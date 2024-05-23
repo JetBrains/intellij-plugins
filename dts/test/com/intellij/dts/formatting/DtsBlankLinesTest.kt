@@ -54,4 +54,9 @@ class DtsBlankLinesTest : DtsFormattingTest() {
     minBlankLinesBetweenProperties = 1,
     maxBlankLinesBetweenProperties = 1,
   )
+
+  fun testPpStatements() = doFormattingTest(
+    minBlankLinesBetweenNodes = 1,
+    minBlankLinesBetweenProperties = 1,
+  )
 }

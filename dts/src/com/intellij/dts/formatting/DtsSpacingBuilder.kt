@@ -18,6 +18,11 @@ import kotlin.math.max
 import kotlin.math.min
 
 class DtsSpacingBuilder(settings: CodeStyleSettings) {
+  companion object {
+    // no spacing between statements and these elements
+    private val NO_SPACING_TO = TokenSet.create(*DtsTokenSets.comments.types, DtsTypes.PP_STATEMENT, DtsTypes.PP_INACTIVE)
+  }
+
   private data class BlankLinesRang(val lineFeeds: Int, val blankLines: Int) {
     companion object {
       fun fromSettings(minBlankLines: Int, maxBlankLines: Int) = BlankLinesRang(minBlankLines + 1, maxBlankLines)
@@ -123,7 +128,7 @@ class DtsSpacingBuilder(settings: CodeStyleSettings) {
   }
 
   private fun getBlankLinesRange(child1: PsiElement, child2: PsiElement): BlankLinesRang? {
-    if (child1.elementType in DtsTokenSets.comments || child2.elementType in DtsTokenSets.comments) {
+    if (child1.elementType in NO_SPACING_TO || child2.elementType in NO_SPACING_TO) {
       return BlankLinesRang(0, common.KEEP_BLANK_LINES_IN_CODE)
     }
 

@@ -7,10 +7,13 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.elementType
 
 abstract class DtsWrappingBuilder(protected val settings: DtsCodeStyleSettings) {
   companion object {
+    private val NO_WRAP = TokenSet.create(*DtsTokenSets.comments.types, DtsTypes.PP_STATEMENT, DtsTypes.PP_INACTIVE)
+
     fun childBuilder(settings: CodeStyleSettings): DtsWrappingBuilder =
       Null(settings.getCustomSettings(DtsCodeStyleSettings::class.java))
 
@@ -32,7 +35,7 @@ abstract class DtsWrappingBuilder(protected val settings: DtsCodeStyleSettings) 
     val parentElement = ASTBlock.getPsiElement(parent)
     val childElement = child.psi ?: return null
 
-    if (child.elementType in DtsTokenSets.comments) return null
+    if (child.elementType in NO_WRAP) return null
 
     return getWrap(parentElement, childElement)
   }

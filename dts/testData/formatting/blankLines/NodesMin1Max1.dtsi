@@ -1,3 +1,6 @@
+node {};
+node {};
+
 node {
     node1 { };
     node2 { };

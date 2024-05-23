@@ -7,6 +7,7 @@ import com.intellij.dts.pp.lang.psi.PpStatementType.*
 import com.intellij.dts.pp.lang.psi.PpToken
 import com.intellij.dts.pp.lang.psi.identifier
 import com.intellij.lexer.Lexer
+import com.intellij.psi.TokenType
 
 private class IfState {
   private var inside: Boolean = false
@@ -88,6 +89,18 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
   }
 
   /**
+   * Add the inactive code section but keep the trailing whitespace to enable indentation of
+   * preprocessor statements.
+   */
+  private fun addInactiveSection(baseLexer: Lexer, endOffset: Int) {
+    addToken(endOffset, tokenTypes.inactive)
+
+    if (endOffset != baseLexer.tokenStart) {
+      addToken(baseLexer.tokenStart, TokenType.WHITE_SPACE)
+    }
+  }
+
+  /**
    * Processes an inactive code section. Therefore, the base lexer is advanced until
    * the next preprocessor statement was reached. The overall if-state is tracked by
    * [ifState].
@@ -100,16 +113,21 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
 
     var tokens: List<PpToken>
     var nestedIfs = 0
+    var inactiveEnd = baseLexer.tokenEnd
 
     while (true) {
       // advance until next preprocessor statement
       while (baseLexer.tokenType != null && baseLexer.tokenType != tokenTypes.statementMarker) {
+        if (baseLexer.tokenType != TokenType.WHITE_SPACE) {
+          inactiveEnd = baseLexer.tokenEnd
+        }
+
         baseLexer.advance()
       }
 
       // reached the end of the file before the inactive section was closed
       if (baseLexer.tokenType == null) {
-        addToken(baseLexer.bufferEnd, tokenTypes.inactive)
+        addInactiveSection(baseLexer, inactiveEnd)
         return
       }
 
@@ -122,7 +140,7 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
         nestedIfs == 0 && statement.type == Endif -> break
         nestedIfs >= 1 && statement.type == Endif -> nestedIfs--
         nestedIfs == 0 && statement is PpElifStatement -> {
-          addToken(baseLexer.tokenStart, tokenTypes.inactive)
+          addInactiveSection(baseLexer, inactiveEnd)
           baseLexer.restoreState(baseLexerState)
           return
         }
@@ -132,7 +150,7 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
     }
 
     // emit one token for the inactive code section
-    addToken(baseLexer.tokenStart, tokenTypes.inactive)
+    addInactiveSection(baseLexer, inactiveEnd)
 
     // forward tokens of last statement, it is no longer part of the inactive code section
     addStatementsTokens(baseLexer.tokenStart, tokens)

@@ -1,0 +1,11 @@
+#include "file"
+
+node {
+#if 1
+    property = "value";
+#elif 1
+    property = "value";
+#else
+        property = "value";
+#endif
+};

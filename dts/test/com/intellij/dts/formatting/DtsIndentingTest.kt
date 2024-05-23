@@ -14,4 +14,6 @@ class DtsIndentingTest : DtsFormattingTest() {
   fun testListOnNewLine() = doFormattingTest(keepLineBreaks = true)
 
   fun testNodes() = doFormattingTest()
+
+  fun testPpStatements() = doFormattingTest()
 }

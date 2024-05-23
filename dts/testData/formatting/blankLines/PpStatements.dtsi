@@ -1,0 +1,18 @@
+#if 1
+node { };
+node { };
+#else
+node { };
+node { };
+#endif
+
+node {
+    property = "value";
+#if 1
+    property = "value";
+    property = "value";
+#else
+    property = "value";
+    property = "value";
+#endif
+};

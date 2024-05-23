@@ -63,6 +63,9 @@ class DtsIndentingBuilder {
     // comments need to be treated differently because they can be outside of NODE_CONTENT
     if (DtsTokenSets.comments.contains(childElement.elementType)) return getChildIndenting(parent, 0)
 
+    // absolute indenting of preprocessor statements
+    if (childElement.elementType == DtsTypes.PP_STATEMENT) return Indent.getAbsoluteNoneIndent()
+
     return when {
       parentElement is DtsNodeContent -> Indent.getNormalIndent()
       parentElement is DtsPropertyContent && childElement is DtsValue && isOnNewLine(childElement) -> Indent.getContinuationIndent(

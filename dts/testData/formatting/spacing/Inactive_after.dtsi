@@ -1,0 +1,10 @@
+#ifdef NOT_DEFINED
+node{
+property   = "value"   ;
+   property=
+<
+   >;
+         }
+    ;
+
+#endif
