@@ -91,12 +91,7 @@ tasks.register('startContainer', DockerStartContainer) {
   targetContainerId("$crawlerContainerName")
 }
 
-tasks.register('stopContainer', DockerStopContainer) {
-  targetContainerId("$crawlerContainerName")
-}
-
-tasks.register('removeContainer', DockerRemoveContainer) {
-  dependsOn stopContainer
+tasks.register('waitForMetadataBuild', DockerWaitContainer) {
   targetContainerId("$crawlerContainerName")
 }
 
@@ -121,3 +116,15 @@ publishing {
   }
 }
 
+tasks.named('publishMetadataPublicationToMavenRepository') {
+  dependsOn waitForMetadataBuild
+}
+
+tasks.register('stopContainer', DockerStopContainer) {
+  targetContainerId("$crawlerContainerName")
+}
+
+tasks.register('removeContainer', DockerRemoveContainer) {
+  dependsOn stopContainer
+  targetContainerId("$crawlerContainerName")
+}
