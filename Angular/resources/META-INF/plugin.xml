@@ -407,6 +407,11 @@
             class="org.angular2.refactoring.extractComponent.Angular2ExtractComponentAction">
       <add-to-group group-id="IntroduceActionsGroup"/>
     </action>
+    <action id="Angular2VisualizeGeneratedTcbAction"
+            internal="true"
+            class="org.angular2.lang.html.tcb.Angular2VisualizeGeneratedTcbAction">
+      <add-to-group group-id="Internal"/>
+    </action>
   </actions>
 
   <applicationListeners>

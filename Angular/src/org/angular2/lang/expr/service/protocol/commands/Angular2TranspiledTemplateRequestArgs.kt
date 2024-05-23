@@ -29,8 +29,9 @@ class Angular2TranspiledTemplateRequestArgs private constructor(
 }
 
 class CodeMapping(
-  @JvmField val source: String,
+  @JvmField val source: String, /* source file name */
   @JvmField val sourceOffsets: List<Int>,
   @JvmField val generatedOffsets: List<Int>,
   @JvmField val lengths: List<Int>,
+  @JvmField val generatedLengths: List<Int>,
 )

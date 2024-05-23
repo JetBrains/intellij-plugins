@@ -30,7 +30,7 @@ function _tcb1(this: i0.TcbCheckComponent) { if (true) {
 
 export const IS_A_MODULE = true;
 """.trim(), listOf(
-        CodeMapping(TypeScriptCompilerConfigUtil.normalizeNameAndPath(input.templateFile)!!, listOf(3), listOf(167), listOf(5))
+        CodeMapping(TypeScriptCompilerConfigUtil.normalizeNameAndPath(input.templateFile)!!, listOf(3), listOf(167), listOf(5), listOf(5))
       )),
       emptyList()
     )
