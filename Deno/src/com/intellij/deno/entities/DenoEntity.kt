@@ -42,7 +42,7 @@ interface DenoEntity : WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyEntity(
+fun MutableEntityStorage.modifyDenoEntity(
   entity: DenoEntity,
   modification: DenoEntity.Builder.() -> Unit,
 ): DenoEntity {

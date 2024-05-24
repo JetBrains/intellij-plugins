@@ -47,7 +47,7 @@ interface NuxtFolderEntity: WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyEntity(
+fun MutableEntityStorage.modifyNuxtFolderEntity(
   entity: NuxtFolderEntity,
   modification: NuxtFolderEntity.Builder.() -> Unit,
 ): NuxtFolderEntity {
