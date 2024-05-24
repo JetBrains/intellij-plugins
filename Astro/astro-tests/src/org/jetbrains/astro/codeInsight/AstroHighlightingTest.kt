@@ -7,11 +7,9 @@ class AstroHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting
 
   fun testCharEntityResolution() = doTest()
 
-  fun testUnusedComponentImports() = doTest(additionalFiles = listOf("component.astro"))
-
   fun testClientDirectives() = doTest(additionalFiles = listOf("react-component.tsx"))
 
-  fun testUnusedImportFalsePositive() = doTest()
+  fun testUnusedImportDisabledInspection() = doTest()
 
   fun testImplicitConfigUsage() {
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection())
