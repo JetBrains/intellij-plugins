@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
@@ -24,45 +23,43 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 
 class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    val ft = holder.file.fileType
-    if (ft != TerraformFileType) {
+    if (holder.file.fileType != TerraformFileType) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
-
-    return MyEV(holder)
+    return TfBlockVisitor(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
+  inner class TfBlockVisitor(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
       ProgressIndicatorProvider.checkCanceled()
-      val type = block.getNameElementUnquoted(0) ?: return
-      doCheck(block, holder, type)
+      val type = block.getNameElementUnquoted(0)
+      if (!type.isNullOrEmpty()) {
+        doCheck(block, holder, type)
+      }
     }
   }
 
   private fun doCheck(block: HCLBlock, holder: ProblemsHolder, type: String) {
-    if (type.isEmpty()) return
     // It could be root block OR block inside Object.
     // Object could be value of some property or right part of other object
-    val parent = PsiTreeUtil.getParentOfType(block, HCLBlock::class.java, HCLProperty::class.java, HCLFile::class.java) ?: return
-    ProgressIndicatorProvider.checkCanceled()
+    val parent = PsiTreeUtil.getParentOfType(block, HCLBlock::class.java, HCLFile::class.java) ?: return
     when (parent) {
       is HCLFile -> {
-        if (TerraformCompletionUtil.RootBlockKeywords.contains(type)) return
-        holder.registerProblem(block.nameElements.first(),
-                               HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY))
+        if (TerraformCompletionUtil.RootBlockKeywords.contains(type)) {
+          return
+        }
+        registerUnknownBlockProblem(block, holder, type)
       }
       is HCLBlock -> {
         parent.getNameElementUnquoted(0) ?: return
         parent.`object` ?: return
-        if (TerraformPatterns.DynamicBlock.accepts(block)) return
-        if (TerraformPatterns.DynamicBlockContent.accepts(block)) return
-        val properties = TfModelHelper.getBlockProperties(parent)
+        if (TerraformPatterns.DynamicBlock.accepts(block) || TerraformPatterns.DynamicBlockContent.accepts(block)) {
+          return
+        }
+
         // TODO: (?) For some reason single name block could be represented as 'property' in model
+        val properties = TfModelHelper.getBlockProperties(parent)
         if (properties[type] is BlockType) return
 
         // Check for non-closed root block (issue #93)
@@ -72,18 +69,18 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
                                  ProblemHighlightType.GENERIC_ERROR, AddClosingBraceFix(block.nameElements.first()))
           return
         }
-
-        holder.registerProblem(block.nameElements.first(),
-                               HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY))
-      }
-      is HCLProperty -> {
-        // TODO: Add some logic
+        registerUnknownBlockProblem(block, holder, type)
       }
       else -> return
     }
     // TODO: Add 'Register as known block type' quick fix
+  }
+
+  private fun registerUnknownBlockProblem(block: HCLBlock, holder: ProblemsHolder, type: String) {
+    holder.registerProblem(block.nameElements.first(),
+                           HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
+                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                           *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block), RemoveBlockQuickFix(block)).toTypedArray())
   }
 }
 
@@ -114,5 +111,13 @@ class AddClosingBraceFix(before: PsiElement) : LocalQuickFixAndIntentionActionOn
         }
       }
     }
+  }
+}
+
+internal class RemoveBlockQuickFix(element: HCLBlock) : LocalQuickFixOnPsiElement(element) {
+  override fun getText(): String = HCLBundle.message("unknown.block.type.inspection.quick.fix.name")
+  override fun getFamilyName(): String = text
+  override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+    startElement.delete()
   }
 }
