@@ -11,9 +11,6 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
   constructor(id: Identifier)
     : this({ append(id) })
 
-  constructor(originalRange: TextRange?, builder: ExpressionBuilder.() -> Unit)
-    : this({ withSourceSpan(originalRange, builder) })
-
   private val code: StringBuilder
 
   private val sourceMappings: List<SourceMappingData>
@@ -69,10 +66,12 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     val sourceMappings = mutableListOf<SourceMappingData>()
 
+    private var ignoreDiagnostics = false
+
     override fun append(code: String, originalRange: TextRange?): ExpressionBuilder {
       if (originalRange != null) {
         sourceMappings.add(SourceMappingData(originalRange.startOffset, originalRange.length,
-                                             this.code.length, code.length))
+                                             this.code.length, code.length, ignoreDiagnostics))
       }
       this.code.append(code)
       return this
@@ -84,7 +83,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     override fun append(expression: Expression): ExpressionBuilder {
       val offset = this.code.length
       expression.sourceMappings.mapTo(this.sourceMappings) { sourceMapping ->
-        sourceMapping.withOffset(offset)
+        sourceMapping.copy(generatedOffset = sourceMapping.generatedOffset + offset,
+                           ignoreDiagnostics = ignoreDiagnostics || sourceMapping.ignoreDiagnostics)
       }
       this.code.append(expression.code)
       return this
@@ -96,13 +96,22 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     }
 
     override fun withSourceSpan(originalRange: TextRange?, builder: ExpressionBuilder.() -> Unit) {
-      // TODO - ignore for now, determine whether it makes sense to register the range
-      this.builder()
+      if (originalRange != null) {
+        //val offset = this.code.length
+        this.builder()
+        // TODO this may be necessary only for error mapping
+        //sourceMappings.add(SourceMappingData(originalRange.startOffset, originalRange.length, offset,
+        //                                     this.code.length - offset, ignoreDiagnostics))
+      }
+      else {
+        this.builder()
+      }
     }
 
     override fun withIgnoreDiagnostics(builder: ExpressionBuilder.() -> Unit) {
-      // TODO - ignore for now, add a filter later on
+      ignoreDiagnostics = true
       this.builder()
+      ignoreDiagnostics = false
     }
 
     override fun codeBlock(builder: BlockBuilder.() -> Unit) {
@@ -131,7 +140,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
   }
 }
 
-internal class Identifier constructor(val name: String, val sourceSpan: TextRange? = null, val kind: ExpressionIdentifier? = null) {
+internal class Identifier(val name: String, val sourceSpan: TextRange? = null, val kind: ExpressionIdentifier? = null) {
   override fun toString(): String = name
 }
 
@@ -144,7 +153,5 @@ private data class SourceMappingData(
   override val sourceLength: Int,
   override val generatedOffset: Int,
   override val generatedLength: Int,
-) : Angular2TemplateTranspiler.SourceMapping {
-  fun withOffset(offset: Int) =
-    copy(generatedOffset = generatedOffset + offset)
-}
+  override val ignoreDiagnostics: Boolean,
+) : Angular2TemplateTranspiler.SourceMapping

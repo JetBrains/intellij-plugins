@@ -75,6 +75,7 @@ object Angular2TemplateTranspiler {
     val sourceLength: Int
     val generatedOffset: Int
     val generatedLength: Int
+    val ignoreDiagnostics: Boolean
   }
 
   interface TypeScriptImport {

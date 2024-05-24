@@ -62,8 +62,11 @@ internal class Angular2TranspiledTemplateInspector(
 
   private val currentHighlighters = MultiMap<MarkupModel, RangeHighlighter>()
 
-  private val sourceMappingsSorted = transpiledTemplate.sourceMappings.sortedBy { -it.sourceOffset }
-  private val generatedMappingsSorted = transpiledTemplate.sourceMappings.sortedBy { -it.generatedOffset }
+  private val sourceMappingsSorted = transpiledTemplate.sourceMappings.sortedWith(
+    Comparator.comparing<SourceMapping, Int> { -it.sourceOffset }.thenComparing { it -> it.sourceLength })
+
+  private val generatedMappingsSorted = transpiledTemplate.sourceMappings.sortedWith(
+    Comparator.comparing<SourceMapping, Int> { -it.generatedOffset }.thenComparing { it -> it.generatedLength })
 
   init {
     Disposer.register(disposable, generatedTextEditor)
@@ -71,7 +74,6 @@ internal class Angular2TranspiledTemplateInspector(
 
     setupEditor(generatedEditor)
     setupEditor(sourceEditor)
-    generatedEditor.headerComponent = JLabel("0:0", SwingConstants.RIGHT)
 
     Angular2TranspiledTemplateVisualizer.addMarkersToGeneratedFile(transpiledTemplate, generatedEditor.markupModel)
     Angular2TranspiledTemplateVisualizer.addMarkersToSourceFile(transpiledTemplate, sourceEditor.markupModel)
@@ -173,7 +175,7 @@ internal class Angular2TranspiledTemplateInspector(
 
     addSelectedMapping(mapping)
 
-    generatedEditor.scrollingModel.scrollTo(generatedEditor.offsetToLogicalPosition(mapping.sourceOffset), ScrollType.CENTER)
+    generatedEditor.scrollingModel.scrollTo(generatedEditor.offsetToLogicalPosition(mapping.generatedOffset), ScrollType.CENTER)
   }
 
   private fun highlightSource(generatedPosition: LogicalPosition) {
@@ -189,11 +191,11 @@ internal class Angular2TranspiledTemplateInspector(
   }
 
   private fun addSelectedMapping(mapping: SourceMapping) {
-    addSelectedHighlighter(sourceEditor.markupModel, mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength )
+    addSelectedHighlighter(sourceEditor.markupModel, mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength)
     transpiledTemplate.sourceMappings.filter {
       it.sourceOffset == mapping.sourceOffset && it.sourceLength == mapping.sourceLength
     }.forEach {
-      addSelectedHighlighter(generatedEditor.markupModel, it.generatedOffset, it.generatedOffset + it.generatedLength )
+      addSelectedHighlighter(generatedEditor.markupModel, it.generatedOffset, it.generatedOffset + it.generatedLength)
     }
   }
 
@@ -242,12 +244,12 @@ internal class Angular2TranspiledTemplateInspector(
       }
     }
 
-    private fun createTextAttributesForEditor(): Array<TextAttributes?> {
+    private fun createTextAttributesForEditor(transparency: Double): Array<TextAttributes?> {
       val background = EditorColorsManager.getInstance().globalScheme.defaultBackground
       val resultAttributes = arrayOfNulls<TextAttributes>(BASE_COLORS.size)
       for (i in resultAttributes.indices) {
         resultAttributes[i] = createTextAttributes(UIUtil.makeTransparent(
-          BASE_COLORS[i], background, 0.4))
+          BASE_COLORS[i], background, transparency))
       }
       return resultAttributes
     }
@@ -255,11 +257,12 @@ internal class Angular2TranspiledTemplateInspector(
     private fun addHighlighters(mappings: List<SourceMapping>,
                                 isGeneratedEditor: Boolean,
                                 markupModel: MarkupModel) {
-      val textStyles = createTextAttributesForEditor()
+      val textStyles = createTextAttributesForEditor(0.4)
+      val ignoredTextStyles = createTextAttributesForEditor(0.15)
       val colors = mutableMapOf<Pair<Int, Int>, Int>()
 
-      fun getColorId(offset: Int, length:Int) =
-        colors.computeIfAbsent(Pair(offset, length)) {colors.size}
+      fun getColorId(offset: Int, length: Int) =
+        colors.computeIfAbsent(Pair(offset, length)) { colors.size }
 
       for (i in mappings.indices) {
         val mapping = mappings[i]
@@ -268,7 +271,11 @@ internal class Angular2TranspiledTemplateInspector(
                                         if (isGeneratedEditor) mapping.generatedOffset + mapping.generatedLength
                                         else mapping.sourceOffset + mapping.sourceLength,
                                         HighlighterLayer.LAST,
-                                        getTextAttributes(textStyles, getColorId(mapping.sourceOffset, mapping.sourceLength)),
+                                        getTextAttributes(if (isGeneratedEditor && mapping.ignoreDiagnostics)
+                                                            ignoredTextStyles
+                                                          else
+                                                            textStyles,
+                                                          getColorId(mapping.sourceOffset, mapping.sourceLength)),
                                         HighlighterTargetArea.EXACT_RANGE)
       }
     }

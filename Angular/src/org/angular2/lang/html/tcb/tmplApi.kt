@@ -36,7 +36,6 @@ internal sealed interface TmplAstExpressionSymbol : TmplAstNode {
   val keySpan: TextRange?
   val value: String?
   val valueSpan: TextRange?
-  val sourceSpan: TextRange
 }
 
 internal sealed interface TmplAstDirectiveContainer : TmplAstNode {
@@ -46,7 +45,6 @@ internal sealed interface TmplAstDirectiveContainer : TmplAstNode {
   val attributes: Map<String, TmplAstTextAttribute>
   val references: Map<String, TmplAstReference>
   val startSourceSpan: TextRange?
-  val sourceSpan: TextRange
   val children: List<TmplAstNode>
 }
 
@@ -61,7 +59,6 @@ internal class TmplAstVariable(
   override val value: String?,
   override val keySpan: TextRange?,
   override val valueSpan: TextRange?,
-  override val sourceSpan: TextRange,
 ) : TmplAstExpressionSymbol
 
 internal class TmplAstElement(
@@ -72,7 +69,6 @@ internal class TmplAstElement(
   override val attributes: Map<String, TmplAstTextAttribute>,
   override val references: Map<String, TmplAstReference>,
   override val startSourceSpan: TextRange?,
-  override val sourceSpan: TextRange,
   override val children: List<TmplAstNode>,
 ) : TmplAstDirectiveContainer
 
@@ -86,7 +82,6 @@ internal class TmplAstTemplate(
   override val references: Map<String, TmplAstReference>,
   val variables: Map<String, TmplAstVariable>,
   override val startSourceSpan: TextRange?,
-  override val sourceSpan: TextRange,
   override val children: List<TmplAstNode>,
 ) : TmplAstDirectiveContainer
 
@@ -96,7 +91,6 @@ internal class TmplAstReference(
   override val keySpan: TextRange,
   override val value: String,
   override val valueSpan: TextRange?,
-  override val sourceSpan: TextRange,
 ) : TmplAstExpressionSymbol
 
 internal data class TmplAstBoundText(
@@ -387,7 +381,8 @@ private fun XmlTag.toTemplateAst(
 
   val isTemplateTag = isTemplateTag(this)
 
-  val templateBindings = buildInfo(attributesByKind[TEMPLATE_BINDINGS] ?: emptyList(), psiVar2tmplAst)
+  val templateBindingAttribute = attributesByKind[TEMPLATE_BINDINGS]?.firstOrNull()?.first
+  val templateBindings = buildInfo(templateBindingAttribute, psiVar2tmplAst)
 
   val directives = attributes.asSequence()
     .flatMap { attr ->
@@ -454,8 +449,7 @@ private fun XmlTag.toTemplateAst(
         name = info.name,
         keySpan = attr.nameElement.textRange,
         value = attr.value ?: "",
-        valueSpan = attr.valueTextRange,
-        sourceSpan = attr.textRange
+        valueSpan = attr.valueElement?.textRange,
       ).apply {
         psiVar2tmplAst[attr] = this
       }
@@ -468,14 +462,14 @@ private fun XmlTag.toTemplateAst(
         keySpan = attr.nameElement.textRange,
         value = attr.value ?: "",
         valueSpan = attr.valueTextRange,
-        sourceSpan = attr.textRange
       ).apply {
         psiVar2tmplAst[attr] = this
       }
     })
 
-  val startSourceSpan = XmlTagUtil.getStartTagRange(this)
-  val sourceSpan = textRange
+  val startSourceSpan = XmlTagUtil.getStartTagNameElement(this)?.textRange
+                        ?:  XmlTagUtil.getStartTagRange(this)
+                        ?: textRange
   val children = children.mapNotNull { it.toTemplateAst(psiVar2tmplAst) }
 
   return if (isTemplateTag) {
@@ -489,7 +483,6 @@ private fun XmlTag.toTemplateAst(
       references = references,
       variables = lets,
       startSourceSpan = startSourceSpan,
-      sourceSpan = sourceSpan,
       children = children
     ).apply {
       references.forEach { it.value.parent = this }
@@ -505,8 +498,7 @@ private fun XmlTag.toTemplateAst(
       attributes = emptyMap(),
       references = references,
       variables = templateBindings.variables,
-      startSourceSpan = startSourceSpan,
-      sourceSpan = sourceSpan,
+      startSourceSpan = templateBindingAttribute?.nameElement?.textRange ?: startSourceSpan,
       children = listOf(
         TmplAstElement(
           name = name,
@@ -516,7 +508,6 @@ private fun XmlTag.toTemplateAst(
           attributes = attributes,
           references = emptyMap(),
           startSourceSpan = startSourceSpan,
-          sourceSpan = sourceSpan,
           children = children
         )
       )
@@ -533,7 +524,6 @@ private fun XmlTag.toTemplateAst(
       attributes = attributes,
       references = references,
       startSourceSpan = startSourceSpan,
-      sourceSpan = sourceSpan,
       children = children
     ).apply {
       references.forEach { it.value.parent = this }
@@ -542,15 +532,13 @@ private fun XmlTag.toTemplateAst(
 }
 
 private fun buildInfo(
-  attributes: List<Pair<XmlAttribute, Angular2AttributeNameParser.AttributeInfo>>,
+  attribute: XmlAttribute?,
   psiVar2tmplAst: MutableMap<PsiElement, TmplAstExpressionSymbol>
 ): TemplateBindingsInfo? {
-  if (attributes.isEmpty()) return null
-  val templateBindings = attributes.flatMap { (attr, _) -> Angular2TemplateBindings.get(attr).bindings.asSequence() }
+  if (attribute == null) return null
+  val templateBindings = Angular2TemplateBindings.get(attribute).bindings
   return TemplateBindingsInfo(
-    directives = attributes.asSequence()
-      .flatMap { (attr, _) -> attr.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives ?: emptyList() }
-      .toSet(),
+    directives = attribute.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives?.toSet() ?: emptySet(),
     inputs = templateBindings.asSequence()
       .filter { !it.keyIsVar() }
       .map { Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange, BindingType.Property, it.expression, it.textRange)) }
@@ -558,7 +546,7 @@ private fun buildInfo(
     variables = templateBindings.asSequence()
       .filter { it.keyIsVar() }
       .map {
-        Pair(it.key, TmplAstVariable(it.key, it.name, it.keyElement?.textRange, null, it.textRange).apply {
+        Pair(it.key, TmplAstVariable(it.key, it.name, it.variableDefinition?.textRange, null).apply {
           psiVar2tmplAst[it] = this
         })
       }

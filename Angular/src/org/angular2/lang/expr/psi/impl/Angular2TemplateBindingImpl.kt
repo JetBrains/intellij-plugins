@@ -33,6 +33,7 @@ class Angular2TemplateBindingImpl(elementType: IElementType,
 
   override val keyElement: Angular2TemplateBindingKey?
     get() = ContainerUtil.findInstance(children, Angular2TemplateBindingKey::class.java)
+
   override val keyJSType: JSType?
     get() {
       if (!keyIsVar()) {

@@ -125,13 +125,11 @@ private class TcbElementOp(private val tcb: Context, private val scope: Scope, p
     }
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId()
+    val id = this.tcb.allocateId(element.startSourceSpan)
     // Add the declaration of the element using document.createElement.
-    this.scope.addStatement {
-      append("var $id = ")
-      append("document.createElement(\"${element.name}\")", element.startSourceSpan ?: element.sourceSpan)
-      append(";")
-    }
+    this.scope.addStatement (
+      tsCreateVariable(id, Expression("document.createElement(\"${element.name}\")"))
+    )
     return id
   }
 }
@@ -159,20 +157,16 @@ private class TcbTemplateVariableOp(
     // on the template context.
     val id = this.tcb.allocateId(variable.keySpan)
     this.scope.addStatement {
-      withSourceSpan(variable.sourceSpan) {
-        append("var ")
-        append(id, id.sourceSpan)
-        append(" = ")
-        withSourceSpan(variable.valueSpan) {
-          append(ctx)
-          val name = variable.value ?: `$IMPLICIT`
-          if (StringUtil.isJavaIdentifier(name))
-            append(".").append(name)
-          else
-            append("[\"").append(name.replace("\"", "\\\"")).append("\"]")
-        }
-        append(";")
-      }
+      append("var ")
+      append(id, id.sourceSpan)
+      append(" = ")
+      append(ctx)
+      val name = variable.value ?: `$IMPLICIT`
+      if (StringUtil.isJavaIdentifier(name))
+        append(".").append(name, variable.valueSpan)
+      else
+        append("[\"").append(name.replace("\"", "\\\""), variable.valueSpan).append("\"]")
+      append(";")
     }
     return id
   }
@@ -257,8 +251,9 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
           else {
             // Call the guard function on the directive with the directive instance and that
             // expression.
-            val guardInvoke = Expression(boundInput.value?.textRange) {
-              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}($dirInstId, ")
+            val guardInvoke = Expression {
+              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange)
+              append("($dirInstId, ")
               append(expr)
               append(")")
             }
@@ -272,8 +267,8 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
       if (dir.hasTemplateContextGuard) {
         if (this.tcb.env.config.applyTemplateContextGuards) {
           val ctx = this.scope.resolve(this.template)
-          val guardInvoke = Expression(this.template.sourceSpan) {
-            append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)")
+          val guardInvoke = Expression {
+            append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)", template.startSourceSpan)
           }
           directiveGuards.add(guardInvoke)
         }
@@ -385,7 +380,7 @@ private abstract class TcbDirectiveTypeOpBase(
         rawType.source, rawType.type, rawType.arguments.indices.map { JSAnyType.get(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED) })
     }
 
-    val id = this.tcb.allocateId(this.node.startSourceSpan ?: this.node.sourceSpan, ExpressionIdentifier.Directive)
+    val id = this.tcb.allocateId(this.node.startSourceSpan, ExpressionIdentifier.Directive)
     this.scope.addStatement(tsDeclareVariable(id, type))
     return id
   }
@@ -463,14 +458,17 @@ private class TcbReferenceOp(
 
   override fun execute(): Identifier {
     val id = this.tcb.allocateId(this.node.keySpan)
-    val reference: Identifier = if (this.target is TmplAstDirectiveContainer)
-      this.scope.resolve(this.target)
-    else
-      this.scope.resolve(this.host, this.target as Angular2Directive)
+    val reference = Expression {
+      append(if (target is TmplAstDirectiveContainer)
+               scope.resolve(target)
+             else
+               scope.resolve(host, target as Angular2Directive),
+             node.valueSpan)
+    }
 
     // The reference is either to an element, an <ng-template> node, or to a directive on an
     // element or template.
-    val initializer = Expression(this.node.sourceSpan) {
+    val initializer = Expression {
       if ((target is TmplAstElement && !tcb.env.config.checkTypeOfDomReferences) ||
           !tcb.env.config.checkTypeOfNonDomReferences) {
         // References to DOM nodes are pinned to 'any' when `checkTypeOfDomReferences` is `false`.
@@ -536,7 +534,7 @@ private class TcbDirectiveCtorOp(
   override val optional = true
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(this.node.startSourceSpan ?: this.node.sourceSpan, ExpressionIdentifier.Directive)
+    val id = this.tcb.allocateId(this.node.startSourceSpan, ExpressionIdentifier.Directive)
 
     val genericInputs = mutableMapOf<String, TcbDirectiveInput>()
     val boundAttrs = getBoundAttributes(this.dir, this.node)
@@ -649,7 +647,7 @@ private class TcbDirectiveInputsOp(
           val id = this.tcb.allocateId()
           this.scope.addStatement(tsDeclareVariable(id, type))
 
-          target = Expression(id)
+          target = Expression { append(id, attr.attribute.keySpan) }
         }
         else if (fieldName == null) {
           // If no coercion declaration is present nor is the field declared (i.e. the input is
@@ -670,7 +668,7 @@ private class TcbDirectiveInputsOp(
           val type = Expression { append(dirId!!).append("[\"${fieldName}\"]") }
           val temp = tsDeclareVariable(id, type)
           this.scope.addStatement(temp)
-          target = Expression(id)
+          target = Expression { append(id, attr.attribute.keySpan) }
         }
         else {
           if (dirId == null) {
@@ -681,9 +679,9 @@ private class TcbDirectiveInputsOp(
           // when possible. String literal fields may not be valid JS identifiers so we use
           // literal element access instead for those cases.
           target = if (StringUtil.isJavaIdentifier(fieldName))
-            Expression { append(dirId).append(".$fieldName") }
+            Expression { append(dirId).append(".").append(fieldName, attr.attribute.keySpan) }
           else
-            Expression { append(dirId).append("[\"$fieldName\"]") }
+            Expression { append(dirId).append("[\"").append(fieldName, attr.attribute.keySpan).append("\"]") }
         }
 
         // For signal inputs, we unwrap the target `InputSignal`. Note that
@@ -699,12 +697,6 @@ private class TcbDirectiveInputsOp(
           target = Expression { append(target).append("[").append(inputSignalBrandWriteSymbol).append("]") }
         }
 
-        if (attr.attribute.keySpan != null) {
-          target = Expression(attr.attribute.keySpan) {
-            append(target)
-          }
-        }
-
         // Two-way bindings accept `T | WritableSignal<T>` so we have to unwrap the value.
         if (input.isTwoWayBinding && this.tcb.env.config.allowSignalsInTwoWayBindings) {
           assignment = unwrapWritableSignal(assignment, this.tcb)
@@ -714,16 +706,13 @@ private class TcbDirectiveInputsOp(
         assignment = Expression { append(target).append(" = ").append(assignment) }
       }
 
-      assignment = Expression(attr.attribute.sourceSpan) {
-        // Ignore diagnostics for text attributes if configured to do so.
-        if (!tcb.env.config.checkTypeOfAttributes &&
-            attr.attribute is TmplAstTextAttribute) {
+      // Ignore diagnostics for text attributes if configured to do so.
+      if (!tcb.env.config.checkTypeOfAttributes &&
+          attr.attribute is TmplAstTextAttribute) {
+        assignment = Expression {
           withIgnoreDiagnostics {
             append(assignment)
           }
-        }
-        else {
-          append(assignment)
         }
       }
 
@@ -938,11 +927,9 @@ private class TcbUnclaimedInputsOp(
           // A direct binding to a property.
           val propertyName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING[binding.name] ?: binding.name
           this.scope.addStatement {
-            withSourceSpan(binding.sourceSpan) {
-              append(elId).append("[\"").append(propertyName).append("\"]")
-              append(" = ")
-              append(expr)
-            }
+            append(elId).append("[\"").append(propertyName, binding.keySpan).append("\"]")
+            append(" = ")
+            append(expr)
             append(";")
           }
         }
@@ -994,8 +981,8 @@ private class TcbDirectiveOutputsOp(
       if (dirId == null) {
         dirId = this.scope.resolve(this.node, this.dir)
       }
-      val outputField = Expression(output.keySpan) {
-        append(dirId).append("[\"$field\"]")
+      val outputField = Expression {
+        append(dirId).append("[\"$field\"]", output.keySpan)
       }
       if (this.tcb.env.config.checkTypeOfOutputEvents) {
         // For strict checking of directive events, generate a call to the `subscribe` method
@@ -1085,12 +1072,13 @@ private class TcbUnclaimedOutputsOp(
         }
         this.scope.addStatement {
           withSourceSpan(output.sourceSpan) {
-            withSourceSpan(output.keySpan) {
-              append(elId).append(".addEventListener")
-            }
-            append("(\"${output.name}\", ").append(handler).append(")")
+            append(elId)
+            append(".addEventListener(\"")
+            append(output.name, output.keySpan)
+            append("\", ")
+            append(handler)
+            append(");")
           }
-          append(";")
         }
       }
       else {
@@ -2100,9 +2088,7 @@ private open class TcbExpressionTranslator(private val tcb: Context, protected v
         result.append(node.text, node.textRange)
       }
       else {
-        result.withSourceSpan(node.textRange) {
-          append(templateTarget)
-        }
+        result.append(templateTarget)
       }
     }
     else {
@@ -2178,23 +2164,22 @@ private open class TcbExpressionTranslator(private val tcb: Context, protected v
     }
     result.withSourceSpan(pipe.textRange) {
       if (!tcb.env.config.checkTypeOfPipes) {
-        append("(")
+        result.append("(")
       }
-      withSourceSpan(pipe.methodExpression?.textRange) {
-        append(pipeCall)
-        append(".transform")
-      }
+      result.append(pipeCall)
+      result.append(".")
+      result.append("transform", pipe.methodExpression?.textRange)
       if (!tcb.env.config.checkTypeOfPipes) {
-        append(" as any)")
+        result.append(" as any)")
       }
-      append("(")
+      result.append("(")
       arguments.forEachIndexed { index, it ->
         if (index > 0) {
-          append(", ")
+          result.append(", ")
         }
         it.accept(this@TcbExpressionTranslator)
       }
-      append(")")
+      result.append(")")
     }
   }
 
@@ -2230,9 +2215,9 @@ private open class TcbExpressionTranslator(private val tcb: Context, protected v
       return null
     }
 
-    val expr = this.scope.resolve(binding)
-    return Expression(ast.textRange) {
-      append(expr)
+    val identifier = this.scope.resolve(binding)
+    return Expression {
+      append(identifier, ast.textRange)
     }
   }
 }
@@ -2254,10 +2239,9 @@ private fun tcbCallTypeCtor(dir: Angular2Directive, tcb: Context, inputs: Collec
         expr = unwrapWritableSignal(expr, tcb)
       }
 
-      Expression(input.sourceSpan) {
+      Expression {
         append("\"${input.field}\": ")
         append(expr)
-
       }
     }
     else {
