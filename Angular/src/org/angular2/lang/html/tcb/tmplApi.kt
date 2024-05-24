@@ -356,20 +356,21 @@ private fun buildTmplAst(
   file: Angular2HtmlFile,
   psiVar2tmplAst: MutableMap<PsiElement, TmplAstExpressionSymbol>
 ): List<TmplAstNode> {
-  return file.document?.children?.mapNotNull { it.toTemplateAst(psiVar2tmplAst) }
+  return file.document?.children?.mapNotNull { it.toTemplateAstNode(psiVar2tmplAst) }
          ?: emptyList()
 }
 
-private fun PsiElement.toTemplateAst(
+private fun PsiElement.toTemplateAstNode(
   psiVar2tmplAst: MutableMap<PsiElement, TmplAstExpressionSymbol>
 ): TmplAstNode? =
   when (this) {
-    is XmlTag -> toTemplateAst(psiVar2tmplAst)
-    is Angular2HtmlExpansionForm -> toTemplateAst()
+    is XmlTag -> toTmplAstDirectiveContainer(psiVar2tmplAst)
+    is Angular2HtmlExpansionForm -> toTmplAstContent()
+    is ASTWrapperPsiElement -> toTmplAstBoundText()
     else -> null
   }
 
-private fun XmlTag.toTemplateAst(
+private fun XmlTag.toTmplAstDirectiveContainer(
   psiVar2tmplAst: MutableMap<PsiElement, TmplAstExpressionSymbol>
 ): TmplAstDirectiveContainer {
   val attributesByKind = attributes.asSequence()
@@ -468,9 +469,15 @@ private fun XmlTag.toTemplateAst(
     })
 
   val startSourceSpan = XmlTagUtil.getStartTagNameElement(this)?.textRange
-                        ?:  XmlTagUtil.getStartTagRange(this)
+                        ?: XmlTagUtil.getStartTagRange(this)
                         ?: textRange
-  val children = children.mapNotNull { it.toTemplateAst(psiVar2tmplAst) }
+  val children = children.asSequence().mapNotNull { it.toTemplateAstNode(psiVar2tmplAst) }
+    .plus(attributesByKind[REGULAR]?.asSequence()
+            ?.mapNotNull { it.first.valueElement }
+            ?.flatMap { it.children.asSequence() }
+            ?.mapNotNull { it.toTemplateAstNode(psiVar2tmplAst) }
+          ?: emptySequence())
+    .toList()
 
   return if (isTemplateTag) {
     TmplAstTemplate(
@@ -580,7 +587,7 @@ private val Angular2AttributeNameParser.EventInfo.tmplParsedEventType: ParsedEve
     }
 
 
-private fun Angular2HtmlExpansionForm.toTemplateAst() =
+private fun Angular2HtmlExpansionForm.toTmplAstContent(): TmplAstContent =
   // Let's simplify stuff a little bit and don't create a real ICU node
   TmplAstContent(
     childrenOfType<ASTWrapperPsiElement>()
@@ -600,3 +607,7 @@ private fun Angular2HtmlExpansionForm.toTemplateAst() =
       }
       .toList()
   )
+
+private fun ASTWrapperPsiElement.toTmplAstBoundText(): TmplAstBoundText? =
+  children.asSequence().firstNotNullOfOrNull { it as? Angular2Interpolation }
+    ?.let { TmplAstBoundText(it.expression) }
