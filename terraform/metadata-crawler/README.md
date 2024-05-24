@@ -18,7 +18,7 @@ Please note that parsing heavy JSON files requires a lot of memory, so we recomm
 6. The container will collect metadata, build artifact and put it to the metadata path. If we need to alter defaults, we need to redefine environment variables (see the table below).
 7. We can always run container manually using `docker` command.
 
-For the image, we can specify the following environment configuration parameters
+For the build, we can specify the following environment configuration parameters
 
 | Variable Name                | Default Value                                                    | Comment                                                                                                                                       |
 |------------------------------|------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|

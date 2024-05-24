@@ -27,7 +27,7 @@ def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2024.1.2'
 def artifactName = "terraform-metadata"
 
 def crawlerContainerName = "terraform_metadata_crawler"
-def metadataPath = System.getenv('METADATA_PATH') ?: '/Users/Shared/metadata2'
+def metadataPath = System.getenv('METADATA_PATH') ?: "${project.buildDir}/metadata"
 
 dependencies {
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
@@ -79,9 +79,15 @@ tasks.register('buildDockerImage', DockerBuildImage) {
 }
 
 tasks.register('createContainer', DockerCreateContainer) {
+  doFirst {
+    new File("$metadataPath").mkdirs()
+  }
   dependsOn buildDockerImage
   targetImageId buildDockerImage.imageId
   containerName = "$crawlerContainerName"
+  envVars.put('TERRAFORM_REGISTRY_HOST', System.getenv('TERRAFORM_REGISTRY_HOST') ?: 'https://registry.terraform.io')
+  envVars.put('DOWNLOADS_LIMIT_FOR_PROVIDER', System.getenv('DOWNLOADS_LIMIT_FOR_PROVIDER') ?: '10000')
+  envVars.put('CLEAN_DOWNLOADED_DATA', System.getenv('CLEAN_DOWNLOADED_DATA') ?: 'true')
   hostConfig.getBinds().put("$metadataPath", "/opt/terraform-metadata/build/libs")
   hostConfig.memory = 4096L * 1024 * 1024
   cmd = ["jar"]
@@ -125,6 +131,5 @@ tasks.register('stopContainer', DockerStopContainer) {
 }
 
 tasks.register('removeContainer', DockerRemoveContainer) {
-  dependsOn stopContainer
   targetContainerId("$crawlerContainerName")
 }
