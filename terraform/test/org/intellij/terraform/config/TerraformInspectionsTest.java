@@ -67,6 +67,10 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
     doTest("unknown_block_name", new HCLUnknownBlockTypeInspection());
   }
 
+  public void testUnknownPropertyInResource() {
+    doTest("unknown_property_in_resource", new TfUnknownPropertyInspection());
+  }
+
   // Test for issue #198
   public void testNoUnknownBlocksForNomad() {
     doTest("no_unknown_blocks_for_nomad", new HCLUnknownBlockTypeInspection());

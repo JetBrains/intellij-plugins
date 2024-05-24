@@ -267,6 +267,10 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      suppressId="LiteralValidness"
                      implementationClass="org.intellij.terraform.config.inspection.HCLLiteralValidnessInspection"/>
+    <localInspection language="HCL" applyToDialects="true" shortName="TfUnknownProperty" bundle="messages.HCLBundle"
+                     key="unknown.property.in.resource.inspection.display.name"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="org.intellij.terraform.config.inspection.TfUnknownPropertyInspection"/>
 
     <!--region TF Duplicates-->
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedProvider" bundle="messages.HCLBundle"

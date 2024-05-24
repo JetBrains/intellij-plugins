@@ -1,0 +1,31 @@
+<html>
+<body>
+<p>Reports unknown properties in resource block</p>
+<p>Example of a problem:</p>
+<pre><code>
+resource "awscc_appflow_flow" "aws_flow1" {
+  flow_name          = ""
+  source_flow_config = ""
+  trigger_config     = ""
+  destination_flow_config_list {}
+  tasks {}
+  test = ""
+}
+
+</code></pre>
+<p>
+  In this example, the 'test' property in the block is unknown.
+</p>
+<p>Example of correction:</p>
+<pre><code>
+resource "awscc_appflow_flow" "aws_flow1" {
+  flow_name          = ""
+  source_flow_config = ""
+  trigger_config     = ""
+  destination_flow_config_list {}
+  tasks {}
+}
+
+</code></pre>
+</body>
+</html>

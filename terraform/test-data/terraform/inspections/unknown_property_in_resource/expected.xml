@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>main.tf</file>
+    <line>5</line>
+    <module>9</module>
+    <problem_class id="TfUnknownProperty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown property</problem_class>
+    <description>Unknown property non_property</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>8</line>
+    <module>9</module>
+    <problem_class id="TfUnknownProperty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown property</problem_class>
+    <description>Unknown property ami_mot</description>
+  </problem>
+</problems>
