@@ -106,7 +106,7 @@ class HCLBlock(val parent: HCLBlock?,
       // IDEA-305835 - Align all properties except objects and next properties which is documented
       val pva = valueAlignment
       if (childNode.isElementType(EQUALS) && settings.PROPERTY_ALIGNMENT == HCLCodeStyleSettings.ALIGN_PROPERTY_ON_EQUALS &&
-          !myNode.isObjectProperty() && !myNode.isNextPropertyDocumented()
+          needToAlignProperty()
       ) {
         assert(pva != null) { "Expected not null PVA, node ${node.elementType}, parent ${parent?.node?.elementType}" }
         alignment = pva
@@ -191,6 +191,14 @@ class HCLBlock(val parent: HCLBlock?,
   override fun getSpacing(child1: Block?, child2: Block): Spacing? {
     return spacingBuilder.getSpacing(this, child1, child2)
   }
+
+  private fun needToAlignProperty(): Boolean =
+    !isNextPropertyDocumented() && !myNode.lastChildNode.isElementType(OBJECT, METHOD_CALL_EXPRESSION, ARRAY)
+
+  private fun isNextPropertyDocumented(): Boolean {
+    val nextSibling = myNode.psi.getNextSiblingNonWhiteSpace()
+    return nextSibling is PsiComment && nextSibling.getNextSiblingNonWhiteSpace().elementType == PROPERTY
+  }
 }
 
 private fun ASTNode.isHasTwoOrMoreLineSeparators(): Boolean {
@@ -231,11 +239,4 @@ private fun ASTNode.isFile(): Boolean {
 
 private fun ASTNode.isWhitespaceOrEmpty(): Boolean {
   return this.elementType == TokenType.WHITE_SPACE || this.textLength == 0
-}
-
-private fun ASTNode.isObjectProperty(): Boolean = this.lastChildNode.isElementType(OBJECT)
-
-private fun ASTNode.isNextPropertyDocumented(): Boolean {
-  val nextSibling = this.psi.getNextSiblingNonWhiteSpace()
-  return nextSibling is PsiComment && nextSibling.getNextSiblingNonWhiteSpace().elementType == PROPERTY
 }

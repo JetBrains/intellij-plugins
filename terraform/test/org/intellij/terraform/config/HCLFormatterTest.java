@@ -67,6 +67,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
     doSimpleTest("a = true\nbaz=42", "a   = true\nbaz = 42");
     doSimpleTest("a = true\nbaz = 42", "a   = true\nbaz = 42");
     doSimpleTest("a=true\nbaz = 42", "a   = true\nbaz = 42");
+
     doSimpleTest(
       """
         resource "kafka_topic" "blah" {
@@ -90,6 +91,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
             "retention.bytes" = -1
           }
         }""");
+
     doSimpleTest(
       """
         resource "azurerm_role_assignment" "test" {
@@ -119,6 +121,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
             another_long_property = val3
           }
         }""");
+
     doSimpleTest(
       """
         locals {
@@ -149,7 +152,49 @@ public class HCLFormatterTest extends BasePlatformTestCase {
             )
           )
         }
-         """);
+        """);
+
+    doSimpleTest(
+      """
+        module "a_module" {
+          source        = "./modules/a_module"
+          some_variable = "foo"
+          another_variable = {
+            "foo" : "bar"
+          }
+          another_var     = "bar"
+          some_mapped_var = tomap({
+            "a" = "123"
+            "b" = "456"
+          })
+          still_another_var = "baz"
+          some_list         = [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+        """,
+      """
+        module "a_module" {
+          source        = "./modules/a_module"
+          some_variable = "foo"
+          another_variable = {
+            "foo" : "bar"
+          }
+          another_var = "bar"
+          some_mapped_var = tomap({
+            "a" = "123"
+            "b" = "456"
+          })
+          still_another_var = "baz"
+          some_list = [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+        """);
   }
 
   @Test
