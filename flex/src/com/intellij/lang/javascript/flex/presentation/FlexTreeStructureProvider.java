@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiCompiledFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.SimpleTextAttributes;
 import icons.JavaScriptPsiIcons;
@@ -229,6 +230,14 @@ public final class FlexTreeStructureProvider implements TreeStructureProvider, D
     public VirtualFile getVirtualFile() {
       final Object value = getValue();
       return value instanceof PsiElement && ((PsiElement)value).isValid() ? ((PsiElement)value).getContainingFile().getVirtualFile() : null;
+    }
+
+    @Override
+    protected @Nullable VirtualFile getCacheableFile() {
+      if (getEqualityObject() instanceof SmartPsiElementPointer<?> smartPointer) {
+        return smartPointer.getVirtualFile(); // Skip PSI pointer resolve to avoid slow ops.
+      }
+      return null;
     }
 
     @Override
