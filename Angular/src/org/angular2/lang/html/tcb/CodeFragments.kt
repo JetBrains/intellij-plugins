@@ -1,6 +1,7 @@
 package org.angular2.lang.html.tcb
 
 import com.intellij.openapi.util.TextRange
+import org.angular2.lang.html.Angular2HtmlFile
 
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
@@ -25,11 +26,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     code.toString()
 
   fun asTranspiledTemplate(
-    sourceCode: String,
+    templateFile: Angular2HtmlFile,
     imports: List<Angular2TemplateTranspiler.TypeScriptImport>,
-  ): Angular2TemplateTranspiler.TranspiledTemplate =
+  ): Angular2TemplateTranspiler.TranspiledTemplate? =
     object : Angular2TemplateTranspiler.TranspiledTemplate {
-      override val sourceCode: String = sourceCode
+      override val templateFile: Angular2HtmlFile = templateFile
       override val generatedCode: String = code.toString()
       override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings
       override val imports: List<Angular2TemplateTranspiler.TypeScriptImport> = imports
@@ -148,10 +149,13 @@ internal class Statement private constructor(val expression: Expression) {
   constructor(builder: Expression.ExpressionBuilder.() -> Unit) : this(Expression(builder))
 }
 
-private data class SourceMappingData(
+internal data class SourceMappingData(
   override val sourceOffset: Int,
   override val sourceLength: Int,
   override val generatedOffset: Int,
   override val generatedLength: Int,
   override val ignoreDiagnostics: Boolean,
-) : Angular2TemplateTranspiler.SourceMapping
+) : Angular2TemplateTranspiler.SourceMapping {
+  override fun offsetBy(generatedOffset: Int, sourceOffset: Int): Angular2TemplateTranspiler.SourceMapping =
+    copy(sourceOffset = this.sourceOffset + sourceOffset, generatedOffset = this.generatedOffset + generatedOffset)
+}

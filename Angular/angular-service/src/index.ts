@@ -1,42 +1,51 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
-import type * as ts from "typescript/lib/tsserverlibrary";
+import type * as ts from "./languageService";
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
 import {CodeMapping, LanguagePlugin, ServiceScript} from "@volar/language-core"
 import {AngularVirtualCode} from "./code"
-import {patchVolarToDecorateLanguageService} from "./decorateLanguageService"
+import {patchVolarAndDecorateLanguageService} from "./decorateLanguageService"
+import {hasComponentDecorator} from "./utils"
 
-const tcbBlocks = new Map<string, AngularVirtualCode>()
-
-interface AngularLanguagePlugin extends LanguagePlugin<AngularVirtualCode> {
-}
-
-patchVolarToDecorateLanguageService()
+patchVolarAndDecorateLanguageService()
 
 function loadLanguagePlugins(ts: typeof import('typescript'),
-                             info: ts.server.PluginCreateInfo): AngularLanguagePlugin[] {
-  if (!addedCommands) {
-    addNewCommands(ts, info)
-    addedCommands = true
-  }
+                             info: ts.server.PluginCreateInfo): [LanguagePlugin<AngularVirtualCode>] {
+  addNgCommands(ts, info);
   return [{
     getLanguageId(scriptId: string): string | undefined {
-      return scriptId.endsWith(".html") ? "ng-html" : undefined
+      return scriptId.endsWith(".html") ? "html" : undefined
     },
     createVirtualCode(scriptId: string, languageId: string, snapshot: ts.IScriptSnapshot): AngularVirtualCode | undefined {
-      if (languageId !== "ng-html") return undefined
-      let virtualCode = tcbBlocks.get(scriptId)
-      if (!virtualCode) {
-        virtualCode = new AngularVirtualCode("ng-html")
-        tcbBlocks.set(scriptId, virtualCode)
+      if (languageId === "typescript" && hasComponentDecorator(
+        ts, scriptId, snapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
+      )) {
+        let virtualCode = info.languageService.webStormNgTcbBlocks.get(scriptId)
+        if (!virtualCode) {
+          virtualCode = new AngularVirtualCode(scriptId)
+          info.languageService.webStormNgTcbBlocks.set(scriptId, virtualCode)
+        }
+        return virtualCode.sourceFileUpdated(snapshot)
       }
-      return virtualCode // tcbBlocks.get(scriptId)?.checkUpdate(snapshot, languageId)
+      return undefined
     },
-    updateVirtualCode(_scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot): AngularVirtualCode | undefined {
-      return virtualCode//?.checkUpdate(newSnapshot)
+    updateVirtualCode(scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot): AngularVirtualCode | undefined {
+      if (hasComponentDecorator(
+        ts, scriptId, newSnapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
+      )) {
+        return virtualCode.sourceFileUpdated(newSnapshot)
+      }
+      else {
+        info.languageService.webStormNgTcbBlocks.delete(scriptId)
+        return undefined
+      }
     },
     typescript: {
-      extraFileExtensions: [],
+      extraFileExtensions: [{
+        extension: "html",
+        scriptKind: ts.ScriptKind.Unknown,
+        isMixedContent: true,
+      }],
       getServiceScript(rootVirtualCode: AngularVirtualCode): ServiceScript | undefined {
         return {
           code: rootVirtualCode,
@@ -50,9 +59,7 @@ function loadLanguagePlugins(ts: typeof import('typescript'),
 
 const ngTranspiledTemplateCommand = "ngTranspiledTemplate";
 
-let addedCommands = false;
-
-function addNewCommands(ts: typeof import('typescript'), info: ts.server.PluginCreateInfo) {
+function addNgCommands(ts: typeof import('typescript'), info: ts.server.PluginCreateInfo) {
   let projectService = info.project.projectService;
   projectService.logger.info("Angular: called handler processing");
 
@@ -66,40 +73,50 @@ function addNewCommands(ts: typeof import('typescript'), info: ts.server.PluginC
     projectService.logger.info("Angular: there is no addProtocolHandler method.");
     return;
   }
+  if ((session as any).webStormNgCommandsAdded) return
 
-  session.addProtocolHandler(ngTranspiledTemplateCommand, ngTranspiledTemplateHandler.bind(null, ts, projectService));
+  (session as any).webStormNgCommandsAdded = true
+  session.addProtocolHandler(ngTranspiledTemplateCommand, ngTranspiledTemplateHandler.bind(null, ts, session, projectService));
 
   projectService.logger.info("Angular specific commands are successfully added.");
 }
 
 type TranspiledTemplateArguments = {
   file: string;
-  content?: string;
-  transpiledContent?: string;
+  transpiledContent: string;
+  sourceCode: { [key: string]: string }
   mappings: CodeMapping[];
 }
 
-const ngTranspiledTemplateHandler = (_ts: typeof import('typescript'),
-                                     _projectService: ts.server.ProjectService,
+const ngTranspiledTemplateHandler = (ts: typeof import('typescript'),
+                                     session: ts.server.Session,
+                                     projectService: ts.server.ProjectService,
                                      request: ts.server.protocol.Request) => {
 
   const requestArguments = request.arguments as TranspiledTemplateArguments
 
-  const fileName = requestArguments.file
+  let fileName = ts.server.toNormalizedPath(requestArguments.file)
+  let project = projectService.getDefaultProjectForFile(fileName, true)
+  if (project) {
+    project.getLanguageService().webStormNgUpdateTranspiledTemplate(
+      ts, fileName, requestArguments.transpiledContent, requestArguments.sourceCode, requestArguments.mappings);
 
-  let virtualCode: AngularVirtualCode | undefined = tcbBlocks.get(fileName)
-  if (virtualCode === undefined) {
-    virtualCode = new AngularVirtualCode("ng-html")
-    tcbBlocks.set(fileName, virtualCode);
+    // trigger reload
+    (session as any).change(
+      {
+        file: fileName,
+        line: 1,
+        offset: 1,
+        endLine: 1,
+        endOffset: 1,
+        insertString: ""
+      })
   }
-
-  virtualCode.update(requestArguments.content, requestArguments.transpiledContent, requestArguments.mappings);
-
   return {
     responseRequired: true,
     response: {}
   }
 };
 
-const init = createLanguageServicePlugin(loadLanguagePlugins)
+const init = createLanguageServicePlugin(loadLanguagePlugins as any)
 export = init

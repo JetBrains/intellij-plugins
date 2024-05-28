@@ -2,8 +2,8 @@ package org.angular2.lang.html.tcb
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
-import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.editor.colors.EditorColorsListener
@@ -17,27 +17,24 @@ import com.intellij.openapi.editor.markup.*
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.util.Disposer
-import com.intellij.psi.PsiFileFactory
-import com.intellij.ui.AncestorListenerAdapter
-import com.intellij.ui.JBColor
-import com.intellij.ui.JBSplitter
+import com.intellij.psi.PsiFile
+import com.intellij.ui.*
 import com.intellij.util.SingleAlarm
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.XDebuggerUtil
-import org.angular2.lang.html.Angular17HtmlLanguage
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
+import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Font
 import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.SwingConstants
+import javax.swing.JPanel
 import javax.swing.event.AncestorEvent
 
 internal class Angular2TranspiledTemplateInspector(
-  private val transpiledTemplate: TranspiledTemplate,
+  transpiledTemplate: Angular2TranspiledComponentFileBuilder.TranspiledComponentFile,
   project: Project,
   disposable: Disposable
 ) {
@@ -47,13 +44,39 @@ internal class Angular2TranspiledTemplateInspector(
   private val generatedTextEditor = TextEditorProvider.getInstance().createEditor(project, generatedFile) as TextEditor
   private val generatedEditor = generatedTextEditor.editor as EditorEx
 
+  private val sources: List<SourceInfo> = transpiledTemplate.mappings.filter { it.sourceFile != null }.map {
+    SourceInfo(project, disposable, it.sourceFile!!, it.sourceMappings)
+  }
 
-  private val sourceFile = PsiFileFactory.getInstance(project).createFileFromText(
-    JSUtils.DUMMY_FILE_NAME_PREFIX + ".html", Angular17HtmlLanguage,
-    transpiledTemplate.sourceCode, false, true)
-    .viewProvider.virtualFile
-  private val sourceTextEditor = TextEditorProvider.getInstance().createEditor(project, sourceFile) as TextEditor
-  private val sourceEditor = sourceTextEditor.editor as EditorEx
+  private val sourceEditorPositionListener = object : CaretListener {
+    override fun caretPositionChanged(event: CaretEvent) {
+      scheduleHighlight(event.newPosition, true)
+    }
+  }
+
+  private class SourceInfo(
+    project: Project,
+    disposable: Disposable,
+    val sourceFile: PsiFile,
+    val sourceMappings: List<SourceMapping>
+  ) {
+    val sourceTextEditor = TextEditorProvider.getInstance().createEditor(project, sourceFile.viewProvider.virtualFile) as TextEditor
+    val sourceEditor = sourceTextEditor.editor as EditorEx
+
+    val sourceMappingsSorted = sourceMappings.sortedWith(
+      Comparator.comparing<SourceMapping, Int> { -it.sourceOffset }.thenComparing { it -> it.sourceLength })
+
+    val generatedMappingsSorted = sourceMappings.sortedWith(
+      Comparator.comparing<SourceMapping, Int> { -it.generatedOffset }.thenComparing { it -> it.generatedLength })
+
+    init {
+      Disposer.register(disposable, sourceTextEditor)
+      setupEditor(sourceEditor)
+    }
+
+  }
+
+  private val comboBox: ComboBox<SourceInfo> = ComboBox(CollectionComboBoxModel(sources), 100)
 
   private val alarm: SingleAlarm
 
@@ -62,21 +85,13 @@ internal class Angular2TranspiledTemplateInspector(
 
   private val currentHighlighters = MultiMap<MarkupModel, RangeHighlighter>()
 
-  private val sourceMappingsSorted = transpiledTemplate.sourceMappings.sortedWith(
-    Comparator.comparing<SourceMapping, Int> { -it.sourceOffset }.thenComparing { it -> it.sourceLength })
+  private var currentInfo: SourceInfo = sources.first()
 
-  private val generatedMappingsSorted = transpiledTemplate.sourceMappings.sortedWith(
-    Comparator.comparing<SourceMapping, Int> { -it.generatedOffset }.thenComparing { it -> it.generatedLength })
+  private lateinit var rightPanel: JPanel
 
   init {
     Disposer.register(disposable, generatedTextEditor)
-    Disposer.register(disposable, sourceTextEditor)
-
     setupEditor(generatedEditor)
-    setupEditor(sourceEditor)
-
-    Angular2TranspiledTemplateVisualizer.addMarkersToGeneratedFile(transpiledTemplate, generatedEditor.markupModel)
-    Angular2TranspiledTemplateVisualizer.addMarkersToSourceFile(transpiledTemplate, sourceEditor.markupModel)
 
     alarm = SingleAlarm(Runnable {
       val p = positionToSelect
@@ -104,22 +119,19 @@ internal class Angular2TranspiledTemplateInspector(
         scheduleHighlight(event.newPosition, false)
       }
     })
-
-    sourceEditor.caretModel.addCaretListener(object : CaretListener {
-      override fun caretPositionChanged(event: CaretEvent) {
-        scheduleHighlight(event.newPosition, true)
-      }
-    })
+    updateMarkers()
   }
 
   private fun updateMarkers() {
     val generatedEditorMarkup = generatedEditor.markupModel
     generatedEditorMarkup.removeAllHighlighters()
-    Angular2TranspiledTemplateVisualizer.addMarkersToGeneratedFile(transpiledTemplate, generatedEditorMarkup)
+    for (source in sources) {
+      Angular2TranspiledTemplateVisualizer.addMarkersToGeneratedFile(source.sourceMappings, generatedEditorMarkup)
 
-    val sourceEditorMarkup = sourceEditor.markupModel
-    sourceEditorMarkup.removeAllHighlighters()
-    Angular2TranspiledTemplateVisualizer.addMarkersToSourceFile(transpiledTemplate, sourceEditorMarkup)
+      val sourceEditorMarkup = source.sourceEditor.markupModel
+      sourceEditorMarkup.removeAllHighlighters()
+      Angular2TranspiledTemplateVisualizer.addMarkersToSourceFile(source.sourceMappings, sourceEditorMarkup)
+    }
   }
 
   private fun scheduleHighlight(position: LogicalPosition, positionToSelectIsSource: Boolean) {
@@ -128,10 +140,24 @@ internal class Angular2TranspiledTemplateInspector(
     alarm.cancelAndRequest()
   }
 
+
   fun createMainComponent(): JComponent {
+
+    comboBox.renderer = SimpleListCellRenderer.create { label, value, _ ->
+      if (value != null) {
+        label.text = value.sourceFile.name
+      }
+    }
+    comboBox.addItemListener {
+      showSource(it.item as SourceInfo)
+    }
+
+    rightPanel = JPanel(BorderLayout())
+    rightPanel.add(comboBox, BorderLayout.PAGE_START)
+
     val splitter = JBSplitter()
     splitter.splitterProportionKey = "SourceMapInspector.splitter"
-    splitter.firstComponent = sourceEditor.component
+    splitter.firstComponent = rightPanel
     splitter.secondComponent = generatedEditor.component
 
     generatedEditor.component.addAncestorListener(object : AncestorListenerAdapter() {
@@ -146,6 +172,7 @@ internal class Angular2TranspiledTemplateInspector(
         positionToSelectIsSource = false
       }
     })
+    showSource(currentInfo)
     return splitter
   }
 
@@ -168,9 +195,9 @@ internal class Angular2TranspiledTemplateInspector(
   private fun highlightGenerated(sourcePosition: LogicalPosition) {
     removeHighlighters()
 
-    val sourceOffset = sourceEditor.logicalPositionToOffset(sourcePosition)
+    val sourceOffset = currentInfo.sourceEditor.logicalPositionToOffset(sourcePosition)
 
-    val mapping = sourceMappingsSorted.firstOrNull { it.sourceOffset <= sourceOffset && sourceOffset < it.sourceOffset + it.sourceLength }
+    val mapping = currentInfo.sourceMappingsSorted.firstOrNull { it.sourceOffset <= sourceOffset && sourceOffset < it.sourceOffset + it.sourceLength }
                   ?: return
 
     addSelectedMapping(mapping)
@@ -183,16 +210,19 @@ internal class Angular2TranspiledTemplateInspector(
 
     val generatedOffset = generatedEditor.logicalPositionToOffset(generatedPosition)
 
-    val mapping = generatedMappingsSorted.firstOrNull { it.generatedOffset <= generatedOffset && generatedOffset < it.generatedOffset + it.generatedLength }
-                  ?: return
+    for (source in sources) {
+      val mapping = source.generatedMappingsSorted.firstOrNull { it.generatedOffset <= generatedOffset && generatedOffset < it.generatedOffset + it.generatedLength }
+                    ?: continue
 
-    addSelectedMapping(mapping)
-    sourceEditor.scrollingModel.scrollTo(sourceEditor.offsetToLogicalPosition(mapping.sourceOffset), ScrollType.CENTER)
+      showSource(source)
+      addSelectedMapping(mapping)
+      source.sourceEditor.scrollingModel.scrollTo(currentInfo.sourceEditor.offsetToLogicalPosition(mapping.sourceOffset), ScrollType.CENTER)
+    }
   }
 
   private fun addSelectedMapping(mapping: SourceMapping) {
-    addSelectedHighlighter(sourceEditor.markupModel, mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength)
-    transpiledTemplate.sourceMappings.filter {
+    addSelectedHighlighter(currentInfo.sourceEditor.markupModel, mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength)
+    currentInfo.sourceMappings.filter {
       it.sourceOffset == mapping.sourceOffset && it.sourceLength == mapping.sourceLength
     }.forEach {
       addSelectedHighlighter(generatedEditor.markupModel, it.generatedOffset, it.generatedOffset + it.generatedLength)
@@ -211,10 +241,15 @@ internal class Angular2TranspiledTemplateInspector(
     currentHighlighters.putValue(markupModel, highlighter)
   }
 
-  private fun setupEditor(editor: EditorEx) {
-    editor.isRendererMode = true
-    editor.settings.isLineNumbersShown = true
-    XDebuggerUtil.getInstance().disableValueLookup(editor)
+  private fun showSource(source: SourceInfo) {
+    currentInfo.sourceEditor.caretModel.removeCaretListener(sourceEditorPositionListener)
+    rightPanel.remove(currentInfo.sourceEditor.component)
+
+    comboBox.selectedItem = source
+    currentInfo = source
+    currentInfo.sourceEditor.caretModel.addCaretListener(sourceEditorPositionListener)
+    rightPanel.add(currentInfo.sourceEditor.component)
+    rightPanel.repaint()
   }
 
 
@@ -223,12 +258,12 @@ internal class Angular2TranspiledTemplateInspector(
     val SELECTED_MARKER: TextAttributes = TextAttributes(JBColor.WHITE, JBColor.BLACK, JBColor.BLACK, EffectType.ROUNDED_BOX, Font.PLAIN)
     private val BASE_COLORS = arrayOf(JBColor.RED, JBColor.YELLOW, JBColor.GREEN, JBColor.CYAN, JBColor.BLUE, JBColor.MAGENTA)
 
-    fun addMarkersToGeneratedFile(template: TranspiledTemplate, markupModel: MarkupModel) {
-      addHighlighters(template.sourceMappings, true, markupModel)
+    fun addMarkersToGeneratedFile(sourceMappings: List<SourceMapping>, markupModel: MarkupModel) {
+      addHighlighters(sourceMappings, true, markupModel)
     }
 
-    fun addMarkersToSourceFile(template: TranspiledTemplate, markupModel: MarkupModel) {
-      addHighlighters(template.sourceMappings, false, markupModel)
+    fun addMarkersToSourceFile(sourceMappings: List<SourceMapping>, markupModel: MarkupModel) {
+      addHighlighters(sourceMappings, false, markupModel)
     }
 
     private fun createTextAttributes(color: Color): TextAttributes {
@@ -267,18 +302,29 @@ internal class Angular2TranspiledTemplateInspector(
       for (i in mappings.indices) {
         val mapping = mappings[i]
 
-        markupModel.addRangeHighlighter(if (isGeneratedEditor) mapping.generatedOffset else mapping.sourceOffset,
-                                        if (isGeneratedEditor) mapping.generatedOffset + mapping.generatedLength
-                                        else mapping.sourceOffset + mapping.sourceLength,
-                                        HighlighterLayer.LAST,
-                                        getTextAttributes(if (isGeneratedEditor && mapping.ignoreDiagnostics)
-                                                            ignoredTextStyles
-                                                          else
-                                                            textStyles,
-                                                          getColorId(mapping.sourceOffset, mapping.sourceLength)),
-                                        HighlighterTargetArea.EXACT_RANGE)
+        try {
+          markupModel.addRangeHighlighter(if (isGeneratedEditor) mapping.generatedOffset else mapping.sourceOffset,
+                                          if (isGeneratedEditor) mapping.generatedOffset + mapping.generatedLength
+                                          else mapping.sourceOffset + mapping.sourceLength,
+                                          HighlighterLayer.LAST,
+                                          getTextAttributes(if (isGeneratedEditor && mapping.ignoreDiagnostics)
+                                                              ignoredTextStyles
+                                                            else
+                                                              textStyles,
+                                                            getColorId(mapping.sourceOffset, mapping.sourceLength)),
+                                          HighlighterTargetArea.EXACT_RANGE)
+        }
+        catch (e: Exception) {
+          this.thisLogger().error(e)
+        }
       }
     }
   }
 
+}
+
+private fun setupEditor(editor: EditorEx) {
+  editor.isRendererMode = true
+  editor.settings.isLineNumbersShown = true
+  XDebuggerUtil.getInstance().disableValueLookup(editor)
 }

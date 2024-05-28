@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "@volar/typescript": "~2.2.2",
+    "@volar/typescript": "~2.2.5",
     "tsc-ide-plugin": "file:/../../../plugins/JavaScriptLanguage/src/tscplugin"
   },
   "devDependencies": {

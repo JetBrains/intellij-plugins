@@ -68,7 +68,7 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)
-      if (element.language is Angular2Language) {
+      if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
         process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
       }
     }

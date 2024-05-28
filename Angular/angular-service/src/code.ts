@@ -17,29 +17,69 @@ export class AngularVirtualCode implements VirtualCode {
       };
     },
   };
+
   public mappings: CodeMapping[] = []
   public id: string = "main"
+  public source: { [key: string]: string } = {}
 
-  constructor(
-    public languageId: string,
-  ) {
+  public originalSourceSnapshot: IScriptSnapshot = this.snapshot
+
+  constructor(private fileName: string) {
   }
 
-  public sourceCode: string = ""
+  get languageId(): string {
+    return "typescript"
+  }
 
-  checkUpdate(snapshot: ts.IScriptSnapshot, languageId?: string): AngularVirtualCode {
-    if (snapshot.getText(0, snapshot.getLength()) !== this.sourceCode) {
-      throw new Error("AngularVirtualCode source code out of sync.")
+  sourceFileUpdated(snapshot: ts.IScriptSnapshot, _languageId?: string): AngularVirtualCode {
+    if (this.snapshot.getLength() >= snapshot.getLength()
+      && this.snapshot.getText(0, snapshot.getLength()) === snapshot.getText(0, snapshot.getLength())) {
+      return this;
     }
-    if (languageId !== undefined && languageId !== this.languageId) {
-      throw new Error(`AngularVirtualCode languageId out of sync - expected ${languageId} by it is ${this.languageId}.`)
+    this.originalSourceSnapshot = snapshot
+
+    this.source = {
+      [this.fileName]: snapshot.getText(0, snapshot.getLength())
     }
+
+    this.snapshot = snapshot
+    this.mappings = [{
+      source: this.fileName,
+      generatedOffsets: [0],
+      sourceOffsets: [0],
+      lengths: [snapshot.getLength()],
+      data: {
+        format: true,
+        completion: true,
+        navigation: true,
+        semantic: true,
+        structure: true,
+        verification: true,
+      }
+    }]
     return this
   }
 
-  update(sourceCode: string | undefined, transpiledCode: string | undefined, mappings: CodeMapping[]) {
-    this.sourceCode = sourceCode ?? ""
-    this.mappings = mappings
+  transpiledTemplateUpdated(transpiledCode: string | undefined, sourceCode: { [key: string]: string }, mappings: CodeMapping[]) {
+    this.mappings = mappings.map(mapping => ({
+      source: mapping.source,
+      sourceOffsets: mapping.sourceOffsets,
+      lengths: mapping.lengths,
+      generatedOffsets: mapping.generatedOffsets,
+      generatedLengths: mapping.generatedLengths,
+      data: {
+        format: mapping.source === this.fileName,
+        completion: true,
+        navigation: true,
+        semantic: true,
+        structure: true,
+        verification: mapping.source === this.fileName,
+      }
+    }))
+    this.source = {}
+    for (const fileName in sourceCode) {
+      this.source[fileName] = sourceCode[fileName]
+    }
     const changeRanges = new Map<ts.IScriptSnapshot, ts.TextChangeRange | undefined>();
     this.snapshot = {
       getText: (start, end) => (transpiledCode ?? "").slice(start, end),

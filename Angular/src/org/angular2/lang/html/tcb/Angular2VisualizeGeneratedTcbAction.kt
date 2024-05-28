@@ -41,7 +41,12 @@ class Angular2VisualizeGeneratedTcbAction : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val element = Angular2InjectionUtils.getElementAtCaretFromContext(e.dataContext) ?: return
     val component = Angular2EntitiesProvider.findTemplateComponent(element) ?: return
-    val transpiledTemplate = Angular2TemplateTranspiler.transpileTemplate(component)
+
+    // Ensure that we will recreate TCB
+    element.manager.dropPsiCaches()
+    val transpiledTemplate =
+      Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(component.sourceElement.containingFile ?: return)
+      ?: return
 
     val project = element.project
     val dimensionKey = "TcbMapInspector.frame"
@@ -52,8 +57,10 @@ class Angular2VisualizeGeneratedTcbAction : AnAction() {
 
     val dialogBuilder = DialogBuilder(project)
     val mapInspector = Angular2TranspiledTemplateInspector(transpiledTemplate, project, dialogBuilder)
+
+    @Suppress("HardCodedStringLiteral")
     dialogBuilder
-      .title("Visualization of Angular template transpilation")
+      .title("Visualization of Angular Template Transpilation")
       .centerPanel(mapInspector.createMainComponent())
       .dimensionKey(dimensionKey)
       .showNotModal()

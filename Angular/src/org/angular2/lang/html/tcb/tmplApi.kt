@@ -205,11 +205,14 @@ internal class BoundTarget(component: Angular2Component) {
 
   val pipes: Map<String, Angular2Pipe> = component.declarationsInScope.filterIsInstance<Angular2Pipe>().associateBy { it.getName() }
 
+  val templateFile: Angular2HtmlFile?
+
   val templateRoots: List<TmplAstNode>
 
   init {
     val psiVar2tmplAst = mutableMapOf<PsiElement, TmplAstExpressionSymbol>()
-    templateRoots = (component.templateFile as? Angular2HtmlFile)?.let { buildTmplAst(it, psiVar2tmplAst) }
+    templateFile = component.templateFile as? Angular2HtmlFile
+    templateRoots = templateFile?.let { buildTmplAst(it, psiVar2tmplAst) }
                     ?: emptyList()
     this.psiVar2tmplAst = Collections.unmodifiableMap(psiVar2tmplAst)
   }

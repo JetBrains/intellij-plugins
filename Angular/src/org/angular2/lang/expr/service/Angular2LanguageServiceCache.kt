@@ -1,15 +1,25 @@
 package org.angular2.lang.expr.service
 
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
-import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateRequestArgs
-import org.angular2.lang.expr.service.protocol.commands.CodeMapping
+import org.angular2.lang.expr.service.protocol.commands.toAngular2TranspiledTemplateRequestArgs
+import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageServiceCache(project) {
+
+  private val transpiledComponentCache: MutableMap<VirtualFile, TranspiledComponentInfo> = ConcurrentHashMap()
 
   override fun updateCacheAndGetServiceObject(input: JSLanguageServiceCommand): JSLanguageServiceObject? =
     if (input is Angular2TranspiledTemplateCommand)
@@ -17,22 +27,57 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
     else
       super.updateCacheAndGetServiceObject(input)
 
-  private fun getUpdateTemplateServiceObject(input: Angular2TranspiledTemplateCommand): ServiceObjectWithCacheUpdate =
-    ServiceObjectWithCacheUpdate(
-      Angular2TranspiledTemplateRequestArgs.build(input.templateFile, "{{ foo }}",
-                                                  """import * as i0 from './tcb-check.component';
-import * as i1 from '@angular/core';
 
-/*tcb1*/
-function _tcb1(this: i0.TcbCheckComponent) { if (true) {
-    "" + (((this).title /*3,8*/) /*3,8*/);
-} }
+  private fun getUpdateTemplateServiceObject(input: Angular2TranspiledTemplateCommand): ServiceObjectWithCacheUpdate? {
+    val templateFile = PsiManager.getInstance(myProject).findFile(input.templateFile)
+    val componentFile =
+      when (templateFile?.language) {
+        is Angular2HtmlDialect, is Angular2Language ->
+          Angular2EntitiesProvider.findTemplateComponent(templateFile)
+            ?.sourceElement
+            ?.containingFile
+        JavaScriptSupportLoader.TYPESCRIPT -> templateFile
+        else -> null
+      }
 
-export const IS_A_MODULE = true;
-""".trim(), listOf(
-        CodeMapping(TypeScriptCompilerConfigUtil.normalizeNameAndPath(input.templateFile)!!, listOf(3), listOf(167), listOf(5), listOf(5))
-      )),
-      emptyList()
+    val componentVirtualFile = componentFile?.virtualFile ?: return null
+    val newContents = Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(componentFile)
+
+    if (newContents == null) {
+      transpiledComponentCache.remove(componentVirtualFile)
+      return null
+    }
+
+    val newInfo = TranspiledComponentInfo(newContents)
+    val oldInfo = transpiledComponentCache[componentVirtualFile]
+
+    if (oldInfo == newInfo) {
+      return null
+    }
+
+    return ServiceObjectWithCacheUpdate(
+      newContents.toAngular2TranspiledTemplateRequestArgs(componentVirtualFile),
+      listOf(Runnable {
+        transpiledComponentCache[componentVirtualFile] = newInfo
+      })
     )
+  }
+
+  private class TranspiledComponentInfo(contents: TranspiledComponentFile) {
+    val contentsLength: Int = contents.generatedCode.length
+    val contentsHash: Int = contents.generatedCode.hashCode()
+    val timestamps: Map<String, Long> = contents.mappings.associateBy({ it.fileName }, { it.sourceFile.modificationStamp })
+
+    override fun equals(other: Any?): Boolean {
+      return other === this || other is TranspiledComponentInfo
+             && contentsLength == other.contentsLength
+             && contentsHash == other.contentsHash
+             && timestamps == other.timestamps
+    }
+
+    override fun hashCode(): Int {
+      return Objects.hash(contentsLength, contentsHash, timestamps)
+    }
+  }
 
 }

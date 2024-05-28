@@ -4,17 +4,16 @@ import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.entities.Angular2ClassBasedComponent
 import org.angular2.entities.Angular2Component
 import org.angular2.lang.html.Angular2HtmlFile
-import java.util.concurrent.atomic.AtomicInteger
 
 object Angular2TemplateTranspiler {
 
-  private val nextId = AtomicInteger()
-
-  fun transpileTemplate(component: Angular2Component): TranspiledTemplate {
+  fun transpileTemplate(component: Angular2Component, tcbId: String): TranspiledTemplate? {
     val boundTarget = BoundTarget(component)
+    if (boundTarget.templateFile == null) return null
+
     val context = Context(
       Environment(Angular2Compiler.getTypeCheckingConfig(component.sourceElement)),
-      OutOfBandDiagnosticRecorder(), nextId.getAndIncrement().toString(),
+      OutOfBandDiagnosticRecorder(), tcbId,
       boundTarget,
     )
 
@@ -49,7 +48,8 @@ object Angular2TemplateTranspiler {
           append(">")
         }
         append(") ")
-      } else {
+      }
+      else {
         append("() ")
       }
       codeBlock {
@@ -58,13 +58,13 @@ object Angular2TemplateTranspiler {
         }
       }
     }.asTranspiledTemplate(
-      (component.templateFile as? Angular2HtmlFile)?.text ?: "",
+      boundTarget.templateFile,
       emptyList()
     )
   }
 
   interface TranspiledTemplate {
-    val sourceCode: String
+    val templateFile: Angular2HtmlFile
     val generatedCode: String
     val sourceMappings: List<SourceMapping>
     val imports: List<TypeScriptImport>
@@ -76,6 +76,9 @@ object Angular2TemplateTranspiler {
     val generatedOffset: Int
     val generatedLength: Int
     val ignoreDiagnostics: Boolean
+
+    fun offsetBy(generatedOffset: Int = 0, sourceOffset: Int = 0): SourceMapping
+
   }
 
   interface TypeScriptImport {
