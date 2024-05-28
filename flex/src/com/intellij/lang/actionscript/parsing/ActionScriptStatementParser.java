@@ -324,4 +324,15 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     }
     return false;
   }
+
+  @Override
+  public boolean parseForLoopHeader() {
+    LOG.assertTrue(builder.getTokenType() == JSTokenTypes.FOR_KEYWORD);
+    builder.advanceLexer();
+    final boolean hasEach = builder.getTokenType() == JSTokenTypes.EACH_KEYWORD;
+    if (hasEach) {
+      builder.advanceLexer();
+    }
+    return parseForLoopHeaderCondition();
+  }
 }
