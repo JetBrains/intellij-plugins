@@ -10,10 +10,12 @@ import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import icons.AngularIcons
@@ -37,6 +39,17 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
       it is HtmlFileType && SubstitutedFileType.substituteFileType(file, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
 
+  override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
+    return super.isAcceptableNonTsFile(project, service, virtualFile) || virtualFile.isInLocalFileSystem && virtualFile.fileType.let {
+      it is HtmlFileType && SubstitutedFileType.substituteFileType(virtualFile, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
+    }
+  }
+
+  override fun canHighlight(file: PsiFile): Boolean {
+    return file.language is Angular2HtmlDialect
+           || super.canHighlight(file)
+  }
+
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
@@ -57,6 +70,10 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 
   override fun createLSCache(): TypeScriptLanguageServiceCache =
     Angular2LanguageServiceCache(myProject)
+
+  override fun beforeGetErrors(file: VirtualFile) {
+    process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
+  }
 
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project) {
 

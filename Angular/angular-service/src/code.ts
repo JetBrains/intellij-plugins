@@ -73,7 +73,7 @@ export class AngularVirtualCode implements VirtualCode {
         navigation: true,
         semantic: true,
         structure: true,
-        verification: mapping.source === this.fileName,
+        verification: true,
       }
     }))
     this.source = {}
