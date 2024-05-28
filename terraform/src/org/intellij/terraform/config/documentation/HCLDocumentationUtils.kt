@@ -28,11 +28,13 @@ import java.util.*
 internal val FETCH_TIMEOUT: Int = RegistryManager.getInstance().intValue("terraform.registry.connection.timeout", 1000)
 internal val NO_DOC: String = CodeInsightBundle.message("no.documentation.found")
 internal const val ROOT_DOC_ANCHOR: String = "provider-docs-content"
-
+internal val parentBlocksForDocs = setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER, HCL_PROVIDER_IDENTIFIER)
 
 @RequiresReadLock
 internal fun getBlockForHclIdentifier(element: HCLIdentifier): HCLBlock? {
-  return element.parentsOfType<HCLBlock>(true).firstOrNull { block -> block::class.java != element::class.java}
+  return element.parentsOfType<HCLBlock>(true).firstOrNull {
+    block -> block::class.java != element::class.java && parentBlocksForDocs.contains(block.getNameElementUnquoted(0))
+  }
 }
 
 @RequiresReadLock
