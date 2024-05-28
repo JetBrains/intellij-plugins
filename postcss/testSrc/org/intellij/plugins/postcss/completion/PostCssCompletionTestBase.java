@@ -8,7 +8,7 @@ import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class PostCssCompletionTest extends PostCssFixtureTestCase {
+public abstract class PostCssCompletionTestBase extends PostCssFixtureTestCase {
   protected void doTestCompletionVariants(String... items) {
     myFixture.testCompletionVariants(getTestName(true) + ".pcss", items);
   }

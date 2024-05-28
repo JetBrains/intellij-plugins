@@ -28,7 +28,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
   private static final PostCssOneLineAtRuleInsertHandler ONE_LINE_STATEMENT_HANDLER = new PostCssOneLineAtRuleInsertHandler();
 
   public PostCssDumbAwareCompletionContributor() {
-    extend(CompletionType.BASIC, selector(), new TagsCompletionProvider());
+    extend(CompletionType.BASIC, selector().andNot(elementInsidePropertyAtRule()), new TagsCompletionProvider());
     extend(CompletionType.BASIC, propertyDeclaration(), new PropertyNamesCompletionProvider());
   }
 
@@ -40,7 +40,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
                .beforeLeafSkipping(or(emptyElement(), spaceElement()), blockStartOrEnd()));
   }
 
-  private static ElementPattern<PsiElement> selector() {
+  private static PsiElementPattern.Capture<PsiElement> selector() {
     return inPostCssFile(CssElementTypes.CSS_IDENT).andOr(propertyName(), propertyName());
   }
 

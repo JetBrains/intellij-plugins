@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.completion;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssCustomMediaCompletionTest extends PostCssCompletionTest {
+public class PostCssCustomMediaCompletionTest extends PostCssCompletionTestBase {
 
   public void testCustomMediaTopLevel() {
     doTest();

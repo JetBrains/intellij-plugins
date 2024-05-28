@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.completion;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssCustomSelectorCompletionTest extends PostCssCompletionTest {
+public class PostCssCustomSelectorCompletionTest extends PostCssCompletionTestBase {
 
   public void testCustomSelectorTopLevel() {
     doTest();

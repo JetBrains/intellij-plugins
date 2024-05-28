@@ -2,7 +2,7 @@ package org.intellij.plugins.postcss.completion;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssOtherCompletionTest extends PostCssCompletionTest {
+public class PostCssOtherCompletionTest extends PostCssCompletionTestBase {
 
   @NotNull
   @Override

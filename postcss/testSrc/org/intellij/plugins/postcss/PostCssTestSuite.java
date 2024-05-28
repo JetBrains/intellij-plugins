@@ -78,6 +78,7 @@ public final class PostCssTestSuite {
       suite.addTestSuite(PostCssNestingCompletionTest.class);
       suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
       suite.addTestSuite(PostCssCustomMediaCompletionTest.class);
+      suite.addTestSuite(PostCssCustomPropertyCompletionTest.class);
       suite.addTestSuite(PostCssOtherCompletionTest.class);
       return suite;
     }

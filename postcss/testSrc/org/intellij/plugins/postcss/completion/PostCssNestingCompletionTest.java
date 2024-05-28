@@ -2,7 +2,7 @@ package org.intellij.plugins.postcss.completion;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssNestingCompletionTest extends PostCssCompletionTest {
+public class PostCssNestingCompletionTest extends PostCssCompletionTestBase {
   public void testPropertiesBeforeTag() {
     myFixture.configureByFile(getTestName(true) + ".pcss");
     assertEmpty(myFixture.completeBasic());
