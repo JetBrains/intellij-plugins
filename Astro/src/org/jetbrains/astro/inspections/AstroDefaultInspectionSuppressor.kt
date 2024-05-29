@@ -2,6 +2,7 @@
 package org.jetbrains.astro.inspections
 
 import com.intellij.codeInspection.InspectionSuppressor
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectionBase
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.typescript.inspections.TypeScriptDefaultInspectionSuppressor
 import com.intellij.psi.PsiElement
@@ -12,6 +13,8 @@ class AstroDefaultInspectionSuppressor : TypeScriptDefaultInspectionSuppressor()
   }
 
   override fun isSuppressedFor(element: PsiElement, toolId: String): Boolean {
-    return super.isSuppressedFor(element, toolId) || toolId == ES6UnusedImportsInspection.SHORT_NAME
+    return super.isSuppressedFor(element, toolId)
+           || toolId == ES6UnusedImportsInspection.SHORT_NAME
+           || toolId == HtmlUnknownAttributeInspectionBase.ATTRIBUTE_SHORT_NAME
   }
 }
