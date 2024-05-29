@@ -4,7 +4,6 @@ package com.intellij.javascript.karma.coverage;
 import com.intellij.coverage.*;
 import com.intellij.coverage.view.CoverageListRootNode;
 import com.intellij.coverage.view.CoverageViewExtension;
-import com.intellij.coverage.view.CoverageViewManager;
 import com.intellij.coverage.view.DirectoryCoverageViewExtension;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.WrappingRunConfiguration;
@@ -132,10 +131,8 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public CoverageViewExtension createCoverageViewExtension(final Project project,
-                                                           final CoverageSuitesBundle suiteBundle,
-                                                           CoverageViewManager.StateBean stateBean) {
-    return new DirectoryCoverageViewExtension(project, getCoverageAnnotator(project), suiteBundle, stateBean) {
+  public CoverageViewExtension createCoverageViewExtension(final Project project, final CoverageSuitesBundle suiteBundle) {
+    return new DirectoryCoverageViewExtension(project, getCoverageAnnotator(project), suiteBundle) {
       @NotNull
       @Override
       public AbstractTreeNode createRootNode() {
@@ -145,7 +142,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
         }
         assert rootDir != null;
         PsiDirectory psiRootDir = PsiManager.getInstance(myProject).findDirectory(rootDir);
-        return new CoverageListRootNode(myProject, Objects.requireNonNull(psiRootDir), mySuitesBundle, myStateBean);
+        return new CoverageListRootNode(myProject, Objects.requireNonNull(psiRootDir), mySuitesBundle);
       }
     };
   }
