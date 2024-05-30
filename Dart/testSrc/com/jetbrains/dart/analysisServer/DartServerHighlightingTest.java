@@ -297,7 +297,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     // TestFileEditorManager doesn't notify listeners itself;
     // we need any notification to trigger DartAnalysisserverService.updateVisibleFiles()
     final FileEditorManagerEvent event =
-      new FileEditorManagerEvent(FileEditorManager.getInstance(getProject()), firstFile, null, secondFile, null);
+      new FileEditorManagerEvent(FileEditorManager.getInstance(getProject()), firstFile, null, null, secondFile, null, null);
     getProject().getMessageBus().syncPublisher(FileEditorManagerListener.FILE_EDITOR_MANAGER).selectionChanged(event);
     myFixture.doHighlighting();
 
