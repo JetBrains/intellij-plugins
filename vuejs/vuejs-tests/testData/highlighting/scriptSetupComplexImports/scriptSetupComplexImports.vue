@@ -7,7 +7,8 @@
   <tree-modal-direct></tree-modal-direct>
   <ComplexModalDirect></ComplexModalDirect>
   <default-modal-direct></default-modal-direct>
-  {{ printString(<error descr="Argument type 12 is not assignable to parameter type string">Bar</error>) + printString(<error descr="Argument type 12 is not assignable to parameter type string">Foo</error>) }}
+  {{ Bar }}
+  {{ Foo }}
 
   <TabGroup>
     <TabList>
@@ -29,14 +30,8 @@ import { <warning descr="Unused import specifier Tab">Tab</warning>, TabGroup, T
 
 const Foo = 12
 
-function printString(<warning descr="Unused parameter str">str</warning>: string) {
-
-}
-
-
-const props = defineProps<{
+defineProps<{
   fooBar: string;
   barFoo?: number;
 }>();
-
 </script>
