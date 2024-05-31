@@ -17,7 +17,7 @@ package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
 import com.intellij.coldFusion.model.CfmlLanguage;
-import com.intellij.rt.execution.junit.FileComparisonData;
+import com.intellij.platform.testFramework.core.FileComparisonFailedError;
 import org.junit.Assert;
 
 public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
@@ -66,8 +66,7 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
   public void testCfthreadScriptSyntaxError() {
     try {
       myFixture.testHighlighting(false, false, false, Util.getInputDataFileName(getTestName(true)));
-    } catch (AssertionError exception) {
-      if (!(exception instanceof FileComparisonData)) throw exception;
+    } catch (FileComparisonFailedError exception) {
       Assert.assertTrue(exception.getMessage().contains("{ or ; expected"));
     }
   }

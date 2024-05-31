@@ -16,7 +16,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
-import com.intellij.rt.execution.junit.FileComparisonData
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
@@ -298,8 +297,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     try {
       checkResultByText(loadText(File(goldFile)))
     }
-    catch (e: AssertionError) {
-      if (e !is FileComparisonData) throw e
+    catch (e: FileComparisonFailedError) {
       throw FileComparisonFailedError(e.message, e.expectedStringPresentation, e.actualStringPresentation, goldFile)
     }
   }
