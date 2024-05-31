@@ -1,6 +1,6 @@
 package org.angularjs.performance;
 
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.tools.ide.metrics.benchmark.PerformanceTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -16,7 +16,7 @@ public class AngularJSPerformanceTest extends BasePlatformTestCase {
 
   public void testManyInjectionsHighlighting() {
     myFixture.configureByFiles("manyInjections.highlight.html", "angular.js", "custom.js");
-    PlatformTestUtil.newPerformanceTest(getTestName(false), () -> myFixture.checkHighlighting()).attempts(1).start();
+    PerformanceTestUtil.newPerformanceTest(getTestName(false), () -> myFixture.checkHighlighting()).attempts(1).start();
   }
 
 }

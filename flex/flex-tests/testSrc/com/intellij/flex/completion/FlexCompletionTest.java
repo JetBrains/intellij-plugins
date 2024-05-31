@@ -32,7 +32,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.tools.ide.metrics.benchmark.PerformanceTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -1341,7 +1341,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
     if (PROFILING) YourKitProfilerHandler.startCPUProfiling();
     try {
-      PlatformTestUtil.newPerformanceTest("ActionScript class completion", () -> complete())
+      PerformanceTestUtil.newPerformanceTest("ActionScript class completion", () -> complete())
         .setup(() -> getPsiManager().dropPsiCaches())
         .start();
     }

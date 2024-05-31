@@ -6,7 +6,7 @@ import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.tools.ide.metrics.benchmark.PerformanceTestUtil;
 import com.jetbrains.performancePlugin.yourkit.YourKitProfilerHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +38,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
   public void testPerformance() {
     if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
     try {
-      PlatformTestUtil.newPerformanceTest("Mxml highlighting",
+      PerformanceTestUtil.newPerformanceTest("Mxml highlighting",
                                           () -> doTestFor(true, getTestName(false) + ".mxml", "UsingSwcStubs2.swc"))
         .start();
     }
