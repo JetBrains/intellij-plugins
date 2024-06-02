@@ -176,7 +176,7 @@ public class AngularJSParser
         }
         int cur = -1;
         IElementType prev = builder.rawLookup(-1);
-        while (prev != null && ((PsiBuilderImpl)builder).whitespaceOrComment(prev)) {
+        while (prev != null && builder.isWhitespaceOrComment(prev)) {
           prev = builder.rawLookup(--cur);
         }
         if (prev == JSTokenTypes.AS_KEYWORD) {
