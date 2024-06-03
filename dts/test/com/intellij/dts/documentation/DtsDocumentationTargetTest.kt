@@ -2,8 +2,14 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.DtsTestBase
 import com.intellij.lang.documentation.ide.IdeDocumentationTargetProvider
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.progress.runBlockingCancellable
 
 class DtsDocumentationTargetTest : DtsTestBase() {
+  override fun runInDispatchThread(): Boolean = false
+
+  override fun runFromCoroutine(): Boolean = true
+
   fun `test start of node name`() = doTest("""
        <caret>node {}; 
     """)
@@ -40,14 +46,22 @@ class DtsDocumentationTargetTest : DtsTestBase() {
       &{/<caret>} {};
     """)
 
+  private fun assertOneDocumentationTarget() {
+    val provider = IdeDocumentationTargetProvider.getInstance(project)
+
+    val targets = runBlockingCancellable {
+      readAction {
+        provider.documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset)
+      }
+    }
+
+    assertOneElement(targets)
+  }
+
   private fun doTest(text: String) {
     configureByText(text)
 
-    val targets = IdeDocumentationTargetProvider
-      .getInstance(project)
-      .documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset)
-
-    assertOneElement(targets)
+    assertOneDocumentationTarget()
   }
 
   private fun doLookupTest(text: String) {
@@ -56,10 +70,6 @@ class DtsDocumentationTargetTest : DtsTestBase() {
     val completion = myFixture.completeBasic().toList()
     assertNotEmpty(completion)
 
-    val targets = IdeDocumentationTargetProvider
-      .getInstance(project)
-      .documentationTargets(myFixture.editor, myFixture.file, completion.first())
-
-    assertOneElement(targets)
+    assertOneDocumentationTarget()
   }
 }
