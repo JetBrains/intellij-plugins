@@ -3,11 +3,23 @@ import {MyReactComponent} from "./react-component"
 ---
 <div>
   <MyReactComponent client:load />
-  <MyReactComponent client:load=<warning descr="client:load does not accept any value">"incorrect"</warning> />
+  <!--
+  Temporarily removed warning from the line under this comment
+  TODO When validation will be done through LSP, rollback this change
+  -->
+  <MyReactComponent client:load="incorrect" />
   <MyReactComponent client:idle />
-  <MyReactComponent client:idle=<warning descr="client:idle does not accept any value">"incorrect"</warning> />
+  <!--
+  Temporarily removed warning from the line under this comment
+  TODO When validation will be done through LSP, rollback this change
+  -->
+  <MyReactComponent client:idle="incorrect" />
   <MyReactComponent client:visible />
-  <MyReactComponent client:visible=<warning descr="client:visible does not accept any value">"incorrect"</warning> />
+  <!--
+  Temporarily removed warning from the line under this comment
+  TODO When validation will be done through LSP, rollback this change
+  -->
+  <MyReactComponent client:visible="incorrect" />
   <MyReactComponent <warning descr="client:media requires value">client:media</warning> />
   <MyReactComponent client:media="(max-width: 50em)" />
   <MyReactComponent <warning descr="client:only requires value">client:only</warning> />
