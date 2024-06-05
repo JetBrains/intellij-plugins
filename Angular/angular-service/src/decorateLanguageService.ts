@@ -1,5 +1,5 @@
 import * as decorateLanguageServiceModule from "@volar/typescript/lib/node/decorateLanguageService"
-import {CodeMapping, Language} from "@volar/language-core"
+import {Language} from "@volar/language-core"
 import type * as TS from "./languageService"
 import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
@@ -16,14 +16,14 @@ export function patchVolarAndDecorateLanguageService() {
 
   // @ts-ignore TS2540
   decorateLanguageServiceModule.decorateLanguageService =
-    (language: Language, languageService: TS.LanguageService) => {
-      decorateLanguageService(language, languageService as any /* due to difference in TS version we need to cast to any */)
+    (language: Language<string>, languageService: TS.LanguageService, caseSensitiveFileNames: boolean) => {
+      decorateLanguageService(language, languageService as any /* due to difference in TS version we need to cast to any */, caseSensitiveFileNames)
       decorateIdeLanguageServiceExtensions(language, languageService)
       decorateNgLanguageServiceExtensions(language, languageService)
     }
 }
 
-function decorateIdeLanguageServiceExtensions(language: Language, languageService: TS.LanguageService) {
+function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
 
   let {webStormGetElementType, webStormGetTypeProperties, webStormGetSymbolType} = languageService
 
@@ -48,8 +48,8 @@ function decorateIdeLanguageServiceExtensions(language: Language, languageServic
         let originalRangePosStart = ts.getPositionOfLineAndCharacter(sourceFile, range.start.line, range.start.character)
         let originalRangePosEnd = ts.getPositionOfLineAndCharacter(sourceFile, range.end.line, range.end.character)
 
-        const generatedRangePosStart = toGeneratedOffset(sourceScript, map, originalRangePosStart, () => true);
-        const generatedRangePosEnd = toGeneratedOffset(sourceScript, map, originalRangePosEnd, () => true);
+        const generatedRangePosStart = toGeneratedOffset(serviceScript, sourceScript, map, originalRangePosStart, () => true);
+        const generatedRangePosEnd = toGeneratedOffset(serviceScript, sourceScript, map, originalRangePosEnd, () => true);
 
         if (generatedRangePosStart !== undefined && generatedRangePosEnd !== undefined) {
           const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRangePosStart)
@@ -89,21 +89,14 @@ function decorateIdeLanguageServiceExtensions(language: Language, languageServic
 
 }
 
-function decorateNgLanguageServiceExtensions(language: Language, languageService: TS.LanguageService) {
-
-  languageService.webStormNgTcbBlocks = new Map()
-
+function decorateNgLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
   languageService.webStormNgUpdateTranspiledTemplate = (
     _ts, fileName,transpiledCode,sourceCode: { [key: string]: string }, mappings
   ) => {
-    let virtualCode: AngularVirtualCode | undefined = languageService.webStormNgTcbBlocks.get(fileName)
-    if (virtualCode === undefined) {
-      virtualCode = new AngularVirtualCode(fileName);
-      languageService.webStormNgTcbBlocks.set(fileName, virtualCode);
+    const sourceScript = language.scripts.get(fileName)
+    const virtualCode = sourceScript?.generated?.root
+    if (sourceScript && virtualCode instanceof AngularVirtualCode) {
+      virtualCode.transpiledTemplateUpdated(transpiledCode, sourceCode, mappings);
     }
-
-    virtualCode.transpiledTemplateUpdated(transpiledCode, sourceCode, mappings);
   }
-
-
 }

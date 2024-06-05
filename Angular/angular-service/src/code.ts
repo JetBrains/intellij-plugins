@@ -1,102 +1,122 @@
 import {CodeMapping, VirtualCode} from "@volar/language-core"
 import * as ts from "typescript";
 import {IScriptSnapshot} from "typescript";
+import {CodegenContext} from "@volar/language-core/lib/types"
 
 export class AngularVirtualCode implements VirtualCode {
 
-  public snapshot: IScriptSnapshot = {
-    getText: (start, end) => "",
-    getLength: () => 0,
-    getChangeRange(oldSnapshot) {
-      return {
-        span: {
-          start: 0,
-          length: oldSnapshot.getLength(),
-        },
-        newLength: 0
-      };
-    },
-  };
+  public snapshot: IScriptSnapshot = createEmptySnapshot();
 
   public mappings: CodeMapping[] = []
-  public id: string = "main"
-  public source: { [key: string]: string } = {}
 
-  public originalSourceSnapshot: IScriptSnapshot = this.snapshot
+  public associatedScriptMappings: Map<string, CodeMapping[]> = new Map<string, CodeMapping[]>();
 
-  constructor(private fileName: string) {
+  get id(): string {
+    return "main"
   }
 
   get languageId(): string {
     return "typescript"
   }
 
+  private transpiledTemplate: {
+    sourceCode: { [fileName: string]: string },
+    snapshot: IScriptSnapshot
+    mappings: ({ source: string } & CodeMapping)[]
+  } | undefined
+
+  constructor(private fileName: string, private ctx: CodegenContext<string>, private useCaseSensitiveFileNames: boolean) {
+  }
+
   sourceFileUpdated(snapshot: ts.IScriptSnapshot, _languageId?: string): AngularVirtualCode {
-    if (this.snapshot.getLength() >= snapshot.getLength()
-      && this.snapshot.getText(0, snapshot.getLength()) === snapshot.getText(0, snapshot.getLength())) {
-      return this;
-    }
-    this.originalSourceSnapshot = snapshot
-
-    this.source = {
-      [this.fileName]: snapshot.getText(0, snapshot.getLength())
-    }
-
-    this.snapshot = snapshot
-    this.mappings = [{
-      source: this.fileName,
-      generatedOffsets: [0],
-      sourceOffsets: [0],
-      lengths: [snapshot.getLength()],
-      data: {
-        format: true,
-        completion: true,
-        navigation: true,
-        semantic: true,
-        structure: true,
-        verification: true,
+    this.associatedScriptMappings.clear()
+    if (this.transpiledTemplate) {
+      // Check if the template is still valid
+      if (snapshot.getChangeRange(this.transpiledTemplate.snapshot) !== undefined
+          || !sameContents(snapshot, this.transpiledTemplate.sourceCode[this.normalizeId(this.fileName)])) {
+        this.transpiledTemplate = undefined
+      } else if (this.transpiledTemplate.mappings.find(mapping => {
+          return !sameContents(this.ctx.getAssociatedScript(mapping.source)?.snapshot,
+                               this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.source)])
+        })) {
+        this.transpiledTemplate = undefined
       }
-    }]
+    }
+    if (this.transpiledTemplate) {
+      this.snapshot = this.transpiledTemplate.snapshot
+      this.mappings = []
+      this.transpiledTemplate.mappings.forEach(mapping => {
+        const mappingWithData = {
+          sourceOffsets: mapping.sourceOffsets,
+          lengths: mapping.lengths,
+          generatedOffsets: mapping.generatedOffsets,
+          generatedLengths: mapping.generatedLengths,
+          data: {
+            format: mapping.source === this.fileName,
+            completion: true,
+            navigation: true,
+            semantic: true,
+            structure: true,
+            verification: true,
+          }
+        }
+        if (this.normalizeId(mapping.source) === this.normalizeId(this.fileName)) {
+          this.mappings.push(mappingWithData)
+        }
+        else {
+          const associatedScript = this.ctx.getAssociatedScript(mapping.source)
+          const scriptId = associatedScript?.id
+          if (scriptId) {
+            if (!this.associatedScriptMappings.has(scriptId)) {
+              this.associatedScriptMappings.set(scriptId, [])
+            }
+            this.associatedScriptMappings.get(scriptId)!!.push(mappingWithData)
+          }
+        }
+      })
+    }
+    else {
+      this.snapshot = snapshot
+      this.mappings = [{
+        generatedOffsets: [0],
+        sourceOffsets: [0],
+        lengths: [snapshot.getLength()],
+        data: {
+          format: true,
+          completion: true,
+          navigation: true,
+          semantic: true,
+          structure: true,
+          verification: true,
+        }
+      }]
+    }
     return this
   }
 
-  transpiledTemplateUpdated(transpiledCode: string | undefined, sourceCode: { [key: string]: string }, mappings: CodeMapping[]) {
-    this.mappings = mappings.map(mapping => ({
-      source: mapping.source,
-      sourceOffsets: mapping.sourceOffsets,
-      lengths: mapping.lengths,
-      generatedOffsets: mapping.generatedOffsets,
-      generatedLengths: mapping.generatedLengths,
-      data: {
-        format: mapping.source === this.fileName,
-        completion: true,
-        navigation: true,
-        semantic: true,
-        structure: true,
-        verification: true,
+  transpiledTemplateUpdated(
+    transpiledCode: string | undefined,
+    sourceCode: { [fileName: string]: string },
+    mappings: ({ source: string } & CodeMapping)[]
+  ) {
+    if (transpiledCode) {
+      this.transpiledTemplate = {
+        mappings,
+        sourceCode: Object.fromEntries(Object.entries(sourceCode).map(([key, value]) => {
+          return [this.normalizeId(key), value]
+        })),
+        snapshot: createScriptSnapshot(transpiledCode)
       }
-    }))
-    this.source = {}
-    for (const fileName in sourceCode) {
-      this.source[fileName] = sourceCode[fileName]
     }
-    const changeRanges = new Map<ts.IScriptSnapshot, ts.TextChangeRange | undefined>();
-    this.snapshot = {
-      getText: (start, end) => (transpiledCode ?? "").slice(start, end),
-      getLength: () => (transpiledCode ?? "").length,
-      getChangeRange(oldSnapshot) {
-        if (!changeRanges.has(oldSnapshot)) {
-          changeRanges.set(oldSnapshot, undefined);
-          const oldText = oldSnapshot.getText(0, oldSnapshot.getLength());
-          const changeRange = fullDiffTextChangeRange(oldText, (transpiledCode ?? ""));
-          if (changeRange) {
-            changeRanges.set(oldSnapshot, changeRange);
-          }
-        }
-        return changeRanges.get(oldSnapshot);
-      },
-    };
+    else {
+      this.transpiledTemplate = undefined
+    }
   }
+
+  normalizeId(id: string): string {
+    return this.useCaseSensitiveFileNames ? id : id.toLowerCase()
+  }
+
 }
 
 function fullDiffTextChangeRange(oldText: string, newText: string): ts.TextChangeRange | undefined {
@@ -122,4 +142,43 @@ function fullDiffTextChangeRange(oldText: string, newText: string): ts.TextChang
     }
   }
   return undefined
+}
+
+function sameContents(snapshot: IScriptSnapshot | undefined, code: string | undefined): boolean {
+  return !!snapshot && !!code && snapshot.getText(0, snapshot.getLength()) === code
+}
+
+function createScriptSnapshot(code: string): IScriptSnapshot {
+  const changeRanges = new Map<ts.IScriptSnapshot, ts.TextChangeRange | undefined>()
+  return {
+    getText: (start, end) => (code ?? "").slice(start, end),
+    getLength: () => (code ?? "").length,
+    getChangeRange(oldSnapshot) {
+      if (!changeRanges.has(oldSnapshot)) {
+        changeRanges.set(oldSnapshot, undefined);
+        const oldText = oldSnapshot.getText(0, oldSnapshot.getLength());
+        const changeRange = fullDiffTextChangeRange(oldText, (code ?? ""));
+        if (changeRange) {
+          changeRanges.set(oldSnapshot, changeRange);
+        }
+      }
+      return changeRanges.get(oldSnapshot);
+    },
+  }
+}
+
+function createEmptySnapshot(): IScriptSnapshot {
+  return {
+    getText: (start, end) => "",
+    getLength: () => 0,
+    getChangeRange(oldSnapshot) {
+      return {
+        span: {
+          start: 0,
+          length: oldSnapshot.getLength(),
+        },
+        newLength: 0
+      };
+    },
+  }
 }
