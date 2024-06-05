@@ -130,6 +130,7 @@
     <codeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HCLCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HCLLanguageCodeStyleSettingsProvider"/>
     <lang.formatter language="HCL" implementationClass="org.intellij.terraform.hcl.formatter.HCLFormattingBuilderModel"/>
+    <formattingService implementation="org.intellij.terraform.hcl.formatter.TfAsyncFormattingService"/>
     <lang.quoteHandler language="HCL" implementationClass="org.intellij.terraform.hcl.formatter.HCLQuoteHandler"/>
 
     <!-- Handles autoinsert '}' after '${' in string literals (Issue https://github.com/VladRassokhin/intellij-hcl/issues/63>)-->
@@ -357,6 +358,12 @@
                      groupKey="advanced.setting.terraform"
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.variables.deep.search"/>
+
+    <advancedSetting id="org.intellij.terraform.config.formatting"
+                     default="false"
+                     groupKey="advanced.setting.terraform"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.formatting"/>
 
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settings.dialog.project.terraform"

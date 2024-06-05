@@ -21,7 +21,7 @@ class GoToSymbolContributor : ChooseByNameContributorEx, DumbAware {
   override fun processNames(processor: Processor<in String>, scope: GlobalSearchScope, filter: IdFilter?) {
     val fileIndex = FileBasedIndex.getInstance()
     DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE.ignoreDumbMode {
-      if (!fileIndex.processAllKeys(NAME, processor, scope, filter)) return@ignoreDumbMode
+      fileIndex.processAllKeys(NAME, processor, scope, filter)
     }
   }
 
@@ -30,7 +30,7 @@ class GoToSymbolContributor : ChooseByNameContributorEx, DumbAware {
     val collector = SymbolCollector(name, parameters.project, scope, processor)
     val fileIndex = FileBasedIndex.getInstance()
     DumbModeAccessType.RELIABLE_DATA_ONLY.ignoreDumbMode {
-      if (!fileIndex.processValues(NAME, name, null, collector, scope, parameters.idFilter)) return@ignoreDumbMode
+      fileIndex.processValues(NAME, name, null, collector, scope, parameters.idFilter)
     }
   }
 }

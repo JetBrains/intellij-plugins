@@ -10,13 +10,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import org.intellij.terraform.hcl.HCLElementTypes.*
 import org.intellij.terraform.hcl.HCLLanguage
 
-
 open class HCLFormattingBuilderModel(val language: Language = HCLLanguage) : FormattingModelBuilder {
   override fun createModel(formattingContext: FormattingContext): FormattingModel {
     val settings = formattingContext.codeStyleSettings
     val builder = createSpacingBuilder(settings)
     val block = HCLBlock(null, formattingContext.node, null, null, builder, Indent.getNoneIndent(),
                          settings.getCustomSettings(HCLCodeStyleSettings::class.java))
+
     return FormattingModelProvider.createFormattingModelForPsiFile(formattingContext.containingFile, block, settings)
   }
 
@@ -27,28 +27,28 @@ open class HCLFormattingBuilderModel(val language: Language = HCLLanguage) : For
     val spacesAroundAssignment = if (commonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS) 1 else 0
 
     return SpacingBuilder(settings, language)
-        .after(HEREDOC_LITERAL).lineBreakInCode()
-        .before(EQUALS).spacing(spacesAroundAssignment, spacesAroundAssignment, 0, false, 0)
-        .after(EQUALS).spacing(spacesAroundAssignment, spacesAroundAssignment, 0, false, 0)
-        .afterInside(IDENTIFIER, BLOCK).spaces(1)
-        .afterInside(STRING_LITERAL, BLOCK).spaces(1)
-        .between(L_CURLY, R_CURLY).none()
-        .withinPairInside(L_CURLY, R_CURLY, OBJECT).parentDependentLFSpacing(1, 0, commonSettings.KEEP_LINE_BREAKS, commonSettings.KEEP_BLANK_LINES_IN_CODE)
-        .withinPairInside(L_CURLY, R_CURLY, BLOCK_OBJECT).parentDependentLFSpacing(1, 0, commonSettings.KEEP_LINE_BREAKS, commonSettings.KEEP_BLANK_LINES_IN_CODE)
-        .withinPair(L_BRACKET, R_BRACKET).spaceIf(commonSettings.SPACE_WITHIN_BRACKETS, true)
-        .withinPair(L_CURLY, R_CURLY).spaceIf(commonSettings.SPACE_WITHIN_BRACES, true)
-        .before(COMMA).spacing(spacesBeforeComma, spacesBeforeComma, 0, false, 0)
-        .after(COMMA).spaceIf(commonSettings.SPACE_AFTER_COMMA)
-        .before(OP_COLON).spaceIf(commonSettings.SPACE_BEFORE_COLON)
-        .after(OP_COLON).spaceIf(commonSettings.SPACE_AFTER_COLON)
-        .after(BLOCK).lineBreakInCode()
-        .before(PARAMETER_LIST).none()
-        .before(OP_ELLIPSIS).none()
-        .before(OP_DOT).none()
-        .after(OP_DOT).none()
-        .after(OP_NOT).none()
-        .around(L_CURLY).spaces(1)
-        .around(R_CURLY).spaces(1)
+      .after(HEREDOC_LITERAL).lineBreakInCode()
+      .before(EQUALS).spacing(spacesAroundAssignment, spacesAroundAssignment, 0, false, 0)
+      .after(EQUALS).spacing(spacesAroundAssignment, spacesAroundAssignment, 0, false, 0)
+      .afterInside(IDENTIFIER, BLOCK).spaces(1)
+      .afterInside(STRING_LITERAL, BLOCK).spaces(1)
+      .between(L_CURLY, R_CURLY).none()
+      .withinPairInside(L_CURLY, R_CURLY, OBJECT).parentDependentLFSpacing(1, 0, commonSettings.KEEP_LINE_BREAKS, commonSettings.KEEP_BLANK_LINES_IN_CODE)
+      .withinPairInside(L_CURLY, R_CURLY, BLOCK_OBJECT).parentDependentLFSpacing(1, 0, commonSettings.KEEP_LINE_BREAKS, commonSettings.KEEP_BLANK_LINES_IN_CODE)
+      .withinPair(L_BRACKET, R_BRACKET).spaceIf(commonSettings.SPACE_WITHIN_BRACKETS, true)
+      .withinPair(L_CURLY, R_CURLY).spaceIf(commonSettings.SPACE_WITHIN_BRACES, true)
+      .before(COMMA).spacing(spacesBeforeComma, spacesBeforeComma, 0, false, 0)
+      .after(COMMA).spaceIf(commonSettings.SPACE_AFTER_COMMA)
+      .before(OP_COLON).spaceIf(commonSettings.SPACE_BEFORE_COLON)
+      .after(OP_COLON).spaceIf(commonSettings.SPACE_AFTER_COLON)
+      .after(BLOCK).lineBreakInCode()
+      .before(PARAMETER_LIST).none()
+      .before(OP_ELLIPSIS).none()
+      .before(OP_DOT).none()
+      .after(OP_DOT).none()
+      .after(OP_NOT).none()
+      .around(L_CURLY).spaces(1)
+      .around(R_CURLY).spaces(1)
       .around(OP_MAPPING).spaces(1)
       .withinPair(L_PAREN, R_PAREN).none()
       .around(OP_QUEST).spaces(1)

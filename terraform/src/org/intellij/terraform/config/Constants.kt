@@ -2,6 +2,7 @@
 package org.intellij.terraform.config
 
 import com.intellij.openapi.options.advanced.AdvancedSettings
+import com.intellij.openapi.util.NlsSafe
 
 object Constants {
   const val HAS_DYNAMIC_ATTRIBUTES: String = "__has_dynamic_attributes"
@@ -22,9 +23,13 @@ object Constants {
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   internal const val LATEST_VERSION: String = "latest"
 
-  internal val OFFICIAL_PROVIDERS_NAMESPACES = setOf("hashicorp")
+  internal const val TF_FMT: @NlsSafe String = "Terraform fmt"
+
+  internal val OFFICIAL_PROVIDERS_NAMESPACES: Set<String> = setOf("hashicorp")
 
   internal val shouldDownloadDocs: Boolean
     get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.documentation.download")
 
+  internal val isTerraformFmtEnabled: Boolean
+    get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.formatting")
 }

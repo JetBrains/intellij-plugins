@@ -3,6 +3,8 @@ package org.intellij.terraform.config
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.TerraformFileType.DEFAULT_EXTENSION
+import org.intellij.terraform.config.TerraformFileType.TFVARS_EXTENSION
 import org.intellij.terraform.hcl.HCLBundle
 import javax.swing.Icon
 
@@ -20,3 +22,5 @@ object TerraformFileType : LanguageFileType(TerraformLanguage) {
 
   override fun toString(): String = name
 }
+
+internal fun String?.isTerraformFile(): Boolean = setOf(DEFAULT_EXTENSION, TFVARS_EXTENSION).contains(this)
