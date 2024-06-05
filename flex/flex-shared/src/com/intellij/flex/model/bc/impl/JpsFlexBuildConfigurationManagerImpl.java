@@ -73,14 +73,14 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
 
   @Override
   public JpsFlexBuildConfiguration createCopy(@NotNull final JpsFlexBuildConfiguration bc) {
-    final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createCopy();
+    final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createConfigurationCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());
     return copy;
   }
 
   @Override
   public JpsFlexBuildConfiguration createTemporaryCopyForCompilation(@NotNull final JpsFlexBuildConfiguration bc) {
-    final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createCopy();
+    final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createConfigurationCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());
     copy.setTempBCForCompilation(true);
     return copy;

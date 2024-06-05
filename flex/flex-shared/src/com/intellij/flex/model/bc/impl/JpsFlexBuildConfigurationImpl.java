@@ -70,6 +70,11 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   public JpsFlexBuildConfigurationImpl createCopy() {
     return new JpsFlexBuildConfigurationImpl(this);
   }
+  
+  @NotNull
+  public JpsFlexBuildConfigurationImpl createConfigurationCopy() {
+    return new JpsFlexBuildConfigurationImpl(this);
+  }
 
 // -----------------------------------------
 
