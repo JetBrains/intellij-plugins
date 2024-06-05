@@ -1800,7 +1800,7 @@ class _CfscriptLexer implements FlexLexer {
           // fall through
           case 222: break;
           case 103:
-            { return CfscriptTokenTypes.BOOLAEN_TYPE;
+            { return CfscriptTokenTypes.BOOLEAN_TYPE;
             }
           // fall through
           case 223: break;
