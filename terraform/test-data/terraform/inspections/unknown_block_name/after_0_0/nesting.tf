@@ -1,4 +1,4 @@
-# intention: "HCLUnknownBlockType"
+# intention: "TfUnknownBlockType"
 # fix: "Add closing braces before element"
 # position: 3: "resource"
 #

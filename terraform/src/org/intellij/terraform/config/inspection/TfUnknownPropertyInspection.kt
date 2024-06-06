@@ -5,7 +5,6 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -28,33 +27,32 @@ class TfUnknownPropertyInspection : LocalInspectionTool() {
 
   inner class TfPropertyVisitor(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitProperty(property: HCLProperty) {
-      val resourceBlock = getResourceBlock(property) ?: return
-      val properties = TfModelHelper.getBlockProperties(resourceBlock).ifEmpty { return }
+      super.visitProperty(property)
+
+      val hclBlock = getBlockOfProperty(property) ?: return
+      val properties = TfModelHelper.getBlockProperties(hclBlock).ifEmpty { return }
 
       val propertyName = property.name
       if (!properties.containsKey(propertyName)) {
         holder.registerProblem(
           property,
-          HCLBundle.message("unknown.property.in.resource.inspection.error.message", propertyName),
+          HCLBundle.message("unknown.property.in.block.inspection.error.message", propertyName),
           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
           *listOfNotNull(TFInitAction.createQuickFixNotInitialized(property), RemovePropertyQuickFix(property)).toTypedArray()
         )
       }
     }
 
-    private fun getResourceBlock(element: HCLElement): HCLBlock? {
-      ProgressIndicatorProvider.checkCanceled()
-
-      //For now, only check for 'Resource' block
+    private fun getBlockOfProperty(element: HCLElement): HCLBlock? {
       val hclObject = element.parent as? HCLObject
       val hclBlock = hclObject?.parent as? HCLBlock
-      return if (TerraformPatterns.ResourceRootBlock.accepts(hclBlock)) hclBlock else null
+      return if (TerraformPatterns.RootBlock.accepts(hclBlock)) hclBlock else null
     }
   }
 }
 
 internal class RemovePropertyQuickFix(element: HCLProperty) : LocalQuickFixOnPsiElement(element) {
-  override fun getText(): String = HCLBundle.message("unknown.property.in.resource.inspection.quick.fix.name")
+  override fun getText(): String = HCLBundle.message("unknown.property.in.block.inspection.quick.fix.name")
   override fun getFamilyName(): String = text
   override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     startElement.delete()

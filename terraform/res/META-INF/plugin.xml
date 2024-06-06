@@ -232,10 +232,10 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      suppressId="ConflictingProperties"
                      implementationClass="org.intellij.terraform.config.inspection.HCLBlockConflictingPropertiesInspection"/>
-    <localInspection language="HCL" applyToDialects="true" shortName="HCLUnknownBlockType" bundle="messages.HCLBundle"
+    <localInspection language="HCL" applyToDialects="true" shortName="TfUnknownBlockType" bundle="messages.HCLBundle"
                      key="unknown.block.type.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
-                     implementationClass="org.intellij.terraform.config.inspection.HCLUnknownBlockTypeInspection"/>
+                     implementationClass="org.intellij.terraform.config.inspection.TfUnknownBlockTypeInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="HCLDeprecatedElement" bundle="messages.HCLBundle"
                      key="deprecated.element.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WEAK WARNING"
@@ -269,7 +269,7 @@
                      suppressId="LiteralValidness"
                      implementationClass="org.intellij.terraform.config.inspection.HCLLiteralValidnessInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TfUnknownProperty" bundle="messages.HCLBundle"
-                     key="unknown.property.in.resource.inspection.display.name"
+                     key="unknown.property.in.block.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.intellij.terraform.config.inspection.TfUnknownPropertyInspection"/>
 

@@ -1,4 +1,4 @@
-# intention: "HCLUnknownBlockType"
+# intention: "TfUnknownBlockType"
 # fix: "Remove unknown block"
 # position: 6: "abracadabra"
 #
@@ -21,7 +21,7 @@ terraform {
 }
 
 moved {
-  from = test1 
+  from = test1
   to   = test2
 }
 

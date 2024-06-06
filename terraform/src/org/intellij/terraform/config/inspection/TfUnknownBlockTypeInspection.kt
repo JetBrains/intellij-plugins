@@ -22,7 +22,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 
-class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
+class TfUnknownBlockTypeInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     if (holder.file.fileType != TerraformFileType) {
       return PsiElementVisitor.EMPTY_VISITOR
@@ -41,8 +41,8 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
   }
 
   private fun doCheck(block: HCLBlock, holder: ProblemsHolder, type: String) {
-    // It could be root block OR block inside Object.
-    // Object could be value of some property or right part of other object
+    // It could be a root block or block inside Object
+    // Object could be the value of some property or right part of another object
     val parent = PsiTreeUtil.getParentOfType(block, HCLBlock::class.java, HCLFile::class.java) ?: return
     when (parent) {
       is HCLFile -> {
@@ -58,7 +58,6 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
           return
         }
 
-        // TODO: (?) For some reason single name block could be represented as 'property' in model
         val properties = TfModelHelper.getBlockProperties(parent)
         if (properties[type] is BlockType) return
 
