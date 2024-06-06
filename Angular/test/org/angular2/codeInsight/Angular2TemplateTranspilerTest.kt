@@ -16,10 +16,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
     doConfiguredTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_ROUTER_16_2_8, dir = true, configurators = listOf(
       Angular2TsConfigFile(strictTemplates = true)
     )) {
-      val transpiledTemplate = Angular2TemplateTranspiler.transpileTemplate(Angular2EntitiesProvider.getComponent(myFixture.elementAtCaret)!!)
+      val transpiledTemplate = Angular2TemplateTranspiler.transpileTemplate(
+        Angular2EntitiesProvider.getComponent(myFixture.elementAtCaret)!!, "0")
 
       checkTextByFile(
-        transpiledTemplate.generatedCode,
+        transpiledTemplate!!.generatedCode,
         "${testName}/result.ts"
       )
     }
