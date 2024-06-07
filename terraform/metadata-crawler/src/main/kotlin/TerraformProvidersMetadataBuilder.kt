@@ -68,6 +68,7 @@ object TerraformProvidersMetadataBuilder {
       nf.objectNode().set<JsonNode>("attributes",
                                     nf.objectNode()
                                       .put("full-name", "terraform.io/builtin/terraform")
+                                      .put("type", "providers")
                                       .put("name", "terraform")
                                       .put("namespace", "terraform")
                                       .put("tier", "builtin"))
@@ -93,11 +94,9 @@ object TerraformProvidersMetadataBuilder {
       logger.info("Processing: $name")
       val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
-        logger.info("Schema file generated: ${file.path}")
         generatedJsonFileNames.appendText("$name\n")
       }
       else {
-        logger.error("Error generating schema for provider: ${name}")
         errors.incrementAndGet()
       }
     }
@@ -136,9 +135,11 @@ object TerraformProvidersMetadataBuilder {
       File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
       File(failureDir, "init.err").writeText(initError)
       File(failureDir, "schema.err").writeText(schemaError)
+      logger.error("Metadata build failure for provider $name. \n Error: $initError \n Schema Generation Error: $schemaError")
     }
     else {
       storeRegistryData(data, tfgendir, outputDir, dir, file)
+      logger.info("Schema file generated: ${file}")
     }
     deleteDirRecursively(tfgendir)
     return schemaFile
@@ -180,7 +181,7 @@ object TerraformProvidersMetadataBuilder {
       Files.walk(tfgendir.toPath())
         .sorted(Comparator.reverseOrder())
         .map { it.toFile() }
-        .forEach(File::delete)
+        .forEach(File::deleteOnExit)
   }
 
   private fun writeVersionsTfFile(tfgendir: File, version: String?, fullName: String?) {
