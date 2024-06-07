@@ -1,12 +1,13 @@
-resource "google_compute_instance" "mesos-slave" {
-  network_interface {
-    network = "default"
-    access_config {
-        // Ephemeral IP
-    }
-    abracadabra {
-    }
+resource "vault_mount" "kvv2-example" {
+  path        = "version2-example"
+  type        = "kv-v2"
+  options = {
+    version = "2"
+    type    = "kv-v2"
   }
+  abracadabra {
+  }
+  description = "This is an example KV Version 2 secret engine mount"
 }
 
 terraform {

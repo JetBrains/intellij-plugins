@@ -1,14 +1,15 @@
 # intention: "TfUnknownBlockType"
 # fix: "Remove unknown block"
-# position: 6: "abracadabra"
+# position: 7: "abracadabra"
 #
-resource "google_compute_instance" "mesos-slave" {
-  network_interface {
-    network = "default"
-    access_config {
-        // Ephemeral IP
-    }
+resource "vault_mount" "kvv2-example" {
+  path        = "version2-example"
+  type        = "kv-v2"
+  options = {
+    version = "2"
+    type    = "kv-v2"
   }
+  description = "This is an example KV Version 2 secret engine mount"
 }
 
 terraform {

@@ -1,3 +1,13 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "figma/aws-4-49-0"
+      version = "> 0.0.1"
+    }
+  }
+}
+
+
 locals {
   source_code = {
     type = "NO_SOURCE"

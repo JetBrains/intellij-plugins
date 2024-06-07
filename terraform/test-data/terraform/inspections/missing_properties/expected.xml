@@ -2,19 +2,19 @@
 <problems>
   <problem>
     <file>test.tf</file>
-    <line>3</line>
-    <module>4</module>
+    <line>11</line>
+    <module>0</module>
     <entry_point TYPE="file" FQNAME="file:///private/var/folders/yd/rj_ylnkx1zdbdcg0jzvg2xtw0000gp/T/unitTest_missingBlockProperty_2ZalC8Z32NwIQMZX2G1d3QT5eTM/unitTest7592437907398280990/test.tf" />
     <problem_class id="HCLBlockMissingProperty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
-    <description>Missing required properties: region</description>
-    <highlighted_element>provider &quot;aws&quot; { }</highlighted_element>
+    <description>Missing required properties: address</description>
+    <highlighted_element>provider &quot;vault&quot; { }</highlighted_element>
     <language>HCL</language>
     <offset>0</offset>
     <length>18</length>
   </problem>
   <problem>
     <file>test.tf</file>
-    <line>12</line>
+    <line>20</line>
     <module>0</module>
     <package>&lt;default&gt;</package>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
@@ -22,19 +22,19 @@
   </problem>
   <problem>
     <file>dynamic.tf</file>
-    <line>6</line>
-    <module>0</module>
+    <line>8</line>
+    <module>1</module>
     <package>&lt;default&gt;</package>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
-    <description>Missing required properties: registry_arn</description>
+    <description>Missing required properties: caching</description>
   </problem>
   <problem>
     <file>dynamic.tf</file>
-    <line>9</line>
-    <module>0</module>
+    <line>14</line>
+    <module>1</module>
     <package>&lt;default&gt;</package>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
-    <description>Missing required properties: registry_arn</description>
+    <description>Missing required properties: caching</description>
   </problem>
 </problems>
 

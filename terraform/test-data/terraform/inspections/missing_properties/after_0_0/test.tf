@@ -1,11 +1,19 @@
 # intention: "HCLBlockMissingProperty"
-# fix: "Add properties: region"
-# position: 2: "provider "aws" {"
+# fix: "Add properties: address"
+# position: 10: "provider "vault" {"
 #
+terraform {
+  required_providers {
+    docker = {
+      source = "kreuzwerker/docker"
+      version = ">= 0.0.1"
+    }
+  }
+}
 provider "docker" {
 }
-provider "aws" {
-  region = ""
+provider "vault" {
+  address = ""
 }
 //noinspection MissingProperty
 provider "atlas" {

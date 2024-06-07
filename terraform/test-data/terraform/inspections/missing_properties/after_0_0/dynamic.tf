@@ -1,32 +1,41 @@
 # intention: "HCLBlockMissingProperty"
-# fix: "Add properties: registry_arn"
-# position: 5: "content {"
+# fix: "Add properties: caching"
+# position: 7: "content {"
 #
-resource "aws_ecs_service" "ecss" {
-  name = ""
-  task_definition = ""
-  dynamic "service_registries" {
+resource "azurerm_orchestrated_virtual_machine_scale_set" "vm_set" {
+  location                    = ""
+  name                        = ""
+  platform_fault_domain_count = 0
+  resource_group_name         = ""
+  dynamic "data_disk" {
     for_each = ""
     content {
-      registry_arn = ""
+      disk_size_gb = 1
+      lun          = 0
+      storage_account_type = "dd"
+      caching = ""
     }
   }
-  service_registries {
+  data_disk {
+    disk_size_gb         = 0
+    lun                  = 0
+    storage_account_type = ""
   }
 }
 
-resource "aws_codebuild_project" "default" {
+resource "azurerm_virtual_machine_scale_set_packet_capture" "default" {
+  network_watcher_id           = ""
+  virtual_machine_scale_set_id = ""
   name = ""
-  service_role = ""
   //noinspection MissingProperty
-  artifacts {}
+  storage_location {}
   //noinspection MissingProperty
-  environment {}
+  timeouts {}
   //source {type=""} // dynamic below
-  dynamic "source" {
+  dynamic "filter" {
     for_each = [local.source_code]
     content {
-      type = source.value.type
+      protocol = source.value.type
     }
   }
 }

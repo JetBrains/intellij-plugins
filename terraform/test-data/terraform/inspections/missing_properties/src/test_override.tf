@@ -1,2 +1,2 @@
-provider "aws" {
+provider "vault" {
 }

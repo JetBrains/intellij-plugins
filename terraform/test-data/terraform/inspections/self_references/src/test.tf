@@ -1,15 +1,15 @@
-resource "aws_instance" "foo" {
+resource "vault_jwt_auth_backend" "foo" {
   foo = "bar"
 
   connection {
-    host = self.public_ip
+    host = self.path
   }
 
   provisioner "shell" {
-    value = self.public_ip
+    value = self.provider
 
     connection {
-      host = self.public_ip
+      host = self.path
     }
   }
 }

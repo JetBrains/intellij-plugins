@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "figma/aws-4-49-0"
+      version = "> 0.0.1"
+    }
+  }
+}
+
 variable "list" {
   default = [1, 2, 3, 4, 5]
 }

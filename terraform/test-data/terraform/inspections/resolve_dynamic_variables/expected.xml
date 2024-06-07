@@ -2,24 +2,27 @@
 <problems>
   <problem>
     <file>235.tf</file>
-    <line>44</line>
+    <line>53</line>
     <entry_point TYPE="file" FQNAME="235.tf" />
     <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
     <description>The "each" object can be used only in "resource"/"data"/"module" blocks, and only when the "for_each" argument is set</description>
+    <highlighted_element>each</highlighted_element>
   </problem>
   <problem>
     <file>235.tf</file>
-    <line>44</line>
+    <line>53</line>
     <entry_point TYPE="file" FQNAME="235.tf" />
     <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
     <description>Unresolved reference value</description>
+    <highlighted_element>value</highlighted_element>
   </problem>
   <problem>
     <file>227.tf</file>
-    <line>57</line>
+    <line>67</line>
     <entry_point TYPE="file" FQNAME="227.tf" />
     <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
     <description>Unknown iterator field unknown</description>
+    <highlighted_element>unknown</highlighted_element>
   </problem>
 </problems>
 

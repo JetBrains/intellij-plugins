@@ -1,10 +1,18 @@
 # intention: "HCLBlockMissingProperty"
 # fix: "Add properties: source"
-# position: 11: "module "test-module" {"
+# position: 19: "module "test-module" {"
 #
+terraform {
+  required_providers {
+    docker = {
+      source = "kreuzwerker/docker"
+      version = ">= 0.0.1"
+    }
+  }
+}
 provider "docker" {
 }
-provider "aws" {
+provider "vault" {
 }
 //noinspection MissingProperty
 provider "atlas" {

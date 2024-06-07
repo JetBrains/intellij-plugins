@@ -1,29 +1,33 @@
 //noinspection MissingProperty
-resource "aws_codebuild_project" "default" {
-  dynamic "source" {
-    for_each = [local.source_code]
-    //noinspection MissingProperty
+resource "azurerm_orchestrated_virtual_machine_scale_set" "example" {
+  name                = "example-VMSS"
+  location            = "West Europe"
+  resource_group_name = "example-rg"
+  dynamic "network_interface" {
+    for_each = ""
     content {
-      dynamic "auth" {
-        for_each = lookup(source.value, "auth", [])
+      name = "if1"
+      dynamic "ip_configuration" {
+        for_each = ""
         content {
-          resource = lookup(auth.value, "resource", null)
-          type = auth.value.type
+          name = "conf1"
         }
       }
     }
   }
 }
 
-//noinspection MissingProperty
-resource "aws_ec2_fleet" "fleet" {
-  //noinspection MissingProperty
-  launch_template_config {
-    dynamic "override" {
-      for_each = local.overrides
-      content {
-        instance_type = override.value
-      }
+resource "azurerm_network_interface" "example" {
+  name                = "example-nic"
+  location            = "West Europe"
+  resource_group_name = "example-rg"
+
+  dynamic "ip_configuration" {
+    for_each = local.overrides
+    content {
+      name                          = "internal"
+      subnet_id                     = "example-nic"
+      private_ip_address_allocation = "Dynamic"
     }
   }
 }

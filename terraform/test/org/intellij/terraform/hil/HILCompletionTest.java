@@ -88,7 +88,7 @@ public class HILCompletionTest extends CompletionTestCase {
   }
 
   public void testSelfReferenceCompletion() {
-    doBasicCompletionTest("resource 'aws_instance' 'x' {provisioner 'file' {file = '${self.<caret>}'}", "ami", "instance_type");
+    doBasicCompletionTest("resource 'azurerm_resource_group' 'x' {provisioner 'file' {file = '${self.<caret>}'}", "name", "location");
   }
 
   public void testSelfReferenceCompletionAbracadabraProvisioner() {
@@ -275,22 +275,36 @@ public class HILCompletionTest extends CompletionTestCase {
 
   public void testDefinedComputedBlockCompletion() {
     doBasicCompletionTest("""
-                            resource "google_dataproc_cluster" "x" {
-                              cluster_config {
-                                master_config {
-                                  num_instances = 1
-                                  machine_type = "n1-standard-1"
-                                  disk_config {
-                                    boot_disk_size_gb = 10
-                                    num_local_ssds = 0
-                                  }
-                                }
-                              \s
+                            resource "azurerm_linux_virtual_machine" "example" {
+                              name                = "example-machine"
+                              resource_group_name = "test-rg"
+                              location            = "US West"
+                              size                = "Standard_F2"
+                              admin_username      = "adminuser"
+                              network_interface_ids = [
+                                "example-nic"
+                              ]
+                            
+                              admin_ssh_key {
+                                username   = "adminuser"
+                                public_key = file("~/.ssh/id_rsa.pub")
+                              }
+                            
+                              os_disk {
+                                caching              = "ReadWrite"
+                                storage_account_type = "Standard_LRS"
+                              }
+                            
+                              source_image_reference {
+                                publisher = "Canonical"
+                                offer     = "0001-com-ubuntu-server-jammy"
+                                sku       = "22_04-lts"
+                                version   = "latest"
                               }
                             }
-
+                            
                             output "x" {
-                              value = "${google_dataproc_cluster.x.cluster_config.master_config.<caret>}"
-                            }""", "disk_config", "instance_names", "machine_type", "num_instances");
+                              value = "${azurerm_linux_virtual_machine.example.os_disk.<caret>}"
+                            }""", "caching", "storage_account_type");
   }
 }

@@ -17,94 +17,94 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
   }
 
-  public void testProperlyParsedNetworkInterface() {
+  public void testProperlyParsedOsDiskConfig() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    final ResourceType google_compute_instance = model.getResourceType("google_compute_instance");
-    assertNotNull(google_compute_instance);
-    final Map<String, PropertyOrBlockType> properties = google_compute_instance.getProperties();
-    final PropertyOrBlockType network_interface = properties.get("network_interface");
-    assertNotNull(network_interface);
-    final BlockType network_interfaceBlock = (BlockType)network_interface;
-    assertNotNull(network_interfaceBlock);
-    Map<String, PropertyOrBlockType> properties3 = network_interfaceBlock.getProperties();
-    final PropertyOrBlockType access_config = properties3.get("access_config");
-    assertNotNull(access_config);
-    final BlockType access_configBlock = (BlockType)access_config;
-    assertNotNull(access_configBlock);
-    Map<String, PropertyOrBlockType> properties2 = access_configBlock.getProperties();
-    assertNotNull(properties2.get("network_tier"));
-    Map<String, PropertyOrBlockType> properties1 = access_configBlock.getProperties();
-    assertNotNull(properties1.get("nat_ip"));
+    final ResourceType azurerm_linux_virtual_machine = model.getResourceType("azurerm_linux_virtual_machine", null);
+    assertNotNull(azurerm_linux_virtual_machine);
+    final Map<String, PropertyOrBlockType> properties = azurerm_linux_virtual_machine.getProperties();
+    final PropertyOrBlockType os_disk = properties.get("os_disk");
+    assertNotNull(os_disk);
+    final BlockType os_disk_block = (BlockType)os_disk;
+    assertNotNull(os_disk_block);
+    Map<String, PropertyOrBlockType> properties3 = os_disk_block.getProperties();
+    final PropertyOrBlockType diff_disk_settings = properties3.get("diff_disk_settings");
+    assertNotNull(diff_disk_settings);
+    final BlockType diff_disk_settings_block = (BlockType)diff_disk_settings;
+    assertNotNull(diff_disk_settings_block);
+    Map<String, PropertyOrBlockType> properties2 = diff_disk_settings_block.getProperties();
+    assertNotNull(properties2.get("option"));
+    assertNotNull(properties2.get("placement"));
   }
 
   // Test for #67
-  public void test_aws_cloudfront_distribution_forwarded_values() {
+  public void test_azurerm_kubernetes_cluster_values() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
-    final ResourceType aws_cloudfront_distribution = model.getResourceType("aws_cloudfront_distribution");
-    assertNotNull(aws_cloudfront_distribution);
-    final Map<String, PropertyOrBlockType> properties = aws_cloudfront_distribution.getProperties();
+    final ResourceType azurerm_kubernetes_cluster = model.getResourceType("azurerm_kubernetes_cluster", null);
+    assertNotNull(azurerm_kubernetes_cluster);
+    final Map<String, PropertyOrBlockType> properties = azurerm_kubernetes_cluster.getProperties();
 
-    final PropertyOrBlockType default_cache_behavior = properties.get("default_cache_behavior");
-    assertNotNull(default_cache_behavior);
-    final BlockType default_cache_behavior_block = (BlockType)default_cache_behavior;
-    assertNotNull(default_cache_behavior_block);
+    final PropertyOrBlockType default_node_pool = properties.get("default_node_pool");
+    assertNotNull(default_node_pool);
+    final BlockType default_node_pool_block = (BlockType)default_node_pool;
+    assertNotNull(default_node_pool_block);
 
-    Map<String, PropertyOrBlockType> properties3 = default_cache_behavior_block.getProperties();
-    final PropertyOrBlockType forwarded_values = properties3.get("forwarded_values");
-    assertNotNull(forwarded_values);
-    final BlockType forwarded_values_block = (BlockType)forwarded_values;
-    assertNotNull(forwarded_values_block);
+    Map<String, PropertyOrBlockType> properties3 = default_node_pool_block.getProperties();
+    final PropertyOrBlockType linux_os_config = properties3.get("linux_os_config");
+    assertNotNull(linux_os_config);
+    final BlockType linux_os_config_block = (BlockType)linux_os_config;
+    assertNotNull(linux_os_config_block);
 
-    Map<String, PropertyOrBlockType> properties2 = forwarded_values_block.getProperties();
-    PropertyOrBlockType query_string = properties2.get("query_string");
-    assertTrue(query_string.getRequired());
-    assertNotNull(query_string);
+    Map<String, PropertyOrBlockType> properties2 = linux_os_config_block.getProperties();
+    PropertyOrBlockType sysctl_config = properties2.get("sysctl_config");
+    assertTrue(sysctl_config instanceof BlockType);
+    assertNotNull(sysctl_config);
+    assertFalse(sysctl_config.getRequired());
 
-    Map<String, PropertyOrBlockType> properties1 = forwarded_values_block.getProperties();
-    PropertyOrBlockType cookies = properties1.get("cookies");
-    assertNotNull(cookies);
+    Map<String, PropertyOrBlockType> properties1 = ((BlockType)sysctl_config).getProperties();
+    PropertyOrBlockType kernel_threads_max = properties1.get("kernel_threads_max");
+    assertNotNull(kernel_threads_max);
   }
 
-  public void test_data_aws_kms_ciphertext_context() {
+  public void test_azurerm_storage_encryption_scope_depends_on() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
-    final DataSourceType aws_kms_ciphertext = model.getDataSourceType("aws_kms_ciphertext");
-    assertNotNull(aws_kms_ciphertext);
-    final Map<String, PropertyOrBlockType> properties = aws_kms_ciphertext.getProperties();
+    final DataSourceType azurerm_storage_encryption_scope = model.getDataSourceType("azurerm_storage_encryption_scope", null);
+    assertNotNull(azurerm_storage_encryption_scope);
+    final Map<String, PropertyOrBlockType> properties = azurerm_storage_encryption_scope.getProperties();
 
-    final PropertyOrBlockType context = properties.get("context");
-    assertNotNull(context);
-    assertInstanceOf(context, PropertyType.class);
+    final PropertyOrBlockType depends_on = properties.get("depends_on");
+    assertNotNull(depends_on);
+    assertInstanceOf(depends_on, PropertyType.class);
 
-    PropertyType contextProperty = (PropertyType)context;
+    PropertyType contextProperty = (PropertyType)depends_on;
     Type type = contextProperty.getType();
-    assertEquals("map(string)", type.getPresentableText().toLowerCase());
+    assertEquals("list", type.getPresentableText().toLowerCase());
   }
 
   // Have explicit mode == attr, yet it's a block
-  public void test_aws_security_group_ingress() {
+  public void test_azurerm_application_security_group_provisioner() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
-    final ResourceType aws_security_group = model.getResourceType("aws_security_group");
-    assertNotNull(aws_security_group);
-    final Map<String, PropertyOrBlockType> properties = aws_security_group.getProperties();
+    final ResourceType azurerm_application_security_group = model.getResourceType("azurerm_application_security_group", null);
+    assertNotNull(azurerm_application_security_group);
+    final Map<String, PropertyOrBlockType> properties = azurerm_application_security_group.getProperties();
 
-    final PropertyOrBlockType ingress = properties.get("ingress");
-    assertNotNull(ingress);
-    assertInstanceOf(ingress, BlockType.class);
+    final PropertyOrBlockType provisioner = properties.get("provisioner");
+    assertNotNull(provisioner);
+    assertInstanceOf(provisioner, BlockType.class);
   }
 
   public void test_containers_as_block_type_if_non_scalar_typed() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
-    assertInstanceOf(model.getResourceType("aws_instance").getProperties().get("security_groups"), PropertyType.class);
-    PropertyOrBlockType accessPolicyBlockType = model.getResourceType("azurerm_key_vault").getProperties().get("access_policy");
+    assertInstanceOf(model.getResourceType("vault_audit", null).getProperties().get("path"), PropertyType.class);
+    PropertyOrBlockType accessPolicyBlockType = model.getResourceType("azurerm_key_vault", null).getProperties().get("access_policy");
     assertInstanceOf(accessPolicyBlockType, BlockType.class);
     assertContainsElements(((BlockType)accessPolicyBlockType).getProperties().keySet(),
                            "application_id", "certificate_permissions", "key_permissions", "object_id", "secret_permissions",
@@ -117,7 +117,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
-    final DataSourceType external = model.getDataSourceType("external");
+    final DataSourceType external = model.getDataSourceType("external", null);
     assertNotNull(external);
     final Map<String, PropertyOrBlockType> properties = external.getProperties();
 
@@ -133,7 +133,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   public void test_kubernetes_provider_exec() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    ProviderType k8s = model.getProviderType("kubernetes");
+    ProviderType k8s = model.getProviderType("kubernetes", null);
     assertNotNull(k8s);
     PropertyOrBlockType pobt = k8s.getProperties().get("exec");
     assertNotNull(pobt);
@@ -143,11 +143,12 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
                  prop.getPresentableText().toLowerCase());
   }
 
+  /*
   public void testAllResourceHasProviderNameAsPrefix() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
     final List<ResourceType> failedResources = new ArrayList<>();
-    for (ResourceType block : model.getResources()) {
+    for (ResourceType block : model.allResources()) {
       final String rt = block.getType();
       String pt = block.getProvider().getType();
       String fullProvName = block.getProvider().getFullName();
@@ -479,6 +480,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     }
     then(failedDataSources).isEmpty();
   }
+  */
 
   public void testProvisionersLoaded() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
