@@ -3,7 +3,7 @@ package com.intellij.deno.service
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.UseDeno
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
-import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
+import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction

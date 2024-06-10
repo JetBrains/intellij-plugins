@@ -5,7 +5,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
-import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
+import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT
 import com.intellij.openapi.actionSystem.CommonDataKeys.PSI_ELEMENT
