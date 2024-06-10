@@ -1,6 +1,29 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.openapi.util.io.DataInputOutputUtilRt
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.util.childrenOfType
+import com.intellij.util.ThrowableConsumer
+import com.intellij.util.gist.GistManager
+import com.intellij.util.io.DataExternalizer
+import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersData
+import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersSource
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLProperty
+import java.io.DataInput
+import java.io.DataOutput
+import java.io.IOException
+
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
   TIER_LOCAL("local"),
@@ -17,21 +40,35 @@ enum class ProviderTier(val label: String) {
 }
 
 class TypeModel(
-  val resources: List<ResourceType> = emptyList(),
-  val dataSources: List<DataSourceType> = emptyList(),
-  val providers: List<ProviderType> = emptyList(),
+  resources: List<ResourceType> = emptyList(),
+  dataSources: List<DataSourceType> = emptyList(),
+  providers: List<ProviderType> = emptyList(),
   provisioners: List<ProvisionerType> = emptyList(),
   backends: List<BackendType> = emptyList(),
-  functions: List<Function> = emptyList()
+  functions: List<Function> = emptyList(),
 ) {
 
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
   val backends: List<BackendType> = backends.sortedBy { it.type }
   val functions: List<Function> = functions.sortedBy { it.name }
 
-  val resourcesByTier: Map<ProviderTier, List<ResourceType>> = resources.groupBy { it.provider.tier }.mapValues { (_, v) -> v.sortedBy { it.type } }
-  val providersByTier: Map<ProviderTier, List<ProviderType>> = providers.groupBy { it.tier }.mapValues { (_, v) -> v.sortedBy { it.type } }
-  val dataSourcesByTier: Map<ProviderTier, List<DataSourceType>> = dataSources.groupBy { it.provider.tier }.mapValues { (_, v) -> v.sortedBy { it.type } }
+  val providersByFullName: Map<String, ProviderType> = providers.associateBy { it.fullName }
+  val resourcesByProvider: Map<String, List<ResourceType>> = resources.groupBy { it.provider.fullName }
+  val datasourcesByProvider: Map<String, List<DataSourceType>> = dataSources.groupBy { it.provider.fullName }
+
+  val hasOfficialProviders: Boolean = providers.any { it.tier == ProviderTier.TIER_OFFICIAL }
+
+  private val providerDefaultPrefixes: Map<String, String>
+
+  init {
+    fun getDefaultPrefix(provider: List<ResourceOrDataSourceType>?): String? {
+      return provider?.mapNotNull { getResourcePrefix(it.type) }?.firstOrNull()
+    }
+    providerDefaultPrefixes = providersByFullName.mapNotNull { (name, _) ->
+      val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(datasourcesByProvider[name])
+      prefix?.let { name to it }
+    }.toMap()
+  }
 
   @Suppress("MemberVisibilityCanBePrivate")
   companion object {
@@ -208,6 +245,55 @@ class TypeModel(
                                              AbstractResource, AbstractDataSource, Terraform,
                                              Locals, Moved, Import, CheckBlock, RemovedBlock)
     val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
+
+    @JvmStatic
+    fun getResourcePrefix(identifier: String): String {
+      val stringList = identifier.split("_", limit = 2)
+      val prefix = if (stringList.size < 2) identifier else stringList[0]
+      return prefix
+    }
+
+    @JvmStatic
+    fun getResourceName(identifier: String): String {
+      val stringList = identifier.split("_", limit = 2)
+      val id = if (stringList.size < 2) identifier else stringList[1]
+      return id
+    }
+
+    @JvmStatic
+    fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
+      val containingFile = getContainingFile(psiElement) ?: return emptyMap()
+      val parentDir = containingFile.parent ?: return emptyMap()
+      if (parentDir.isDirectory) {
+        val fileTypeManager = FileTypeManager.getInstance()
+        val gists = parentDir.childrenOfType<PsiFile>()
+          .filter { file -> fileTypeManager.isFileOfType(file.virtualFile, TerraformFileType) }
+          .map { providersNamesGist.getFileData(it) }
+        return gists.flatMap { it.entries }.associate { it.key to it.value }
+      }
+      return emptyMap()
+    }
+
+    private val providersNamesGist by lazy {
+      GistManager.getInstance().newPsiFileGist<Map<String, String>>("TF_PROVIDER_LIST", 1, object : DataExternalizer<Map<String, String>> {
+        override fun save(out: DataOutput, value: Map<String, String>) {
+          DataInputOutputUtilRt.writeMap(out, value,
+                                         ThrowableConsumer { out.writeUTF(it) },
+                                         ThrowableConsumer { out.writeUTF(it) })
+        }
+
+        override fun read(input: DataInput): Map<String, String> {
+          return DataInputOutputUtilRt.readMap(input,
+                                               ThrowableComputable<String, IOException> { input.readUTF() },
+                                               ThrowableComputable<String, IOException> { input.readUTF() })
+        }
+      }) { psiFile ->
+        val localNames = mutableMapOf<String, String>()
+        val terraformRootBlock = psiFile.childrenOfType<HCLBlock>().firstOrNull { TerraformPatterns.TerraformRootBlock.accepts(it) }
+        terraformRootBlock?.accept(RequiredProvidersVisitor(localNames))
+        localNames
+      }
+    }
   }
 
   private fun <T> List<T>.findBinary(elt: String, k: (T) -> String): T? =
@@ -230,16 +316,31 @@ class TypeModel(
     return -1
   }
 
-  fun getResourceType(name: String): ResourceType? {
-    return ProviderTier.entries.mapNotNull { tier -> resourcesByTier[tier]?.findBinary(name) { it.type } }.firstOrNull()
+  private fun getProviderFullName(identifier: String, psiElement: PsiElement? = null): String {
+    val localNames = psiElement?.let { collectProviderLocalNames(it) } ?: emptyMap()
+    val providerShortName = getResourcePrefix(identifier)
+    return localNames[providerShortName]
+           ?: Constants.OFFICIAL_PROVIDERS_NAMESPACE.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
+           ?: "hashicorp/$providerShortName" //The last resort
   }
 
-  fun getDataSourceType(name: String): DataSourceType? {
-    return ProviderTier.entries.mapNotNull { tier -> dataSourcesByTier[tier]?.findBinary(name) { it.type } }.firstOrNull()
+  fun getResourceType(name: String, psiElement: PsiElement? = null): ResourceType? =
+    lookupType<ResourceType>(name, psiElement, resourcesByProvider)
+
+  fun getDataSourceType(name: String, psiElement: PsiElement? = null): DataSourceType? =
+    lookupType<DataSourceType>(name, psiElement, datasourcesByProvider)
+
+  private fun <T : ResourceOrDataSourceType> lookupType(name: String, psiElement: PsiElement?, typesMap: Map<String, List<T>>): T? {
+    val providerName = getProviderFullName(name, psiElement)
+    val resourceId = getResourceName(name)
+    val defaultPrefix = providerDefaultPrefixes[providerName]?.takeIf { it != resourceId }
+    val typesCollection = typesMap[providerName] ?: return null
+    return typesCollection.firstOrNull { it.type == (defaultPrefix?.let { defaultPrefix + "_" + resourceId } ?: resourceId) }
   }
 
-  fun getProviderType(name: String): ProviderType? {
-    return ProviderTier.entries.mapNotNull { tier -> providersByTier[tier]?.findBinary(name) { it.type } }.firstOrNull()
+  fun getProviderType(name: String, psiElement: PsiElement? = null): ProviderType? {
+    val providerName = getProviderFullName(name, psiElement)
+    return providersByFullName[providerName]
   }
 
   fun getProvisionerType(name: String): ProvisionerType? {
@@ -254,16 +355,16 @@ class TypeModel(
     return functions.findBinary(name) { it.name }
   }
 
-  fun getByFQN(fqn: String): PropertyOrBlockType? {
+  fun getByFQN(fqn: String, psiElement: PsiElement? = null): PropertyOrBlockType? {
     val parts = fqn.split('.')
     if (parts.size < 2) return null
     val second = when (parts[0]) {
-                   "resource" -> {
-                     getResourceType(parts[1])
+                   HCL_RESOURCE_IDENTIFIER -> {
+                     getResourceType(parts[1], psiElement)
                    }
 
-                   "data" -> {
-                     getDataSourceType(parts[1])
+                   HCL_DATASOURCE_IDENTIFIER -> {
+                     getDataSourceType(parts[1], psiElement)
                    }
 
                    else -> null
@@ -283,6 +384,10 @@ class TypeModel(
     }
     return null
   }
+
+  fun allResources(): Iterable<ResourceType> = resourcesByProvider.values.flatten()
+  fun allDatasources(): Iterable<DataSourceType> = datasourcesByProvider.values.flatten()
+  fun allProviders(): Iterable<ProviderType> = providersByFullName.values
 }
 
 fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {
@@ -295,4 +400,16 @@ fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {
     throw IllegalStateException("Grouping clash on keys: $broken")
   }
   return this.associateBy { it.name }
+}
+
+private class RequiredProvidersVisitor(private val localNames: MutableMap<String, String>) : PsiRecursiveElementVisitor() {
+  override fun visitElement(element: PsiElement) {
+    if (RequiredProvidersData.accepts(element)) {
+      element as HCLProperty
+      val localName = element.name
+      val source = element.value?.children?.filter { RequiredProvidersSource.accepts(it) }?.firstOrNull() as? HCLProperty
+      source?.value?.name?.let { localNames.put(localName, it) }
+    }
+    element.acceptChildren(this)
+  }
 }

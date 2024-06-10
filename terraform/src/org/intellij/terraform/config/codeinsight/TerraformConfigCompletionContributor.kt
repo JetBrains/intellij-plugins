@@ -253,8 +253,24 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       doCompletion(position, Processor { result.addElement(it); !result.isStopped }, parameters)
     }
 
-    private fun buildProviderTypeText(provider: ProviderType) : String {
-      return   """${provider.fullName}${if (provider.version.isNotBlank()) " ${provider.version}" else ""}"""
+    private fun buildProviderTypeText(provider: ProviderType): String =
+      """${provider.fullName}${if (provider.version.isNotBlank()) " ${provider.version}" else ""}"""
+
+
+    private fun buildResourceDisplayString(block: BlockType, providerLocalNames: Map<String, String>): String {
+      return when (block) {
+        is ResourceOrDataSourceType -> {
+          val providerLocalName = providerLocalNames[block.provider.fullName] ?: return block.type
+          return providerLocalName + "_" + TypeModel.getResourceName(block.type)
+        }
+        is ProviderType -> {
+          val providerLocalName = providerLocalNames[block.fullName] ?: return block.type
+          providerLocalName
+        }
+        else -> {
+          block.literal
+        }
+      }
     }
 
     private fun doCompletion(position: PsiElement, consumer: Processor<LookupElement>, parameters: CompletionParameters): Boolean {
@@ -271,24 +287,30 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent, obj=$obj, lnws=$leftNWS}" }
       val type = getClearTextValue(leftNWS) ?: return true
       val typeModel = TypeModelProvider.getModel(position)
-      val addGlobalModelData = parameters.invocationCount > 1 || !typeModel.providersByTier.containsKey(ProviderTier.TIER_OFFICIAL)
+      val addGlobalModelData = parameters.invocationCount > 1 || !typeModel.hasOfficialProviders
       val tiersToIncludeByDefault = setOf(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL)
       return when (type) {
-        HCL_RESOURCE_IDENTIFIER ->
-          typeModel.resources.toPlow()
+        HCL_RESOURCE_IDENTIFIER -> {
+          val providerLocalNamesReversed = TypeModel.collectProviderLocalNames (position).entries.associateBy({ it.value }) { it.key }
+          typeModel.allResources().toPlow()
             .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier) }
-            .map { buildLookupElement(it, it.type, buildProviderTypeText(it.provider), position) }
+            .map { buildLookupElement(it, buildResourceDisplayString(it, providerLocalNamesReversed), buildProviderTypeText(it.provider), position) }
             .processWith(consumer)
-        HCL_DATASOURCE_IDENTIFIER ->
-          typeModel.dataSources.toPlow()
+        }
+        HCL_DATASOURCE_IDENTIFIER -> {
+          val providerLocalNamesReversed = TypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
+          typeModel.allDatasources().toPlow()
             .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier) }
-            .map { buildLookupElement(it, it.type, buildProviderTypeText(it.provider), position) }
+            .map { buildLookupElement(it, buildResourceDisplayString(it, providerLocalNamesReversed), buildProviderTypeText(it.provider), position) }
             .processWith(consumer)
-        HCL_PROVIDER_IDENTIFIER ->
-          typeModel.providers.toPlow()
+        }
+        HCL_PROVIDER_IDENTIFIER -> {
+          val providerLocalNamesReversed = TypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
+          typeModel.allProviders().toPlow()
             .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.tier) }
-            .map { buildProviderLookupElement(it, it.type, position) }
+            .map { buildProviderLookupElement(it, buildResourceDisplayString(it, providerLocalNamesReversed), position) }
             .processWith(consumer)
+        }
         HCL_PROVISIONER_IDENTIFIER ->
           typeModel.provisioners.toPlow()
             .map { buildLookupElement(it, it.type, it.description, position) }
@@ -301,21 +323,19 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       }
     }
 
-    private fun buildProviderLookupElement(it: ProviderType, typeName: String, position: PsiElement) = create(it)
+    private fun buildProviderLookupElement(it: ProviderType, typeName: String, position: PsiElement) = create(typeName)
       .withTailText(" ${it.namespace}", true)
       .withTypeText(it.version, true)
       .withIcon(TerraformIcons.Terraform)
-      .withPresentableText(typeName)
-      .withLookupString(it.fullName)
-      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, original = position.containingFile.originalFile))
-      .withInsertHandler(ProviderBlockInsertHandler(it))
+      .withLookupStrings(setOf(it.fullName, it.type))
+      .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
+      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, it.type, position.containingFile.originalFile))
 
-    private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement) = create(typeName)
+    private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement): LookupElementBuilder = create(typeName)
       .withTypeText(typeText, true)
       .withIcon(TerraformIcons.Terraform)
-      .withLookupString(typeName)
-      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, original = position.containingFile.originalFile))
       .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
+      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, position.containingFile.originalFile))
   }
 
   private object BlockPropertiesCompletionProvider : TfCompletionProvider() {

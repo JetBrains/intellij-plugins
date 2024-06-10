@@ -9,6 +9,7 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
 import org.intellij.terraform.hcl.psi.*
@@ -64,7 +65,7 @@ internal abstract class BaseTerraformDocUrlProvider {
     } ?: Pair(null, null)
     val type = block?.getNameElementUnquoted(0) ?: ""
     val identifier = block?.getNameElementUnquoted(1) ?: ""
-    val providerData = getProviderData(element, type, identifier)
+    val providerData = getProviderData(element, identifier)
     BlockData(identifier, type, parameter, providerData)
   }
 
@@ -75,25 +76,14 @@ internal abstract class BaseTerraformDocUrlProvider {
   }
 
   private fun getProviderData(element: PsiElement,
-                              type: String,
                               identifier: String): ProviderData? {
-    val provider = getProvider(identifier, type, element) ?: return null
+    val provider = getProvider(identifier, element) ?: return null
     return ProviderData(provider.namespace, provider.type, if (provider.version.isEmpty()) LATEST_VERSION else provider.version)
   }
 
-  protected fun getResourceId(identifier: String): String {
-    val stringList = identifier.split("_", limit = 2)
-    val id = if (stringList.size < 2) identifier else stringList[1]
-    return id
-  }
-
-  private fun getProvider(identifier: String, resourceType: String, element: PsiElement): ProviderType? {
+  private fun getProvider(identifier: String, element: PsiElement): ProviderType? {
     val model = TypeModelProvider.getModel(element)
-    return when (resourceType) {
-      HCL_RESOURCE_IDENTIFIER -> model.getResourceType(identifier)?.provider
-      HCL_DATASOURCE_IDENTIFIER -> model.getDataSourceType(identifier)?.provider
-      HCL_PROVIDER_IDENTIFIER -> model.getProviderType(identifier)
-      else -> null
-    }
+    val prefix = TypeModel.getResourcePrefix(identifier)
+    return model.getProviderType(prefix, element)
   }
 }

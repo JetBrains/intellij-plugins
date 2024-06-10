@@ -7,19 +7,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
-
-internal class ProviderBlockInsertHandler(blockType: BlockType) : ResourceBlockSubNameInsertHandler(blockType) {
-  override fun handleInsert(context: InsertionContext, item: LookupElement) {
-    super.handleInsert(context, item)
-    val providerType = item.`object` as ProviderType
-    val startOffset = context.startOffset
-    val document = context.document
-    document.replaceString(startOffset, startOffset + providerType.toString().length, providerType.type)
-  }
-}
 
 internal open class ResourceBlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
   override fun handleInsert(context: InsertionContext, item: LookupElement) {

@@ -1,13 +1,16 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.Constants.OFFICIAL_PROVIDERS_NAMESPACES
+import org.intellij.terraform.config.Constants.OFFICIAL_PROVIDERS_NAMESPACE
 
 // Model for element types
 
@@ -96,9 +99,7 @@ interface ObjectType : Type {
   val elements: Map<String, Type?>?
 }
 
-fun ObjectType(elements: Map<String, Type?>?, optional: Set<String>? = null): ObjectType {
-  return ObjectTypeImpl(elements, optional)
-}
+fun ObjectType(elements: Map<String, Type?>?, optional: Set<String>? = null): ObjectType = ObjectTypeImpl(elements, optional)
 
 private open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: Set<String>? = null) : ContainerType<Map<String, Type?>?>(
   "object", elements), ObjectType {
@@ -508,9 +509,14 @@ object Types {
   val Expression: Type = TypeImpl("expression")
 }
 
-class ResourceType(val type: String,
-                   val provider: ProviderType,
-                   properties: List<PropertyOrBlockType>) : BlockType(HCL_RESOURCE_IDENTIFIER, 2, properties = withDefaults(properties, TypeModel.AbstractResource)) {
+interface ResourceOrDataSourceType {
+  val type: String
+  val provider: ProviderType
+}
+
+class ResourceType(override val type: String,
+                   override val provider: ProviderType,
+                   properties: List<PropertyOrBlockType>) : BlockType(HCL_RESOURCE_IDENTIFIER, 2, properties = withDefaults(properties, TypeModel.AbstractResource)), ResourceOrDataSourceType {
   override fun toString(): String {
     return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -519,9 +525,9 @@ class ResourceType(val type: String,
     get() = "$literal ($type)"
 }
 
-class DataSourceType(val type: String,
-                     val provider: ProviderType,
-                     properties: List<PropertyOrBlockType>) : BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = withDefaults(properties, TypeModel.AbstractDataSource)) {
+class DataSourceType(override val type: String,
+                     override val provider: ProviderType,
+                     properties: List<PropertyOrBlockType>) : BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = withDefaults(properties, TypeModel.AbstractDataSource)), ResourceOrDataSourceType {
   override fun toString(): String {
     return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -531,14 +537,14 @@ class DataSourceType(val type: String,
 }
 
 class ProviderType(val type: String,
-                   properties: List<PropertyOrBlockType>,
+                   properties: List<PropertyOrBlockType> = emptyList<PropertyOrBlockType>(),
                    val namespace: String = "",
                    tier: ProviderTier = ProviderTier.TIER_NONE,
                    val version: String = ""
 ) : BlockType(HCL_PROVIDER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
 
   val fullName: String = "$namespace/$type"
-  val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OFFICIAL_PROVIDERS_NAMESPACES.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
+  val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OFFICIAL_PROVIDERS_NAMESPACE.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
 
   override fun toString(): String {
     return "ProviderType (type='$type' namespace='$namespace' tier='${tier.label}')"
@@ -581,4 +587,9 @@ private fun withDefaults(properties: List<PropertyOrBlockType>, default: BlockTy
   result.putAll(default.properties)
   result.putAll(properties.toMap())
   return result
+}
+
+internal fun getContainingFile(psiElement: PsiElement): PsiFile? {
+  val containingFile = psiElement.containingFile
+  return containingFile.getUserData<PsiFile>(PsiFileFactory.ORIGINAL_FILE) ?: containingFile?.originalFile
 }

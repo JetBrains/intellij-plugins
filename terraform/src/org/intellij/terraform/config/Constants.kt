@@ -18,6 +18,12 @@ object Constants {
   internal const val HCL_LOCALS_IDENTIFIER: String = "locals"
   internal const val HCL_PROVISIONER_IDENTIFIER: String = "provisioner"
   internal const val HCL_BACKEND_IDENTIFIER: String = "backend"
+  internal const val HCL_LIFECYCLE_IDENTIFIER: String = "lifecycle"
+  internal const val HCL_CONNECTION_IDENTIFIER: String = "connection"
+  internal const val HCL_MOVED_BLOCK_IDENTIFIER: String = "moved"
+  internal const val HCL_DYNAMIC_BLOCK_IDENTIFIER: String = "dynamic"
+  internal const val HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER: String = "content"
+
 
   internal const val TERRAFORM_DOMAIN: String = "terraform.io"
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
@@ -25,7 +31,7 @@ object Constants {
 
   internal const val TF_FMT: @NlsSafe String = "Terraform fmt"
 
-  internal val OFFICIAL_PROVIDERS_NAMESPACES: Set<String> = setOf("hashicorp")
+  internal val OFFICIAL_PROVIDERS_NAMESPACE = setOf("hashicorp", "builtin")
 
   internal val shouldDownloadDocs: Boolean
     get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.documentation.download")

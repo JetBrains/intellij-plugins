@@ -112,17 +112,17 @@ internal object TfModelHelper {
     if (type == HCL_PROVIDER_IDENTIFIER) {
       val fallback = TypeModel.AbstractProvider
       val name = block.getNameElementUnquoted(1) ?: return fallback
-      return TypeModelProvider.getModel(block).getProviderType(name)
+      return TypeModelProvider.getModel(block).getProviderType(name, block) ?: fallback
     }
     if (type == HCL_RESOURCE_IDENTIFIER) {
       val fallback = TypeModel.AbstractResource
       val name = block.getNameElementUnquoted(1) ?: return wrapIfCountForEach(fallback, block)
-      return wrapIfCountForEach(TypeModelProvider.getModel(block).getResourceType(name) ?: fallback, block)
+      return wrapIfCountForEach(TypeModelProvider.getModel(block).getResourceType(name, block) ?: fallback, block)
     }
     if (type == HCL_DATASOURCE_IDENTIFIER) {
       val fallback = TypeModel.AbstractDataSource
       val name = block.getNameElementUnquoted(1) ?: return wrapIfCountForEach(fallback, block)
-      return wrapIfCountForEach(TypeModelProvider.getModel(block).getDataSourceType(name) ?: fallback, block)
+      return wrapIfCountForEach(TypeModelProvider.getModel(block).getDataSourceType(name, block) ?: fallback, block)
     }
     if (type == HCL_MODULE_IDENTIFIER) {
       val fallback = TypeModel.Module
@@ -181,7 +181,7 @@ internal object TfModelHelper {
 
   private fun getProviderProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val providerType = if (type != null) TypeModelProvider.getModel(block).getProviderType(type) else null
+    val providerType = if (type != null) TypeModelProvider.getModel(block).getProviderType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractProvider, providerType)
   }
 
@@ -223,13 +223,13 @@ internal object TfModelHelper {
 
   fun getResourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val resourceType = if (type != null) TypeModelProvider.getModel(block).getResourceType(type) else null
+    val resourceType = if (type != null) TypeModelProvider.getModel(block).getResourceType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractResource, resourceType)
   }
 
   private fun getDataSourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val dataSourceType = if (type != null) TypeModelProvider.getModel(block).getDataSourceType(type) else null
+    val dataSourceType = if (type != null) TypeModelProvider.getModel(block).getDataSourceType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractDataSource, dataSourceType)
   }
 

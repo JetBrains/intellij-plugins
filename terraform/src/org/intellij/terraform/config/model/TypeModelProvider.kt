@@ -6,16 +6,15 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFileFactory
 import com.intellij.util.resettableLazy
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import java.util.concurrent.Callable
 
 @Service
-class TypeModelProvider {
+internal class TypeModelProvider {
   private val _model_lazy = resettableLazy {
-    // Run non-cancellable since it may take time, so it makes sense to finish loading even if caller was cancelled
+    // Run non-cancellable since it may take time, so it makes sense to finish loading even if the caller was canceled
     @Suppress("RedundantSamConstructor")
     ApplicationUtil.runWithCheckCanceled(Callable {
       TerraformMetadataLoader().loadDefaults() ?: TypeModel()
@@ -32,10 +31,8 @@ class TypeModelProvider {
       get() = service<TypeModelProvider>()._model
 
     fun getModel(psiElement: PsiElement): TypeModel {
-      val containingFile = psiElement.containingFile ?: return globalModel
-      val virtualFile = containingFile.originalFile.virtualFile ?: containingFile.getUserData(PsiFileFactory.ORIGINAL_FILE)?.virtualFile
-      virtualFile ?: return globalModel
-      return containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
+      val virtualFile = getContainingFile(psiElement)?.virtualFile ?: return globalModel
+      return psiElement.containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
   }
 

@@ -49,9 +49,9 @@ class TerraformMetadataLoader {
 
   fun loadFrom(another: TypeModel) {
     val tmp = buildModel()
-    model.resources.addAll(another.resources.filter { tmp.getResourceType(it.type) == null })
-    model.dataSources.addAll(another.dataSources.filter { tmp.getDataSourceType(it.type) == null })
-    model.providers.addAll(another.providers.filter { tmp.getProviderType(it.type) == null })
+    model.resources.addAll(another.allResources().filter { tmp.getResourceType(it.type) == null })
+    model.dataSources.addAll(another.allDatasources().filter { tmp.getDataSourceType(it.type) == null })
+    model.providers.addAll(another.allProviders().filter { tmp.getProviderType(it.type) == null })
     model.provisioners.addAll(another.provisioners.filter { tmp.getProvisionerType(it.type) == null })
     model.backends.addAll(another.backends.filter { tmp.getBackendType(it.type) == null })
     model.functions.addAll(another.functions.filter { tmp.getFunction(it.name) == null })

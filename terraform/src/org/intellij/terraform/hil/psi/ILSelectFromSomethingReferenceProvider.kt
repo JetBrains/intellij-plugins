@@ -200,7 +200,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
           found.addAll(blocks)
         } else {
           if (fqn != null) {
-            val type = TypeModelProvider.getModel(r).getByFQN(fqn)
+            val type = TypeModelProvider.getModel(r).getByFQN(fqn, r)
             if (type is PropertyOrBlockType && type is BlockType && type.computed) {
               found.add(FakeHCLProperty(name, r))
               return
@@ -222,7 +222,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
             val fqn = HCLQualifiedNameProvider.getQualifiedModelName(r)
             if (fqn != null) {
-              val type = TypeModelProvider.getModel(r).getByFQN(fqn)
+              val type = TypeModelProvider.getModel(r).getByFQN(fqn, r)
               if (type != null && type.computed) {
                 if (type is BlockType) {
                   addBlockProperty(type.properties, name, r, found, true)
@@ -262,7 +262,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
             if (fake) {
               val fqn = HCLQualifiedNameProvider.getQualifiedModelName(r)
-              val type = fqn?.let { TypeModelProvider.getModel(r).getByFQN(it) }
+              val type = fqn?.let { TypeModelProvider.getModel(r).getByFQN(it, r) }
               if (type is PropertyOrBlockType && type is BlockType) {
                 // It's actually an incorrectly defined block, e.g. 'test = {}' instead of 'test {}'
                 val properties = type.properties
