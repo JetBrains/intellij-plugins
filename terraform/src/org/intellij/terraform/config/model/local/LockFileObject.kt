@@ -4,6 +4,7 @@ package org.intellij.terraform.config.model.local
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
@@ -12,10 +13,15 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 
 
-internal class LockFileObject(lockFile: PsiFile) {
+internal class LockFileObject private constructor (lockFile: PsiFile) {
 
   companion object {
     internal const val VERSION: String = "version"
+
+    @RequiresReadLock
+    fun create(lockFile: PsiFile): LockFileObject {
+      return LockFileObject(lockFile)
+    }
   }
 
   internal class ProviderInfo(block: HCLBlock) {

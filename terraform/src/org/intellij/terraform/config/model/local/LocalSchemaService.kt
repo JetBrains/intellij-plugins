@@ -7,7 +7,6 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readAndWriteAction
-import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments
@@ -190,12 +189,10 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  @RequiresReadLock
-  private fun buildProviderMeta(lockData: LockFileObject?): String? {
-    val providersInfo = lockData?.providers ?: return null
+  private fun buildProviderMeta(providers: Collection<LockFileObject.ProviderInfo>): String? {
     val mapper = ObjectMapper()
     val metadataNode = mapper.createObjectNode()
-    providersInfo.values.forEach { providerInfo ->
+    providers.forEach { providerInfo ->
       val info = mapper.createObjectNode()
       info.put("type", "providers")
       val attributes = mapper.createObjectNode()
@@ -230,7 +227,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     if (lockData != null && lockData.timeStamp >= lock.timeStamp) {
       try {
-        return readLockDataJsonFile(lockData)
+        return readLockDataJsonFile(lockData.jsonPath)
       }
       catch (e: Exception) {
         if (e is CancellationException) throw e
@@ -248,7 +245,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     val jsonFilePath: String = generateResult.getOrNull() ?: lockData?.let { ld ->
       try {
-        readLockDataJsonFile(ld)
+        readLockDataJsonFile(ld.jsonPath)
         logger<LocalSchemaService>().info("using previous logData for: ${lock.name}")
         ld.jsonPath
       }
@@ -265,21 +262,14 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       }
     } ?: generateResult.getOrThrow()
 
-    writeAction {
-      updateWorkspaceModel(lock, lockData, jsonFilePath)
-    }
-    return withContext(Dispatchers.IO) {
-      val localModelJson = localModelPath.resolve(jsonFilePath).readText()
-      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lock)?.let { LockFileObject(it) }) }
-      addLockFileDataString(lockFileData, localModelJson)
-    }
+    updateWorkspaceModel(lock, lockData, jsonFilePath)
+
+    return readLockDataJsonFile(jsonFilePath)
   }
 
-  private suspend fun readLockDataJsonFile(lockData: TFLocalMetaEntity): String {
+  private suspend fun readLockDataJsonFile(path: String): String {
     return withContext(Dispatchers.IO) {
-      val localModelJson = localModelPath.resolve(lockData.jsonPath).readText()
-      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lockData.lockFile.virtualFile)?.let { LockFileObject(it) }) }
-      addLockFileDataString(lockFileData, localModelJson)
+      localModelPath.resolve(path).readText()
     }
   }
 
@@ -299,10 +289,13 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   private suspend fun generateNewJsonFile(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): @NlsSafe String {
     if (!explicitlyAllowRunningProcess && !buildLocalMetadataAutomatically) throw IllegalStateException("generateNewJsonFile is not enabled")
     val jsonFromProcess = buildJsonFromTerraformProcess(project, lock)
+    val lockFileProviders = readAction { getLockFilePsi(lock)?.let { LockFileObject.create(it).providers.values } }
+    val lockFileDataString = lockFileProviders?.let { buildProviderMeta(lockFileProviders) }
+    val modelJson = addLockFileDataString(lockFileDataString, jsonFromProcess)
     return withContext(Dispatchers.IO) {
       val uuid = UUID.randomUUID().toString()
       val jsonFile = localModelPath.resolve("$uuid.json")
-      Files.writeString(jsonFile, jsonFromProcess)
+      Files.writeString(jsonFile, modelJson)
       scope.launch { orphanCollector.cancelPreviousAndRun() }
       localModelPath.relativize(jsonFile).toString()
     }
@@ -334,13 +327,12 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TFLocalMetaEntity?, newJson: @NlsSafe String) {
+  private suspend fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TFLocalMetaEntity?, newJson: @NlsSafe String) {
     val low = (lock.timeStamp and 0xFFFFFFFFL).toInt()
     val high = (lock.timeStamp shr 32).toInt()
     val workspaceModel = WorkspaceModel.getInstance(project)
-    workspaceModel.updateProjectModel("Update TF Local Model from $lock") { storage ->
-      if (prevLockData != null)
-        storage.removeEntity(prevLockData)
+    workspaceModel.update("Update TF Local Model from $lock") { storage ->
+      if (prevLockData != null) storage.removeEntity(prevLockData)
       storage.addEntity(TFLocalMetaEntity(low, high, newJson,
                                           lock.toVirtualFileUrl(workspaceModel.getVirtualFileUrlManager()),
                                           TFLocalMetaEntity.LockEntitySource
