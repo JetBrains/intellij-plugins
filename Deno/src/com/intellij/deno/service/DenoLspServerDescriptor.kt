@@ -137,6 +137,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
   override val lspHoverSupport = false
   override val lspCompletionSupport = null
   override val lspDiagnosticsSupport = null
+  override val lspFindReferencesSupport = null
 
   override val lspFormattingSupport = object : LspFormattingSupport() {
     override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
