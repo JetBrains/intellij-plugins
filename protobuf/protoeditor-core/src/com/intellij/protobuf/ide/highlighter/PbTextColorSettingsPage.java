@@ -69,7 +69,8 @@ public class PbTextColorSettingsPage implements ColorSettingsPage {
   @Override
   public String getDemoText() {
     try {
-      return ResourceUtil.readUrlAsString(getClass().getResource("/example.pb"));
+      return ResourceUtil.readUrlAsString(getClass().getResource("/example.pb"))
+        .replace("\r\n", "\n");
     } catch (IOException e) {
       return "Error loading example.";
     }
