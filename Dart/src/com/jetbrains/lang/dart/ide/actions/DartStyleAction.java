@@ -98,7 +98,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     }
 
     final List<SourceEdit> edits = formatResult.getEdits();
-    if (edits == null || edits.size() == 0) {
+    if (edits == null || edits.isEmpty()) {
       if (editor != null && !runningAsPostFormatProcessor) {
         showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);
       }

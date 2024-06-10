@@ -218,7 +218,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     if (selectedTemplate != null) {
       myTemplatesList.setSelectedValue(selectedTemplate, true);
     }
-    else if (templates.size() > 0) {
+    else if (!templates.isEmpty()) {
       myTemplatesList.setSelectedIndex(0);
     }
   }

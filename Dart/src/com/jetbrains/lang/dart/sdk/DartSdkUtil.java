@@ -154,7 +154,7 @@ public final class DartSdkUtil {
     }
 
     List<String> knownPaths = PropertiesComponent.getInstance().getList(propertyKey);
-    if (knownPaths != null && knownPaths.size() > 0) {
+    if (knownPaths != null && !knownPaths.isEmpty()) {
       for (String path : knownPaths) {
         final String pathSD = FileUtil.toSystemDependentName(path);
         if (!pathSD.equals(currentPath) && pathChecker.test(path)) {

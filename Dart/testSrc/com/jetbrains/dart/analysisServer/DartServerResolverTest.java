@@ -98,7 +98,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     final DartSdk sdk = DartSdk.getDartSdk(element.getProject());
     if (sdk != null && path.startsWith(sdk.getHomePath())) path = "[Dart SDK]" + path.substring(sdk.getHomePath().length());
 
-    if (buf.length() > 0) buf.insert(0, " -> ");
+    if (!buf.isEmpty()) buf.insert(0, " -> ");
     buf.insert(0, path);
 
     return buf.toString();

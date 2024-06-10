@@ -367,7 +367,7 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
         setWebdevPort(myProject, myPortField.getNumber());
       }
       else {
-        if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
+        if (!myModulesWithDartSdkLibAttachedInitial.isEmpty() && mySdkInitial != null) {
           DartSdkLibUtil.disableDartSdk(myModulesWithDartSdkLibAttachedInitial);
         }
       }

@@ -111,7 +111,7 @@ public final class DartMultiHostInjector implements MultiHostInjector {
       child = child.getNextSibling();
     }
 
-    if (textBuf.length() > 0 && looksLikeHtml(textBuf.toString())) {
+    if (!textBuf.isEmpty() && looksLikeHtml(textBuf.toString())) {
       registrar.startInjecting(HTMLLanguage.INSTANCE);
 
       for (HtmlPlaceInfo info : infos) {

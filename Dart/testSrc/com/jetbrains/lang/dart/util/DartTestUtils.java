@@ -151,7 +151,7 @@ public final class DartTestUtils {
         TestCase.assertEquals("Expected one content root, got: " + contentEntries.length, 1, contentEntries.length);
 
         final ContentEntry oldContentEntry = contentEntries[0];
-        if (oldContentEntry.getSourceFolders().length != 1 || oldContentEntry.getExcludeFolderUrls().size() > 0) {
+        if (oldContentEntry.getSourceFolders().length != 1 || !oldContentEntry.getExcludeFolderUrls().isEmpty()) {
           modifiableModel.removeContentEntry(oldContentEntry);
           final ContentEntry newContentEntry = modifiableModel.addContentEntry(oldContentEntry.getUrl());
           newContentEntry.addSourceFolder(newContentEntry.getUrl(), false);

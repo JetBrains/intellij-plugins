@@ -62,7 +62,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     }
 
     final List<SourceEdit> edits = fileEdit.getEdits();
-    if (edits == null || edits.size() == 0) {
+    if (edits == null || edits.isEmpty()) {
       showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
       return;
     }

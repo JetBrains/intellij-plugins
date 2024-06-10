@@ -76,7 +76,7 @@ public final class DartGenericSpecialization implements Cloneable {
         result.append(dartComponent.getName());
       }
     }
-    if (result.length() > 0) {
+    if (!result.isEmpty()) {
       result.append("-");
     }
     result.append(genericName);

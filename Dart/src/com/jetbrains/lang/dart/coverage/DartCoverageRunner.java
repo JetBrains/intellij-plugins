@@ -106,7 +106,7 @@ public final class DartCoverageRunner extends CoverageRunner {
         }
         SortedMap<Integer, Integer> lineHits = entry.getValue();
         ClassData classData = projectData.getOrCreateClassData(filePath);
-        if (lineHits.size() == 0) {
+        if (lineHits.isEmpty()) {
           classData.setLines(new LineData[1]);
           continue;
         }
