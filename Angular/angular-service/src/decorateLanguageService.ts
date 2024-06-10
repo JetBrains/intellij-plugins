@@ -1,4 +1,3 @@
-import * as decorateLanguageServiceModule from "@volar/typescript/lib/node/decorateLanguageService"
 import {Language} from "@volar/language-core"
 import type * as TS from "./languageService"
 import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
@@ -7,23 +6,7 @@ import {getServiceScript} from "@volar/typescript/lib/node/utils"
 import {toGeneratedOffset} from "@volar/typescript/lib/node/transform"
 import {AngularVirtualCode} from "./code"
 
-let decorated = false
-
-export function patchVolarAndDecorateLanguageService() {
-  if (decorated) return
-  decorated = true
-  let {decorateLanguageService} = decorateLanguageServiceModule
-
-  // @ts-ignore TS2540
-  decorateLanguageServiceModule.decorateLanguageService =
-    (language: Language<string>, languageService: TS.LanguageService, caseSensitiveFileNames: boolean) => {
-      decorateLanguageService(language, languageService as any /* due to difference in TS version we need to cast to any */, caseSensitiveFileNames)
-      decorateIdeLanguageServiceExtensions(language, languageService)
-      decorateNgLanguageServiceExtensions(language, languageService)
-    }
-}
-
-function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
+export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
 
   let {webStormGetElementType, webStormGetTypeProperties, webStormGetSymbolType} = languageService
 
@@ -37,26 +20,29 @@ function decorateIdeLanguageServiceExtensions(language: Language<string>, langua
     forceReturnType: boolean,
     reverseMapper?: ReverseMapper,
   ): GetElementTypeResponse => {
-    const [serviceScript, sourceScript, map] =
+    const [serviceScript, targetScript, sourceScript] =
       getServiceScript(language, fileName);
+    if (targetScript?.associatedOnly) {
+      return undefined;
+    }
     const program = languageService.getProgram()
     const sourceFile = program?.getSourceFile(fileName);
-    const generatedFile = sourceScript ? program?.getSourceFile(sourceScript.id) : undefined;
+    const generatedFile = targetScript ? program?.getSourceFile(targetScript.id) : undefined;
 
     if (serviceScript && sourceFile && generatedFile) {
       try {
         let originalRangePosStart = ts.getPositionOfLineAndCharacter(sourceFile, range.start.line, range.start.character)
         let originalRangePosEnd = ts.getPositionOfLineAndCharacter(sourceFile, range.end.line, range.end.character)
 
-        const generatedRangePosStart = toGeneratedOffset(serviceScript, sourceScript, map, originalRangePosStart, () => true);
-        const generatedRangePosEnd = toGeneratedOffset(serviceScript, sourceScript, map, originalRangePosEnd, () => true);
+        const generatedRangePosStart = toGeneratedOffset(language, serviceScript, sourceScript, originalRangePosStart, () => true);
+        const generatedRangePosEnd = toGeneratedOffset(language, serviceScript, sourceScript, originalRangePosEnd, () => true);
 
         if (generatedRangePosStart !== undefined && generatedRangePosEnd !== undefined) {
           const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRangePosStart)
           const end = ts.getLineAndCharacterOfPosition(generatedFile, generatedRangePosEnd)
 
           //TODO support reverseMapper
-          return webStormGetElementType(ts as any, sourceScript.id, {start, end}, forceReturnType)
+          return webStormGetElementType(ts as any, targetScript.id, {start, end}, forceReturnType)
         }
       }
       catch (e) {
@@ -89,7 +75,7 @@ function decorateIdeLanguageServiceExtensions(language: Language<string>, langua
 
 }
 
-function decorateNgLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
+export function decorateNgLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
   languageService.webStormNgUpdateTranspiledTemplate = (
     _ts, fileName,transpiledCode,sourceCode: { [key: string]: string }, mappings
   ) => {

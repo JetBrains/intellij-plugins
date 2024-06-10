@@ -2,65 +2,75 @@
 
 import type * as ts from "./languageService";
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
-import {CodeMapping, LanguagePlugin} from "@volar/language-core"
+import {CodeMapping, Language, LanguagePlugin} from "@volar/language-core"
 import {AngularVirtualCode} from "./code"
-import {patchVolarAndDecorateLanguageService} from "./decorateLanguageService"
+import {
+  decorateIdeLanguageServiceExtensions,
+  decorateNgLanguageServiceExtensions,
+} from "./decorateLanguageService"
 import {hasComponentDecorator} from "./utils"
 import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/types"
 
-patchVolarAndDecorateLanguageService()
-
 function loadLanguagePlugins(ts: typeof import('typescript'),
-                             info: ts.server.PluginCreateInfo): [LanguagePlugin<string, AngularVirtualCode>] {
+                             info: ts.server.PluginCreateInfo): {
+  languagePlugins: [LanguagePlugin<string, AngularVirtualCode>];
+  setup?: (language: Language<string>) => void;
+} {
   addNgCommands(ts, info);
   let ngTcbBlocks = new Map<string, AngularVirtualCode>()
-  return [{
-    getLanguageId(scriptId: string): string | undefined {
-      return scriptId.endsWith(".html") ? "html" : undefined
-    },
-    isAssociatedFileOnly(_scriptId: string, languageId: string): boolean {
-      return languageId === "html"
-    },
-    createVirtualCode(scriptId: string, languageId: string, snapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
-      if (languageId === "typescript" && hasComponentDecorator(
-        ts, scriptId, snapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
-      )) {
-        let virtualCode = ngTcbBlocks.get(scriptId)
-        if (!virtualCode) {
-          virtualCode = new AngularVirtualCode(scriptId, ctx, ts.sys.useCaseSensitiveFileNames)
-          ngTcbBlocks.set(scriptId, virtualCode)
+  return {
+    languagePlugins: [{
+      getLanguageId(scriptId: string): string | undefined {
+        return scriptId.endsWith(".html") ? "html" : undefined
+      },
+      isAssociatedFileOnly(_scriptId: string, languageId: string): boolean {
+        return languageId === "html"
+      },
+      createVirtualCode(scriptId: string, languageId: string, snapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
+        if (languageId === "typescript" && hasComponentDecorator(
+          ts, scriptId, snapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
+        )) {
+          let virtualCode = ngTcbBlocks.get(scriptId)
+          if (!virtualCode) {
+            virtualCode = new AngularVirtualCode(scriptId, ctx, ts.sys.useCaseSensitiveFileNames)
+            ngTcbBlocks.set(scriptId, virtualCode)
+          }
+          return virtualCode.sourceFileUpdated(snapshot)
         }
-        return virtualCode.sourceFileUpdated(snapshot)
-      }
-      return undefined
-    },
-    updateVirtualCode(scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
-      if (hasComponentDecorator(
-        ts, scriptId, newSnapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
-      )) {
-        return virtualCode.sourceFileUpdated(newSnapshot)
-      }
-      else {
-        ngTcbBlocks.delete(scriptId)
         return undefined
-      }
-    },
-    typescript: {
-      extraFileExtensions: [{
-        extension: "html",
-        scriptKind: ts.ScriptKind.External,
-        isMixedContent: true,
-      }],
-      getServiceScript(rootVirtualCode: AngularVirtualCode): TypeScriptServiceScript | undefined {
-        return {
-          code: rootVirtualCode,
-          extension: ".ts",
-          scriptKind: ts.ScriptKind.TS,
-          preventLeadingOffset: true,
+      },
+      updateVirtualCode(scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
+        if (hasComponentDecorator(
+          ts, scriptId, newSnapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
+        )) {
+          return virtualCode.sourceFileUpdated(newSnapshot)
+        }
+        else {
+          ngTcbBlocks.delete(scriptId)
+          return undefined
+        }
+      },
+      typescript: {
+        extraFileExtensions: [{
+          extension: "html",
+          scriptKind: ts.ScriptKind.External,
+          isMixedContent: true,
+        }],
+        getServiceScript(rootVirtualCode: AngularVirtualCode): TypeScriptServiceScript | undefined {
+          return {
+            code: rootVirtualCode,
+            extension: ".ts",
+            scriptKind: ts.ScriptKind.TS,
+            preventLeadingOffset: true,
+          }
         }
       }
+    }],
+    setup(language: Language<string>) {
+      decorateIdeLanguageServiceExtensions(language, info.languageService)
+      decorateNgLanguageServiceExtensions(language, info.languageService)
     }
-  }]
+  }
 }
 
 const ngTranspiledTemplateCommand = "ngTranspiledTemplate";
