@@ -45,7 +45,7 @@ public class DartFunctionDescription {
   public String getParametersListPresentableText() {
     final StringBuilder result = new StringBuilder();
     for (DartParameterDescription parameterDescription : myParameters) {
-      if (result.length() > 0) {
+      if (!result.isEmpty()) {
         result.append(", ");
       }
       result.append(parameterDescription.toString());
@@ -55,7 +55,7 @@ public class DartFunctionDescription {
     if (myOptionalParameters.length > 0) {
       final String[] braces = myOptionalParameters[0].isPositional() ? new String[]{"[", "]"} : new String[]{"{", "}"};
 
-      if (result.length() > 0) {
+      if (!result.isEmpty()) {
         result.append(", ");
       }
       result.append(braces[0]);

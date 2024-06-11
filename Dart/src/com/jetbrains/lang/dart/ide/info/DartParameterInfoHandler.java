@@ -106,7 +106,7 @@ public final class DartParameterInfoHandler implements ParameterInfoHandler<PsiE
       return;
     }
     myParametersListPresentableText = p.getParametersListPresentableText();
-    if (myParametersListPresentableText != null && myParametersListPresentableText.length() == 0) {
+    if (myParametersListPresentableText != null && myParametersListPresentableText.isEmpty()) {
       myParametersListPresentableText = CodeInsightBundle.message("parameter.info.no.parameters");
     }
     context.setupUIComponentPresentation(

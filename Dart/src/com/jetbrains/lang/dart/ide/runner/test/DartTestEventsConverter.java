@@ -196,7 +196,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
         path = test.getName().substring(COMPILING_PREFIX.length());
       }
 
-      if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
+      if (!path.isEmpty()) myLocation = FILE_URL_PREFIX + path;
 
       test.myTestStartReported = false;
       return true;

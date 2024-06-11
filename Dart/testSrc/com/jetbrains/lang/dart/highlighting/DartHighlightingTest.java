@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlighting;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.openapi.application.ApplicationManager;
@@ -13,8 +12,6 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-
-import java.util.List;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   @Override

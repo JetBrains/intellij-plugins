@@ -8,8 +8,6 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.packageDependencies.ui.PackageDependenciesNode;
-import com.intellij.ui.ColoredTreeCellRenderer;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.jetbrains.annotations.NotNull;
 

@@ -54,7 +54,7 @@ public class DartTestRerunner implements RunProfileState {
           !((SMTestProxy)test).isSuite() &&
           test.isLeaf() &&
           (magnitude == Magnitude.FAILED_INDEX || magnitude == Magnitude.ERROR_INDEX || magnitude == Magnitude.TERMINATED_INDEX)) {
-        if (buf.length() > 0) buf.append('|');
+        if (!buf.isEmpty()) buf.append('|');
         buf.append(buildFullTestName(test));
       }
     }

@@ -69,7 +69,7 @@ class DartPackageAwareFileReference extends FileReference {
     if (index > 0 && PACKAGES_FOLDER_NAME.equals(allReferences[index - 1].getText())) {
       final StringBuilder b = new StringBuilder();
       for (int i = index + 1; i < allReferences.length; i++) {
-        if (b.length() > 0) b.append('/');
+        if (!b.isEmpty()) b.append('/');
         b.append(allReferences[i].getText());
       }
 
