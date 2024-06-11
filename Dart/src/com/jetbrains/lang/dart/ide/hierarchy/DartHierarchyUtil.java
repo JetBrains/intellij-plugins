@@ -46,7 +46,7 @@ public final class DartHierarchyUtil {
   public static Comparator<NodeDescriptor<?>> getComparator(Project project) {
     final HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(project).getState();
     if (state != null && state.SORT_ALPHABETICALLY) {
-      return AlphaComparator.INSTANCE;
+      return AlphaComparator.getInstance();
     }
     else {
       return NODE_DESCRIPTOR_COMPARATOR;
