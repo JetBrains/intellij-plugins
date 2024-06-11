@@ -60,6 +60,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   NG_ZORRO_ANTD_8_5_0_IVY("ng-zorro-antd", "8.5.0-ivy"),
   RXJS_6_4_0("rxjs", "6.4.0"),
   RXJS_7_8_1("rxjs", "7.8.1"),
+  TS_LIB("tslib", "2.6.2"),
   ;
 
   override val packageNames: List<String> = listOf(myPackageName)

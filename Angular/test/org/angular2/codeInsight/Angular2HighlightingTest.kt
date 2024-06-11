@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
@@ -241,6 +242,20 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
       else
         checkHighlighting(true, checkInformation, true)
     }
+  }
+
+  override fun adjustModules(modules: Array<out WebFrameworkTestModule>): Array<out WebFrameworkTestModule> {
+    val result = mutableSetOf(*modules)
+
+    if (TS_LIB !in result) {
+      result.add(TS_LIB)
+    }
+
+    if (result.flatMap { it.packageNames }.none { it == "@angular/core" }) {
+      result.add(ANGULAR_CORE_16_2_8)
+    }
+
+    return result.toTypedArray()
   }
 
   private fun loadInjectionsAndCheckHighlighting(checkInformation: Boolean) {
