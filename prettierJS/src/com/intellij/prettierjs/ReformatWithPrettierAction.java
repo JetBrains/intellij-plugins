@@ -173,7 +173,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return checkNodeAndPackage(file, editor, errorHandler);
   }
 
-  public static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler, @Nullable TextRange targetRange) {
+  public static void processFileInEditor(@NotNull Project project,
+                                         @NotNull Editor editor,
+                                         @NotNull ErrorHandler errorHandler,
+                                         @Nullable TextRange targetRange) {
     if (!isAvailable(project, editor, errorHandler)) return;
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
@@ -243,7 +246,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
     Project project = file.getProject();
 
-    if (!checkNodeAndPackage(file, null, PrettierActionOnSave.NOOP_ERROR_HANDLER)) {
+    if (!checkNodeAndPackage(file, null, NOOP_ERROR_HANDLER)) {
       return range;
     }
 
@@ -509,6 +512,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       showError(project, editor, text, () -> showErrorDetails(project, details));
     }
   }
+
+  static final ReformatWithPrettierAction.ErrorHandler NOOP_ERROR_HANDLER = new ReformatWithPrettierAction.ErrorHandler() {
+    @Override
+    public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
+      // No need to show any notification in case of 'Prettier on save' failure.
+      // Most likely the file is simply not syntactically valid at the moment.
+    }
+  };
 
   private static class DefaultErrorHandler implements ErrorHandler {
     @Override
