@@ -6,6 +6,7 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.ActionsOnSaveTestUtil;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
 import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -17,7 +18,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -118,7 +118,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     myFixture.configureByText("foo.js", "var  a=''");
     myFixture.type(' ');
     myFixture.performEditorAction(saveActionId);
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
+    ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.getProject());
+
     myFixture.checkResult("var a = \"\";\n");
   }
 
