@@ -1,4 +1,4 @@
-import {Component, Input, Directive, NgModule} from '@angular/core';
+import {Component, Input, Directive} from '@angular/core';
 
 @Directive({
              standalone: true,

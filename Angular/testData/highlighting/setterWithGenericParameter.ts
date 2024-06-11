@@ -10,7 +10,7 @@ export abstract class CustomizableComponent<T extends string> {
     return false;
   }
 
-  @Input() set variation(<warning descr="Unused parameter val">val</warning>: T) {
+  @Input() set variation(<warning descr="Unused parameter val"><weak_warning descr="TS6133: 'val' is declared but its value is never read.">val</weak_warning></warning>: T) {
   }
 }
 

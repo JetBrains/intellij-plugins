@@ -2,8 +2,8 @@
 import {Input, Component} from '@angular/core';
 
 @Component(<error descr="SubmitButton doesn't have a template">{}</error>)
-class SubmitButton {
-  private _disabled: boolean;
+export class SubmitButton {
+  private _disabled!: boolean;
 
   @Input()
   get disabled(): boolean {
@@ -11,15 +11,15 @@ class SubmitButton {
   }
 
   set disabled(value: boolean) {
-    this._disabled = (value === '') || value;
+    this._disabled = (value === true) || value;
   }
 
   @Input()
-  foo: string
+  foo!: string
 
   static ngAcceptInputType_disabled: boolean|'';
 
-  <warning descr="Unused field ngAcceptInputType_foo">ngAcceptInputType_foo</warning>: boolean|'';
+  <warning descr="Unused field ngAcceptInputType_foo">ngAcceptInputType_foo</warning>!: boolean|'';
 
   static <warning descr="Unused field ngAcceptInputType_bar">ngAcceptInputType_bar</warning>: boolean|'';
 }

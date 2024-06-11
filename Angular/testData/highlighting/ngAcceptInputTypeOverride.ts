@@ -13,12 +13,12 @@ import {Component, Input} from "@angular/core"
 })
 export class MyComp2 {
 
-  @Input() bar: /*c2*/ number
+  @Input() bar!: /*c2*/ number
 
-  @Input() boo: /*c2*/ string
+  @Input() boo!: /*c2*/ string
 
   static ngAcceptInputType_bar: string | boolean;
 
-  <warning descr="Unused field ngAcceptInputType_boo">ngAcceptInputType_boo</warning>: string | boolean;
+  <warning descr="Unused field ngAcceptInputType_boo">ngAcceptInputType_boo</warning>!: string | boolean;
 
 }

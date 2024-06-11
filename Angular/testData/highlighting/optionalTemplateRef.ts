@@ -1,11 +1,11 @@
-import {Component, Directive, Input, model, Optional, Self, TemplateRef} from "@angular/core";
+import {Component, Directive, Input, Optional, Self, TemplateRef} from "@angular/core";
 
 @Directive({
    selector: '[foo]',
    standalone: true
  })
 export class FooDirective {
-  public constructor(@Optional() @Self() private readonly template: TemplateRef<void> ) {
+  public constructor(@Optional() @Self() private readonly <weak_warning descr="TS6138: Property 'template' is declared but its value is never read.">template</weak_warning>: TemplateRef<void> ) {
 
   }
   @Input() foo!: string;
@@ -16,7 +16,7 @@ export class FooDirective {
    standalone: true
  })
 export class BarDirective {
-  public constructor(@Self() private readonly template: TemplateRef<void> ) {
+  public constructor(@Self() private readonly <weak_warning descr="TS6138: Property 'template' is declared but its value is never read.">template</weak_warning>: TemplateRef<void> ) {
 
   }
   @Input() bar!: string;

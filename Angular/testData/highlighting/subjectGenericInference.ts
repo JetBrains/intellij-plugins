@@ -6,7 +6,7 @@ type Greeting = {
   hello: string;
 }
 
-type <warning descr="Unused type alias Greeting2">Greeting2</warning> = {
+type <warning descr="Unused type alias Greeting2"><weak_warning descr="TS6196: 'Greeting2' is declared but never used.">Greeting2</weak_warning></warning> = {
   foo: string;
 }
 

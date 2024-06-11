@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-import {Component, Directive, Input, Output, ViewContainerRef, TemplateRef} from '@angular/core';
+import {Component, Directive, Input, ViewContainerRef, TemplateRef} from '@angular/core';
 
 
 @Directive({
@@ -8,7 +8,7 @@ import {Component, Directive, Input, Output, ViewContainerRef, TemplateRef} from
            })
 export class TestDirective {
   @Input({required: true, alias: "myRequiredInput"})
-  myInput;
+  myInput: any;
 }
 
 @Directive({
@@ -17,7 +17,7 @@ export class TestDirective {
            })
 export class TestDirective2 {
   @Input({required: false, alias: "myOptionalInput"})
-  myInput;
+  myInput: any;
 }
 
 @Directive({
@@ -26,7 +26,7 @@ export class TestDirective2 {
            })
 export class TestDirective3 {
   @Input({required: true, alias: "theRequiredInput"})
-  myInput;
+  myInput: any;
 }
 
 @Directive({
@@ -36,11 +36,11 @@ export class TestDirective3 {
 export class NgForOf {
 
   @Input({required: true})
-  set ngForOf(<warning descr="Unused parameter ngForOf">ngForOf</warning>: any) {
+  set ngForOf(<warning descr="Unused parameter ngForOf"><weak_warning descr="TS6133: 'ngForOf' is declared but its value is never read.">ngForOf</weak_warning></warning>: any) {
   }
 
   @Input()
-  set ngForTrackBy(<warning descr="Unused parameter fn">fn</warning>: any) {
+  set ngForTrackBy(<warning descr="Unused parameter fn"><weak_warning descr="TS6133: 'fn' is declared but its value is never read.">fn</weak_warning></warning>: any) {
   }
 
   get ngForTrackBy(): any {
@@ -48,12 +48,12 @@ export class NgForOf {
   }
 
   constructor(
-    private _viewContainer: ViewContainerRef,
-    private _template: TemplateRef<any>,
+    private <weak_warning descr="TS6138: Property '_viewContainer' is declared but its value is never read.">_viewContainer</weak_warning>: ViewContainerRef,
+    private <weak_warning descr="TS6138: Property '_template' is declared but its value is never read.">_template</weak_warning>: TemplateRef<any>,
   ) {}
 
   @Input()
-  set ngForTemplate(<warning descr="Unused parameter value">value</warning>: any) {
+  set ngForTemplate(<warning descr="Unused parameter value"><weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning></warning>: any) {
   }
 
 }

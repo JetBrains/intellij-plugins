@@ -1,19 +1,19 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgForOf } from '@angular/common';
 
 @Component({
     selector: 'g[some-attr]',
     template: ``
 })
-export class GComponent implements OnInit, OnDestroy {
+export class GComponent {
 }
 
 @Component({
     selector: 'f[some-attr]',
     template: ``
 })
-export class FComponent implements OnInit, OnDestroy {
+export class FComponent {
 }
 
 @Component({
@@ -29,7 +29,7 @@ export class FComponent implements OnInit, OnDestroy {
       <<error descr="Component or directive matching f element is out of scope of the current template">f</error>></f>
     </svg>`,
 })
-export class RoomSelectorComponent implements OnInit, OnDestroy {
+export class RoomSelectorComponent {
     viewBox = '-20 -20 618.88 407.99';
     roomSvg = {
         borders: [{

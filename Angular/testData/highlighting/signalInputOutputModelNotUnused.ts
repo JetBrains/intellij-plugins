@@ -1,10 +1,8 @@
 import {Component, input, output, signal, model} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -13,11 +11,11 @@ export class AppComponent {
 
   inputWithAlias = input(42, {alias: "aliasedInput"})
 
-  inputWithAlias = input.required({alias: "aliasedInput"})
+  inputWithAliasRequired = input.required({alias: "aliasedInput"})
 
   modelWithAlias = model(42, {alias: "aliasedModel"})
 
-  modelWithAlias = model.required({alias: "aliasedModel"})
+  modelWithAliasRequired = model.required({alias: "aliasedModel"})
 
   outputWithAlias = output({alias: "aliasedOutput"})
 

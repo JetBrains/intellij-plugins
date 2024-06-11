@@ -10,7 +10,7 @@ export declare type BooleanInput = string | boolean | null | undefined;
   template: "",
 })
 class SideNav {
-  private value: boolean
+  private value!: boolean
   get fixedInViewport(): boolean {
     return this.value;
   }
@@ -23,10 +23,9 @@ class SideNav {
 @Directive({
    selector: '[icn-btn]',
    standalone: true,
-   template: "",
  })
 class IcnBtn {
-  private value: boolean
+  private value!: boolean
   get disabled(): boolean {
     return this.value;
   }

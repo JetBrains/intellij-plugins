@@ -51,7 +51,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
    * @see Angular2ExpressionTypesInspectionTest.testNullChecks
    * @see Angular2ExpressionTypesInspectionTest.testNullChecksInline
    */
-  fun testTypeMismatchErrorWithOptionalInputs() = checkHighlighting(dir = true, extension = "ts", strictTemplates = true)
+  fun testTypeMismatchErrorWithOptionalInputs() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
+                                                                    dir = true, extension = "ts", strictTemplates = true)
 
   fun testHostDirectives() = checkHighlighting(dir = true)
 

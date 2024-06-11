@@ -10,5 +10,5 @@ import {<info descr="identifiers//exported function">Component</info>} <info des
     </inject>`
  })
 export class <info descr="classes//exported class">RobotProfileComponent</info> {
-  <info descr="instance field">bar</info>: <info descr="null">string</info>[]
+  <info descr="instance field">bar</info>!: <info descr="null">string</info>[]
 }
