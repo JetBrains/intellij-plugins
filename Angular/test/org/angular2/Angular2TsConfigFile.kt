@@ -37,11 +37,11 @@ class Angular2TsConfigFile(
             "outDir": "./dist/out-tsc",
             "forceConsistentCasingInFileNames": true,
             ${
-      listOfNotNull(
-        strict.let { "\"strict\": $it" },
-        strictNullChecks?.let { "\"strictNullChecks\": $it" },
-      ).joinToString(",\n" + "            ")
-    }
+              listOfNotNull(
+                strict.let { "\"strict\": $it" },
+                strictNullChecks?.let { "\"strictNullChecks\": $it" },
+              ).joinToString(",\n" + "            ")
+            },
             "noImplicitOverride": true,
             "noPropertyAccessFromIndexSignature": true,
             "noImplicitReturns": true,

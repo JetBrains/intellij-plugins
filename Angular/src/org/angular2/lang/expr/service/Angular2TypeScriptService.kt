@@ -11,6 +11,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
+import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
@@ -18,6 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
+import com.intellij.util.ui.EDT
 import icons.AngularIcons
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
@@ -53,7 +55,8 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
-    element.language is Angular2Language || super.supportsTypeEvaluation(virtualFile, element)
+    element.language.let { it is Angular2Language || it is Angular2HtmlDialect }
+    || super.supportsTypeEvaluation(virtualFile, element)
 
   override fun isDisabledByContext(context: VirtualFile): Boolean =
     super.isDisabledByContext(context)
@@ -81,7 +84,7 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
       get() = this@AngularTypeScriptService
 
     override fun getElementType(element: PsiElement, virtualFile: VirtualFile): JSType? =
-      if (element !is JSElement) null else super.getElementType(element, virtualFile)
+      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile)
 
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)
@@ -93,7 +96,10 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 }
 
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  if (!isAngular2Context(project, context)) return false
+  if (EDT.isCurrentThreadEdt())
+    !isAngular2Context(project, context)
+  else
+    computeCancellable<Boolean, Throwable> { !isAngular2Context(project, context) }
 
   return when (getAngularSettings(project).serviceType) {
     AngularServiceSettings.AUTO -> true
