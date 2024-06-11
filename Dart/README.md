@@ -11,7 +11,7 @@ for help to get started with Dart development and the IntelliJ IDEA plugin.
 ## Reporting Issues
 
 Please file issues at YouTrack
-[bug tracker](https://youtrack.jetbrains.com/issues/WEB?q=Subsystem:%20Dart).
+[bug tracker](https://youtrack.jetbrains.com/issues/IDEA?q=Subsystem:%20%7BLang.%20Dart%7D).
 
 ## Developing the Plugin
 
