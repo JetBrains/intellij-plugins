@@ -39,7 +39,7 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
   public String getName() {
     StringBuilder name = new StringBuilder();
     for (DartId id : PsiTreeUtil.getChildrenOfTypeAsList(this, DartId.class)) {
-      if (name.length() > 0) {
+      if (!name.isEmpty()) {
         name.append('.');
       }
       name.append(id.getText());

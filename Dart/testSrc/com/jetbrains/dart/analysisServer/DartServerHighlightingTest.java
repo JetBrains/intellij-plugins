@@ -11,7 +11,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.containers.ContainerUtil;
