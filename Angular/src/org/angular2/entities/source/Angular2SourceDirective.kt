@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
+import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.getStubSafeChildren
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
@@ -253,7 +254,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
               var hasViewContainerRef = false
               var isTemplateRefOptional = false
               paramList.parameters.forEach {
-                val typeText = it.jsType?.typeText ?: return@forEach
+                val typeText = it.jsType?.let { type -> if (type is TypeScriptCompilerType) type.substitute() else type }?.typeText
+                               ?: return@forEach
                 when {
                   typeText.contains(ELEMENT_REF) -> hasElementRef = true
                   typeText.contains(VIEW_CONTAINER_REF) -> hasViewContainerRef = true
