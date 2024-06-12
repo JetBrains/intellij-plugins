@@ -1,5 +1,6 @@
-package com.intellij.deno.entities
+package com.intellij.deno.entities.impl
 
+import com.intellij.deno.entities.DenoEntity
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.EntityType
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
@@ -20,7 +21,7 @@ import kotlin.jvm.JvmStatic
 
 @GeneratedCodeApiVersion(3)
 @GeneratedCodeImplVersion(5)
-open class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, WorkspaceEntityBase(dataSource) {
+internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, WorkspaceEntityBase(dataSource) {
 
   private companion object {
 
@@ -53,8 +54,8 @@ open class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, 
   }
 
 
-  class Builder(result: DenoEntityData?) : ModifiableWorkspaceEntityBase<DenoEntity, DenoEntityData>(result), DenoEntity.Builder {
-    constructor() : this(DenoEntityData())
+  internal class Builder(result: DenoEntityData?) : ModifiableWorkspaceEntityBase<DenoEntity, DenoEntityData>(result), DenoEntity.Builder {
+    internal constructor() : this(DenoEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
       if (this.diff != null) {
@@ -135,7 +136,7 @@ open class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, 
   }
 }
 
-class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
+internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   var depsFile: VirtualFileUrl? = null
   var denoTypes: VirtualFileUrl? = null
 

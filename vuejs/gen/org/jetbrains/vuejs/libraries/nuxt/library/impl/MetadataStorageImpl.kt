@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.libraries.nuxt.library
+package org.jetbrains.vuejs.libraries.nuxt.library.impl
 
 import com.intellij.platform.workspace.storage.metadata.impl.MetadataStorageBase
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
@@ -8,7 +8,7 @@ import com.intellij.platform.workspace.storage.metadata.model.OwnPropertyMetadat
 import com.intellij.platform.workspace.storage.metadata.model.StorageTypeMetadata
 import com.intellij.platform.workspace.storage.metadata.model.ValueTypeMetadata
 
-object MetadataStorageImpl: MetadataStorageBase() {
+internal object MetadataStorageImpl: MetadataStorageBase() {
     override fun initializeMetadata() {
         val primitiveTypeListNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "List")
         

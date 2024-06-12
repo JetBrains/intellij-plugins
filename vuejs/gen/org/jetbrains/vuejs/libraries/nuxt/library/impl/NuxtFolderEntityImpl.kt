@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.libraries.nuxt.library
+package org.jetbrains.vuejs.libraries.nuxt.library.impl
 
 import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.EntitySource
@@ -18,10 +18,11 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInstrumentationApi
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
+import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity
 
 @GeneratedCodeApiVersion(3)
 @GeneratedCodeImplVersion(5)
-open class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : NuxtFolderEntity, WorkspaceEntityBase(dataSource) {
+internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : NuxtFolderEntity, WorkspaceEntityBase(dataSource) {
 
   private companion object {
 
@@ -54,9 +55,9 @@ open class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : 
   }
 
 
-  class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
+  internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
     result), NuxtFolderEntity.Builder {
-    constructor() : this(NuxtFolderEntityData())
+    internal constructor() : this(NuxtFolderEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
       if (this.diff != null) {
@@ -163,7 +164,7 @@ open class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : 
   }
 }
 
-class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
+internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   lateinit var nuxtFolderUrl: VirtualFileUrl
   lateinit var libraryFileUrls: MutableList<VirtualFileUrl>
 

@@ -1,8 +1,9 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.config.model.local
+package org.intellij.terraform.config.model.local.impl
 
 import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.EntitySource
+import com.intellij.platform.workspace.storage.EntityType
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
 import com.intellij.platform.workspace.storage.MutableEntityStorage
@@ -15,10 +16,11 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInstrumentationApi
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
+import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 
 @GeneratedCodeApiVersion(3)
 @GeneratedCodeImplVersion(5)
-open class TFLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityData) : TFLocalMetaEntity, WorkspaceEntityBase(dataSource) {
+internal class TFLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityData) : TFLocalMetaEntity, WorkspaceEntityBase(dataSource) {
 
   private companion object {
 
@@ -61,9 +63,9 @@ open class TFLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityData) 
   }
 
 
-  class Builder(result: TFLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TFLocalMetaEntity, TFLocalMetaEntityData>(
+  internal class Builder(result: TFLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TFLocalMetaEntity, TFLocalMetaEntityData>(
     result), TFLocalMetaEntity.Builder {
-    constructor() : this(TFLocalMetaEntityData())
+    internal constructor() : this(TFLocalMetaEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
       if (this.diff != null) {
@@ -165,7 +167,7 @@ open class TFLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityData) 
   }
 }
 
-class TFLocalMetaEntityData : WorkspaceEntityData<TFLocalMetaEntity>() {
+internal class TFLocalMetaEntityData : WorkspaceEntityData<TFLocalMetaEntity>() {
   var timeStampLow: Int = 0
   var timeStampHigh: Int = 0
   lateinit var jsonPath: String
