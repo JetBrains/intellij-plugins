@@ -22,9 +22,9 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
-import com.jetbrains.nodeJs.NodeDebugProgramRunnerKt;
+import com.jetbrains.debugger.wip.WipLocalVmConnection;
+import com.jetbrains.nodeJs.NodeChromeDebugProcess;
 import com.jetbrains.nodeJs.NodeJSDebuggableConfiguration;
-import com.jetbrains.nodeJs.NodeJsDebugProcess;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import com.jetbrains.plugins.meteor.MeteorProjectStartupActivity;
@@ -85,9 +85,9 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
                                           @NotNull XDebugSession session,
                                           @Nullable ExecutionResult executionResult,
                                           @NotNull ExecutionEnvironment environment) {
-    var connection = NodeDebugProgramRunnerKt.createRemoteConnection();
+    var connection = new WipLocalVmConnection();
     DebuggableFileFinder fileFinder = createFileFinder(session.getProject());
-    var process = new NodeJsDebugProcess(session, connection, fileFinder, true, executionResult);
+    var process = new NodeChromeDebugProcess(session, fileFinder, connection, executionResult);
     connection.open(socketAddress);
     return process;
   }

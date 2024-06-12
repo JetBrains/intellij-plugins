@@ -43,7 +43,6 @@ class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunC
     for (extraArg in extraArgs) {
       if (extraArg.contains("--inspect-brk") || extraArg.contains("--inspect")) hasInspect = true
     }
-    NodeCommandLineUtil.useInspectorProtocol(commandLine, true)
 
     if (!hasInspect && configurator is NodeDebugCommandLineConfigurator) {
       val debugPort = configurator.debugPort
