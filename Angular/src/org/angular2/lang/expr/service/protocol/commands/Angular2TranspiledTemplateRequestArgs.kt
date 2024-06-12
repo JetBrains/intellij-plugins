@@ -52,7 +52,7 @@ internal fun TranspiledComponentFile.toAngular2TranspiledTemplateRequestArgs(vir
 
 private fun Angular2TranspiledComponentFileBuilder.FileMappings.toCodeMapping(): CodeMapping {
   val fileName = fileName
-  val mappings = sourceMappings.sortedBy { it.sourceOffset }
+  val mappings = sourceMappings
   val prevMappingStart = -1
   val prevMappingLength = 0
   mappings.forEach {

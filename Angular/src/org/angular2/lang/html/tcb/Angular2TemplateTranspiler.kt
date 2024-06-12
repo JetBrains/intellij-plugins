@@ -1,5 +1,6 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.psi.PsiFile
 import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.entities.Angular2ClassBasedComponent
 import org.angular2.entities.Angular2Component
@@ -7,12 +8,20 @@ import org.angular2.lang.html.Angular2HtmlFile
 
 object Angular2TemplateTranspiler {
 
-  fun transpileTemplate(component: Angular2Component, tcbId: String): TranspiledTemplate? {
+  internal fun createFileContext(file: PsiFile): Environment {
+    return Environment(Angular2Compiler.getTypeCheckingConfig(file), file)
+  }
+
+  internal fun transpileTemplate(
+    fileContext: FileContext,
+    component: Angular2Component,
+    tcbId: String,
+  ): TranspiledTemplate? {
     val boundTarget = BoundTarget(component)
     if (boundTarget.templateFile == null) return null
 
     val context = Context(
-      Environment(Angular2Compiler.getTypeCheckingConfig(component.sourceElement)),
+      fileContext as Environment,
       OutOfBandDiagnosticRecorder(), tcbId,
       boundTarget,
     )
@@ -53,21 +62,21 @@ object Angular2TemplateTranspiler {
         append("() ")
       }
       codeBlock {
-        for (it in context.env.getPipeStatements() + context.env.getDirectiveStatements() + statements) {
+        for (it in statements) {
           appendStatement(it)
         }
       }
-    }.asTranspiledTemplate(
-      boundTarget.templateFile,
-      emptyList()
-    )
+    }.asTranspiledTemplate(boundTarget.templateFile)
+  }
+
+  interface FileContext {
+    fun getCommonCode(): String
   }
 
   interface TranspiledTemplate {
     val templateFile: Angular2HtmlFile
     val generatedCode: String
     val sourceMappings: List<SourceMapping>
-    val imports: List<TypeScriptImport>
   }
 
   interface SourceMapping {
@@ -84,5 +93,6 @@ object Angular2TemplateTranspiler {
   interface TypeScriptImport {
     val symbolName: String
     val packageName: String
+    val isDefault: Boolean
   }
 }

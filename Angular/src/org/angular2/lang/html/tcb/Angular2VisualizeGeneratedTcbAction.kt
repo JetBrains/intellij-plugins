@@ -6,9 +6,15 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.DimensionService
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.platform.ide.progress.withModalProgress
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.angular2.Angular2InjectionUtils
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil
@@ -44,25 +50,31 @@ class Angular2VisualizeGeneratedTcbAction : AnAction() {
 
     // Ensure that we will recreate TCB
     element.manager.dropPsiCaches()
-    val transpiledTemplate =
-      Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(component.sourceElement.containingFile ?: return)
-      ?: return
+    runWithModalProgressBlocking(element.project, "Building TCBs") {
+      val transpiledTemplate =
+        readAction { Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(component.sourceElement.containingFile ?: return@readAction null)}
+        ?: return@runWithModalProgressBlocking
 
-    val project = element.project
-    val dimensionKey = "TcbMapInspector.frame"
-    if (DimensionService.getInstance().getSize(dimensionKey, project) == null) {
-      val frameSize = WindowManager.getInstance().getFrame(project)?.size
-      DimensionService.getInstance().setSize(dimensionKey, frameSize, project)
+
+      withContext(Dispatchers.EDT) {
+        val project = element.project
+        val dimensionKey = "TcbMapInspector.frame"
+        if (DimensionService.getInstance().getSize(dimensionKey, project) == null) {
+          val frameSize = WindowManager.getInstance().getFrame(project)?.size
+          DimensionService.getInstance().setSize(dimensionKey, frameSize, project)
+        }
+
+        val dialogBuilder = DialogBuilder(project)
+        val mapInspector = Angular2TranspiledTemplateInspector(transpiledTemplate, project, dialogBuilder)
+
+        @Suppress("HardCodedStringLiteral")
+        dialogBuilder
+          .title("Visualization of Angular Template Transpilation")
+          .centerPanel(mapInspector.createMainComponent())
+          .dimensionKey(dimensionKey)
+          .showNotModal()
+      }
     }
 
-    val dialogBuilder = DialogBuilder(project)
-    val mapInspector = Angular2TranspiledTemplateInspector(transpiledTemplate, project, dialogBuilder)
-
-    @Suppress("HardCodedStringLiteral")
-    dialogBuilder
-      .title("Visualization of Angular Template Transpilation")
-      .centerPanel(mapInspector.createMainComponent())
-      .dimensionKey(dimensionKey)
-      .showNotModal()
   }
 }

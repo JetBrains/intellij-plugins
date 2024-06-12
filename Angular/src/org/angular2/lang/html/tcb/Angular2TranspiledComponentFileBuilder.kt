@@ -26,12 +26,13 @@ object Angular2TranspiledComponentFileBuilder {
   private fun buildTranspiledComponentFile(componentFile: PsiFile, cache: ComponentFileCache): TranspiledComponentFile {
     val templates = cache.components.mapIndexedNotNull { index, cls ->
       CachedValuesManager.getCachedValue(cls) {
+        val context = getComponentFileCache(cls.containingFile)!!.environment
         CachedValueProvider.Result.create(Angular2EntitiesProvider.getComponent(cls)?.let {
-          Angular2TemplateTranspiler.transpileTemplate(it, index.toString())
+          Angular2TemplateTranspiler.transpileTemplate(context, it, index.toString())
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
-    return buildTranspiledComponentFile(componentFile, templates)
+    return buildTranspiledComponentFile(cache.environment, componentFile, templates)
   }
 
   private fun getComponentFileCache(file: PsiFile): ComponentFileCache? =
@@ -47,13 +48,22 @@ object Angular2TranspiledComponentFileBuilder {
           node.acceptChildren(this)
         }
       })
-      CachedValueProvider.Result.create(if (result.isEmpty()) null else ComponentFileCache(result), file)
+      CachedValueProvider.Result.create(
+        if (result.isEmpty()) null else ComponentFileCache(result, Angular2TemplateTranspiler.createFileContext(file)),
+        PsiModificationTracker.MODIFICATION_COUNT
+      )
     }
 
+  private class ComponentFileCache(
+    val components: List<TypeScriptClass>,
+    val environment: Environment
+  )
 
-  private class ComponentFileCache(val components: List<TypeScriptClass>)
-
-  private fun buildTranspiledComponentFile(componentFile: PsiFile, templates: List<TranspiledTemplate>): TranspiledComponentFile {
+  private fun buildTranspiledComponentFile(
+    context: Angular2TemplateTranspiler.FileContext,
+    componentFile: PsiFile,
+    templates: List<TranspiledTemplate>
+  ): TranspiledComponentFile {
     val generatedCode = StringBuilder()
     val componentFileText = componentFile.text
     generatedCode.append(componentFileText)
@@ -64,13 +74,11 @@ object Angular2TranspiledComponentFileBuilder {
     val componentFileMappings = SmartList<SourceMapping>()
     val mappings = SmartList<FileMappings>()
 
-    generatedCode.append("\n\n/* Additional imports */\n\n")
-    for (template in templates) {
-      // TODO add imports
-    }
+    generatedCode.append("\n\n/* Angular type checking code */\n")
+    generatedCode.append(context.getCommonCode())
 
     for (template in templates) {
-      generatedCode.append("\n\n/* TCB for ")
+      generatedCode.append("\n/* TCB for ")
         .append(template.templateFile.name)
         .append(" */\n\n")
       val generatedMappingsOffset = generatedCode.length
@@ -89,7 +97,7 @@ object Angular2TranspiledComponentFileBuilder {
         val fileMappings = template.sourceMappings.map {
           it.offsetBy(generatedOffset = generatedMappingsOffset)
         }
-        mappings.add(FileMappings(template.templateFile, fileMappings))
+        mappings.add(FileMappings(template.templateFile, fileMappings.sorted()))
       }
     }
     inlineTemplateRanges.sortBy { it.startOffset }
@@ -111,6 +119,9 @@ object Angular2TranspiledComponentFileBuilder {
       mappings
     )
   }
+
+  private fun List<SourceMapping>.sorted(): List<SourceMapping> =
+    sortedWith(Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength })
 
   data class TranspiledComponentFile(
     val generatedCode: String,

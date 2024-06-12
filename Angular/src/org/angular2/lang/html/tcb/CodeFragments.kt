@@ -3,7 +3,6 @@ package org.angular2.lang.html.tcb
 import com.intellij.openapi.util.TextRange
 import org.angular2.lang.html.Angular2HtmlFile
 
-
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
   constructor(code: String, originalRange: TextRange? = null)
@@ -27,13 +26,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
   fun asTranspiledTemplate(
     templateFile: Angular2HtmlFile,
-    imports: List<Angular2TemplateTranspiler.TypeScriptImport>,
-  ): Angular2TemplateTranspiler.TranspiledTemplate? =
+  ): Angular2TemplateTranspiler.TranspiledTemplate =
     object : Angular2TemplateTranspiler.TranspiledTemplate {
       override val templateFile: Angular2HtmlFile = templateFile
       override val generatedCode: String = code.toString()
       override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings
-      override val imports: List<Angular2TemplateTranspiler.TypeScriptImport> = imports
     }
 
   interface ExpressionBuilder {
@@ -50,6 +47,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     fun withIgnoreDiagnostics(builder: ExpressionBuilder.() -> Unit)
 
     fun codeBlock(builder: BlockBuilder.() -> Unit)
+
+    fun statements(builder: BlockBuilder.() -> Unit)
 
     fun newLine()
   }
@@ -119,6 +118,10 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       append("{\n")
       this.builder()
       append("}")
+    }
+
+    override fun statements(builder: BlockBuilder.() -> Unit) {
+      this.builder()
     }
 
     override fun newLine() {

@@ -934,14 +934,14 @@ private class TcbUnclaimedInputsOp(
           }
         }
         else {
-          this.scope.addStatement { append(expr) }
+          this.scope.addStatement { append(expr).append(";") }
         }
       }
       else {
         // A binding to an animation, attribute, class or style. For now, only validate the right-
         // hand side of the expression.
         // TODO: properly check class and style bindings.
-        this.scope.addStatement { append(expr) }
+        this.scope.addStatement { append(expr).append(";") }
       }
     }
 
