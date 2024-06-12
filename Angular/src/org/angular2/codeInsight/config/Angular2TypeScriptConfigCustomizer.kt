@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.config
 
+import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.json.psi.JsonObject
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigCustomizer
@@ -10,6 +11,7 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
+import org.angular2.lang.html.tcb.R3Identifiers
 
 private val STRICT_INJECTION_PARAMETERS = Key.create<Boolean>("angularCompilerOptions.strictInjectionParameters")
 private val STRICT_TEMPLATES = Key.create<Boolean>("angularCompilerOptions.strictTemplates")
@@ -48,6 +50,10 @@ object Angular2Compiler {
   fun getTypeCheckingConfig(psi: PsiElement?): Angular2TypeCheckingConfig =
     with(getConfigForPsiElement(psi)) {
       val isStrictTemplates = this?.getCustomOption(STRICT_TEMPLATES) == true
+      val allowSignalsInTwoWayBindings = WebJSResolveUtil.resolveSymbolFromNodeModule(
+        psi, R3Identifiers.unwrapWritableSignal.moduleName,
+        R3Identifiers.unwrapWritableSignal.name, PsiElement::class.java
+      ) != null /* Angular 17.2.0+ */
       if (this == null)
         Angular2TypeCheckingConfig(
           checkTypeOfInputBindings = false,
@@ -71,12 +77,12 @@ object Angular2Compiler {
           strictLiteralTypes = false,
           useInlineTypeConstructors = false,
           suggestionsForSuboptimalTypeInference = true,
-          allowSignalsInTwoWayBindings = true, /* Angular 17.2.0+ */
+          allowSignalsInTwoWayBindings = allowSignalsInTwoWayBindings,
           checkControlFlowBodies = false,
         )
       else
         Angular2TypeCheckingConfig(
-          allowSignalsInTwoWayBindings = true, /* Angular 17.2.0+ */
+          allowSignalsInTwoWayBindings = allowSignalsInTwoWayBindings,
           alwaysCheckSchemaInTemplateBodies = isStrictTemplates,
           applyTemplateContextGuards = getCustomOption(STRICT_INPUT_TYPES) ?: isStrictTemplates,
           checkControlFlowBodies = isStrictTemplates,

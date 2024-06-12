@@ -367,19 +367,22 @@ private abstract class TcbDirectiveTypeOpBase(
   override val optional get() = true
 
   override fun execute(): Identifier {
-    val rawType = (dir as? Angular2ClassBasedDirective)?.typeScriptClass?.possiblyGenericJsType
-                  ?: dir.entityJsType
-                  ?: JSAnyType.get(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
-
-    val type: JSType
-    if (rawType !is JSGenericTypeImpl) {
-      type = rawType
+    val type: Expression
+    val cls = (dir as? Angular2ClassBasedDirective)?.typeScriptClass
+    if (cls != null) {
+      val clsId = tcb.env.reference(cls)
+      type = Expression {
+        append(clsId)
+        val typeParameters = cls.typeParameters
+        if (typeParameters.isNotEmpty()) {
+          append("<")
+          typeParameters.joinToString(", ") { "any" }
+          append(">")
+        }
+      }
+    } else {
+      type = Expression("any")
     }
-    else {
-      type = JSGenericTypeImpl(
-        rawType.source, rawType.type, rawType.arguments.indices.map { JSAnyType.get(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED) })
-    }
-
     val id = this.tcb.allocateId(this.node.startSourceSpan, ExpressionIdentifier.Directive)
     this.scope.addStatement(tsDeclareVariable(id, type))
     return id
@@ -481,9 +484,9 @@ private class TcbReferenceOp(
         // `TemplateRef<any>`. To get this, an expression of the form
         // `(_t1 as any as TemplateRef<any>)` is constructed.
         append("(")
-        append(reference).append(" as any as")
+        append(reference).append(" as any as ")
         append(tcb.env.referenceExternalType(ANGULAR_CORE_PACKAGE, TEMPLATE_REF))
-        append(")")
+        append("<any>)")
       }
       else {
         append(reference)
@@ -632,8 +635,7 @@ private class TcbDirectiveInputsOp(
 
           val transformType = input.transformType
           if (transformType != null) {
-            // TODO detect stuff to import
-            type = Expression(transformType.getTypeText(JSType.TypeTextFormat.CODE))
+            type = tcb.env.referenceType(transformType)
           }
           else {
             // The input has a coercion declaration which should be used instead of assigning the
@@ -641,7 +643,7 @@ private class TcbDirectiveInputsOp(
             // with a type of `typeof Directive.ngAcceptInputType_fieldName` which is then used as
             // target of the assignment.
             val dirTypeRef: JSType = dir.entityJsType!!
-            type = tsCreateTypeQueryForCoercedInput(dirTypeRef.getTypeText(JSType.TypeTextFormat.CODE), fieldName)
+            type = tsCreateTypeQueryForCoercedInput(tcb.env.referenceType(dirTypeRef), fieldName)
           }
 
           val id = this.tcb.allocateId()
@@ -2424,8 +2426,16 @@ private enum class EventParamType {
  */
 private fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
                                   eventType: `EventParamType|JSType`): Expression {
-  val handlers = event.handler.map {
-    tcbEventHandlerExpression(it, tcb, scope)
+  val handlers = event.handler.map { handler ->
+    tcbEventHandlerExpression(handler, tcb, scope).let {
+      if (event.type == ParsedEventType.TwoWay) {
+        Expression {
+          append(it).append(" = $EVENT_PARAMETER")
+        }
+      } else {
+        it
+      }
+    }
   }
 
   // Obtain all guards that have been applied to the scope and its parents, as they have to be
@@ -2442,7 +2452,10 @@ private fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope:
     }
     else {
       append(": ")
-      append((eventType as JSType).getTypeText(JSType.TypeTextFormat.CODE))
+      if (eventType is Expression)
+        append(eventType)
+      else
+        append(tcb.env.referenceType(eventType as JSType))
     }
     append("): any => ")
 
@@ -2488,7 +2501,8 @@ private fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, i
     return false
   }
   // Input consumer should be a directive because it"s claimed
-  val inputConsumer = tcb.boundTarget.getConsumerOfBinding(input) as Angular2Directive
+  val inputConsumer = tcb.boundTarget.getConsumerOfBinding(input) as? Angular2Directive
+                      ?: return false
   val outputConsumer = tcb.boundTarget.getConsumerOfBinding(output)
   if (outputConsumer == null || outputConsumer is TmplAstTemplate) {
     return false
@@ -2570,7 +2584,7 @@ private fun tsCastToAny(expr: Expression): Expression {
  * Unlike with `tsCreateVariable`, the type of the variable is explicitly specified.
  */
 
-private fun tsDeclareVariable(id: Identifier, type: Expression): Statement {
+internal fun tsDeclareVariable(id: Identifier, type: Expression): Statement {
   // When we create a variable like `var _t1: boolean = null!`, TypeScript actually infers `_t1`
   // to be `never`, instead of a `boolean`. To work around it, we cast the value
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
@@ -2583,12 +2597,6 @@ private fun tsDeclareVariable(id: Identifier, type: Expression): Statement {
   }
 }
 
-internal fun tsDeclareVariable(id: Identifier, type: JSType): Statement {
-  return tsDeclareVariable(id, Expression {
-    append(type.getTypeText(JSType.TypeTextFormat.CODE))
-  })
-}
-
 /**
  * Creates a `ts.TypeQueryNode` for a coerced input.
  *
@@ -2598,9 +2606,9 @@ internal fun tsDeclareVariable(id: Identifier, type: JSType): Statement {
  * @param typeName The `EntityName` of the Directive where the static coerced input is defined.
  * @param coercedInputName The field name of the coerced input.
  */
-private fun tsCreateTypeQueryForCoercedInput(typeName: String, coercedInputName: String): Expression {
+private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputName: String): Expression {
   return Expression {
-    append("typeof $typeName.$NG_ACCEPT_INPUT_TYPE_PREFIX${coercedInputName}")
+    append("typeof ").append(typeName).append(".$NG_ACCEPT_INPUT_TYPE_PREFIX${coercedInputName}")
   }
 }
 

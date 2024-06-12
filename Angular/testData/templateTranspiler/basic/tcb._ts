@@ -1,4 +1,6 @@
 /* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/router";
 /* Pipes */
 var _pipe1 = null! as MyPipe;
 /* Directives */
@@ -13,7 +15,7 @@ _t1.ngIf = this.title != 'foo';
 var _t2: any = null!;
 if (TestIf.ngTemplateContextGuard(_t1, _t2) && this.title != 'foo') {
 var _t3 = _t2.ngIf;
-var _t5 = null! as RouterOutlet;
+var _t5 = null! as _i1.RouterOutlet;
 var _t4 = _t5;
 var _t6 = _ctor2({"foo": {a: _t4}, "foo2": null as any});
 _t6.foo = {a: _t4};

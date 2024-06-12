@@ -1,0 +1,18 @@
+<li attr="value"
+    *ngFor="let hero of heroes as test"
+    [class.selected]="hero === selectedHero"
+    (click)="onSelect(hero)">
+  {{hero.name}}
+  {{test}}
+</li>
+{heroes.length, plural, =0 {no heroes} =1 {one hero} other {{{heroes.length}} heroes}} found
+
+{{movieSig()}}
+
+<input [(ngModel)]="hero.name" #model="ngModel"/>
+
+{{model}}
+
+<span *ngIf="true; else other">Test</span>
+
+<ng-template #other>Test 2</ng-template>

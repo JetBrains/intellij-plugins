@@ -19,6 +19,7 @@ import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2Pipe
+import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -425,7 +426,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
       }) + (attributesByKind[BANANA_BOX_BINDING]?.asSequence() ?: emptySequence())
       .associateBy({ it.second.name }, { (attr, info) ->
         TmplAstBoundEvent(
-          info.name,
+          info.name + OUTPUT_CHANGE_SUFFIX,
           attr.nameElement?.textRange,
           ParsedEventType.TwoWay,
           listOfNotNull(Angular2Binding.get(attr)?.expression),

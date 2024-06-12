@@ -1,0 +1,45 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/common";
+import * as _i2 from "@angular/forms";
+import * as _i3 from "@angular/core";
+/* Directives */
+const _ctor1 = null! as <T = any, U extends _i3.NgIterable<T> = _i3.NgIterable<T>>(init: Pick<_i1.NgForOf<T, U>, "ngForOf" | "ngForTrackBy" | "ngForTemplate">) => _i1.NgForOf<T, U>;
+const _ctor2 = null! as <T = unknown>(init: Pick<_i1.NgIf<T>, "ngIf" | "ngIfThen" | "ngIfElse">) => _i1.NgIf<T>;
+
+/* TCB for colors.html */
+
+function _tcb_0(this: AppComponent) {
+var _t1 = _ctor1({"ngForOf": this.heroes, "ngForTrackBy": null as any, "ngForTemplate": null as any});
+_t1.ngForOf = this.heroes;
+var _t2: any = null!;
+if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)) {
+var _t3 = _t2.$implicit;
+var _t4 = _t2.ngForOf;
+_t3 === this.selectedHero;
+var _t5 = document.createElement("li");
+_t5.addEventListener("click", ($event): any => {
+if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)){
+this.onSelect(_t3);
+}
+});
+"" + _t3.name;
+"" + _t4;
+}
+"" + this.heroes.length;
+"" + this.heroes.length;
+"" + this.movieSig();
+var _t6 = null! as _i2.NgModel;
+_t6.model = this.hero.name;
+_t6["update"].subscribe(($event): any => {
+this.hero.name = $event;
+});
+var _t7 = _t6;
+"" + _t7;
+var _t10: any = null!;
+var _t9 = (_t10 as any as _i3.TemplateRef<any>);
+var _t8 = _ctor2({"ngIf": true, "ngIfElse": _t9, "ngIfThen": null as any});
+_t8.ngIf = true;
+_t8.ngIfElse = _t9;
+var _t11: any = null!;
+}

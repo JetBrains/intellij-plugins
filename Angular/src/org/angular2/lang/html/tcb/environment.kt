@@ -5,17 +5,17 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
-import com.intellij.lang.javascript.psi.types.JSAnyType
-import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
 import org.angular2.entities.Angular2ClassBasedDirective
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2Pipe
 import java.util.concurrent.ConcurrentHashMap
@@ -42,13 +42,15 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
   fun reference(ref: TypeScriptClass): Expression =
     Expression(reference(ref, ImportExportSpecifierKind.IMPORT))
 
-  fun referenceExternalType(packageName: String, symbol: String): Expression {
-    return Expression(getModuleImportName(packageName, false, ImportExportSpecifierKind.IMPORT_TYPE) + "." + symbol)
-  }
+  fun referenceExternalType(packageName: String, symbol: String): Expression =
+    Expression(getModuleImportName(packageName, false, ImportExportSpecifierKind.IMPORT) + "." + symbol)
 
-  fun referenceExternalSymbol(moduleName: String, name: String): Expression {
-    return Expression(getModuleImportName(moduleName, false, ImportExportSpecifierKind.IMPORT) + "." + name)
-  }
+  fun referenceExternalSymbol(moduleName: String, name: String): Expression =
+    Expression(getModuleImportName(moduleName, false, ImportExportSpecifierKind.IMPORT) + "." + name)
+
+  fun referenceType(dirTypeRef: JSType): Expression =
+    // TODO detect stuff to import
+    Expression(dirTypeRef.getTypeText(JSType.TypeTextFormat.CODE))
 
   private fun reference(element: JSQualifiedNamedElement, kind: ImportExportSpecifierKind): String =
     importCache.computeIfAbsent(element) {
@@ -149,9 +151,12 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
     }.toList()
 
   private fun getPipeStatements(): List<Statement> =
-    pipe2ctor.entries.asSequence().sortedBy { it.value }.map {
-      tsDeclareVariable(Identifier(it.value), it.key.entityJsType
-                                              ?: JSAnyType.get(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED))
+    pipe2ctor.entries.asSequence().sortedBy { it.value }.map { (pipe, name) ->
+      tsDeclareVariable(Identifier(name), Expression {
+        (pipe as? Angular2ClassBasedEntity)?.typeScriptClass
+          ?.let { append(reference(it)) }
+        ?: append("any")
+      })
     }.toList()
 
 
