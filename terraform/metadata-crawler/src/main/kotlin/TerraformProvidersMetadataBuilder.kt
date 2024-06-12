@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.slf4j.LoggerFactory
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.net.URI
 import java.net.URLDecoder
 import java.net.http.HttpClient
@@ -39,7 +41,7 @@ object TerraformProvidersMetadataBuilder {
   private fun getProvidersDataFromPages(): Sequence<JsonNode> {
     logger.info("Loading providers from $terraformRegistryHost ...")
     return sequence {
-      var httpResponse = getQuery("${terraformRegistryHost}/v2/providers")
+      var httpResponse = getQuery("${terraformRegistryHost}/v2/providers?page[size]=100")
       do {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
         val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
@@ -60,6 +62,7 @@ object TerraformProvidersMetadataBuilder {
   fun main(args: Array<String>) {
     val outputDir = File("plugins-meta").apply { mkdirs() }
     val allOut = File(outputDir, "allout.json")
+    val officialProviders = loadOfficialProvidersList()
     if (!allOut.exists()) {
       objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut, getProvidersDataFromPages().asIterable())
     }
@@ -92,6 +95,7 @@ object TerraformProvidersMetadataBuilder {
       totalProviders.incrementAndGet()
       val name = data["attributes"]["full-name"].asText()
       logger.info("Processing: $name")
+      officialProviders.remove(name)
       val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
         generatedJsonFileNames.appendText("$name\n")
@@ -100,11 +104,21 @@ object TerraformProvidersMetadataBuilder {
         errors.incrementAndGet()
       }
     }
+    if (officialProviders.isNotEmpty()) {
+      throw IllegalStateException("Not all official providers are loaded. Missing providers: ${officialProviders.joinToString()}")
+    }
     if (cleanDownloadedData) {
       logger.info("Deleting data about providers from file: ${allOut}")
       allOut.deleteOnExit()
     }
     logger.info("Providing processing finished, processed ${totalProviders} providers, errors: ${errors}")
+  }
+
+  private fun loadOfficialProvidersList(): MutableSet<String> {
+    val resource = TerraformProvidersMetadataBuilder::class.java.getResourceAsStream("/official-providers.list")
+    return resource?.use { inputStream ->
+      BufferedReader(InputStreamReader(inputStream)).readLines()
+    }?.toMutableSet() ?: mutableSetOf()
   }
 
   private fun buildProviderMetadata(data: JsonNode,
