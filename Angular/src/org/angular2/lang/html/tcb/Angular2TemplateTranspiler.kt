@@ -89,10 +89,4 @@ object Angular2TemplateTranspiler {
     fun offsetBy(generatedOffset: Int = 0, sourceOffset: Int = 0): SourceMapping
 
   }
-
-  interface TypeScriptImport {
-    val symbolName: String
-    val packageName: String
-    val isDefault: Boolean
-  }
 }

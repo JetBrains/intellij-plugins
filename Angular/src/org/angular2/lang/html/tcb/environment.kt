@@ -1,12 +1,19 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
 import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2Directive
@@ -18,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger
 internal class Environment(val config: Angular2TypeCheckingConfig,
                            val file: PsiFile) : Angular2TemplateTranspiler.FileContext {
 
-  private val importCache = ConcurrentHashMap<PsiElement, Expression>()
+  private val importCache = ConcurrentHashMap<PsiElement, String>()
   private val packageImport2name = ConcurrentHashMap<ImportInfo, String>()
   private val dir2ctor = ConcurrentHashMap<Angular2Directive, String>()
   private val pipe2ctor = ConcurrentHashMap<Angular2Pipe, String>()
@@ -33,13 +40,24 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
    * This may involve importing the node into the file if it's not declared there already.
    */
   fun reference(ref: TypeScriptClass): Expression =
-    importCache.computeIfAbsent(ref) {
-      if (ref.containingFile == file) {
-        return@computeIfAbsent Expression(ref.qualifiedName ?: ref.name!!)
+    Expression(reference(ref, ImportExportSpecifierKind.IMPORT))
+
+  fun referenceExternalType(packageName: String, symbol: String): Expression {
+    return Expression(getModuleImportName(packageName, false, ImportExportSpecifierKind.IMPORT_TYPE) + "." + symbol)
+  }
+
+  fun referenceExternalSymbol(moduleName: String, name: String): Expression {
+    return Expression(getModuleImportName(moduleName, false, ImportExportSpecifierKind.IMPORT) + "." + name)
+  }
+
+  private fun reference(element: JSQualifiedNamedElement, kind: ImportExportSpecifierKind): String =
+    importCache.computeIfAbsent(element) {
+      if (element.containingFile == file) {
+        return@computeIfAbsent element.qualifiedName ?: element.name!!
       }
       val importDescriptor = ES6CreateImportUtil.getImportDescriptor(
-        null, ref, ref.containingFile.virtualFile, file, true)
-                             ?: throw RuntimeException("Cannot import class ${ref.qualifiedName ?: ref.name} from file ${ref.containingFile.virtualFile}")
+        null, element, element.containingFile.virtualFile, file, true)
+                             ?: throw RuntimeException("Cannot import class ${element.qualifiedName ?: element.name} from file ${element.containingFile.virtualFile}")
       assert(importDescriptor.importType.let {
         !it.isBare && !it.isComposite && !it.isNamespace && !it.isBindingAll && !it.isTypeScriptRequire
       }) {
@@ -51,23 +69,22 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
         importDescriptor.importType
       }
 
-      val importInfo = ImportInfo(importDescriptor.moduleName, importDescriptor.importType.isDefault)
-      val importName = packageImport2name.computeIfAbsent(importInfo) { "_i" + nextImportNameId.getAndIncrement() }
-      if (importInfo.isDefault) {
-        return@computeIfAbsent Expression(importName)
+      val importName = getModuleImportName(importDescriptor.moduleName, importDescriptor.importType.isDefault, kind)
+      if (importDescriptor.importType.isDefault) {
+        return@computeIfAbsent importName
       }
       else {
-        return@computeIfAbsent Expression(importName + "." + importDescriptor.effectiveName)
+        return@computeIfAbsent importName + "." + importDescriptor.effectiveName
       }
     }
 
-  fun referenceExternalType(packageName: String, symbol: String): Expression {
-    // TODO record an import
-    return Expression(symbol)
-  }
-
-  fun referenceExternalSymbol(moduleName: String, name: String): Expression {
-    return Expression(name)
+  private fun getModuleImportName(
+    moduleName: String,
+    isDefault: Boolean,
+    kind: ImportExportSpecifierKind
+  ): String {
+    val importInfo = ImportInfo(moduleName, isDefault, kind)
+    return packageImport2name.computeIfAbsent(importInfo) { "_i" + nextImportNameId.getAndIncrement() }
   }
 
   fun isExplicitlyDeferred(directive: Angular2Directive): Boolean {
@@ -83,7 +100,7 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
   }
 
   fun pipeInst(pipeInfo: Angular2Pipe): Expression {
-    var name = pipe2ctor.computeIfAbsent(pipeInfo) {
+    val name = pipe2ctor.computeIfAbsent(pipeInfo) {
       "_pipe" + nextPipeNameId.getAndIncrement()
     }
     return Expression(name)
@@ -95,15 +112,17 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
 
   override fun getCommonCode(): String = Expression {
     statements {
+      val pipeStatements = getPipeStatements()
+      val directiveStatements = getDirectiveStatements()
       getImportStatements().takeIf { it.isNotEmpty() }?.let {
         appendStatement { append("/* Imports */") }
         it.forEach(::appendStatement)
       }
-      getPipeStatements().takeIf { it.isNotEmpty() }?.let {
+      pipeStatements.takeIf { it.isNotEmpty() }?.let {
         appendStatement { append("/* Pipes */") }
         it.forEach(::appendStatement)
       }
-      getDirectiveStatements().takeIf { it.isNotEmpty() }?.let {
+      directiveStatements.takeIf { it.isNotEmpty() }?.let {
         appendStatement { append("/* Directives */") }
         it.forEach(::appendStatement)
       }
@@ -112,11 +131,20 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
 
   private fun getImportStatements(): List<Statement> =
     packageImport2name.entries.asSequence().sortedBy { it.value }.map { (importInfo, varName) ->
-      if (importInfo.isDefault) {
-        Statement { append("import $varName from \"${importInfo.packageName}\";") }
-      }
-      else {
-        Statement { append("import * as $varName from \"${importInfo.packageName}\";") }
+      Statement {
+        when (importInfo.kind) {
+          ImportExportSpecifierKind.IMPORT -> append("import ")
+          ImportExportSpecifierKind.IMPORT_TYPE -> append("import type ")
+          ImportExportSpecifierKind.IMPORT_TYPEOF -> append("import typeof ")
+          else -> throw IllegalStateException(importInfo.kind.toString())
+        }
+        if (importInfo.isDefault) {
+          append(varName)
+        }
+        else {
+          append("* as $varName")
+        }
+        append(" from \"${importInfo.packageName}\";")
       }
     }.toList()
 
@@ -129,9 +157,9 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
 
   private fun getDirectiveStatements(): List<Statement> =
     dir2ctor.entries.asSequence().sortedBy { it.value }.map { (directive, name) ->
-      val typeName = directive.entitySourceName
       val cls = (directive as? Angular2ClassBasedDirective)?.typeScriptClass?.takeIf { it.typeParameters.isNotEmpty() }
-                ?: return@map Statement { append("const ${name} = null! as () => ${typeName};") }
+                ?: return@map Statement { append("const ${name} = null! as () => any;") }
+      val typeName = reference(cls)
       return@map Statement {
         // const _ctor1 = null! as <T = any>(init: Pick<TestIf<T>, "ngIf" | "ngIfThen">) => TestIf<T>;
         append("const ${name} = null! as <")
@@ -139,9 +167,13 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
           if (index > 0) {
             append(", ")
           }
-          append(typeScriptTypeParameter.text)
-          if (typeScriptTypeParameter.default == null) {
-            append(" = any")
+          append(typeScriptTypeParameter.name ?: return@forEachIndexed)
+          typeScriptTypeParameter.typeConstraint?.let { append(" extends ").append(it.toExpression()) }
+          typeScriptTypeParameter.default.let {
+            if (it == null)
+              append(" = any")
+            else
+              append(" = ").append(it.toExpression())
           }
         }
         append(">(init: Pick<$typeName<")
@@ -173,14 +205,46 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
       }
     }.toList()
 
-  private data class ImportInfo(val packageName: String, val isDefault: Boolean)
+  private fun TypeScriptType.toExpression(): Expression = Expression {
+    acceptChildren(object : JSRecursiveWalkingElementVisitor() {
+      override fun visitElement(element: PsiElement) {
+        if (element is LeafPsiElement) {
+          append(element.text)
+        }
+        else {
+          super.visitElement(element)
+        }
+      }
 
-  private data class TypeScriptImportData(
-    override val symbolName: String,
-    override val packageName: String,
-    override val isDefault: Boolean
-  ) : Angular2TemplateTranspiler.TypeScriptImport
+      override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+        if (node.qualifier == null) {
+          var importSpecifierKind = ImportExportSpecifierKind.IMPORT
+          val templateTarget = node.resolve().let { resolveResult ->
+            if (resolveResult is ES6ImportSpecifier) {
+              importSpecifierKind = resolveResult.specifierKind
+              resolveResult.resolveOverAliases().firstOrNull { it.isValidResult && it.element != null }?.element
+            }
+            else
+              resolveResult
+          }
+          if (templateTarget !is JSQualifiedNamedElement) {
+            append(node.text, node.textRange)
+          }
+          else {
+            append(reference(templateTarget, importSpecifierKind), node.textRange)
+          }
+        }
+      }
+    })
+  }
+
+  private data class ImportInfo(
+    val packageName: String,
+    val isDefault: Boolean,
+    val kind: ImportExportSpecifierKind,
+  )
 }
+
 
 internal class OutOfBandDiagnosticRecorder {
   fun deferredComponentUsedEagerly(id: Any, node: TmplAstElement) {

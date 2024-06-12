@@ -11,10 +11,13 @@ import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
 
   fun testBasic() =
-    checkTranspilation(Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_ROUTER_16_2_8, dir = true)
+    checkTranspilation(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                       Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                       Angular2TestModule.ANGULAR_ROUTER_16_2_8, dir = true)
 
   fun testCssClassBinding() =
-    checkTranspilation(Angular2TestModule.ANGULAR_COMMON_16_2_8)
+    checkTranspilation(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                       Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
