@@ -4,11 +4,10 @@ package org.angular2
 import com.intellij.javascript.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import org.angular2.lang.expr.service.AngularTypeScriptService
 
@@ -31,6 +30,9 @@ abstract class Angular2TestCase(override val testCasePath: String) : WebFramewor
   }
 
   override fun beforeConfiguredTest() {
+    TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
+      it::class.java == TypeScriptServerServiceImpl::class.java
+    }
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
       it is AngularTypeScriptService
     }

@@ -95,11 +95,14 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
       descriptor.sourceDirectives.firstOrNull(),
       descriptor.symbol.jsType
     )
+
+    val highlightType = Angular2InspectionUtils.getTypeScriptInspectionHighlightType(attribute)
+
     JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.optionHolder,
                                                            "javascript.type.is.not.assignable.to.type")
       ?.let {
         holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                               highlightType,
                                *getCreateInputTransformFixes(attribute, "string").toTypedArray())
       }
   }

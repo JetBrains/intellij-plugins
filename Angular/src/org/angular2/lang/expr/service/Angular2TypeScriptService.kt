@@ -17,10 +17,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import icons.AngularIcons
+import org.angular2.codeInsight.config.Angular2Compiler
+import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol
@@ -36,27 +41,28 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
   override fun getProcessName(): String = "Angular TypeScript"
 
   override fun isAcceptable(file: VirtualFile): Boolean =
-    super.isAcceptable(file)
-    || file.isInLocalFileSystem && file.fileType.let {
+    super.isAcceptable(file) || isAcceptableHtmlFile(file)
+
+  override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
+    return super.isAcceptableNonTsFile(project, service, virtualFile) || isAcceptableHtmlFile(virtualFile)
+  }
+
+  private fun isAcceptableHtmlFile(file: VirtualFile): Boolean =
+    file.isInLocalFileSystem && file.fileType.let {
       it is HtmlFileType && SubstitutedFileType.substituteFileType(file, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
 
-  override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
-    return super.isAcceptableNonTsFile(project, service, virtualFile) || virtualFile.isInLocalFileSystem && virtualFile.fileType.let {
-      it is HtmlFileType && SubstitutedFileType.substituteFileType(virtualFile, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
-    }
-  }
-
   override fun canHighlight(file: PsiFile): Boolean {
-    return file.language is Angular2HtmlDialect
+    return (file.language is Angular2HtmlDialect && Angular2Compiler.isStrictTemplates(file))
            || super.canHighlight(file)
   }
 
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
-    element.language.let { it is Angular2Language || it is Angular2HtmlDialect }
-    || super.supportsTypeEvaluation(virtualFile, element)
+    (element.language.let { it is Angular2Language || it is Angular2HtmlDialect }
+     && Angular2EntitiesProvider.findTemplateComponent(element) != null
+    ) || super.supportsTypeEvaluation(virtualFile, element)
 
   override fun isDisabledByContext(context: VirtualFile): Boolean =
     super.isDisabledByContext(context)
@@ -77,6 +83,13 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
   override fun beforeGetErrors(file: VirtualFile) {
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
   }
+
+  override fun skipInternalErrors(element: PsiElement): Boolean =
+    element.containingFile.let { file ->
+      file.language.let { it !is Angular2Language && it !is Angular2HtmlDialect } || CachedValuesManager.getCachedValue(file) {
+        CachedValueProvider.Result.create(canHighlight(file), PsiModificationTracker.MODIFICATION_COUNT)
+      }
+    }
 
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project) {
 
