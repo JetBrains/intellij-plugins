@@ -37,9 +37,9 @@ private fun isVolarEnabledByContextAndSettings(project: Project, context: Virtua
   if (isForceEnabledInTests()) return true
 
   return TypeScriptLanguageServiceUtil.isServiceEnabled(project) &&
-         isVueServiceContext(project, context) &&
          !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context) &&
-         isVolarEnabledBySettings(project)
+         isVolarEnabledBySettings(project) &&
+         isVueServiceContext(project, context)
 }
 
 private fun isVolarEnabledBySettings(project: Project): Boolean {
