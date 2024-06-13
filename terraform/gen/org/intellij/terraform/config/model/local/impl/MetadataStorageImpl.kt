@@ -18,7 +18,7 @@ internal object MetadataStorageImpl: MetadataStorageBase() {
         
         addMetadata(typeMetadata)
         
-        typeMetadata = EntityMetadata(fqName = "org.intellij.terraform.config.model.local.TFLocalMetaEntity", entityDataFqName = "org.intellij.terraform.config.model.local.TFLocalMetaEntityData", supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"), properties = listOf(OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "entitySource", valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false, typeMetadata = FinalClassMetadata.KnownClass(fqName = "com.intellij.platform.workspace.storage.EntitySource")), withDefault = false),
+        typeMetadata = EntityMetadata(fqName = "org.intellij.terraform.config.model.local.TFLocalMetaEntity", entityDataFqName = "org.intellij.terraform.config.model.local.impl.TFLocalMetaEntityData", supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"), properties = listOf(OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "entitySource", valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false, typeMetadata = FinalClassMetadata.KnownClass(fqName = "com.intellij.platform.workspace.storage.EntitySource")), withDefault = false),
 OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "timeStampLow", valueType = primitiveTypeIntNotNullable, withDefault = false),
 OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "timeStampHigh", valueType = primitiveTypeIntNotNullable, withDefault = false),
 OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "jsonPath", valueType = primitiveTypeStringNotNullable, withDefault = false),
@@ -28,7 +28,7 @@ OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = 
     }
 
     override fun initializeMetadataHash() {
-        addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TFLocalMetaEntity", metadataHash = 956487635)
+        addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TFLocalMetaEntity", metadataHash = 231549997)
         addMetadataHash(typeFqn = "com.intellij.platform.workspace.storage.EntitySource", metadataHash = -1739507243)
         addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TFLocalMetaEntity\$LockEntitySource", metadataHash = -2114129321)
     }
