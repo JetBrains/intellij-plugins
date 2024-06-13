@@ -22,28 +22,6 @@ private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean
   return context.fileType is VueFileType || isVueContext(context, project)
 }
 
-private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
-  val path = getTypeScriptServiceDirectory(project)
-
-  val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
-  if (packageJson == null) return false // Nuxt doesn't have correct TS detection. Let's assume TS 5+
-  val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
-  return version.major < 5
-}
-
-/**
- * Refers to the classic service that predates Volar.
- */
-fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  if (!isVueServiceContext(project, context)) return false
-
-  return when (getVueSettings(project).serviceType) {
-    VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> false
-    VueServiceSettings.TS_SERVICE -> isTypeScriptServiceBefore5Context(project) // with TS 5+ project, nothing will be enabled
-    VueServiceSettings.DISABLED -> false
-  }
-}
-
 /**
  * If enabled but not available, will launch a background task that will eventually restart the services
  */
@@ -82,3 +60,29 @@ private var forceEnabled = false
 fun markVolarForceEnabled(value: Boolean) {
   forceEnabled = value
 }
+
+//<editor-fold desc="VueClassicTypeScriptService">
+
+/**
+ * Refers to the classic service that predates Volar.
+ */
+fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
+  if (!isVueServiceContext(project, context)) return false
+
+  return when (getVueSettings(project).serviceType) {
+    VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> false
+    VueServiceSettings.TS_SERVICE -> isTypeScriptServiceBefore5Context(project) // with TS 5+ project, nothing will be enabled
+    VueServiceSettings.DISABLED -> false
+  }
+}
+
+private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
+  val path = getTypeScriptServiceDirectory(project)
+
+  val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
+  if (packageJson == null) return false // Nuxt doesn't have correct TS detection. Let's assume TS 5+
+  val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
+  return version.major < 5
+}
+
+//</editor-fold>
