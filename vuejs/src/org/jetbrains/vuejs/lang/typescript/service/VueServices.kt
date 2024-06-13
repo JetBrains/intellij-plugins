@@ -36,11 +36,10 @@ fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
 private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
   if (isForceEnabledInTests()) return true
 
-  if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
-  if (!isVueServiceContext(project, context)) return false
-  if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
-
-  return isVolarEnabledBySettings(project)
+  return TypeScriptLanguageServiceUtil.isServiceEnabled(project) &&
+         isVueServiceContext(project, context) &&
+         !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context) &&
+         isVolarEnabledBySettings(project)
 }
 
 private fun isVolarEnabledBySettings(project: Project): Boolean {
