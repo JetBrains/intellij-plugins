@@ -45,11 +45,11 @@ export class <info descr="classes//exported class">AppComponent</info> {
       <info descr="instance field">name</info>: 'Titanic',
       <info descr="instance field">genre</info>: 'Romance',
       <info descr="instance field">releaseYear</info>: 1997,
-      <info descr="instance field">upVote</info>: this.<info descr="ng-signal">movieSig</info>() ?.<info descr="instance field">upVote</info>,
+      <info descr="instance field">upVote</info>: this.<info descr="ng-signal">movieSig</info>() ?.<info descr="instance field">upVote</info> ?? 0,
     };
     return <info descr="identifiers//local variable">newMovie</info>;
   });
-  <warning descr="Unused field withRegularColor"><info descr="instance field">withRegularColor</info></warning>: <info descr="types//type alias">Record</info><<info descr="null">any</info>,<info descr="null">any</info>>;
+  <warning descr="Unused field withRegularColor"><info descr="instance field">withRegularColor</info></warning>!: <info descr="types//type alias">Record</info><<info descr="null">any</info>,<info descr="null">any</info>>;
 
   <warning descr="Unused method setMovie"><info descr="instance method">setMovie</info></warning>() {
     this.<info descr="ng-signal">movieSig</info>.<info descr="instance method">set</info>({
