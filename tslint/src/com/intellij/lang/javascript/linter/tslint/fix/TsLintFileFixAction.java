@@ -38,7 +38,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   }
 
   @Override
-  protected boolean isFileAccepted(@NotNull Project project, @NotNull VirtualFile file) {
+  public boolean isFileAccepted(@NotNull Project project, @NotNull VirtualFile file) {
     FileType fileType = file.getFileType();
     return TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(fileType)
            || DialectDetector.JAVASCRIPT_FILE_TYPES.contains(fileType);
