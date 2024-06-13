@@ -263,7 +263,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return range;
   }
 
-  private static void ensureConfigsSaved(@NotNull List<VirtualFile> virtualFiles, @NotNull Project project) {
+  static void ensureConfigsSaved(@NotNull List<VirtualFile> virtualFiles, @NotNull Project project) {
     FileDocumentManager documentManager = FileDocumentManager.getInstance();
     for (VirtualFile config : PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project)) {
       Document document = documentManager.getCachedDocument(config);
@@ -356,9 +356,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   /**
    * @param result (new text length) - (old text length)
    */
-  private static int applyFormatResult(@NotNull Project project,
-                                       @NotNull VirtualFile virtualFile,
-                                       @NotNull PrettierLanguageService.FormatResult result) {
+  static int applyFormatResult(@NotNull Project project,
+                               @NotNull VirtualFile virtualFile,
+                               @NotNull PrettierLanguageService.FormatResult result) {
     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     int delta = 0;
     if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported) {
@@ -375,8 +375,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return delta;
   }
 
-  @Nullable
-  private static PrettierLanguageService.FormatResult performRequestForFile(@NotNull PsiFile currentFile, @Nullable TextRange range) {
+  static @Nullable PrettierLanguageService.FormatResult performRequestForFile(@NotNull PsiFile currentFile, @Nullable TextRange range) {
     boolean edt = ApplicationManager.getApplication().isDispatchThread();
     if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
       LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
