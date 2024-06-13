@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="intellij.javascript.web" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.webSymbols" scope="TEST" />
     <orderEntry type="module" module-name="intellij.postcss" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lsp" scope="TEST" />
   </component>
 </module>
