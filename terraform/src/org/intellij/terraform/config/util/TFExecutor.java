@@ -6,6 +6,8 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.PtyCommandLine;
 import com.intellij.execution.process.*;
+import com.intellij.execution.wsl.WSLCommandLineOptions;
+import com.intellij.execution.wsl.WslPath;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -127,6 +129,7 @@ public final class TFExecutor {
       commandLine = createCommandLine();
       GeneralCommandLine finalCommandLine = ApplicationManager.getApplication()
         .getService(TFCommandLineService.class).wrapCommandLine(commandLine);
+
       myProcessHandler = new KillableColoredProcessHandler(finalCommandLine);
       final HistoryProcessListener historyProcessListener = new HistoryProcessListener();
       myProcessHandler.addProcessListener(historyProcessListener);
@@ -203,14 +206,26 @@ public final class TFExecutor {
   }
 
   public @NotNull GeneralCommandLine createCommandLine() throws ExecutionException {
+    String exePath =  Objects.requireNonNull(myExePath);
+    WslPath wslPath = WslPath.parseWindowsUncPath(exePath);
+    if(wslPath != null){
+      exePath = wslPath.getLinuxPath();
+    }
     GeneralCommandLine commandLine = !myPtyDisabled && PtyCommandLine.isEnabled() ? new PtyCommandLine() : new GeneralCommandLine();
-    commandLine.setExePath(Objects.requireNonNull(myExePath));
+    commandLine.setExePath(exePath);
     commandLine.getEnvironment().putAll(myExtraEnvironment);
 
     commandLine.withWorkDirectory(myWorkDirectory);
     commandLine.addParameters(myParameterList.getList());
     commandLine.withParentEnvironmentType(myParentEnvironmentType);
     commandLine.withCharset(StandardCharsets.UTF_8);
+    if(wslPath != null){
+      var wslOptions = new WSLCommandLineOptions()
+        .setLaunchWithWslExe(true)
+        .setExecuteCommandInShell(false)
+        .setPassEnvVarsUsingInterop(true);
+      commandLine = wslPath.getDistribution().patchCommandLine(commandLine, myProject, wslOptions);
+    }
     return commandLine;
   }
 

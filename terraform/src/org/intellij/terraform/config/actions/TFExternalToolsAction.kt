@@ -15,6 +15,7 @@
  */
 package org.intellij.terraform.config.actions
 
+import com.intellij.execution.wsl.WslPath
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
@@ -136,4 +137,7 @@ internal fun isTerraformExecutable(project: Project): Boolean {
   }
 }
 
-internal fun isPathExecutable(path: String): Boolean = FileUtil.canExecute(File(path))
+internal fun isPathExecutable(path: String): Boolean {
+  if(FileUtil.canExecute(File(path))) return true
+  return WslPath.parseWindowsUncPath(path) != null
+}

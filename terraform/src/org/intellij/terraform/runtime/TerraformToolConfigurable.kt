@@ -2,6 +2,7 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.process.CapturingProcessAdapter
+import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.SearchableConfigurable
@@ -80,8 +81,9 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
         }.onChanged {
           configuration.terraformPath = it.text
         }.trimmedTextValidation(
-          validationErrorIf<String>(HCLBundle.message("terraform.invalid.path")) {
-            it.isNotBlank() && !File(it).exists()
+          validationErrorIf<String>(HCLBundle.message("terraform.invalid.path")) { terraformFilePath ->
+            val wslDistribution = WslPath.getDistributionByWindowsUncPath(terraformFilePath)
+            terraformFilePath.isNotBlank() && (!File(terraformFilePath).exists() || wslDistribution == null)
           }
         ).align(AlignX.FILL)
       }
