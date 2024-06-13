@@ -29,6 +29,7 @@ import com.jetbrains.cidr.cpp.execution.debugger.peripheralview.SvdPanel;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment;
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains;
+import com.jetbrains.cidr.execution.CidrCoroutineHelper;
 import com.jetbrains.cidr.execution.CidrPathConsoleFilter;
 import com.jetbrains.cidr.execution.TrivialRunParameters;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
@@ -123,60 +124,61 @@ public class PlatformioLauncher extends CLionLauncher {
     }};
 
     String defaultSvdLocation = getProject().getService(PlatformioService.class).getSvdPath();
-    return new CidrDebugProcess(parameters, xDebugSession, commandLineState.getConsoleBuilder(),
-                                consoleCopyFilter) {
+    return CidrCoroutineHelper.runOnEDT(
+      () -> new CidrDebugProcess(parameters, xDebugSession, commandLineState.getConsoleBuilder(),
+                                 consoleCopyFilter) {
 
-      @Override
-      public @NotNull
-      XDebugTabLayouter createTabLayouter() {
-        CidrDebugProcess gdbDebugProcess = this;
-        XDebugTabLayouter innerLayouter = super.createTabLayouter();
-        return new XDebugTabLayouter() {
-          @NotNull
-          @Override
-          public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
-            return innerLayouter.registerConsoleContent(ui, console);
-          }
+        @Override
+        public @NotNull
+        XDebugTabLayouter createTabLayouter() {
+          CidrDebugProcess gdbDebugProcess = this;
+          XDebugTabLayouter innerLayouter = super.createTabLayouter();
+          return new XDebugTabLayouter() {
+            @NotNull
+            @Override
+            public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
+              return innerLayouter.registerConsoleContent(ui, console);
+            }
 
-          @Override
-          public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
-            innerLayouter.registerAdditionalContent(ui);
-            SvdPanel.registerPeripheralTab(gdbDebugProcess, ui, defaultSvdLocation);
-          }
-        };
-      }
+            @Override
+            public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
+              innerLayouter.registerAdditionalContent(ui);
+              SvdPanel.registerPeripheralTab(gdbDebugProcess, ui, defaultSvdLocation);
+            }
+          };
+        }
 
-      @Override
-      public @NotNull ConsoleView createConsole() {
-        ConsoleView console = super.createConsole();
-        console.addMessageFilter(new CidrPathConsoleFilter(getProject(), null, Path.of(projectPath)));
-        return console;
-      }
+        @Override
+        public @NotNull ConsoleView createConsole() {
+          ConsoleView console = super.createConsole();
+          console.addMessageFilter(new CidrPathConsoleFilter(getProject(), null, Path.of(projectPath)));
+          return console;
+        }
 
-      @Override
-      protected @NotNull
-      DebuggerDriver.Inferior doLoadTarget(@NotNull DebuggerDriver driver) throws ExecutionException {
+        @Override
+        protected @NotNull
+        DebuggerDriver.Inferior doLoadTarget(@NotNull DebuggerDriver driver) throws ExecutionException {
 
-        DebuggerDriver.Inferior tempInferior = driver.loadForRemote("", null, null, Collections.emptyList());
-        return driver.new Inferior(tempInferior.getId()) {
-          @SuppressWarnings("RedundantThrows")
-          @Override
-          protected long startImpl() throws ExecutionException {
-            return 0;
-          }
+          DebuggerDriver.Inferior tempInferior = driver.loadForRemote("", null, null, Collections.emptyList());
+          return driver.new Inferior(tempInferior.getId()) {
+            @SuppressWarnings("RedundantThrows")
+            @Override
+            protected long startImpl() throws ExecutionException {
+              return 0;
+            }
 
-          @Override
-          protected void detachImpl() throws ExecutionException {
-            tempInferior.detach();
-          }
+            @Override
+            protected void detachImpl() throws ExecutionException {
+              tempInferior.detach();
+            }
 
-          @Override
-          protected boolean destroyImpl() throws ExecutionException {
-            return tempInferior.destroy();
-          }
-        };
-      }
-    };
+            @Override
+            protected boolean destroyImpl() throws ExecutionException {
+              return tempInferior.destroy();
+            }
+          };
+        }
+      });
   }
 
   @SuppressWarnings("RedundantThrows")
