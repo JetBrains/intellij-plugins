@@ -40,6 +40,10 @@ private fun isVolarEnabledByContextAndSettings(project: Project, context: Virtua
   if (!isVueServiceContext(project, context)) return false
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
 
+  return isVolarEnabledBySettings(project)
+}
+
+private fun isVolarEnabledBySettings(project: Project): Boolean {
   return when (getVueSettings(project).serviceType) {
     VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> true
     VueServiceSettings.TS_SERVICE -> false
