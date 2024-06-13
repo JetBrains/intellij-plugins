@@ -37,7 +37,7 @@ import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
 
 /**
- * Provides limited features through TSServer protocol with custom typescript plugin that rewrites .vue files into valid .ts files.
+ * Provides limited features through TSServer protocol with a custom typescript plugin that rewrites .vue files into valid .ts files.
  *
  * Doesn't work properly with TypeScript 5+.
  * Superseded by integration with Vue Language Tools (Volar) through LSP.
@@ -49,10 +49,8 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
   override fun isDisabledByContext(context: VirtualFile): Boolean {
     if (super.isDisabledByContext(context)) return true
 
-    return !isVueServiceAvailableByContext(context)
+    return !isVueClassicTypeScriptServiceEnabled(myProject, context)
   }
-
-  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean = isVueTypeScriptServiceEnabled(myProject, context)
 
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true

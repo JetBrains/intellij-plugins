@@ -66,7 +66,7 @@ fun markVolarForceEnabled(value: Boolean) {
 /**
  * Refers to the classic service that predates Volar.
  */
-fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
+fun isVueClassicTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   if (!isVueServiceContext(project, context)) return false
 
   return when (getVueSettings(project).serviceType) {
