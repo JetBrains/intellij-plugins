@@ -5,6 +5,8 @@ import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptions
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveFileDocumentManagerListener
 import com.intellij.lang.javascript.linter.GlobPatternUtil
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.editor.Document
@@ -52,7 +54,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
   private suspend fun runPrettierAsActionOnSave(file: VirtualFile, psiFile: PsiFile) {
     val project = psiFile.project
 
-    withContext(Dispatchers.EDT) {
+    withContext(Dispatchers.EDT + ModalityState.nonModal().asContextElement()) {
       ReformatWithPrettierAction.ensureConfigsSaved(listOf(file), project)
     }
 
