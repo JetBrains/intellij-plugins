@@ -26,6 +26,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
     configureFileName = "colors.ts"
   )
 
+  fun testNgAcceptInputTypeOverride() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_16_2_8,
+    dir = false,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
