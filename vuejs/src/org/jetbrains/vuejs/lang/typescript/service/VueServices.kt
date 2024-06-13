@@ -18,10 +18,6 @@ import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
 
-private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
-  return context.fileType is VueFileType || isVueContext(context, project)
-}
-
 /**
  * If enabled but not available, will launch a background task that will eventually restart the services
  */
@@ -38,7 +34,7 @@ fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
 }
 
 private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
-  if (ApplicationManager.getApplication().isUnitTestMode && forceEnabled) return true
+  if (isForceEnabledInTests()) return true
 
   if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
   if (!isVueServiceContext(project, context)) return false
@@ -51,7 +47,15 @@ private fun isVolarEnabledByContextAndSettings(project: Project, context: Virtua
   }
 }
 
+private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
+  return context.fileType is VueFileType || isVueContext(context, project)
+}
+
 private var forceEnabled = false
+
+private fun isForceEnabledInTests(): Boolean {
+  return ApplicationManager.getApplication().isUnitTestMode && forceEnabled
+}
 
 /**
  * Please don't use unless there's no other choice, e.g., with [TypeScriptLanguageServiceUtil.TypeScriptUseServiceState.USE_FOR_EVALUATION]
