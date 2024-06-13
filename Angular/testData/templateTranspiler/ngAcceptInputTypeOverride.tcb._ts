@@ -2,7 +2,7 @@
 
 /* TCB for ngAcceptInputTypeOverride.ts */
 
-function _tcb_0(this: MyComp2) {
+function _tcb1(this: MyComp2) {
 var _t1 = null! as typeof MyComp2.ngAcceptInputType_bar;
 _t1 = 2;
 var _t2 = null! as MyComp2;

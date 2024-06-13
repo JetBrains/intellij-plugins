@@ -30,7 +30,7 @@ object Angular2TemplateTranspiler {
     val statements = scope.render()
 
     return Expression {
-      append("function _tcb_${context.id}")
+      append("function _tcb${context.id}")
 
       val cls = (component as? Angular2ClassBasedComponent)?.typeScriptClass
       if (cls != null) {

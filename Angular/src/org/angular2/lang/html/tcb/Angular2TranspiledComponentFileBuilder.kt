@@ -28,7 +28,7 @@ object Angular2TranspiledComponentFileBuilder {
       CachedValuesManager.getCachedValue(cls) {
         val context = getComponentFileCache(cls.containingFile)!!.environment
         CachedValueProvider.Result.create(Angular2EntitiesProvider.getComponent(cls)?.let {
-          Angular2TemplateTranspiler.transpileTemplate(context, it, index.toString())
+          Angular2TemplateTranspiler.transpileTemplate(context, it, (index + 1).toString())
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }

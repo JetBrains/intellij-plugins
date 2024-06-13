@@ -9,7 +9,7 @@ const _ctor2 = null! as <T = unknown>(init: Pick<_i1.NgIf<T>, "ngIf" | "ngIfThen
 
 /* TCB for colors.html */
 
-function _tcb_0(this: AppComponent) {
+function _tcb1(this: AppComponent) {
 var _t1 = _ctor1({"ngForOf": this.heroes, "ngForTrackBy": null as any, "ngForTemplate": null as any});
 _t1.ngForOf = this.heroes;
 var _t2: any = null!;
