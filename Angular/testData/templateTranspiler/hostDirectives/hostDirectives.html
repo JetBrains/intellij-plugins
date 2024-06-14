@@ -1,0 +1,31 @@
+<resolved
+  [underlineColor]="12"
+  (hover)="$event"
+  [colr]="12"
+  (hovr)="$event"
+  ref-a="boldDir"
+  ref-a2="fooDir"
+  ref-a3="mouseDir"
+  ref-b="bldDir"
+></resolved>
+<unresolved
+  [underlineColor]="12"
+  (hover)="$event"
+  [colr]="12"
+  (hovr)="$event"
+  ref-c="boldDir"
+  ref-d="bldDir"
+></unresolved>
+<app-test
+  [underlineColor]="12"
+  (hover)="$event"
+  appBold
+  appUnderline
+  ref-e="boldDir"
+  ref-f="bldDir"
+></app-test>
+<!-- priority in exportAs resolve goes to the topmost host directive -->
+{{ a.title }}
+{{ a2.title }}
+{{ a3.title }}
+{{a + b + c + d + e + f}}

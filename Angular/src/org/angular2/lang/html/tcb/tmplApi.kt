@@ -3,12 +3,14 @@ package org.angular2.lang.html.tcb
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.javascript.web.html.XmlASTWrapperPsiElement
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.*
+import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
@@ -16,9 +18,7 @@ import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.codeInsight.template.isTemplateTag
-import org.angular2.entities.Angular2Component
-import org.angular2.entities.Angular2Directive
-import org.angular2.entities.Angular2Pipe
+import org.angular2.entities.*
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.Angular2HtmlFile
@@ -28,6 +28,7 @@ import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.Angular2HtmlExpansionForm
 import org.angular2.lang.html.psi.Angular2HtmlExpansionFormCase
 import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.*
 
 internal sealed interface TmplAstNode
@@ -40,7 +41,7 @@ internal sealed interface TmplAstExpressionSymbol : TmplAstNode {
 }
 
 internal sealed interface TmplAstDirectiveContainer : TmplAstNode {
-  val directives: Set<Angular2Directive>
+  val directives: Set<TmplDirectiveMetadata>
   val inputs: Map<String, TmplAstBoundAttribute>
   val outputs: Map<String, TmplAstBoundEvent>
   val attributes: Map<String, TmplAstTextAttribute>
@@ -64,7 +65,7 @@ internal class TmplAstVariable(
 
 internal class TmplAstElement(
   val name: String,
-  override val directives: Set<Angular2Directive>,
+  override val directives: Set<TmplDirectiveMetadata>,
   override val inputs: Map<String, TmplAstBoundAttribute>,
   override val outputs: Map<String, TmplAstBoundEvent>,
   override val attributes: Map<String, TmplAstTextAttribute>,
@@ -76,7 +77,7 @@ internal class TmplAstElement(
 internal class TmplAstTemplate(
   val tagName: String?,
   val templateAttrs: List<TmplAstAttribute>,
-  override val directives: Set<Angular2Directive>,
+  override val directives: Set<TmplDirectiveMetadata>,
   override val inputs: Map<String, TmplAstBoundAttribute>,
   override val outputs: Map<String, TmplAstBoundEvent>,
   override val attributes: Map<String, TmplAstTextAttribute>,
@@ -169,6 +170,36 @@ internal interface TmplAstSwitchBlockCase : TmplAstNode {
 
 }
 
+internal class TmplDirectiveMetadata(
+  val directive: Angular2Directive,
+  val isHostDirective: Boolean,
+  val inputs: Map<String, Angular2DirectiveProperty>,
+  val outputs: Map<String, Angular2DirectiveProperty>,
+  val exportAs: Set<String>,
+) {
+
+  val typeScriptClass: TypeScriptClass?
+    get() =
+      (directive as? Angular2ClassBasedDirective)?.typeScriptClass
+
+  val entityJsType: JSType?
+    get() =
+      typeScriptClass?.possiblyGenericJsType ?: directive.entityJsType
+
+  val isGeneric: Boolean
+    get() =
+      typeScriptClass?.typeParameters?.isNotEmpty() == true
+
+  val templateGuards: List<Angular2TemplateGuard>
+    get() =
+      directive.templateGuards
+
+  val hasTemplateContextGuard: Boolean
+    get() =
+      directive.hasTemplateContextGuard
+
+}
+
 internal enum class BindingType {
   // A regular binding to a property (e.g. `[property]="expression"`).
   Property,
@@ -222,7 +253,7 @@ internal class BoundTarget(component: Angular2Component) {
    * For a given template node (either an `Element` or a `Template`), get the set of directives
    * which matched the node, if any.
    */
-  fun getDirectivesOfNode(node: `TmplAstElement|TmplAstTemplate`): Set<Angular2Directive> {
+  fun getDirectivesOfNode(node: `TmplAstElement|TmplAstTemplate`): Set<TmplDirectiveMetadata> {
     return node.directives
   }
 
@@ -230,9 +261,9 @@ internal class BoundTarget(component: Angular2Component) {
    * For a given `Reference`, get the reference's target - either an `Element`, a `Template`, or
    * a directive on a particular node.
    */
-  fun getReferenceTarget(ref: TmplAstReference): `Angular2Directive|TmplAstElement|TmplAstTemplate`? {
+  fun getReferenceTarget(ref: TmplAstReference): `TmplDirectiveMetadata|TmplAstElement|TmplAstTemplate`? {
     ref.value.takeIf { it.isNotBlank() }?.let { exportAs ->
-      return ref.parent?.directives?.firstNotNullOfOrNull { it.exportAs[exportAs]?.directive }
+      return ref.parent?.directives?.find { it.exportAs.contains(exportAs) }
     }
     return ref.parent
   }
@@ -244,7 +275,7 @@ internal class BoundTarget(component: Angular2Component) {
    */
   fun getConsumerOfBinding(
     binding: `TmplAstBoundAttribute|TmplAstBoundEvent|TmplAstTextAttribute`,
-  ): `Angular2Directive|TmplAstElement|TmplAstTemplate`? {
+  ): `TmplDirectiveMetadata|TmplAstElement|TmplAstTemplate`? {
     // TODO
     return null
   }
@@ -394,6 +425,8 @@ private fun XmlTag.toTmplAstDirectiveContainer(
       attr.descriptor.asSafely<Angular2AttributeDescriptor>()?.takeIf { it.info.type != TEMPLATE_BINDINGS }?.sourceDirectives
       ?: emptyList()
     }.plus(descriptor.asSafely<Angular2ElementDescriptor>()?.sourceDirectives ?: emptyList())
+    .distinct()
+    .flatMap { directive -> buildMetadata(directive) }
     .toSet()
 
   val inputs =
@@ -444,7 +477,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
         keySpan = attr.nameElement.textRange,
         value = attr.value ?: "",
         valueSpan = attr.valueTextRange,
-        sourceSpan = attr.textRange
+        sourceSpan = attr.textRange,
       )
     })
 
@@ -542,6 +575,44 @@ private fun XmlTag.toTmplAstDirectiveContainer(
   }
 }
 
+internal fun buildMetadata(directive: Angular2Directive): List<TmplDirectiveMetadata> {
+  val result = SmartList<TmplDirectiveMetadata>()
+  val exportAs = directive.exportAs.entries.groupBy({ it.value.directive }, { it.key })
+  val takenInputs = mutableSetOf<String>()
+  val takenOutputs = mutableSetOf<String>()
+  result.add(directive.toDirectiveMetadata(exportAs[directive], takenInputs, takenOutputs))
+  for (hostDirective in directive.hostDirectives) {
+    result.add(hostDirective.toDirectiveMetadata(exportAs[hostDirective.directive], takenInputs, takenOutputs))
+  }
+  return result
+}
+
+private fun Angular2HostDirective.toDirectiveMetadata(
+  exportAs: List<String>?,
+  takenInputs: MutableSet<String>,
+  takenOutputs: MutableSet<String>,
+): TmplDirectiveMetadata? {
+  return TmplDirectiveMetadata(
+    directive = directive ?: return null,
+    isHostDirective = true,
+    inputs = inputs.asSequence().filter { takenInputs.add(it.name) }.associateBy { it.name },
+    outputs = outputs.asSequence().filter { takenOutputs.add(it.name) }.associateBy { it.name },
+    exportAs = exportAs?.toSet() ?: emptySet()
+  )
+}
+
+private fun Angular2Directive.toDirectiveMetadata(
+  exportAs: Collection<String>?,
+  takenInputs: MutableSet<String>,
+  takenOutputs: MutableSet<String>,
+) = TmplDirectiveMetadata(
+  directive = this,
+  isHostDirective = false,
+  inputs = bindings.inputs.asSequence().filter { takenInputs.add(it.name) }.associateBy { it.name },
+  outputs = bindings.outputs.asSequence().filter { takenOutputs.add(it.name) }.associateBy { it.name },
+  exportAs = exportAs?.toSet() ?: emptySet()
+)
+
 private fun buildInfo(
   attribute: XmlAttribute?,
   psiVar2tmplAst: MutableMap<PsiElement, TmplAstExpressionSymbol>
@@ -549,7 +620,8 @@ private fun buildInfo(
   if (attribute == null) return null
   val templateBindings = Angular2TemplateBindings.get(attribute).bindings
   return TemplateBindingsInfo(
-    directives = attribute.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives?.toSet() ?: emptySet(),
+    directives = attribute.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives?.asSequence()
+                   ?.flatMap { buildMetadata(it) }?.toSet() ?: emptySet(),
     inputs = templateBindings.asSequence()
       .filter { !it.keyIsVar() }
       .map { Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange, BindingType.Property, it.expression, it.textRange)) }
@@ -566,7 +638,7 @@ private fun buildInfo(
 }
 
 private data class TemplateBindingsInfo(
-  val directives: Set<Angular2Directive>,
+  val directives: Set<TmplDirectiveMetadata>,
   val inputs: Map<String, TmplAstBoundAttribute>,
   val variables: Map<String, TmplAstVariable>,
 )

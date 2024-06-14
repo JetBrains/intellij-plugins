@@ -1,0 +1,55 @@
+/* Angular type checking code */
+
+/* TCB for hostDirectives.ts */
+
+function _tcb1(this: ResolvedComponent) {
+}
+/* TCB for hostDirectives.ts */
+
+function _tcb2(this: UnResolvedComponent) {
+}
+/* TCB for hostDirectives.html */
+
+function _tcb3(this: TestComponent) {
+var _t1 = null! as UnderlineDirective;
+_t1.color = 12;
+12;
+var _t2 = null! as BoldDirective;
+_t2["hover"].subscribe(($event): any => {
+$event;
+});
+var _t3 = document.createElement("resolved");
+_t3.addEventListener("hovr", ($event): any => {
+$event;
+});
+var _t4 = null! as UnderlineDirective;
+_t4.color = 12;
+12;
+var _t5 = null! as BoldDirective;
+_t5["hover"].subscribe(($event): any => {
+$event;
+});
+var _t6 = document.createElement("unresolved");
+_t6.addEventListener("hovr", ($event): any => {
+$event;
+});
+12;
+var _t7 = null! as BoldDirective;
+_t7["hover"].subscribe(($event): any => {
+$event;
+});
+var _t8 = _t2;
+"" + _t8.title;
+var _t10 = null! as ResolvedComponent;
+var _t9 = _t10;
+"" + _t9.title;
+var _t12 = null! as MouseenterDirective;
+var _t11 = _t12;
+"" + _t11.title;
+var _t13 = null as any;
+var _t14 = _t5;
+var _t15 = null as any;
+var _t16 = _t7;
+var _t17 = null as any;
+"" + _t8 + _t13 + _t14 + _t15 + _t16 + _t17;
+}

@@ -89,13 +89,13 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
     return packageImport2name.computeIfAbsent(importInfo) { "_i" + nextImportNameId.getAndIncrement() }
   }
 
-  fun isExplicitlyDeferred(directive: Angular2Directive): Boolean {
+  fun isExplicitlyDeferred(directive: TmplDirectiveMetadata): Boolean {
     // TODO support blocks
     return false
   }
 
-  fun typeCtorFor(dir: Angular2Directive): Expression {
-    val name = dir2ctor.computeIfAbsent(dir) {
+  fun typeCtorFor(dir: TmplDirectiveMetadata): Expression {
+    val name = dir2ctor.computeIfAbsent(dir.directive) {
       "_ctor" + nextDirNameId.getAndIncrement()
     }
     return Expression(name)
@@ -265,7 +265,7 @@ internal class OutOfBandDiagnosticRecorder {
   }
 
   fun splitTwoWayBinding(id: TemplateId, input: TmplAstBoundAttribute, output: TmplAstBoundEvent,
-                         directive: Angular2Directive, outputConsumer: `Angular2Directive|TmplAstElement`) {
+                         directive: TmplDirectiveMetadata, outputConsumer: `TmplDirectiveMetadata|TmplAstElement`) {
   }
 
   fun missingPipe(id: TemplateId, ast: AST) {
