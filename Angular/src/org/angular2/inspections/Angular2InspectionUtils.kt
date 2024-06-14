@@ -2,6 +2,7 @@
 package org.angular2.inspections
 
 import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptService.Companion.getForFile
 import com.intellij.lang.typescript.compiler.TypeScriptService.Companion.getServiceAwareVirtualFile
 import com.intellij.psi.PsiElement
@@ -18,9 +19,7 @@ object Angular2InspectionUtils {
   }
 
   internal fun getTypeScriptInspectionHighlightType(context: PsiElement): ProblemHighlightType =
-    if (getServiceAwareVirtualFile(context)
-        ?.let { getForFile(context.project, it) }
-        ?.skipInternalErrors(context) == true)
+    if (TypeScriptAnnotatorCheckerProvider.getCheckerProvider(context).skipErrors(context))
       ProblemHighlightType.INFORMATION
     else
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING

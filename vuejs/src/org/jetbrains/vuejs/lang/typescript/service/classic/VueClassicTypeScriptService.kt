@@ -150,14 +150,9 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     (error.line > startLine || error.line == startLine && error.column >= startColumn) &&
     (error.endLine < endLine || error.endLine == endLine && error.endColumn <= endColumn)
 
-  override fun canHighlight(file: PsiFile): Boolean {
-    if (super.canHighlight(file)) return true
-
+  override fun isAcceptableForHighlighting(file: PsiFile): Boolean {
     if (!file.isVueFile) return false
-
     val virtualFile = file.virtualFile ?: return false
-
-    if (isDisabledByContext(virtualFile) || !checkAnnotationProvider(file)) return false
 
     if (findModule(file, false)?.let { DialectDetector.isTypeScript(it) } != true
         && findModule(file, true)?.let { DialectDetector.isTypeScript(it) } != true)

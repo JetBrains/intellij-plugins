@@ -2,8 +2,12 @@
 package org.angular2.lang.expr.service
 
 import com.intellij.ide.highlighter.HtmlFileType
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
@@ -15,15 +19,15 @@ import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import icons.AngularIcons
+import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
@@ -52,10 +56,11 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
       it is HtmlFileType && SubstitutedFileType.substituteFileType(file, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
 
-  override fun canHighlight(file: PsiFile): Boolean {
-    return (file.language is Angular2HtmlDialect && Angular2Compiler.isStrictTemplates(file))
-           || super.canHighlight(file)
-  }
+  override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
+    if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
+      Angular2Compiler.isStrictTemplates(file)
+    else
+      super.isAcceptableForHighlighting(file)
 
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
@@ -83,13 +88,6 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
   override fun beforeGetErrors(file: VirtualFile) {
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
   }
-
-  override fun skipInternalErrors(element: PsiElement): Boolean =
-    element.containingFile.let { file ->
-      file.language.let { it !is Angular2Language && it !is Angular2HtmlDialect } || CachedValuesManager.getCachedValue(file) {
-        CachedValueProvider.Result.create(canHighlight(file), PsiModificationTracker.MODIFICATION_COUNT)
-      }
-    }
 
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project) {
 
