@@ -44,7 +44,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
       Angular2TsConfigFile(strictTemplates = true)
     )) {
       val componentFile = myFixture.file
-      val transpiledFile = Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(componentFile)
+      val transpiledFile = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
                            ?: throw IllegalStateException("Cannot build transpiled file")
 
       val fileText = componentFile.text

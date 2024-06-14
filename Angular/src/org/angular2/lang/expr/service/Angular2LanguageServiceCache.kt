@@ -41,7 +41,7 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
       }
 
     val componentVirtualFile = componentFile?.virtualFile ?: return null
-    val newContents = Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(componentFile)
+    val newContents = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
 
     if (newContents == null) {
       transpiledComponentCache.remove(componentVirtualFile)

@@ -54,33 +54,35 @@ object Angular2Compiler {
         psi, R3Identifiers.unwrapWritableSignal.moduleName,
         R3Identifiers.unwrapWritableSignal.name, PsiElement::class.java
       ) != null /* Angular 17.2.0+ */
-      if (this == null)
+      if (this == null
+          || !isStrictTemplates /* Workaround to generate proper TCB in non-strict mode */)
         Angular2TypeCheckingConfig(
-          checkTypeOfInputBindings = false,
-          honorAccessModifiersForInputBindings = false,
-          strictNullInputBindings = false,
-          checkTypeOfAttributes = false,
-          checkTypeOfDomBindings = false,
-          checkTypeOfOutputEvents = false,
-          checkTypeOfAnimationEvents = false,
-          checkTypeOfDomEvents = false,
-          checkTypeOfDomReferences = false,
-          checkTypeOfNonDomReferences = false,
-          enableTemplateTypeChecker = false,
-          checkTypeOfPipes = false,
-          applyTemplateContextGuards = false,
-          strictSafeNavigationTypes = false,
-          checkTemplateBodies = false,
-          alwaysCheckSchemaInTemplateBodies = false,
+          checkTypeOfInputBindings = true,
+          honorAccessModifiersForInputBindings = true,
+          strictNullInputBindings = true,
+          checkTypeOfAttributes = true,
+          checkTypeOfDomBindings = true,
+          checkTypeOfOutputEvents = true,
+          checkTypeOfAnimationEvents = true,
+          checkTypeOfDomEvents = true,
+          checkTypeOfDomReferences = true,
+          checkTypeOfNonDomReferences = true,
+          enableTemplateTypeChecker = true,
+          checkTypeOfPipes = true,
+          applyTemplateContextGuards = true,
+          strictSafeNavigationTypes = true,
+          checkTemplateBodies = true,
+          alwaysCheckSchemaInTemplateBodies = true,
           controlFlowPreventingContentProjection = ControlFlowPreventingContentProjectionKind.Warning,
-          useContextGenericType = false,
-          strictLiteralTypes = false,
+          useContextGenericType = true,
+          strictLiteralTypes = true,
           useInlineTypeConstructors = false,
           suggestionsForSuboptimalTypeInference = true,
           allowSignalsInTwoWayBindings = allowSignalsInTwoWayBindings,
-          checkControlFlowBodies = false,
+          checkControlFlowBodies = true,
         )
-      else
+      else {
+        @Suppress("KotlinConstantConditions")
         Angular2TypeCheckingConfig(
           allowSignalsInTwoWayBindings = allowSignalsInTwoWayBindings,
           alwaysCheckSchemaInTemplateBodies = isStrictTemplates,
@@ -106,6 +108,7 @@ object Angular2Compiler {
           useContextGenericType = getCustomOption(STRICT_CONTEXT_GENERICS) ?: isStrictTemplates,
           useInlineTypeConstructors = false,
         )
+      }
     }
 
   private fun getConfigForPsiElement(psi: PsiElement?): TypeScriptConfig? =

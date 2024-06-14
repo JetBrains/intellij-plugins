@@ -12,7 +12,6 @@ import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.DimensionService
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
-import com.intellij.platform.ide.progress.withModalProgress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.angular2.Angular2InjectionUtils
@@ -52,7 +51,7 @@ class Angular2VisualizeGeneratedTcbAction : AnAction() {
     element.manager.dropPsiCaches()
     runWithModalProgressBlocking(element.project, "Building TCBs") {
       val transpiledTemplate =
-        readAction { Angular2TranspiledComponentFileBuilder.buildTranspiledComponentFile(component.sourceElement.containingFile ?: return@readAction null)}
+        readAction { Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(component.sourceElement.containingFile ?: return@readAction null)}
         ?: return@runWithModalProgressBlocking
 
 

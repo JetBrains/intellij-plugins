@@ -18,10 +18,15 @@ import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
 
 object Angular2TranspiledComponentFileBuilder {
 
-  fun buildTranspiledComponentFile(componentFile: PsiFile): TranspiledComponentFile? {
-    val cache = getComponentFileCache(componentFile) ?: return null
-    return buildTranspiledComponentFile(componentFile, cache)
-  }
+  private val mappingsComparator: Comparator<SourceMapping> =
+    Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength }
+
+  fun getTranspiledComponentFile(componentFile: PsiFile): TranspiledComponentFile? =
+    CachedValuesManager.getCachedValue(componentFile) {
+      CachedValueProvider.Result.create(getComponentFileCache(componentFile)?.let {
+        buildTranspiledComponentFile(componentFile, it)
+      }, PsiModificationTracker.MODIFICATION_COUNT)
+    }
 
   private fun buildTranspiledComponentFile(componentFile: PsiFile, cache: ComponentFileCache): TranspiledComponentFile {
     val templates = cache.components.mapIndexedNotNull { index, cls ->
@@ -121,7 +126,7 @@ object Angular2TranspiledComponentFileBuilder {
   }
 
   private fun List<SourceMapping>.sorted(): List<SourceMapping> =
-    sortedWith(Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength })
+    sortedWith(mappingsComparator)
 
   data class TranspiledComponentFile(
     val generatedCode: String,
