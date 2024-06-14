@@ -3,6 +3,7 @@ package org.angular2.lang.expr.service
 
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSElementVisitor
@@ -28,7 +29,6 @@ import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
@@ -58,13 +58,14 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
     if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
-      Angular2Compiler.isStrictTemplates(file)
+      false // For now do not use TS server for highlighting TODO - Angular2Compiler.isStrictTemplates(file)
     else
       super.isAcceptableForHighlighting(file)
 
   override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
     computeCancellable<List<JSAnnotationError>, Throwable> {
-      if (!Angular2Compiler.isStrictTemplates(file)) {
+      // For now do not use TS server for highlighting TODO - !Angular2Compiler.isStrictTemplates(file)
+      if (file.language is TypeScriptLanguageDialect) {
         val templateRanges = findTemplatesRanges(file)
         if (templateRanges.isNotEmpty()) {
           return@computeCancellable list.filter { error -> templateRanges.none { it.contains(error.line, error.column) } }
