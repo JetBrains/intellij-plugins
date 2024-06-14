@@ -22,7 +22,7 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity
 
 @GeneratedCodeApiVersion(3)
-@GeneratedCodeImplVersion(5)
+@GeneratedCodeImplVersion(6)
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : NuxtFolderEntity, WorkspaceEntityBase(dataSource) {
 
