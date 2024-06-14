@@ -11,13 +11,11 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.angular2.web.Angular2DescriptorSymbolsProvider
-import javax.swing.Icon
 
 class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?)
   : WebSymbolAttributeDescriptor(info, tag) {
@@ -46,43 +44,22 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
                attributeName: String,
                @Suppress("UNUSED_PARAMETER")
                element: PsiElement): Angular2AttributeDescriptor {
-      return Angular2AttributeDescriptor(object : WebSymbolHtmlAttributeInfo {
+      val symbol = object : WebSymbol {
+        override val origin: WebSymbolOrigin
+          get() = WebSymbolOrigin.create(Angular2Framework.ID)
+        override val namespace: SymbolNamespace
+          get() = WebSymbol.NAMESPACE_HTML
+        override val kind: SymbolKind
+          get() = WebSymbol.KIND_HTML_ATTRIBUTES
+
         override val name: String
-          get() = attributeName
-        override val symbol: WebSymbol
-          get() = object : WebSymbol {
-            override val origin: WebSymbolOrigin
-              get() = WebSymbolOrigin.create(Angular2Framework.ID)
-            override val namespace: SymbolNamespace
-              get() = WebSymbol.NAMESPACE_HTML
-            override val kind: SymbolKind
-              get() = WebSymbol.KIND_HTML_ATTRIBUTES
+          get() = "Fake symbol"
 
-            override val name: String
-              get() = "Fake symbol"
+        override fun createPointer(): Pointer<out WebSymbol> =
+          Pointer.hardPointer(this)
+      }
 
-            override fun createPointer(): Pointer<out WebSymbol> =
-              Pointer.hardPointer(this)
-          }
-        override val acceptsNoValue: Boolean
-          get() = false
-        override val acceptsValue: Boolean
-          get() = true
-        override val enumValues: List<WebSymbolCodeCompletionItem>?
-          get() = null
-        override val strictEnumValues: Boolean
-          get() = false
-        override val type: Any?
-          get() = null
-        override val icon: Icon?
-          get() = null
-        override val required: Boolean
-          get() = false
-        override val defaultValue: String?
-          get() = null
-        override val priority: WebSymbol.Priority
-          get() = WebSymbol.Priority.NORMAL
-      }, tag)
+      return Angular2AttributeDescriptor(WebSymbolHtmlAttributeInfo.create(attributeName, symbol), tag)
     }
   }
 
