@@ -62,6 +62,17 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
     else
       super.isAcceptableForHighlighting(file)
 
+  override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
+    computeCancellable<List<JSAnnotationError>, Throwable> {
+      if (!Angular2Compiler.isStrictTemplates(file)) {
+        val templateRanges = findTemplatesRanges(file)
+        if (templateRanges.isNotEmpty()) {
+          return@computeCancellable list.filter { error -> templateRanges.none { it.contains(error.line, error.column) } }
+        }
+      }
+      super.postprocessErrors(file, list)
+    }
+
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
@@ -102,6 +113,45 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
       if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
         process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
       }
+    }
+  }
+
+  private fun findTemplatesRanges(file: PsiFile): List<TemplateRange> {
+    val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+                   ?: return emptyList()
+    val result = SmartList<TemplateRange>()
+    file.acceptChildren(object : JSElementVisitor() {
+      override fun visitTypeScriptClass(typeScriptClass: TypeScriptClass) {
+        Angular2DecoratorUtil.findDecorator(typeScriptClass, Angular2DecoratorUtil.COMPONENT_DEC)
+          ?.let { Angular2DecoratorUtil.getProperty(it, Angular2DecoratorUtil.TEMPLATE_PROP) }
+          ?.value?.textRange
+          ?.let {
+            val startLine = document.getLineNumber(it.startOffset)
+            val endLine = document.getLineNumber(it.endOffset)
+            result.add(TemplateRange(startLine, it.startOffset - document.getLineStartOffset(startLine),
+                                     endLine, it.endOffset - document.getLineStartOffset(endLine)))
+          }
+      }
+
+      override fun visitES6ExportDefaultAssignment(node: ES6ExportDefaultAssignment) {
+        node.acceptChildren(this)
+      }
+    })
+    return result
+  }
+
+  private data class TemplateRange(
+    val startLine: Int,
+    val startColumn: Int,
+    val endLine: Int,
+    val endColumn: Int,
+  ) {
+    fun contains(line: Int, column: Int): Boolean {
+      if (line < startLine) return false
+      if (line == startLine && column < startColumn) return false
+      if (line > endLine) return false
+      if (line == endLine && column >= endColumn) return false
+      return true
     }
   }
 }
