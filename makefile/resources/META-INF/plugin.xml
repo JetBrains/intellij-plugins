@@ -72,7 +72,6 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <toolWindow id="make" anchor="right" icon="MakefileIcons.MakefileToolWindow" factoryClass="com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
 
     <internalFileTemplate name="Makefile" />
-    <iconMapper mappingFile="MakefileIconMappings.json"/>
 
     <localInspection language="Makefile"
                      groupKey="makefile.inspection.group.name"

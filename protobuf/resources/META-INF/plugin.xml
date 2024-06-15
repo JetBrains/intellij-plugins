@@ -162,8 +162,6 @@
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$OneofBody"/>
     <liveTemplateContext contextId="PROTO_SERVICE" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$ServiceBody"/>
-
-    <iconMapper mappingFile="ProtobufIconMappings.json"/>
   </extensions>
 
   <!-- Text format extensions -->

@@ -259,8 +259,6 @@
     <notificationGroup id="Dart analysis issue" displayType="NONE"
                        bundle="messages.DartBundle" key="notification.group.dart.analysis.issue"/>
 
-    <iconMapper mappingFile="DartIconMappings.json"/>
-
     <!--suppress PluginXmlCapitalization -->
     <registryKey defaultValue="true" description="Launch Dart Tooling Daemon and DevTools" key="dart.launch.dtd.and.devtools"/>
     <registryKey defaultValue="true" description="Dart macros support (SDK 3.4+)" key="dart.macros.support"/>
