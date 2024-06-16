@@ -10,7 +10,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.isLspServerEnabledAndAvailable
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 
 class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(project, VolarSupportProvider::class.java) {
   override val name: String
@@ -18,7 +18,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
 
-  override fun isAcceptable(file: VirtualFile) = isLspServerEnabledAndAvailable(project, file)
+  override fun isAcceptable(file: VirtualFile) = VueServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null

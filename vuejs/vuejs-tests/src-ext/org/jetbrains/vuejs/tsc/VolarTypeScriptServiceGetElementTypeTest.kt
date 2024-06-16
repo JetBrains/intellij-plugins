@@ -9,14 +9,14 @@ import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.UsefulTestCase
 import org.intellij.lang.annotations.Language
-import org.jetbrains.vuejs.lang.typescript.service.markVolarForceEnabled
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 import org.junit.Test
 
 class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementTypeTest() {
 
   override fun setUpTypeScriptService() {
-    markVolarForceEnabled(true)
+    VueServiceSetActivationRule.markForceEnabled(true)
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it is VolarTypeScriptService
     }

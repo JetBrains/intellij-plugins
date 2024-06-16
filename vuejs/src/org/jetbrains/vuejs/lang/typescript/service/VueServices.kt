@@ -4,12 +4,10 @@ package org.jetbrains.vuejs.lang.typescript.service
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
-import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
+import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
@@ -18,57 +16,28 @@ import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
 
-/**
- * Checks if the file is local and of the correct file type.
- */
-fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
-  if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
+object VueServiceSetActivationRule : JSServiceSetActivationRule(VolarExecutableDownloader, null) {
+  override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
+    if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 
-  return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
-}
+    return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
+  }
 
-/**
- * If enabled but not available, will launch a background task that will eventually restart the services
- */
-fun isLspServerEnabledAndAvailable(project: Project, context: VirtualFile): Boolean {
-  return isFileAcceptableForLspServer(context) &&
-         isVolarEnabledByContextAndSettings(project, context) &&
-         VolarExecutableDownloader.getExecutableOrRefresh(project) != null
-}
+  override fun isServiceSetProjectContext(project: Project, context: VirtualFile): Boolean {
+    return isVueServiceContext(project, context)
+  }
 
-private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
-  if (isForceEnabledInTests()) return true
-
-  return TypeScriptLanguageServiceUtil.isServiceEnabled(project) &&
-         !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context) &&
-         isVolarEnabledBySettings(project) &&
-         isVueServiceContext(project, context)
-}
-
-private fun isVolarEnabledBySettings(project: Project): Boolean {
-  return when (getVueSettings(project).serviceType) {
-    VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> true
-    VueServiceSettings.TS_SERVICE -> false
-    VueServiceSettings.DISABLED -> false
+  override fun isServiceSetEnabledInSettings(project: Project): Boolean {
+    return when (getVueSettings(project).serviceType) {
+      VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> true
+      VueServiceSettings.TS_SERVICE -> false
+      VueServiceSettings.DISABLED -> false
+    }
   }
 }
 
 private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
   return context.fileType is VueFileType || isVueContext(context, project)
-}
-
-private var forceEnabled = false
-
-private fun isForceEnabledInTests(): Boolean {
-  return ApplicationManager.getApplication().isUnitTestMode && forceEnabled
-}
-
-/**
- * Please don't use unless there's no other choice, e.g., with [TypeScriptLanguageServiceUtil.TypeScriptUseServiceState.USE_FOR_EVALUATION]
- */
-@TestOnly
-fun markVolarForceEnabled(value: Boolean) {
-  forceEnabled = value
 }
 
 //<editor-fold desc="VueClassicTypeScriptService">
