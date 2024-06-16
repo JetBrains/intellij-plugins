@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
@@ -33,14 +34,20 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
 
 /**
- * Provides limited features through TSServer protocol with a custom typescript plugin that rewrites .vue files into valid .ts files.
+ * Original [TypeScriptService] implementation for Vue.
+ * Superseded by integration with [Vue Language Tools (Volar)][VolarTypeScriptService] through LSP.
  *
- * Doesn't work properly with TypeScript 5+.
- * Superseded by integration with Vue Language Tools (Volar) through LSP.
+ * Not used anymore by default but can be toggled in Settings for people that have problems with Vue LS, particularly some Vue 2.x users;
+ * therefore, it's not reasonable to delete it.
+ *
+ * Provides limited features through TSServer protocol with a custom TS plugin that rewrites `.vue` files into valid `.ts` files.
+ *
+ * Doesn't work properly with TypeScript 5+ and is known to have some bugs.
  */
 class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
 
