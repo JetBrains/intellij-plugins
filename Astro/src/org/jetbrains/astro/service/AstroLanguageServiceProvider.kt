@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.astro.lang.AstroFileType
 
 internal class AstroLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
-  private val lspService by lazy(LazyThreadSafetyMode.NONE) { project.service<AstroServiceWrapper>() }
+  private val lspService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<AstroServiceWrapper>() }
 
   override fun getAllServices(): List<JSLanguageService> = listOf(lspService.service)
 
