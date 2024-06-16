@@ -11,13 +11,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.isVueFile
+import org.jetbrains.vuejs.lang.typescript.service.classic.VueClassicTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
-  private val tsLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
+  private val classicLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
   private val volarLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VolarServiceWrapper>() }
 
-  override fun getAllServices(): List<JSLanguageService> = listOf(tsLanguageService.service, volarLanguageService.service)
+  override fun getAllServices(): List<JSLanguageService> = listOf(classicLanguageService.service, volarLanguageService.service)
 
   override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 

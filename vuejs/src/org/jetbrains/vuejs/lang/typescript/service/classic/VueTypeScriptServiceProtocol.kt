@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.lang.typescript.service.protocol
+package org.jetbrains.vuejs.lang.typescript.service.classic
 
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
@@ -10,11 +10,11 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.openapi.project.Project
 import java.util.function.Consumer
 
-class VueTypeScriptServiceProtocol(project: Project,
-                                   settings: TypeScriptCompilerSettings,
-                                   readyConsumer: Consumer<*>,
-                                   eventConsumer: Consumer<in JSLanguageServiceAnswer>,
-                                   tsServicePath: String) :
+internal class VueTypeScriptServiceProtocol(project: Project,
+                                            settings: TypeScriptCompilerSettings,
+                                            readyConsumer: Consumer<*>,
+                                            eventConsumer: Consumer<in JSLanguageServiceAnswer>,
+                                            tsServicePath: String) :
   TypeScriptServiceStandardOutputProtocol(project, settings, readyConsumer, eventConsumer, "VueService", tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {

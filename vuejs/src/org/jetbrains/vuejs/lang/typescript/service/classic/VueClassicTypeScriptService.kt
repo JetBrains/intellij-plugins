@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.lang.typescript.service
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.jetbrains.vuejs.lang.typescript.service.classic
 
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
@@ -33,7 +33,7 @@ import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
+import org.jetbrains.vuejs.lang.typescript.service.isVueClassicTypeScriptServiceEnabled
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
