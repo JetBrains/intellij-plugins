@@ -23,7 +23,7 @@ private val astroLspServerPackageDescriptor: () -> LspServerPackageDescriptor = 
 
 class AstroLspServerSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
-    if (isLspServerEnabledAndAvailable(project, file)) {
+    if (AstroServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)) {
       serverStarter.ensureServerStarted(AstroLspServerDescriptor(project))
     }
   }
@@ -33,7 +33,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
 }
 
 class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroLspExecutableDownloader, "Astro") {
-  override fun isSupportedFile(file: VirtualFile): Boolean = isFileAcceptableForLspServer(file)
+  override fun isSupportedFile(file: VirtualFile): Boolean = AstroServiceSetActivationRule.isFileAcceptableForLspServer(file)
 }
 
 @ApiStatus.Experimental
