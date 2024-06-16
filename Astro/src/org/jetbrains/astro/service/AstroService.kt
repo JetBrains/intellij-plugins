@@ -22,9 +22,9 @@ fun isFileAcceptableForService(file: VirtualFile): Boolean {
 
 private fun isServiceEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
   return TypeScriptLanguageServiceUtil.isServiceEnabled(project) &&
-         context.fileType == AstroFileType &&
          !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context) &&
-         isEnabledBySettings(project)
+         isEnabledBySettings(project) &&
+         context.fileType == AstroFileType
 }
 
 private fun isEnabledBySettings(project: Project): Boolean {
