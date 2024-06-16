@@ -47,23 +47,15 @@ object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDesc
     return getVueSettings(project).packageRef
   }
 
-  override fun getExecutable(project: Project, packageRef: NodePackageRef): String? {
-    val ref = extractRefText(packageRef)
-    if (ref == defaultPackageKey) {
-      if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
-        // work in progress
-        val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                        "typescript/node_modules/tsc-vue/${packageDescriptor.packageRelativePath}")
-        val path = file.absolutePath
-        return path
-      }
-      else {
-        return getLspServerExecutablePath(packageDescriptor.serverPackage, packageDescriptor.packageRelativePath)
-      }
+  override fun getExecutableForDefaultKey(project: Project): String? {
+    if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
+      // work in progress
+      val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
+                      "typescript/node_modules/tsc-vue/${packageDescriptor.packageRelativePath}")
+      val path = file.absolutePath
+      return path
     }
 
-    val suffix = FileUtil.toSystemDependentName(packageDescriptor.packageRelativePath)
-
-    return if (ref.endsWith(suffix)) ref else "$ref$suffix"
+    return super.getExecutableForDefaultKey(project)
   }
 }
