@@ -15,8 +15,8 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.VuejsIcons
-import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
-import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
+import org.jetbrains.vuejs.lang.typescript.service.isLspServerEnabledAndAvailable
+import org.jetbrains.vuejs.lang.typescript.service.isFileAcceptableForLspServer
 import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
@@ -29,7 +29,7 @@ private val volarLspServerPackageDescriptor: () -> LspServerPackageDescriptor = 
 
 class VolarSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
-    if (isVolarEnabledAndAvailable(project, file)) {
+    if (isLspServerEnabledAndAvailable(project, file)) {
       serverStarter.ensureServerStarted(VolarServerDescriptor(project))
     }
   }
@@ -39,7 +39,7 @@ class VolarSupportProvider : LspServerSupportProvider {
 }
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VolarExecutableDownloader, "Vue") {
-  override fun isSupportedFile(file: VirtualFile): Boolean = isVolarFileTypeAcceptable(file)
+  override fun isSupportedFile(file: VirtualFile): Boolean = isFileAcceptableForLspServer(file)
 }
 
 @ApiStatus.Experimental

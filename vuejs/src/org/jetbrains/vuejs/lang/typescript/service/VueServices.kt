@@ -19,18 +19,21 @@ import org.jetbrains.vuejs.options.getVueSettings
 
 
 /**
- * If enabled but not available, will launch a background task that will eventually restart the services
+ * Checks if the file is local and of the correct file type.
  */
-fun isVolarEnabledAndAvailable(project: Project, context: VirtualFile): Boolean {
-  return isVolarFileTypeAcceptable(context) &&
-         isVolarEnabledByContextAndSettings(project, context) &&
-         VolarExecutableDownloader.getExecutableOrRefresh(project) != null
-}
-
-fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
+fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
   if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 
   return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
+}
+
+/**
+ * If enabled but not available, will launch a background task that will eventually restart the services
+ */
+fun isLspServerEnabledAndAvailable(project: Project, context: VirtualFile): Boolean {
+  return isFileAcceptableForLspServer(context) &&
+         isVolarEnabledByContextAndSettings(project, context) &&
+         VolarExecutableDownloader.getExecutableOrRefresh(project) != null
 }
 
 private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
