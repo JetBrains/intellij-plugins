@@ -24,5 +24,9 @@ fun isServiceEnabledByContextAndSettings(project: Project, context: VirtualFile)
   if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
   if (context.fileType != AstroFileType) return false
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
+  return isEnabledBySettings(project)
+}
+
+private fun isEnabledBySettings(project: Project): Boolean {
   return getAstroServiceSettings(project).serviceMode == AstroServiceMode.ENABLED
 }
