@@ -14,7 +14,9 @@ enum class PrismaPreviewFeature {
   PostgresqlExtensions,
   Tracing,
   Views,
-  RelationJoins;
+  RelationJoins,
+  OmitApi,
+  PrismaSchemaFolder;
 
   val presentation: String = StringUtil.decapitalize(name)
 }
