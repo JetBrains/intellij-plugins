@@ -39,6 +39,7 @@
       bundle="messages.PrettierBundle"
       key="configurable.PrettierConfigurable.display.name"
       instance="com.intellij.prettierjs.PrettierConfigurable"/>
+    <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierProjectConfigurator" />
     <actionOnSaveInfoProvider id="PrettierOnSaveInfoProvider"
                               implementation="com.intellij.prettierjs.PrettierConfigurable$PrettierOnSaveInfoProvider"
                               order="after FormatOnSaveInfoProvider, after EsLintOnSaveInfoProvider, before BuildOnSaveInfoProvider, before FileWatcherOnSaveInfoProvider, before UploadOnSaveInfoProvider"/>

@@ -152,6 +152,11 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return getConfigurationMode() == ConfigurationMode.DISABLED;
   }
 
+  public boolean isDefaultConfigurationMode() {
+    State defaultState = new State();
+    return this.myState.configurationMode == defaultState.configurationMode;
+  }
+
   private boolean isAutomatic() {
     return getConfigurationMode() == ConfigurationMode.AUTOMATIC;
   }
