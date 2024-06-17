@@ -19,10 +19,10 @@ import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
-private val volarLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
-  LspServerPackageDescriptor("@vue/language-server",
-                             Registry.stringValue("vue.language.server.default.version"),
-                             "/bin/vue-language-server.js")
+private object VolarLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
+                                                                            "1.8.27",
+                                                                            "/bin/vue-language-server.js") {
+  override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
 }
 
 class VolarSupportProvider : LspServerSupportProvider {
@@ -39,7 +39,7 @@ class VolarSupportProvider : LspServerSupportProvider {
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue")
 
 @ApiStatus.Experimental
-object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDescriptor()) {
+object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDescriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
   }

@@ -16,10 +16,10 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 
-private val astroLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
-  LspServerPackageDescriptor("@astrojs/language-server",
-                             Registry.stringValue("astro.language.server.default.version"),
-                             "/bin/nodeServer.js")
+private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor("@astrojs/language-server",
+                                                                            "2.8.3",
+                                                                            "/bin/nodeServer.js") {
+  override val defaultVersion: String get() = Registry.stringValue("astro.language.server.default.version")
 }
 
 class AstroLspServerSupportProvider : LspServerSupportProvider {
@@ -36,4 +36,4 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
 class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroServiceSetActivationRule, "Astro")
 
 @ApiStatus.Experimental
-object AstroLspExecutableDownloader : LspServerDownloader(astroLspServerPackageDescriptor())
+object AstroLspExecutableDownloader : LspServerDownloader(AstroLspServerPackageDescriptor)

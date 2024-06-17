@@ -31,7 +31,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <registryKey defaultValue="2.8.3" description="Astro service version for downloading" restartRequired="true" key="astro.language.server.default.version"/>
+    <registryKey defaultValue="" description="Astro service version for downloading" key="astro.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:astro" displayName="Astro"/>
 
     <internalFileTemplate name="Astro Component"/>
