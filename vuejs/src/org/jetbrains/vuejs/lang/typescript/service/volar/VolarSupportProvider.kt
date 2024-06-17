@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.lsp.*
 import com.intellij.lang.typescript.resolve.TypeScriptCompilerEvaluationFacade
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
