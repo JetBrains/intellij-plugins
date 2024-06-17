@@ -35,6 +35,7 @@ import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.web.Angular2SymbolDelegate
 
 
 private typealias `TcbOp|Identifier` = Any
@@ -2310,7 +2311,7 @@ private fun getBoundAttributes(directive: TmplDirectiveMetadata, node: `TmplAstE
             fieldName = input.fieldName,
             required = input.required,
             transformType = (input as? Angular2SourceDirectiveProperty)?.transformParameterType,
-            isSignal = (input as? Angular2SourceDirectiveProperty)?.typeFromSignal != null,
+            isSignal = (((input as? Angular2SymbolDelegate<*>)?.delegate ?: input) as? Angular2SourceDirectiveProperty)?.typeFromSignal != null,
             isTwoWayBinding = attr is TmplAstBoundAttribute && attr.type == BindingType.TwoWay,
             isCoerced = (input as? Angular2ClassBasedDirectiveProperty)?.isCoerced == true,
             isRestricted = (input as? Angular2SourceDirectiveProperty)?.sources?.any {
