@@ -2,6 +2,7 @@
 package org.jetbrains.astro.service
 
 import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
+import com.intellij.lang.typescript.lsp.JSLspServerWidgetItem
 import com.intellij.lang.typescript.lsp.LspServerDownloader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.openapi.project.Project
@@ -29,7 +30,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
   }
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    LspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, AstroServiceConfigurable::class.java)
+    JSLspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, AstroServiceConfigurable::class.java)
 }
 
 class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroServiceSetActivationRule, "Astro")
