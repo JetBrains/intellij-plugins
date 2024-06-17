@@ -3,8 +3,9 @@
 /* TCB for ngAcceptInputTypeOverride.ts */
 
 function _tcb1(this: MyComp2) {
-var _t1 = null! as typeof MyComp2.ngAcceptInputType_bar;
-_t1 = 2;
+var _t1 = document.createElement("foo");
 var _t2 = null! as MyComp2;
+var _t3 = null! as typeof MyComp2.ngAcceptInputType_bar;
+_t3 = 2;
 _t2.boo = 3;
 }

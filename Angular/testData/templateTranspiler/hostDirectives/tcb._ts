@@ -11,45 +11,50 @@ function _tcb2(this: UnResolvedComponent) {
 /* TCB for hostDirectives.html */
 
 function _tcb3(this: TestComponent) {
-var _t1 = null! as UnderlineDirective;
-_t1.color = 12;
-12;
-var _t2 = null! as BoldDirective;
-_t2["hover"].subscribe(($event): any => {
-$event;
-});
-var _t3 = document.createElement("resolved");
-_t3.addEventListener("hovr", ($event): any => {
-$event;
-});
+var _t1 = document.createElement("resolved");
+var _t2 = null! as ResolvedComponent;
+var _t3 = null! as MouseenterDirective;
 var _t4 = null! as UnderlineDirective;
 _t4.color = 12;
-12;
 var _t5 = null! as BoldDirective;
+12;
 _t5["hover"].subscribe(($event): any => {
 $event;
 });
-var _t6 = document.createElement("unresolved");
-_t6.addEventListener("hovr", ($event): any => {
+_t1.addEventListener("hovr", ($event): any => {
 $event;
 });
-12;
-var _t7 = null! as BoldDirective;
-_t7["hover"].subscribe(($event): any => {
-$event;
-});
-var _t8 = _t2;
-"" + _t8.title;
-var _t10 = null! as ResolvedComponent;
-var _t9 = _t10;
-"" + _t9.title;
+var _t6 = _t5;
+var _t7 = _t2;
+var _t8 = _t3;
+var _t9 = null as any;
+var _t10 = document.createElement("unresolved");
+var _t11 = null! as UnResolvedComponent;
 var _t12 = null! as MouseenterDirective;
-var _t11 = _t12;
-"" + _t11.title;
-var _t13 = null as any;
-var _t14 = _t5;
-var _t15 = null as any;
-var _t16 = _t7;
-var _t17 = null as any;
-"" + _t8 + _t13 + _t14 + _t15 + _t16 + _t17;
+var _t13 = null! as UnderlineDirective;
+_t13.color = 12;
+var _t14 = null! as BoldDirective;
+12;
+_t14["hover"].subscribe(($event): any => {
+$event;
+});
+_t10.addEventListener("hovr", ($event): any => {
+$event;
+});
+var _t15 = _t14;
+var _t16 = null as any;
+var _t17 = document.createElement("app-test");
+var _t18 = null! as BoldDirective;
+var _t19 = null! as UnderlineDirective;
+var _t20 = null! as TestComponent;
+12;
+_t18["hover"].subscribe(($event): any => {
+$event;
+});
+var _t21 = _t18;
+var _t22 = null as any;
+"" + _t6.title;
+"" + _t7.title;
+"" + _t8.title;
+"" + _t6 + _t9 + _t15 + _t16 + _t21 + _t22;
 }

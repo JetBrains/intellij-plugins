@@ -185,7 +185,7 @@ private class TcbTemplateContextOp(private val tcb: Context, private val scope: 
     // may be narrowed as a result of template guard conditions.
     val ctx = this.tcb.allocateId()
     this.scope.addStatement {
-      append("var ${ctx}: any = null!;")
+      append("var ${ctx} = null! as any;")
     }
     return ctx
   }
@@ -2447,16 +2447,7 @@ private enum class EventParamType {
 private fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
                                   eventType: `EventParamType|JSType`): Expression {
   val handlers = event.handler.map { handler ->
-    tcbEventHandlerExpression(handler, tcb, scope).let {
-      if (event.type == ParsedEventType.TwoWay) {
-        Expression {
-          append(it).append(" = $EVENT_PARAMETER")
-        }
-      }
-      else {
-        it
-      }
-    }
+    tcbEventHandlerExpression(handler, tcb, scope)
   }
 
   // Obtain all guards that have been applied to the scope and its parents, as they have to be

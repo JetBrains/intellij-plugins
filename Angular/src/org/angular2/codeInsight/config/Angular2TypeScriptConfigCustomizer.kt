@@ -99,7 +99,7 @@ object Angular2Compiler {
           checkTypeOfOutputEvents = getCustomOption(STRICT_OUTPUT_EVENT_TYPES) ?: isStrictTemplates,
           checkTypeOfPipes = isStrictTemplates,
           controlFlowPreventingContentProjection = ControlFlowPreventingContentProjectionKind.Warning,
-          enableTemplateTypeChecker = false,
+          enableTemplateTypeChecker = true,
           honorAccessModifiersForInputBindings = getCustomOption(STRICT_INPUT_ACCESS_MODIFIERS) ?: false,
           strictLiteralTypes = getCustomOption(STRICT_LITERAL_TYPES) ?: isStrictTemplates,
           strictNullInputBindings = getCustomOption(STRICT_NULL_INPUT_TYPES) ?: isStrictTemplates,

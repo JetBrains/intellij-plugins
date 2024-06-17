@@ -12,17 +12,21 @@ const _ctor2 = null! as <T extends number = any>(init: Pick<TestFoo<T>, "foo" | 
 function _tcb1<T extends mytype>(this: AppComponent<T>) {
 var _t1 = _ctor1({"ngIf": this.title != 'foo', "ngIfThen": null as any});
 _t1.ngIf = this.title != 'foo';
-var _t2: any = null!;
+var _t2 = null! as any;
 if (TestIf.ngTemplateContextGuard(_t1, _t2) && this.title != 'foo') {
 var _t3 = _t2.ngIf;
-var _t5 = null! as _i1.RouterOutlet;
-var _t4 = _t5;
-var _t6 = _ctor2({"foo": {a: _t4}, "foo2": null as any});
-_t6.foo = {a: _t4};
-var _t7 = _ctor2({"foo": {a: _t4}, "foo2": _pipe1.transform(12)});
-_t7.foo = {a: _t4};
-_t7.foo2 = _pipe1.transform(12);
+var _t4 = document.createElement("main");
+var _t7 = null! as _i1.RouterOutlet;
+var _t6 = _t7;
+var _t5 = _ctor2({"foo": {a: _t6}, "foo2": null as any});
+_t5.foo = {a: _t6};
+var _t8 = document.createElement("div");
+var _t9 = _ctor2({"foo": {a: _t6}, "foo2": _pipe1.transform(12)});
+_t9.foo = {a: _t6};
+_t9.foo2 = _pipe1.transform(12);
+var _t10 = document.createElement("router-outlet");
 }
+var _t11 = document.createElement("span");
 "" + this.minutes;
 "" + this.minutes;
 }
