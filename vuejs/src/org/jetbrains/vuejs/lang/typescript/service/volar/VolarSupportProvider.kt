@@ -37,9 +37,7 @@ class VolarSupportProvider : LspServerSupportProvider {
     LspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
-class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VolarExecutableDownloader, "Vue") {
-  override fun isSupportedFile(file: VirtualFile): Boolean = VueServiceSetActivationRule.isFileAcceptableForLspServer(file)
-}
+class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue")
 
 @ApiStatus.Experimental
 object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDescriptor()) {

@@ -32,9 +32,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
     LspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, AstroServiceConfigurable::class.java)
 }
 
-class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroLspExecutableDownloader, "Astro") {
-  override fun isSupportedFile(file: VirtualFile): Boolean = AstroServiceSetActivationRule.isFileAcceptableForLspServer(file)
-}
+class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroServiceSetActivationRule, "Astro")
 
 @ApiStatus.Experimental
 object AstroLspExecutableDownloader : LspServerDownloader(astroLspServerPackageDescriptor())
