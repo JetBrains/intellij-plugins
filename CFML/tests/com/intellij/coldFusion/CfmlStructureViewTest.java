@@ -102,10 +102,10 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
 
     if (fileType == CfmlFileType.INSTANCE) {
       CfmlFileViewProvider viewProvider = (CfmlFileViewProvider)myFixture.getFile().getViewProvider();
-      structureViewBuilder = LanguageStructureViewBuilder.INSTANCE.forLanguage(viewProvider.getBaseLanguage())
+      structureViewBuilder = LanguageStructureViewBuilder.getInstance().forLanguage(viewProvider.getBaseLanguage())
         .getStructureViewBuilder(viewProvider.getPsi(viewProvider.getBaseLanguage()));
     } else {
-      structureViewBuilder = StructureViewBuilder.PROVIDER.getStructureViewBuilder(fileType, virtualFile, getProject());
+      structureViewBuilder = StructureViewBuilder.getProvider().getStructureViewBuilder(fileType, virtualFile, getProject());
     }
 
     return structureViewBuilder.createStructureView(FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile), getProject());

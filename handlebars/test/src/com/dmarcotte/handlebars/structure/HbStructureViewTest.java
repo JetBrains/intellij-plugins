@@ -33,7 +33,7 @@ public class HbStructureViewTest extends BasePlatformTestCase {
   private void doTestStructureView(PsiFile file, Consumer<StructureViewComposite> consumer) {
     VirtualFile vFile = file.getVirtualFile();
     FileEditor fileEditor = FileEditorManager.getInstance(getProject()).getSelectedEditor(vFile);
-    StructureViewBuilder builder = LanguageStructureViewBuilder.INSTANCE.getStructureViewBuilder(file);
+    StructureViewBuilder builder = LanguageStructureViewBuilder.getInstance().getStructureViewBuilder(file);
     assert builder != null;
 
     StructureViewComposite composite = null;
