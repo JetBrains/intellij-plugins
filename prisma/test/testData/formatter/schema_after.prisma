@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int      @default(autoincrement()) @id
   createdAt DateTime @default(now())
   title     String
   content   String?
@@ -19,14 +19,14 @@ model Post {
 }
 
 model Profile {
-  id     Int     @id @default(autoincrement())
+  id     Int     @default(autoincrement()) @id
   bio    String?
   userId Int     @unique // relation scalar field
   user   User    @relation(fields: [userId], references: [id]) // renamed from `User` -> `user`
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
+  id      Int      @default(autoincrement()) @id
   email   String   @unique
   name    String?
   posts   Post[] // renamed from `Post` -> `posts`
