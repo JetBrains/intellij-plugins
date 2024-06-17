@@ -13,7 +13,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
   private val code: StringBuilder
 
-  private val sourceMappings: List<SourceMappingData>
+  private val sourceMappings: Set<SourceMappingData>
 
   init {
     val expression = ExpressionBuilderImpl().apply(builder)
@@ -30,7 +30,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     object : Angular2TemplateTranspiler.TranspiledTemplate {
       override val templateFile: Angular2HtmlFile = templateFile
       override val generatedCode: String = code.toString()
-      override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings
+      override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
     }
 
   interface ExpressionBuilder {
@@ -64,7 +64,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
   private class ExpressionBuilderImpl : ExpressionBuilder, BlockBuilder {
     val code = StringBuilder()
 
-    val sourceMappings = mutableListOf<SourceMappingData>()
+    val sourceMappings = mutableSetOf<SourceMappingData>()
 
     private var ignoreDiagnostics = false
 
@@ -97,11 +97,10 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     override fun withSourceSpan(originalRange: TextRange?, builder: ExpressionBuilder.() -> Unit) {
       if (originalRange != null) {
-        //val offset = this.code.length
+        val offset = this.code.length
         this.builder()
-        // TODO this may be necessary only for error mapping
-        //sourceMappings.add(SourceMappingData(originalRange.startOffset, originalRange.length, offset,
-        //                                     this.code.length - offset, ignoreDiagnostics))
+        sourceMappings.add(SourceMappingData(originalRange.startOffset, originalRange.length, offset,
+                                             this.code.length - offset, ignoreDiagnostics))
       }
       else {
         this.builder()

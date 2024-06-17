@@ -1,0 +1,8 @@
+/* Angular type checking code */
+
+/* TCB for safeAccess.ts */
+
+function _tcb1(this: AppComponent) {
+"" + (null as any ? ((null as any ? ((null as any ? (this.data)!.icon : undefined))!.toString : undefined))!() : undefined);
+"" + (null as any ? ((null as any ? (this.data)!.check : undefined))!() : undefined);
+}

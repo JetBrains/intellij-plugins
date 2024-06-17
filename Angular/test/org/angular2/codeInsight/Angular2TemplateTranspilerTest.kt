@@ -35,6 +35,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
     dir = true,
   )
 
+  fun testSafeAccess() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

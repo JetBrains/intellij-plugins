@@ -33,9 +33,7 @@ import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.Angular2LangUtil.`$IMPLICIT`
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
-import org.angular2.lang.expr.psi.Angular2PipeExpression
-import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
-import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
+import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 
 
@@ -991,13 +989,10 @@ private class TcbDirectiveOutputsOp(
         // `$event` parameter.
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, EventParamType.Infer)
         this.scope.addStatement {
-          withSourceSpan(output.sourceSpan) {
-            append(outputField)
-            append(".subscribe(")
-            append(handler)
-            append(")")
-          }
-          append(";")
+          append(outputField)
+          append(".subscribe(")
+          append(handler)
+          append(");")
         }
       }
       else {
@@ -1072,14 +1067,12 @@ private class TcbUnclaimedOutputsOp(
           elId = this.scope.resolve(this.element)
         }
         this.scope.addStatement {
-          withSourceSpan(output.sourceSpan) {
-            append(elId)
-            append(".addEventListener(\"")
-            append(output.name, output.keySpan)
-            append("\", ")
-            append(handler)
-            append(");")
-          }
+          append(elId)
+          append(".addEventListener(\"")
+          append(output.name, output.keySpan)
+          append("\", ")
+          append(handler)
+          append(");")
         }
       }
       else {
@@ -2030,14 +2023,24 @@ private open class TcbExpressionTranslator(private val tcb: Context, protected v
       result.append(element.text, if (element !is PsiWhiteSpace) element.textRange else null)
     }
     else {
-      super.visitElement(element)
+      result.withSourceSpan(element.textRange) {
+        super.visitElement(element)
+      }
     }
   }
 
   override fun visitJSCallExpression(node: JSCallExpression) {
+    val methodExpression = node.methodExpression.let {
+      var result = it
+      while (result is JSParenthesizedExpression) {
+        result = result.innerExpression
+      }
+      result
+    }
+
     // Resolve the special `$any(expr)` syntax to insert a cast in the argument to type `any`.
     // `$any(expr)` -> `expr as any`
-    if (node.methodExpression
+    if (methodExpression
           ?.asSafely<JSReferenceExpression>()
           ?.takeIf { it.qualifier == null && it.referenceName == "\$any" } != null
         && node.argumentSize == 1) {
@@ -2045,8 +2048,16 @@ private open class TcbExpressionTranslator(private val tcb: Context, protected v
       translate(node.arguments[0])
       result.append(" as any)")
     }
-    else
+    else if (methodExpression
+        ?.asSafely<JSReferenceExpression>()
+        ?.isElvis == true
+      ) {
+      emitSafeAccess(node, methodExpression) {
+        append("()")
+      }
+    } else {
       super.visitJSCallExpression(node)
+    }
   }
 
   override fun visitJSReferenceExpression(node: JSReferenceExpression) {
@@ -2095,43 +2106,52 @@ private open class TcbExpressionTranslator(private val tcb: Context, protected v
     else {
       // The form of safe property reads depends on whether strictness is in use.
       if (node.isElvis) {
-        result.withSourceSpan(node.textRange) {
-          if (tcb.env.config.strictSafeNavigationTypes) {
-            // Basically, the return here is either the type of the complete expression with a null-safe
-            // property read, or `undefined`. So a ternary is used to create an "or" type:
-            // "a?.b" becomes (null as any ? a!.b : undefined)
-            // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
-            append("(null as any ? ")
-            node.qualifier!!.accept(this@TcbExpressionTranslator)
-            append("!.")
-            node.referenceNameElement!!.accept(this@TcbExpressionTranslator)
-            append(" : undefined)")
+          emitSafeAccess(node, node.qualifier!!) {
+            append(".")
+            node.referenceNameElement
+              ?.accept(this@TcbExpressionTranslator)
+            ?: append("_error_")
           }
-          else if (VeSafeLhsInferenceBugDetector().veWillInferAnyFor(node)) {
-            // Emulate a View Engine bug where 'any' is inferred for the left-hand side of the safe
-            // navigation operation. With this bug, the type of the left-hand side is regarded as any.
-            // Therefore, the left-hand side only needs repeating in the output (to validate it), and then
-            // 'any' is used for the rest of the expression. This is done using a comma operator:
-            // "a?.b" becomes (a as any).b, which will of course have type 'any'.
-            append("((")
-            node.qualifier!!.accept(this@TcbExpressionTranslator)
-            append(") as any).")
-            node.referenceNameElement!!.accept(this@TcbExpressionTranslator)
-          }
-          else {
-            // The View Engine bug isn't active, so check the entire type of the expression, but the final
-            // result is still inferred as `any`.
-            // "a?.b" becomes (a!.b as any)
-            append("(")
-            node.qualifier!!.accept(this@TcbExpressionTranslator)
-            append("!.")
-            node.referenceNameElement!!.accept(this@TcbExpressionTranslator)
-            append(" as any)")
-          }
-        }
       }
       else {
         super.visitJSReferenceExpression(node)
+      }
+    }
+  }
+
+  private fun emitSafeAccess(node: PsiElement, qualifier: JSExpression, expression: Expression.ExpressionBuilder.() -> Unit) {
+    result.withSourceSpan(node.textRange) {
+      if (tcb.env.config.strictSafeNavigationTypes) {
+        // Basically, the return here is either the type of the complete expression with a null-safe
+        // property read, or `undefined`. So a ternary is used to create an "or" type:
+        // "a?.b" becomes (null as any ? a!.b : undefined)
+        // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
+        append("(null as any ? (")
+        qualifier.accept(this@TcbExpressionTranslator)
+        append(")!")
+        expression()
+        append(" : undefined)")
+      }
+      else if (VeSafeLhsInferenceBugDetector().veWillInferAnyFor(node)) {
+        // Emulate a View Engine bug where 'any' is inferred for the left-hand side of the safe
+        // navigation operation. With this bug, the type of the left-hand side is regarded as any.
+        // Therefore, the left-hand side only needs repeating in the output (to validate it), and then
+        // 'any' is used for the rest of the expression. This is done using a comma operator:
+        // "a?.b" becomes (a as any).b, which will of course have type 'any'.
+        append("((")
+        qualifier.accept(this@TcbExpressionTranslator)
+        append(") as any)")
+        expression()
+      }
+      else {
+        // The View Engine bug isn't active, so check the entire type of the expression, but the final
+        // result is still inferred as `any`.
+        // "a?.b" becomes (a!.b as any)
+        append("((")
+        qualifier.accept(this@TcbExpressionTranslator)
+        append(")!")
+        expression()
+        append(" as any)")
       }
     }
   }

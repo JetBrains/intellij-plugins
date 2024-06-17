@@ -81,5 +81,5 @@ export class AppComponent {
   signal2 = signal(12)
   signal3 = computed(() => this.signal2() + 1)
   readonly signal4 = signal("test")
-  readonly value4: string
+  readonly value4!: string
 }
