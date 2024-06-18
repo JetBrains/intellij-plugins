@@ -29,13 +29,13 @@ public class PrismaBlockAttributeImpl extends PrismaElementImpl implements Prism
   @Override
   @Nullable
   public PrismaArgumentsList getArgumentsList() {
-    return findChildByClass(PrismaArgumentsList.class);
+    return PsiTreeUtil.getChildOfType(this, PrismaArgumentsList.class);
   }
 
   @Override
   @Nullable
   public PrismaPathExpression getPathExpression() {
-    return findChildByClass(PrismaPathExpression.class);
+    return PsiTreeUtil.getChildOfType(this, PrismaPathExpression.class);
   }
 
 }

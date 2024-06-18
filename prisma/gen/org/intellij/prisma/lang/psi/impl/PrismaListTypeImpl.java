@@ -30,7 +30,7 @@ public class PrismaListTypeImpl extends PrismaFieldTypeImpl implements PrismaLis
   @Override
   @NotNull
   public PrismaTypeReference getTypeReference() {
-    return findNotNullChildByClass(PrismaTypeReference.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, PrismaTypeReference.class));
   }
 
 }

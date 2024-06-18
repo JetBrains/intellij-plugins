@@ -4,8 +4,10 @@ package org.intellij.prisma.lang.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
 
-public interface PrismaTypeDeclaration extends PrismaDeclaration, PrismaEntityDeclaration, PrismaTableEntityDeclaration {
+public interface PrismaTypeDeclaration extends StubBasedPsiElement<PrismaNamedStub<PrismaTypeDeclaration>>, PrismaDeclaration, PrismaEntityDeclaration, PrismaTableEntityDeclaration {
 
   @Nullable
   PrismaFieldDeclarationBlock getFieldDeclarationBlock();

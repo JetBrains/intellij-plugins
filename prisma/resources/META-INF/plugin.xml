@@ -82,6 +82,7 @@
         <!-- Indexing -->
         <additionalLibraryRootsProvider
                 implementation="org.intellij.prisma.ide.indexing.PrismaAdditionalLibraryRootsProvider"/>
+        <stubElementTypeHolder class="org.intellij.prisma.lang.psi.stubs.PrismaStubElementTypes" externalIdPrefix="PRISMA:"/>
 
         <!-- Refactoring -->
         <lang.refactoringSupport language="Prisma"

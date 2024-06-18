@@ -30,13 +30,13 @@ public class PrismaFunctionCallImpl extends PrismaExpressionImpl implements Pris
   @Override
   @NotNull
   public PrismaArgumentsList getArgumentsList() {
-    return findNotNullChildByClass(PrismaArgumentsList.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, PrismaArgumentsList.class));
   }
 
   @Override
   @NotNull
   public PrismaPathExpression getPathExpression() {
-    return findNotNullChildByClass(PrismaPathExpression.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, PrismaPathExpression.class));
   }
 
 }

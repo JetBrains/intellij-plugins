@@ -29,7 +29,7 @@ public class PrismaTypeReferenceImpl extends PrismaTypeReferenceMixin implements
   @Override
   @Nullable
   public PrismaUnsupportedType getUnsupportedType() {
-    return findChildByClass(PrismaUnsupportedType.class);
+    return PsiTreeUtil.getChildOfType(this, PrismaUnsupportedType.class);
   }
 
   @Override

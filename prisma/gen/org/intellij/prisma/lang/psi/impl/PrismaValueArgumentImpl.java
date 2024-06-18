@@ -30,7 +30,7 @@ public class PrismaValueArgumentImpl extends PrismaValueArgumentMixin implements
   @Override
   @NotNull
   public PrismaExpression getExpression() {
-    return findNotNullChildByClass(PrismaExpression.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, PrismaExpression.class));
   }
 
 }

@@ -29,13 +29,13 @@ public class PrismaNamedArgumentImpl extends PrismaNamedArgumentMixin implements
   @Override
   @Nullable
   public PrismaExpression getExpression() {
-    return findChildByClass(PrismaExpression.class);
+    return PsiTreeUtil.getChildOfType(this, PrismaExpression.class);
   }
 
   @Override
   @NotNull
   public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+    return notNullChild(findChildByType(IDENTIFIER));
   }
 
 }

@@ -35,7 +35,7 @@ public class PrismaUnsupportedTypeImpl extends PrismaElementImpl implements Pris
   @Override
   @NotNull
   public PsiElement getIdentifier() {
-    return findNotNullChildByType(UNSUPPORTED);
+    return notNullChild(findChildByType(UNSUPPORTED));
   }
 
 }

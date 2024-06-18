@@ -9,11 +9,17 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
+import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
+import com.intellij.psi.stubs.IStubElementType;
 
 public class PrismaEnumDeclarationImpl extends PrismaEnumDeclarationMixin implements PrismaEnumDeclaration {
 
   public PrismaEnumDeclarationImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  public PrismaEnumDeclarationImpl(@NotNull PrismaNamedStub<PrismaEnumDeclaration> stub, @NotNull IStubElementType<?, ?> type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull PrismaVisitor visitor) {
@@ -29,7 +35,7 @@ public class PrismaEnumDeclarationImpl extends PrismaEnumDeclarationMixin implem
   @Override
   @Nullable
   public PrismaEnumDeclarationBlock getEnumDeclarationBlock() {
-    return findChildByClass(PrismaEnumDeclarationBlock.class);
+    return PsiTreeUtil.getChildOfType(this, PrismaEnumDeclarationBlock.class);
   }
 
   @Override

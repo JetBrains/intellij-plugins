@@ -14,6 +14,8 @@
   psiPackage='org.intellij.prisma.lang.psi'
   psiImplPackage='org.intellij.prisma.lang.psi.impl'
 
+  elementTypeFactory('KeyValue|(EnumValue|Enum|Field|Generator|Datasource|Type|View|Model)Declaration|TypeAlias')='org.intellij.prisma.lang.psi.stubs.PrismaStubElementTypeFactory.create'
+
   tokens=[
     MODEL           = 'model'
     TYPE            = 'type'
@@ -55,7 +57,6 @@
   implements('(Datasource|Generator)Declaration')='org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration'
 
   implements('(Model|Type|View)Declaration')='org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration'
-  mixin('(Model|Type|View)Declaration')='org.intellij.prisma.lang.psi.impl.PrismaTableEntityDeclarationMixin'
   pin('(Model|Type|View)Declaration')=1
 
   implements('.*Block')='org.intellij.prisma.lang.psi.PrismaBlock'
@@ -89,9 +90,21 @@ private Declaration ::=
 private Declaration_recover ::= !TopLevelKeywords
 private TopLevelKeywords ::= MODEL | TYPE | VIEW | ENUM | GENERATOR | DATASOURCE
 
-ModelDeclaration ::= MODEL Identifier FieldDeclarationBlock
-TypeDeclaration ::= TYPE Identifier FieldDeclarationBlock
-ViewDeclaration ::= VIEW Identifier FieldDeclarationBlock
+ModelDeclaration ::= MODEL Identifier FieldDeclarationBlock {
+  mixin="org.intellij.prisma.lang.psi.impl.PrismaTableEntityDeclarationMixin<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaModelDeclaration>>"
+  implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaModelDeclaration>>"
+  stubClass="org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaModelDeclaration>"
+}
+TypeDeclaration ::= TYPE Identifier FieldDeclarationBlock {
+  mixin="org.intellij.prisma.lang.psi.impl.PrismaTableEntityDeclarationMixin<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaTypeDeclaration>>"
+  implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaTypeDeclaration>>"
+  stubClass="org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaTypeDeclaration>"
+}
+ViewDeclaration ::= VIEW Identifier FieldDeclarationBlock {
+  mixin="org.intellij.prisma.lang.psi.impl.PrismaTableEntityDeclarationMixin<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaViewDeclaration>>"
+  implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaViewDeclaration>>"
+  stubClass="org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaViewDeclaration>"
+}
 
 FieldDeclarationBlock ::= '{' FieldDeclarationBlockItem* '}' {
 }
@@ -106,6 +119,7 @@ private FieldDeclarationBlockItem ::=
 
 FieldDeclaration ::= IDENTIFIER ':'? FieldType? FieldAttribute* {
     mixin="org.intellij.prisma.lang.psi.impl.PrismaFieldDeclarationMixin"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaFieldDeclaration>>"
     pin=1
     recoverWhile=UntilNewLine_recover
     methods=[getNativeType]
@@ -113,6 +127,7 @@ FieldDeclaration ::= IDENTIFIER ':'? FieldType? FieldAttribute* {
 
 EnumDeclaration ::= ENUM Identifier EnumDeclarationBlock {
     mixin="org.intellij.prisma.lang.psi.impl.PrismaEnumDeclarationMixin"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaEnumDeclaration>>"
     pin=1
 }
 EnumDeclarationBlock ::= '{' (EnumValueDeclaration | BlockAttribute)* '}' {
@@ -120,16 +135,21 @@ EnumDeclarationBlock ::= '{' (EnumValueDeclaration | BlockAttribute)* '}' {
 }
 EnumValueDeclaration ::= Identifier FieldAttribute* {
     mixin="org.intellij.prisma.lang.psi.impl.PrismaEnumValueDeclarationMixin"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaEnumValueDeclaration>>"
     pin=1
     recoverWhile=UntilNewLine_recover
 }
 
 DatasourceDeclaration ::= DATASOURCE Identifier KeyValueBlock {
-    mixin="org.intellij.prisma.lang.psi.impl.PrismaKeyValueDeclarationMixin"
+    mixin="org.intellij.prisma.lang.psi.impl.PrismaKeyValueDeclarationMixin<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaDatasourceDeclaration>>"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaDatasourceDeclaration>>"
+    stubClass="org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaDatasourceDeclaration>"
     pin=1
 }
 GeneratorDeclaration ::= GENERATOR Identifier KeyValueBlock {
-    mixin="org.intellij.prisma.lang.psi.impl.PrismaKeyValueDeclarationMixin"
+    mixin="org.intellij.prisma.lang.psi.impl.PrismaKeyValueDeclarationMixin<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaGeneratorDeclaration>>"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaGeneratorDeclaration>>"
+    stubClass="org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaGeneratorDeclaration>"
     pin=1
 }
 
@@ -138,12 +158,14 @@ KeyValueBlock ::= '{' KeyValue* '}' {
 }
 KeyValue ::= Identifier '=' Expression {
     mixin="org.intellij.prisma.lang.psi.impl.PrismaKeyValueMixin"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaKeyValue>>"
     pin=1
     recoverWhile=UntilNewLine_recover
 }
 
 TypeAlias ::= TYPE Identifier '=' FieldType FieldAttribute* {
     mixin="org.intellij.prisma.lang.psi.impl.PrismaTypeAliasMixin"
+    implements="com.intellij.psi.StubBasedPsiElement<org.intellij.prisma.lang.psi.stubs.PrismaNamedStub<PrismaTypeAlias>>"
     pin=3
 }
 

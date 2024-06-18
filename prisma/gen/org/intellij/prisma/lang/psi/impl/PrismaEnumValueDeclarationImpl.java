@@ -9,11 +9,17 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
+import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
+import com.intellij.psi.stubs.IStubElementType;
 
 public class PrismaEnumValueDeclarationImpl extends PrismaEnumValueDeclarationMixin implements PrismaEnumValueDeclaration {
 
   public PrismaEnumValueDeclarationImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  public PrismaEnumValueDeclarationImpl(@NotNull PrismaNamedStub<PrismaEnumValueDeclaration> stub, @NotNull IStubElementType<?, ?> type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull PrismaVisitor visitor) {
@@ -35,7 +41,7 @@ public class PrismaEnumValueDeclarationImpl extends PrismaEnumValueDeclarationMi
   @Override
   @NotNull
   public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+    return notNullChild(findChildByType(IDENTIFIER));
   }
 
 }

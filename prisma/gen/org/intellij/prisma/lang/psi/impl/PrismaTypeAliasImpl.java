@@ -9,11 +9,17 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
+import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
+import com.intellij.psi.stubs.IStubElementType;
 
 public class PrismaTypeAliasImpl extends PrismaTypeAliasMixin implements PrismaTypeAlias {
 
   public PrismaTypeAliasImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  public PrismaTypeAliasImpl(@NotNull PrismaNamedStub<PrismaTypeAlias> stub, @NotNull IStubElementType<?, ?> type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull PrismaVisitor visitor) {
@@ -35,13 +41,13 @@ public class PrismaTypeAliasImpl extends PrismaTypeAliasMixin implements PrismaT
   @Override
   @Nullable
   public PrismaFieldType getFieldType() {
-    return findChildByClass(PrismaFieldType.class);
+    return PsiTreeUtil.getChildOfType(this, PrismaFieldType.class);
   }
 
   @Override
   @NotNull
   public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+    return notNullChild(findChildByType(IDENTIFIER));
   }
 
 }
