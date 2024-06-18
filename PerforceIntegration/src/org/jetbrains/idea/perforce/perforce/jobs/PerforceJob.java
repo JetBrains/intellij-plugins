@@ -14,20 +14,15 @@ public class PerforceJob {
   private final ConnectionKey myKey;
 
   private final Map<Integer, PerforceJobFieldValue> myStandardFields;
-  private final Map<Integer, PerforceJobFieldValue> myOtherFields;
 
-  public PerforceJob(List<PerforceJobFieldValue> standardFields, List<PerforceJobFieldValue> otherFields, @NotNull final P4Connection connection,
+  public PerforceJob(List<PerforceJobFieldValue> standardFields, @NotNull final P4Connection connection,
                      ConnectionKey key) {
     myKey = key;
     myStandardFields = new HashMap<>(standardFields.size(), 1);
-    myOtherFields = new HashMap<>(otherFields.size(), 1);
     myConnection = connection;
 
     for (PerforceJobFieldValue field : standardFields) {
       myStandardFields.put(field.getField().getCode(), field);
-    }
-    for (PerforceJobFieldValue field : otherFields) {
-      myOtherFields.put(field.getField().getCode(), field);
     }
   }
 

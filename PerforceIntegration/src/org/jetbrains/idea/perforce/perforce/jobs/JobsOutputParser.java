@@ -9,7 +9,6 @@ import org.jetbrains.idea.perforce.application.ConnectionKey;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class JobsOutputParser {
@@ -56,7 +55,7 @@ public class JobsOutputParser {
     for (FieldParser parser : fieldParsers) {
       parser.parse(line, startAt, values);
     }
-    return new PerforceJob(values, Collections.emptyList(), myConnection, myKey);
+    return new PerforceJob(values, myConnection, myKey);
   }
 
   private static class FieldParser {
