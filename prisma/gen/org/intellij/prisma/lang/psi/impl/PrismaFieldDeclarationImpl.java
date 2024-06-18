@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
-import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaFieldDeclarationStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class PrismaFieldDeclarationImpl extends PrismaFieldDeclarationMixin implements PrismaFieldDeclaration {
@@ -18,7 +18,7 @@ public class PrismaFieldDeclarationImpl extends PrismaFieldDeclarationMixin impl
     super(node);
   }
 
-  public PrismaFieldDeclarationImpl(@NotNull PrismaNamedStub<PrismaFieldDeclaration> stub, @NotNull IStubElementType<?, ?> type) {
+  public PrismaFieldDeclarationImpl(@NotNull PrismaFieldDeclarationStub stub, @NotNull IStubElementType<?, ?> type) {
     super(stub, type);
   }
 

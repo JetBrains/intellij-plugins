@@ -7,7 +7,7 @@ import com.intellij.psi.stubs.StubElement
 import org.intellij.prisma.lang.psi.PrismaNamedElement
 import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub
 
-class PrismaNamedStubImpl<T : PrismaNamedElement>(
+open class PrismaNamedStubImpl<T : PrismaNamedElement>(
   parent: StubElement<*>?,
   elementType: IStubElementType<out StubElement<*>, *>,
   name: String?,

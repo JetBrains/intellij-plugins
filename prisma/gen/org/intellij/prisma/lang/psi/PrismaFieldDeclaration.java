@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaFieldDeclarationStub;
 
-public interface PrismaFieldDeclaration extends StubBasedPsiElement<PrismaNamedStub<PrismaFieldDeclaration>>, PrismaMemberDeclaration, PrismaTypeOwner, PrismaFieldAttributeOwner {
+public interface PrismaFieldDeclaration extends StubBasedPsiElement<PrismaFieldDeclarationStub>, PrismaMemberDeclaration, PrismaTypeOwner, PrismaFieldAttributeOwner {
 
   @NotNull
   List<PrismaFieldAttribute> getFieldAttributeList();

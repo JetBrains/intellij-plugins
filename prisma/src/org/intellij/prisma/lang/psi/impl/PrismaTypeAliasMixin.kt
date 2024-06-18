@@ -3,11 +3,10 @@ package org.intellij.prisma.lang.psi.impl
 import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.IStubElementType
 import org.intellij.prisma.lang.psi.PrismaDeclaration
-import org.intellij.prisma.lang.psi.PrismaTypeAlias
-import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub
+import org.intellij.prisma.lang.psi.stubs.PrismaTypeAliasStub
 
-abstract class PrismaTypeAliasMixin : PrismaDeclarationMixin<PrismaNamedStub<PrismaTypeAlias>>, PrismaDeclaration {
+abstract class PrismaTypeAliasMixin : PrismaDeclarationMixin<PrismaTypeAliasStub>, PrismaDeclaration {
   constructor(node: ASTNode) : super(node)
 
-  constructor(stub: PrismaNamedStub<PrismaTypeAlias>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
+  constructor(stub: PrismaTypeAliasStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 }

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
-import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaTypeAliasStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class PrismaTypeAliasImpl extends PrismaTypeAliasMixin implements PrismaTypeAlias {
@@ -18,7 +18,7 @@ public class PrismaTypeAliasImpl extends PrismaTypeAliasMixin implements PrismaT
     super(node);
   }
 
-  public PrismaTypeAliasImpl(@NotNull PrismaNamedStub<PrismaTypeAlias> stub, @NotNull IStubElementType<?, ?> type) {
+  public PrismaTypeAliasImpl(@NotNull PrismaTypeAliasStub stub, @NotNull IStubElementType<?, ?> type) {
     super(stub, type);
   }
 

@@ -8,18 +8,18 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
 import org.intellij.prisma.lang.psi.PrismaMemberDeclaration
 import org.intellij.prisma.lang.psi.PrismaTypeSignature
-import org.intellij.prisma.lang.psi.stubs.PrismaNamedStub
+import org.intellij.prisma.lang.psi.stubs.PrismaFieldDeclarationStub
 import org.intellij.prisma.lang.types.PrismaAnyType
 import org.intellij.prisma.lang.types.PrismaType
 
 abstract class PrismaFieldDeclarationMixin :
-  PrismaNamedElementImpl<PrismaNamedStub<PrismaFieldDeclaration>>,
+  PrismaNamedElementImpl<PrismaFieldDeclarationStub>,
   PrismaMemberDeclaration,
   PrismaFieldDeclaration {
 
   constructor(node: ASTNode) : super(node)
 
-  constructor(stub: PrismaNamedStub<PrismaFieldDeclaration>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
+  constructor(stub: PrismaFieldDeclarationStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
   override val type: PrismaType
     get() = CachedValuesManager.getCachedValue(this) {

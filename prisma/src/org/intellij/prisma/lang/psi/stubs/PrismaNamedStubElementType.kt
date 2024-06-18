@@ -2,24 +2,32 @@
 package org.intellij.prisma.lang.psi.stubs
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.intellij.prisma.lang.psi.PrismaNamedElement
-import org.intellij.prisma.lang.psi.stubs.impl.PrismaNamedStubImpl
 
-abstract class PrismaNamedStubElementType<P : PrismaNamedElement>(debugName: String) : PrismaStubElementType<PrismaNamedStub<P>, P>(debugName) {
-  override fun serialize(stub: PrismaNamedStub<P>, dataStream: StubOutputStream) {
+abstract class PrismaNamedStubElementType<S : PrismaNamedStub<P>, P : PrismaNamedElement>(
+  debugName: String,
+  private val psiFactory: (S, IStubElementType<out StubElement<*>, *>) -> P,
+  private val stubFactory: (StubElement<out PsiElement>?, IStubElementType<out StubElement<*>, *>, String?) -> S,
+) : PrismaStubElementType<S, P>(debugName) {
+  override fun serialize(stub: S, dataStream: StubOutputStream) {
     super.serialize(stub, dataStream)
     dataStream.writeName(stub.name)
   }
 
-  override fun createStub(psi: P, parentStub: StubElement<out PsiElement>?): PrismaNamedStub<P> {
-    return PrismaNamedStubImpl(parentStub, this, psi.name)
+  override fun createPsi(stub: S): P {
+    return psiFactory(stub, this)
   }
 
-  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): PrismaNamedStub<P> {
+  override fun createStub(psi: P, parentStub: StubElement<out PsiElement>?): S {
+    return stubFactory(parentStub, this, psi.name)
+  }
+
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): S {
     val name = dataStream.readNameString()
-    return PrismaNamedStubImpl(parentStub, this, name)
+    return stubFactory(parentStub, this, name)
   }
 }

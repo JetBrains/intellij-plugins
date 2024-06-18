@@ -11,7 +11,7 @@ import org.intellij.prisma.lang.psi.PrismaElement
 abstract class PrismaStubElementType<S : StubElement<P>, P : PrismaElement>(debugName: String) :
   IStubElementType<S, P>(debugName, PrismaLanguage) {
 
-  override fun getExternalId(): String = EXTERNAL_PREFIX_ID + debugName
+  override fun getExternalId(): String = EXTERNAL_PREFIX_ID + super.toString()
 
   override fun serialize(stub: S, dataStream: StubOutputStream) {
   }

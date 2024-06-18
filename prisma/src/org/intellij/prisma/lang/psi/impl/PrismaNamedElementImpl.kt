@@ -37,7 +37,7 @@ abstract class PrismaNamedElementImpl<S : PrismaNamedStub<*>> : StubBasedPsiElem
 
   override fun getIcon(flags: Int): Icon? = icon
 
-  override fun getUseScope(): SearchScope {
-    return LocalSearchScope(containingFile)
-  }
+  override fun getUseScope(): SearchScope = LocalSearchScope(containingFile)
+
+  override fun toString(): String = "${javaClass.simpleName}($elementType)"
 }
