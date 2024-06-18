@@ -3,8 +3,6 @@ package org.angular2.inspections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
-import com.intellij.lang.typescript.compiler.TypeScriptService.Companion.getForFile
-import com.intellij.lang.typescript.compiler.TypeScriptService.Companion.getServiceAwareVirtualFile
 import com.intellij.psi.PsiElement
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.entities.Angular2Directive

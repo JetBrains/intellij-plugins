@@ -56,6 +56,10 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
       it is HtmlFileType && SubstitutedFileType.substituteFileType(file, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
 
+  override fun supportsInjectedFile(file: PsiFile): Boolean {
+    return file.language is Angular2Language || file.language is Angular2HtmlDialect
+  }
+
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
     if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
       false // For now do not use TS server for highlighting TODO - Angular2Compiler.isStrictTemplates(file)
