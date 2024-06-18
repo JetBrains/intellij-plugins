@@ -11,7 +11,6 @@ public class FullSearchSpecificator implements JobsSearchSpecificator {
   // todo setting
   public final static int ourMaxLines = 500;
   private final List<Pair<Parts, String>> myStandard = new ArrayList<>();
-  private final List<FreePart> myFree = new ArrayList<>();
 
   public void addStandardConstraint(final Parts part, final String pattern) {
     myStandard.add(Pair.create(part, pattern));
@@ -23,7 +22,7 @@ public class FullSearchSpecificator implements JobsSearchSpecificator {
     ContainerUtil.addAll(list, s);
     list.add("-m");
     list.add("" + (ourMaxLines + 1));
-    if (!(myStandard.isEmpty() && myFree.isEmpty())) {
+    if (!(myStandard.isEmpty())) {
       list.add("-e");
       list.add(createPatterns());
     }
@@ -40,11 +39,6 @@ public class FullSearchSpecificator implements JobsSearchSpecificator {
     for (Pair<Parts, String> pair : myStandard) {
       sb.append("(");
       pair.getFirst().add(sb, pair.getSecond());
-      sb.append(") ");
-    }
-    for (FreePart part : myFree) {
-      sb.append("(");
-      part.add(sb);
       sb.append(") ");
     }
     return sb.toString();
@@ -95,21 +89,4 @@ public class FullSearchSpecificator implements JobsSearchSpecificator {
 
     protected abstract void addImpl(final StringBuilder sb, final String pattern);
   }
-
-  private static final class FreePart {
-    private final String myPattern;
-    private final String myFieldName;
-    private final String mySign;
-
-    private FreePart(final String fieldName, final String sign, final String pattern) {
-      myPattern = pattern;
-      myFieldName = fieldName;
-      mySign = sign;
-    }
-
-    private void add(final StringBuilder sb) {
-      sb.append(myFieldName).append(mySign).append(myPattern);
-    }
-  }
-
 }
