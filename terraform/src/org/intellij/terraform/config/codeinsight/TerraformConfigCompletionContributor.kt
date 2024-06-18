@@ -250,7 +250,10 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
 
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
-      doCompletion(position, Processor { result.addElement(it); !result.isStopped }, parameters)
+      doCompletion(position, Processor {
+        result.addElement(it)
+        !result.isStopped
+      })
     }
 
     private fun buildProviderTypeText(provider: ProviderType): String =
@@ -273,7 +276,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       }
     }
 
-    private fun doCompletion(position: PsiElement, consumer: Processor<LookupElement>, parameters: CompletionParameters): Boolean {
+    private fun doCompletion(position: PsiElement, consumer: Processor<LookupElement>): Boolean {
       val parent = position.parent
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent}" }
       val obj = when {
@@ -287,27 +290,22 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent, obj=$obj, lnws=$leftNWS}" }
       val type = getClearTextValue(leftNWS) ?: return true
       val typeModel = TypeModelProvider.getModel(position)
-      val addGlobalModelData = parameters.invocationCount > 1 || !typeModel.hasOfficialProviders
-      val tiersToIncludeByDefault = setOf(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL)
       return when (type) {
         HCL_RESOURCE_IDENTIFIER -> {
-          val providerLocalNamesReversed = TypeModel.collectProviderLocalNames (position).entries.associateBy({ it.value }) { it.key }
+          val providerLocalNamesReversed = TypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
           typeModel.allResources().toPlow()
-            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier) }
             .map { buildLookupElement(it, buildResourceDisplayString(it, providerLocalNamesReversed), buildProviderTypeText(it.provider), position) }
             .processWith(consumer)
         }
         HCL_DATASOURCE_IDENTIFIER -> {
           val providerLocalNamesReversed = TypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
           typeModel.allDatasources().toPlow()
-            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier) }
             .map { buildLookupElement(it, buildResourceDisplayString(it, providerLocalNamesReversed), buildProviderTypeText(it.provider), position) }
             .processWith(consumer)
         }
         HCL_PROVIDER_IDENTIFIER -> {
           val providerLocalNamesReversed = TypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
           typeModel.allProviders().toPlow()
-            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.tier) }
             .map { buildProviderLookupElement(it, buildResourceDisplayString(it, providerLocalNamesReversed), position) }
             .processWith(consumer)
         }
@@ -406,13 +404,15 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       }
     }
 
-    private fun doAddCompletion(isBlock: Boolean,
-                                isProperty: Boolean,
-                                parent: HCLObject,
-                                result: CompletionResultSet,
-                                right: Type?,
-                                parameters: CompletionParameters,
-                                properties: Map<String, PropertyOrBlockType>) {
+    private fun doAddCompletion(
+      isBlock: Boolean,
+      isProperty: Boolean,
+      parent: HCLObject,
+      result: CompletionResultSet,
+      right: Type?,
+      parameters: CompletionParameters,
+      properties: Map<String, PropertyOrBlockType>,
+    ) {
       if (properties.isEmpty()) return
       val incomplete = getIncomplete(parameters)
       if (incomplete != null) {

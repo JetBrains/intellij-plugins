@@ -156,4 +156,9 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
   public void testStringLiteral() {
     doTest("check_string_literal",  new HCLLiteralValidnessInspection());
   }
+
+  public void testUnknownResource() {
+    doTest("unknown_resource",  new TfUnknownResourceInspection());
+  }
+
 }

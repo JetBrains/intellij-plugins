@@ -52,11 +52,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   //<editor-fold desc="Resources completion tests">
   public void testResourceTypeCompletion() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -70,11 +68,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceQuotedTypeCompletion() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -88,11 +84,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceQuotedKeywordCompletion() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -270,11 +264,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceTypeCompletionGivenDefinedProvidersOrForNoPropsProviders() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     then(set).contains("template_file", "vault_kv_secret");
@@ -295,11 +287,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   //<editor-fold desc="Data Sources completion tests">
   public void testDataSourceTypeCompletion() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -348,11 +338,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceQuotedTypeCompletion() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -366,11 +354,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceQuotedKeywordCompletion() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -440,11 +426,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceTypeCompletionGivenDefinedProviders() throws Exception {
-    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
-      .filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     then(set).contains("template_file", "vault_kv_secret");

@@ -4,6 +4,7 @@ package org.intellij.terraform.config.model
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.DataInputOutputUtilRt
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
@@ -55,8 +56,6 @@ class TypeModel(
   val providersByFullName: Map<String, ProviderType> = providers.associateBy { it.fullName }
   val resourcesByProvider: Map<String, List<ResourceType>> = resources.groupBy { it.provider.fullName }
   val datasourcesByProvider: Map<String, List<DataSourceType>> = dataSources.groupBy { it.provider.fullName }
-
-  val hasOfficialProviders: Boolean = providers.any { it.tier == ProviderTier.TIER_OFFICIAL }
 
   private val providerDefaultPrefixes: Map<String, String>
 
@@ -262,16 +261,11 @@ class TypeModel(
 
     @JvmStatic
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
-      val containingFile = getContainingFile(psiElement) ?: return emptyMap()
-      val parentDir = containingFile.parent ?: return emptyMap()
-      if (parentDir.isDirectory) {
-        val fileTypeManager = FileTypeManager.getInstance()
-        val gists = parentDir.childrenOfType<PsiFile>()
-          .filter { file -> fileTypeManager.isFileOfType(file.virtualFile, TerraformFileType) }
-          .map { providersNamesGist.getFileData(it) }
-        return gists.flatMap { it.entries }.associate { it.key to it.value }
-      }
-      return emptyMap()
+      val fileTypeManager = FileTypeManager.getInstance()
+      val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
+        ?.filter { file -> fileTypeManager.isFileOfType(file.virtualFile, TerraformFileType) }
+        ?.map { providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
+      return gists.flatMap { it.entries }.associate { it.key to it.value }
     }
 
     private val providersNamesGist by lazy {
@@ -289,10 +283,20 @@ class TypeModel(
         }
       }) { psiFile ->
         val localNames = mutableMapOf<String, String>()
-        val terraformRootBlock = psiFile.childrenOfType<HCLBlock>().firstOrNull { TerraformPatterns.TerraformRootBlock.accepts(it) }
+        val terraformRootBlock = getTerraformBlock(psiFile)
         terraformRootBlock?.accept(RequiredProvidersVisitor(localNames))
         localNames
       }
+    }
+
+    fun getContainingDir(psiElement: PsiElement?): PsiDirectory? {
+      val containingDir = psiElement?.let { getContainingFile(it)?.parent } ?: return null
+      return if (containingDir.isDirectory) containingDir else null
+    }
+
+    fun getTerraformBlock(psiFile: PsiFile?): HCLBlock? {
+      val terraformRootBlock = psiFile?.childrenOfType<HCLBlock>()?.firstOrNull { TerraformPatterns.TerraformRootBlock.accepts(it) }
+      return terraformRootBlock
     }
   }
 
@@ -316,7 +320,7 @@ class TypeModel(
     return -1
   }
 
-  private fun getProviderFullName(identifier: String, psiElement: PsiElement? = null): String {
+  private fun getProviderNameForIdentifier(identifier: String, psiElement: PsiElement? = null): String {
     val localNames = psiElement?.let { collectProviderLocalNames(it) } ?: emptyMap()
     val providerShortName = getResourcePrefix(identifier)
     return localNames[providerShortName]
@@ -331,7 +335,7 @@ class TypeModel(
     lookupType<DataSourceType>(name, psiElement, datasourcesByProvider)
 
   private fun <T : ResourceOrDataSourceType> lookupType(name: String, psiElement: PsiElement?, typesMap: Map<String, List<T>>): T? {
-    val providerName = getProviderFullName(name, psiElement)
+    val providerName = getProviderNameForIdentifier(name, psiElement)
     val resourceId = getResourceName(name)
     val defaultPrefix = providerDefaultPrefixes[providerName]?.takeIf { it != resourceId }
     val typesCollection = typesMap[providerName] ?: return null
@@ -339,7 +343,7 @@ class TypeModel(
   }
 
   fun getProviderType(name: String, psiElement: PsiElement? = null): ProviderType? {
-    val providerName = getProviderFullName(name, psiElement)
+    val providerName = getProviderNameForIdentifier(name, psiElement)
     return providersByFullName[providerName]
   }
 
