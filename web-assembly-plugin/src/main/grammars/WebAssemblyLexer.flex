@@ -110,7 +110,7 @@ FCONST = f(32 | 64)\.const
 NUMERICINSTR = i(32 | 64)\.(c[lt]z | popcnt | add | sub | mul | (div | rem | shr)_[su] | and | x?or | shl | rot[lr]
                                    | eqz? | ne | [lg][te]_[su] | trunc_((f | sat)(32 | 64)_[su]))
              | i32\.(wrap_i64 | extend(8 | 16)_s)
-             | i64\.(extend_i32[su] | extend(8 | 16 | 32)_s)
+             | i64\.(extend_i32_[su] | extend(8 | 16 | 32)_s)
              | f (32 | 64)\.(abs | neg | ceil | floor | trunc | nearest | sqrt | add | sub | mul | div | min | max
                                  | copysign | eq | ne | [lg][te] | convert_i(32 | 64)_[su])
              | f32\.demote_f64 | f64\.promote_f32
