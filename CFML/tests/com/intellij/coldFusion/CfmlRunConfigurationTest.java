@@ -22,7 +22,6 @@ import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -105,7 +104,6 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     Editor editor = myFixture.getEditor();
     CfmlRunConfiguration cfmlConfig = getContextRunConfiguration(editor);
     assert cfmlConfig != null;
-    cfmlConfig.getRunnerParameters().getUrl();
     assertEquals("http://4.4.4.4/src/index.cfm", cfmlConfig.getRunnerParameters().getUrl());
   }
 
