@@ -674,13 +674,11 @@ public final class DartResolveUtil {
       return specialization.get(null, element.getText());
     }
 
-    if (element instanceof DartVarAccessDeclaration && parentElement instanceof DartForInPart) {
-      final DartForInPart forInPart = (DartForInPart)parentElement;
+    if (element instanceof DartVarAccessDeclaration && parentElement instanceof DartForInPart forInPart) {
       return resolveForInPartClass(forInPart);
     }
 
-    if (element instanceof DartForInPart) {
-      final DartForInPart forInPart = (DartForInPart)element;
+    if (element instanceof DartForInPart forInPart) {
       return resolveForInPartClass(forInPart);
     }
 

@@ -80,12 +80,10 @@ public class AngularUiRouterDiagramBuilder {
             if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
               state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
 
-              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
-                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
+              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression object) {
                 fillStateParameters(state, object);
               }
-              else if (arguments[0] instanceof JSObjectLiteralExpression) {
-                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[0];
+              else if (arguments[0] instanceof JSObjectLiteralExpression object) {
                 final JSProperty name = object.findProperty("name");
                 if (name != null && PsiTreeUtil.isAncestor(name, element.getNavigationElement(), false)) {
                   fillStateParameters(state, object);
@@ -394,8 +392,8 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   private @Nullable VirtualFile parseTemplate(final @NotNull String url, @Nullable JSProperty urlProperty) {
-    PsiFile templateFile = null;
-    Template template = null;
+    PsiFile templateFile;
+    Template template;
     if (urlProperty != null && urlProperty.getValue() != null) {
       int offset = urlProperty.getValue().getTextRange().getEndOffset() - 1;
       final PsiReference reference = urlProperty.getContainingFile().findReferenceAt(offset);

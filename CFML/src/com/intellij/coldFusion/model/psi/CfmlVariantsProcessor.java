@@ -105,8 +105,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
     }
 
     // continue if element is hidden (has private modifier, package_local or protected) (?)
-    if (namedElement instanceof PsiModifierListOwner) {
-      final PsiModifierListOwner owner = (PsiModifierListOwner)namedElement;
+    if (namedElement instanceof PsiModifierListOwner owner) {
       if (owner.hasModifierProperty(PRIVATE) || owner.hasModifierProperty(PACKAGE_LOCAL) || owner.hasModifierProperty(PROTECTED)) {
         return true;
       }
@@ -135,11 +134,8 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
       }
     }
 
-    if (namedElement instanceof PsiModifierListOwner) {
-      final PsiModifierListOwner owner = (PsiModifierListOwner)namedElement;
-      if (myStaticScopeFlag && !owner.hasModifierProperty(STATIC)) {
-        return true;
-      }
+    if (namedElement instanceof PsiModifierListOwner owner && myStaticScopeFlag && !owner.hasModifierProperty(STATIC)) {
+      return true;
     }
 
     boolean isMyMethodCall = namedElement instanceof CfmlFunction;
