@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public final class HbBlockMismatchAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    if (element instanceof HbOpenBlockMustache) {
-      HbOpenBlockMustache openBlockMustache = (HbOpenBlockMustache)element;
+    if (element instanceof HbOpenBlockMustache openBlockMustache) {
       HbMustacheName openBlockMustacheName = openBlockMustache.getBlockMustacheName();
 
       HbCloseBlockMustache closeBlockMustache = openBlockMustache.getPairedElement();
@@ -42,8 +41,7 @@ public final class HbBlockMismatchAnnotator implements Annotator {
       }
     }
 
-    if (element instanceof HbCloseBlockMustache) {
-      HbCloseBlockMustache closeBlockMustache = (HbCloseBlockMustache)element;
+    if (element instanceof HbCloseBlockMustache closeBlockMustache) {
       HbOpenBlockMustache openBlockMustache = closeBlockMustache.getPairedElement();
       if (openBlockMustache == null) {
         HbMustacheName closeBlockMustacheName = closeBlockMustache.getBlockMustacheName();

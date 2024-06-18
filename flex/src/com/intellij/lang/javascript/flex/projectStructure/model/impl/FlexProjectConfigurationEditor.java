@@ -633,12 +633,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
       if (entry instanceof ModuleLibraryEntry) {
         existingModuleLibrariesEntries.put(((ModuleLibraryEntry)entry).getLibraryId(), entry);
       }
-      else if (entry instanceof ModifiableSharedLibraryEntry) {
-        final ModifiableSharedLibraryEntry e = (ModifiableSharedLibraryEntry)entry;
+      else if (entry instanceof ModifiableSharedLibraryEntry e) {
         existingSharedLibrariesEntries.put(Pair.create(e.getLibraryLevel(), e.getLibraryName()), e);
       }
-      else if (entry instanceof ModifiableBuildConfigurationEntry) {
-        final ModifiableBuildConfigurationEntry e = (ModifiableBuildConfigurationEntry)entry;
+      else if (entry instanceof ModifiableBuildConfigurationEntry e) {
         existingBcEntries.put(Pair.create(e.getModuleName(), e.getBcName()), e);
       }
       else {

@@ -569,8 +569,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
 
     myNodes.remove(node);
-    if (element instanceof JSClass) {
-      final JSClass psiClass = (JSClass)element;
+    if (element instanceof JSClass psiClass) {
       classesRemovedByUser.put(psiClass.getQualifiedName(), spManager.createSmartPsiElementPointer(psiClass));
       classesAddedByUser.remove(psiClass.getQualifiedName());
     }

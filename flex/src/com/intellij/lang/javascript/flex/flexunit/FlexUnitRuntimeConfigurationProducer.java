@@ -122,8 +122,7 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
       }
     }
 
-    if (element instanceof JSClass) {
-      final JSClass clazz = (JSClass)element;
+    if (element instanceof JSClass clazz) {
       if (!support.isTestClass(clazz, true)) return false;
 
       forClass(clazz, params);

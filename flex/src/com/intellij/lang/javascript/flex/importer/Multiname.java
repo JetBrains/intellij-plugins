@@ -96,8 +96,7 @@ class Multiname {
       return "protected";
     }
 
-    if (parentTraits.name instanceof Multiname) {
-      Multiname parentName = (Multiname)parentTraits.name;
+    if (parentTraits.name instanceof Multiname parentName) {
       String parentNs = parentName.nsset[0];
 
       if (parentNs.equals(ns)) {
@@ -116,8 +115,7 @@ class Multiname {
           return "";
         }
       }
-    } else if (parentTraits.name instanceof String) {
-      String parentName = (String)parentTraits.name;
+    } else if (parentTraits.name instanceof String parentName) {
 
       if (parentName.startsWith(Abc.SCRIPT_PREFIX)) {
         if (mi.kind == Abc.TraitType.Const) {    // namespace reference

@@ -7,7 +7,6 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import org.intellij.plugins.intelliLang.inject.InjectorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
@@ -27,13 +26,11 @@ public final class GherkinLanguageInjector implements MultiHostInjector {
 
     @Override
     public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
-        if (!(context instanceof GherkinPystring)) {
+        if (!(context instanceof GherkinPystring host)) {
             return;
         }
 
-        final PsiLanguageInjectionHost host = (PsiLanguageInjectionHost) context;
-
-        final String hostText = host.getText();
+      final String hostText = host.getText();
         int newLineCharacterOffset = 0;
         while (newLineCharacterOffset < hostText.length() && hostText.charAt(newLineCharacterOffset) != '\n') {
             newLineCharacterOffset++;
