@@ -45,33 +45,40 @@ export class AngularVirtualCode implements VirtualCode {
     if (this.transpiledTemplate) {
       this.snapshot = this.transpiledTemplate.snapshot
       this.mappings = []
-      this.transpiledTemplate.mappings.forEach(mapping => {
-        const mappingWithData = {
-          sourceOffsets: mapping.sourceOffsets,
-          lengths: mapping.lengths,
-          generatedOffsets: mapping.generatedOffsets,
-          generatedLengths: mapping.generatedLengths,
-          data: {
-            format: mapping.source === this.fileName,
-            completion: true,
-            navigation: true,
-            semantic: true,
-            structure: true,
-            verification: true,
-          }
-        }
-        if (this.normalizeId(mapping.source) === this.normalizeId(this.fileName)) {
-          this.mappings.push(mappingWithData)
+      this.transpiledTemplate.mappings.forEach(mappingSet => {
+        let mappingsWithData: CodeMapping[]
+        if (this.normalizeId(mappingSet.source) === this.normalizeId(this.fileName)) {
+          mappingsWithData = this.mappings
         }
         else {
-          const associatedScript = this.ctx.getAssociatedScript(mapping.source)
+          const associatedScript = this.ctx.getAssociatedScript(mappingSet.source)
           const scriptId = associatedScript?.id
           if (scriptId) {
             if (!this.associatedScriptMappings.has(scriptId)) {
               this.associatedScriptMappings.set(scriptId, [])
             }
-            this.associatedScriptMappings.get(scriptId)!!.push(mappingWithData)
+            mappingsWithData = this.associatedScriptMappings.get(scriptId)!!
+          } else {
+            return
           }
+        }
+        // Split the mapping set for Volar
+        for (let i = 0 ; i < mappingSet.sourceOffsets.length; i++) {
+          const generatedLength = mappingSet.generatedLengths?.[i];
+          mappingsWithData.push({
+            sourceOffsets: [mappingSet.sourceOffsets[i]],
+            lengths: [mappingSet.lengths[i]],
+            generatedOffsets: [mappingSet.generatedOffsets[i]],
+            generatedLengths: generatedLength ? [generatedLength] : undefined,
+            data: {
+              format: mappingSet.source === this.fileName,
+              completion: true,
+              navigation: true,
+              semantic: true,
+              structure: true,
+              verification: true,
+            }
+          })
         }
       })
     }
