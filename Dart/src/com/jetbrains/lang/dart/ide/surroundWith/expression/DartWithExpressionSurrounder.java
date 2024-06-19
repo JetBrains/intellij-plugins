@@ -28,8 +28,7 @@ public abstract class DartWithExpressionSurrounder implements Surrounder {
 
   @Override
   @Nullable
-  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements)
-    throws IncorrectOperationException {
+  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
     PsiElement source = elements[0];
 
     final DartExpression parenthExprNode = getSurroundedNode(source);

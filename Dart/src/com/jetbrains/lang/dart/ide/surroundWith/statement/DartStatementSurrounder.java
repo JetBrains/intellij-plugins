@@ -29,8 +29,7 @@ public abstract class DartStatementSurrounder implements Surrounder {
 
   @Override
   @Nullable
-  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements)
-    throws IncorrectOperationException {
+  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
     PsiElement parent = elements[0].getParent();
 
     PsiElement surrounder = createSurrounder(project);
