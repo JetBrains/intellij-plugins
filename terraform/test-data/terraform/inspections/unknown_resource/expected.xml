@@ -4,7 +4,7 @@
     <file>main.tf</file>
     <line>17</line>
     <module>0</module>
-    <problem_class id="TfUnknownResource" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unknown type</problem_class>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
     <description>Unknown resource: docker_image</description>
     <highlighted_element>resource &quot;docker_image&quot; &quot;image&quot; { name = &quot;mayastorn-hub:0.0.2&quot; }</highlighted_element>
     <language>HCL</language>

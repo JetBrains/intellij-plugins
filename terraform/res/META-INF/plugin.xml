@@ -272,7 +272,7 @@
                      implementationClass="org.intellij.terraform.config.inspection.TfUnknownPropertyInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TfUnknownResource" bundle="messages.HCLBundle"
                      key="unknown.resource.identifier.inspection.display.name"
-                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.intellij.terraform.config.inspection.TfUnknownResourceInspection"/>
 
     <!--region TF Duplicates-->

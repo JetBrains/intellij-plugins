@@ -2,14 +2,17 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -17,6 +20,7 @@ import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import kotlin.String
+import kotlin.collections.listOfNotNull
 
 internal class TfUnknownResourceInspection : LocalInspectionTool() {
 
@@ -49,8 +53,9 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
     }
     if (provider == null) {
       holder.registerProblem(block,
-                             HCLBundle.message("unknown.resource.identifier.inspection.error.message",
-                                               getBlockTypeString(block), type))
+                             HCLBundle.message("unknown.resource.identifier.inspection.error.message", getBlockTypeString(block), type),
+                             *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+      )
     }
   }
 
