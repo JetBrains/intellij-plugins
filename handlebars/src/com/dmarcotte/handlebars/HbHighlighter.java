@@ -19,7 +19,6 @@ import java.util.Map;
 
 public final class HbHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> keys1;
-  private static final Map<IElementType, TextAttributesKey> keys2;
 
   @Override
   @NotNull
@@ -69,7 +68,6 @@ public final class HbHighlighter extends SyntaxHighlighterBase {
 
   static {
     keys1 = new HashMap<>();
-    keys2 = new HashMap<>();
 
     keys1.put(HbTokenTypes.OPEN, MUSTACHES);
     keys1.put(HbTokenTypes.OPEN_BLOCK, MUSTACHES);
@@ -99,7 +97,7 @@ public final class HbHighlighter extends SyntaxHighlighterBase {
 
   @Override
   public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
-    return pack(keys1.get(tokenType), keys2.get(tokenType));
+    return pack(keys1.get(tokenType));
   }
 
   public static final Map<TextAttributesKey, Pair<@Nls String, HighlightSeverity>> DISPLAY_NAMES
