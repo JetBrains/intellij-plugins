@@ -13,6 +13,8 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.CheckBox
+import com.intellij.ui.components.JBPanelWithEmptyText
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toMutableProperty
@@ -55,7 +57,19 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
     }
   }
 
-  override fun createPanel(): DialogPanel = panel {
+  override fun createPanel(): DialogPanel {
+    if (DtsSettingsDisabler.shouldBeDisabled(project)) {
+      return panel {
+        row {
+          cell(JBPanelWithEmptyText().withEmptyText(DtsBundle.message("settings.are.not.available.for.this.project"))).align(Align.FILL)
+        }.resizableRow()
+      }
+    }
+
+    return createActualPanel()
+  }
+
+  private fun createActualPanel() = panel {
     val syncInput = CheckBox(DtsBundle.message("settings.zephyr.sync_with_cmake"))
     syncInput.isEnabled = enableSync
 

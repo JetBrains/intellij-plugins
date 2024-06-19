@@ -16,6 +16,7 @@
       qualifiedName="com.intellij.clion.dtsUtil"
       interface="com.intellij.dts.clion.DtsCLionUtil"
       dynamic="true"/>
+    <extensionPoint interface="com.intellij.dts.settings.DtsSettingsDisabler" dynamic="true" name="settings.disabler"/>
   </extensionPoints>
 
   <projectListeners>
