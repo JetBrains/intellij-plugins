@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
-import com.intellij.lang.typescript.lsp.*
+import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
+import com.intellij.lang.typescript.lsp.JSLspServerWidgetItem
+import com.intellij.lang.typescript.lsp.LspServerDownloader
+import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.resolve.TypeScriptCompilerEvaluationFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -33,7 +36,7 @@ class VolarSupportProvider : LspServerSupportProvider {
   }
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    JSLspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VueConfigurable::class.java)
+    JSLspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue")

@@ -187,5 +187,5 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
   }
 
   override fun createWidgetItem(currentFile: VirtualFile?): LanguageServiceWidgetItem =
-    TypeScriptServiceWidgetItem(this, currentFile, VuejsIcons.Vue, VueConfigurable::class.java)
+    TypeScriptServiceWidgetItem(this, currentFile, VuejsIcons.Vue, VuejsIcons.Vue, VueConfigurable::class.java)
 }
