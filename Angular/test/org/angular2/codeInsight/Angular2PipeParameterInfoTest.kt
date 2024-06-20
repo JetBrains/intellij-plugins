@@ -2,7 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.javascript.JSParameterInfoHandler
-import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.javascript.JSSignaturePresentation
 import com.intellij.lang.parameterInfo.CreateParameterInfoContext
 import com.intellij.lang.typescript.hint.TypeScriptParameterInfoHandler
 import com.intellij.psi.PsiElement
@@ -34,11 +34,11 @@ class Angular2PipeParameterInfoTest : Angular2CodeInsightFixtureTestCase() {
 
   companion object {
     private fun getPresentation(parameterInfoElement: Any): String {
-      assertTrue(parameterInfoElement is JSFunctionType)
-      val jsFunctionType = parameterInfoElement as JSFunctionType
+      assertTrue(parameterInfoElement is JSSignaturePresentation)
+      val signaturePresentation = parameterInfoElement as JSSignaturePresentation
       val parameterInfoHandler = JSParameterInfoHandler()
-      val context = MockParameterInfoUIContext<PsiElement?>(jsFunctionType.getSourceFunctionItem())
-      parameterInfoHandler.updateUI(jsFunctionType, context)
+      val context = MockParameterInfoUIContext<PsiElement?>(null)
+      parameterInfoHandler.updateUI(signaturePresentation, context)
       return context.text
     }
   }
