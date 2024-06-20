@@ -18,12 +18,15 @@ import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2Pipe
+import org.angular2.lang.expr.psi.Angular2PipeExpression
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 
-internal class Environment(val config: Angular2TypeCheckingConfig,
-                           val file: PsiFile) : Angular2TemplateTranspiler.FileContext {
+internal class Environment(
+  val config: Angular2TypeCheckingConfig,
+  val file: PsiFile,
+) : Angular2TemplateTranspiler.FileContext {
 
   private val importCache = ConcurrentHashMap<PsiElement, String>()
   private val packageImport2name = ConcurrentHashMap<ImportInfo, String>()
@@ -83,7 +86,7 @@ internal class Environment(val config: Angular2TypeCheckingConfig,
   private fun getModuleImportName(
     moduleName: String,
     isDefault: Boolean,
-    kind: ImportExportSpecifierKind
+    kind: ImportExportSpecifierKind,
   ): String {
     val importInfo = ImportInfo(moduleName, isDefault, kind)
     return packageImport2name.computeIfAbsent(importInfo) { "_i" + nextImportNameId.getAndIncrement() }
@@ -264,11 +267,33 @@ internal class OutOfBandDiagnosticRecorder {
   fun missingReferenceTarget(id: TemplateId, ref: TmplAstReference) {
   }
 
-  fun splitTwoWayBinding(id: TemplateId, input: TmplAstBoundAttribute, output: TmplAstBoundEvent,
-                         directive: TmplDirectiveMetadata, outputConsumer: `TmplDirectiveMetadata|TmplAstElement`) {
+  fun splitTwoWayBinding(
+    id: TemplateId, input: TmplAstBoundAttribute, output: TmplAstBoundEvent,
+    directive: TmplDirectiveMetadata, outputConsumer: `TmplDirectiveMetadata|TmplAstElement`,
+  ) {
   }
 
   fun missingPipe(id: TemplateId, ast: AST) {
+  }
+
+  fun deferredPipeUsedEagerly(id: TemplateId, pipe: Angular2PipeExpression) {
+
+  }
+
+  fun inaccessibleDeferredTriggerElement(id: TemplateId, trigger: `TmplAstHoverDeferredTrigger|TmplAstInteractionDeferredTrigger|TmplAstViewportDeferredTrigger`) {
+
+  }
+
+  fun illegalForLoopTrackAccess(id: TemplateId, block: TmplAstForLoopBlock, ast: JSReferenceExpression) {
+
+  }
+
+  fun controlFlowPreventingContentProjection(
+    id: TemplateId, category: ts.DiagnosticCategory,
+    child: TmplAstNode, componentName: String,
+    originalSelector: String?, root: TmplAstBlockNodeWithChildren,
+    hostPreserveWhitespaces: Boolean) {
+
   }
 
 }

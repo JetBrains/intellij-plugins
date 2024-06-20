@@ -61,6 +61,9 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       }
     }
 
+    override val source: PsiElement
+      get() = root
+
     override val symbols = ArrayList<WebSymbol>()
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {

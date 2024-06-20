@@ -43,6 +43,22 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  fun testBlockDefer() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
+  fun testBlockFor() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
+  fun testBlockIf() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
+  fun testBlockSwitch() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

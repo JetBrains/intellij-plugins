@@ -6,6 +6,8 @@ import com.intellij.model.Pointer
 
 interface Angular2Pipe : Angular2Declaration {
 
+  val isExplicitlyDeferred: Boolean get() = false // TODO
+
   val transformMembers: Collection<JSElement>
 
   override fun createPointer(): Pointer<out Angular2Pipe>

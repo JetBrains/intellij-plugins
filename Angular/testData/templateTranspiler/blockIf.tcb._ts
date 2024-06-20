@@ -1,0 +1,24 @@
+/* Angular type checking code */
+
+/* TCB for blockIf.ts */
+
+function _tcb1(this: RobotProfileComponent) {
+var _t1 = this.user.isRobot;
+if (_t1) {
+"" + _t1;
+"" + this.user.name;
+}
+else if (this.user.isHuman) {
+"" + this.isRobot;
+"" + this.user.name;
+}
+else {
+"" + this.isRobot;
+"" + this.user.name;
+if (this.user.name) {
+"" + this.user.name;
+}
+}
+
+
+}

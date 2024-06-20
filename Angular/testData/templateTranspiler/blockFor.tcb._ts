@@ -1,0 +1,46 @@
+/* Angular type checking code */
+
+/* TCB for blockFor.ts */
+
+function _tcb1(this: RobotProfileComponent) {
+for (const _t1 of (this.array)!) {
+var _t2 = null! as boolean;
+var _t3 = null! as number;
+var _t4 = null! as number;
+var _t5 = null! as boolean;
+var _t6 = null! as boolean;
+var _t7 = null! as boolean;
+"" + _t1;
+"" + _t5;
+"" + _t2;
+"" + this.$last;
+"" + _t3;
+"" + this.$foo;
+_t1.name;
+}
+for (const _t8 of (this.array)!) {
+var _t9 = null! as number;
+var _t10 = null! as boolean;
+var _t11 = null! as boolean;
+var _t12 = null! as boolean;
+var _t13 = null! as boolean;
+var _t14 = null! as number;
+"" + _t10;
+"" + _t11;
+"" + _t12;
+"" + _t13;
+"" + _t9;
+"" + _t14;
+_t8.name;
+}
+for (const __error of (undefined)!) {
+var _t15 = null! as number;
+var _t16 = null! as boolean;
+var _t17 = null! as boolean;
+var _t18 = null! as boolean;
+var _t19 = null! as boolean;
+var _t20 = null! as number;
+"" + this.a;
+undefined;
+}
+}

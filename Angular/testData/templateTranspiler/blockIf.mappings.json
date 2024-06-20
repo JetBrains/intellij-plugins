@@ -1,0 +1,41 @@
+[
+  {
+    "file-name": "blockIf.ts",
+    "mappings": [
+      "«isRobot» [252] => «_t1» [110]}",
+      "«user» [235] => «user» [121]}",
+      "«.» [239] => «.» [125]}",
+      "«isRobot» [240] => «isRobot» [126]}",
+      "«user.isRobot» [235] => «this.user.isRobot» [116]}",
+      "«isRobot» [278] => «_t1» [151]}",
+      "«user» [290] => «user» [166]}",
+      "«.» [294] => «.» [170]}",
+      "«name» [295] => «name» [171]}",
+      "«user.name» [290] => «this.user.name» [161]}",
+      "«user» [318] => «user» [193]}",
+      "«.» [322] => «.» [197]}",
+      "«isHuman» [323] => «isHuman» [198]}",
+      "«user.isHuman» [318] => «this.user.isHuman» [188]}",
+      "«isRobot» [356] => «isRobot» [219]}",
+      "«user» [368] => «user» [238]}",
+      "«.» [372] => «.» [242]}",
+      "«name» [373] => «name» [243]}",
+      "«user.name» [368] => «this.user.name» [233]}",
+      "«isRobot» [404] => «isRobot» [268]}",
+      "«user» [416] => «user» [287]}",
+      "«.» [420] => «.» [291]}",
+      "«name» [421] => «name» [292]}",
+      "«user.name» [416] => «this.user.name» [282]}",
+      "«user» [440] => «user» [307]}",
+      "«.» [444] => «.» [311]}",
+      "«name» [445] => «name» [312]}",
+      "«user.name» [440] => «this.user.name» [302]}",
+      "«user» [465] => «user» [330]}",
+      "«.» [469] => «.» [334]}",
+      "«name» [470] => «name» [335]}",
+      "«user.name» [465] => «this.user.name» [325]}",
+      "0:223 => 0:223 (source)",
+      "496:555 => 496:555 (source)"
+    ]
+  }
+]

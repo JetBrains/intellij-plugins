@@ -22,6 +22,9 @@ class Angular2ComponentScopeProvider : Angular2TemplateScopesProvider() {
 
   private class Angular2ComponentScope(private val myClass: TypeScriptClass) : Angular2TemplateScope(null) {
 
+    override val source: PsiElement
+      get() = myClass
+
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       for (property in TypeScriptTypeParser.buildTypeFromClass(myClass, false).properties) {
         property.memberSource.allSourceElements
