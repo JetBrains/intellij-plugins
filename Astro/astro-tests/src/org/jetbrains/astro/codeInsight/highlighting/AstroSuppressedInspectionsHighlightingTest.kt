@@ -5,4 +5,5 @@ class AstroSuppressedInspectionsHighlightingTest : AstroHighlightingTestBase("co
   fun testUnusedImport() = doTest()
   fun testUnknownAttribute() = doTest()
   fun testValidateAttributeValueThroughWebSymbols() = doTest()
+  fun testNotBoundedNamespace() = doTest()
 }
