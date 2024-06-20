@@ -7,9 +7,9 @@ import org.intellij.prisma.lang.psi.PrismaNamedElement
 private const val CARET = "<caret>"
 private const val TARGET = "<target>"
 
-class PrismaResolveTest : PrismaTestCase() {
+class PrismaResolveTest : PrismaTestCase("resolve") {
   fun testTypeReference() {
-    checkWithTarget(
+    checkLocalResolve(
       """
             model Post {
               id        Int      @id @default(autoincrement())
@@ -24,7 +24,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testTypeReferenceIgnoreConfigurationBlocks() {
-    checkWithTarget(
+    checkLocalResolve(
       """
             datasource Database {
               provider = "sqlite"
@@ -43,7 +43,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testFieldExpressionReference() {
-    checkWithTarget("""
+    checkLocalResolve("""
             datasource db {
               provider = "postgresql"
             }
@@ -57,7 +57,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testFieldReference() {
-    checkWithTarget("""
+    checkLocalResolve("""
             datasource db {
               provider = "postgresql"
             }
@@ -71,7 +71,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testFieldReferenceNamedArgument() {
-    checkWithTarget("""
+    checkLocalResolve("""
             datasource db {
               provider = "postgresql"
             }
@@ -85,7 +85,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testRelationAttributeReferences() {
-    checkWithTarget("""
+    checkLocalResolve("""
             model Post {
               id       Int    @id @default(autoincrement())
               title    String
@@ -101,7 +101,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testBlockAttributeUniqueCompositeType() {
-    checkWithTarget("""
+    checkLocalResolve("""
             datasource db {
               provider = "mongodb"
             }
@@ -125,7 +125,7 @@ class PrismaResolveTest : PrismaTestCase() {
   }
 
   fun testBlockAttributeIndexCompositeType() {
-    checkWithTarget("""
+    checkLocalResolve("""
             datasource db {
               provider = "mongodb"
             }
@@ -148,7 +148,15 @@ class PrismaResolveTest : PrismaTestCase() {
         """.trimIndent())
   }
 
-  private fun checkWithTarget(source: String): PrismaNamedElement {
+  fun testLocalResolveHasPriority() {
+    checkGotoDeclaration("model <caret>Address", dir = true, expectedFileName = getTestFileName())
+  }
+
+  fun testGlobalModelResolve() {
+    checkGotoDeclaration("model <caret>Address", dir = true, expectedFileName = "address.prisma")
+  }
+
+  private fun checkLocalResolve(source: String): PrismaNamedElement {
     val targetOffset = findExpectedTargetOffset(source)
     val text = source.replace(TARGET, "")
     val file = myFixture.configureByText("schema.prisma", text)

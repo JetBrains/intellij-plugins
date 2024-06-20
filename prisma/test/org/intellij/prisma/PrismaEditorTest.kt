@@ -2,7 +2,7 @@ package org.intellij.prisma
 
 import org.intellij.prisma.lang.PrismaFileType
 
-class PrismaEditorTest : PrismaTestCase() {
+class PrismaEditorTest : PrismaTestCase("") {
   fun testEnterInFile() {
     doEnterTest(
       """

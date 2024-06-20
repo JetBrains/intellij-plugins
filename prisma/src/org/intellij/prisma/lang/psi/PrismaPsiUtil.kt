@@ -37,3 +37,6 @@ fun PsiElement?.skipWhitespacesForwardWithoutNewLines() =
 
 fun PsiElement?.skipWhitespacesBackwardWithoutNewLines() =
   PsiTreeUtil.skipMatching(this, { it.prevSibling }, { it is PsiWhiteSpace && !it.textContains('\n') })
+
+fun isFieldExpression(function: PrismaFunctionCall) =
+  function.pathExpression.resolve() is PrismaFieldDeclaration

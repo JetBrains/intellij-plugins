@@ -1,8 +1,6 @@
 package org.intellij.prisma.completion
 
-class PrismaKeywordCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/keywords"
-
+class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keywords") {
   fun testRootKeywords() {
     val lookupElements = completeSelected(
       """

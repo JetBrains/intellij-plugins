@@ -2,9 +2,7 @@ package org.intellij.prisma.completion
 
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 
-class PrismaBlockAttributesCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/blockAttributes"
-
+class PrismaBlockAttributesCompletionTest : PrismaCompletionTestBase("completion/blockAttributes") {
   fun testBlockAttributes() {
     val lookupElements = completeSelected(
       """

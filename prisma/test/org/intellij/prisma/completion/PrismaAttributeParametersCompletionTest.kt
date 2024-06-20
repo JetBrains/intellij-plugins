@@ -8,9 +8,7 @@ import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 
-class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/attributeParameters"
-
+class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("completion/attributeParameters") {
   fun testBlockAttributeId() {
     val lookupElements = completeSelected(
       """

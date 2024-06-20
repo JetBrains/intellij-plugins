@@ -2,9 +2,7 @@ package org.intellij.prisma.completion
 
 import org.intellij.prisma.lang.PrismaConstants
 
-class PrismaTypesCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/types"
-
+class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
   fun testPrimitiveTypes() {
     val lookupElements = completeSelected(
       """
@@ -75,5 +73,9 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase() {
       "Unsupported"
     )
     checkLookupDocumentation(lookupElements, "Unsupported")
+  }
+
+  fun testGlobalTypes() {
+    doLookupTest(dir = true) { it.lookupString !in PrismaConstants.PrimitiveTypes.ALL }
   }
 }

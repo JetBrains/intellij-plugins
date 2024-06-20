@@ -11,12 +11,8 @@ class PrismaTypeNameReference(
   soft: Boolean = false,
 ) : PrismaReference(element, range, soft) {
 
-  override fun processCandidates(
-    processor: PrismaProcessor,
-    state: ResolveState,
-    element: PsiElement,
-  ) {
-    processFileDeclarations(processor, state, element)
+  override fun processCandidates(processor: PrismaProcessor, state: ResolveState, element: PsiElement) {
+    processEntityDeclarations(processor, state, element)
   }
 
   companion object {

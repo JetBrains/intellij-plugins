@@ -2,9 +2,7 @@ package org.intellij.prisma.completion
 
 import org.intellij.prisma.ide.schema.types.PrismaNativeType
 
-class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/nativeTypes"
-
+class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nativeTypes") {
   fun testNativeTypeNamespace() {
     val lookupElements = completeSelected(
       """

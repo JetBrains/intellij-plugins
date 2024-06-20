@@ -1,0 +1,4 @@
+model Address {
+  id   Int    @id
+  User User[]
+}

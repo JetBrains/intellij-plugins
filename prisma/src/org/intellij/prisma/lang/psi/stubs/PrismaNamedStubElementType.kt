@@ -2,10 +2,9 @@
 package org.intellij.prisma.lang.psi.stubs
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.IStubElementType
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.stubs.*
+import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
+import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
 import org.intellij.prisma.lang.psi.PrismaNamedElement
 
 abstract class PrismaNamedStubElementType<S : PrismaNamedStub<P>, P : PrismaNamedElement>(
@@ -13,6 +12,7 @@ abstract class PrismaNamedStubElementType<S : PrismaNamedStub<P>, P : PrismaName
   private val psiFactory: (S, IStubElementType<out StubElement<*>, *>) -> P,
   private val stubFactory: (StubElement<out PsiElement>?, IStubElementType<out StubElement<*>, *>, String?) -> S,
 ) : PrismaStubElementType<S, P>(debugName) {
+
   override fun serialize(stub: S, dataStream: StubOutputStream) {
     super.serialize(stub, dataStream)
     dataStream.writeName(stub.name)
@@ -29,5 +29,14 @@ abstract class PrismaNamedStubElementType<S : PrismaNamedStub<P>, P : PrismaName
   override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): S {
     val name = dataStream.readNameString()
     return stubFactory(parentStub, this, name)
+  }
+
+  override fun indexStub(stub: S, sink: IndexSink) {
+    super.indexStub(stub, sink)
+
+    val psi = stub.psi
+    if (psi is PrismaEntityDeclaration) {
+      stub.name?.let { sink.occurrence(PRISMA_ENTITIES_INDEX_KEY, it) }
+    }
   }
 }

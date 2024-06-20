@@ -68,15 +68,6 @@ abstract class PrismaReference(
 
   protected open fun collectIgnoredNames(): Set<String> = emptySet()
 
-  protected fun processFileDeclarations(
-    processor: PrismaProcessor,
-    state: ResolveState,
-    element: PsiElement,
-  ): Boolean {
-    val file = element.containingFile
-    return file.processDeclarations(processor, state, null, element)
-  }
-
   override fun handleElementRename(newElementName: String): PsiElement {
     val referenceElement = element as? PrismaReferenceElement
     if (referenceElement != null) {

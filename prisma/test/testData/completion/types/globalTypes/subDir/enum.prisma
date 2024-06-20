@@ -1,0 +1,13 @@
+enum AuthRole {
+  USER
+  ADMIN
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+view UserView {
+  id Int @id
+}

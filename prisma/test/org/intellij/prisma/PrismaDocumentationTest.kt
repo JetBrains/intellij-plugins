@@ -5,9 +5,7 @@ import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.Disposer
 
-class PrismaDocumentationTest : PrismaTestCase() {
-  override fun getBasePath(): String = "/documentation"
-
+class PrismaDocumentationTest : PrismaTestCase("documentation") {
   override fun setUp() {
     super.setUp()
 
@@ -128,12 +126,12 @@ class PrismaDocumentationTest : PrismaTestCase() {
   }
 
   private fun doTest() {
-    val file = myFixture.configureByFile(getTestName())
+    val file = myFixture.configureByFile(getTestFileName())
     val originalElement = file.findElementAt(myFixture.caretOffset)
     val element = DocumentationManager.getInstance(myFixture.project)
       .findTargetElement(myFixture.editor, file, originalElement)
     val provider = DocumentationManager.getProviderFromElement(element, originalElement)
     val doc = provider.generateDoc(element, originalElement) ?: "<empty>"
-    assertSameLinesWithFile("${testDataPath}/${getTestName("html")}", doc)
+    assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc)
   }
 }

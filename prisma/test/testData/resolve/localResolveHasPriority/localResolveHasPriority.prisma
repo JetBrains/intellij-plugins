@@ -1,0 +1,10 @@
+model Address {
+  id   Int    @id
+  User User[]
+}
+
+model User {
+  id        Int     @id
+  address   A<caret>ddress @relation(fields: [addressId], references: [id])
+  addressId Int
+}

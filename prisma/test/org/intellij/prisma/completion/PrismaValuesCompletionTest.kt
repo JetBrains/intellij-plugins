@@ -8,9 +8,7 @@ import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import com.intellij.openapi.util.text.StringUtil.wrapWithDoubleQuote as quoted
 
-class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/values"
-
+class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values") {
   fun testDatasourceProvider() {
     val lookupElements = completeSelected(
       """

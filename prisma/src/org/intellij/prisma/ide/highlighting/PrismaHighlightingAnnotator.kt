@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
-import org.intellij.prisma.lang.resolve.PrismaResolver
+import org.intellij.prisma.lang.psi.isFieldExpression
 
 class PrismaHighlightingAnnotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -40,7 +40,7 @@ class PrismaHighlightingAnnotator : Annotator {
     element: PsiElement
   ) {
     when (val topmostParent = expr.findTopmostPathParent()) {
-      is PrismaFunctionCall -> if (PrismaResolver.isFieldExpression(topmostParent)) {
+      is PrismaFunctionCall -> if (isFieldExpression(topmostParent)) {
         newAnnotation(holder, element, PrismaColors.FIELD_REFERENCE)
       }
       else {

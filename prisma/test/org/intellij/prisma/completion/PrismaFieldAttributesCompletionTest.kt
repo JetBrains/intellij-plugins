@@ -2,9 +2,7 @@ package org.intellij.prisma.completion
 
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 
-class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/fieldAttributes"
-
+class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion/fieldAttributes") {
   fun testFieldAttributes() {
     val lookupElements = completeSelected(
       """

@@ -2,10 +2,7 @@ package org.intellij.prisma.completion
 
 import org.intellij.prisma.lang.PrismaConstants.Functions
 
-class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase() {
-
-  override fun getBasePath(): String = "/completion/defaultAttribute"
-
+class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completion/defaultAttribute") {
   fun testCockroach() {
     val lookupElements = completeSelected(
       """

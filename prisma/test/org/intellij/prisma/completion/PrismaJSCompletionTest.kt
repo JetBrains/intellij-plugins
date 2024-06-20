@@ -4,9 +4,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 
-class PrismaJSCompletionTest : PrismaCompletionTestBase() {
-  override fun getBasePath(): String = "/completion/js"
-
+class PrismaJSCompletionTest : PrismaCompletionTestBase("completion/js") {
   fun testApiClientField() {
     val lookupElements = doDirTest()
     UsefulTestCase.assertSize(2, lookupElements)

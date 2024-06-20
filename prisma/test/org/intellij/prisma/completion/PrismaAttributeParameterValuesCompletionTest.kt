@@ -6,7 +6,7 @@ import org.intellij.prisma.ide.schema.types.PrismaReferentialAction
 import org.intellij.prisma.ide.schema.types.PrismaSortOrder
 import org.intellij.prisma.lang.PrismaConstants.Functions
 
-class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase() {
+class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase("") {
   fun testBlockAttributeIndexPostgreSQLType() {
     val lookupElements = getLookupElements(
       """
