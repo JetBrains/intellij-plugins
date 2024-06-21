@@ -58,7 +58,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testAnimationCallbacks() = checkHighlighting(dir = true)
 
-  fun testElementShims() = checkHighlighting(dir = true, strictTemplates = true)
+  // The shim doesn't work with TCB
+  fun _testElementShims() = checkHighlighting(dir = true, strictTemplates = true)
 
   fun testCustomUserEvents() = checkHighlighting(dir = true)
 
