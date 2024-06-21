@@ -18,7 +18,8 @@ import org.angular2.Angular2TestModule
 class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
 
   fun testUnusedSymbol() =
-    checkHighlighting(configureFileName = "unused.ts",
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      configureFileName = "unused.ts",
                       dir = true,
                       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
@@ -31,19 +32,21 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                                            JSUnusedLocalSymbolsInspection::class.java))
 
   fun testUnusedSetter() =
-    checkHighlighting(dir = true,
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      dir = true,
                       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
 
   fun testMethodCanBeStatic() =
-    checkHighlighting(dir = true) {
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8, dir = true) {
       val canBeStaticInspection = JSMethodCanBeStaticInspection()
       JSTestUtils.setInspectionHighlightLevel(project, canBeStaticInspection, HighlightDisplayLevel.WARNING, testRootDisposable)
       enableInspections(canBeStaticInspection)
     }
 
   fun testUnterminated() =
-    checkHighlighting(inspections = listOf(UnterminatedStatementJSInspection::class.java))
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      inspections = listOf(UnterminatedStatementJSInspection::class.java))
 
   fun testUnusedReference() =
     doConfiguredTest(dir = true, checkResult = true, extension = "html") {
@@ -63,7 +66,8 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
     }
 
   fun testId() =
-    checkHighlighting(inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
 
   fun testPipeAndArgResolution() =
@@ -81,7 +85,8 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                       extension = "html")
 
   fun testDuplicateDeclarationOffTemplate() =
-    checkHighlighting(inspections = listOf(JSDuplicatedDeclarationInspection::class.java))
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      inspections = listOf(JSDuplicatedDeclarationInspection::class.java))
 
   fun testEmptyVarDefinition() =
     checkHighlighting(inspections = listOf(JSUnusedLocalSymbolsInspection::class.java),

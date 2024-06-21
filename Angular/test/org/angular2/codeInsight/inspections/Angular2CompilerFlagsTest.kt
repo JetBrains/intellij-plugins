@@ -46,8 +46,12 @@ class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags") 
   }
 
   private fun doFlagTest(test: Angular2TsConfigFile) {
-    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
-                     extension = "ts", configurators = listOf(test)) {
+    doConfiguredTest(
+      Angular2TestModule.TS_LIB,
+      Angular2TestModule.ANGULAR_CORE_16_2_8,
+      Angular2TestModule.ANGULAR_COMMON_16_2_8,
+      extension = "ts", configurators = listOf(test)
+    ) {
       checkHighlighting()
     }
   }

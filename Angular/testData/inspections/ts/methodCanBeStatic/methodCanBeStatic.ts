@@ -1,5 +1,5 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component, Input, View} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'home',
@@ -15,16 +15,16 @@ export class Home {
         console.log("foobar")
     }
 
-    set input(value: string) {
+    set input(_value: string) {
 
     }
 
-    @Input
+    @Input()
     get input(): string {
         return "foo";
     }
 
-    set unused(val: string) {
+    set unused(_val: string) {
 
     }
 

@@ -1,8 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
-/// <reference path="../../typings/tsd.d.ts" />
-
-import {Component, View} from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
     selector: 'home',
@@ -14,14 +12,14 @@ export class Home {
     testFn = testFn; //WEB-33907
     <warning descr="Unused field publicUnusedField">publicUnusedField</warning>: string;
 
-    private <warning descr="Unused field privateUnusedField">privateUnusedField</warning>: string;
+    private <warning descr="Unused field privateUnusedField"><weak_warning descr="TS6133: 'privateUnusedField' is declared but its value is never read.">privateUnusedField</weak_warning></warning>: string;
     private privateUsedField: string;
 
     constructor(
         public publicUsedConstructorField: string,
         public <warning descr="Unused field publicUnusedConstructorField">publicUnusedConstructorField</warning>: string,
         private privateUsedConstructorField: string,
-        private <warning descr="Unused field privateUnusedConstructorField">privateUnusedConstructorField</warning>: string,) {
+        private <warning descr="Unused field privateUnusedConstructorField"><weak_warning descr="TS6138: Property 'privateUnusedConstructorField' is declared but its value is never read.">privateUnusedConstructorField</weak_warning></warning>: string,) {
     }
 
     public publicUsedMethod() {
@@ -36,7 +34,7 @@ export class Home {
 
     }
 
-    private <warning descr="Unused method privateUnusedMethod">privateUnusedMethod</warning>() {
+    private <warning descr="Unused method privateUnusedMethod"><weak_warning descr="TS6133: 'privateUnusedMethod' is declared but its value is never read.">privateUnusedMethod</weak_warning></warning>() {
 
     }
 
