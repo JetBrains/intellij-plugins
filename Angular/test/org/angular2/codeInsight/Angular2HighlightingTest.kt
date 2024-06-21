@@ -82,7 +82,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
    *
    * @see Angular2ExpressionTypesInspectionTest.testNgrxLetContextGuard
    */
-  fun testNgrxLetAsContextGuard() = checkHighlighting(ANGULAR_COMMON_13_3_5, dir = true, extension = "ts", strictTemplates = true)
+  fun testNgrxLetAsContextGuard() = checkHighlighting(ANGULAR_CORE_16_2_8, RXJS_7_8_1, dir = true, extension = "ts", strictTemplates = true)
 
   fun testRequiredInputs() = checkHighlighting(extension = "ts")
 

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Observable } from "rxjs";
 
- type ObservableOrPromise<T> = Observable<T> | PromiseLike<T>;
+type ObservableOrPromise<T> = Observable<T> | PromiseLike<T>;
 
 type LetViewContextValue<PO> = PO extends ObservableOrPromise<infer V> ? V : PO;
 

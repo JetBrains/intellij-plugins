@@ -33,8 +33,8 @@ export class ChildComponent {
  template: `
         <app-child [value]="{ value: 'foo' } | badUnbox" />
         <app-child [value]="<error descr="Type \"bar\" is not assignable to type \"foo\" | undefined  Type \"bar\" is not assignable to type \"foo\"">{ value: 'bar' } | badUnbox</error>" />
-        <app-child [value]="({ value: {foo: 'foo'} } | badUnbox).foo" />
-        <app-child [value]="<error descr="Type \"bar\" is not assignable to type \"foo\" | undefined  Type \"bar\" is not assignable to type \"foo\"">({ value: {foo: 'bar'} } | badUnbox).foo</error>" />
+        <app-child [value]="<error descr="Type string is not assignable to type \"foo\" | undefined  Type string is not assignable to type \"foo\"">({ value: {foo: 'foo'} } | badUnbox).foo</error>" />
+        <app-child [value]="<error descr="Type string is not assignable to type \"foo\" | undefined  Type string is not assignable to type \"foo\"">({ value: {foo: 'bar'} } | badUnbox).foo</error>" />
         <app-child [value]="'' | goodUnbox: { value: 'foo' }" />
         <app-child [value]="<error descr="Type \"bar\" is not assignable to type \"foo\" | undefined  Type \"bar\" is not assignable to type \"foo\"">'' | goodUnbox: { value: 'bar' }</error>" />
     `,
