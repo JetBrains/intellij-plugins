@@ -48,7 +48,6 @@ private typealias `TmplAstTemplate|TmplAstIfBlockBranch|TmplAstForLoopBlock` = T
 private typealias `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference` = TmplAstNode
 private typealias `TmplAstBoundAttribute|TmplAstTextAttribute` = TmplAstAttribute
 internal typealias `TmplAstBoundAttribute|TmplAstBoundEvent|TmplAstTextAttribute` = TmplAstAttribute
-internal typealias `TmplAstHoverDeferredTrigger|TmplAstInteractionDeferredTrigger|TmplAstViewportDeferredTrigger` = TmplAstReferenceBasedDeferredTrigger
 private typealias `EventParamType|JSType` = Any
 
 internal typealias AST = PsiElement
@@ -2052,28 +2051,30 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
     if (triggers.`when` != null) {
       this.opQueue.add(TcbExpressionOp(this.tcb, this, triggers.`when`.value))
     }
-
-    if (triggers.hover != null) {
-      this.appendReferenceBasedDeferredTrigger(block, triggers.hover)
-    }
-
-    if (triggers.interaction != null) {
-      this.appendReferenceBasedDeferredTrigger(block, triggers.interaction)
-    }
-
-    if (triggers.viewport != null) {
-      this.appendReferenceBasedDeferredTrigger(block, triggers.viewport)
-    }
+    // WebStorm - this is validated through WebStorm inspections
+    //
+    //if (triggers.hover != null) {
+    //  this.appendReferenceBasedDeferredTrigger(block, triggers.hover)
+    //}
+    //
+    //if (triggers.interaction != null) {
+    //  this.appendReferenceBasedDeferredTrigger(block, triggers.interaction)
+    //}
+    //
+    //if (triggers.viewport != null) {
+    //  this.appendReferenceBasedDeferredTrigger(block, triggers.viewport)
+    //}
   }
 
-  private fun appendReferenceBasedDeferredTrigger(
-    block: TmplAstDeferredBlock,
-    trigger: `TmplAstHoverDeferredTrigger|TmplAstInteractionDeferredTrigger|TmplAstViewportDeferredTrigger`,
-  ) {
-    if (this.tcb.boundTarget.getDeferredTriggerTarget(block, trigger) == null) {
-      this.tcb.oobRecorder.inaccessibleDeferredTriggerElement(this.tcb.id, trigger)
-    }
-  }
+  // WebStorm - this is validated through WebStorm inspections
+  //private fun appendReferenceBasedDeferredTrigger(
+  //  block: TmplAstDeferredBlock,
+  //  trigger: `TmplAstHoverDeferredTrigger|TmplAstInteractionDeferredTrigger|TmplAstViewportDeferredTrigger`,
+  //) {
+  //  if (this.tcb.boundTarget.getDeferredTriggerTarget(block, trigger) == null) {
+  //    this.tcb.oobRecorder.inaccessibleDeferredTriggerElement(this.tcb.id, trigger)
+  //  }
+  //}
 }
 
 private data class TcbBoundAttribute(

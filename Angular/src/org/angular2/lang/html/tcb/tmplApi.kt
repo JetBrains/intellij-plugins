@@ -8,6 +8,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.childrenOfType
+import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -25,6 +26,7 @@ import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.*
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
+import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.Angular2HtmlFile
@@ -189,51 +191,20 @@ internal class TmplAstDeferredBlockPlaceholder(
 
 internal sealed interface TmplAstDeferredTrigger : TmplAstBlockNode
 
-internal sealed interface TmplAstReferenceBasedDeferredTrigger : TmplAstDeferredTrigger {
-  val reference: String?
-}
-
 internal class TmplAstBoundDeferredTrigger(
+  override val nameSpan: TextRange?,
   val value: JSExpression?,
-  override val nameSpan: TextRange?,
 ) : TmplAstDeferredTrigger
-
-internal class TmplAstIdleDeferredTrigger(
-  override val nameSpan: TextRange?,
-) : TmplAstDeferredTrigger
-
-internal class TmplAstImmediateDeferredTrigger(
-  override val nameSpan: TextRange?,
-) : TmplAstDeferredTrigger
-
-internal class TmplAstHoverDeferredTrigger(
-  override val reference: String?,
-  override val nameSpan: TextRange?,
-) : TmplAstReferenceBasedDeferredTrigger
-
-internal class TmplAstTimerDeferredTrigger(
-  val delay: Int,
-  override val nameSpan: TextRange?,
-) : TmplAstDeferredTrigger
-
-internal class TmplAstInteractionDeferredTrigger(
-  override val reference: String?,
-  override val nameSpan: TextRange?,
-) : TmplAstReferenceBasedDeferredTrigger
-
-internal class TmplAstViewportDeferredTrigger(
-  override val reference: String?,
-  override val nameSpan: TextRange?,
-) : TmplAstReferenceBasedDeferredTrigger
 
 internal class TmplAstDeferredBlockTriggers(
   val `when`: TmplAstBoundDeferredTrigger?,
-  val idle: TmplAstIdleDeferredTrigger?,
-  val immediate: TmplAstImmediateDeferredTrigger?,
-  val hover: TmplAstHoverDeferredTrigger?,
-  val timer: TmplAstTimerDeferredTrigger?,
-  val interaction: TmplAstInteractionDeferredTrigger?,
-  val viewport: TmplAstViewportDeferredTrigger?,
+  // Most triggers do not produce any code in TCB - ignore them
+  //val hover: TmplAstHoverDeferredTrigger?,
+  //val interaction: TmplAstInteractionDeferredTrigger?,
+  //val viewport: TmplAstViewportDeferredTrigger?,
+  //val idle: TmplAstIdleDeferredTrigger?,
+  //val immediate: TmplAstImmediateDeferredTrigger?,
+  //val timer: TmplAstTimerDeferredTrigger?,
 )
 
 internal class TmplAstIfBlock(
@@ -501,10 +472,11 @@ internal class BoundTarget(component: Angular2Component) {
    * Gets the element that a specific deferred block trigger is targeting.
    * @param block Block that the trigger belongs to.
    * @param trigger Trigger whose target is being looked up.
-   */
+   *//*
   fun getDeferredTriggerTarget(block: TmplAstDeferredBlock, trigger: `TmplAstHoverDeferredTrigger|TmplAstInteractionDeferredTrigger|TmplAstViewportDeferredTrigger`): TmplAstElement? {
     return null
   }
+  */
 
   /**
    * Whether a given node is located in a `@defer` block.
@@ -861,7 +833,7 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
       item = parameters.firstOrNull()?.variables?.firstOrNull()?.toTmplAstVariable(referenceResolver),
       expression = parameters.getOrNull(0)?.expression,
       trackBy = parameters.find { it.name == PARAMETER_TRACK }?.expression,
-      empty = blockSiblingsBackward().find { it.name == BLOCK_EMPTY }?.toTmplAstBlock(referenceResolver) as? TmplAstForLoopBlockEmpty,
+      empty = blockSiblingsForward().find { it.name == BLOCK_EMPTY }?.toTmplAstBlock(referenceResolver) as? TmplAstForLoopBlockEmpty,
       contextVariables = buildContextVariables(this, referenceResolver),
       children = contents.mapChildren(referenceResolver),
     )
@@ -885,8 +857,42 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
       expression = null,
       children = contents.mapChildren(referenceResolver),
     )
+    BLOCK_DEFER -> TmplAstDeferredBlock(
+      nameSpan = nameElement.textRange,
+      triggers = this.buildTriggers(false),
+      prefetchTriggers = this.buildTriggers(true),
+      error = blockSiblingsForward().find { it.name == BLOCK_ERROR }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockError,
+      loading = blockSiblingsForward().find { it.name == BLOCK_LOADING }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockLoading,
+      placeholder = blockSiblingsForward().find { it.name == BLOCK_PLACEHOLDER }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockPlaceholder,
+      children = contents.mapChildren(referenceResolver),
+    )
+    BLOCK_ERROR -> TmplAstDeferredBlockError(
+      nameSpan = nameElement.textRange,
+      children = contents.mapChildren(referenceResolver),
+    )
+    BLOCK_LOADING -> TmplAstDeferredBlockLoading(
+      nameSpan = nameElement.textRange,
+      children = contents.mapChildren(referenceResolver),
+    )
+    BLOCK_PLACEHOLDER -> TmplAstDeferredBlockPlaceholder(
+      nameSpan = nameElement.textRange,
+      children = contents.mapChildren(referenceResolver),
+    )
     else -> null
   }
+
+private fun Angular2HtmlBlock.buildTriggers(prefetch: Boolean): TmplAstDeferredBlockTriggers =
+  TmplAstDeferredBlockTriggers(
+    `when` = parameters.find { it.name == PARAMETER_WHEN && prefetch == hasPrefetch(it)}?.let {
+      TmplAstBoundDeferredTrigger(
+        nameSpan = it.nameElement?.textRange,
+        value = it.expression
+      )
+    }
+  )
+
+private fun hasPrefetch(parameter: Angular2BlockParameter) =
+  parameter.getChildren().firstOrNull { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME }?.text == PARAMETER_PREFIX_PREFETCH
 
 private fun JSVariable.toTmplAstVariable(referenceResolver: ReferenceResolver): TmplAstVariable =
   TmplAstVariable(

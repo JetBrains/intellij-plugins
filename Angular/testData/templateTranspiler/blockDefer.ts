@@ -12,13 +12,13 @@ export interface User {
   standalone: true,
   template: `
     @defer (prefetch when user.name; no; on something) {
-    
+      {{user.name}}
     } @placeholder (minimum 12; dd) {
-    
+      {{user.name + 0}}
     } @error {
-    
+      {{user.name + 1}}
     } @loading (max 12; after 12) {
-    
+      {{user.name + 2}}
     }
     <div #fooBar></div>
     @defer(prefetch;
@@ -29,7 +29,7 @@ export interface User {
            on viewport ( foo ;
            on viewport ( fooBar ) ff;
            on viewport ( fooBar  ff;) {
-           
+         {{user.name + 12}}
     }
   `
 })

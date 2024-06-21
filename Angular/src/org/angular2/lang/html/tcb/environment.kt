@@ -280,10 +280,6 @@ internal class OutOfBandDiagnosticRecorder {
 
   }
 
-  fun inaccessibleDeferredTriggerElement(id: TemplateId, trigger: `TmplAstHoverDeferredTrigger|TmplAstInteractionDeferredTrigger|TmplAstViewportDeferredTrigger`) {
-
-  }
-
   fun illegalForLoopTrackAccess(id: TemplateId, block: TmplAstForLoopBlock, ast: JSReferenceExpression) {
 
   }
