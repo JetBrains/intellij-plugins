@@ -2149,9 +2149,7 @@ private open class TcbExpressionTranslator(
         ?.asSafely<JSReferenceExpression>()
         ?.isElvis == true
     ) {
-      emitSafeAccess(node, methodExpression) {
-        append("()")
-      }
+      emitMethodSafeAccess(node, methodExpression)
     }
     else {
       super.visitJSCallExpression(node)
@@ -2204,12 +2202,7 @@ private open class TcbExpressionTranslator(
     else {
       // The form of safe property reads depends on whether strictness is in use.
       if (node.isElvis) {
-        emitSafeAccess(node, node.qualifier!!) {
-          append(".")
-          node.referenceNameElement
-            ?.accept(this@TcbExpressionTranslator)
-          ?: append("_error_")
-        }
+        emitSafeAccess(node, node.qualifier!!, node.referenceNameElement)
       }
       else {
         super.visitJSReferenceExpression(node)
@@ -2217,7 +2210,7 @@ private open class TcbExpressionTranslator(
     }
   }
 
-  private fun emitSafeAccess(node: PsiElement, qualifier: JSExpression, expression: Expression.ExpressionBuilder.() -> Unit) {
+  private fun emitSafeAccess(node: PsiElement, qualifier: JSExpression, referenceName: PsiElement?) {
     result.withSourceSpan(node.textRange) {
       if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
@@ -2226,8 +2219,9 @@ private open class TcbExpressionTranslator(
         // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
         append("(null as any ? (")
         qualifier.accept(this@TcbExpressionTranslator)
-        append(")!")
-        expression()
+        append(")!.")
+        referenceName?.accept(this@TcbExpressionTranslator)
+          ?: append("_error_")
         append(" : undefined)")
       }
       else if (VeSafeLhsInferenceBugDetector().veWillInferAnyFor(node)) {
@@ -2238,8 +2232,9 @@ private open class TcbExpressionTranslator(
         // "a?.b" becomes (a as any).b, which will of course have type 'any'.
         append("((")
         qualifier.accept(this@TcbExpressionTranslator)
-        append(") as any)")
-        expression()
+        append(") as any).")
+        referenceName?.accept(this@TcbExpressionTranslator)
+        ?: append("_error_")
       }
       else {
         // The View Engine bug isn't active, so check the entire type of the expression, but the final
@@ -2247,9 +2242,56 @@ private open class TcbExpressionTranslator(
         // "a?.b" becomes (a!.b as any)
         append("((")
         qualifier.accept(this@TcbExpressionTranslator)
-        append(")!")
-        expression()
+        append(")!.")
+        referenceName?.accept(this@TcbExpressionTranslator)
+        ?: append("_error_")
         append(" as any)")
+      }
+    }
+  }
+
+  private fun emitMethodSafeAccess(node: PsiElement, methodExpression: JSExpression) {
+    result.withSourceSpan(node.textRange) {
+      if (tcb.env.config.strictSafeNavigationTypes) {
+        // Basically, the return here is either the type of the complete expression with a null-safe
+        // property read, or `undefined`. So a ternary is used to create an "or" type:
+        // "a?.b" becomes (null as any ? a!.b : undefined)
+        // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
+        append("(null as any ? ")
+        withSourceSpan(methodExpression.textRange) {
+          append("(")
+          methodExpression.accept(this@TcbExpressionTranslator)
+          removeMappings(methodExpression.textRange)
+          append(")!")
+        }
+        append("() : undefined)")
+      }
+      else if (VeSafeLhsInferenceBugDetector().veWillInferAnyFor(node)) {
+        // Emulate a View Engine bug where 'any' is inferred for the left-hand side of the safe
+        // navigation operation. With this bug, the type of the left-hand side is regarded as any.
+        // Therefore, the left-hand side only needs repeating in the output (to validate it), and then
+        // 'any' is used for the rest of the expression. This is done using a comma operator:
+        // "a?.b" becomes (a as any).b, which will of course have type 'any'.
+        withSourceSpan(methodExpression.textRange) {
+          append("((")
+          methodExpression.accept(this@TcbExpressionTranslator)
+          removeMappings(methodExpression.textRange)
+          append(") as any)")
+        }
+        append("()")
+      }
+      else {
+        // The View Engine bug isn't active, so check the entire type of the expression, but the final
+        // result is still inferred as `any`.
+        // "a?.b" becomes (a!.b as any)
+        append("(")
+        withSourceSpan(methodExpression.textRange) {
+          append("(")
+          methodExpression.accept(this@TcbExpressionTranslator)
+          removeMappings(methodExpression.textRange)
+          append(")!")
+        }
+        append("() as any)")
       }
     }
   }

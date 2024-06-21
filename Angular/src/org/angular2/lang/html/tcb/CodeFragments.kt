@@ -51,6 +51,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     fun statements(builder: BlockBuilder.() -> Unit)
 
     fun newLine()
+
+    fun removeMappings(range: TextRange)
   }
 
   interface BlockBuilder : ExpressionBuilder {
@@ -67,6 +69,13 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     val sourceMappings = mutableSetOf<SourceMappingData>()
 
     private var ignoreDiagnostics = false
+
+    override fun removeMappings(range: TextRange) {
+      sourceMappings.removeIf {
+        it.sourceOffset == range.startOffset
+        && it.sourceOffset + it.sourceLength == range.endOffset
+      }
+    }
 
     override fun append(code: String, originalRange: TextRange?): ExpressionBuilder {
       if (originalRange != null) {
