@@ -1,7 +1,12 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
-import com.intellij.javascript.web.js.WebJSResolveUtil.resolveMergedInterfaceJSTypeFromNodeModule
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
+import com.intellij.lang.javascript.library.JSLibraryUtil.findUpClosestNodeModulesResolveRoot
+import com.intellij.lang.javascript.psi.JSCommonTypeNames.MODULE_PREFIX
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
+import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -9,6 +14,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 import java.util.*
@@ -18,10 +24,34 @@ class VueTypedGlobal(override val delegate: VueGlobal,
 
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
-      val jsRecordType = resolveMergedInterfaceJSTypeFromNodeModule(source, VUE_MODULE, "GlobalComponents")
-      val map = jsRecordType.properties.asSequence().mapNotNull { property ->
-        property.memberSource.singleElement?.let { Pair(property.memberName, VueTypedComponent(it, property.memberName)) }
-      }.toMap()
+      val file = source.containingFile
+      val map = TypeScriptUtil.getAllAugmentationModules(source.project, file)
+        .asSequence()
+        .filter { module -> module.name?.removePrefix(MODULE_PREFIX)?.let { it.startsWith("@$VUE_MODULE") || it.startsWith(VUE_MODULE) } == true }
+        .flatMap { it.stubSafeChildren }
+        .filterIsInstance<TypeScriptInterface>()
+        .filter { it.name == GLOBAL_COMPONENTS }
+        .flatMap { it.jsType.asRecordType().properties }
+        .groupBy { it.memberName }
+        .mapNotNull { nameToProperty ->
+          val fromLibrary = mutableListOf<JSRecordType.PropertySignature>()
+          val property = nameToProperty.value.find { property ->
+            val sourceElement = property.memberSource.singleElement
+            val isFromProject = sourceElement?.containingFile?.virtualFile?.let {
+              findUpClosestNodeModulesResolveRoot(it)
+            } != null
+
+            if (isFromProject) {
+              return@find true
+            }
+
+            fromLibrary.add(property)
+            false
+          } ?: fromLibrary.singleOrNull() ?: return@mapNotNull null
+
+          property.memberSource.singleElement?.let { Pair(property.memberName, VueTypedComponent(it, property.memberName)) }
+        }.toMap()
+
       CachedValueProvider.Result.create(map, PsiModificationTracker.MODIFICATION_COUNT)
     }
 

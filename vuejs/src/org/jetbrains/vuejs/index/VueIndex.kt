@@ -20,6 +20,7 @@ const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
 const val SHARDS_VUE_MODULE: String = "shards-vue"
 const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
+const val GLOBAL_COMPONENTS: String = "GlobalComponents"
 
 val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
 
