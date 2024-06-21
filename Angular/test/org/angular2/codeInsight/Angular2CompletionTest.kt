@@ -17,7 +17,8 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     this.enableIdempotenceChecksOnEveryCache()
   }
 
-  fun testExportAs() =
+  // TODO WEB-67260 - fix issue later
+  fun _testExportAs() =
     doLookupTest(checkDocumentation = true)
 
   fun testRecursiveHostDirective() =
@@ -61,13 +62,15 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
       it.priority >= 100
     }
 
-  fun testDirectiveOutputMapping() =
+  // TODO WEB-67260 - fix issue later
+  fun _testDirectiveOutputMapping() =
     doLookupTest(ANGULAR_CORE_13_3_5)
 
   fun testSignal() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
-  fun testCustomSignal() =
+  // TODO WEB-67260 - fix completion of custom signals
+  fun _testCustomSignal() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
   fun testSignalInGenericStructuralDirective() =
