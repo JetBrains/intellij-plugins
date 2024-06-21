@@ -11,7 +11,17 @@
       topic="com.intellij.execution.ExecutionTargetListener"/>
   </projectListeners>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.dts.cmake.configurationDataProvider"
+                    interface="com.intellij.dts.clion.impl.DtsCMakeModelConfigurationDataProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij.clion">
     <dtsUtil implementation="com.intellij.dts.clion.impl.DtsClionUtilImpl"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.dts.cmake">
+    <configurationDataProvider implementation="com.intellij.dts.clion.impl.DefaultDtsCMakeProfileProvider"/>
   </extensions>
 </idea-plugin>

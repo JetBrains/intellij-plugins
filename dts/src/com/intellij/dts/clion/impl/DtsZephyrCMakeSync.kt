@@ -1,14 +1,12 @@
 package com.intellij.dts.clion
 
+import com.intellij.dts.clion.impl.DtsCMakeModelConfigurationDataProvider
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetListener
-import com.intellij.execution.ExecutionTargetManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
-import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -45,14 +43,10 @@ class DtsZephyrCMakeSync(
     val settings = DtsSettings.of(project)
     if (!settings.zephyrCMakeSync) return
 
-    val target = ExecutionTargetManager.getInstance(project).activeTarget
-    if (target !is CMakeBuildProfileExecutionTarget) return
-
-    val workspace = CMakeWorkspace.getInstance(project)
-    if (!workspace.isInitialized) return
-
-    val configs = workspace.model?.configurationData ?: return
-    val activeConfig = configs.firstOrNull { it.configName == target.profileName } ?: return
+    val activeConfig = DtsCMakeModelConfigurationDataProvider.getFirstCMakeModelConfigurationData(project)
+    if (activeConfig == null) {
+      return
+    }
 
     val cache = try {
       activeConfig.getCacheConfigurator()
