@@ -15,6 +15,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.project.Project
@@ -38,6 +39,7 @@ import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.getAngularSettings
+import java.util.concurrent.Future
 import java.util.function.Consumer
 
 class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
@@ -65,6 +67,12 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
       false // For now do not use TS server for highlighting TODO - Angular2Compiler.isStrictTemplates(file)
     else
       super.isAcceptableForHighlighting(file)
+
+  override fun getQuickInfoAt(usageElement: PsiElement, originalFile: VirtualFile): Future<TypeScriptQuickInfoResponse?>? =
+    if (usageElement.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language })
+      null // For now do not use TS server for quick info
+    else
+      super.getQuickInfoAt(usageElement, originalFile)
 
   override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
     computeCancellable<List<JSAnnotationError>, Throwable> {
