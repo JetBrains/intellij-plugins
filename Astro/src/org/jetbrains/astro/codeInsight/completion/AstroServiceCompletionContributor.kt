@@ -2,5 +2,8 @@
 package org.jetbrains.astro.codeInsight.completion
 
 import com.intellij.lang.typescript.compiler.languageService.ide.TypeScriptServiceCompletionContributor
+import com.intellij.openapi.util.registry.Registry
 
-class AstroServiceCompletionContributor: TypeScriptServiceCompletionContributor()
+class AstroServiceCompletionContributor: TypeScriptServiceCompletionContributor() {
+  override val serviceItemsLimit: Int = Registry.get("astro.language.server.completion.serviceItemsLimit").asInteger()
+}
