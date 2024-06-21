@@ -4,13 +4,19 @@ package org.jetbrains.astro.codeInsight.refs
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.psi.PsiElement
-import org.jetbrains.astro.codeInsight.*
+import org.jetbrains.astro.codeInsight.ASTRO_PROPS
+import org.jetbrains.astro.codeInsight.astroContentRoot
+import org.jetbrains.astro.codeInsight.frontmatterScript
+import org.jetbrains.astro.codeInsight.propsInterface
 
 class AstroImplicitUsageProvider : ImplicitUsageProvider {
   override fun isImplicitUsage(element: PsiElement) =
     isAstroPropsInterface(element) ||
-    isAstroPropsImport(element)
+    isAstroPropsImport(element) ||
+    isAstroImplicitlyUsedFunction(element);
 
   override fun isImplicitRead(element: PsiElement) = false
 
@@ -23,6 +29,13 @@ class AstroImplicitUsageProvider : ImplicitUsageProvider {
     when (element) {
       is ES6ImportSpecifier -> element.name == ASTRO_PROPS
       is ES6ImportSpecifierAlias -> element.name == ASTRO_PROPS
+      else -> false
+    }
+
+  private fun isAstroImplicitlyUsedFunction(element: PsiElement) =
+    when (element) {
+      is TypeScriptFunction -> element.name.equals("getStaticPaths")
+      is TypeScriptVariable -> element.name.equals("getStaticPaths")
       else -> false
     }
 }

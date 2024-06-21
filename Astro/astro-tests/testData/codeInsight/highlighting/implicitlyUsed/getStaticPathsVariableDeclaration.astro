@@ -1,0 +1,9 @@
+---
+export const getStaticPaths = (async () => {
+    return [{slug: "x", }].map((post) => {
+        return {
+            params: { slug: post.slug }
+        };
+    });
+}) satisfies <error descr="Unresolved type GetStaticPaths">GetStaticPaths</error>;
+---
