@@ -1,0 +1,18 @@
+/* Angular type checking code */
+
+/* TCB for blockSwitch.ts */
+
+function _tcb1(this: RobotProfileComponent) {
+this.user.name;
+if ((this.user.name) === "foo") {
+"" + this.user.name;
+}
+else if ((this.user.name) === "bar") {
+"" + this.user.name;
+}
+else {
+"" + this.user.name;
+}
+
+
+}

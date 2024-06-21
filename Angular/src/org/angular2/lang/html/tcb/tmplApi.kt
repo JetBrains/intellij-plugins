@@ -869,6 +869,22 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
       nameSpan = nameElement.textRange,
       children = contents.mapChildren(referenceResolver),
     )
+    BLOCK_SWITCH -> TmplAstSwitchBlock(
+      nameSpan = nameElement.textRange,
+      expression = parameters.getOrNull(0)?.expression,
+      cases = contents?.children?.mapNotNull { (it as? Angular2HtmlBlock)?.toTmplAstBlock(referenceResolver) as? TmplAstSwitchBlockCase }
+              ?: emptyList()
+    )
+    BLOCK_CASE -> TmplAstSwitchBlockCase(
+      nameSpan = nameElement.textRange,
+      expression = parameters.getOrNull(0)?.expression,
+      children = contents.mapChildren(referenceResolver),
+    )
+    BLOCK_DEFAULT -> TmplAstSwitchBlockCase(
+      nameSpan = nameElement.textRange,
+      expression = null,
+      children = contents.mapChildren(referenceResolver),
+    )
     else -> null
   }
 

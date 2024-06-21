@@ -336,14 +336,24 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
  *
  * Executing this operation returns nothing.
  */
-private class TcbExpressionOp(private val tcb: Context, private val scope: Scope, private val expression: JSExpression?) : TcbOp() {
+private class TcbExpressionOp(
+  private val tcb: Context,
+  private val scope: Scope,
+  private val expression: JSExpression?,
+  private val isBoundText: Boolean = false,
+) : TcbOp() {
 
   override val optional get() = false
 
   override fun execute(): Identifier? {
-    val expr = tcbExpression(this.expression, this.tcb, this.scope)
-    this.scope.addStatement {
-      append("\"\" + ").append(expr).append(";")
+    if (expression != null) {
+      val expr = tcbExpression(this.expression, this.tcb, this.scope)
+      this.scope.addStatement {
+        if (isBoundText) {
+          append("\"\" + ")
+        }
+        append(expr).append(";")
+      }
     }
     return null
   }
@@ -1284,31 +1294,78 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
   override val optional get() = false
 
   override fun execute(): Identifier? {
-    this.scope.addStatement(Statement {
-      val switchExpression = tcbExpression(block.expression, tcb, scope)
-      append("switch (").append(switchExpression).append(") {").newLine()
-
-      block.cases.forEach { current ->
-        val checkBody = tcb.env.config.checkControlFlowBodies
-        val clauseScope = Scope.forNodes(
-          tcb, scope, null, if (checkBody) current.children else emptyList(),
-          if (checkBody) generateGuard(current, switchExpression) else null)
-
-        if (current.expression == null) {
-          append("default: ")
-        }
-        else {
-          append("case ").append(tcbExpression(current.expression, tcb, clauseScope))
-        }.newLine()
-
-        statements {
-          clauseScope.render().forEach(::appendStatement)
-          appendStatement(Statement { append("break;") })
-        }
-        newLine()
+    // Since we'll use the expression in multiple comparisons, we don't want to
+    // log the same diagnostic more than once. Ignore this expression since we already
+    // produced a `TcbExpressionOp`.
+    val expression = Expression {
+      // Wrap the comparisson expression in parentheses so we don't ignore
+      // diagnostics when comparing incompatible types (see #52315).
+      append("(")
+      withIgnoreDiagnostics {
+        append(tcbExpression(block.expression, tcb, scope))
       }
-    })
-    return null
+      append(")")
+    };
+
+    val root = this.generateCase(0, expression, null);
+
+    if (root !== null) {
+      this.scope.addStatement(root);
+    }
+
+    return null;
+  }
+
+  private fun generateCase(index: Int, switchValue: Expression, defaultCase: TmplAstSwitchBlockCase?): Statement? {
+    val checkBodies = this.tcb.env.config.checkControlFlowBodies;
+
+    // If we've reached the end, output the default case as the final `else`.
+    if (index >= this.block.cases.size) {
+      if (defaultCase !== null) {
+        val defaultScope = Scope.forNodes(
+          this.tcb, this.scope, null, if (checkBodies) defaultCase.children else emptyList(),
+          if (checkBodies) this.generateGuard(defaultCase, switchValue) else null);
+        return Statement {
+          codeBlock {
+            defaultScope.render().forEach(::appendStatement)
+          }
+        }
+      }
+      return null;
+    }
+
+    // If the current case is the default (could be placed arbitrarily),
+    // skip it since it needs to be generated as the final `else` at the end.
+    val current = this.block.cases[index];
+    if (current.expression === null) {
+      return this.generateCase(index + 1, switchValue, current);
+    }
+
+    val caseScope = Scope.forNodes(
+      this.tcb, this.scope, null,
+      if (checkBodies) current.children else emptyList(),
+      if (checkBodies) this.generateGuard(current, switchValue) else null);
+    val caseValue = tcbExpression(current.expression, this.tcb, caseScope);
+
+    // TODO(crisbeto): change back to a switch statement when the TS bug is resolved.
+    // Note that it would be simpler to generate a `switch` statement to represent the user's
+    // code, but the current TypeScript version (at the time of writing 5.2.2) has a bug where
+    // parenthesized `switch` expressions aren't narrowed correctly:
+    // https://github.com/microsoft/TypeScript/issues/56030. We work around it by generating
+    // `if`/`else if`/`else` statements to represent the switch block instead.
+    return Statement {
+      append("if (").append(switchValue).append(" === ").append(caseValue).append(") ")
+      codeBlock {
+        caseScope.render().forEach(::appendStatement)
+      }
+      generateCase(index + 1, switchValue, defaultCase)?.let {
+        newLine()
+        append("else ")
+        statements {
+          appendStatement(it)
+        }
+      }
+    }
   }
 
   private fun generateGuard(node: TmplAstSwitchBlockCase, switchValue: Expression): Expression? {
@@ -1805,6 +1862,7 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
       this.opQueue.add(TcbIfOp(this.tcb, this, node))
     }
     else if (node is TmplAstSwitchBlock) {
+      this.opQueue.add(TcbExpressionOp(this.tcb, this, node.expression))
       this.opQueue.add(TcbSwitchOp(this.tcb, this, node))
     }
     else if (node is TmplAstForLoopBlock) {
@@ -1814,7 +1872,7 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
       }
     }
     else if (node is TmplAstBoundText) {
-      this.opQueue.add(TcbExpressionOp(this.tcb, this, node.value))
+      this.opQueue.add(TcbExpressionOp(this.tcb, this, node.value, true))
     }
     else if (node is TmplAstContent) {
       this.appendChildren(node)

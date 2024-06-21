@@ -1,0 +1,35 @@
+[
+  {
+    "file-name": "blockSwitch.ts",
+    "mappings": [
+      "«user» [238] => «user» [115]}",
+      "«.» [242] => «.» [119]}",
+      "«name» [243] => «name» [120]}",
+      "«user.name» [238] => «this.user.name» [110]}",
+      "«user» [238] => «user» [136]} (ignoreDiagnostics)",
+      "«.» [242] => «.» [140]} (ignoreDiagnostics)",
+      "«name» [243] => «name» [141]} (ignoreDiagnostics)",
+      "«user.name» [238] => «this.user.name» [131]} (ignoreDiagnostics)",
+      "«\"foo\"» [270] => «\"foo\"» [151]}",
+      "«user» [293] => «user» [170]}",
+      "«.» [297] => «.» [174]}",
+      "«name» [298] => «name» [175]}",
+      "«user.name» [293] => «this.user.name» [165]}",
+      "«user» [238] => «user» [198]} (ignoreDiagnostics)",
+      "«.» [242] => «.» [202]} (ignoreDiagnostics)",
+      "«name» [243] => «name» [203]} (ignoreDiagnostics)",
+      "«user.name» [238] => «this.user.name» [193]} (ignoreDiagnostics)",
+      "«\"bar\"» [330] => «\"bar\"» [213]}",
+      "«user» [358] => «user» [232]}",
+      "«.» [362] => «.» [236]}",
+      "«name» [363] => «name» [237]}",
+      "«user.name» [358] => «this.user.name» [227]}",
+      "«user» [413] => «user» [262]}",
+      "«.» [417] => «.» [266]}",
+      "«name» [418] => «name» [267]}",
+      "«user.name» [413] => «this.user.name» [257]}",
+      "0:223 => 0:223 (source)",
+      "444:503 => 444:503 (source)"
+    ]
+  }
+]
