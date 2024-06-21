@@ -3,7 +3,7 @@ import type * as TS from "./languageService"
 import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
-import {toGeneratedOffset} from "@volar/typescript/lib/node/transform"
+import {toGeneratedRange} from "@volar/typescript/lib/node/transform"
 import {AngularVirtualCode} from "./code"
 
 export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
@@ -34,12 +34,11 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
         let originalRangePosStart = ts.getPositionOfLineAndCharacter(sourceFile, range.start.line, range.start.character)
         let originalRangePosEnd = ts.getPositionOfLineAndCharacter(sourceFile, range.end.line, range.end.character)
 
-        const generatedRangePosStart = toGeneratedOffset(language, serviceScript, sourceScript, originalRangePosStart, () => true);
-        const generatedRangePosEnd = toGeneratedOffset(language, serviceScript, sourceScript, originalRangePosEnd, () => true);
+        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, {pos: originalRangePosStart, end: originalRangePosEnd}, () => true);
 
-        if (generatedRangePosStart !== undefined && generatedRangePosEnd !== undefined) {
-          const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRangePosStart)
-          const end = ts.getLineAndCharacterOfPosition(generatedFile, generatedRangePosEnd)
+        if (generatedRange !== undefined) {
+          const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange.pos)
+          const end = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange.end)
 
           //TODO support reverseMapper
           return webStormGetElementType(ts as any, targetScript.id, {start, end}, forceReturnType)
