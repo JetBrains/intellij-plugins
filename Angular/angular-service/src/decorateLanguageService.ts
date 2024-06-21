@@ -6,6 +6,7 @@ import {getServiceScript} from "@volar/typescript/lib/node/utils"
 import {toGeneratedRange, toSourceRanges} from "@volar/typescript/lib/node/transform"
 import {AngularVirtualCode} from "./code"
 import type * as ts from "typescript"
+import * as console from "node:console"
 
 function toSourceRange(sourceScript: SourceScript<string> | undefined, language: Language<string>, serviceScript: TypeScriptServiceScript, range: ts.TextRange, filter: (data: CodeInformation) => boolean): [fileName: string, range: ts.TextRange] | undefined {
   for (const result of toSourceRanges(sourceScript, language, serviceScript, range, filter)) {
@@ -45,7 +46,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
         }
       }
       catch (e) {
-        // ignore
+        console.error(e)
       }
     }
     return undefined;

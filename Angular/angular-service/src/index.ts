@@ -8,7 +8,6 @@ import {
   decorateIdeLanguageServiceExtensions,
   decorateNgLanguageServiceExtensions,
 } from "./decorateLanguageService"
-import {hasComponentDecorator} from "./utils"
 import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/types"
 
 function loadLanguagePlugins(ts: typeof import('typescript'),
@@ -27,9 +26,7 @@ function loadLanguagePlugins(ts: typeof import('typescript'),
         return languageId === "html"
       },
       createVirtualCode(scriptId: string, languageId: string, snapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
-        if (languageId === "typescript" && hasComponentDecorator(
-          ts, scriptId, snapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
-        )) {
+        if (languageId === "typescript" && !scriptId.endsWith(".d.ts") && scriptId.indexOf("/node_modules/") < 0) {
           let virtualCode = ngTcbBlocks.get(scriptId)
           if (!virtualCode) {
             virtualCode = new AngularVirtualCode(scriptId, ctx, ts.sys.useCaseSensitiveFileNames)
@@ -40,15 +37,7 @@ function loadLanguagePlugins(ts: typeof import('typescript'),
         return undefined
       },
       updateVirtualCode(scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
-        if (hasComponentDecorator(
-          ts, scriptId, newSnapshot, info.project.getCompilerOptions().target ?? ts.ScriptTarget.Latest
-        )) {
-          return virtualCode.sourceFileUpdated(newSnapshot)
-        }
-        else {
-          ngTcbBlocks.delete(scriptId)
-          return undefined
-        }
+        return virtualCode.sourceFileUpdated(newSnapshot)
       },
       typescript: {
         extraFileExtensions: [{
