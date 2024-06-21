@@ -8,7 +8,8 @@ import { Component } from '@angular/core';
       {{ test(<error descr="Argument type \"a\" | \"b\" is not assignable to parameter type \"f\"  Type \"a\" is not assignable to type \"f\"">bar</error>) }}
     } @else {
       {{ test(<error descr="Unresolved variable or type bar">bar</error>) }}
-      {{ test(<error descr="Argument type \"\" | undefined is not assignable to parameter type \"f\"  Type \"\" is not assignable to type \"f\"">foo</error>) }}
+      TCB incorrectly generates the if block when alias is present, so foo is not properly narrowed here. 
+      {{ test(<error descr="Argument type \"\" | \"a\" | \"b\" | undefined is not assignable to parameter type \"f\"  Type \"\" is not assignable to type \"f\"">foo</error>) }}
     }
   `,
    standalone: true,
