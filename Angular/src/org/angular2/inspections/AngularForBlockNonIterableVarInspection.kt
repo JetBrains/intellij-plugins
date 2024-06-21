@@ -37,7 +37,10 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
                                ?: return
           val property = expressionType
             .asRecordType()
-            .findPropertySignature("[Symbol.iterator]")
+            .let {
+              it.findPropertySignature("[Symbol.iterator]")
+              ?: it.findPropertySignature("SymbolConstructor.iterator")
+            }
           val type = property
             ?.jsType
             ?.substitute()
