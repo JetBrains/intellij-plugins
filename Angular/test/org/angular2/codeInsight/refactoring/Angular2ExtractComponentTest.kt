@@ -4,6 +4,8 @@ package org.angular2.codeInsight.refactoring
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import com.intellij.testFramework.UsefulTestCase
 import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TsConfigFile
 
 class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent") {
 
@@ -48,7 +50,12 @@ class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractCompon
   }
 
   private fun doMultiFileTest(source: String = "src/app/app.component.html") {
-    doConfiguredTest(dir = true, checkResult = true, configureFileName = source) {
+    doConfiguredTest(Angular2TestModule.TS_LIB,
+                     Angular2TestModule.ANGULAR_CORE_16_2_8,
+                     Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                     Angular2TestModule.ANGULAR_FORMS_16_2_8,
+                     dir = true, checkResult = true, configureFileName = source,
+                     configurators = listOf(Angular2TsConfigFile(strictTemplates = true))) {
       myFixture.performEditorAction("Angular2ExtractComponentAction")
     }
   }

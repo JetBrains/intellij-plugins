@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {Person} from "../Person";
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
     selector: 'app-child',
@@ -12,7 +11,7 @@ export class ChildComponent implements OnInit {
 
     @Input() handleEvent: (event?: Event) => void;
 
-    @Input() section: any;
+    @Input() section: number;
 
     @Input() inputElement: HTMLInputElement;
 

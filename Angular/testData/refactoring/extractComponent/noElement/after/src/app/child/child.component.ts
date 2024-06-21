@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {Person} from "../Person";
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
     selector: 'app-child',
@@ -8,7 +7,7 @@ import {Person} from "../Person";
 })
 export class ChildComponent implements OnInit {
 
-    @Input() section: any;
+    @Input() section: number;
 
     @Input() inputElement: HTMLInputElement;
 

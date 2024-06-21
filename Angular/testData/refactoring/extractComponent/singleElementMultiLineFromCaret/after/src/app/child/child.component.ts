@@ -14,7 +14,7 @@ export class ChildComponent implements OnInit {
 
     @Input() titleContent: string;
 
-    @Input() section: any;
+    @Input() section: number;
 
     @Input() inputElement: HTMLInputElement;
 
