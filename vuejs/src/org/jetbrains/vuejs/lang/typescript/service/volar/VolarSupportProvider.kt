@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
 private object VolarLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
-                                                                            "1.8.27",
+                                                                            "2.0.21",
                                                                             "/bin/vue-language-server.js") {
   override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
 }
@@ -71,8 +71,8 @@ object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDesc
     // work in progress
     val registryValue = Registry.stringValue("vue.language.server.default.version")
     val version =
-      if (registryValue.startsWith("2")) "tsc-vue"
-      else "tsc-vue1"
+      if (registryValue.startsWith("1")) "tsc-vue1"
+      else "tsc-vue"
     val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
                     "typescript/node_modules/$version/${packageDescriptor.packageRelativePath}")
     val path = file.absolutePath
