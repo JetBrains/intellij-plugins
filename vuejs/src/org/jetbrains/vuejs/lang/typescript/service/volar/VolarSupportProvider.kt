@@ -74,7 +74,7 @@ object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDesc
       if (registryValue.startsWith("2")) "tsc-vue" // explicit Registry value is needed for Vue LS 2 New Eval
       else "tsc-vue1" // default IDE config will launch old Vue LS New Eval for now
     val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                    "typescript/node_modules/$version/${packageDescriptor.packageRelativePath}")
+                    "typescript/node_modules/$version/${packageDescriptor.defaultPackageRelativePath}")
     val path = file.absolutePath
     return path
   }

@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.service
 
+import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.JSLspServerWidgetItem
 import com.intellij.lang.typescript.lsp.LspServerDownloader
@@ -15,6 +16,7 @@ import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
+import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor("@astrojs/language-server",
                                                                             "2.10.0",
@@ -36,4 +38,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
 class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroServiceSetActivationRule, "Astro")
 
 @ApiStatus.Experimental
-object AstroLspExecutableDownloader : LspServerDownloader(AstroLspServerPackageDescriptor)
+object AstroLspExecutableDownloader : LspServerDownloader(AstroLspServerPackageDescriptor) {
+  override fun getSelectedPackageRef(project: Project): NodePackageRef =
+    getAstroServiceSettings(project).lspServerPackageRef
+}
