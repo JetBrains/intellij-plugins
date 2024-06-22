@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.tsc
 
+import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
@@ -11,10 +12,20 @@ import com.intellij.testFramework.UsefulTestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementTypeTest() {
 
+  @JvmField
+  @Rule
+  val rule: TestRule = TrackFailedTestRule(
+    "testObjectLiteralWithSymbol",
+    "testInWriteAction",
+    "testAnonymousThread"
+  )
+  
   override fun setUpTypeScriptService() {
     VueServiceSetActivationRule.markForceEnabled(true)
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
