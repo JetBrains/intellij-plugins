@@ -63,7 +63,7 @@ object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDesc
     if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
       // work in progress
       val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                      "typescript/node_modules/tsc-vue/${packageDescriptor.packageRelativePath}")
+                      "typescript/node_modules/tsc-vue1/${packageDescriptor.packageRelativePath}")
       val path = file.absolutePath
       return path
     }
