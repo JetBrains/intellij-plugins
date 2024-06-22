@@ -61,13 +61,17 @@ object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDesc
 
   override fun getExecutableForDefaultKey(project: Project): String? {
     if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
-      // work in progress
-      val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                      "typescript/node_modules/tsc-vue1/${packageDescriptor.packageRelativePath}")
-      val path = file.absolutePath
-      return path
+      return getNewEvalExecutable()
     }
 
     return super.getExecutableForDefaultKey(project)
+  }
+
+  private fun getNewEvalExecutable(): String {
+    // work in progress
+    val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
+                    "typescript/node_modules/tsc-vue1/${packageDescriptor.packageRelativePath}")
+    val path = file.absolutePath
+    return path
   }
 }
