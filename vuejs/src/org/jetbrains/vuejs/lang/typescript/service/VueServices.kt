@@ -23,11 +23,11 @@ object VueServiceSetActivationRule : JSServiceSetActivationRule(VolarExecutableD
     return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
   }
 
-  override fun isServiceSetProjectContext(project: Project, context: VirtualFile): Boolean {
+  override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
     return isVueServiceContext(project, context)
   }
 
-  override fun isServiceSetEnabledInSettings(project: Project): Boolean {
+  override fun isEnabledInSettings(project: Project): Boolean {
     return when (getVueSettings(project).serviceType) {
       VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> true
       VueServiceSettings.TS_SERVICE -> false

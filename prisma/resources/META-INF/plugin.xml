@@ -100,12 +100,20 @@
 
         <!-- LSP -->
         <platform.lsp.serverSupportProvider implementation="org.intellij.prisma.ide.lsp.PrismaLspServerSupportProvider"/>
+        <registryKey defaultValue="" description="Prisma service version for downloading" key="prisma.language.server.default.version"/>
 
         <!-- UI -->
         <notificationGroup id="Prisma"
                            displayType="BALLOON"
                            bundle="messages.PrismaBundle"
                            key="notification.group.prisma"/>
+        <projectConfigurable id="settings.prisma"
+                             groupId="language"
+                             instance="org.intellij.prisma.ide.ui.PrismaSettingsConfigurable"
+                             bundle="messages.PrismaBundle"
+                             key="prisma.settings.configurable.title"
+                             nonDefaultProject="true"
+        />
 
         <!-- Find Usages -->
        <lang.findUsagesProvider language="Prisma" implementationClass="org.intellij.prisma.lang.findUsages.PrismaFindUsagesProvider"/>

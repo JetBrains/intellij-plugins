@@ -16,11 +16,11 @@ object AstroServiceSetActivationRule : JSServiceSetActivationRule(AstroLspExecut
     return file.fileType == AstroFileType || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
   }
 
-  override fun isServiceSetProjectContext(project: Project, context: VirtualFile): Boolean {
+  override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
     return context.fileType == AstroFileType
   }
 
-  override fun isServiceSetEnabledInSettings(project: Project): Boolean {
+  override fun isEnabledInSettings(project: Project): Boolean {
     return getAstroServiceSettings(project).serviceMode == AstroServiceMode.ENABLED
   }
 }

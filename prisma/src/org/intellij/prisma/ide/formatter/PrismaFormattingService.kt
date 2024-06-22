@@ -52,6 +52,9 @@ class PrismaFormattingService : AsyncDocumentFormattingService() {
   override fun canFormat(file: PsiFile): Boolean = file is PrismaFile
 
   override fun createFormattingTask(formattingRequest: AsyncFormattingRequest): FormattingTask? {
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      return null
+    }
     if (ApplicationManager.getApplication().isUnitTestMode &&
         USE_PRISMA_FMT.get(formattingRequest.context.containingFile) != true) {
       return null
