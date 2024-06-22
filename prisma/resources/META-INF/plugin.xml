@@ -88,6 +88,7 @@
         <!-- Refactoring -->
         <lang.refactoringSupport language="Prisma"
                                  implementationClass="org.intellij.prisma.ide.refactoring.PrismaRefactoringSupport"/>
+        <refactoring.helper implementation="org.intellij.prisma.ide.refactoring.PrismaFormatRefactoringHelper"/>
 
         <!-- Structure view -->
         <lang.psiStructureViewFactory language="Prisma"

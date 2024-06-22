@@ -5,10 +5,12 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
+import com.intellij.webSymbols.checkLookupItems
 import com.intellij.webSymbols.noAutoComplete
 import junit.framework.TestCase
 import org.intellij.prisma.PrismaTestCase
 import org.intellij.prisma.ide.documentation.PrismaDocumentationProvider
+import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaFileType
 
 abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(testCasePath) {
@@ -64,6 +66,24 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
     val doc = PrismaDocumentationProvider().generateDoc(element!!, null)
     assertNotNull(doc)
     assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc!!)
+  }
+
+  protected fun checkLookupElementsInSplitSchema(fileDir: String? = null, includePrimitive: Boolean = false) {
+    doConfiguredTest(dir = true, configureFileDir = fileDir) {
+      checkLookupItems(
+        renderPriority = true,
+        renderTypeText = true,
+        expectedDataLocation = testName,
+        lookupItemFilter = {
+          if (!includePrimitive) {
+            it.lookupString !in PrismaConstants.PrimitiveTypes.ALL
+          }
+          else {
+            true
+          }
+        }
+      )
+    }
   }
 
   protected val Array<LookupElement>?.strings: List<String>

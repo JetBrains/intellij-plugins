@@ -76,6 +76,14 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
   }
 
   fun testGlobalTypes() {
-    doLookupTest(dir = true) { it.lookupString !in PrismaConstants.PrimitiveTypes.ALL }
+    checkLookupElementsInSplitSchema()
+  }
+
+  fun testGlobalTypesSchemaDir() {
+    checkLookupElementsInSplitSchema("prisma/schema")
+  }
+
+  fun testTypesMonorepo() {
+    checkLookupElementsInSplitSchema("module1/schema/feature1")
   }
 }

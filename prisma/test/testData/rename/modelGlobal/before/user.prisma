@@ -1,0 +1,18 @@
+model <caret>User {
+  id String @id @default(cuid())
+
+  accounts Account[]
+  sessions Session[]
+  projects ProjectUsers[]
+  links    Link[]
+  tokens   Token[]
+}
+
+model Account {
+  id     String @id @default(cuid())
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.isFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.search.GlobalSearchScope
@@ -13,6 +14,7 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
+import org.intellij.prisma.lang.PrismaFileType
 import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
 
 fun processEntityDeclarations(processor: PrismaProcessor, state: ResolveState, element: PsiElement) {
@@ -61,22 +63,43 @@ private fun processGlobalEntityDeclarations(
 }
 
 fun getSchemaScope(context: PsiElement): GlobalSearchScope {
-  return CachedValuesManager.getCachedValue(context) {
-    val psiFile = context.containingFile.originalFile
-    val file = psiFile.viewProvider.virtualFile
-    val root = findSchemaRoot(context.project, file)
-    create(root?.let { GlobalSearchScopes.directoryScope(context.project, it, true) }
-           ?: GlobalSearchScope.projectScope(context.project), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+  val psiFile = context.containingFile
+
+  return CachedValuesManager.getCachedValue(psiFile) {
+    create(
+      buildSchemaScope(psiFile.project, getPhysicalFile(psiFile)) ?: GlobalSearchScope.fileScope(psiFile),
+      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+    )
   }
 }
 
-fun getSchemaScopeWithoutCurrentFile(context: PsiElement): GlobalSearchScope {
-  val psiFile = context.containingFile.originalFile
-  return GlobalSearchScope.notScope(GlobalSearchScope.fileScope(psiFile)).intersectWith(getSchemaScope(context))
+fun getSchemaScopeWithoutCurrentFile(context: PsiElement): GlobalSearchScope =
+  GlobalSearchScope
+    .notScope(GlobalSearchScope.fileScope(context.project, getPhysicalFile(context)))
+    .intersectWith(getSchemaScope(context))
+
+private fun buildSchemaScope(project: Project, file: VirtualFile): GlobalSearchScope? {
+  return findSchemaRoot(project, file)?.let { GlobalSearchScopes.directoryScope(project, it, true) }
 }
 
-private fun findSchemaRoot(project: Project, file: VirtualFile): VirtualFile? =
-  JSProjectUtil.processDirectoriesUpToContentRootAndFindFirst(project, file) {
-    // TODO: not the best way obviously, but I don't see any other option yet
-    if (it.isDirectory && (it.name == "prisma" || it.name == "schema")) it else null
+private fun findSchemaRoot(project: Project, file: VirtualFile): VirtualFile? {
+  var root: VirtualFile? = null
+  var lastDir: VirtualFile? = null
+
+  JSProjectUtil.processDirectoriesUpToContentRoot(project, file) {
+    if (it.name == "schema" && it.parent.name == "prisma" ||
+        it.children.none { file -> file.isFile && file.extension == PrismaFileType.defaultExtension }) {
+      root = it
+      false
+    }
+    else {
+      lastDir = it
+      true
+    }
   }
+
+  return root ?: lastDir
+}
+
+private fun getPhysicalFile(context: PsiElement) =
+  context.containingFile.originalFile.viewProvider.virtualFile
