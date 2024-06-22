@@ -39,7 +39,19 @@ class VolarSupportProvider : LspServerSupportProvider {
     JSLspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
-class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue")
+class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue") {
+  override fun createInitializationOptionsWithTS(targetPath: String): Any {
+    @Suppress("unused")
+    return object {
+      val typescript = object {
+        val tsdk = targetPath
+      }
+      val vue = object {
+        val hybridMode = false
+      }
+    }
+  }
+}
 
 @ApiStatus.Experimental
 object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDescriptor) {
