@@ -69,8 +69,12 @@ object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDesc
 
   private fun getNewEvalExecutable(): String {
     // work in progress
+    val registryValue = Registry.stringValue("vue.language.server.default.version")
+    val version =
+      if (registryValue.startsWith("2")) "tsc-vue"
+      else "tsc-vue1"
     val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                    "typescript/node_modules/tsc-vue1/${packageDescriptor.packageRelativePath}")
+                    "typescript/node_modules/$version/${packageDescriptor.packageRelativePath}")
     val path = file.absolutePath
     return path
   }
