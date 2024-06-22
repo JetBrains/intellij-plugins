@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
@@ -10,7 +10,7 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
-import com.intellij.javascript.debugger.com.intellij.lang.javascript.JSCompletionTestHelperSimple;
+import com.intellij.lang.javascript.JSCompletionTestHelperSimple;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexUtils;
