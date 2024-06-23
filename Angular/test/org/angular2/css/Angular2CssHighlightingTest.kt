@@ -3,7 +3,7 @@ package org.angular2.css
 
 import org.angular2.Angular2TestCase
 
-class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting") {
+class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting", false) {
 
   // WEB-63400
   fun testCssAmpersandSelector() = checkHighlighting()

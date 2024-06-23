@@ -5,7 +5,7 @@ import com.intellij.webSymbols.checkLookupItems
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup") {
+class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", false) {
 
   fun testForBlockTyping1() =
     doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {

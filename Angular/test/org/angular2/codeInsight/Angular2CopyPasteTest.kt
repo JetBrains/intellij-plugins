@@ -6,7 +6,7 @@ import com.intellij.webSymbols.performCopyPaste
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
+class Angular2CopyPasteTest : Angular2TestCase("copyPaste", false) {
 
   fun testBasic() {
     doTest("html", "html")

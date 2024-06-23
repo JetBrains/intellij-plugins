@@ -15,7 +15,7 @@ import org.angular2.Angular2TestModule
  * @see Angular2DecoratorInspectionsTest
  * @see Angular2TemplateInspectionsTest
  */
-class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
+class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts", false) {
 
   fun testUnusedSymbol() =
     checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8,

@@ -3,7 +3,7 @@ package org.angular2.codeInsight.navigation
 
 import org.angular2.Angular2TestCase
 
-class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/") {
+class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/", false) {
 
   fun testElementSelector() = checkGotoSymbol("app-my-table")
 

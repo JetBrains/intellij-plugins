@@ -18,7 +18,7 @@ import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import java.io.File
 
-class Angular2HighlightingTest : Angular2TestCase("highlighting") {
+class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testSvgTags() = checkHighlighting(ANGULAR_COMMON_16_2_8, extension = "ts")
 

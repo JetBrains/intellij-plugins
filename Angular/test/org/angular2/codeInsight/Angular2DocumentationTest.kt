@@ -4,7 +4,7 @@ import com.intellij.webSymbols.checkDocumentationAtCaret
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2DocumentationTest : Angular2TestCase("documentation") {
+class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testTagName() = doTestWithDeps()
 

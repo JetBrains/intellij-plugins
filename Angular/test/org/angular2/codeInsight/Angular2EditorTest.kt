@@ -5,7 +5,7 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2EditorTest : Angular2TestCase("editor") {
+class Angular2EditorTest : Angular2TestCase("editor", false) {
 
   fun testBlockTyping() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,

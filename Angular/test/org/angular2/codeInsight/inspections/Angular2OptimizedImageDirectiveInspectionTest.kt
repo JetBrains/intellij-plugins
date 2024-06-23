@@ -7,7 +7,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularNgOptimizedImageInspection
 import org.angular2.lang.Angular2Bundle
 
-class Angular2OptimizedImageDirectiveInspectionTest : Angular2TestCase("inspections/ngSrc") {
+class Angular2OptimizedImageDirectiveInspectionTest : Angular2TestCase("inspections/ngSrc", false) {
 
   override fun setUp() {
     super.setUp()

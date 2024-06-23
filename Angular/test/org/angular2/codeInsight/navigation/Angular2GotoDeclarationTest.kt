@@ -6,7 +6,7 @@ import com.intellij.webSymbols.checkGTDUOutcome
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
+class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration", false) {
 
   fun testExportAs() = checkGotoDeclaration("exportAs: \"<caret>test\"")
 

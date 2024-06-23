@@ -13,7 +13,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
-class Angular2FormattingTest : Angular2TestCase("formatting") {
+class Angular2FormattingTest : Angular2TestCase("formatting", false) {
 
   fun testStyles() = doFormattingTest()
 

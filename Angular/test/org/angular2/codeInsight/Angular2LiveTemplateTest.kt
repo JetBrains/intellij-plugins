@@ -12,7 +12,7 @@ import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import org.angular2.Angular2TestCase
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.*
 
-class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
+class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate", false) {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()

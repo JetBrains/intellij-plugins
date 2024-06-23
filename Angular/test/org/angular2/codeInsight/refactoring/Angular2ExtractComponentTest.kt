@@ -7,7 +7,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 
-class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent") {
+class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent", true) {
 
   // TODO WEB-67260 - fix issues with Person being replaced with record type
   fun _testSingleElementMultiLineFromCaret() {

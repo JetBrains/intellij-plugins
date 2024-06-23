@@ -9,7 +9,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 
-class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
+class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", true) {
 
   fun testBasic() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,

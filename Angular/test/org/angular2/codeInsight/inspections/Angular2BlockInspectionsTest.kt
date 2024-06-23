@@ -5,7 +5,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularIncorrectBlockUsageInspection
 
-class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks") {
+class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks", false) {
 
   fun testUnknown() = doHighlightingTest()
 

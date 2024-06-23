@@ -3,7 +3,7 @@ package org.angular2.codeInsight.navigation
 
 import org.angular2.Angular2TestCase
 
-class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages") {
+class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages", false) {
 
   fun testPrivateComponentField() = checkUsages()
 

@@ -9,7 +9,8 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angular2.Angular2TsConfigFile
 
-class Angular2CompletionTest : Angular2TestCase("completion") {
+// TODO WEB-67260 - Enable test with tsc; disabled to avoid timeouts on the job
+class Angular2CompletionTest : Angular2TestCase("completion", false) {
 
   override fun setUp() {
     super.setUp()
