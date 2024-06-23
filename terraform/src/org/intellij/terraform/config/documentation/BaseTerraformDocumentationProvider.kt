@@ -3,6 +3,7 @@ package org.intellij.terraform.config.documentation
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.components.service
+import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
@@ -11,7 +12,6 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import org.intellij.terraform.TerraformIcons
-import org.intellij.terraform.config.Constants.shouldDownloadDocs
 import org.intellij.terraform.hcl.psi.HCLElement
 
 internal abstract class BaseTerraformDocumentationProvider {
@@ -59,5 +59,7 @@ internal abstract class BaseTerraformDocumentationProvider {
       }
     }
   }
-
 }
+
+internal val shouldDownloadDocs: Boolean
+  get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.documentation.download")

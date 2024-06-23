@@ -388,7 +388,7 @@
                      default="false"
                      groupKey="advanced.setting.terraform"
                      bundle="messages.HCLBundle"
-                     descriptionKey="terraform.formatting"/>
+                     descriptionKey="terraform.formatting.description"/>
 
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settings.dialog.project.terraform"
