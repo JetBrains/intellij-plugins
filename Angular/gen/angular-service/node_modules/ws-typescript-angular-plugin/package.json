@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "@volar/typescript": "~2.3.0",
-    "tsc-ide-plugin": "file:/../../../../plugins/JavaScriptLanguage/src/tscplugin"
+    "tsc-ide-plugin": "file:/../../../../plugins/JavaScriptLanguage/src/tscplugin",
+    "esbuild": "^0.20.0"
   },
   "devDependencies": {
     "@types/node": "^18.13.10",
@@ -13,9 +14,7 @@
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",
-    "build": "npm run build:node-modules && npm run build:plugin",
     "clean": "rm -rf ../../gen/angular-service",
-    "build:plugin": "tsc && cp ./package.json ../../gen/angular-service/node_modules/ws-typescript-angular-plugin",
-    "build:node-modules": "mkdir -p ../../gen/angular-service/node_modules && cp -R ./node_modules/* ../../gen/angular-service/node_modules && rm -R ../../gen/angular-service/node_modules/{@types,typescript,undici-types,tsc-ide-plugin} && rm -R ../../gen/angular-service/node_modules/{**/**,**/**/**,**/**/**/**}/*.d.ts"
+    "build": "node build && cp -r ./package.json ../../gen/angular-service/node_modules/ws-typescript-angular-plugin"
   }
 }
