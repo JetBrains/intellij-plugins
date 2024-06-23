@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "target": "ES2015",
     "lib": ["ES2015"],
-    "outDir": "../gen/angular-service/node_modules/ws-typescript-angular-plugin",
+    "outDir": "../../gen/angular-service/node_modules/ws-typescript-angular-plugin",
     "declaration": false,
     "module": "commonjs",
     "strictNullChecks": true,
