@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
-import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.util.NlsSafe
 
 object Constants {
@@ -24,18 +23,11 @@ object Constants {
   internal const val HCL_DYNAMIC_BLOCK_IDENTIFIER: String = "dynamic"
   internal const val HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER: String = "content"
 
-
   internal const val TERRAFORM_DOMAIN: String = "terraform.io"
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   internal const val LATEST_VERSION: String = "latest"
 
   internal const val TF_FMT: @NlsSafe String = "Terraform fmt"
 
-  internal val OFFICIAL_PROVIDERS_NAMESPACE = setOf("hashicorp", "builtin")
-
-  internal val shouldDownloadDocs: Boolean
-    get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.documentation.download")
-
-  internal val isTerraformFmtEnabled: Boolean
-    get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.formatting")
+  internal val OFFICIAL_PROVIDERS_NAMESPACE: Set<String> = setOf("hashicorp", "builtin")
 }

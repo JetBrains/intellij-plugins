@@ -2,25 +2,21 @@
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.CapturingProcessAdapter
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessEvent
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
-import org.intellij.terraform.config.Constants.isTerraformFmtEnabled
 import org.intellij.terraform.config.TerraformConstants.EXECUTION_NOTIFICATION_GROUP
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.isTerraformFile
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLFile
-import java.nio.charset.StandardCharsets
 
 class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -39,7 +35,7 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
 
     val virtualFile = context.virtualFile ?: return null
-    if (!virtualFile.extension.isTerraformFile()) {
+    if (!virtualFile.extension.isTerraformFile() && !virtualFile.name.endsWith(".tftest.hcl")) {
       EXECUTION_NOTIFICATION_GROUP.createNotification(
         HCLBundle.message("terraform.formatter.error.title"),
         HCLBundle.message("terraform.formatter.file.extension.error"),
@@ -50,28 +46,26 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 
     val filePath = virtualFile.canonicalPath ?: return null
     val commandLine = createCommandLine(project, filePath)
-    val handler = OSProcessHandler(commandLine.withCharset(StandardCharsets.UTF_8))
-
     return object : FormattingTask {
       override fun run() {
-        handler.addProcessListener(object : CapturingProcessAdapter() {
-          override fun processTerminated(event: ProcessEvent) {
-            val exitCode = event.exitCode
-            if (exitCode == 0) {
-              VfsUtil.markDirtyAndRefresh(true, true, true, virtualFile)
-              formattingRequest.onTextReady(null)
-            }
-            else {
-              formattingRequest.onError(HCLBundle.message("terraform.formatter.error.title"), output.stderr)
-            }
+        try {
+          val process = commandLine.createProcess()
+          val exitCode = process.waitFor()
+          if (exitCode == 0) {
+            VfsUtil.markDirtyAndRefresh(true, false, false, virtualFile)
+            formattingRequest.onTextReady(null)
+          } else {
+            formattingRequest.onError(HCLBundle.message("terraform.formatter.error.title"),
+                                      HCLBundle.message("terraform.formatter.error.message", virtualFile.name))
           }
-        })
-
-        handler.startNotify()
+        }
+        catch (e: Exception) {
+          formattingRequest.onError(HCLBundle.message("terraform.formatter.error.title"),
+                                    HCLBundle.message("terraform.formatter.error.message", virtualFile.name))
+        }
       }
 
       override fun cancel(): Boolean {
-        handler.destroyProcess()
         return true
       }
 
@@ -85,3 +79,6 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
       .withParameters("fmt", filePath)
       .createCommandLine()
 }
+
+internal val isTerraformFmtEnabled: Boolean
+  get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.formatting")
