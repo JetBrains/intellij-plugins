@@ -35,9 +35,6 @@ abstract class Angular2TestCase(override val testCasePath: String) : WebFramewor
       UIUtil.dispatchAllInvocationEvents()
     }
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
-      it::class.java == TypeScriptServerServiceImpl::class.java
-    }
-    TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
       it is AngularTypeScriptService
     }
     runInEdtAndWait {

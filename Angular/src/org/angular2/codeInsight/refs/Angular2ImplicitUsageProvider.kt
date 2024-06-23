@@ -53,14 +53,15 @@ class Angular2ImplicitUsageProvider : ImplicitUsageProvider {
         if (NG_TEMPLATE_CONTEXT_GUARD == name || name.startsWith(NG_TEMPLATE_GUARD_PREFIX)) {
           val cls = JSUtils.getMemberContainingClass(element)
           return cls.hasDirectiveDecorator()
-                 && (name == NG_TEMPLATE_CONTEXT_GUARD || cls.hasMember(name.substring(NG_TEMPLATE_GUARD_PREFIX.length)))
+                 && (name == NG_TEMPLATE_CONTEXT_GUARD
+                     || cls.hasMember(name.substring(NG_TEMPLATE_GUARD_PREFIX.length), element))
         }
         else if (element is TypeScriptField
                  && element.attributeList?.hasModifier(JSAttributeList.ModifierType.STATIC) == true
                  && name.startsWith(NG_ACCEPT_INPUT_TYPE_PREFIX)) {
           // https://angular.io/guide/template-typecheck#input-setter-coercion
           val cls = JSUtils.getMemberContainingClass(element)
-          return cls.hasMember(name.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length)) && cls.hasDirectiveDecorator()
+          return cls.hasMember(name.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length), element) && cls.hasDirectiveDecorator()
         }
       }
     }
@@ -91,8 +92,8 @@ class Angular2ImplicitUsageProvider : ImplicitUsageProvider {
     return false
   }
 
-  private fun JSClass.hasMember(name: String): Boolean =
-    jsType.asRecordType().findPropertySignature(name) != null
+  private fun JSClass.hasMember(name: String, context: PsiElement): Boolean =
+    jsType.asRecordType(context).findPropertySignature(name) != null
 
   private fun JSClass.hasDirectiveDecorator(): Boolean =
     Angular2DecoratorUtil.findDecorator(this, COMPONENT_DEC, DIRECTIVE_DEC) != null

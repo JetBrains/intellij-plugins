@@ -33,7 +33,7 @@ class Angular2TemplateVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable
 
     val contextType = JSResolveUtil.getElementJSType(bindings)
     if (contextType != null) {
-      val signature = contextType.asRecordType().findPropertySignature(propertyName)
+      val signature = contextType.asRecordType(this).findPropertySignature(propertyName)
       propertyType = signature?.jsType
     }
     if (propertyType == null || propertyType is JSAnyType) {

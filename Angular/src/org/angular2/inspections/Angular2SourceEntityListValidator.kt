@@ -21,7 +21,7 @@ protected constructor(private val decorator: ES6Decorator,
                       private val results: ValidationResults<in E>,
                       entityClass: Class<T>,
                       private val propertyName: String)
-  : Angular2SourceEntityListProcessor<T>(entityClass) {
+  : Angular2SourceEntityListProcessor<T>(entityClass, decorator) {
   private lateinit var myIterator: TreeTraversal.TracingIt<PsiElement>
 
   fun validate() {

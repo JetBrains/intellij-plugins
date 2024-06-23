@@ -34,9 +34,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(templateFile.project).modificationCount
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))
     }
@@ -57,7 +59,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     templateFile.hashCode()
 
   private class HtmlElementStandardPropertyAndEventsExtension(
-    templateFile: PsiFile, tagNamespace: String, tagName: String)
+    templateFile: PsiFile, tagNamespace: String, tagName: String,
+  )
     : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
                                                               templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
@@ -99,7 +102,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
       val typeSource = Angular2TypeUtils.createJSTypeSourceForXmlElement(templateFile)
       val tagClass = WebJSTypesUtil.getHtmlElementClassType(typeSource, tagName)
-      val elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource).asRecordType()
+      val elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource).asRecordType(templateFile)
 
       val allowedElementProperties = DomElementSchemaRegistry.getElementProperties(tagNamespace, tagName).toMutableSet()
       val eventNames = DomElementSchemaRegistry.getElementEvents(tagNamespace, tagName).toMutableSet()
@@ -110,7 +113,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
         consumer(Angular2StandardProperty(name, project, source))
       }
 
-      for (property in tagClass.asRecordType().properties) {
+      for (property in tagClass.asRecordType(templateFile).properties) {
         val propertyDeclaration = property.memberSource.singleElement
         if (propertyDeclaration is TypeScriptPropertySignature) {
           if (propertyDeclaration.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true) {
@@ -156,9 +159,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     private val propToAttrName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING.entries.associateBy({ it.value }, { it.key })
   }
 
-  private class Angular2StandardProperty(override val name: String,
-                                         override val project: Project,
-                                         override val source: TypeScriptPropertySignature?) : Angular2PsiSourcedSymbol {
+  private class Angular2StandardProperty(
+    override val name: String,
+    override val project: Project,
+    override val source: TypeScriptPropertySignature?,
+  ) : Angular2PsiSourcedSymbol {
 
 
     override fun createPointer(): Pointer<Angular2StandardProperty> {
@@ -191,10 +196,12 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
   }
 
-  private class Angular2StandardEvent(override val name: String,
-                                      override val project: Project,
-                                      private val mainSource: TypeScriptPropertySignature?,
-                                      private val mapSource: TypeScriptPropertySignature?)
+  private class Angular2StandardEvent(
+    override val name: String,
+    override val project: Project,
+    private val mainSource: TypeScriptPropertySignature?,
+    private val mapSource: TypeScriptPropertySignature?,
+  )
     : WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
 
     override val source: PsiElement?

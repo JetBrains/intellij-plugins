@@ -85,7 +85,7 @@ object Angular2LibrariesHacks {
     val cls = directive.asSafely<Angular2ClassBasedEntity>()?.typeScriptClass ?: return emptyMap()
     val outputs = mutableMapOf<String, String>()
     // We can guess outputs by looking for fields with EventEmitter type
-    cls.jsType.asRecordType().properties.forEach { prop ->
+    cls.jsType.asRecordType(directive.sourceElement).properties.forEach { prop ->
       try {
         val type = prop.asSafely<TypeScriptField>()?.jsType
         if (type != null && type.typeText.startsWith(Angular2LangUtil.EVENT_EMITTER)) {

@@ -38,7 +38,10 @@ import org.angular2.entities.metadata.psi.Angular2MetadataObject
 import org.angular2.entities.metadata.psi.Angular2MetadataReference
 import org.angular2.index.getFunctionNameFromIndex
 
-abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val myAcceptableEntityClass: Class<T>) {
+abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
+  private val myAcceptableEntityClass: Class<T>,
+  private val location: PsiElement?,
+) {
 
   private val myAcceptNgModuleWithProviders: Boolean = myAcceptableEntityClass.isAssignableFrom(Angular2Module::class.java)
 
@@ -231,7 +234,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
     while (type != null
            && type !is JSAnyType
            && visitedTypes.add(type.resolvedTypeId)) {
-      val recordType = NotNullLazyValue.createValue<JSRecordType> { type!!.asRecordType() }
+      val recordType = NotNullLazyValue.createValue<JSRecordType> { type!!.asRecordType(location) }
       type.sourceElement
         ?.let { processCacheDependency(it) }
       if (lookingForModule) { // see https://angular.io/guide/migration-module-with-providers
@@ -332,7 +335,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
       }
       CachedValueProvider.Result.create(cachedDataEvaluator.returnTypeFromEvaluated, function)
     }
-    return evaluatedReturnType?.asRecordType()?.findPropertySignature(NG_MODULE_PROP)?.jsType
+    return evaluatedReturnType?.asRecordType(location)?.findPropertySignature(NG_MODULE_PROP)?.jsType
   }
 
   private fun resolveFunctionValue(function: Angular2MetadataFunction): Angular2MetadataModule? {

@@ -39,10 +39,12 @@ abstract class Angular2SourceDirectiveProperty(
 ) : Angular2ClassBasedDirectiveProperty {
 
   companion object {
-    fun create(owner: TypeScriptClass,
-               signature: JSRecordType.PropertySignature,
-               qualifiedKind: WebSymbolQualifiedKind,
-               info: Angular2PropertyInfo): Angular2SourceDirectiveProperty =
+    fun create(
+      owner: TypeScriptClass,
+      signature: JSRecordType.PropertySignature,
+      qualifiedKind: WebSymbolQualifiedKind,
+      info: Angular2PropertyInfo,
+    ): Angular2SourceDirectiveProperty =
       if (info.declarationRange == null || info.declaringElement == null)
         Angular2SourceFieldDirectiveProperty(
           owner, signature, qualifiedKind, info.name, info.required, info.declarationSource?.takeIf { isStubBased(it) }
@@ -58,7 +60,10 @@ abstract class Angular2SourceDirectiveProperty(
     get() = signature.memberName
 
   val transformParameterType: JSType?
-    get() = objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)?.jsType?.asRecordType()?.callSignatures
+    get() = objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)
+      ?.jsType
+      ?.asRecordType(owner)
+      ?.callSignatures
       ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.size > 0 }?.get(0) }
       ?.inferredType
 
@@ -124,9 +129,9 @@ abstract class Angular2SourceDirectiveProperty(
               ?.context?.asSafely<JSObjectLiteralExpression>()
 
   @Suppress("NonAsciiCharacters")
-  val typeFromSignal: JSType? =
-    signature.jsType
-      ?.asRecordType()
+  val typeFromSignal: JSType?
+    get() = signature.jsType
+      ?.asRecordType(owner)
       ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
       ?.jsTypeWithOptionality
 

@@ -13,7 +13,7 @@ interface Angular2ClassBasedDirectiveProperty : Angular2DirectiveProperty {
     get() = fieldName?.let { fieldName ->
       owner
         ?.staticJSType
-        ?.asRecordType()
+        ?.asRecordType(owner)
         ?.findPropertySignature(NG_ACCEPT_INPUT_TYPE_PREFIX + fieldName)
     } != null
 

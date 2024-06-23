@@ -14,7 +14,7 @@ import org.angular2.entities.Angular2Entity
 
 abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
   entityClass: Class<T>, private val source: PsiElement
-) : Angular2SourceEntityListProcessor<T>(entityClass) {
+) : Angular2SourceEntityListProcessor<T>(entityClass, source) {
 
   private var isFullyResolved = true
   private val dependencies = HashSet<PsiElement>()
