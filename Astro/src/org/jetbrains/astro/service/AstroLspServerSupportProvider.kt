@@ -17,7 +17,7 @@ import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 
 private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor("@astrojs/language-server",
-                                                                            "2.8.3",
+                                                                            "2.10.0",
                                                                             "/bin/nodeServer.js") {
   override val defaultVersion: String get() = Registry.stringValue("astro.language.server.default.version")
 }
