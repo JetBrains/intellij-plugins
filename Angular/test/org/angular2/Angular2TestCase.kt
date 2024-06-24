@@ -54,17 +54,9 @@ abstract class Angular2TestCase(
   }
 
   override fun tearDown() {
-    try {
-      if (useTsc) {
-        mode = INITIAL_MODE
-        TypeScriptServiceTestMixin.tearDown()
-      }
+    if (useTsc) {
+      mode = INITIAL_MODE
     }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
+    super.tearDown()
   }
 }
