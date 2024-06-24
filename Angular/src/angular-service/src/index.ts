@@ -9,6 +9,7 @@ import {
   decorateNgLanguageServiceExtensions,
 } from "./decorateLanguageService"
 import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/types"
+import {AngularSourceMap} from "./ngSourceMap"
 
 function loadLanguagePlugins(ts: typeof import('typescript'),
                              info: ts.server.PluginCreateInfo): {
@@ -56,6 +57,7 @@ function loadLanguagePlugins(ts: typeof import('typescript'),
       }
     }],
     setup(language: Language<string>) {
+      language.mapperFactory = (mappings) => new AngularSourceMap(mappings)
       decorateIdeLanguageServiceExtensions(language, info.languageService)
       decorateNgLanguageServiceExtensions(language, info.languageService)
     }

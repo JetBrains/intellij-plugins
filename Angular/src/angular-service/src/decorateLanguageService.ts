@@ -3,13 +3,19 @@ import type * as TS from "./languageService"
 import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
-import {toGeneratedRange, toSourceRanges} from "@volar/typescript/lib/node/transform"
+import {toGeneratedRanges, toSourceRanges} from "@volar/typescript/lib/node/transform"
 import {AngularVirtualCode} from "./code"
-import type * as ts from "typescript"
 import * as console from "node:console"
 
-function toSourceRange(sourceScript: SourceScript<string> | undefined, language: Language<string>, serviceScript: TypeScriptServiceScript, range: ts.TextRange, filter: (data: CodeInformation) => boolean): [fileName: string, range: ts.TextRange] | undefined {
-  for (const result of toSourceRanges(sourceScript, language, serviceScript, range, filter)) {
+function toSourceRange(sourceScript: SourceScript<string> | undefined, language: Language<string>, serviceScript: TypeScriptServiceScript, start: number, end: number, filter: (data: CodeInformation) => boolean): [fileName: string, start: number, end: number] | undefined {
+  for (const result of toSourceRanges(sourceScript, language, serviceScript, start, end, filter)) {
+    return result
+  }
+  return undefined
+}
+
+function toGeneratedRange(language: Language, serviceScript: TypeScriptServiceScript, sourceScript: SourceScript<string>, start: number, end: number, filter: (data: CodeInformation) => boolean): readonly [start: number, end: number] | undefined {
+  for (const result of toGeneratedRanges(language, serviceScript, sourceScript, start, end, filter)) {
     return result
   }
   return undefined
@@ -35,13 +41,13 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
         let generatedRangePosStart = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.start.line, generatedRange.start.character)
         let generatedRangePosEnd = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.end.line, generatedRange.end.character)
 
-        const sourceRange = toSourceRange(sourceScript, language, serviceScript, {pos: generatedRangePosStart, end: generatedRangePosEnd}, () => true);
+        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, () => true);
 
         if (sourceRange !== undefined) {
           return {
             fileName: sourceRange[0],
-            pos: sourceRange[1].pos,
-            end: sourceRange[1].end
+            pos: sourceRange[1],
+            end: sourceRange[2],
           }
         }
       }
@@ -73,11 +79,11 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
         let originalRangePosStart = ts.getPositionOfLineAndCharacter(sourceFile, range.start.line, range.start.character)
         let originalRangePosEnd = ts.getPositionOfLineAndCharacter(sourceFile, range.end.line, range.end.character)
 
-        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, {pos: originalRangePosStart, end: originalRangePosEnd}, () => true);
+        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, originalRangePosStart, originalRangePosEnd, () => true);
 
         if (generatedRange !== undefined) {
-          const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange.pos)
-          const end = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange.end)
+          const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange[0])
+          const end = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange[1])
           return webStormGetElementType(ts as any, targetScript.id, {start, end}, forceReturnType, ngReverseMapper.bind(null, ts))
         }
       }

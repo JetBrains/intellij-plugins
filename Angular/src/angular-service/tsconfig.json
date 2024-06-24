@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "target": "ES2015",
-    "lib": ["ES2015"],
+    "target": "ES2021",
+    "lib": ["ES2021"],
     "outDir": "../../gen/angular-service/node_modules/ws-typescript-angular-plugin",
     "declaration": false,
-    "module": "commonjs",
+    "module": "Node16",
     "strictNullChecks": true,
     "noImplicitThis": true,
     "noImplicitAny": true,

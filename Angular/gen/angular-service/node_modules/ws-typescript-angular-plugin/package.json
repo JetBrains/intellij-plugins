@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "@volar/typescript": "~2.3.0",
+    "@volar/typescript": "~2.3.3",
     "tsc-ide-plugin": "file:/../../../../plugins/JavaScriptLanguage/src/tscplugin",
     "esbuild": "^0.20.0"
   },
@@ -15,6 +15,6 @@
   "scripts": {
     "build:clean": "npm run clean && npm run build",
     "clean": "rm -rf ../../gen/angular-service",
-    "build": "node build && cp -r ./package.json ../../gen/angular-service/node_modules/ws-typescript-angular-plugin"
+    "build": "tsc --noEmit && node build && cp -r ./package.json ../../gen/angular-service/node_modules/ws-typescript-angular-plugin"
   }
 }
