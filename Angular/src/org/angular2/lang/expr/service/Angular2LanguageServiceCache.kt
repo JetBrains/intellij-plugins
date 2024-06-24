@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringHash
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.angular2.entities.Angular2EntitiesProvider
@@ -64,19 +65,17 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
   }
 
   private class TranspiledComponentInfo(contents: TranspiledComponentFile) {
-    val contentsLength: Int = contents.generatedCode.length
-    val contentsHash: Int = contents.generatedCode.hashCode()
+    val contentsHash: Long = StringHash.calc(contents.generatedCode)
     val timestamps: Map<String, Long> = contents.mappings.associateBy({ it.fileName }, { it.sourceFile.modificationStamp })
 
     override fun equals(other: Any?): Boolean {
       return other === this || other is TranspiledComponentInfo
-             && contentsLength == other.contentsLength
              && contentsHash == other.contentsHash
              && timestamps == other.timestamps
     }
 
     override fun hashCode(): Int {
-      return Objects.hash(contentsLength, contentsHash, timestamps)
+      return Objects.hash(contentsHash, timestamps)
     }
   }
 
