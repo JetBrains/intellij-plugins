@@ -1,6 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
-import type * as ts from "./languageService";
+import type * as ts from "./tsserverlibrary.shim";
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
 import {CodeMapping, Language, LanguagePlugin} from "@volar/language-core"
 import {AngularVirtualCode} from "./code"

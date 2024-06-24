@@ -1,7 +1,7 @@
-import type * as ts from "tsc-ide-plugin/languageService"
+import type * as ts from "tsc-ide-plugin/tsserverlibrary.shim"
 import {CodeMapping} from "@volar/language-core"
 
-declare module "tsc-ide-plugin/languageService" {
+declare module "tsc-ide-plugin/tsserverlibrary.shim" {
 
   interface LanguageService {
     webStormNgUpdateTranspiledTemplate(
