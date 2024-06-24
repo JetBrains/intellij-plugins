@@ -68,7 +68,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     val types: MutableList<JSType?> = SmartList()
     for (directive in directives) {
       findDirectivePropertyTypeAndOrigin(directive, directive.inputs, inputName)?.let { (propertyType, directive) ->
-        val type = JSTypeUtils.applyGenericArguments(propertyType, substitutors[directive])
+        val type = JSTypeUtils.applyGenericArguments(propertyType?.substitute(element), substitutors[directive])
         types.add(type)
       }
     }
@@ -81,7 +81,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     val types: MutableList<JSType?> = SmartList()
     for (directive in directives) {
       findDirectivePropertyTypeAndOrigin(directive, directive.outputs, outputName)?.let { (propertyType, directive) ->
-        val type = JSTypeUtils.applyGenericArguments(propertyType, substitutors[directive])
+        val type = JSTypeUtils.applyGenericArguments(propertyType?.substitute(element), substitutors[directive])
         types.add(hackNgModelChangeType(type, outputName))
       }
     }
@@ -310,7 +310,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
           if (propertyType != null) {
             directives2inputs.computeIfAbsent(directive) { mutableListOf() }
-              .add(DirectiveInput(propertyType,
+              .add(DirectiveInput(propertyType.substitute(element),
                                   inputsMap.containsKey(inputName),
                                   inputsMap[inputName],
                                   attrsMap[inputName],
@@ -420,7 +420,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
           val inputExpression = inputsMap[property.name]
           val propertyType = property.type
           if (inputExpression != null && propertyType != null) {
-            collectGenericArgumentsNonStrict(inputExpression, propertyType, processingContext, genericArguments)
+            collectGenericArgumentsNonStrict(inputExpression, propertyType.substitute(element), processingContext, genericArguments)
           }
         }
       }
@@ -435,7 +435,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
                                                  propertyType: JSType,
                                                  processingContext: ProcessingContext,
                                                  genericArguments: MultiMap<JSTypeGenericId, JSType?>) {
-      val inputType = JSPsiBasedTypeOfType(inputExpression, true)
+      val inputType = JSPsiBasedTypeOfType(inputExpression, true).substitute(inputExpression)
       // todo getApparentType is supposed to be used only in JS according to usages in JS plugin
       val apparentType = JSTypeUtils.getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType))
       if (JSTypeUtils.isAnyType(apparentType)) {

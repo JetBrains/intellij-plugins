@@ -12,7 +12,7 @@ import {CdkConnectedOverlay} from "@angular/cdk/overlay";
             cdkConnectedOverlay
             cdkConnectedOverlayFlexibleDimensions="true"
             <error descr="Type \"\" is not assignable to type number">cdkConnectedOverlayViewportMargin</error>
-            [cdkConnectedOverlayMinWidth]="<error descr="Type boolean is not assignable to type number | string  Type boolean is not assignable to type string    Type boolean is not assignable to type number">true</error>"
+            [cdkConnectedOverlayMinWidth]="<error descr="Type boolean is not assignable to type string | number  Type boolean is not assignable to type number    Type boolean is not assignable to type string">true</error>"
             cdkConnectedOverlayHasBackdrop
             [cdkConnectedOverlayHasBackdrop]="12"
         >

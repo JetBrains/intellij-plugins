@@ -60,8 +60,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String,
-  )
-    : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
+  ) : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
                                                               templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
@@ -109,8 +108,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       elementEventMap.propertyNames.forEach { name -> eventNames.add(name) }
 
       fun addStandardProperty(name: String, project: Project, source: TypeScriptPropertySignature?) {
-        propToAttrName[name]?.let { consumer(Angular2StandardProperty(it, project, source)) }
-        consumer(Angular2StandardProperty(name, project, source))
+        propToAttrName[name]?.let { consumer(Angular2StandardProperty(it, project, source, templateFile)) }
+        consumer(Angular2StandardProperty(name, project, source, templateFile))
       }
 
       for (property in tagClass.asRecordType(templateFile).properties) {
@@ -124,10 +123,13 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
           if (property.memberName.startsWith(EVENT_ATTR_PREFIX)) {
             val eventName = property.memberName.substring(2)
             eventNames.remove(eventName)
-            consumer(Angular2StandardEvent(eventName,
-                                           propertyDeclaration.project, propertyDeclaration,
-                                           elementEventMap.findPropertySignature(eventName)
-                                             ?.memberSource?.singleElement as? TypeScriptPropertySignature))
+            consumer(Angular2StandardEvent(
+              eventName,
+              propertyDeclaration.project, propertyDeclaration,
+              elementEventMap.findPropertySignature(eventName)
+                ?.memberSource?.singleElement as? TypeScriptPropertySignature,
+              templateFile
+            ))
           }
           else {
             name = property.memberName
@@ -142,11 +144,14 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
         addStandardProperty(name, templateFile.project, null)
       }
       for (eventName in eventNames) {
-        consumer(Angular2StandardEvent(eventName,
-                                       templateFile.project,
-                                       null,
-                                       elementEventMap.findPropertySignature(eventName)
-                                         ?.memberSource?.singleElement as? TypeScriptPropertySignature))
+        consumer(Angular2StandardEvent(
+          eventName,
+          templateFile.project,
+          null,
+          elementEventMap.findPropertySignature(eventName)
+            ?.memberSource?.singleElement as? TypeScriptPropertySignature,
+          templateFile
+        ))
       }
       if (cacheDependencies.isEmpty()) {
         cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -163,6 +168,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     override val name: String,
     override val project: Project,
     override val source: TypeScriptPropertySignature?,
+    private val templateFile: PsiFile,
   ) : Angular2PsiSourcedSymbol {
 
 
@@ -170,16 +176,18 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       val name = name
       val project = project
       val source = source?.createSmartPointer()
+      val templateFilePtr = templateFile.createSmartPointer()
       return Pointer {
         val newSource = source?.let {
           it.dereference() ?: return@Pointer null
         }
-        Angular2StandardProperty(name, project, newSource)
+        Angular2StandardProperty(name, project, newSource,
+                                 templateFilePtr.dereference() ?: return@Pointer null)
       }
     }
 
     override val type: JSType?
-      get() = source?.jsType
+      get() = source?.getJSType(templateFile)
 
     override val qualifiedKind: WebSymbolQualifiedKind
       get() = JS_PROPERTIES
@@ -190,9 +198,10 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       && other.name == name
       && other.project == project
       && other.source == source
+      && other.templateFile == templateFile
 
     override fun hashCode(): Int =
-      Objects.hash(name, project, source)
+      Objects.hash(name, project, source, templateFile)
 
   }
 
@@ -201,8 +210,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     override val project: Project,
     private val mainSource: TypeScriptPropertySignature?,
     private val mapSource: TypeScriptPropertySignature?,
-  )
-    : WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
+    private val templateFile: PsiFile,
+  ) : WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
 
     override val source: PsiElement?
       get() = mainSource ?: mapSource
@@ -215,6 +224,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       val project = this.project
       val mainSourcePtr = mainSource?.createSmartPointer()
       val mapSourcePtr = mapSource?.createSmartPointer()
+      val templateFilePtr = templateFile.createSmartPointer()
       return Pointer {
         val mainSource = mainSourcePtr?.let {
           it.dereference() ?: return@Pointer null
@@ -222,12 +232,14 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
         val mapSource = mapSourcePtr?.let {
           it.dereference() ?: return@Pointer null
         }
-        Angular2StandardEvent(name, project, mainSource, mapSource)
+        Angular2StandardEvent(name, project, mainSource, mapSource,
+                              templateFilePtr.dereference() ?: return@Pointer null)
       }
     }
 
     override val type: JSType?
-      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.jsType) ?: mapSource?.jsType
+      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
+              ?: mapSource?.getJSType(templateFile)
 
     override val priority: WebSymbol.Priority
       get() = WebSymbol.Priority.NORMAL
@@ -242,9 +254,10 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       && other.project == project
       && other.mainSource == mainSource
       && other.mapSource == mapSource
+      && other.templateFile == templateFile
 
     override fun hashCode(): Int =
-      Objects.hash(name, project, mainSource, mapSource)
+      Objects.hash(name, project, mainSource, mapSource, templateFile)
 
   }
 

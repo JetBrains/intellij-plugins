@@ -2,6 +2,7 @@
 package org.angular2.entities.source
 
 import com.intellij.javascript.webSymbols.apiStatus
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
@@ -28,6 +29,7 @@ import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import java.util.*
+import java.util.function.Supplier
 
 abstract class Angular2SourceDirectiveProperty(
   override val owner: TypeScriptClass,
@@ -130,10 +132,12 @@ abstract class Angular2SourceDirectiveProperty(
 
   @Suppress("NonAsciiCharacters")
   val typeFromSignal: JSType?
-    get() = signature.jsType
-      ?.asRecordType(owner)
-      ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
-      ?.jsTypeWithOptionality
+    get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(owner, Supplier {
+      signature.jsType
+        ?.asRecordType()
+        ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
+        ?.jsTypeWithOptionality
+    })
 
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,

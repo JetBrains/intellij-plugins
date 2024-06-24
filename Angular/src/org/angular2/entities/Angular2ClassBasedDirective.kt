@@ -4,6 +4,7 @@ import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolApiStatus
@@ -19,16 +20,20 @@ interface Angular2ClassBasedDirective : Angular2Directive, Angular2ClassBasedEnt
     get() = typeScriptClass?.members
               ?.asSequence()
               ?.filter { it.name?.startsWith(Angular2ControlFlowBuilder.NG_TEMPLATE_GUARD_PREFIX) == true }
-              ?.map {
+              ?.map { guard ->
                 Angular2TemplateGuard(
-                  it.name!!.removePrefix(Angular2ControlFlowBuilder.NG_TEMPLATE_GUARD_PREFIX),
-                  if (it.asSafely<TypeScriptField>()
-                      ?.jsType?.asSafely<JSExoticStringLiteralType>()
-                      ?.asSimpleLiteralType()?.literal == BINDING_GUARD)
+                  guard.name!!.removePrefix(Angular2ControlFlowBuilder.NG_TEMPLATE_GUARD_PREFIX),
+                  if (guard.asSafely<TypeScriptField>()
+                      ?.jsType?.let {
+                        if (it is JSExoticStringLiteralType)
+                          it.asSimpleLiteralType()
+                        else
+                          it as? JSStringLiteralTypeImpl
+                      }?.literal == BINDING_GUARD)
                     Angular2TemplateGuard.Kind.Binding
                   else
                     Angular2TemplateGuard.Kind.Method,
-                  it
+                  guard
                 )
               }
               ?.toList()

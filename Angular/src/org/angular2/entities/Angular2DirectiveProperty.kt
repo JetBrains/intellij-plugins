@@ -48,7 +48,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 
 
   override val attributeValue: WebSymbolHtmlAttributeValue?
-    get() = if (TypeScriptSymbolTypeSupport.isBoolean(type) != ThreeState.NO) {
+    get() = if (TypeScriptSymbolTypeSupport.isBoolean(type, sourceElement) != ThreeState.NO) {
       WebSymbolHtmlAttributeValue.create(null, null, false, null, null)
     }
     else {

@@ -31,9 +31,6 @@ abstract class Angular2TestCase(
     }
     super.setUp()
     Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
-    if (useTsc) {
-      Registry.get("typescript.compiler.evaluation.jsTypeDeclaration").setValue(false, testRootDisposable)
-    }
   }
 
   override fun beforeConfiguredTest() {

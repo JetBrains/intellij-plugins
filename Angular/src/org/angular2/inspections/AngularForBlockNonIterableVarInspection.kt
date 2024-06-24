@@ -9,10 +9,12 @@ import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
+import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService.LOCATION
 import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.lang.Angular2Bundle
@@ -49,7 +51,7 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
           if (property == null
               || (type != null && !JSNamedTypeFactory
               .createType("Iterator", JSTypeSource.EMPTY_TS, JSTypeContext.STATIC)
-              .isDirectlyAssignableType(type, null))) {
+              .isDirectlyAssignableType(type, ProcessingContext().apply { put(LOCATION, block) }))) {
             holder.registerProblem(expression, Angular2Bundle.htmlMessage(
               "angular.inspection.for-block-non-iterable.message.non-iterable-type",
               JSTooltipWithHtmlHighlighter.highlightTypeOrStmt(block.project, expressionType.getTypeText(CODE)),

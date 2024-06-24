@@ -147,7 +147,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         )
       }
       else {
-        val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType)
+        val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType, psiContext)
         when {
           isBoolean != ThreeState.NO -> {
             WebSymbolHtmlAttributeValue.create(
