@@ -10,7 +10,6 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import icons.FlexIcons;
@@ -91,7 +90,7 @@ public final class FlexSdkType2 extends SdkType {
   public void setupSdkPaths(@NotNull final Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
     setupSdkPaths(sdk.getHomeDirectory(), modificator);
-    WriteAction.run(() -> modificator.commitChanges());
+    ApplicationManager.getApplication().invokeAndWait(() -> WriteAction.run(() -> modificator.commitChanges()));
   }
 
   @Override
@@ -135,15 +134,8 @@ public final class FlexSdkType2 extends SdkType {
 
     sdkModificator.setVersionString(getVersionString(sdkRoot.getPath()));
 
-    final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
-      final VirtualFile libsDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkRoot.getPath() + "/frameworks/libs");
-      if (libsDir != null && libsDir.isDirectory()) {
-        libsDir.refresh(false, true);
-        return libsDir.findChild("player");
-      }
-      return null;
-    });
-
+    VirtualFile libsDir = LocalFileSystem.getInstance().findFileByPath(sdkRoot.getPath() + "/frameworks/libs");
+    VirtualFile playerDir = libsDir != null && libsDir.isDirectory() ? libsDir.findChild("player") : null;
     if (playerDir != null) {
       FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, playerglobalSwcFile -> {
         addSwcRoot(sdkModificator, playerglobalSwcFile);
