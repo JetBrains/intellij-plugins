@@ -34,7 +34,7 @@ private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@p
 
 class PrismaLspServerSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
-    if (PrismaServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)) {
+    if (PrismaLspServerActivationRule.isLspServerEnabledAndAvailable(project, file)) {
       serverStarter.ensureServerStarted(PrismaLspServerDescriptor(project))
     }
   }

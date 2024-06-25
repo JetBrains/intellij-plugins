@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.prisma.lang.PrismaFileType
 
-object PrismaServiceSetActivationRule : LspServerActivationRule(PrismaLspExecutableDownloader) {
+object PrismaLspServerActivationRule : LspServerActivationRule(PrismaLspExecutableDownloader) {
   override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
     return file.fileType == PrismaFileType

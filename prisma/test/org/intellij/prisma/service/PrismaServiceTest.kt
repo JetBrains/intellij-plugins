@@ -3,15 +3,12 @@ package org.intellij.prisma.service
 
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.javascript.service.BaseLspTypeScriptServiceTest
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
-import com.intellij.openapi.diagnostic.LogLevel
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import org.intellij.prisma.ide.lsp.PrismaLspExecutableDownloader
 import org.intellij.prisma.ide.lsp.PrismaServiceMode
-import org.intellij.prisma.ide.lsp.PrismaServiceSetActivationRule
+import org.intellij.prisma.ide.lsp.PrismaLspServerActivationRule
 import org.intellij.prisma.ide.lsp.PrismaServiceSettings
 
 class PrismaServiceTest : BaseLspTypeScriptServiceTest() {
@@ -21,11 +18,11 @@ class PrismaServiceTest : BaseLspTypeScriptServiceTest() {
     val serviceSettings = PrismaServiceSettings.getInstance(project)
     val old = serviceSettings.serviceMode
     TypeScriptExternalDefinitionsRegistry.testTypingsRootPath = TypeScriptDefinitionFilesDirectory.getGlobalAutoDownloadTypesDirectoryPath()
-    PrismaServiceSetActivationRule.markForceEnabled(true)
+    PrismaLspServerActivationRule.markForceEnabled(true)
 
     Disposer.register(testRootDisposable) {
       serviceSettings.serviceMode = old
-      PrismaServiceSetActivationRule.markForceEnabled(false)
+      PrismaLspServerActivationRule.markForceEnabled(false)
     }
     serviceSettings.serviceMode = PrismaServiceMode.ENABLED
 
