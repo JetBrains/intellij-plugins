@@ -4,6 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.javascript.webSymbols.jsType
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSEmptyExpression
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
@@ -28,6 +29,7 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
+import java.util.function.Supplier
 
 class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
@@ -85,25 +87,29 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
     }
   }
 
-  private fun checkTypes(holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor,
-                         value: String?, bindingsTypeResolver: BindingsTypeResolver, reportOnValue: Boolean) {
-    val valueType = if (value != null)
-      JSStringLiteralTypeImpl(value, true, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
-    else
-      JSNamedTypeFactory.createUndefinedType(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
-    val symbolType = bindingsTypeResolver.substituteType(
-      descriptor.sourceDirectives.firstOrNull(),
-      descriptor.symbol.jsType
-    )
+  private fun checkTypes(
+    holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor,
+    value: String?, bindingsTypeResolver: BindingsTypeResolver, reportOnValue: Boolean,
+  ) {
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(attribute, Supplier {
+      val valueType = if (value != null)
+        JSStringLiteralTypeImpl(value, true, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
+      else
+        JSNamedTypeFactory.createUndefinedType(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
+      val symbolType = bindingsTypeResolver.substituteType(
+        descriptor.sourceDirectives.firstOrNull(),
+        descriptor.symbol.jsType
+      )
 
-    val highlightType = Angular2InspectionUtils.getTypeScriptInspectionHighlightType(attribute)
+      val highlightType = Angular2InspectionUtils.getTypeScriptInspectionHighlightType(attribute)
 
-    JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.optionHolder,
-                                                           "javascript.type.is.not.assignable.to.type")
-      ?.let {
-        holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,
-                               highlightType,
-                               *getCreateInputTransformFixes(attribute, "string").toTypedArray())
-      }
+      JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.optionHolder,
+                                                             "javascript.type.is.not.assignable.to.type")
+        ?.let {
+          holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,
+                                 highlightType,
+                                 *getCreateInputTransformFixes(attribute, "string").toTypedArray())
+        }
+    })
   }
 }

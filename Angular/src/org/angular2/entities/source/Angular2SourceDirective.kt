@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.getStubSafeChildren
@@ -46,6 +45,7 @@ import org.angular2.entities.source.Angular2SourceUtil.parseInputObjectLiteral
 import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
+import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
@@ -120,8 +120,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     val clazz = typeScriptClass
 
-    TypeScriptTypeParser
-      .buildTypeFromClass(clazz, false)
+    Angular2TypeUtils
+      .buildTypeFromClass(clazz)
       .properties
       .forEach { prop ->
         for (el in getPropertySources(prop.memberSource.singleElement)) {
@@ -185,14 +185,16 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     readDirectivePropertyMappings(Angular2DecoratorUtil.getProperty(decorator, source))
 
   companion object {
-    private fun processProperty(sourceClass: TypeScriptClass,
-                                property: JSRecordType.PropertySignature,
-                                field: JSAttributeListOwner,
-                                mappings: MutableMap<String, Angular2PropertyInfo>?,
-                                decorator: String?,
-                                functionNames: List<String>,
-                                qualifiedKind: WebSymbolQualifiedKind,
-                                result: MutableMap<String, Angular2DirectiveProperty>) {
+    private fun processProperty(
+      sourceClass: TypeScriptClass,
+      property: JSRecordType.PropertySignature,
+      field: JSAttributeListOwner,
+      mappings: MutableMap<String, Angular2PropertyInfo>?,
+      decorator: String?,
+      functionNames: List<String>,
+      qualifiedKind: WebSymbolQualifiedKind,
+      result: MutableMap<String, Angular2DirectiveProperty>,
+    ) {
       val info: Angular2PropertyInfo? =
         mappings?.remove(property.memberName)
         ?: field.attributeList
@@ -254,7 +256,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
               var hasViewContainerRef = false
               var isTemplateRefOptional = false
               paramList.parameters.forEach {
-                val typeText = it.jsType?.let { type -> if (type is TypeScriptCompilerType) type.substitute() else type }?.typeText
+                val typeText = it.getJSType(clazz)?.let { type -> if (type is TypeScriptCompilerType) type.substitute(clazz) else type }?.typeText
                                ?: return@forEach
                 when {
                   typeText.contains(ELEMENT_REF) -> hasElementRef = true

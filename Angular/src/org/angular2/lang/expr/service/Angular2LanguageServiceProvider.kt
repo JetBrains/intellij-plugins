@@ -27,7 +27,7 @@ internal class Angular2LanguageServiceProvider(project: Project) : JSLanguageSer
 
 @Service(Service.Level.PROJECT)
 private class AngularServiceWrapper(project: Project) : Disposable {
-  val service = AngularTypeScriptService(project)
+  val service = Angular2TypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)

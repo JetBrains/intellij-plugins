@@ -3,7 +3,6 @@ package org.angular2.entities.metadata.psi
 
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Pair
@@ -23,6 +22,7 @@ import org.angular2.entities.Angular2DirectiveProperties
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
@@ -123,12 +123,14 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
 
   fun getPropertySignature(fieldName: String): JSRecordType.PropertySignature? {
     return typeScriptClass
-      ?.let { TypeScriptTypeParser.buildTypeFromClass(it, false) }
+      ?.let { Angular2TypeUtils.buildTypeFromClass(it) }
       ?.findPropertySignature(fieldName)
   }
 
-  private fun collectProperties(mappings: Map<String, String>,
-                                qualifiedKind: WebSymbolQualifiedKind): List<Angular2DirectiveProperty> {
+  private fun collectProperties(
+    mappings: Map<String, String>,
+    qualifiedKind: WebSymbolQualifiedKind,
+  ): List<Angular2DirectiveProperty> {
     val result = ArrayList<Angular2DirectiveProperty>()
     mappings.forEach { (fieldName: String, bindingName: String) ->
       result.add(Angular2MetadataDirectiveProperty(

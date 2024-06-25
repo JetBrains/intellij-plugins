@@ -2,6 +2,7 @@ package org.angular2.lang.html.tcb
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
@@ -15,6 +16,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
+import java.util.function.Supplier
 
 object Angular2TranspiledComponentFileBuilder {
 
@@ -33,7 +35,9 @@ object Angular2TranspiledComponentFileBuilder {
       CachedValuesManager.getCachedValue(cls) {
         val context = getComponentFileCache(cls.containingFile)!!.environment
         CachedValueProvider.Result.create(Angular2EntitiesProvider.getComponent(cls)?.let {
-          Angular2TemplateTranspiler.transpileTemplate(context, it, (index + 1).toString())
+          JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(cls, Supplier {
+            Angular2TemplateTranspiler.transpileTemplate(context, it, (index + 1).toString())
+          })
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
@@ -61,13 +65,13 @@ object Angular2TranspiledComponentFileBuilder {
 
   private class ComponentFileCache(
     val components: List<TypeScriptClass>,
-    val environment: Environment
+    val environment: Environment,
   )
 
   private fun buildTranspiledComponentFile(
     context: Angular2TemplateTranspiler.FileContext,
     componentFile: PsiFile,
-    templates: List<TranspiledTemplate>
+    templates: List<TranspiledTemplate>,
   ): TranspiledComponentFile {
     val generatedCode = StringBuilder()
     val componentFileText = componentFile.text

@@ -5,7 +5,6 @@ import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.model.Pointer
@@ -27,6 +26,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
+import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import java.util.*
 import java.util.function.Supplier
@@ -169,8 +169,8 @@ abstract class Angular2SourceDirectiveProperty(
         val source = sourcePtr.dereference()
                      ?: return@Pointer null
         val declarationSource = declarationSourcePtr?.let { it.dereference() ?: return@Pointer null }
-        val propertySignature = TypeScriptTypeParser
-                                  .buildTypeFromClass(source, false)
+        val propertySignature = Angular2TypeUtils
+                                  .buildTypeFromClass(source)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
         Angular2SourceFieldDirectiveProperty(source, propertySignature, qualifiedKind, name, required, declarationSource)
@@ -213,8 +213,8 @@ abstract class Angular2SourceDirectiveProperty(
         val sourceElement = sourceElementPtr.dereference()
                             ?: return@Pointer null
         val declarationSource = declarationSourcePtr?.let { it.dereference() ?: return@Pointer null }
-        val propertySignature = TypeScriptTypeParser
-                                  .buildTypeFromClass(owner, false)
+        val propertySignature = Angular2TypeUtils
+                                  .buildTypeFromClass(owner)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
         Angular2SourceMappedDirectiveProperty(owner, propertySignature, qualifiedKind, name, required, declarationSource,
