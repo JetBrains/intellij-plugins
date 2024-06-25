@@ -170,10 +170,12 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 }
 
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  if (EDT.isCurrentThreadEdt())
-    !isAngular2Context(project, context)
+  val isAngularContext = if (EDT.isCurrentThreadEdt())
+    isAngular2Context(project, context)
   else
-    computeCancellable<Boolean, Throwable> { !isAngular2Context(project, context) }
+    computeCancellable<Boolean, Throwable> { isAngular2Context(project, context) }
+
+  if (!isAngularContext) return false
 
   return when (getAngularSettings(project).serviceType) {
     AngularServiceSettings.AUTO -> true
