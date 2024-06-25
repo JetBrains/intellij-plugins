@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -148,13 +147,7 @@ public class AngularUiRouterDiagramBuilder {
   private static void putState2map(final @NotNull VirtualFile rootFile, final @NotNull UiRouterState state,
                                    final @NotNull Map<VirtualFile, Map<String, UiRouterState>> rootMap) {
     Map<String, UiRouterState> map = rootMap.computeIfAbsent(rootFile, k -> new HashMap<>());
-    if (map.containsKey(state.getName())) {
-      final UiRouterState existing = map.get(state.getName());
-      if (!Comparing.equal(existing.getPointer(), state.getPointer()) && state.getPointer() != null) {
-        existing.addDuplicateDefinition(state);
-      }
-    }
-    else {
+    if (!map.containsKey(state.getName())) {
       map.put(state.getName(), state);
     }
   }
@@ -341,7 +334,6 @@ public class AngularUiRouterDiagramBuilder {
       state.setParentName(parentKey);
     }
     final String templateUrl = getPropertyValueIfExists(object, "templateUrl");
-    VirtualFile templateFile = null;
     if (templateUrl != null) {
       state.setTemplateUrl(templateUrl);
       final JSProperty urlProperty = object.findProperty("templateUrl");

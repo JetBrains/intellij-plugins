@@ -6,7 +6,6 @@ import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UiRouterState {
@@ -19,7 +18,6 @@ public class UiRouterState {
   private @Nullable SmartPsiElementPointer<PsiElement> myPointer;
   private boolean myIsAbstract;
   private final @NotNull VirtualFile myFile;
-  private @Nullable List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
   private VirtualFile myTemplateFile;
   private @Nullable SmartPsiElementPointer<PsiElement> myTemplatePointer;
   private boolean myGeneric;
@@ -95,11 +93,6 @@ public class UiRouterState {
 
   public @NotNull VirtualFile getFile() {
     return myFile;
-  }
-
-  public void addDuplicateDefinition(final @NotNull UiRouterState state) {
-    if (myDuplicateDefinitions == null) myDuplicateDefinitions = new ArrayList<>();
-    myDuplicateDefinitions.add(state.getPointer());
   }
 
   @Override
