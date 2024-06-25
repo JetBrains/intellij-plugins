@@ -5,11 +5,11 @@ import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult
 import org.angular2.entities.source.Angular2SourceUtil
+import org.angular2.lang.types.Angular2TypeUtils
 import java.util.function.Consumer
 
 class Angular2ComponentScopeProvider : Angular2TemplateScopesProvider() {
@@ -26,7 +26,7 @@ class Angular2ComponentScopeProvider : Angular2TemplateScopesProvider() {
       get() = myClass
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
-      for (property in TypeScriptTypeParser.buildTypeFromClass(myClass, false).properties) {
+      for (property in Angular2TypeUtils.buildTypeFromClass(myClass).properties) {
         property.memberSource.allSourceElements
           .asSequence()
           .filterIsInstance<JSPsiElementBase>()

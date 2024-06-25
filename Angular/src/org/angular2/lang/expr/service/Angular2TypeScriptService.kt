@@ -39,10 +39,11 @@ import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.getAngularSettings
+import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
 import java.util.function.Consumer
 
-class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
+class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
 
   override fun getProcessName(): String = "Angular TypeScript"
 
@@ -55,7 +56,7 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 
   private fun isAcceptableHtmlFile(file: VirtualFile): Boolean =
     file.isInLocalFileSystem && file.fileType.let {
-      it is HtmlFileType && SubstitutedFileType.substituteFileType(file, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
+      (it is HtmlFileType || it is SvgFileType) && SubstitutedFileType.substituteFileType(file, it, project).asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
 
   override fun supportsInjectedFile(file: PsiFile): Boolean {
@@ -116,10 +117,10 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project) {
 
     override val service: TypeScriptService
-      get() = this@AngularTypeScriptService
+      get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, virtualFile: VirtualFile): JSType? =
-      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile)
+    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, evaluationLocation: VirtualFile): JSType? =
+      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, evaluationLocation)
 
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)

@@ -411,7 +411,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       directives.forEach { directive ->
         val cls = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass ?: return@forEach
 
-        getTemplateContextTypeNonStrict(cls)?.let { templateContextType ->
+        getTemplateContextTypeNonStrict(cls, element)?.let { templateContextType ->
           templateContextTypes.add(templateContextType)
         }
 
@@ -493,12 +493,13 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       else types.firstOrNull()?.source
     }
 
-    private fun getTemplateContextTypeNonStrict(cls: TypeScriptClass): JSType? {
+    private fun getTemplateContextTypeNonStrict(cls: TypeScriptClass, context: PsiElement): JSType? {
       var templateRefType: JSType? = null
       for (ctor in cls.constructors) {
         for (param in ctor.parameterVariables) {
-          if (param.jsType.let { it != null && it.typeText.startsWith("$TEMPLATE_REF<") }) {
-            templateRefType = param.jsType
+          val paramType = param.getJSType(context)
+          if (paramType.let { it != null && it.typeText.startsWith("$TEMPLATE_REF<") }) {
+            templateRefType = paramType
             break
           }
         }
@@ -513,10 +514,12 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
   /**
    * This class doesn't simplify much, but allows using find usages to find related code for different web frameworks.
    */
-  class WebJSSyntheticFunctionCall(val place: PsiElement?,
-                                   private val argSize: Int,
-                                   val argumentListProvider: (typeFactory: JSExpressionTypeFactory) -> List<JSType?>) : JSCallItem {
-    override fun getPsiContext(): PsiElement? = place
+  class WebJSSyntheticFunctionCall(
+    val place: PsiElement,
+    private val argSize: Int,
+    val argumentListProvider: (typeFactory: JSExpressionTypeFactory) -> List<JSType?>,
+  ) : JSCallItem {
+    override fun getPsiContext(): PsiElement = place
 
     override fun getArgumentTypes(argumentTypeFactory: JSExpressionTypeFactory): List<JSType?> {
       return argumentListProvider(argumentTypeFactory)

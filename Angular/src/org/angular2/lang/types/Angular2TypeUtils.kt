@@ -1,10 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
 import com.intellij.psi.PsiElement
@@ -15,6 +18,7 @@ import com.intellij.psi.xml.XmlTag
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import java.util.function.Supplier
 
 object Angular2TypeUtils {
   private const val HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME: String = "HTMLElementEventMap"
@@ -78,6 +82,11 @@ object Angular2TypeUtils {
     // covered by an `on*` method
     return JSNamedTypeFactory.createType(HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME, typeSource, JSContext.INSTANCE)
   }
+
+  fun buildTypeFromClass(cls: JSClass, context: PsiElement = cls): JSRecordType =
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(context, Supplier {
+      TypeScriptTypeParser.buildTypeFromClass(cls, false)
+    })
 
   val TypeScriptClass.possiblyGenericJsType
     get() = if (typeParameters.isNotEmpty())

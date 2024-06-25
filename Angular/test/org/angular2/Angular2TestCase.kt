@@ -9,7 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
-import org.angular2.lang.expr.service.AngularTypeScriptService
+import org.angular2.lang.expr.service.Angular2TypeScriptService
 
 abstract class Angular2TestCase(
   override val testCasePath: String,
@@ -39,7 +39,7 @@ abstract class Angular2TestCase(
         UIUtil.dispatchAllInvocationEvents()
       }
       TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
-        it is AngularTypeScriptService
+        it is Angular2TypeScriptService
       }
       runInEdtAndWait {
         FileDocumentManager.getInstance().saveAllDocuments()

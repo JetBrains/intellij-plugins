@@ -12,11 +12,13 @@ import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
 
-class Angular2SourceDirectiveAttribute internal constructor(private val myParameter: JSParameter,
-                                                            override val name: String) : Angular2DirectiveAttribute {
+class Angular2SourceDirectiveAttribute internal constructor(
+  private val myParameter: JSParameter,
+  override val name: String,
+) : Angular2DirectiveAttribute {
 
   override val type: JSType?
-    get() = myParameter.jsType
+    get() = myParameter.getJSType(myParameter)
 
   override val sourceElement: PsiElement
     get() = myParameter

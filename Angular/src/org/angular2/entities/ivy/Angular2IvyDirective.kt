@@ -5,7 +5,6 @@ import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryM
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
@@ -24,6 +23,7 @@ import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getDirectiveKindNoCache
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
+import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
@@ -91,8 +91,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
 
     hackCoreDirectiveRequiredInputStatus(this, inputMap)
 
-    TypeScriptTypeParser
-      .buildTypeFromClass(clazz, false)
+    Angular2TypeUtils
+      .buildTypeFromClass(clazz)
       .properties
       .forEach { prop ->
         if (prop.memberSource.singleElement != null) {
@@ -205,18 +205,22 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       }
     }
 
-    private fun readMappingsInto(directiveDef: Angular2IvySymbolDef.Directive,
-                                 field: String,
-                                 target: MutableMap<String, Angular2PropertyInfo>) {
+    private fun readMappingsInto(
+      directiveDef: Angular2IvySymbolDef.Directive,
+      field: String,
+      target: MutableMap<String, Angular2PropertyInfo>,
+    ) {
       directiveDef.readPropertyMappings(field)
         .forEach { (key, value) -> target.putIfAbsent(key, value) }
     }
 
-    private fun processProperty(clazz: TypeScriptClass,
-                                property: JSRecordType.PropertySignature,
-                                mappings: MutableMap<String, Angular2PropertyInfo>,
-                                qualifiedKind: WebSymbolQualifiedKind,
-                                result: MutableMap<String, Angular2DirectiveProperty>) {
+    private fun processProperty(
+      clazz: TypeScriptClass,
+      property: JSRecordType.PropertySignature,
+      mappings: MutableMap<String, Angular2PropertyInfo>,
+      qualifiedKind: WebSymbolQualifiedKind,
+      result: MutableMap<String, Angular2DirectiveProperty>,
+    ) {
       val info = mappings.remove(property.memberName)
       if (info != null) {
         result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(clazz, property, qualifiedKind, info))

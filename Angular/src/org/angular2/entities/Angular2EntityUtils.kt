@@ -340,9 +340,9 @@ object Angular2EntityUtils {
   fun jsTypeFromAcceptInputType(clz: TypeScriptClass?, name: String): JSType? =
     clz
       ?.staticJSType
-      ?.asRecordType()
+      ?.asRecordType(clz)
       ?.findPropertySignature(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
-      ?.jsType
+      ?.getJSType(clz)
 
   private fun Collection<Angular2Entity>.render(): String =
     this.asSequence().map { it.getName() }.sorted().joinToString(", ")
@@ -351,7 +351,7 @@ object Angular2EntityUtils {
     val kind: String,
     val directive: Angular2Directive,
     val hostDirective: Boolean,
-    val property: JSProperty?
+    val property: JSProperty?,
   )
 
 }
