@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.nodejs.monorepo.JSMonorepoManager
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
@@ -32,6 +34,7 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
+import java.util.function.Supplier
 
 val VUE_TOP_LEVEL_ELEMENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
 val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
@@ -72,7 +75,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     val fileContext = location.containingFile?.originalFile ?: return emptyList()
 
     if (allowResolve) {
-      addEntityContainers(location, fileContext, result)
+      withTypeEvaluationLocation(fileContext, Supplier { addEntityContainers(location, fileContext, result) })
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
       tag?.takeIf { it.name == SLOT_TAG_NAME }?.let { result.add(VueSlotElementScope(it)) }
       attribute?.takeIf { it.valueElement == null }?.let { result.add(VueBindingShorthandScope(it)) }

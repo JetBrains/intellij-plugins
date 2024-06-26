@@ -9,6 +9,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
@@ -17,6 +18,7 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.model.Pointer
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.command.CommandProcessor
@@ -63,6 +65,7 @@ import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.EVENT_EMITTER
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.html.parser.Angular2AttributeType
+import java.util.function.Supplier
 
 class Angular2ExtractComponentHandler : RefactoringActionHandler {
   override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
@@ -88,7 +91,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
 @Service(Service.Level.PROJECT)
 class Angular2ExtractComponentHandlerService(
   private val project: Project,
-  private val coroutineScope: CoroutineScope
+  private val coroutineScope: CoroutineScope,
 ) {
 
   fun run(editor: Editor, sourceFilePtr: Pointer<PsiFile>, workingDir: VirtualFile, cliDir: VirtualFile) {
@@ -252,6 +255,9 @@ class Angular2ExtractComponentHandlerService(
       modifyTargetComponentFile(project, extractedComponent, generatorContext)
     }
     catch (e: Exception) {
+      if (ApplicationManager.getApplication().isUnitTestMode) {
+        throw RuntimeException("Failed to modify source", e)
+      }
       thisLogger().warn("Something went wrong during file modification", e)
       showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
     }
@@ -342,7 +348,9 @@ class Angular2ExtractComponentHandlerService(
 
     for (attribute in extractedComponent.attributes) {
       val name = attribute.name
-      val type = attribute.jsType.getTypeText(JSType.TypeTextFormat.CODE)
+      val type = withTypeEvaluationLocation(componentClass, Supplier {
+        attribute.jsType.getTypeText(JSType.TypeTextFormat.CODE)
+      })
       val texts = when (attribute.attributeType) {
         Angular2AttributeType.PROPERTY_BINDING -> {
           seenInput = true
