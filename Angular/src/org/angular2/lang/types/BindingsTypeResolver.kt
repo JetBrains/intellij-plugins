@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.EMPTY
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
+import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -25,6 +26,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.Angular2DeclarationsScope
@@ -68,7 +70,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     val types: MutableList<JSType?> = SmartList()
     for (directive in directives) {
       findDirectivePropertyTypeAndOrigin(directive, directive.inputs, inputName)?.let { (propertyType, directive) ->
-        val type = JSTypeUtils.applyGenericArguments(propertyType?.substitute(element), substitutors[directive])
+        val type = JSTypeUtils.applyGenericArguments(propertyType?.substituteIfCompilerType(element), substitutors[directive])
         types.add(type)
       }
     }
@@ -81,7 +83,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     val types: MutableList<JSType?> = SmartList()
     for (directive in directives) {
       findDirectivePropertyTypeAndOrigin(directive, directive.outputs, outputName)?.let { (propertyType, directive) ->
-        val type = JSTypeUtils.applyGenericArguments(propertyType?.substitute(element), substitutors[directive])
+        val type = JSTypeUtils.applyGenericArguments(propertyType?.substituteIfCompilerType(element), substitutors[directive])
         types.add(hackNgModelChangeType(type, outputName))
       }
     }
@@ -310,7 +312,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
           if (propertyType != null) {
             directives2inputs.computeIfAbsent(directive) { mutableListOf() }
-              .add(DirectiveInput(propertyType.substitute(element),
+              .add(DirectiveInput(propertyType.substituteIfCompilerType(element),
                                   inputsMap.containsKey(inputName),
                                   inputsMap[inputName],
                                   attrsMap[inputName],
@@ -420,7 +422,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
           val inputExpression = inputsMap[property.name]
           val propertyType = property.type
           if (inputExpression != null && propertyType != null) {
-            collectGenericArgumentsNonStrict(inputExpression, propertyType.substitute(element), processingContext, genericArguments)
+            collectGenericArgumentsNonStrict(inputExpression, propertyType.substituteIfCompilerType(element), processingContext, genericArguments)
           }
         }
       }
@@ -435,7 +437,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
                                                  propertyType: JSType,
                                                  processingContext: ProcessingContext,
                                                  genericArguments: MultiMap<JSTypeGenericId, JSType?>) {
-      val inputType = JSPsiBasedTypeOfType(inputExpression, true).substitute(inputExpression)
+      val inputType = JSPsiBasedTypeOfType(inputExpression, true).substituteIfCompilerType(inputExpression)
       // todo getApparentType is supposed to be used only in JS according to usages in JS plugin
       val apparentType = JSTypeUtils.getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType))
       if (JSTypeUtils.isAnyType(apparentType)) {
@@ -509,6 +511,9 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       }
       else templateRefType.arguments.firstOrNull()
     }
+
+    private fun JSType.substituteIfCompilerType(location: PsiElement): JSType =
+      applyIf(this is TypeScriptCompilerType) { substitute(location) }
   }
 
   /**
