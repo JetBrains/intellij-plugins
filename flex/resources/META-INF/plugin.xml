@@ -13,6 +13,7 @@
     ]]></description>
 
   <depends>JavaScript</depends>
+  <depends>JavaScriptDebugger</depends>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.properties</depends>
   <depends>com.intellij.modules.idea.ultimate</depends>
