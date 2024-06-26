@@ -47,7 +47,7 @@ class IcnBtn {
             fixedInViewport/>
           <mat-sidenav
             class="sidenav"
-            [fixedInViewport]="<error descr="Type 12 is not assignable to type string | false | true | null | undefined  Type 12 is not assignable to type true    Type 12 is not assignable to type false">12</error>"/>
+            [fixedInViewport]="<error descr="Type 12 is not assignable to type BooleanInput  Type 12 is not assignable to type true    Type 12 is not assignable to type false">12</error>"/>
       </div>
   `,
   standalone: true,
