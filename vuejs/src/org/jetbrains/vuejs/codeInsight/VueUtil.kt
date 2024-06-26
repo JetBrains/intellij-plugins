@@ -10,6 +10,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
@@ -61,6 +62,7 @@ import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import java.util.*
+import java.util.function.Supplier
 import kotlin.reflect.KClass
 
 const val SETUP_ATTRIBUTE_NAME = "setup"
@@ -204,10 +206,12 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
               is JSVariable -> cur.initializerOrStub
               else -> null
             }
-            // Try extract reference name from type
-            ?: JSPsiImplUtils.getInitializerReference(cur)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
-            // Most expensive solution through substitution, works with function calls
-            ?: getFromType(cur)
+            ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element, Supplier {
+              // Try extract reference name from type
+              JSPsiImplUtils.getInitializerReference(cur)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
+              // Most expensive solution through substitution, works with function calls
+              ?: getFromType(cur)
+            })
           )?.let { queue.addLast(it) }
         }
         is PsiPolyVariantReference -> cur.multiResolve(false)
