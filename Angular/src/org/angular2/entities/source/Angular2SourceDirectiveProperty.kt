@@ -81,7 +81,9 @@ abstract class Angular2SourceDirectiveProperty(
   override val rawJsType: JSType?
     get() = typeFromSignal
             ?: transformParameterType
-            ?: (signature.setterJSType ?: signature.jsType)?.applyIf(signature.isOptional) {
+            ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(owner, Supplier {
+              signature.setterJSType ?: signature.jsType
+            })?.applyIf(signature.isOptional) {
               JSTypeGuardUtil.wrapWithUndefined(this, this.getSource())!!
             }
 
