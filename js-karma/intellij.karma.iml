@@ -17,6 +17,7 @@
     <orderEntry type="module" module-name="intellij.javascript.testing" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.debugger" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.coverage" />
