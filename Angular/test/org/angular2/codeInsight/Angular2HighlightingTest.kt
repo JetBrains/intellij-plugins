@@ -42,7 +42,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testImgSrcWithNg15() = checkHighlighting(ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5)
 
-  fun testNoRequiredBindingsWithoutModuleScope() =
+  // TODO WEB-67260 - no default project
+  fun _testNoRequiredBindingsWithoutModuleScope() =
     checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8)
 
   fun testNgAcceptInputTypeOverride() = checkHighlighting(extension = "ts")
@@ -71,7 +72,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testCustomDataAttributes() = checkHighlighting(dir = true)
 
-  fun testI18nAttr() = checkHighlighting(ANGULAR_MATERIAL_8_2_3_MIXED)
+  // TODO WEB-67260 - no default project
+  fun _testI18nAttr() = checkHighlighting(ANGULAR_MATERIAL_8_2_3_MIXED)
 
   fun testNgNonBindable() = checkHighlighting()
 
@@ -92,7 +94,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testTrUnderTemplate() = checkHighlighting(ANGULAR_CDK_14_2_0, dir = true)
 
-  fun testDivUnderButton() = checkHighlighting(ANGULAR_MATERIAL_16_2_8, dir = true)
+  // TODO WEB-67260 - no default project
+  fun _testDivUnderButton() = checkHighlighting(ANGULAR_MATERIAL_16_2_8, dir = true)
 
   fun testReadOnlyTemplateVariables() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, extension = "ts")
 
@@ -110,7 +113,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testNgCspNonceNg16() = checkHighlighting(ANGULAR_CORE_16_2_8)
 
-  fun testUndefinedInterpolationBinding() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_ROUTER_16_2_8, dir = true,
+  // TODO WEB-67260 - no default project
+  fun _testUndefinedInterpolationBinding() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_ROUTER_16_2_8, dir = true,
                                                               configureFileName = "hero-search.component.html")
 
   fun testSubjectGenericInference() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
