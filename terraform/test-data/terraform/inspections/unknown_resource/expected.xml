@@ -5,11 +5,44 @@
     <line>17</line>
     <module>0</module>
     <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
-    <description>Unknown resource: docker_image</description>
-    <highlighted_element>resource &quot;docker_image&quot; &quot;image&quot; { name = &quot;mayastorn-hub:0.0.2&quot; }</highlighted_element>
+    <description>Unknown resource: ably_app</description>
+    <highlighted_element>resource &quot;ably_app&quot; &quot;ably&quot; { name = &quot;app&quot; }</highlighted_element>
     <language>HCL</language>
     <offset>0</offset>
     <length>66</length>
+  </problem>
+  <problem>
+    <file>test2.tf</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
+    <description>Unknown resource: aci_cloud_ad</description>
+    <highlighted_element>resource &quot;aci_cloud_ad&quot; &quot;cloud_ad&quot; { active_directory_id = &quot;ad_id&quot; tenant_dn = &quot;id1&quot; }</highlighted_element>
+    <language>HCL</language>
+    <offset>0</offset>
+    <length>100</length>
+  </problem>
+  <problem>
+    <file>test3.tf</file>
+    <line>4</line>
+    <module>0</module>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
+    <description>Unknown resource: abbey_demo</description>
+    <highlighted_element>resource &quot;abbey_demo&quot; &quot;demo&quot; { email = &quot;a@a.a&quot; permission = &quot;user&quot; }</highlighted_element>
+    <language>HCL</language>
+    <offset>0</offset>
+    <length>77</length>
+  </problem>
+  <problem>
+    <file>test4.tf</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
+    <description>Unknown provider: tsuru</description>
+    <highlighted_element>provider &quot;tsuru&quot; { }</highlighted_element>
+    <language>HCL</language>
+    <offset>0</offset>
+    <length>77</length>
   </problem>
 </problems>
 

@@ -17,6 +17,8 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   private static final int ENTRIES_LIST_SIZE = 1000; //x2 to the default registry value
 
+  private static final Set<ProviderTier> tiers = Set.of(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL);
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -55,6 +57,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -71,6 +74,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -87,6 +91,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -267,6 +272,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allResources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(ResourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     then(set).contains("template_file", "vault_kv_secret");
@@ -290,6 +296,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -341,6 +348,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -357,6 +365,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     final Predicate<Collection<String>> matcher =
@@ -429,6 +438,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     final TreeSet<String> set = StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
         false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
       .collect(Collectors.toCollection(TreeSet::new));
     then(set).contains("template_file", "vault_kv_secret");

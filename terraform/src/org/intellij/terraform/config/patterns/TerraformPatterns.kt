@@ -19,6 +19,7 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
@@ -110,7 +111,7 @@ object TerraformPatterns {
 
   val RequiredProvidersBlock: PsiElementPattern.Capture<HCLBlock> =
     PlatformPatterns.psiElement(HCLBlock::class.java)
-      .with(createBlockPattern("required_providers"))
+      .with(createBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS))
       .withSuperParent(2, TerraformRootBlock)
 
   val RequiredProvidersData: PsiElementPattern.Capture<HCLProperty> =

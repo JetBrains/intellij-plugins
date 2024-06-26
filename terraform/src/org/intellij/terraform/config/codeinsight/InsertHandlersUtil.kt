@@ -13,9 +13,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.inspection.AddResourcePropertiesFix
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersBlock
+import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -71,10 +78,6 @@ object InsertHandlersUtil {
     } while (changed)
   }
 
-  internal fun addSpace(editor: Editor) {
-    EditorModificationUtil.insertStringAtCaret(editor, " ")
-  }
-
   internal fun addArguments(count: Int, editor: Editor) {
     EditorModificationUtil.insertStringAtCaret(editor, StringUtil.repeat(" \"\"", count))
   }
@@ -83,4 +86,21 @@ object InsertHandlersUtil {
     EditorModificationUtil.insertStringAtCaret(editor, " {}")
     editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
   }
+
+  internal fun addRequiredProvidersBlock(provider: ProviderType, file: PsiFile) {
+    val project = file.project
+    val elementGenerator = TerraformElementGenerator(project)
+    val terraformBlock = (TypeModel.getTerraformBlock(file)
+                          ?: file.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_IDENTIFIER), file.firstChild)) as HCLBlock
+    val requiredProvidersBlock = (PsiTreeUtil.findChildrenOfType<HCLBlock>(terraformBlock, HCLBlock::class.java).firstOrNull { RequiredProvidersBlock.accepts(it) }
+                                  ?: terraformBlock.`object`?.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_REQUIRED_PROVIDERS), terraformBlock.`object`?.lastChild)) as HCLBlock
+
+    val providerObject = elementGenerator.createObject(mapOf("source" to "\"${provider.fullName}\"", "version" to "\"${provider.version}\""))
+    val providerProperty = elementGenerator.createObjectProperty(provider.type, providerObject.text)
+
+    requiredProvidersBlock.`object`?.addBefore(providerProperty, requiredProvidersBlock.`object`?.lastChild)
+    CodeStyleManager.getInstance(project).reformatText(file, listOf(terraformBlock.textRange), true)
+  }
+
+
 }
