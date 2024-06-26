@@ -1,7 +1,6 @@
 package org.jetbrains.idea.perforce.actions
 
 import com.intellij.icons.AllIcons
-import com.intellij.icons.ExpUiIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.NlsSafe
@@ -62,8 +61,6 @@ class PerforceToolbarWidgetHelper {
       if (isNoConnections || !settings.ENABLED)
         return AllIcons.General.Warning
 
-      if (isNewUi)
-        return ExpUiIcons.General.Vcs
       return AllIcons.Vcs.Branch
     }
 
