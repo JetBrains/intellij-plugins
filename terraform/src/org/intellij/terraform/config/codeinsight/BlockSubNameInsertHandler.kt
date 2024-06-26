@@ -7,16 +7,18 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
-internal open class ResourceBlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
+internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
+    val project = context.project
+    if (project.isDisposed) return
+
     val editor = context.editor
     val file = context.file
-    val project = context.project
-
-    if (project.isDisposed) return
 
     var element = file.findElementAt(context.startOffset) ?: return
     val parent: PsiElement
@@ -70,6 +72,11 @@ internal open class ResourceBlockSubNameInsertHandler(val type: BlockType) : Bas
       if (expected - already != 1) { // Do not invoke completion for last name
         InsertHandlersUtil.scheduleBasicCompletion(context)
       }
+    }
+
+    val provider = getProviderForBlockType(type)
+    if (provider != null && !TypeModel.collectProviderLocalNames(file).containsKey(provider.name)) {
+      InsertHandlersUtil.addRequiredProvidersBlock(provider, file)
     }
 
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)

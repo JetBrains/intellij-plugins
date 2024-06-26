@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.config.model.*
@@ -85,5 +86,42 @@ object TerraformCompletionUtil {
     val text = getClearTextValue(position) ?: position.text
     if (text == CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED) return null
     return text.replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "").nullize(true)
+  }
+
+  @NlsSafe
+  internal fun buildProviderTypeText(provider: ProviderType): String =
+    """${provider.fullName}${if (provider.version.isNotBlank()) " ${provider.version}" else ""}"""
+
+
+  @NlsSafe
+  internal fun buildResourceDisplayString(block: BlockType, providerLocalNames: Map<String, String>): String {
+    return when (block) {
+      is ResourceOrDataSourceType -> {
+        val providerLocalName = providerLocalNames[block.provider.fullName] ?: return block.type
+        return "${providerLocalName}_${TypeModel.getResourceName(block.type)}"
+      }
+      is ProviderType -> {
+        val providerLocalName = providerLocalNames[block.fullName] ?: return block.type
+        providerLocalName
+      }
+      else -> {
+        block.literal
+      }
+    }
+  }
+
+  @NlsSafe
+  internal fun buildResourceFullString(block: BlockType): String {
+    return when (block) {
+      is ResourceOrDataSourceType -> {
+        return "${block.type} (${buildProviderTypeText(block.provider)})"
+      }
+      is ProviderType -> {
+        return "${block.fullName} ${block.version}"
+      }
+      else -> {
+        block.presentableText
+      }
+    }
   }
 }

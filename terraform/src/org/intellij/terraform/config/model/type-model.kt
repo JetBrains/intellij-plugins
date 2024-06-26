@@ -509,8 +509,12 @@ object Types {
   val Expression: Type = TypeImpl("expression")
 }
 
-interface ResourceOrDataSourceType {
+interface NamedType {
+  val literal: String
   val type: String
+}
+
+interface ResourceOrDataSourceType: NamedType {
   val provider: ProviderType
 }
 
@@ -536,12 +540,12 @@ class DataSourceType(override val type: String,
     get() = "$literal ($type)"
 }
 
-class ProviderType(val type: String,
+class ProviderType(override val type: String,
                    properties: List<PropertyOrBlockType> = emptyList<PropertyOrBlockType>(),
                    val namespace: String = "",
                    tier: ProviderTier = ProviderTier.TIER_NONE,
                    val version: String = ""
-) : BlockType(HCL_PROVIDER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
+) : BlockType(HCL_PROVIDER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractProvider)), NamedType {
 
   val fullName: String = "$namespace/$type"
   val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OFFICIAL_PROVIDERS_NAMESPACE.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
@@ -592,4 +596,13 @@ private fun withDefaults(properties: List<PropertyOrBlockType>, default: BlockTy
 internal fun getContainingFile(psiElement: PsiElement): PsiFile? {
   val containingFile = psiElement.containingFile
   return containingFile.getUserData<PsiFile>(PsiFileFactory.ORIGINAL_FILE) ?: containingFile?.originalFile
+}
+
+internal fun getProviderForBlockType(blockType: BlockType): ProviderType? {
+  val provider = when (blockType) {
+    is ResourceOrDataSourceType -> blockType.provider
+    is ProviderType -> blockType
+    else -> null
+  }
+  return provider
 }

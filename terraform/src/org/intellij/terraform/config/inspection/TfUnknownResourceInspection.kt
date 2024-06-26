@@ -12,6 +12,7 @@ import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.actions.AddProviderAction
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.hcl.HCLBundle
@@ -54,7 +55,10 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
     if (provider == null) {
       holder.registerProblem(block,
                              HCLBundle.message("unknown.resource.identifier.inspection.error.message", getBlockTypeString(block), type),
-                             *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+                             *listOfNotNull(
+                               TFInitAction.createQuickFixNotInitialized(block),
+                               AddProviderAction(block)
+                             ).toArray(LocalQuickFix.EMPTY_ARRAY)
       )
     }
   }

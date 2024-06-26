@@ -8,12 +8,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLElementGenerator
 import org.intellij.terraform.hcl.psi.HCLLiteral
+import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILLiteralExpression
 
@@ -47,7 +49,7 @@ class TerraformElementGenerator(val project: Project) : HCLElementGenerator(proj
         builder.toString()
       }
     }
-    val propertiesString = properties.map { (name, value) -> "$name = \"${StringUtil.unquoteString(value)}\"" }.joinToString("\n", "\t")
+    val propertiesString = properties.map { (name, value) -> createPropertyString(name, "\"${StringUtil.unquoteString(value)}\"") }.joinToString("\n", "\t")
     val content = """
       $nameString ${typeString} {
       ${propertiesString}
@@ -56,6 +58,15 @@ class TerraformElementGenerator(val project: Project) : HCLElementGenerator(proj
     val file = createDummyFile(content, original)
     return file.firstChild as HCLBlock
   }
+
+  fun createObjectProperty(name: String, value: String): HCLProperty {
+    val s = """
+      $name = $value
+    """.trimIndent()
+    val file = createDummyFile(s)
+    return file.childrenOfType<HCLProperty>().first()
+  }
+
 
   fun createVariable(name: String, type: Type?, initializer: ILExpression): HCLBlock {
     // TODO: Improve
