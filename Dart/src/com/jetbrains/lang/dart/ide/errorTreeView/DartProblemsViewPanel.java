@@ -40,7 +40,6 @@ import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
 import org.dartlang.analysis.server.protocol.DiagnosticMessage;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SourceChange;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -377,15 +376,10 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   @Override
-  public @Nullable Object getData(@NotNull @NonNls String dataId) {
-    if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
-      return this;
-    }
-    if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
-      return createNavigatable();
-    }
-
-    return null;
+  public void uiDataSnapshot(@NotNull DataSink sink) {
+    super.uiDataSnapshot(sink);
+    sink.set(PlatformDataKeys.COPY_PROVIDER, this);
+    sink.lazy(CommonDataKeys.NAVIGATABLE, () -> createNavigatable());
   }
 
   private @Nullable Navigatable createNavigatable() {
