@@ -73,7 +73,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
       DartIfStatement.class,
       DartForStatement.class,
       DartWhileStatement.class,
-      DartDoWhileStatement.class);
+      DartDoWhileStatement.class,
+      DartFormalParameterList.class);
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class bodies
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function bodies
@@ -91,6 +92,7 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
     foldIfStatements(descriptors, psiElements);                                        // 12.1. If statements
     foldLoopStatements(descriptors, psiElements);                                      // 12.2. For, while, do while statements
+    foldParameterLists(descriptors, psiElements);                                      // 13.  Parameter list
   }
 
   @Override
@@ -136,6 +138,7 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10.  Constructor invocations
     if (psiElement instanceof DartAssertStatement) return DOT_DOT_DOT;                           // 11.  Assert statements
     if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  Block statements
+    if (psiElement instanceof DartFormalParameterList) return PAREN_DOTS;                        // 13.  Parameter list
 
     return DOT_DOT_DOT;
   }
@@ -455,6 +458,17 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
 
       if (dartBlock != null && dartBlock.textContains('\n')) {
         descriptors.add(new FoldingDescriptor(dartBlock, dartBlock.getTextRange()));
+      }
+    }
+  }
+
+  private static void foldParameterLists(@NotNull final List<FoldingDescriptor> descriptors,
+                                         @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartFormalParameterList paramList) {
+        if (paramList.textContains('\n')) {
+          descriptors.add(new FoldingDescriptor(paramList, paramList.getTextRange()));
+        }
       }
     }
   }
