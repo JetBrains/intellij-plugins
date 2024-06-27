@@ -16,7 +16,7 @@ import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.ide.ui.PrismaSettingsConfigurable
 
 private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@prisma/language-server",
-                                                                             "5.15.0",
+                                                                             "5.16.0",
                                                                              "/dist/bin.js") {
   private val sinceNewServiceLayoutVersion = SemVer.parseFromText("5.15.0")!! // inclusive
 
