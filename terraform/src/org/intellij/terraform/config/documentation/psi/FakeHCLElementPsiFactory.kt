@@ -4,21 +4,35 @@ package org.intellij.terraform.config.documentation.psi
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.NamedType
 import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
+internal val FAKE_PROVIDER_KEY = Key.create<ProviderType>("org.intellij.terraform.config.documentation.psi.provider")
+
 @Service(Service.Level.PROJECT)
-class FakeHCLElementPsiFactory(val project: Project) {
+internal class FakeHCLElementPsiFactory(val project: Project) {
 
   val emptyHCLBlock: HCLBlock? by lazy {
     createFakeHCLBlock("", "")
   }
 
   private val terraformElementGenerator = TerraformElementGenerator(project)
+
+  fun createFakeHCLBlock(block: NamedType, original: PsiFile? = null): HCLBlock? {
+    val provider = getProviderForBlockType(block as BlockType) ?: return null
+    val fakeBlock = createFakeHCLBlock(block.literal, block.type, original) ?: return null
+    fakeBlock.putUserData(FAKE_PROVIDER_KEY, provider)
+    return fakeBlock
+  }
 
   fun createFakeHCLBlock(blockName: String, blockType: String, original: PsiFile? = null): HCLBlock? {
     val hclBlock = try {

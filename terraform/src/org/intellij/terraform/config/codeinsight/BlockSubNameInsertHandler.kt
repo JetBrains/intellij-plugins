@@ -75,7 +75,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     }
 
     val provider = getProviderForBlockType(type)
-    if (provider != null && !TypeModel.collectProviderLocalNames(file).containsKey(provider.name)) {
+    if (provider != null && !TypeModel.collectProviderLocalNames(file).containsKey(provider.type)) {
       InsertHandlersUtil.addRequiredProvidersBlock(provider, file)
     }
 
