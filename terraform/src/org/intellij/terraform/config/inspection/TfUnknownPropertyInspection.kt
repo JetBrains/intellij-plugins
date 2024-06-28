@@ -51,10 +51,13 @@ class TfUnknownPropertyInspection : LocalInspectionTool() {
   }
 }
 
-internal class RemovePropertyQuickFix(element: HCLProperty) : LocalQuickFixOnPsiElement(element) {
-  override fun getText(): String = HCLBundle.message("unknown.property.in.block.inspection.quick.fix.name")
+internal abstract class RemovePsiElementQuickFix(element: HCLElement) : LocalQuickFixOnPsiElement(element) {
   override fun getFamilyName(): String = text
   override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     startElement.delete()
   }
+}
+
+internal class RemovePropertyQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
+  override fun getText(): String = HCLBundle.message("unknown.property.in.block.inspection.quick.fix.name")
 }
