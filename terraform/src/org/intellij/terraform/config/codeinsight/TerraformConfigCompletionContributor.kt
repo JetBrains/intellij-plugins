@@ -317,7 +317,6 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             presentation.icon = TerraformIcons.Terraform
           }
         })
-        .withLookupString(it.type)
         .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
         .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
     }
