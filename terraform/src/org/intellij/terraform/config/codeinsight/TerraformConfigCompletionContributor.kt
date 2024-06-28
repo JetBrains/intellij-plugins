@@ -273,23 +273,24 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent, obj=$obj, lnws=$leftNWS}" }
       val type = getClearTextValue(leftNWS) ?: return true
       val typeModel = TypeModelProvider.getModel(position)
+      val localProviders = TypeModel.collectProviderLocalNames(position)
       val tiers = setOf(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL)
       return when (type) {
         HCL_RESOURCE_IDENTIFIER -> {
           typeModel.allResources().toPlow()
-            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers}
+            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsKey(it.provider.type) }
             .map { buildResourceOrDataLookupElement(it, position) }
             .processWith(consumer)
         }
         HCL_DATASOURCE_IDENTIFIER -> {
           typeModel.allDatasources().toPlow()
-            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers}
+            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsKey(it.provider.type)}
             .map { buildResourceOrDataLookupElement(it, position) }
             .processWith(consumer)
         }
         HCL_PROVIDER_IDENTIFIER -> {
           typeModel.allProviders().toPlow()
-            .filter { parameters.invocationCount > 1 || it.tier in tiers}
+            .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsKey(it.type)}
             .map { buildProviderLookupElement(it, position) }
             .processWith(consumer)
         }
@@ -318,7 +319,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         })
         .withLookupString(it.type)
         .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
-        .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, it.type, position.containingFile.originalFile))
+        .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
     }
 
     private fun buildProviderLookupElement(it: ProviderType, position: PsiElement): LookupElementBuilder {
@@ -333,7 +334,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it))
-        .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, it.type, position.containingFile.originalFile))
+        .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
     }
 
     private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement): LookupElementBuilder = create(typeName)
