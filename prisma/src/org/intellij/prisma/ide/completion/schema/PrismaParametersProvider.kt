@@ -23,11 +23,11 @@ object PrismaParametersProvider : PrismaCompletionProvider() {
   override fun addCompletions(
     parameters: CompletionParameters,
     context: ProcessingContext,
-    result: CompletionResultSet
+    result: CompletionResultSet,
   ) {
-    val file = parameters.originalFile as? PrismaFile
+    val file = parameters.originalFile as? PrismaFile ?: return
     val position = parameters.originalPosition ?: parameters.position
-    val datasource = file?.datasourceType
+    val datasourceTypes = file.metadata.datasourceTypes
     var argumentsOwner = position.parentOfType<PrismaArgumentsOwner>() ?: return
     val isFieldArgument =
       argumentsOwner is PrismaFunctionCall && argumentsOwner.parent is PrismaArrayExpression
@@ -45,7 +45,7 @@ object PrismaParametersProvider : PrismaCompletionProvider() {
                        ?.toSet()
                      ?: emptySet()
 
-    schemaDeclaration.getAvailableParams(datasource, isFieldArgument)
+    schemaDeclaration.getAvailableParams(datasourceTypes, isFieldArgument)
       .asSequence()
       .filter { it.label !in usedParams && !it.skipInCompletion }
       .map { createLookupElement(it.label, it, PrismaSchemaFakeElement.createForCompletion(parent, it)) }

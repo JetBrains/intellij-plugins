@@ -4,7 +4,9 @@ package org.intellij.prisma.lang.psi.stubs
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
+import org.intellij.prisma.ide.indexing.PRISMA_KEY_VALUE_DECL_INDEX_KEY
 import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration
 import org.intellij.prisma.lang.psi.PrismaNamedElement
 
 abstract class PrismaNamedStubElementType<S : PrismaNamedStub<P>, P : PrismaNamedElement>(
@@ -37,6 +39,9 @@ abstract class PrismaNamedStubElementType<S : PrismaNamedStub<P>, P : PrismaName
     val psi = stub.psi
     if (psi is PrismaEntityDeclaration) {
       stub.name?.let { sink.occurrence(PRISMA_ENTITIES_INDEX_KEY, it) }
+    }
+    if (psi is PrismaKeyValueDeclaration) {
+      stub.name?.let { sink.occurrence(PRISMA_KEY_VALUE_DECL_INDEX_KEY, it) }
     }
   }
 }

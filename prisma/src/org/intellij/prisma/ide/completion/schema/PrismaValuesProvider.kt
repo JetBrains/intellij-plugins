@@ -40,9 +40,10 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
   override fun addCompletions(
     parameters: CompletionParameters,
     context: ProcessingContext,
-    result: CompletionResultSet
+    result: CompletionResultSet,
   ) {
     val file = parameters.originalFile as? PrismaFile ?: return
+    val datasourceTypes = file.metadata.datasourceTypes
     val parent =
       parameters.position.parentOfTypes(PrismaArgument::class, PrismaMemberDeclaration::class) ?: return
     val schema = PrismaSchemaProvider
@@ -56,7 +57,6 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
       return
     }
 
-    val datasourceType = file.datasourceType
     val usedValues = mutableSetOf<String>()
     listExpression?.expressionList?.mapNotNullTo(usedValues) { PrismaSchemaPath.getSchemaLabel(it) }
 
@@ -64,7 +64,7 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
       .asSequence()
       .filter { it.label !in usedValues }
       .filterNot { isInString && it is PrismaSchemaDeclaration }
-      .filter { it.isAvailableForDatasource(datasourceType) }
+      .filter { it.isAvailableForDatasources(datasourceTypes) }
       .filter { it.isAcceptedByPattern(parameters.originalPosition ?: parameters.position, context) }
       .map {
         val label = computeLabel(it, parameters)
