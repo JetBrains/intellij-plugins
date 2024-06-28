@@ -8,8 +8,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
 
-class PrismaCompoundSchema(private val groups: List<PrismaSchemaElementGroup>,
-                           private val factories: List<PrismaSchemaDynamicFactory>) {
+class PrismaCompoundSchema(
+  private val groups: List<PrismaSchemaElementGroup>,
+  private val factories: List<PrismaSchemaDynamicFactory>,
+) {
   fun evaluate(evaluationContext: PrismaSchemaEvaluationContext): PrismaEvaluatedSchema {
     val newGroups = mutableMapOf<PrismaSchemaKind, PrismaSchemaElementGroup.Builder>()
 
@@ -145,11 +147,11 @@ sealed class PrismaSchemaElement(
   val type: String? = null,
   val ref: PrismaSchemaRef? = null,
 ) {
-  fun isAvailableForDatasource(usedDatasource: PrismaDatasourceType?): Boolean {
-    // filter only when datasource provider is specified
+  fun isAvailableForDatasources(usedDatasources: Set<PrismaDatasourceType>): Boolean {
+    // filter only when a datasource provider is specified
     return datasources == null ||
-           usedDatasource == null ||
-           datasources.contains(usedDatasource)
+           usedDatasources.isEmpty() ||
+           datasources.intersect(usedDatasources).isNotEmpty()
   }
 
   fun isAcceptedByPattern(element: PsiElement?, processingContext: ProcessingContext?): Boolean {
@@ -171,10 +173,10 @@ open class PrismaSchemaDeclaration(
 ) : PrismaSchemaElement(label, documentation, insertHandler, pattern, datasources, variants, type = type) {
 
   fun getAvailableParams(
-    usedDatasource: PrismaDatasourceType?,
+    usedDatasources: Set<PrismaDatasourceType>,
     isOnFieldLevel: Boolean,
   ): List<PrismaSchemaParameter> {
-    return params.filter { it.isAvailableForDatasource(usedDatasource) && it.isOnFieldLevel == isOnFieldLevel }
+    return params.filter { it.isAvailableForDatasources(usedDatasources) && it.isOnFieldLevel == isOnFieldLevel }
   }
 
   open class Builder(private val kind: PrismaSchemaKind) : SchemaDslBuilder<PrismaSchemaDeclaration> {

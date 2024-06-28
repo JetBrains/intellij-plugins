@@ -83,6 +83,7 @@
                 implementation="org.intellij.prisma.ide.indexing.PrismaAdditionalLibraryRootsProvider"/>
         <stubElementTypeHolder class="org.intellij.prisma.lang.psi.stubs.PrismaStubElementTypes" externalIdPrefix="PRISMA:"/>
         <stubIndex implementation="org.intellij.prisma.ide.indexing.PrismaEntitiesIndex"/>
+        <stubIndex implementation="org.intellij.prisma.ide.indexing.PrismaKeyValueDeclarationsIndex"/>
 
         <!-- Refactoring -->
         <lang.refactoringSupport language="Prisma"

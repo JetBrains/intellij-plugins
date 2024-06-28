@@ -13,8 +13,8 @@ import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 import org.intellij.prisma.lang.PrismaConstants.Types
 import org.intellij.prisma.lang.psi.PrismaFile
 import org.intellij.prisma.lang.psi.PrismaModelDeclaration
-import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
+import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
 import org.intellij.prisma.lang.types.PrismaBooleanType
 import java.util.*
 
@@ -156,9 +156,9 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
   }
 
   dynamic(PrismaSchemaKind.FIELD_ATTRIBUTE) { ctx ->
-    (ctx.file as? PrismaFile)?.datasourceName?.let { datasource ->
+    (ctx.file as? PrismaFile)?.metadata?.datasources?.forEach { (name) ->
       element {
-        label = "@$datasource"
+        label = "@$name"
         documentation =
           "Defines a native database type that should be used for this field. See https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#native-types-mapping."
         insertHandler = PrismaInsertHandler.QUALIFIED_NAME

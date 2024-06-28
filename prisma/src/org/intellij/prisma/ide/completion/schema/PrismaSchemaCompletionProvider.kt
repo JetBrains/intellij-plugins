@@ -30,14 +30,14 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
     context: ProcessingContext
   ): Collection<PrismaSchemaElement> {
     val file = parameters.originalFile as? PrismaFile ?: return emptyList()
-    val datasourceType = file.datasourceType
+    val datasourceTypes = file.metadata.datasourceTypes
     val position = parameters.originalPosition ?: parameters.position
 
     return PrismaSchemaProvider
       .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(position))
       .getElementsByKind(kind)
       .asSequence()
-      .filter { it.isAvailableForDatasource(datasourceType) }
+      .filter { it.isAvailableForDatasources(datasourceTypes) }
       .filter { it.isAcceptedByPattern(position, context) }
       .toList()
   }

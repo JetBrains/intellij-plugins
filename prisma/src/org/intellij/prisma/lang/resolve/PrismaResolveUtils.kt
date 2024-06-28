@@ -14,8 +14,10 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
+import org.intellij.prisma.ide.indexing.PRISMA_KEY_VALUE_DECL_INDEX_KEY
 import org.intellij.prisma.lang.PrismaFileType
 import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration
 
 fun processEntityDeclarations(processor: PrismaProcessor, state: ResolveState, element: PsiElement) {
   if (!processLocalFileDeclarations(processor, state, element)) return
@@ -58,6 +60,20 @@ private fun processGlobalEntityDeclarations(
   for (declaration in StubIndex.getElements(PRISMA_ENTITIES_INDEX_KEY, key, element.project, scope,
                                             PrismaEntityDeclaration::class.java)) {
     if (!processor.execute(declaration, state)) return false
+  }
+  return true
+}
+
+fun processKeyValueDeclarations(
+  project: Project,
+  processor: PrismaProcessor,
+  scope: GlobalSearchScope,
+): Boolean {
+  for (key in StubIndex.getInstance().getAllKeys(PRISMA_KEY_VALUE_DECL_INDEX_KEY, project)) {
+    for (declaration in StubIndex.getElements(PRISMA_KEY_VALUE_DECL_INDEX_KEY, key, project, scope,
+                                              PrismaKeyValueDeclaration::class.java)) {
+      if (!processor.execute(declaration, ResolveState.initial())) return false
+    }
   }
   return true
 }

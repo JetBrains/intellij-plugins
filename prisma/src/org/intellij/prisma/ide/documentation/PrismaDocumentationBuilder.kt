@@ -44,8 +44,9 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
     val schema = PrismaSchemaProvider.getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(element))
     val schemaElement = schema.match(element) ?: return null
     val declaration = schemaElement as? PrismaSchemaDeclaration
-    val file = element.containingFile as? PrismaFile
-    val params = declaration?.getAvailableParams(file?.datasourceType, false) ?: emptyList()
+    val file = element.containingFile as? PrismaFile ?: return null
+    val datasourceTypes = file.metadata.datasourceTypes
+    val params = declaration?.getAvailableParams(datasourceTypes, false) ?: emptyList()
     val definition = declaration?.signature ?: buildDefinitionFromSchema(schemaElement, params)
 
     return buildString {

@@ -7,7 +7,7 @@ import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
-import org.intellij.prisma.lang.psi.resolveDatasourceType
+import org.intellij.prisma.lang.psi.resolveDatasourceTypes
 import org.intellij.prisma.lang.types.PrismaBigIntType
 import org.intellij.prisma.lang.types.PrismaDateTimeType
 import org.intellij.prisma.lang.types.PrismaIntType
@@ -109,7 +109,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
       documentation =
         "Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence."
       pattern = PrismaPsiPatterns.withFieldType { type, element ->
-        type is PrismaIntType && element.resolveDatasourceType() != PrismaDatasourceType.COCKROACHDB ||
+        type is PrismaIntType && element.resolveDatasourceTypes().singleOrNull() != PrismaDatasourceType.COCKROACHDB ||
         type is PrismaBigIntType
       }
     }

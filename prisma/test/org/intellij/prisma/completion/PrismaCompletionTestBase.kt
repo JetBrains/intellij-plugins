@@ -18,8 +18,9 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
     source: String,
     expected: String,
     selected: String,
+    additionalFile: String? = null,
   ): Array<LookupElement> {
-    return completeAndGetLookupElements(source, expected, selected)
+    return completeAndGetLookupElements(source, expected, selected, additionalFile)
   }
 
   protected fun getLookupElements(source: String): Array<LookupElement> {
@@ -30,9 +31,13 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
     source: String,
     expected: String,
     selected: String? = null,
+    additionalFile: String? = null,
   ): Array<LookupElement> {
     return noAutoComplete {
       myFixture.configureByText(PrismaFileType, source)
+      if (!additionalFile.isNullOrEmpty()) {
+        myFixture.addFileToProject("additionalSchema.prisma", additionalFile)
+      }
       val lookupElements = myFixture.completeBasic()
       TestCase.assertNotNull(lookupElements)
       if (selected != null) {

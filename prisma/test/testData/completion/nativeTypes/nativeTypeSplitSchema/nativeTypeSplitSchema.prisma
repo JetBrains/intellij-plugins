@@ -1,0 +1,3 @@
+model M {
+  id String @pg.<caret>
+}

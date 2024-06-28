@@ -11,6 +11,7 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import com.intellij.util.asSafely
 import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
 import org.intellij.prisma.ide.schema.types.PrismaNativeType
@@ -24,11 +25,11 @@ object PrismaNativeTypeProvider : PrismaCompletionProvider() {
     psiElement(PrismaPathExpression::class.java)
       .withParent(PrismaFieldAttribute::class.java)
       .with("withQualifier") { el ->
-        val datasourceName = (el.containingFile as? PrismaFile)?.datasourceName
+        val file = el.containingFile as? PrismaFile ?: return@with false
         val qualifier = el.qualifier
 
-        if (qualifier != null && datasourceName != null) {
-          qualifier.textMatches(datasourceName)
+        if (qualifier != null) {
+          qualifier.text in file.metadata.datasources
         }
         else {
           false
@@ -37,10 +38,12 @@ object PrismaNativeTypeProvider : PrismaCompletionProvider() {
   )
 
   override fun addCompletions(
-    parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet
+    parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet,
   ) {
     val file = parameters.originalFile as? PrismaFile ?: return
-    val datasourceType = file.datasourceType ?: return
+    val pathExpression = parameters.position.parent.asSafely<PrismaPathExpression>() ?: return
+    val datasourceName = pathExpression.qualifier?.text ?: return
+    val datasourceType = file.metadata.datasources[datasourceName]?.type ?: return
     val constructors = PrismaNativeType.findConstructorsByType(datasourceType)
     val fieldType = parameters.position.parentOfType<PrismaFieldDeclaration>()?.type?.unwrapType() ?: return
 
