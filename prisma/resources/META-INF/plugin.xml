@@ -67,7 +67,6 @@
                         implementationClass="org.intellij.prisma.ide.formatter.PrismaFormattingModelBuilder"/>
         <postFormatProcessor
                 implementation="org.intellij.prisma.ide.formatter.PrismaTrailingSpacesFormatProcessor"/>
-        <formattingService implementation="org.intellij.prisma.ide.formatter.PrismaFormattingService"/>
         <formatOnSaveOptions.defaultsProvider implementation="org.intellij.prisma.ide.formatter.PrismaFormatOnSaveDefaultsProvider"/>
 
         <!-- Documentation -->
