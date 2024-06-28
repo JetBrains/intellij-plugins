@@ -154,11 +154,14 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
   }
 
   public void testStringLiteral() {
-    doTest("check_string_literal",  new HCLLiteralValidnessInspection());
+    doTest("check_string_literal", new HCLLiteralValidnessInspection());
   }
 
   public void testUnknownResource() {
-    doTest("unknown_resource",  new TfUnknownResourceInspection());
+    doTest("unknown_resource", new TfUnknownResourceInspection());
   }
 
+  public void testUnusedVariableAndLocals() {
+    doTest("unused_vars_and_locals", new TfUnusedVariablesAndLocalsInspection());
+  }
 }

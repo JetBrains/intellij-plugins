@@ -21,12 +21,12 @@ import com.intellij.psi.search.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
+import com.intellij.util.indexing.IndexableFilesIndex
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
-import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import com.intellij.util.indexing.IndexableFilesIndex
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -197,15 +197,18 @@ class Module private constructor(val item: PsiFileSystemItem) {
     }
   }
 
-
-  private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
+  fun getTerraformModuleScope(): GlobalSearchScope {
     val searchScope = calculateModuleAwareSearchScope(item) ?: GlobalSearchScope.projectScope(item.project)
 
-    val terraformScope = PsiSearchScopeUtil.restrictScopeToFileLanguage(
+    return PsiSearchScopeUtil.restrictScopeToFileLanguage(
       item.project,
       searchScope,
       LanguageMatcher.matchWithDialects(HCLLanguage)
     ) as GlobalSearchScope
+  }
+
+  private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
+    val terraformScope = getTerraformModuleScope()
 
     return withGuaranteedProgressIndicator {
       if (!PsiSearchHelper.getInstance(item.project).processAllFilesWithWord("variable", terraformScope, processor, true))

@@ -1,0 +1,66 @@
+<html>
+<body>
+<p>Reports unused variables and locals in terraform module.</p>
+<p>Example of a problem:</p>
+
+<pre><code>
+variable "used_variable" {
+  description = "This variable is used in resource configuration"
+  type        = string
+  default     = "ami-01456a894f71116f2"
+}
+
+locals {
+  instance_name = "used-instance"
+}
+
+resource "aws_instance" "example1" {
+  ami           = var.used_variable
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = local.instance_name
+  }
+}
+
+variable "unused_variable1" {
+  description = "This variable is not used anywhere in the configuration"
+  type        = string
+  default     = "default_value1"
+}
+
+locals {
+  unused_local1 = "This is an unused local value"
+}
+</code></pre>
+
+<p>
+  In this example, the `unused_variable1` and `unused_local1` are declared in the file, but they are not used anywhere.
+</p>
+
+<p>Example of correction:</p>
+<pre><code>
+variable "used_variable" {
+  description = "This variable is used in resource configuration"
+  type        = string
+  default     = "ami-01456a894f71116f2"
+}
+
+locals {
+  instance_name = "used-instance"
+}
+
+resource "aws_instance" "example1" {
+  ami           = var.used_variable
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = local.instance_name
+  }
+}
+
+locals {
+}
+</code></pre>
+</body>
+</html>
