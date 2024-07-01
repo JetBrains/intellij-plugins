@@ -9,28 +9,23 @@ import org.angular2.Angular2TsConfigFile
 
 class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent", true) {
 
-  // TODO WEB-67260 - fix issues with Person being replaced with record type
-  fun _testSingleElementMultiLineFromCaret() {
+  fun testSingleElementMultiLineFromCaret() {
     doMultiFileTest()
   }
 
-  // TODO WEB-67260 - problem with type evaled to any
-  fun _testSingleElementSingleLine() {
+  fun testSingleElementSingleLine() {
     doMultiFileTest()
   }
 
-  // TODO WEB-67260 - error
-  fun _testMultiElement() {
+  fun testMultiElement() {
     doMultiFileTest()
   }
 
-  // TODO WEB-67260 - problem with type evaled to any
-  fun _testNoElement() {
+  fun testNoElement() {
     doMultiFileTest()
   }
 
-  // TODO WEB-67260 - problem with type evaled to any
-  fun _testNameClashes() {
+  fun testNameClashes() {
     doMultiFileTest()
   }
 

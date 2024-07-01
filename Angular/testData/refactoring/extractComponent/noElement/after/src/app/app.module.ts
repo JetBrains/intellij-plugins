@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { ListItemComponent } from './list-item.component';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -10,7 +11,8 @@ import { FormsModule } from '@angular/forms';
     ListItemComponent,
   ],
     imports: [
-        FormsModule
+        FormsModule,
+        CommonModule,
     ],
   providers: [],
   bootstrap: [AppComponent]
