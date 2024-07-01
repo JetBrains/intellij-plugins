@@ -15,6 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.asSafely
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider.Companion.`$EVENT`
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.Angular2Bundle
@@ -235,7 +236,8 @@ class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private
       fun processElementJSType(element: PsiElement?): JSType {
         val jsType = JSResolveUtil.getElementJSType(element, true)
 
-        val source = jsType?.sourceElement
+        val source = element.asSafely<JSReferenceExpression>()?.resolve()
+                     ?: jsType?.sourceElement
         if (source != null) {
           infos.add(ES6ReferenceExpressionsInfo.getInfo(source))
         }
