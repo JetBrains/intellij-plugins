@@ -4,6 +4,7 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
@@ -181,19 +182,19 @@ internal object TfModelHelper {
 
   private fun getProviderProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val providerType = if (type != null) TypeModelProvider.getModel(block).getProviderType(type, block) else null
+    val providerType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getProviderType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractProvider, providerType)
   }
 
   private fun getProvisionerProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val provisionerType = if (type != null) TypeModelProvider.getModel(block).getProvisionerType(type) else null
+    val provisionerType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getProvisionerType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractResourceProvisioner, provisionerType)
   }
 
   private fun getBackendProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val backendType = if (type != null) TypeModelProvider.getModel(block).getBackendType(type) else null
+    val backendType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getBackendType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractBackend, backendType)
   }
 
@@ -223,14 +224,28 @@ internal object TfModelHelper {
 
   fun getResourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val resourceType = if (type != null) TypeModelProvider.getModel(block).getResourceType(type, block) else null
+    val resourceType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getResourceType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractResource, resourceType)
   }
 
   private fun getDataSourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val dataSourceType = if (type != null) TypeModelProvider.getModel(block).getDataSourceType(type, block) else null
+    val dataSourceType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getDataSourceType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractDataSource, dataSourceType)
+  }
+
+  @RequiresReadLock
+  fun getTypesForBlock(block: HCLBlock): List<BlockType> {
+    val model = TypeModelProvider.getModel(block)
+    val typeString = block.getNameElementUnquoted(0) ?: return emptyList()
+    val identifier = block.getNameElementUnquoted(1) ?: return emptyList()
+    val types = when (typeString) {
+      HCL_RESOURCE_IDENTIFIER -> model.allResources().filter { it.type == identifier }
+      HCL_DATASOURCE_IDENTIFIER -> model.allDatasources().filter { it.type == identifier }
+      HCL_PROVIDER_IDENTIFIER -> model.allProviders().filter { it.type == identifier }
+      else -> emptyList()
+    }
+    return types
   }
 
   private fun getModuleProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {

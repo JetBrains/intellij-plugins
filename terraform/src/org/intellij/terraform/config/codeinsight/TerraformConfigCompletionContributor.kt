@@ -278,19 +278,19 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       return when (type) {
         HCL_RESOURCE_IDENTIFIER -> {
           typeModel.allResources().toPlow()
-            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsKey(it.provider.type) }
+            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
             .map { buildResourceOrDataLookupElement(it, position) }
             .processWith(consumer)
         }
         HCL_DATASOURCE_IDENTIFIER -> {
           typeModel.allDatasources().toPlow()
-            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsKey(it.provider.type)}
+            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
             .map { buildResourceOrDataLookupElement(it, position) }
             .processWith(consumer)
         }
         HCL_PROVIDER_IDENTIFIER -> {
           typeModel.allProviders().toPlow()
-            .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsKey(it.type)}
+            .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName)}
             .map { buildProviderLookupElement(it, position) }
             .processWith(consumer)
         }

@@ -4,6 +4,7 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.BasicInsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
@@ -37,11 +38,13 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
     if (parent is HCLProperty) {
       return
     }
+    val insertHandlerService = project.service<InsertHandlerService>()
+
     var offset: Int? = null
     val current: Int
     val expected = type.args
     var addBraces = false
-    if (parent is HCLBlock && InsertHandlersUtil.isNextNameOnTheSameLine(element, context.document)) {
+    if (parent is HCLBlock && insertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
       // Count existing arguments and add missing
       val elements = parent.nameElements
       current = elements.size - 1
@@ -58,19 +61,19 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
 
     if (current < expected) {
       offset = editor.caretModel.offset + 2
-      InsertHandlersUtil.addArguments(expected - current, editor)
-      InsertHandlersUtil.scheduleBasicCompletion(context)
+      insertHandlerService.addArguments(expected - current, editor)
+      insertHandlerService.scheduleBasicCompletion(context)
     }
     if (addBraces) {
-      InsertHandlersUtil.addBraces(editor)
+      insertHandlerService.addBraces(editor)
     }
 
-    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
     if (offset != null) {
       editor.caretModel.moveToOffset(offset)
     }
     if (type.properties.isNotEmpty()) {
-      InsertHandlersUtil.addHCLBlockRequiredProperties(file, editor, project)
+      insertHandlerService.addHCLBlockRequiredPropertiesAsync(file, editor, project)
     }
+    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
   }
 }
