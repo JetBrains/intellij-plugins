@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -252,7 +251,7 @@ class TypeModel(
     @JvmStatic
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val fileTypeManager = FileTypeManager.getInstance()
-      val providerNamesService = ApplicationManager.getApplication().getService(LocalProviderNamesService::class.java)
+      val providerNamesService = LocalProviderNamesService.getInstance()
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
         ?.filter { file -> fileTypeManager.isFileOfType(file.virtualFile, TerraformFileType) }
         ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
