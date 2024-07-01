@@ -1,29 +1,19 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.util.ThrowableComputable
-import com.intellij.openapi.util.io.DataInputOutputUtilRt
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.util.childrenOfType
-import com.intellij.util.ThrowableConsumer
-import com.intellij.util.gist.GistManager
-import com.intellij.util.io.DataExternalizer
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersData
-import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersSource
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLProperty
-import java.io.DataInput
-import java.io.DataOutput
-import java.io.IOException
 
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
@@ -262,31 +252,11 @@ class TypeModel(
     @JvmStatic
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val fileTypeManager = FileTypeManager.getInstance()
+      val providerNamesService = ApplicationManager.getApplication().getService(LocalProviderNamesService::class.java)
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
         ?.filter { file -> fileTypeManager.isFileOfType(file.virtualFile, TerraformFileType) }
-        ?.map { providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
+        ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
       return gists.flatMap { it.entries }.associate { it.key to it.value }
-    }
-
-    private val providersNamesGist by lazy {
-      GistManager.getInstance().newPsiFileGist<Map<String, String>>("TF_PROVIDER_LIST", 1, object : DataExternalizer<Map<String, String>> {
-        override fun save(out: DataOutput, value: Map<String, String>) {
-          DataInputOutputUtilRt.writeMap(out, value,
-                                         ThrowableConsumer { out.writeUTF(it) },
-                                         ThrowableConsumer { out.writeUTF(it) })
-        }
-
-        override fun read(input: DataInput): Map<String, String> {
-          return DataInputOutputUtilRt.readMap(input,
-                                               ThrowableComputable<String, IOException> { input.readUTF() },
-                                               ThrowableComputable<String, IOException> { input.readUTF() })
-        }
-      }) { psiFile ->
-        val localNames = mutableMapOf<String, String>()
-        val terraformRootBlock = getTerraformBlock(psiFile)
-        terraformRootBlock?.accept(RequiredProvidersVisitor(localNames))
-        localNames
-      }
     }
 
     fun getContainingDir(psiElement: PsiElement?): PsiDirectory? {
@@ -404,16 +374,4 @@ fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {
     throw IllegalStateException("Grouping clash on keys: $broken")
   }
   return this.associateBy { it.name }
-}
-
-private class RequiredProvidersVisitor(private val localNames: MutableMap<String, String>) : PsiRecursiveElementVisitor() {
-  override fun visitElement(element: PsiElement) {
-    if (RequiredProvidersData.accepts(element)) {
-      element as HCLProperty
-      val localName = element.name
-      val source = element.value?.children?.filter { RequiredProvidersSource.accepts(it) }?.firstOrNull() as? HCLProperty
-      source?.value?.name?.let { localNames.put(localName, it) }
-    }
-    element.acceptChildren(this)
-  }
 }
