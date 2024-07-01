@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.DataInputOutputUtilRt
@@ -19,6 +20,11 @@ import java.io.IOException
 
 @Service
 internal class LocalProviderNamesService {
+
+  companion object {
+    @JvmStatic
+    fun getInstance(): LocalProviderNamesService = ApplicationManager.getApplication().getService(LocalProviderNamesService::class.java)
+  }
 
   val providersNamesGist =
     GistManager.getInstance().newPsiFileGist<Map<String, String>>("TF_PROVIDER_LIST", 1, object : DataExternalizer<Map<String, String>> {
