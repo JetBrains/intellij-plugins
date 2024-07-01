@@ -4,6 +4,7 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.BasicInsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
@@ -46,7 +47,8 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     var offset: Int? = null
     val already: Int
     val expected = type.args
-    if (parent is HCLBlock && InsertHandlersUtil.isNextNameOnTheSameLine(element, context.document)) {
+    val insertHandlerService = project.service<InsertHandlerService>()
+    if (parent is HCLBlock && insertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
       // Count existing arguments and add missing
       val elements = parent.nameElements
       already = elements.size - 1
@@ -59,7 +61,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
         val next = elements[i + 1]
         if (next.textContains('"') && next.textLength < 3) {
           editor.caretModel.moveToOffset(next.textRange.endOffset - 1)
-          InsertHandlersUtil.scheduleBasicCompletion(context)
+          insertHandlerService.scheduleBasicCompletion(context)
         }
       }
     } else {
@@ -68,23 +70,23 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
 
     if (already < expected) {
       offset = editor.caretModel.offset + 2
-      InsertHandlersUtil.addArguments(expected - already, editor)
+      insertHandlerService.addArguments(expected - already, editor)
       if (expected - already != 1) { // Do not invoke completion for last name
-        InsertHandlersUtil.scheduleBasicCompletion(context)
+        insertHandlerService.scheduleBasicCompletion(context)
       }
     }
 
     val provider = getProviderForBlockType(type)
     if (provider != null && !TypeModel.collectProviderLocalNames(file).containsKey(provider.type)) {
-      InsertHandlersUtil.addRequiredProvidersBlock(provider, file)
+      insertHandlerService.addRequiredProvidersBlock(provider, file)
     }
 
-    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
     if (offset != null) {
       editor.caretModel.moveToOffset(offset)
     }
     if (type.properties.isNotEmpty()) {
-      InsertHandlersUtil.addHCLBlockRequiredProperties(file, editor, project)
+      insertHandlerService.addHCLBlockRequiredPropertiesAsync(file, editor, project)
     }
+    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
   }
 }

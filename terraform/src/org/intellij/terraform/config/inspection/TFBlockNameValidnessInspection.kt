@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CodeCompletionHandlerBase
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInspection.*
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -14,7 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThrowableRunnable
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.InsertHandlersUtil
+import org.intellij.terraform.config.codeinsight.InsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.refactoring.TerraformElementRenameValidator
@@ -95,9 +96,10 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
       if (required <= 0) return
 
       WriteAction.run(ThrowableRunnable {
+        val insertHandlerService = project.service<InsertHandlerService>()
         val offset = nameElements.last().let { it.textOffset + it.textLength }
         editor.caretModel.moveToOffset(offset)
-        InsertHandlersUtil.addArguments(required, editor)
+        insertHandlerService.addArguments(required, editor)
         editor.caretModel.moveToOffset(offset + required * 3 - 1)
       })
       CodeCompletionHandlerBase.createHandler(CompletionType.BASIC).invokeCompletion(project, editor)

@@ -12,7 +12,13 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersData
+import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersSource
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLProperty
+import java.io.DataInput
+import java.io.DataOutput
+import java.io.IOException
 
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
@@ -263,6 +269,7 @@ class TypeModel(
       return if (containingDir.isDirectory) containingDir else null
     }
 
+    @RequiresReadLock
     fun getTerraformBlock(psiFile: PsiFile?): HCLBlock? {
       val terraformRootBlock = psiFile?.childrenOfType<HCLBlock>()?.firstOrNull { TerraformPatterns.TerraformRootBlock.accepts(it) }
       return terraformRootBlock

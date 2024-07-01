@@ -6,15 +6,28 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.readAndWriteAction
+import com.intellij.openapi.command.writeCommandAction
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.concurrency.annotations.RequiresWriteLock
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.inspection.AddResourcePropertiesFix
@@ -23,6 +36,7 @@ import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersBlock
 import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -30,7 +44,9 @@ import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 
-object InsertHandlersUtil {
+@Service(Service.Level.PROJECT)
+class InsertHandlerService(val project: Project, val coroutineScope: CoroutineScope) {
+
   internal fun isNextNameOnTheSameLine(element: PsiElement, document: Document): Boolean {
     val right: PsiElement?
     if (element is HCLIdentifier || element is HCLStringLiteral) {
@@ -47,35 +63,39 @@ object InsertHandlersUtil {
 
   internal fun scheduleBasicCompletion(context: InsertionContext) {
     context.laterRunnable = Runnable {
-      CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(context.project, context.editor)
+      CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(project, context.editor)
     }
   }
 
-  internal fun addHCLBlockRequiredProperties(file: PsiFile, editor: Editor, project: Project) {
-    val block = PsiTreeUtil.getParentOfType(file.findElementAt(editor.caretModel.offset), HCLBlock::class.java)
-    if (block != null) {
-      addHCLBlockRequiredProperties(file, project, block)
+  internal fun addHCLBlockRequiredPropertiesAsync(file: PsiFile, editor: Editor, project: Project): Deferred<Unit?> {
+    return coroutineScope.async(Dispatchers.Default) {
+      readAction {
+        PsiTreeUtil.getParentOfType<HCLBlock>(file.findElementAt(editor.caretModel.offset), HCLBlock::class.java)?.createSmartPointer()
+      }?.let { addHCLBlockRequiredProperties(file, project, it) }
+      PsiDocumentManager.getInstance(project).commitDocument(editor.document)
     }
   }
 
-  fun addHCLBlockRequiredProperties(file: PsiFile, project: Project, block: HCLBlock) {
+  private suspend fun addHCLBlockRequiredProperties(file: PsiFile, project: Project, pointer: SmartPsiElementPointer<HCLBlock>) {
     val inspection = HCLBlockMissingPropertyInspection()
-    var changed: Boolean
+    var hasChanges: Boolean = false
     do {
-      changed = false
       val holder = ProblemsHolder(InspectionManager.getInstance(project), file, true)
-      val visitor = inspection.createVisitor(holder, true)
-      if (visitor is HCLElementVisitor) {
-        visitor.visitBlock(block)
-      }
-      for (result in holder.results) {
-        val fixes = result.fixes
-        if (!fixes.isNullOrEmpty()) {
-          changed = true
-          fixes.filterIsInstance<AddResourcePropertiesFix>().forEach { it.applyFix(project, result) }
+      val visitor = inspection.createVisitor(holder, true) as HCLElementVisitor
+      readAndWriteAction {
+        pointer.element?.let { visitor.visitBlock(it) }
+        val fixPairs = holder.results.flatMap { inspectionResult ->
+          inspectionResult.fixes?.filterIsInstance<AddResourcePropertiesFix>()?.map { fix -> inspectionResult to fix } ?: emptyList()
+        }
+        hasChanges = fixPairs.isNotEmpty()
+        writeCommandAction(project, HCLBundle.message("terraform.add.required.properties.command.name")) {
+          fixPairs.forEach {
+            it.second.applyFix(project, it.first)
+          }
         }
       }
-    } while (changed)
+    }
+    while (hasChanges)
   }
 
   internal fun addArguments(count: Int, editor: Editor) {
@@ -87,8 +107,8 @@ object InsertHandlersUtil {
     editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
   }
 
+  @RequiresWriteLock
   internal fun addRequiredProvidersBlock(provider: ProviderType, file: PsiFile) {
-    val project = file.project
     val elementGenerator = TerraformElementGenerator(project)
     val terraformBlock = (TypeModel.getTerraformBlock(file)
                           ?: file.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_IDENTIFIER), file.firstChild)) as HCLBlock
