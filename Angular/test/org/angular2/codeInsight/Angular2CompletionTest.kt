@@ -9,8 +9,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angular2.Angular2TsConfigFile
 
-// TODO WEB-67260 - Enable test with tsc; disabled to avoid timeouts on the job
-class Angular2CompletionTest : Angular2TestCase("completion", false) {
+class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   override fun setUp() {
     super.setUp()
@@ -18,8 +17,7 @@ class Angular2CompletionTest : Angular2TestCase("completion", false) {
     this.enableIdempotenceChecksOnEveryCache()
   }
 
-  // TODO WEB-67260 - fix issue later
-  fun _testExportAs() =
+  fun testExportAs() =
     doLookupTest(checkDocumentation = true)
 
   fun testRecursiveHostDirective() =
@@ -63,8 +61,7 @@ class Angular2CompletionTest : Angular2TestCase("completion", false) {
       it.priority >= 100
     }
 
-  // TODO WEB-67260 - fix issue later
-  fun _testDirectiveOutputMapping() =
+  fun testDirectiveOutputMapping() =
     doLookupTest(ANGULAR_CORE_13_3_5)
 
   fun testSignal() =
@@ -88,10 +85,12 @@ class Angular2CompletionTest : Angular2TestCase("completion", false) {
   fun testTemplatesCompletion() =
     doLookupTest(Angular2TestModule.ANGULAR_COMMON_4_0_0, extension = "html")
 
-  fun testTemplatesCompletion16() =
+  // TODO WEB-67260 - fix issue later
+  fun _testTemplatesCompletion16() =
     doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html")
 
-  fun testTemplatesCompletion16Strict() =
+  // TODO WEB-67260 - fix issue later
+  fun _testTemplatesCompletion16Strict() =
     doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html", configurators = listOf(Angular2TsConfigFile()))
 
   fun testPrimaryBlocks() =
@@ -200,7 +199,8 @@ class Angular2CompletionTest : Angular2TestCase("completion", false) {
   fun testDeferBlockOnViewport() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
-  fun testKeyofAttribute() =
+  // TODO WEB-67260 - fix issue later
+  fun _testKeyofAttribute() =
     doLookupTest()
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")

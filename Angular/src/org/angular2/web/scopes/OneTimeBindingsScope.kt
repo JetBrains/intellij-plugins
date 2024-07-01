@@ -5,6 +5,7 @@ import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -40,6 +41,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Supplier
 
 internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
@@ -103,8 +105,10 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         CachedValueProvider.Result.create(ConcurrentHashMap<WebSymbol, Boolean>(),
                                           PsiModificationTracker.MODIFICATION_COUNT)
       }.getOrPut(property) {
-        expandStringLiteralTypes(type).isDirectlyAssignableType(
-          STRING_TYPE, JSTypeComparingContextService.createProcessingContextWithCache(source))
+        JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(source, Supplier {
+          expandStringLiteralTypes(type).isDirectlyAssignableType(
+            STRING_TYPE, JSTypeComparingContextService.createProcessingContextWithCache(source))
+        })
       }
     }
 
