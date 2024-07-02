@@ -1,5 +1,5 @@
 import type * as ts from "tsc-ide-plugin/tsserverlibrary.shim"
-import {CodeMapping} from "@volar/language-core"
+import {Angular2TcbMappingInfo} from "./mappings"
 
 declare module "tsc-ide-plugin/tsserverlibrary.shim" {
 
@@ -9,7 +9,7 @@ declare module "tsc-ide-plugin/tsserverlibrary.shim" {
       fileName: string,
       transpiledCode: string | undefined,
       sourceCodeLength: { [key: string]: string },
-      mappings: ({source: string} & CodeMapping)[]
+      mappings: Angular2TcbMappingInfo[]
     ): void
   }
 }

@@ -11,7 +11,7 @@ class Angular2TranspiledTemplateRequestArgs private constructor(
   file: VirtualFile,
   @JvmField val transpiledContent: String?,
   @JvmField val sourceCode: Map<String, String>,
-  @JvmField val mappings: List<CodeMapping>,
+  @JvmField val mappings: List<Angular2TcbMappingInfo>,
 ) : TypeScriptFileObject() {
 
   init {
@@ -23,52 +23,47 @@ class Angular2TranspiledTemplateRequestArgs private constructor(
       file: VirtualFile,
       transpiledContent: String,
       sourceCode: Map<String, String>,
-      mappings: List<CodeMapping>,
+      mappings: List<Angular2TcbMappingInfo>,
     ): Angular2TranspiledTemplateRequestArgs {
       return Angular2TranspiledTemplateRequestArgs(file, transpiledContent, sourceCode, mappings)
     }
   }
 }
 
-class CodeMapping(
-  @JvmField val source: String, /* source file name */
+class Angular2TcbMappingInfo(
+  @JvmField val fileName: String, /* source file name */
   @JvmField val sourceOffsets: List<Int>,
+  @JvmField val sourceLengths: List<Int>,
   @JvmField val generatedOffsets: List<Int>,
-  @JvmField val lengths: List<Int>,
   @JvmField val generatedLengths: List<Int>,
+  @JvmField val diagnosticsOffsets: List<Int>,
+  @JvmField val diagnosticsLengths: List<Int>,
+  @JvmField val types: List<Int>,
 )
 
 internal fun TranspiledComponentFile.toAngular2TranspiledTemplateRequestArgs(virtualFile: VirtualFile): Angular2TranspiledTemplateRequestArgs =
   Angular2TranspiledTemplateRequestArgs.build(
     virtualFile,
     this.generatedCode,
-    this.mappings.associate {
+    this.fileMappings.associate {
       Pair(it.fileName, it.sourceFile.text)
     },
-    this.mappings.map {
+    this.fileMappings.map {
       it.toCodeMapping()
     }
   )
 
-private fun Angular2TranspiledComponentFileBuilder.FileMappings.toCodeMapping(): CodeMapping {
-  val fileName = fileName
-  val mappings = sourceMappings
-  val prevMappingStart = -1
-  val prevMappingLength = 0
-  mappings.forEach {
-    if (
-      it.sourceOffset == prevMappingStart
-      && it.sourceLength != prevMappingLength
-    ) {
-      throw IllegalStateException("Overlapping source mappings in $fileName: ($prevMappingStart:$prevMappingLength) and (${it.sourceOffset}:${it.sourceLength})")
-    }
-  }
-  return CodeMapping(
-    source = fileName,
+private fun Angular2TranspiledComponentFileBuilder.FileMappings.toCodeMapping(): Angular2TcbMappingInfo {
+  val mappings = sourceMappings.filter { !it.ignored }
+  return Angular2TcbMappingInfo(
+    fileName = fileName,
     sourceOffsets = mappings.map { it.sourceOffset },
+    sourceLengths = mappings.map { it.sourceLength },
     generatedOffsets = mappings.map { it.generatedOffset },
-    lengths = mappings.map { it.sourceLength },
-    generatedLengths = mappings.map { it.generatedLength }
+    generatedLengths = mappings.map { it.generatedLength },
+    diagnosticsOffsets = mappings.map { it.diagnosticsOffset ?: -1 },
+    diagnosticsLengths = mappings.map { it.diagnosticsLength ?: -1 },
+    types = mappings.map { if (it.types) 1 else 0 }
   )
 }
 

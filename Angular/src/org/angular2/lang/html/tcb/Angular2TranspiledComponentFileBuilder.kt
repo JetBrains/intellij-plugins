@@ -112,12 +112,15 @@ object Angular2TranspiledComponentFileBuilder {
     inlineTemplateRanges.sortBy { it.startOffset }
     var lastRangeEnd = 0
     for (inlineTemplateRange in inlineTemplateRanges + TextRange(componentFileText.length, componentFileText.length)) {
+      val sourceLength = inlineTemplateRange.startOffset - lastRangeEnd
       componentFileMappings.add(SourceMappingData(
         lastRangeEnd,
-        inlineTemplateRange.startOffset - lastRangeEnd,
+        sourceLength,
         lastRangeEnd,
-        inlineTemplateRange.startOffset - lastRangeEnd,
-        false
+        sourceLength,
+        diagnosticsOffset = lastRangeEnd,
+        diagnosticsLength = sourceLength,
+        types = true,
       ))
       lastRangeEnd = inlineTemplateRange.endOffset
     }
@@ -134,7 +137,7 @@ object Angular2TranspiledComponentFileBuilder {
 
   data class TranspiledComponentFile(
     val generatedCode: String,
-    val mappings: List<FileMappings>,
+    val fileMappings: List<FileMappings>,
   )
 
   class FileMappings(

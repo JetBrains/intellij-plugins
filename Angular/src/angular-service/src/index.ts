@@ -2,14 +2,12 @@
 
 import type * as ts from "./tsserverlibrary.shim";
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
-import {CodeMapping, Language, LanguagePlugin} from "@volar/language-core"
+import {Language, LanguagePlugin} from "@volar/language-core"
 import {AngularVirtualCode} from "./code"
-import {
-  decorateIdeLanguageServiceExtensions,
-  decorateNgLanguageServiceExtensions,
-} from "./decorateLanguageService"
+import {decorateIdeLanguageServiceExtensions, decorateNgLanguageServiceExtensions,} from "./decorateLanguageService"
 import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/types"
 import {AngularSourceMap} from "./ngSourceMap"
+import {Angular2TcbMappingInfo} from "./mappings"
 
 function loadLanguagePlugins(ts: typeof import('typescript'),
                              info: ts.server.PluginCreateInfo): {
@@ -92,7 +90,7 @@ type TranspiledTemplateArguments = {
   file: string;
   transpiledContent: string;
   sourceCode: { [key: string]: string }
-  mappings: ({ source: string } & CodeMapping)[];
+  mappings: Angular2TcbMappingInfo[];
 }
 
 const ngTranspiledTemplateHandler = (ts: typeof import('typescript'),

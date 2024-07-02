@@ -66,7 +66,7 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
 
   private class TranspiledComponentInfo(contents: TranspiledComponentFile) {
     val contentsHash: Long = StringHash.calc(contents.generatedCode)
-    val timestamps: Map<String, Long> = contents.mappings.associateBy({ it.fileName }, { it.sourceFile.modificationStamp })
+    val timestamps: Map<String, Long> = contents.fileMappings.associateBy({ it.fileName }, { it.sourceFile.modificationStamp })
 
     override fun equals(other: Any?): Boolean {
       return other === this || other is TranspiledComponentInfo
