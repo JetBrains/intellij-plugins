@@ -19,7 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
-import org.intellij.terraform.runtime.TerraformProjectSettings;
+import org.intellij.terraform.runtime.TerraformPathDetector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +47,7 @@ public final class TFExecutor {
 
   private TFExecutor(@NotNull Project project) {
     myProject = project;
-    myExePath = TerraformProjectSettings.Companion.getInstance(myProject).getActualTerraformPath();
+    myExePath = TerraformPathDetector.Companion.getInstance(myProject).getActualTerraformPath();
   }
 
   public static @NotNull TFExecutor in(@NotNull Project project) {

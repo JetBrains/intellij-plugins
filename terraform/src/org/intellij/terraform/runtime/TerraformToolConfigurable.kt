@@ -18,6 +18,7 @@ import kotlinx.coroutines.ensureActive
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.getBinaryName
 import org.intellij.terraform.install.installTerraform
 import java.io.File
 import kotlin.coroutines.coroutineContext
@@ -31,15 +32,26 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   private val configuration = TerraformProjectSettings.getInstance(project)
 
   private val testTerraformButton = TerraformTestButtonComponent(
-    "terraform",
-    {
-      resultHandler -> installTerraform(project, resultHandler, EmptyProgressIndicator())
-    },
-    {
-      val versionLine = getVersionOfTerraform(project).lineSequence().firstOrNull()?.trim()
-      versionLine?.split(" ")?.getOrNull(1) ?: HCLBundle.message("terraform.executor.unrecognized.version")
+    HCLBundle.message("terraform.testButton.text"),
+    { resultHandler ->
+      installTerraform(project, resultHandler, EmptyProgressIndicator())
     }
-  )
+  ) {
+    if (TerraformPathDetector.getInstance(project).detectedPath == null && TerraformPathDetector.getInstance(project).detect()) {
+      executorPathField.component.emptyText.text = TerraformPathDetector.getInstance(project).detectedPath ?: getBinaryName()
+      updateTestButton()
+    }
+    val versionLine = getVersionOfTerraform(project).lineSequence().firstOrNull()?.trim()
+    versionLine?.split(" ")?.getOrNull(1) ?: HCLBundle.message("terraform.executor.unrecognized.version")
+  }
+
+  private fun updateTestButton() {
+    testTerraformButton.text =
+      if (configuration.terraformPath.isEmpty() && TerraformPathDetector.getInstance(project).detectedPath == null)
+        HCLBundle.message("terraform.detectAndTestButton.text")
+      else
+        HCLBundle.message("terraform.testButton.text")
+  }
 
   private lateinit var executorPathField: Cell<TextFieldWithBrowseButton>
 
@@ -67,7 +79,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
 
   override fun createPanel(): DialogPanel {
     val fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false)
-
+    updateTestButton()
     return panel {
       row(HCLBundle.message("terraform.settings.executable.path.label")) {
         executorPathField = textFieldWithBrowseButton(
@@ -77,9 +89,10 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
             return@textFieldWithBrowseButton chosenFile.path
           }
         ).bindText(configuration::terraformPath).applyToComponent {
-          emptyText.text = TerraformProjectSettings.getDefaultTerraformPath()
+          emptyText.text = TerraformPathDetector.getInstance(project).detectedPath ?: getBinaryName()
         }.onChanged {
           configuration.terraformPath = it.text
+          updateTestButton()
         }.trimmedTextValidation(
           validationErrorIf<String>(HCLBundle.message("terraform.invalid.path")) { terraformFilePath ->
             val wslDistribution = WslPath.getDistributionByWindowsUncPath(terraformFilePath)
