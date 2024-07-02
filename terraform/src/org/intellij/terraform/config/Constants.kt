@@ -23,6 +23,17 @@ object Constants {
   internal const val HCL_MOVED_BLOCK_IDENTIFIER: String = "moved"
   internal const val HCL_DYNAMIC_BLOCK_IDENTIFIER: String = "dynamic"
   internal const val HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER: String = "content"
+  internal const val HCL_CLOUD_IDENTIFIER: String = "cloud"
+  internal const val HCL_IMPORT_IDENTIFIER: String = "import"
+  internal const val HCL_ATLAS_IDENTIFIER: String = "atlas"
+  internal const val HCL_VALIDATION_IDENTIFIER: String = "validation"
+  internal const val HCL_REMOVED_BLOCK_IDENTIFIER: String = "removed"
+  internal const val HCL_CHECK_BLOCK_IDENTIFIER: String = "check"
+  internal const val HCL_ASSERT_BLOCK_IDENTIFIER: String = "assert"
+  internal const val HCL_WORKSPACES_BLOCK_IDENTIFIER: String = "workspaces"
+  internal const val HCL_PRECONDITION_BLOCK_IDENTIFIER: String = "precondition"
+  internal const val HCL_POSTCONDITION_BLOCK_IDENTIFIER: String = "postcondition"
+
 
   internal const val TERRAFORM_DOMAIN: String = "terraform.io"
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"

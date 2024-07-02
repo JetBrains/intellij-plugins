@@ -80,6 +80,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     if (provider != null && !TypeModel.collectProviderLocalNames(file).containsKey(provider.type)) {
       insertHandlerService.addRequiredProvidersBlock(provider, file)
     }
+    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
 
     if (offset != null) {
       editor.caretModel.moveToOffset(offset)
@@ -87,6 +88,5 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     if (type.properties.isNotEmpty()) {
       insertHandlerService.addHCLBlockRequiredPropertiesAsync(file, editor, project)
     }
-    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
   }
 }

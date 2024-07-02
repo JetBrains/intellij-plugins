@@ -235,7 +235,7 @@ internal object TfModelHelper {
   }
 
   @RequiresReadLock
-  fun getTypesForBlock(block: HCLBlock): List<BlockType> {
+  fun getAllTypesForBlockByIdentifier(block: HCLBlock): List<BlockType> {
     val model = TypeModelProvider.getModel(block)
     val typeString = block.getNameElementUnquoted(0) ?: return emptyList()
     val identifier = block.getNameElementUnquoted(1) ?: return emptyList()
@@ -247,6 +247,21 @@ internal object TfModelHelper {
     }
     return types
   }
+
+  @RequiresReadLock
+  fun getTypeForBlock(block: HCLBlock): BlockType? {
+    val model = TypeModelProvider.getModel(block)
+    val typeString = block.getNameElementUnquoted(0) ?: return null
+    val identifier = block.getNameElementUnquoted(1) ?: return null
+    val type = when (typeString) {
+      HCL_RESOURCE_IDENTIFIER -> model.getResourceType(identifier, block)
+      HCL_DATASOURCE_IDENTIFIER -> model.getDataSourceType(identifier, block)
+      HCL_PROVIDER_IDENTIFIER -> model.getProviderType(identifier, block)
+      else -> null
+    }
+    return type
+  }
+
 
   private fun getModuleProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val defaults = TypeModel.Module.properties
