@@ -217,6 +217,10 @@ object TerraformPatterns {
       }
     })
 
+  val LocalProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+    .withSuperParent(1, HCLObject::class.java)
+    .withSuperParent(2, LocalsRootBlock)
+
   val DescriptionProperty: PsiElementPattern.Capture<HCLProperty> = propertyWithName("description")
 
   fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
