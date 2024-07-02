@@ -44,8 +44,8 @@ internal class Angular2TranspiledTemplateInspector(
   private val generatedTextEditor = TextEditorProvider.getInstance().createEditor(project, generatedFile) as TextEditor
   private val generatedEditor = generatedTextEditor.editor as EditorEx
 
-  private val sources: List<SourceInfo> = transpiledTemplate.mappings.filter { it.sourceFile != null }.map {
-    SourceInfo(project, disposable, it.sourceFile!!, it.sourceMappings)
+  private val sources: List<SourceInfo> = transpiledTemplate.fileMappings.filter { it.sourceFile != null }.map {
+    SourceInfo(project, disposable, it.sourceFile, it.sourceMappings)
   }
 
   private val sourceEditorPositionListener = object : CaretListener {
@@ -307,7 +307,7 @@ internal class Angular2TranspiledTemplateInspector(
                                           if (isGeneratedEditor) mapping.generatedOffset + mapping.generatedLength
                                           else mapping.sourceOffset + mapping.sourceLength,
                                           HighlighterLayer.LAST,
-                                          getTextAttributes(if (isGeneratedEditor && mapping.ignoreDiagnostics)
+                                          getTextAttributes(if (isGeneratedEditor && mapping.ignored)
                                                               ignoredTextStyles
                                                             else
                                                               textStyles,

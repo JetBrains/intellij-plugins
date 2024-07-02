@@ -84,9 +84,12 @@ object Angular2TemplateTranspiler {
     val sourceLength: Int
     val generatedOffset: Int
     val generatedLength: Int
-    val ignoreDiagnostics: Boolean
+    val diagnosticsOffset: Int?
+    val diagnosticsLength: Int?
+    val types: Boolean
 
     fun offsetBy(generatedOffset: Int = 0, sourceOffset: Int = 0): SourceMapping
 
+    val ignored get() = !types && diagnosticsOffset == null
   }
 }

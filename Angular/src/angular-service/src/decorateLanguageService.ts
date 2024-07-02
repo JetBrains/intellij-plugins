@@ -7,6 +7,12 @@ import {toGeneratedRanges, toSourceRanges} from "@volar/typescript/lib/node/tran
 import {AngularVirtualCode} from "./code"
 import * as console from "node:console"
 
+declare module "@volar/language-core/lib/types" {
+  interface CodeInformation {
+    types: boolean
+  }
+}
+
 function toSourceRange(sourceScript: SourceScript<string> | undefined, language: Language<string>, serviceScript: TypeScriptServiceScript, start: number, end: number, filter: (data: CodeInformation) => boolean): [fileName: string, start: number, end: number] | undefined {
   for (const result of toSourceRanges(sourceScript, language, serviceScript, start, end, filter)) {
     return result
@@ -41,7 +47,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
         let generatedRangePosStart = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.start.line, generatedRange.start.character)
         let generatedRangePosEnd = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.end.line, generatedRange.end.character)
 
-        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, () => true);
+        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, it => it.types);
 
         if (sourceRange !== undefined) {
           return {
@@ -79,7 +85,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
         let originalRangePosStart = ts.getPositionOfLineAndCharacter(sourceFile, range.start.line, range.start.character)
         let originalRangePosEnd = ts.getPositionOfLineAndCharacter(sourceFile, range.end.line, range.end.character)
 
-        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, originalRangePosStart, originalRangePosEnd, () => true);
+        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, originalRangePosStart, originalRangePosEnd, (it) => it.types);
 
         if (generatedRange !== undefined) {
           const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange[0])

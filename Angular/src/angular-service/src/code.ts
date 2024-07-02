@@ -2,6 +2,7 @@ import {CodeMapping, VirtualCode} from "@volar/language-core"
 import * as ts from "typescript";
 import {IScriptSnapshot} from "typescript";
 import {CodegenContext} from "@volar/language-core/lib/types"
+import {Angular2TcbMappingInfo} from "./mappings"
 
 export class AngularVirtualCode implements VirtualCode {
 
@@ -22,7 +23,7 @@ export class AngularVirtualCode implements VirtualCode {
   private transpiledTemplate: {
     sourceCode: { [fileName: string]: string },
     snapshot: IScriptSnapshot
-    mappings: ({ source: string } & CodeMapping)[]
+    mappings: Angular2TcbMappingInfo[]
   } | undefined
 
   constructor(private fileName: string, private ctx: CodegenContext<string>, private useCaseSensitiveFileNames: boolean) {
@@ -36,8 +37,8 @@ export class AngularVirtualCode implements VirtualCode {
           || !sameContents(snapshot, this.transpiledTemplate.sourceCode[this.normalizeId(this.fileName)])) {
         this.transpiledTemplate = undefined
       } else if (this.transpiledTemplate.mappings.find(mapping => {
-          return !sameContents(this.ctx.getAssociatedScript(mapping.source)?.snapshot,
-                               this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.source)])
+          return !sameContents(this.ctx.getAssociatedScript(mapping.fileName)?.snapshot,
+                               this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.fileName)])
         })) {
         this.transpiledTemplate = undefined
       }
@@ -47,11 +48,11 @@ export class AngularVirtualCode implements VirtualCode {
       this.mappings = []
       this.transpiledTemplate.mappings.forEach(mappingSet => {
         let mappingsWithData: CodeMapping[]
-        if (this.normalizeId(mappingSet.source) === this.normalizeId(this.fileName)) {
+        if (this.normalizeId(mappingSet.fileName) === this.normalizeId(this.fileName)) {
           mappingsWithData = this.mappings
         }
         else {
-          const associatedScript = this.ctx.getAssociatedScript(mappingSet.source)
+          const associatedScript = this.ctx.getAssociatedScript(mappingSet.fileName)
           const scriptId = associatedScript?.id
           if (scriptId) {
             if (!this.associatedScriptMappings.has(scriptId)) {
@@ -64,21 +65,49 @@ export class AngularVirtualCode implements VirtualCode {
         }
         // Split the mapping set for Volar
         for (let i = 0 ; i < mappingSet.sourceOffsets.length; i++) {
-          const generatedLength = mappingSet.generatedLengths?.[i];
+          const isComponentFile = mappingSet.fileName === this.fileName
+
+          const sourceOffset = mappingSet.sourceOffsets[i]
+          const sourceLength = mappingSet.sourceLengths[i]
+
+          const diagnosticsOffset = mappingSet.diagnosticsOffsets[i]
+          const diagnosticsLength = mappingSet.diagnosticsLengths[i]
+
+          const generatedOffset = mappingSet.generatedOffsets[i];
+          const generatedLength = mappingSet.generatedLengths[i];
+
           mappingsWithData.push({
-            sourceOffsets: [mappingSet.sourceOffsets[i]],
-            lengths: [mappingSet.lengths[i]],
-            generatedOffsets: [mappingSet.generatedOffsets[i]],
-            generatedLengths: generatedLength ? [generatedLength] : undefined,
+            sourceOffsets: [sourceOffset],
+            lengths: [sourceLength],
+            generatedOffsets: [generatedOffset],
+            generatedLengths: [generatedLength],
             data: {
-              format: mappingSet.source === this.fileName,
+              format: true,
               completion: true,
               navigation: true,
               semantic: true,
               structure: true,
-              verification: true,
+              verification: diagnosticsOffset == sourceOffset && diagnosticsLength == sourceLength,
+              types: mappingSet.types[i] === 1
             }
           })
+          if (diagnosticsOffset >= 0 && (diagnosticsOffset != sourceOffset || diagnosticsLength != sourceLength)) {
+            mappingsWithData.push({
+              sourceOffsets: [diagnosticsOffset],
+              lengths: [diagnosticsLength],
+              generatedOffsets: [generatedOffset],
+              generatedLengths: [generatedLength],
+              data: {
+                format: false,
+                completion: false,
+                navigation: false,
+                semantic: false,
+                structure: false,
+                verification: true,
+                types: false
+              }
+            })
+          }
         }
       })
     }
@@ -95,6 +124,7 @@ export class AngularVirtualCode implements VirtualCode {
           semantic: true,
           structure: true,
           verification: true,
+          types: true,
         }
       }]
     }
@@ -104,7 +134,7 @@ export class AngularVirtualCode implements VirtualCode {
   transpiledTemplateUpdated(
     transpiledCode: string | undefined,
     sourceCode: { [fileName: string]: string },
-    mappings: ({ source: string } & CodeMapping)[]
+    mappings: Angular2TcbMappingInfo[]
   ) {
     if (transpiledCode) {
       this.transpiledTemplate = {

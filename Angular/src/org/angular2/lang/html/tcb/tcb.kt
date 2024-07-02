@@ -157,14 +157,14 @@ private class TcbTemplateVariableOp(
     val id = this.tcb.allocateId(variable.keySpan)
     this.scope.addStatement {
       append("var ")
-      append(id, id.sourceSpan)
+      append(id, id.sourceSpan, types = true)
       append(" = ")
       append(ctx)
       val name = variable.value ?: `$IMPLICIT`
       if (StringUtil.isJavaIdentifier(name))
-        append(".").append(name, variable.valueSpan)
+        append(".").append(name, variable.valueSpan, types = true)
       else
-        append("[\"").append(name.replace("\"", "\\\""), variable.valueSpan).append("\"]")
+        append("[\"").append(name.replace("\"", "\\\""), variable.valueSpan, types = true).append("\"]")
       append(";")
     }
     return id
@@ -250,7 +250,7 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
             // Call the guard function on the directive with the directive instance and that
             // expression.
             val guardInvoke = Expression {
-              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange)
+              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange, types = true)
               append("($dirInstId, ")
               append(expr)
               append(")")
@@ -266,7 +266,7 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
         if (this.tcb.env.config.applyTemplateContextGuards) {
           val ctx = this.scope.resolve(this.template)
           val guardInvoke = Expression {
-            append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)", template.startSourceSpan)
+            append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)", template.startSourceSpan, types = true)
           }
           directiveGuards.add(guardInvoke)
         }
@@ -475,7 +475,7 @@ private class TcbReferenceOp(
                scope.resolve(target)
              else
                scope.resolve(host, target as TmplDirectiveMetadata),
-             node.valueSpan)
+             node.valueSpan, types = true)
     }
 
     // The reference is either to an element, an <ng-template> node, or to a directive on an
@@ -660,7 +660,7 @@ private class TcbDirectiveInputsOp(
           val id = this.tcb.allocateId()
           this.scope.addStatement(tsDeclareVariable(id, type))
 
-          target = Expression { append(id, attr.attribute.keySpan) }
+          target = Expression { append(id, attr.attribute.keySpan, types = true) }
         }
         else if (fieldName == null) {
           // If no coercion declaration is present nor is the field declared (i.e. the input is
@@ -681,7 +681,7 @@ private class TcbDirectiveInputsOp(
           val type = Expression { append(dirId!!).append("[\"${fieldName}\"]") }
           val temp = tsDeclareVariable(id, type)
           this.scope.addStatement(temp)
-          target = Expression { append(id, attr.attribute.keySpan) }
+          target = Expression { append(id, attr.attribute.keySpan, types = true) }
         }
         else {
           if (dirId == null) {
@@ -692,9 +692,9 @@ private class TcbDirectiveInputsOp(
           // when possible. String literal fields may not be valid JS identifiers so we use
           // literal element access instead for those cases.
           target = if (StringUtil.isJavaIdentifier(fieldName))
-            Expression { append(dirId).append(".").append(fieldName, attr.attribute.keySpan) }
+            Expression { append(dirId).append(".").append(fieldName, attr.attribute.keySpan, types = true) }
           else
-            Expression { append(dirId).append("[\"").append(fieldName, attr.attribute.keySpan).append("\"]") }
+            Expression { append(dirId).append("[\"").append(fieldName, attr.attribute.keySpan, types = true).append("\"]") }
         }
 
         // For signal inputs, we unwrap the target `InputSignal`. Note that
@@ -940,7 +940,7 @@ private class TcbUnclaimedInputsOp(
           // A direct binding to a property.
           val propertyName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING[binding.name] ?: binding.name
           this.scope.addStatement {
-            append(elId).append("[\"").append(propertyName, binding.keySpan).append("\"]")
+            append(elId).append("[\"").append(propertyName, binding.keySpan, types = true).append("\"]")
             append(" = ")
             append(expr)
             append(";")
@@ -996,7 +996,7 @@ private class TcbDirectiveOutputsOp(
         dirId = this.scope.resolve(this.node, this.dir)
       }
       val outputField = Expression {
-        append(dirId).append("[\"$field\"]", output.keySpan)
+        append(dirId).append("[\"$field\"]", output.keySpan, types = true)
       }
       if (this.tcb.env.config.checkTypeOfOutputEvents) {
         // For strict checking of directive events, generate a call to the `subscribe` method
@@ -1085,7 +1085,7 @@ private class TcbUnclaimedOutputsOp(
         this.scope.addStatement {
           append(elId)
           append(".addEventListener(\"")
-          append(output.name, output.keySpan)
+          append(output.name, output.keySpan, types = true)
           append("\", ")
           append(handler)
           append(");")
@@ -1436,7 +1436,7 @@ private class TcbForOfOp(private val tcb: Context, private val scope: Scope, pri
 
     val forOfStatement = Statement {
       append("for (const ")
-        .append(initializerId?.toString() ?: "__error", block.item?.keySpan)
+        .append(initializerId?.toString() ?: "__error", block.item?.keySpan, types = true)
         .append(" of (")
         // It's common to have a for loop over a nullable value (e.g. produced by the `async` pipe).
         // Add a non-null expression to allow such values to be assigned.
@@ -2117,10 +2117,10 @@ private open class TcbExpressionTranslator(
 
   override fun visitElement(element: PsiElement) {
     if (element is LeafPsiElement) {
-      result.append(element.text, if (element !is PsiWhiteSpace) element.textRange else null)
+      result.append(element.text, if (element !is PsiWhiteSpace) element.textRange else null, types = true)
     }
     else {
-      result.withSourceSpan(element.textRange) {
+      result.withSourceSpan(element.textRange, types = true) {
         super.visitElement(element)
       }
     }
@@ -2193,7 +2193,7 @@ private open class TcbExpressionTranslator(
         if (node.qualifier == null) {
           result.append("this.")
         }
-        result.append(node.text, node.textRange)
+        result.append(node.text, node.textRange, types = true)
       }
       else {
         result.append(templateTarget)
@@ -2211,7 +2211,7 @@ private open class TcbExpressionTranslator(
   }
 
   private fun emitSafeAccess(node: PsiElement, qualifier: JSExpression, referenceName: PsiElement?) {
-    result.withSourceSpan(node.textRange) {
+    result.withSourceSpan(node.textRange, types = true) {
       if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
         // property read, or `undefined`. So a ternary is used to create an "or" type:
@@ -2251,14 +2251,14 @@ private open class TcbExpressionTranslator(
   }
 
   private fun emitMethodSafeAccess(node: PsiElement, methodExpression: JSExpression) {
-    result.withSourceSpan(node.textRange) {
+    result.withSourceSpan(node.textRange, types = true) {
       if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
         // property read, or `undefined`. So a ternary is used to create an "or" type:
         // "a?.b" becomes (null as any ? a!.b : undefined)
         // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
         append("(null as any ? ")
-        withSourceSpan(methodExpression.textRange) {
+        withSourceSpan(methodExpression.textRange, types = true) {
           append("(")
           methodExpression.accept(this@TcbExpressionTranslator)
           removeMappings(methodExpression.textRange)
@@ -2272,7 +2272,7 @@ private open class TcbExpressionTranslator(
         // Therefore, the left-hand side only needs repeating in the output (to validate it), and then
         // 'any' is used for the rest of the expression. This is done using a comma operator:
         // "a?.b" becomes (a as any).b, which will of course have type 'any'.
-        withSourceSpan(methodExpression.textRange) {
+        withSourceSpan(methodExpression.textRange, types = true) {
           append("((")
           methodExpression.accept(this@TcbExpressionTranslator)
           removeMappings(methodExpression.textRange)
@@ -2285,7 +2285,7 @@ private open class TcbExpressionTranslator(
         // result is still inferred as `any`.
         // "a?.b" becomes (a!.b as any)
         append("(")
-        withSourceSpan(methodExpression.textRange) {
+        withSourceSpan(methodExpression.textRange, types = true) {
           append("(")
           methodExpression.accept(this@TcbExpressionTranslator)
           removeMappings(methodExpression.textRange)
@@ -2321,13 +2321,13 @@ private open class TcbExpressionTranslator(
       // Use a variable declared as the pipe's type.
       pipeCall = tcb.env.pipeInst(pipeInfo)
     }
-    result.withSourceSpan(pipe.textRange) {
+    result.withSourceSpan(pipe.textRange, types = true) {
       if (!tcb.env.config.checkTypeOfPipes) {
         result.append("(")
       }
       result.append(pipeCall)
       result.append(".")
-      result.append("transform", pipe.methodExpression?.textRange)
+      result.append("transform", pipe.methodExpression?.textRange, types = true)
       if (!tcb.env.config.checkTypeOfPipes) {
         result.append(" as any)")
       }
@@ -2376,7 +2376,7 @@ private open class TcbExpressionTranslator(
 
     val identifier = this.scope.resolve(binding)
     return Expression {
-      append(identifier, ast.textRange)
+      append(identifier, ast.textRange, types = true)
     }
   }
 }
@@ -2680,7 +2680,7 @@ private class TcbEventHandlerTranslator(tcb: Context, scope: Scope, result: Expr
     // function that the converted expression becomes a child of, just create a reference to the
     // parameter by its name.
     if (ast.qualifier == null && ast.referenceName == EVENT_PARAMETER) {
-      return Expression(EVENT_PARAMETER, ast.textRange)
+      return Expression(EVENT_PARAMETER, ast.textRange, types = true)
     }
     return super.resolveTarget(ast)
   }
@@ -2731,7 +2731,7 @@ internal fun tsDeclareVariable(id: Identifier, type: Expression): Statement {
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
   return Statement {
     append("var ")
-    append(id, id.sourceSpan)
+    append(id, id.sourceSpan, types = true)
     append(" = null! as ")
     append(type)
     append(";")
@@ -2762,7 +2762,7 @@ private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputN
 private fun tsCreateVariable(id: Identifier, initializer: Expression): Statement {
   return Statement {
     append("var ")
-    append(id, id.sourceSpan)
+    append(id, id.sourceSpan, types = true)
     append(" = ")
     append(initializer)
     append(";")

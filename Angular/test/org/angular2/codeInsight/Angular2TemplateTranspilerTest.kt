@@ -83,18 +83,27 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
       )
 
       checkTextByFile(
-        GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(transpiledFile.mappings.map { fileInfo ->
+        GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(transpiledFile.fileMappings.map { fileInfo ->
           val sourceFileText = fileInfo.sourceFile.text
+
+          fun rangeToText(text: String, offset: Int, length: Int, offsetPrefix: Int = 0) =
+            "«${text.substring(offset, offset + length)}» [${offset - offsetPrefix}]"
+
           mapOf("file-name" to fileInfo.sourceFile.name,
                 "mappings" to fileInfo.sourceMappings
                   .map { mapping ->
                     (if (mapping.generatedOffset >= prefixLength)
-                      "«${sourceFileText.substring(mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength)}» [${mapping.sourceOffset}] => " +
-                      "«${transpiledFile.generatedCode.substring(mapping.generatedOffset, mapping.generatedOffset + mapping.generatedLength)}» [${mapping.generatedOffset - prefixLength}]}"
+                      rangeToText(sourceFileText, mapping.sourceOffset, mapping.sourceLength) + " => " +
+                      rangeToText(transpiledFile.generatedCode, mapping.generatedOffset, mapping.generatedLength, prefixLength) + "}"
                     else {
                       "${mapping.sourceOffset}:${mapping.sourceOffset + mapping.sourceLength} => " +
                       "${mapping.generatedOffset}:${mapping.generatedOffset + mapping.generatedLength} (source)"
-                    }) + (if (mapping.ignoreDiagnostics) " (ignoreDiagnostics)" else "")
+                    }) + (when {
+                      mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
+                      mapping.ignored -> " (ignored)"
+                      mapping.diagnosticsOffset == null -> " (ignoreDiagnostics)"
+                      else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) +")"
+                    })
                   })
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"

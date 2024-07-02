@@ -1,12 +1,22 @@
 package org.angular2.lang.html.tcb
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiFile
+import com.intellij.util.containers.MultiMap
 import org.angular2.lang.html.Angular2HtmlFile
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
-  constructor(code: String, originalRange: TextRange? = null)
-    : this({ append(code, originalRange) })
+  constructor(code: String)
+    : this({ append(code) })
+
+  constructor(
+    code: String,
+    originalRange: TextRange?,
+    types: Boolean,
+    diagnosticsRange: TextRange? = originalRange,
+  )
+    : this({ append(code, originalRange, types, diagnosticsRange) })
 
   constructor(id: Identifier)
     : this({ append(id) })
@@ -34,15 +44,34 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     }
 
   interface ExpressionBuilder {
-    fun append(code: String, originalRange: TextRange? = null): ExpressionBuilder
+    fun append(code: String): ExpressionBuilder
 
-    fun append(id: Identifier, originalRange: TextRange? = null): ExpressionBuilder
+    fun append(id: Identifier): ExpressionBuilder
+
+    fun append(
+      code: String,
+      originalRange: TextRange?,
+      types: Boolean,
+      diagnosticsRange: TextRange? = originalRange,
+    ): ExpressionBuilder
+
+    fun append(
+      id: Identifier,
+      originalRange: TextRange?,
+      types: Boolean,
+      diagnosticsRange: TextRange? = originalRange,
+    ): ExpressionBuilder
 
     fun append(expression: Expression): ExpressionBuilder
 
     fun append(expression: ExpressionBuilder.() -> Unit): ExpressionBuilder
 
-    fun withSourceSpan(originalRange: TextRange?, builder: ExpressionBuilder.() -> Unit)
+    fun withSourceSpan(
+      originalRange: TextRange?,
+      types: Boolean,
+      diagnosticsRange: TextRange? = originalRange,
+      builder: ExpressionBuilder.() -> Unit,
+    )
 
     fun withIgnoreDiagnostics(builder: ExpressionBuilder.() -> Unit)
 
@@ -77,23 +106,43 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       }
     }
 
-    override fun append(code: String, originalRange: TextRange?): ExpressionBuilder {
+    override fun append(code: String): ExpressionBuilder {
+      this.code.append(code)
+      return this
+    }
+
+    override fun append(id: Identifier): ExpressionBuilder {
+      this.code.append(id.toString())
+      return this
+    }
+
+    override fun append(code: String, originalRange: TextRange?, types: Boolean, diagnosticsRange: TextRange?): ExpressionBuilder {
       if (originalRange != null) {
-        sourceMappings.add(SourceMappingData(originalRange.startOffset, originalRange.length,
-                                             this.code.length, code.length, ignoreDiagnostics))
+        sourceMappings.add(SourceMappingData(
+          sourceOffset = originalRange.startOffset,
+          sourceLength = originalRange.length,
+          generatedOffset = this.code.length,
+          generatedLength = code.length,
+          diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreDiagnostics },
+          diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreDiagnostics },
+          types = types,
+        ))
       }
       this.code.append(code)
       return this
     }
 
-    override fun append(id: Identifier, originalRange: TextRange?): ExpressionBuilder =
-      append(id.toString(), originalRange)
+    override fun append(id: Identifier, originalRange: TextRange?, types: Boolean, diagnosticsRange: TextRange?): ExpressionBuilder =
+      append(id.toString(), originalRange, types, diagnosticsRange)
 
     override fun append(expression: Expression): ExpressionBuilder {
       val offset = this.code.length
       expression.sourceMappings.mapTo(this.sourceMappings) { sourceMapping ->
-        sourceMapping.copy(generatedOffset = sourceMapping.generatedOffset + offset,
-                           ignoreDiagnostics = ignoreDiagnostics || sourceMapping.ignoreDiagnostics)
+        sourceMapping.copy(
+          generatedOffset = sourceMapping.generatedOffset + offset,
+          diagnosticsOffset = sourceMapping.diagnosticsOffset?.takeIf { !ignoreDiagnostics },
+          diagnosticsLength = sourceMapping.diagnosticsLength?.takeIf { !ignoreDiagnostics },
+        )
       }
       this.code.append(expression.code)
       return this
@@ -104,12 +153,22 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       return this
     }
 
-    override fun withSourceSpan(originalRange: TextRange?, builder: ExpressionBuilder.() -> Unit) {
+    override fun withSourceSpan(
+      originalRange: TextRange?, types: Boolean,
+      diagnosticsRange: TextRange?, builder: ExpressionBuilder.() -> Unit,
+    ) {
       if (originalRange != null) {
         val offset = this.code.length
         this.builder()
-        sourceMappings.add(SourceMappingData(originalRange.startOffset, originalRange.length, offset,
-                                             this.code.length - offset, ignoreDiagnostics))
+        sourceMappings.add(SourceMappingData(
+          sourceOffset = originalRange.startOffset,
+          sourceLength = originalRange.length,
+          generatedOffset = offset,
+          generatedLength = this.code.length - offset,
+          diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreDiagnostics },
+          diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreDiagnostics },
+          types = types
+        ))
       }
       else {
         this.builder()
@@ -165,8 +224,12 @@ internal data class SourceMappingData(
   override val sourceLength: Int,
   override val generatedOffset: Int,
   override val generatedLength: Int,
-  override val ignoreDiagnostics: Boolean,
+  override val diagnosticsOffset: Int?,
+  override val diagnosticsLength: Int?,
+  override val types: Boolean,
 ) : Angular2TemplateTranspiler.SourceMapping {
   override fun offsetBy(generatedOffset: Int, sourceOffset: Int): Angular2TemplateTranspiler.SourceMapping =
-    copy(sourceOffset = this.sourceOffset + sourceOffset, generatedOffset = this.generatedOffset + generatedOffset)
+    copy(sourceOffset = this.sourceOffset + sourceOffset,
+         generatedOffset = this.generatedOffset + generatedOffset,
+         diagnosticsOffset = this.diagnosticsOffset?.let { it + sourceOffset })
 }
