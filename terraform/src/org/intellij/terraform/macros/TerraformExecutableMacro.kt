@@ -6,7 +6,8 @@ import com.intellij.ide.macro.PathMacro
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.runtime.TerraformProjectSettings
+import org.intellij.terraform.install.getBinaryName
+import org.intellij.terraform.runtime.TerraformPathDetector
 
 class TerraformExecutableMacro : Macro(), PathMacro {
   companion object {
@@ -23,7 +24,7 @@ class TerraformExecutableMacro : Macro(), PathMacro {
 
   @Throws(ExecutionCancelledException::class)
   override fun expand(dataContext: DataContext): String {
-    val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return TerraformProjectSettings.getDefaultTerraformPath()
-    return TerraformProjectSettings.getInstance(project).actualTerraformPath
+    val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return getBinaryName()
+    return TerraformPathDetector.getInstance(project).actualTerraformPath
   }
 }

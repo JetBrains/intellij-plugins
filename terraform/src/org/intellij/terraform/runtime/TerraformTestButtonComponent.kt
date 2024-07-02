@@ -15,6 +15,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.CoroutineScope
 import org.intellij.terraform.hcl.HCLBundle
+import org.jetbrains.annotations.Nls
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
@@ -22,15 +23,21 @@ import javax.swing.JPanel
 private const val ICON_TEXT_HGAP: Int = 4
 
 internal class TerraformTestButtonComponent(
-  private val toolName: @NlsSafe String,
+  buttonText: @Nls String,
   private val installAction: ((Boolean) -> Unit) -> Unit,
   private val test: suspend CoroutineScope.() -> @NlsSafe String,
 ) : JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)) {
 
-  private val button = JButton(HCLBundle.message("terraform.testButton.text"))
+  private val button = JButton(buttonText)
   private val resultLabel = JBLabel()
   private val spinnerIcon: AsyncProcessIcon = createSpinnerIcon()
   private val installButton: ActionLink = createInstallButton()
+
+  var text: @NlsContexts.Label String
+    get() = button.text
+    set(value) {
+      button.text = value
+    }
 
   init {
     resultLabel.isAllowAutoWrapping = true
@@ -58,7 +65,7 @@ internal class TerraformTestButtonComponent(
         null to exception.takeUnless { it is ProcessCanceledException }
       }
 
-      resultLabel.text = result ?: HCLBundle.message("terraform.testResultLabel.not.found", toolName)
+      resultLabel.text = result ?: HCLBundle.message("terraform.testResultLabel.not.found", "terraform")
       resultLabel.icon = if (result != null) AllIcons.General.InspectionsOK
       else if (exception != null) AllIcons.General.BalloonWarning
       else null
@@ -86,7 +93,7 @@ internal class TerraformTestButtonComponent(
       spinnerIcon.isVisible = true
       resultLabel.border = JBUI.Borders.emptyLeft(ICON_TEXT_HGAP)
 
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.download.progress.title", toolName)
+      resultLabel.text = HCLBundle.message("terraform.testResultLabel.download.progress.title", "terraform")
       resultLabel.icon = null
 
       installAction(::handleInstallationResult)
@@ -100,11 +107,11 @@ internal class TerraformTestButtonComponent(
     resultLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
 
     if (success) {
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.tool.installed", toolName)
+      resultLabel.text = HCLBundle.message("terraform.testResultLabel.tool.installed", "terraform")
       resultLabel.icon = AllIcons.General.InspectionsOK
     }
     else {
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.tool.not.installed", toolName)
+      resultLabel.text = HCLBundle.message("terraform.testResultLabel.tool.not.installed", "terraform")
       resultLabel.icon = AllIcons.General.BalloonError
     }
   }

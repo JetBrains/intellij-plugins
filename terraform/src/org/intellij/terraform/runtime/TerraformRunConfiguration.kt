@@ -17,19 +17,23 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TerraformInitCommandFilter
 import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.getBinaryName
 import org.jdom.Element
 import org.jetbrains.annotations.Nls
 
-class TerraformRunConfiguration(project: Project,
-                                factory: ConfigurationFactory,
-                                name: String?,
-                                override var envFilePaths: List<String>) :
+class TerraformRunConfiguration(
+  project: Project,
+  factory: ConfigurationFactory,
+  name: String?,
+  override var envFilePaths: List<String>,
+) :
   LocatableConfigurationBase<Any?>(project, factory, name), CommonProgramRunConfigurationParameters, EnvFilesOptions, DumbAware {
   private var programParameters: String? = ""
   private var directory: String = ""
@@ -113,7 +117,14 @@ class TerraformRunConfiguration(project: Project,
       )
       exception.setQuickFix(Runnable {
         val settings = TerraformProjectSettings.getInstance(project)
-        settings.terraformPath = TerraformProjectSettings.getDefaultTerraformPath()
+        settings.terraformPath = with(TerraformPathDetector.getInstance(project)) {
+          detectedPath ?: run {
+            runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable")) {
+              detect()
+            }
+            detectedPath ?: getBinaryName()
+          }
+        }
       })
       throw exception
     }
@@ -139,7 +150,7 @@ class TerraformRunConfiguration(project: Project,
     }
 
   private val terraformPath
-    get() = TerraformProjectSettings.getInstance(project).actualTerraformPath
+    get() = TerraformPathDetector.getInstance(project).actualTerraformPath
 
   override fun setProgramParameters(value: String?) {
     programParameters = value
