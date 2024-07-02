@@ -93,6 +93,7 @@ abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() 
     "Convert to HCL2 expression",
     "Rename variable",
     "Run Terraform init",
+    "Unknown type",
   )
 
   open fun skipCheckPreview(intentionAction: IntentionAction): Boolean = intentionAction.text in skipPreview
@@ -102,6 +103,7 @@ abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() 
     "View duplicates like this",
     "Run Terraform init",
     "Disable variable search in nested directories",
+    "Add provider to required providers",
   )
 
   private val skipQuickFixRegexps = setOf(

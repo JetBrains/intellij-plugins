@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CodeCompletionHandlerBase
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readAndWriteAction
@@ -13,9 +14,9 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
+import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
@@ -24,9 +25,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
@@ -51,11 +50,14 @@ class InsertHandlerService(val project: Project, val coroutineScope: CoroutineSc
     val right: PsiElement?
     if (element is HCLIdentifier || element is HCLStringLiteral) {
       right = element.getNextSiblingNonWhiteSpace()
-    } else if (HCLTokenTypes.IDENTIFYING_LITERALS.contains(element.node?.elementType)) {
+    }
+    else if (HCLTokenTypes.IDENTIFYING_LITERALS.contains(element.node?.elementType)) {
       if (element.parent is HCLIdentifier) {
         right = element.parent.getNextSiblingNonWhiteSpace()
-      } else return true
-    } else return true
+      }
+      else return true
+    }
+    else return true
     if (right == null) return true
     val range = right.node.textRange
     return document.getLineNumber(range.startOffset) == document.getLineNumber(element.textRange.endOffset)
@@ -67,35 +69,65 @@ class InsertHandlerService(val project: Project, val coroutineScope: CoroutineSc
     }
   }
 
-  internal fun addHCLBlockRequiredPropertiesAsync(file: PsiFile, editor: Editor, project: Project): Deferred<Unit?> {
-    return coroutineScope.async(Dispatchers.Default) {
+  @RequiresWriteLock
+  internal fun addHCLBlockRequiredProperties(file: PsiFile, editor: Editor, project: Project) {
+    PsiTreeUtil.getParentOfType<HCLBlock>(file.findElementAt(editor.caretModel.offset), HCLBlock::class.java)
+      ?.createSmartPointer()?.let { addHCLBlockRequiredProperties(file, project, it, HCLBlockMissingPropertyInspection()) }
+  }
+
+  internal fun addHCLBlockRequiredPropertiesAsync(file: PsiFile, editor: Editor, project: Project) {
+    coroutineScope.launch(Dispatchers.Default) {
       readAction {
         PsiTreeUtil.getParentOfType<HCLBlock>(file.findElementAt(editor.caretModel.offset), HCLBlock::class.java)?.createSmartPointer()
-      }?.let { addHCLBlockRequiredProperties(file, project, it) }
-      PsiDocumentManager.getInstance(project).commitDocument(editor.document)
+      }?.let {
+        addHCLBlockRequiredPropertiesAsync(file, project, it, HCLBlockMissingPropertyInspection())
+      }
     }
   }
 
-  private suspend fun addHCLBlockRequiredProperties(file: PsiFile, project: Project, pointer: SmartPsiElementPointer<HCLBlock>) {
-    val inspection = HCLBlockMissingPropertyInspection()
+  private suspend fun addHCLBlockRequiredPropertiesAsync(file: PsiFile, project: Project, pointer: SmartPsiElementPointer<HCLBlock>, inspection: HCLBlockMissingPropertyInspection) {
     var hasChanges: Boolean = false
     do {
-      val holder = ProblemsHolder(InspectionManager.getInstance(project), file, true)
-      val visitor = inspection.createVisitor(holder, true) as HCLElementVisitor
+      checkCanceled()
       readAndWriteAction {
-        pointer.element?.let { visitor.visitBlock(it) }
-        val fixPairs = holder.results.flatMap { inspectionResult ->
-          inspectionResult.fixes?.filterIsInstance<AddResourcePropertiesFix>()?.map { fix -> inspectionResult to fix } ?: emptyList()
-        }
-        hasChanges = fixPairs.isNotEmpty()
+        val fixes = processBlockInspections(pointer, inspection, file)
+        hasChanges = fixes.isNotEmpty()
         writeCommandAction(project, HCLBundle.message("terraform.add.required.properties.command.name")) {
-          fixPairs.forEach {
+          fixes.forEach {
             it.second.applyFix(project, it.first)
           }
         }
       }
     }
     while (hasChanges)
+  }
+
+  private fun addHCLBlockRequiredProperties(file: PsiFile, project: Project, pointer: SmartPsiElementPointer<HCLBlock>, inspection: HCLBlockMissingPropertyInspection) {
+    var hasChanges: Boolean = false
+    do {
+      val fixes = processBlockInspections(pointer, inspection, file)
+      hasChanges = fixes.isNotEmpty()
+      fixes.forEach {
+        it.second.applyFix(project, it.first)
+      }
+    }
+    while (hasChanges)
+  }
+
+  private fun processBlockInspections(
+    pointer: SmartPsiElementPointer<HCLBlock>,
+    inspection: HCLBlockMissingPropertyInspection,
+    file: PsiFile,
+  ): List<Pair<ProblemDescriptor, AddResourcePropertiesFix>> {
+    val holder = ProblemsHolder(InspectionManager.getInstance(project), file, true)
+    val visitor = inspection.createVisitor(holder, true) as HCLElementVisitor
+    pointer.element?.let { visitor.visitBlock(it) }
+    val fixPairs = holder.results.flatMap { inspectionResult ->
+      inspectionResult.fixes
+        ?.filterIsInstance<AddResourcePropertiesFix>()
+        ?.map { fix -> inspectionResult to fix } ?: emptyList()
+    }
+    return fixPairs
   }
 
   internal fun addArguments(count: Int, editor: Editor) {

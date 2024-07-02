@@ -8,6 +8,7 @@ import com.intellij.openapi.components.service
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.psi.*
 
@@ -67,13 +68,17 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
     if (addBraces) {
       insertHandlerService.addBraces(editor)
     }
+    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
 
     if (offset != null) {
       editor.caretModel.moveToOffset(offset)
     }
     if (type.properties.isNotEmpty()) {
-      insertHandlerService.addHCLBlockRequiredPropertiesAsync(file, editor, project)
+      if (TypeModel.requiresModelLoad(type)) {
+        insertHandlerService.addHCLBlockRequiredPropertiesAsync(file, editor, project)
+      } else {
+        insertHandlerService.addHCLBlockRequiredProperties(file, editor, project)
+      }
     }
-    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
   }
 }

@@ -9,6 +9,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.readAndWriteAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -20,6 +21,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
@@ -31,7 +33,7 @@ import kotlinx.coroutines.withContext
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.codeinsight.InsertHandlerService
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
-import org.intellij.terraform.config.codeinsight.TfModelHelper.getTypesForBlock
+import org.intellij.terraform.config.codeinsight.TfModelHelper.getAllTypesForBlockByIdentifier
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.getProviderForBlockType
@@ -47,7 +49,7 @@ internal const val FADEOUT_TIME_MILLIS: Long = 10_000L
 internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
 
   override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
-    val possibleTypes = getTypesForBlock(startElement as HCLBlock)
+    val possibleTypes = getAllTypesForBlockByIdentifier(startElement as HCLBlock)
     if (possibleTypes.size == 1) return super.generatePreview(project, editor, file)
     return IntentionPreviewInfo.EMPTY
   }
@@ -61,7 +63,7 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
   }
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-    project.service<ImportProviderService>().addProvider(file, editor, startElement)
+    project.service<ImportProviderService>().addProvider(file.createSmartPointer(), editor, startElement)
   }
 
   override fun isAvailable(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean {
@@ -74,9 +76,9 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
 @Service(Service.Level.PROJECT)
 private class ImportProviderService(val coroutineScope: CoroutineScope) {
 
-  private fun showResourceSelectionPopup(title: String, possibleTypes: List<BlockType>, editor: Editor, file: PsiFile) {
+  private fun showResourceSelectionPopup(title: String, possibleTypes: List<BlockType>, editor: Editor, filePointer: SmartPsiElementPointer<PsiFile>) {
     JBPopupFactory.getInstance()
-      .createListPopup(SelectUnknownResourceStep(title, possibleTypes, file.createSmartPointer(), coroutineScope))
+      .createListPopup(SelectUnknownResourceStep(title, possibleTypes, filePointer, coroutineScope, editor))
       .showInBestPositionFor(editor)
   }
 
@@ -100,9 +102,9 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 
 
-  fun addProvider(file: PsiFile, editor: Editor?, startElement: PsiElement) {
+  fun addProvider(filePointer: SmartPsiElementPointer<PsiFile>, editor: Editor?, startElement: PsiElement) {
     coroutineScope.launch(Dispatchers.Default) {
-      val possibleTypes = if (startElement is HCLBlock && editor != null) readAction { getTypesForBlock(startElement) } else return@launch
+      val possibleTypes = if (startElement is HCLBlock && editor != null) readAction { getAllTypesForBlockByIdentifier(startElement) } else return@launch
       if (possibleTypes.isEmpty()) {
         withContext(Dispatchers.EDT) {
           showProvidersNotFoundBalloon(startElement, editor)
@@ -111,11 +113,11 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
       else {
         val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
         if (possibleTypes.size == 1) {
-          addRequiredProvider(file, title, possibleTypes.first())
+          addRequiredProvider(filePointer, editor, title, possibleTypes.first())
         }
         else {
           withContext(Dispatchers.EDT) {
-            showResourceSelectionPopup(title, possibleTypes, editor, file)
+            showResourceSelectionPopup(title, possibleTypes, editor, filePointer)
           }
         }
       }
@@ -123,11 +125,15 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 }
 
-private suspend fun addRequiredProvider(file: PsiFile, commandName: @Nls String, blockType: BlockType) {
-  val project = file.project
-  writeCommandAction(project, commandName) {
+internal suspend fun addRequiredProvider(filePointer: SmartPsiElementPointer<PsiFile>, editor: Editor, commandName: @Nls String, blockType: BlockType) {
+  readAndWriteAction {
+    val file = filePointer.element ?: return@readAndWriteAction value(Unit)
+    val project = file.project
     val insertHandlerService = project.service<InsertHandlerService>()
-    getProviderForBlockType(blockType)?.let { insertHandlerService.addRequiredProvidersBlock(it, file) }
+    writeCommandAction(project, commandName) {
+      getProviderForBlockType(blockType)?.let { insertHandlerService.addRequiredProvidersBlock(it, file) }
+      PsiDocumentManager.getInstance(project).commitDocument(editor.document)
+    }
   }
 }
 
@@ -136,6 +142,7 @@ private class SelectUnknownResourceStep(
   @NlsSafe title: String, types: List<BlockType>,
   private val pointer: SmartPsiElementPointer<PsiFile>,
   val coroutineScope: CoroutineScope,
+  private val editor: Editor
 ) : BaseListPopupStep<BlockType>(title, types) {
 
   override fun getTextFor(value: BlockType?): String {
@@ -149,11 +156,10 @@ private class SelectUnknownResourceStep(
   }
 
   override fun onChosen(selectedValue: BlockType?, finalChoice: Boolean): PopupStep<*>? {
-    val file = selectedValue?.let { pointer.element }
-    if (file != null && file.isWritable) {
+    if (selectedValue != null) {
       coroutineScope.launch(Dispatchers.Default) {
         val commandName = HCLBundle.message("terraform.add.provider.dialog.title", selectedValue.literal)
-        addRequiredProvider(file, commandName, selectedValue)
+        addRequiredProvider(pointer, editor, commandName, selectedValue)
       }
     }
     return FINAL_CHOICE
