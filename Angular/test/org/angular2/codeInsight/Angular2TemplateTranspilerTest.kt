@@ -98,12 +98,15 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
                     else {
                       "${mapping.sourceOffset}:${mapping.sourceOffset + mapping.sourceLength} => " +
                       "${mapping.generatedOffset}:${mapping.generatedOffset + mapping.generatedLength} (source)"
-                    }) + (when {
+                    }) + when {
                       mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
                       mapping.ignored -> " (ignored)"
-                      mapping.diagnosticsOffset == null -> " (ignoreDiagnostics)"
+                      mapping.diagnosticsOffset == null -> " (no diagnostics)"
                       else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) +")"
-                    })
+                    } + when {
+                      !mapping.types && !mapping.ignored -> " (no types)"
+                      else -> ""
+                    }
                   })
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"

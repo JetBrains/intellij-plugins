@@ -236,7 +236,7 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
             // The expression has already been checked in the type constructor invocation, so
             // it should be ignored when used within a template guard.
             Expression {
-              withIgnoreDiagnostics {
+              withIgnoreMappings {
                 append(it)
               }
             }
@@ -250,7 +250,7 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
             // Call the guard function on the directive with the directive instance and that
             // expression.
             val guardInvoke = Expression {
-              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange, types = true)
+              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange, types = false)
               append("($dirInstId, ")
               append(expr)
               append(")")
@@ -266,7 +266,7 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
         if (this.tcb.env.config.applyTemplateContextGuards) {
           val ctx = this.scope.resolve(this.template)
           val guardInvoke = Expression {
-            append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)", template.startSourceSpan, types = true)
+            append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)", template.startSourceSpan, types = false)
           }
           directiveGuards.add(guardInvoke)
         }
@@ -393,7 +393,7 @@ private abstract class TcbDirectiveTypeOpBase(
       type = Expression("any")
     }
     val id = this.tcb.allocateId(this.node.startSourceSpan, ExpressionIdentifier.Directive)
-    this.scope.addStatement(tsDeclareVariable(id, type))
+    this.scope.addStatement(tsDeclareVariable(id, type, types = false))
     return id
   }
 }
@@ -589,11 +589,11 @@ private class TcbDirectiveCtorOp(
     // Call the type constructor of the directive to infer a type, and assign the directive
     // instance.
     val typeCtor = Expression {
-      withIgnoreDiagnostics {
+      withIgnoreMappings {
         append(tcbCallTypeCtor(dir, tcb, genericInputs.values))
       }
     }
-    this.scope.addStatement(tsCreateVariable(id, typeCtor))
+    this.scope.addStatement(tsCreateVariable(id, typeCtor, types = false))
     return id
   }
 
@@ -660,7 +660,7 @@ private class TcbDirectiveInputsOp(
           val id = this.tcb.allocateId()
           this.scope.addStatement(tsDeclareVariable(id, type))
 
-          target = Expression { append(id, attr.attribute.keySpan, types = true) }
+          target = Expression { append(id, attr.attribute.keySpan, types = false) }
         }
         else if (fieldName == null) {
           // If no coercion declaration is present nor is the field declared (i.e. the input is
@@ -681,7 +681,7 @@ private class TcbDirectiveInputsOp(
           val type = Expression { append(dirId!!).append("[\"${fieldName}\"]") }
           val temp = tsDeclareVariable(id, type)
           this.scope.addStatement(temp)
-          target = Expression { append(id, attr.attribute.keySpan, types = true) }
+          target = Expression { append(id, attr.attribute.keySpan, types = false) }
         }
         else {
           if (dirId == null) {
@@ -692,9 +692,9 @@ private class TcbDirectiveInputsOp(
           // when possible. String literal fields may not be valid JS identifiers so we use
           // literal element access instead for those cases.
           target = if (StringUtil.isJavaIdentifier(fieldName))
-            Expression { append(dirId).append(".").append(fieldName, attr.attribute.keySpan, types = true) }
+            Expression { append(dirId).append(".").append(fieldName, attr.attribute.keySpan, types = false) }
           else
-            Expression { append(dirId).append("[\"").append(fieldName, attr.attribute.keySpan, types = true).append("\"]") }
+            Expression { append(dirId).append("[\"").append(fieldName, attr.attribute.keySpan, types = false).append("\"]") }
         }
 
         // For signal inputs, we unwrap the target `InputSignal`. Note that
@@ -723,7 +723,7 @@ private class TcbDirectiveInputsOp(
       if (!tcb.env.config.checkTypeOfAttributes &&
           attr.attribute is TmplAstTextAttribute) {
         assignment = Expression {
-          withIgnoreDiagnostics {
+          withIgnoreMappings {
             append(assignment)
           }
         }
@@ -940,7 +940,7 @@ private class TcbUnclaimedInputsOp(
           // A direct binding to a property.
           val propertyName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING[binding.name] ?: binding.name
           this.scope.addStatement {
-            append(elId).append("[\"").append(propertyName, binding.keySpan, types = true).append("\"]")
+            append(elId).append("[\"").append(propertyName, binding.keySpan, types = false).append("\"]")
             append(" = ")
             append(expr)
             append(";")
@@ -996,7 +996,7 @@ private class TcbDirectiveOutputsOp(
         dirId = this.scope.resolve(this.node, this.dir)
       }
       val outputField = Expression {
-        append(dirId).append("[\"$field\"]", output.keySpan, types = true)
+        append(dirId).append("[\"$field\"]", output.keySpan, types = false)
       }
       if (this.tcb.env.config.checkTypeOfOutputEvents) {
         // For strict checking of directive events, generate a call to the `subscribe` method
@@ -1006,7 +1006,12 @@ private class TcbDirectiveOutputsOp(
         this.scope.addStatement {
           append(outputField)
           append(".subscribe(")
-          append(handler)
+          if (output.type == ParsedEventType.TwoWay)
+            withIgnoreMappings {
+              append(handler)
+            }
+          else
+            append(handler)
           append(");")
         }
       }
@@ -1085,7 +1090,7 @@ private class TcbUnclaimedOutputsOp(
         this.scope.addStatement {
           append(elId)
           append(".addEventListener(\"")
-          append(output.name, output.keySpan, types = true)
+          append(output.name, output.keySpan, types = false)
           append("\", ")
           append(handler)
           append(");")
@@ -1251,7 +1256,7 @@ private class TcbIfOp(
         // because it was already checked as a part of the block's condition and we don't
         // want it to produce a duplicate diagnostic.
         expression = Expression {
-          withIgnoreDiagnostics {
+          withIgnoreMappings {
             tcbExpression(branch.expression, tcb, expressionScope)
           }
         }
@@ -1300,7 +1305,7 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       // Wrap the comparisson expression in parentheses so we don't ignore
       // diagnostics when comparing incompatible types (see #52315).
       append("(")
-      withIgnoreDiagnostics {
+      withIgnoreMappings {
         append(tcbExpression(block.expression, tcb, scope))
       }
       append(")")
@@ -1375,7 +1380,7 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       val expression = tcbExpression(node.expression, this.tcb, this.scope)
       return Expression {
         append(switchValue).append(" === ")
-        withIgnoreDiagnostics {
+        withIgnoreMappings {
           append(expression)
         }
       }
@@ -1400,7 +1405,7 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       val expression = tcbExpression(current.expression, this.tcb, this.scope)
       val comparison = Expression {
         append(switchValue).append(" !== ")
-        withIgnoreDiagnostics { append(expression) }
+        withIgnoreMappings { append(expression) }
       }
 
       if (guard == null) {
@@ -2190,10 +2195,16 @@ private open class TcbExpressionTranslator(
         // Therefore if `resolve` is called on an `ImplicitReceiver`, it's because no outer
         // PropertyRead/Call resolved to a variable or reference, and therefore this is a
         // property read or method call on the component context itself.
+
         if (node.qualifier == null) {
-          result.append("this.")
+          result.withSourceSpan(node.textRange, types = true) {
+            result.append("this.")
+            result.append(node.text, node.textRange, types = false)
+          }
         }
-        result.append(node.text, node.textRange, types = true)
+        else {
+          result.append(node.text, node.textRange, types = true)
+        }
       }
       else {
         result.append(templateTarget)
@@ -2725,13 +2736,13 @@ private fun tsCastToAny(expr: Expression): Expression {
  * Unlike with `tsCreateVariable`, the type of the variable is explicitly specified.
  */
 
-internal fun tsDeclareVariable(id: Identifier, type: Expression): Statement {
+internal fun tsDeclareVariable(id: Identifier, type: Expression, types: Boolean = true): Statement {
   // When we create a variable like `var _t1: boolean = null!`, TypeScript actually infers `_t1`
   // to be `never`, instead of a `boolean`. To work around it, we cast the value
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = true)
+    append(id, id.sourceSpan, types = types)
     append(" = null! as ")
     append(type)
     append(";")
@@ -2759,10 +2770,10 @@ private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputN
  * Unlike with `tsDeclareVariable`, the type of the variable is inferred from the initializer
  * expression.
  */
-private fun tsCreateVariable(id: Identifier, initializer: Expression): Statement {
+private fun tsCreateVariable(id: Identifier, initializer: Expression, types: Boolean = true): Statement {
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = true)
+    append(id, id.sourceSpan, types = types)
     append(" = ")
     append(initializer)
     append(";")
