@@ -56,13 +56,6 @@ class Angular2SvgTest : Angular2CodeInsightFixtureTestCase() {
     assertEquals(listOf(
       "foo (typeText='string'; priority=101.0; bold)",
       "width (typeText='number'; priority=101.0; bold)",
-      "constructor (typeText='Function'; priority=98.0)",
-      "hasOwnProperty (typeText='boolean'; priority=98.0)",
-      "isPrototypeOf (typeText='boolean'; priority=98.0)",
-      "propertyIsEnumerable (typeText='boolean'; priority=98.0)",
-      "toLocaleString (typeText='string'; priority=98.0)",
-      "toString (typeText='string'; priority=98.0)",
-      "valueOf (typeText='Object'; priority=98.0)"
     ).sorted(), Angular2TestUtil.renderLookupItems(myFixture, true, true, false).sorted())
   }
 }
