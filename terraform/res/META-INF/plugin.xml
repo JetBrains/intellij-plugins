@@ -33,6 +33,26 @@
   <!--suppress PluginXmlValidity -->
   <change-notes>
     <![CDATA[
+    2024.2
+    <ul>
+      <li>AI Full Line Completion for Terraform is now available, running locally on your machine without using external services. It is disabled by default but can be enabled for use. We appreciate your feedback to help improve the model (note that we do not learn from your data).</li>
+      <li>Basic operations, syntax highlighting, and code completion for Terraform are now available immediately, without waiting for indexing. You can start working right away.</li>
+      <li>Enhanced the quick help view for HCL in Terraform, making it more readable and informative.</li>
+      <li>Added a documentation tooltip that appears when hovering over a Terraform resource or attribute.</li>
+      <li>Enhanced performance of the Documentation tool window for faster updates and better visibility of progress.</li>
+      <li>Included the ability to use terraform fmt as an alternative to the default formatter.</li>
+      <li>Added support for composite extensions for .tfpl files. This allows automatic detection of the data language for templates based on composite extensions. For example, if a file has the extension .js.tftpl, the file will be recognized with JavaScript as the data language and tftpl as the primary language.</li>
+      <li>Added support for Terraform resource imports, allowing users to add and manage imported resources directly within the IDE, with automatic detection and matching of resource addresses.</li>
+      <li>Provided support for resolving and finding usages for included variables in Terraform projects. This feature allows users to see the final values of variables, navigate through variable references, and view environment-specific values. Additionally, it provides convenient navigation and refactoring options, enabling users to add or change values across all environments and generate necessary binding variables efficiently.</li>
+      <li>Added support for working with projects in the WSL context. If a project is located in WSL and opened from IntelliJ IDEA, the Terraform installed in the WSL distribution where the project resides is used.</li>
+      <li>Included support for optional parameters in Terraform variable definitions and module usage, including code completion and documentation.</li>
+      <li>Introduced "Deep search for variables" option in Settings | Advanced Settings to enable searching for variables in nested directories (with the ability to disable this behavior).</li>
+      <li>Added the ability to use Move Statement Up/Down for multiple selected blocks.</li>
+      <li>You can now specify tfvars in the Run configuration.</li>
+      <li>Terraform code completion for providers and HCL now scales with the tooltip window, fixing the issue of truncated documentation and enhancing the usefulness of quick documentation.</li>
+      <li>Added highlighting for corresponding parentheses in HCL, enhancing code readability and convenience.</li>
+      <li>The Terraform path in Settings now defaults automatically if the field is left empty, ensuring seamless execution of Terraform commands.</li>
+    </ul>
     2024.1
     <ul>
       <li>Improves code completion for a wide range of third-party Terraform providers from the Terraform Registry, supporting efficient coding.</li>
