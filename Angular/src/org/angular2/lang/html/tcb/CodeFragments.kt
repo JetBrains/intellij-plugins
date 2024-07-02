@@ -73,7 +73,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       builder: ExpressionBuilder.() -> Unit,
     )
 
-    fun withIgnoreDiagnostics(builder: ExpressionBuilder.() -> Unit)
+    fun withIgnoreMappings(builder: ExpressionBuilder.() -> Unit)
 
     fun codeBlock(builder: BlockBuilder.() -> Unit)
 
@@ -97,7 +97,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     val sourceMappings = mutableSetOf<SourceMappingData>()
 
-    private var ignoreDiagnostics = false
+    private var ignoreMappings = false
 
     override fun removeMappings(range: TextRange) {
       sourceMappings.removeIf {
@@ -123,9 +123,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           sourceLength = originalRange.length,
           generatedOffset = this.code.length,
           generatedLength = code.length,
-          diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreDiagnostics },
-          diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreDiagnostics },
-          types = types,
+          diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
+          diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
+          types = types && !ignoreMappings,
         ))
       }
       this.code.append(code)
@@ -140,8 +140,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       expression.sourceMappings.mapTo(this.sourceMappings) { sourceMapping ->
         sourceMapping.copy(
           generatedOffset = sourceMapping.generatedOffset + offset,
-          diagnosticsOffset = sourceMapping.diagnosticsOffset?.takeIf { !ignoreDiagnostics },
-          diagnosticsLength = sourceMapping.diagnosticsLength?.takeIf { !ignoreDiagnostics },
+          diagnosticsOffset = sourceMapping.diagnosticsOffset?.takeIf { !ignoreMappings },
+          diagnosticsLength = sourceMapping.diagnosticsLength?.takeIf { !ignoreMappings },
+          types = sourceMapping.types && !ignoreMappings,
         )
       }
       this.code.append(expression.code)
@@ -165,9 +166,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           sourceLength = originalRange.length,
           generatedOffset = offset,
           generatedLength = this.code.length - offset,
-          diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreDiagnostics },
-          diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreDiagnostics },
-          types = types
+          diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
+          diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
+          types = types && !ignoreMappings
         ))
       }
       else {
@@ -175,10 +176,10 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       }
     }
 
-    override fun withIgnoreDiagnostics(builder: ExpressionBuilder.() -> Unit) {
-      ignoreDiagnostics = true
+    override fun withIgnoreMappings(builder: ExpressionBuilder.() -> Unit) {
+      ignoreMappings = true
       this.builder()
-      ignoreDiagnostics = false
+      ignoreMappings = false
     }
 
     override fun codeBlock(builder: BlockBuilder.() -> Unit) {
@@ -232,4 +233,36 @@ internal data class SourceMappingData(
     copy(sourceOffset = this.sourceOffset + sourceOffset,
          generatedOffset = this.generatedOffset + generatedOffset,
          diagnosticsOffset = this.diagnosticsOffset?.let { it + sourceOffset })
+}
+
+
+private fun rangeToText(text: String, range: TextRange) =
+  "«${text.substring(range.startOffset, range.endOffset)}» [${range.startOffset}]"
+
+fun Angular2TranspiledComponentFileBuilder.TranspiledComponentFile.verifyMappings() {
+
+  // check for unique mapping for types
+  val typeMappings = MultiMap<Pair<PsiFile, TextRange>, TextRange>()
+
+  fileMappings.forEach { fileMappings ->
+    fileMappings.sourceMappings.forEach { mapping ->
+      if (mapping.types) {
+        val key = Pair(fileMappings.sourceFile, TextRange.create(mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength))
+        typeMappings.putValue(key, TextRange.create(mapping.generatedOffset, mapping.generatedOffset + mapping.generatedLength))
+      }
+    }
+  }
+
+  val errors = mutableListOf<String>()
+
+  typeMappings.entrySet().forEach { (key, generatedRanges) ->
+    if (generatedRanges.size > 1) {
+      errors.add("Duplicated mapping from source file ${key.first.name}: " + rangeToText(key.first.text, key.second) + " to generated file: "+
+      generatedRanges.joinToString { rangeToText(generatedCode, it) })
+    }
+  }
+
+  if (errors.isNotEmpty()) {
+    throw IllegalStateException(errors.joinToString("\n"))
+  }
 }

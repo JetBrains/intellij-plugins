@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
@@ -129,7 +130,9 @@ object Angular2TranspiledComponentFileBuilder {
     return TranspiledComponentFile(
       generatedCode.toString(),
       mappings
-    )
+    ).also {
+      if (ApplicationManager.getApplication().isUnitTestMode) it.verifyMappings()
+    }
   }
 
   private fun List<SourceMapping>.sorted(): List<SourceMapping> =
