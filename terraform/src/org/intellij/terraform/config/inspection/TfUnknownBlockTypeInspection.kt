@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfTypes
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
@@ -43,20 +43,19 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
   private fun doCheck(block: HCLBlock, holder: ProblemsHolder, type: String) {
     // It could be a root block or block inside Object
     // Object could be the value of some property or right part of another object
-    val parent = PsiTreeUtil.getParentOfType(block, HCLBlock::class.java, HCLFile::class.java) ?: return
+    val parent = block.parentOfTypes(HCLBlock::class, HCLFile::class) ?: return
     when (parent) {
       is HCLFile -> {
-        if (TerraformCompletionUtil.RootBlockKeywords.contains(type)) {
+        if (TerraformCompletionUtil.RootBlockKeywords.contains(type))
           return
-        }
+
         registerUnknownBlockProblem(block, holder, type)
       }
       is HCLBlock -> {
         parent.getNameElementUnquoted(0) ?: return
         parent.`object` ?: return
-        if (TerraformPatterns.DynamicBlock.accepts(block) || TerraformPatterns.DynamicBlockContent.accepts(block)) {
+        if (TerraformPatterns.DynamicBlock.accepts(block) || TerraformPatterns.DynamicBlockContent.accepts(block))
           return
-        }
 
         val properties = TfModelHelper.getBlockProperties(parent)
         if (properties[type] is BlockType) return
@@ -72,7 +71,6 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
       }
       else -> return
     }
-    // TODO: Add 'Register as known block type' quick fix
   }
 
   private fun registerUnknownBlockProblem(block: HCLBlock, holder: ProblemsHolder, type: String) {
