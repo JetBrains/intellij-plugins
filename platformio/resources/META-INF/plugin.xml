@@ -60,7 +60,7 @@
     <executionTargetProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTargetProvider"/>
     <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
                                id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
-    <toolWindow id="PlatformIO" anchor="right" icon="ClionEmbeddedPlatformioIcons.Platformio"
+    <toolWindow id="PlatformIO" anchor="right" icon="ClionEmbeddedPlatformioIcons.PlatformIO"
                 factoryClass="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioToolWindowFactory"/>
     <project.converterProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.migration.PlatformioProjectMigrationProvider"
@@ -95,13 +95,13 @@
     </group>
     <group id="platformio-group-tools-popup" popup="true"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup"
-           icon="ClionEmbeddedPlatformioIcons.Platformio">
+           icon="ClionEmbeddedPlatformioIcons.PlatformIO">
       <reference id="platformio-group"/>
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
     <group id="platformio-group-file-popup" popup="true"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup"
-           icon="ClionEmbeddedPlatformioIcons.Platformio">
+           icon="ClionEmbeddedPlatformioIcons.PlatformIO">
       <reference id="platformio-group"/>
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>

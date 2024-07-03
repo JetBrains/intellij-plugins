@@ -40,7 +40,7 @@ public final class PlatformioFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return ClionEmbeddedPlatformioIcons.Platformio;
+    return ClionEmbeddedPlatformioIcons.PlatformIO;
   }
 
   private static Language findLanguage() {

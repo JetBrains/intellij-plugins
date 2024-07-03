@@ -9,7 +9,7 @@ class PlatformioBuildTarget(private val projectName: String) : CidrBuildTarget<P
 
   override fun getProjectName(): String = projectName
 
-  override fun getIcon(): Icon = ClionEmbeddedPlatformioIcons.Platformio
+  override fun getIcon(): Icon = ClionEmbeddedPlatformioIcons.PlatformIO
 
   override fun isExecutable(): Boolean = true
 

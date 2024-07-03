@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.TabTitle
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.LayeredIcon
-import com.intellij.util.IconUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
@@ -60,7 +59,7 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   companion object {
-    private val badge = IconUtil.resizeSquared(ClionEmbeddedPlatformioIcons.Platformio, 8)
+    private val badge = ClionEmbeddedPlatformioIcons.ModPlatformIO
 
     fun pioIcon(icon: Icon): Icon {
       return LayeredIcon(2).apply {

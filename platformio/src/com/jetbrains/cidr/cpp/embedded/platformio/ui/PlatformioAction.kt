@@ -13,7 +13,7 @@ import javax.swing.Icon
 
 abstract class PlatformioAction(text: () -> @Nls String,
                                 toolTip: () -> @Nls String?,
-                                icon: Icon? = ClionEmbeddedPlatformioIcons.Platformio)
+                                icon: Icon? = ClionEmbeddedPlatformioIcons.PlatformIO)
   : PlatformioActionBase(text, toolTip, icon) {
 
   override fun update(e: AnActionEvent) {
@@ -42,7 +42,7 @@ class PlatformioCheckAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.m
 open class PlatformioTargetAction(val target: String,
                                   @Nls text: () -> String,
                                   @Nls toolTip: () -> String?,
-                                  icon: Icon? = ClionEmbeddedPlatformioIcons.Platformio)
+                                  icon: Icon? = ClionEmbeddedPlatformioIcons.PlatformIO)
   : PlatformioAction(text, toolTip, icon) {
 
   override fun displayTextInToolbar(): Boolean = true
@@ -62,7 +62,7 @@ private const val UPLOAD_MONITOR_COMMAND = "pio run -t upload -t monitor"
 object PlatformioUploadMonitorAction : PlatformioTargetAction(target = "upload-monitor",
                                                               text = { ClionEmbeddedPlatformioBundle.message("action.upload.n.monitor") },
                                                               toolTip = { UPLOAD_MONITOR_COMMAND },
-                                                              icon = ClionEmbeddedPlatformioIcons.Platformio) {
+                                                              icon = ClionEmbeddedPlatformioIcons.PlatformIO) {
 
   override fun actionPerformed(e: AnActionEvent) {
     super.actionPerformed(e, false, true, true, "run", "-t", "upload", "-t", "monitor")

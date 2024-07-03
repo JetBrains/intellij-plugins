@@ -1,7 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.NlsSafe
+import icons.ClionEmbeddedPlatformioIcons
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 import javax.swing.Icon
@@ -39,9 +39,9 @@ class DeviceTreeNode(private val myParent: DeviceTreeNode?,
 
   enum class TYPE(val icon: Icon?) {
     ROOT(null),
-    VENDOR(AllIcons.Gutter.Colors),
-    BOARD(AllIcons.Actions.GroupBy),
-    FRAMEWORK(AllIcons.General.GearPlain);
+    VENDOR(ClionEmbeddedPlatformioIcons.ComponentVendor),
+    BOARD(ClionEmbeddedPlatformioIcons.ElectronicBoard),
+    FRAMEWORK(ClionEmbeddedPlatformioIcons.SoftwareFramework);
   }
 
 }

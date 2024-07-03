@@ -34,7 +34,7 @@ class PlatformioProjectGenerator : CLionProjectGenerator<Ref<BoardInfo?>>(), Cus
     else return PlatformioProjectSettingsStep(projectGenerator, callback)
   }
 
-  override fun getLogo(): Icon = ClionEmbeddedPlatformioIcons.Platformio
+  override fun getLogo(): Icon = ClionEmbeddedPlatformioIcons.PlatformIO
   override fun generateProject(project: Project, baseDir: VirtualFile, settings: Ref<BoardInfo?>, module: Module) {
     super.generateProject(project, baseDir, settings, module)
     if (!useWebView()) {

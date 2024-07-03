@@ -10,7 +10,7 @@ import icons.ClionEmbeddedPlatformioIcons
 
 class PlatformioConfigurationType : ConfigurationTypeBase(TYPE_ID, ClionEmbeddedPlatformioBundle.message("platformio.name"),
                                                           ClionEmbeddedPlatformioBundle.message("platformio.description"),
-                                                          NotNullLazyValue.createValue { ClionEmbeddedPlatformioIcons.Platformio }), DumbAware {
+                                                          NotNullLazyValue.createValue { ClionEmbeddedPlatformioIcons.PlatformIO }), DumbAware {
   val factory: ConfigurationFactory =
     object : ConfigurationFactory(this) {
       override fun getId(): String = PLATFORM_IO_DEBUG_ID

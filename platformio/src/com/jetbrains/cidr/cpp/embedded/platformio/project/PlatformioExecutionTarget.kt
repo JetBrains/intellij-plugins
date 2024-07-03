@@ -13,7 +13,7 @@ class PlatformioExecutionTarget(@NlsSafe private val myId: String) : ExecutionTa
 
   override fun getDisplayName(): String = myId
 
-  override fun getIcon(): Icon = ClionEmbeddedPlatformioIcons.Platformio
+  override fun getIcon(): Icon = ClionEmbeddedPlatformioIcons.PlatformIO
   override fun canRun(configuration: RunConfiguration): Boolean {
     return configuration is CidrCompoundRunConfiguration || configuration is PlatformioDebugConfiguration
   }
