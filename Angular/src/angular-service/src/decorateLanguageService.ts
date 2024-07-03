@@ -67,7 +67,8 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
   languageService.webStormGetElementType = (
     ts: typeof TS,
     fileName: string,
-    range: Range,
+    startOffset: number,
+    endOffset: number,
     forceReturnType: boolean,
     reverseMapper?: ReverseMapper,
   ): GetElementTypeResponse => {
@@ -82,15 +83,9 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
 
     if (serviceScript && sourceFile && generatedFile) {
       try {
-        let originalRangePosStart = ts.getPositionOfLineAndCharacter(sourceFile, range.start.line, range.start.character)
-        let originalRangePosEnd = ts.getPositionOfLineAndCharacter(sourceFile, range.end.line, range.end.character)
-
-        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, originalRangePosStart, originalRangePosEnd, (it) => it.types);
-
+        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, startOffset, endOffset, (it) => it.types);
         if (generatedRange !== undefined) {
-          const start = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange[0])
-          const end = ts.getLineAndCharacterOfPosition(generatedFile, generatedRange[1])
-          return webStormGetElementType(ts as any, targetScript.id, {start, end}, forceReturnType, ngReverseMapper.bind(null, ts))
+          return webStormGetElementType(ts, targetScript.id,  generatedRange[0], generatedRange[1], forceReturnType, unboundReverseMapper.bind(null, ts))
         }
       }
       catch (e) {
@@ -99,7 +94,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
       return undefined;
     }
     else {
-      return webStormGetElementType(ts as any, fileName, range, forceReturnType, reverseMapper)
+      return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, reverseMapper)
     }
   }
 
