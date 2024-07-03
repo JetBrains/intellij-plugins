@@ -2373,6 +2373,23 @@ private open class TcbExpressionTranslator(
     }
   }
 
+  override fun visitJSLiteralExpression(node: JSLiteralExpression) {
+    if (node.isStringLiteral) {
+      val text = node.text
+      val textRange = node.textRange
+      if ((text.startsWith("\\\"") && text.endsWith("\\\""))
+          || (text.startsWith("\\'") && text.endsWith("\\'"))) {
+        result.withSourceSpan(node.textRange, types = true) {
+          result.append("\"")
+          result.append(text.substring(2, text.length - 2), TextRange(textRange.startOffset + 2, textRange.endOffset - 2), types = true)
+          result.append("\"")
+        }
+      } else {
+        result.append(text, textRange, types = true)
+      }
+    } else super.visitJSLiteralExpression(node)
+  }
+
 
   /**
    * Attempts to resolve a bound target for a given expression, and translates it into the

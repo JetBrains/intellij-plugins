@@ -59,6 +59,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  fun testEscapedString() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

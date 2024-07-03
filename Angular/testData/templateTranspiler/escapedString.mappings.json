@@ -1,0 +1,16 @@
+[
+  {
+    "file-name": "escapedString.ts",
+    "mappings": [
+      "«div» [391] => «_t1» [230]}",
+      "«div» [391] => «_t2» [271]} (no types)",
+      "«red» [406] => «red» [297]} (ignored)",
+      "«\\\"red\\\"» [404] => «\"red\"» [296]} (ignored)",
+      "«[color]» [395] => «myInput» [309]} (no types)",
+      "«red» [406] => «red» [320]}",
+      "«\\\"red\\\"» [404] => «\"red\"» [319]}",
+      "0:389 => 0:389 (source)",
+      "420:483 => 420:483 (source)"
+    ]
+  }
+]
