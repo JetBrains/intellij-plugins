@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
+import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -47,7 +48,7 @@ object Angular2TypeUtils {
           else -> true
         }
       },
-      type
+      type.let { if (it is TypeScriptCompilerType) it.substitute() else it }
     )
     return if (result.isEmpty()) {
       null
