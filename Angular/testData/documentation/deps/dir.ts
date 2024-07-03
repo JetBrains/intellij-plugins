@@ -15,7 +15,11 @@ import {
   OnDestroy,
 } from '@angular/core';
 
-import {Direction, Directionality} from './directionality';
+import {Directionality} from './directionality';
+
+interface Direction {
+  foo: number
+}
 
 /**
  * Directive to listen for changes of direction of part of the DOM.
