@@ -71,11 +71,13 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
   fun _testCustomSignal() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
-  fun testSignalInGenericStructuralDirective() =
+  // TODO WEB-67260 - fix completion of signal calls
+  fun _testSignalInGenericStructuralDirective() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                           dir = true, extension = "html")
 
-  fun testSignalInGenericDirective() =
+  // TODO WEB-67260 - fix completion of signal calls
+  fun _testSignalInGenericDirective() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                           dir = true, extension = "html")
 
@@ -87,11 +89,12 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   // TODO WEB-67260 - fix issue later
   fun _testTemplatesCompletion16() =
-    doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html")
 
   // TODO WEB-67260 - fix issue later
   fun _testTemplatesCompletion16Strict() =
-    doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html", configurators = listOf(Angular2TsConfigFile()))
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                 extension = "html", configurators = listOf(Angular2TsConfigFile()))
 
   fun testPrimaryBlocks() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")

@@ -224,7 +224,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testPipeOverloadWithUndefined() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
                                                           dir = true, configureFileName = "apps/app.component.html",
-                                                          configurators = emptyList())
+                                                          configurators = listOf(Angular2TsConfigFile()))
 
   override fun setUp() {
     super.setUp()
