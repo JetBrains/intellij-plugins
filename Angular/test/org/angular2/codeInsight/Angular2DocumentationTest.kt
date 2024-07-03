@@ -1,8 +1,10 @@
 package org.angular2.codeInsight
 
+import com.intellij.javascript.web.WebFrameworkTestConfigurator
 import com.intellij.webSymbols.checkDocumentationAtCaret
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TsConfigFile
 
 class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
@@ -16,18 +18,15 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testSimpleBananaBox() = doTestWithDeps()
 
-  // TODO WEB-67260 - fix issues with documentation
-  fun _testDirectiveWithMatchingInput() = doTestWithDeps()
+  fun testDirectiveWithMatchingInput() = doTestWithDeps(useConfig = true)
 
-  // TODO WEB-67260 - fix issues with typescript.compiler.evaluation.jsTypeDeclaration flag
-  fun _testDirectiveWithoutMatchingInput() = doTestWithDeps()
+  fun testDirectiveWithoutMatchingInput() = doTestWithDeps()
 
   fun testGlobalAttribute() = doTestWithDeps()
 
   fun testFieldWithoutDocs() = doTestWithDeps()
 
-  // TODO WEB-67260 - fix issues with typescript.compiler.evaluation.jsTypeDeclaration flag
-  fun _testFieldWithDocsPrivate() = doTestWithDeps()
+  fun testFieldWithDocsPrivate() = doTestWithDeps(useConfig = true)
 
   fun testExtendedEventKey() = doTestWithDeps()
 
@@ -42,30 +41,31 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testDirectiveInputNoDoc() = doTest()
 
-  // TODO WEB-67260 - fix issues with typescript.compiler.evaluation.jsTypeDeclaration flag
-  fun _testDirectiveInOutNoDoc() = doTest()
+  fun testDirectiveInOutNoDoc() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                         Angular2TestModule.ANGULAR_COMMON_15_1_5)
 
-  // TODO WEB-67260 - fix issues with typescript.compiler.evaluation.jsTypeDeclaration flag
-  fun _testDirectiveNoDocInOutDoc() = doTest()
+  fun testDirectiveNoDocInOutDoc() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                            Angular2TestModule.ANGULAR_COMMON_15_1_5)
 
-  // TODO WEB-67260 - fix issues with typescript.compiler.evaluation.jsTypeDeclaration flag
-  fun _testDirectiveInOutMixedDoc() = doTest()
+  fun testDirectiveInOutMixedDoc() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                            Angular2TestModule.ANGULAR_COMMON_15_1_5)
 
-  // TODO WEB-67260 - fix issues with documentation
-  fun _testDirectiveWithGenerics() = doTest()
+  fun testDirectiveWithGenerics() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                           Angular2TestModule.ANGULAR_COMMON_15_1_5,
+                                           configurators = listOf(Angular2TsConfigFile()))
 
-  // TODO WEB-67260 - fix issues with typescript.compiler.evaluation.jsTypeDeclaration flag
-  fun _testStructuralDirectiveWithGenerics() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
-                                                     Angular2TestModule.ANGULAR_COMMON_15_1_5)
+  fun testStructuralDirectiveWithGenerics() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                                     Angular2TestModule.ANGULAR_COMMON_15_1_5,
+                                                     configurators = listOf(Angular2TsConfigFile()))
 
   fun testHostDirectiveMappedInput() = doTest()
 
   fun testWritableSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                     Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
-  // TODO WEB-67260 - fix issues with documentation
-  fun _testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
-                                        Angular2TestModule.ANGULAR_COMMON_16_2_8)
+  fun testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                                        Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                                        configurators = listOf(Angular2TsConfigFile()))
 
   fun testSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                             Angular2TestModule.ANGULAR_COMMON_16_2_8)
@@ -96,16 +96,36 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testDefaultValueJSDoc() = doTest()
 
-  private fun doTestWithDeps() {
-    doConfiguredTest(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
-                                              "deps/ng_plural.ts"),
-                     extension = "html") {
+  private fun doTestWithDeps(useConfig: Boolean = false) {
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                     additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
+                                              "deps/ng_plural.ts", "deps/module.ts"),
+                     configureFile = false,
+                     configurators = if (useConfig) listOf(Angular2TsConfigFile()) else emptyList()) {
+      myFixture.configureByText("component.ts", """
+        import {Component} from "@angular/core";
+        import {Module} from "./deps/module"
+
+        @Component({
+         standalone: true,
+         templateUrl: "./$testName.html",
+         imports: [Module]
+        })
+        class MyComponent {
+        }
+      """.trimIndent())
+      myFixture.configureByFile("$testName.html")
       checkDocumentationAtCaret()
     }
   }
 
-  private fun doTest(vararg modules: Angular2TestModule, ext: String = "ts", additionalFiles: List<String> = emptyList()) {
-    doConfiguredTest(modules = modules, extension = ext, additionalFiles = additionalFiles) {
+  private fun doTest(
+    vararg modules: Angular2TestModule,
+    ext: String = "ts",
+    additionalFiles: List<String> = emptyList(),
+    configurators: List<WebFrameworkTestConfigurator> = emptyList(),
+  ) {
+    doConfiguredTest(modules = modules, extension = ext, additionalFiles = additionalFiles, configurators = configurators) {
       checkDocumentationAtCaret()
     }
   }
