@@ -14,6 +14,7 @@ var _t1 = _ctor1({"ngForOf": this.heroes, "ngForTrackBy": null as any, "ngForTem
 _t1.ngForOf = this.heroes;
 var _t2 = null! as any;
 if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)) {
+_t2;
 var _t3 = _t2.$implicit;
 var _t4 = _t2.ngForOf;
 var _t5 = document.createElement("li");
@@ -44,6 +45,7 @@ _t9.ngIf = true;
 _t9.ngIfElse = _t10;
 var _t12 = null! as any;
 if (_i1.NgIf.ngTemplateContextGuard(_t9, _t12) && true) {
+_t12;
 var _t13 = document.createElement("span");
 }
 }

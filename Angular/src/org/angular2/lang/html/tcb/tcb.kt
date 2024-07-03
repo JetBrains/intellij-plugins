@@ -323,6 +323,10 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
         append(") ")
       }
       codeBlock {
+        appendStatement {
+          val ctx = scope.resolve(template)
+          append(ctx, template.startSourceSpan, contextVar = true).append(";")
+        }
         statements.forEach(this::appendStatement)
       }
     }
@@ -392,8 +396,8 @@ private abstract class TcbDirectiveTypeOpBase(
     else {
       type = Expression("any")
     }
-    val id = this.tcb.allocateId(this.node.startSourceSpan, ExpressionIdentifier.Directive)
-    this.scope.addStatement(tsDeclareVariable(id, type, types = false))
+    val id = this.tcb.allocateId(this.node.startSourceSpan)
+    this.scope.addStatement(tsDeclareVariable(id, type, types = false, ofDir = dir.directive))
     return id
   }
 }
@@ -547,7 +551,7 @@ private class TcbDirectiveCtorOp(
   override val optional = true
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(this.node.startSourceSpan, ExpressionIdentifier.Directive)
+    val id = this.tcb.allocateId(this.node.startSourceSpan)
 
     val genericInputs = mutableMapOf<String, TcbDirectiveInput>()
     val boundAttrs = getBoundAttributes(this.dir, this.node)
@@ -593,7 +597,7 @@ private class TcbDirectiveCtorOp(
         append(tcbCallTypeCtor(dir, tcb, genericInputs.values))
       }
     }
-    this.scope.addStatement(tsCreateVariable(id, typeCtor, types = false))
+    this.scope.addStatement(tsCreateVariable(id, typeCtor, types = false, ofDir = dir.directive))
     return id
   }
 
@@ -1494,8 +1498,8 @@ internal class Context(
    * Currently this uses a monotonically increasing counter, but in the future the variable name
    * might change depending on the type of data being stored.
    */
-  fun allocateId(sourceSpan: TextRange? = null, kind: ExpressionIdentifier? = null): Identifier {
-    return Identifier("_t${this.nextId++}", sourceSpan, kind)
+  fun allocateId(sourceSpan: TextRange? = null): Identifier {
+    return Identifier("_t${this.nextId++}", sourceSpan)
   }
 
   fun getPipeByName(name: String?): Angular2Pipe? {
@@ -2753,13 +2757,13 @@ private fun tsCastToAny(expr: Expression): Expression {
  * Unlike with `tsCreateVariable`, the type of the variable is explicitly specified.
  */
 
-internal fun tsDeclareVariable(id: Identifier, type: Expression, types: Boolean = true): Statement {
+internal fun tsDeclareVariable(id: Identifier, type: Expression, types: Boolean = true, ofDir: Angular2Directive? = null): Statement {
   // When we create a variable like `var _t1: boolean = null!`, TypeScript actually infers `_t1`
   // to be `never`, instead of a `boolean`. To work around it, we cast the value
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = types)
+    append(id, id.sourceSpan, types = types, varOfDirective = ofDir)
     append(" = null! as ")
     append(type)
     append(";")
@@ -2787,16 +2791,12 @@ private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputN
  * Unlike with `tsDeclareVariable`, the type of the variable is inferred from the initializer
  * expression.
  */
-private fun tsCreateVariable(id: Identifier, initializer: Expression, types: Boolean = true): Statement {
+private fun tsCreateVariable(id: Identifier, initializer: Expression, types: Boolean = true, ofDir: Angular2Directive? = null): Statement {
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = types)
+    append(id, id.sourceSpan, types = types, varOfDirective = ofDir)
     append(" = ")
     append(initializer)
     append(";")
   }
-}
-
-enum class ExpressionIdentifier {
-  Directive
 }
