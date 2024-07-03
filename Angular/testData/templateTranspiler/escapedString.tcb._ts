@@ -1,0 +1,11 @@
+/* Angular type checking code */
+/* Directives */
+const _ctor1 = null! as <C = any, F = any>(init: Pick<MyDirective<C, F>, "myInput">) => MyDirective<C, F>;
+
+/* TCB for escapedString.ts */
+
+function _tcb1(this: MyComponent) {
+var _t1 = document.createElement("div");
+var _t2 = _ctor1({"myInput": "red"});
+_t2.myInput = "red";
+}
