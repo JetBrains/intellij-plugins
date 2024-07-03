@@ -107,7 +107,7 @@ class PlatformioIconProvider : ExternalSystemIconProvider {
   override val reloadIcon: Icon
     get() = pioIcon(PlatformIcons.SYNCHRONIZE_ICON)
   override val projectIcon: Icon
-    get() = ClionEmbeddedPlatformioIcons.PlatformIO
+    get() = ClionEmbeddedPlatformioIcons.LogoPlatformIO
 }
 
 val LOG: Logger = Logger.getInstance(PlatformioWorkspace::class.java)

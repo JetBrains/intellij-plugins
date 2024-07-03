@@ -21,7 +21,7 @@ import icons.ClionEmbeddedPlatformioIcons
 import javax.swing.Icon
 
 abstract class PlatformioBeforeRunTaskProvider : BeforeRunTaskProvider<PlatformioBeforeRunTask>() {
-  override fun getIcon(): Icon = ClionEmbeddedPlatformioIcons.PlatformIO
+  override fun getIcon(): Icon = ClionEmbeddedPlatformioIcons.LogoPlatformIO
 
   override fun canExecuteTask(configuration: RunConfiguration, task: PlatformioBeforeRunTask): Boolean =
     PlatformioWorkspace.isPlatformioProject(configuration.project)
