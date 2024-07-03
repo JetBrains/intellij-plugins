@@ -4,12 +4,16 @@ import type * as ts from "./tsserverlibrary.shim";
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
 import {Language, LanguagePlugin} from "@volar/language-core"
 import {AngularVirtualCode} from "./code"
-import {decorateIdeLanguageServiceExtensions, decorateNgLanguageServiceExtensions,} from "./decorateLanguageService"
+import {
+  createUnboundReverseMapper,
+  decorateIdeLanguageServiceExtensions,
+  decorateNgLanguageServiceExtensions,
+} from "./decorateLanguageService"
 import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/types"
 import {AngularSourceMap} from "./ngSourceMap"
 import {Angular2TcbMappingInfo} from "./mappings"
 
-function loadLanguagePlugins(ts: typeof import('typescript'),
+function loadLanguagePlugins(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
                              info: ts.server.PluginCreateInfo): {
   languagePlugins: [LanguagePlugin<string, AngularVirtualCode>];
   setup?: (language: Language<string>) => void;
@@ -56,15 +60,19 @@ function loadLanguagePlugins(ts: typeof import('typescript'),
     }],
     setup(language: Language<string>) {
       language.mapperFactory = (mappings) => new AngularSourceMap(mappings)
-      decorateIdeLanguageServiceExtensions(language, info.languageService)
-      decorateNgLanguageServiceExtensions(language, info.languageService)
+
+      const unboundReverseMapper = createUnboundReverseMapper(language, info.languageService)
+      let {webStormGetElementType} = info.languageService
+      decorateIdeLanguageServiceExtensions(language, info.languageService, unboundReverseMapper)
+      decorateNgLanguageServiceExtensions(language, info.languageService, unboundReverseMapper, webStormGetElementType)
     }
   }
 }
 
 const ngTranspiledTemplateCommand = "ngTranspiledTemplate";
+const ngGetGeneratedElementTypeCommand = "ngGetGeneratedElementType";
 
-function addNgCommands(ts: typeof import('typescript'), info: ts.server.PluginCreateInfo) {
+function addNgCommands(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'), info: ts.server.PluginCreateInfo) {
   let projectService = info.project.projectService;
   projectService.logger.info("Angular: called handler processing");
 
@@ -82,6 +90,7 @@ function addNgCommands(ts: typeof import('typescript'), info: ts.server.PluginCr
 
   (session as any).webStormNgCommandsAdded = true
   session.addProtocolHandler(ngTranspiledTemplateCommand, ngTranspiledTemplateHandler.bind(null, ts, session, projectService));
+  session.addProtocolHandler(ngGetGeneratedElementTypeCommand, ngGetGeneratedElementTypeHandler.bind(null, ts, session, projectService));
 
   projectService.logger.info("Angular specific commands are successfully added.");
 }
@@ -93,7 +102,14 @@ type TranspiledTemplateArguments = {
   mappings: Angular2TcbMappingInfo[];
 }
 
-const ngTranspiledTemplateHandler = (ts: typeof import('typescript'),
+type GetGeneratedElementTypeArguments = {
+  file: string;
+  startOffset: number,
+  endOffset: number,
+  forceReturnType: boolean,
+}
+
+const ngTranspiledTemplateHandler = (ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
                                      session: ts.server.Session,
                                      projectService: ts.server.ProjectService,
                                      request: ts.server.protocol.Request) => {
@@ -121,6 +137,20 @@ const ngTranspiledTemplateHandler = (ts: typeof import('typescript'),
     responseRequired: true,
     response: {}
   }
+};
+
+const ngGetGeneratedElementTypeHandler = (ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
+                                          _session: ts.server.Session,
+                                          projectService: ts.server.ProjectService,
+                                          request: ts.server.protocol.Request) => {
+
+  const requestArguments = request.arguments as GetGeneratedElementTypeArguments
+
+  let fileName = ts.server.toNormalizedPath(requestArguments.file)
+  let project = projectService.getDefaultProjectForFile(fileName, true)
+  return project?.getLanguageService()?.webStormNgGetGeneratedElementType(
+      ts, fileName, requestArguments.startOffset, requestArguments.endOffset, requestArguments.forceReturnType)
+    ?? {responseRequired: true, response: undefined}
 };
 
 const init = createLanguageServicePlugin(loadLanguagePlugins as any)

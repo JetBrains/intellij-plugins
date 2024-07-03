@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.service
 
+import com.google.gson.JsonObject
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
@@ -9,39 +10,49 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.resolve.JSEvaluationStatisticsCollector
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerServiceRequest
 import com.intellij.lang.typescript.compiler.TypeScriptService
-import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction.computeCancellable
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.SmartList
+import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import icons.AngularIcons
+import kotlinx.coroutines.currentCoroutineContext
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol
+import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeCommand
+import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
 import java.util.function.Consumer
+import kotlin.coroutines.CoroutineContext
 
 class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
 
@@ -87,7 +98,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.postprocessErrors(file, list)
     }
 
-  override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
+  override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
     (element.language.let { it is Angular2Language || it is Angular2HtmlDialect }
@@ -114,7 +125,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
   }
 
-  private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project) {
+  private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project),
+                                                                                   Angular2TypeScriptServiceEvaluationSupport {
 
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
@@ -128,6 +140,33 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
         process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
       }
     }
+
+    override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? {
+      val virtualFile = transpiledFile.originalFile.originalFile.virtualFile
+                        ?: return null
+      val evaluationLocation = templateFile.originalFile.virtualFile
+                               ?: return null
+      commitDocumentsWithNBRA(virtualFile)
+      if (virtualFile != evaluationLocation) {
+        commitDocumentsWithNBRA(evaluationLocation)
+      }
+      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+
+      val filePath = getFilePath(virtualFile) ?: return null
+
+      val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, generatedRange.startOffset, generatedRange.endOffset)
+      return sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
+    }
+
+    suspend fun getGeneratedElementType(args: Angular2GetGeneratedElementTypeRequestArgs): JsonObject? {
+      val task = Angular2GetGeneratedElementTypeRequest(args, this@Angular2TypeScriptService, currentCoroutineContext())
+      val response = requestQueue.request(task)
+      if (JSEvaluationStatisticsCollector.State.isEnabled()) {
+        application.service<JSEvaluationStatisticsCollector>().responseReady(!task.wasExecuted)
+      }
+      return response
+    }
+
   }
 
   private fun findTemplatesRanges(file: PsiFile): List<TemplateRange> {
@@ -182,4 +221,12 @@ fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): B
     AngularServiceSettings.AUTO -> true
     AngularServiceSettings.DISABLED -> false
   }
+}
+
+private class Angular2GetGeneratedElementTypeRequest(
+  args: Angular2GetGeneratedElementTypeRequestArgs,
+  service: Angular2TypeScriptService,
+  coroutineContext: CoroutineContext,
+) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs>(args, service, coroutineContext) {
+  override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
 }

@@ -27,14 +27,10 @@ function toGeneratedRange(language: Language, serviceScript: TypeScriptServiceSc
   return undefined
 }
 
-export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
+export type UnboundReverseMapper = (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range) => { pos: number, end: number, fileName: string } | undefined;
 
-  let {webStormGetElementType, webStormGetTypeProperties, webStormGetSymbolType} = languageService
-
-  if (webStormGetElementType === undefined || webStormGetElementType === undefined || webStormGetSymbolType === undefined)
-    return
-
-  const ngReverseMapper = function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): { pos: number, end: number, fileName: string } | undefined {
+export function createUnboundReverseMapper(language: Language<string>, languageService: TS.LanguageService): UnboundReverseMapper {
+  return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): { pos: number, end: number, fileName: string } | undefined {
     const [serviceScript, targetScript, sourceScript] =
       getServiceScript(language, sourceFile.fileName);
     if (targetScript?.associatedOnly) {
@@ -63,6 +59,14 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     }
     return undefined;
   }
+}
+
+export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService, unboundReverseMapper: UnboundReverseMapper) {
+
+  let {webStormGetElementType, webStormGetTypeProperties, webStormGetSymbolType} = languageService
+
+  if (webStormGetElementType === undefined || webStormGetElementType === undefined || webStormGetSymbolType === undefined)
+    return
 
   languageService.webStormGetElementType = (
     ts: typeof TS,
@@ -103,7 +107,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     symbolId: number,
     _reverseMapper?: ReverseMapper,
   ) => {
-    return webStormGetSymbolType(ts, symbolId, ngReverseMapper.bind(null, ts))
+    return webStormGetSymbolType(ts, symbolId, unboundReverseMapper.bind(null, ts))
   }
 
   languageService.webStormGetTypeProperties = (
@@ -111,12 +115,16 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     typeId: number,
     _reverseMapper?: ReverseMapper,
   ) => {
-    return webStormGetTypeProperties(ts, typeId, ngReverseMapper.bind(null, ts))
+    return webStormGetTypeProperties(ts, typeId, unboundReverseMapper.bind(null, ts))
   }
 
 }
 
-export function decorateNgLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService) {
+export function decorateNgLanguageServiceExtensions(
+  language: Language<string>,
+  languageService: TS.LanguageService,
+  unboundReverseMapper: UnboundReverseMapper,
+  webStormGetElementType: TS.LanguageService["webStormGetElementType"]) {
   languageService.webStormNgUpdateTranspiledTemplate = (
     _ts, fileName,transpiledCode,sourceCode: { [key: string]: string }, mappings
   ) => {
@@ -125,5 +133,20 @@ export function decorateNgLanguageServiceExtensions(language: Language<string>, 
     if (sourceScript && virtualCode instanceof AngularVirtualCode) {
       virtualCode.transpiledTemplateUpdated(transpiledCode, sourceCode, mappings);
     }
+  }
+
+  languageService.webStormNgGetGeneratedElementType = (
+    ts, fileName, startOffset, endOffset, forceReturnType
+  ) => {
+    let program = languageService.getProgram();
+    if (!program) {
+      return undefined
+    }
+    const sourceFile = program.getSourceFile(fileName);
+    if (!sourceFile) {
+      return undefined
+    }
+
+    return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, unboundReverseMapper.bind(null, ts))
   }
 }

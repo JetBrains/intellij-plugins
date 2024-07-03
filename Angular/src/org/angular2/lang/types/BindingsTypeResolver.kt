@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -16,12 +17,12 @@ import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.Optimize
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.parentOfTypes
+import com.intellij.psi.util.*
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
@@ -29,6 +30,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
+import com.intellij.xml.util.XmlTagUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackNgModelChangeType
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
@@ -39,25 +41,37 @@ import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.function.BiFunction
 import java.util.function.Predicate
 
-internal class BindingsTypeResolver private constructor(val element: PsiElement,
-                                                        provider: Angular2ApplicableDirectivesProvider,
-                                                        inputWeightProvider: () -> Map<String, Int>,
-                                                        plainAttributesProvider: () -> Map<String, String>,
-                                                        inputExpressionsProvider: () -> Map<String, JSExpression?>) {
+internal class BindingsTypeResolver private constructor(
+  val element: PsiElement,
+  provider: Angular2ApplicableDirectivesProvider,
+  inputWeightProvider: () -> Map<String, Int>,
+  plainAttributesProvider: () -> Map<String, String>,
+  inputExpressionsProvider: () -> Map<String, JSExpression?>,
+  elementNameRangeProvider: () -> TextRange,
+) {
   private val analysisResult: AnalysisResult?
 
   init {
     val declarationsScope = Angular2DeclarationsScope(element)
     val directives = provider.matched.filter { declarationsScope.contains(it) }
+    val service = TypeScriptService.getForElement(element)?.service
     analysisResult = when {
       directives.isEmpty() -> AnalysisResult.EMPTY
+      // Use service to analyze the file if there is an associated component file.
+      // Fallback to WebStorm type inference engine otherwise.
+      // Don't use fallback in tests to ensure we don't switch to WebStorm type inference unintentionally
+      service is Angular2TypeScriptService && (ApplicationManager.getApplication().isUnitTestMode
+                                               || Angular2EntitiesProvider.findTemplateComponent(element) != null) ->
+        analyzeService(directives, element, elementNameRangeProvider(), service)
       isStrictTemplates(element) -> analyzeStrictTemplates(
         directives, element, inputWeightProvider(), plainAttributesProvider(), inputExpressionsProvider())
       else -> analyzeNonStrict(directives, element, inputExpressionsProvider())
@@ -90,9 +104,11 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     return postprocessTypes(types)
   }
 
-  private fun findDirectivePropertyTypeAndOrigin(directive: Angular2Directive,
-                                                 properties: Collection<Angular2DirectiveProperty>,
-                                                 name: String): Pair<JSType?, Angular2Directive>? {
+  private fun findDirectivePropertyTypeAndOrigin(
+    directive: Angular2Directive,
+    properties: Collection<Angular2DirectiveProperty>,
+    name: String,
+  ): Pair<JSType?, Angular2Directive>? {
     return properties.find { it.name == name }?.let {
       Pair(it.type, if (it is Angular2AliasedDirectiveProperty) it.directive else directive)
     }
@@ -165,10 +181,12 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
   companion object {
 
-    fun resolve(attribute: XmlAttribute,
-                expectedTypeKind: JSExpectedTypeKind?,
-                infoValidation: Predicate<Angular2AttributeNameParser.AttributeInfo>,
-                resolveMethod: BiFunction<BindingsTypeResolver, String, JSType?>): JSType? {
+    fun resolve(
+      attribute: XmlAttribute,
+      expectedTypeKind: JSExpectedTypeKind?,
+      infoValidation: Predicate<Angular2AttributeNameParser.AttributeInfo>,
+      resolveMethod: BiFunction<BindingsTypeResolver, String, JSType?>,
+    ): JSType? {
       val descriptor = attribute.descriptor as? Angular2AttributeDescriptor
       val tag = attribute.parent
       val info = Angular2AttributeNameParser.parse(attribute.name, attribute.parent)
@@ -184,10 +202,12 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       }
     }
 
-    fun resolve(bindings: Angular2TemplateBindings,
-                key: String,
-                expectedTypeKind: JSExpectedTypeKind?,
-                resolveMethod: BiFunction<BindingsTypeResolver, String, JSType?>): JSType? {
+    fun resolve(
+      bindings: Angular2TemplateBindings,
+      key: String,
+      expectedTypeKind: JSExpectedTypeKind?,
+      resolveMethod: BiFunction<BindingsTypeResolver, String, JSType?>,
+    ): JSType? {
       val resolver = if (expectedTypeKind == JSExpectedTypeKind.EXPECTED)
         create(bindings, key)
       else
@@ -243,6 +263,10 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
             .mapNotNull { Pair(it.key, it.expression ?: return@mapNotNull null) }
             .distinctBy { it.first }
             .toMap()
+        }, {
+          val attribute = (InjectedLanguageManager.getInstance(bindings.project).getInjectionHost(bindings).takeIf { it !is JSElement } ?: bindings)
+            .parentOfType<XmlAttribute>(true)
+          attribute?.nameElement?.textRange ?: bindings.textRange
         })
 
     private fun create(tag: XmlTag, filteredAttribute: XmlAttribute? = null) =
@@ -269,10 +293,16 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
                        ?: return@mapAttrsToMapIndexed null
             Pair(name, Angular2Binding.get(attr)?.expression)
           }
+        }, {
+          XmlTagUtil.getStartTagNameElement(tag)?.textRange
+          ?: XmlTagUtil.getStartTagRange(tag)
+          ?: tag.textRange
         })
 
-    private fun <T> XmlTag.mapAttrsToMapIndexed(filteredAttribute: XmlAttribute?,
-                                                transform: (index: Int, XmlAttribute) -> Pair<String, T>?): Map<String, T> =
+    private fun <T> XmlTag.mapAttrsToMapIndexed(
+      filteredAttribute: XmlAttribute?,
+      transform: (index: Int, XmlAttribute) -> Pair<String, T>?,
+    ): Map<String, T> =
       attributes
         .asSequence()
         .filter { it != filteredAttribute }
@@ -292,11 +322,72 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       }
     }
 
-    private fun analyzeStrictTemplates(directives: List<Angular2Directive>,
-                                       element: PsiElement,
-                                       weightMap: Map<String, Int>,
-                                       attrsMap: Map<String, String>,
-                                       inputsMap: Map<String, JSExpression?>): AnalysisResult {
+    private fun analyzeService(directives: List<Angular2Directive>, element: PsiElement, nameRange: TextRange, service: Angular2TypeScriptService): AnalysisResult? {
+
+      val componentFile = Angular2EntitiesProvider.findTemplateComponent(element)?.sourceElement?.containingFile
+                          ?: return null
+
+      val transpiledComponentFile = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
+                                    ?: return null
+
+      val injectedLanguageManager = InjectedLanguageManager.getInstance(element.project)
+      val templateFile = injectedLanguageManager.getTopLevelFile(element)
+      val templateMappings = transpiledComponentFile.fileMappings[templateFile]
+                             ?: return null
+
+      val adjustedNameRange = if (templateFile != element.containingFile)
+        injectedLanguageManager.injectedToHost(element.containingFile, nameRange)
+      else
+        nameRange
+
+      val templateContextType = templateMappings.contextVarMappings[adjustedNameRange]
+        ?.let { service.typeEvaluationSupport.getGeneratedElementType(transpiledComponentFile, templateFile, it) }
+        ?.substitute(element)
+      val substitutors = directives.associateBy({ it }) { directive ->
+        val directiveInstanceType = templateMappings.directiveVarMappings[Pair(adjustedNameRange, directive)]
+          ?.let { service.typeEvaluationSupport.getGeneratedElementType(transpiledComponentFile, templateFile, it)?.substitute(element) }
+        buildJSTypeSubstitutor(directive, directiveInstanceType)
+      }
+      // TODO - `strictSubstitutors` should not contain implicit `any` substitution,
+      //        which happens when a directive does not have an input, which
+      //        determines some generic parameter.
+      //        E.g. Angular2DocumentationTest.testDirectiveWithGenerics
+      val strictSubstitutors = substitutors
+
+      return AnalysisResult(
+        null,
+        templateContextType = templateContextType,
+        directives = directives,
+        substitutors = substitutors,
+        strictSubstitutors = strictSubstitutors,
+      )
+    }
+
+    private fun buildJSTypeSubstitutor(directive: Angular2Directive, directiveInstanceType: JSType?): JSTypeSubstitutor? {
+      if (directiveInstanceType !is JSGenericTypeImpl)
+        return null
+      val cls = (directive as? Angular2ClassBasedDirective)?.typeScriptClass
+                ?: return null
+
+      val result = JSTypeSubstitutorImpl()
+      val arguments = directiveInstanceType.arguments
+
+      cls.typeParameters.forEachIndexed { index, typeScriptTypeParameter ->
+        if (index < arguments.size) {
+          result.put(typeScriptTypeParameter.genericId, arguments[index])
+        }
+      }
+
+      return result
+    }
+
+    private fun analyzeStrictTemplates(
+      directives: List<Angular2Directive>,
+      element: PsiElement,
+      weightMap: Map<String, Int>,
+      attrsMap: Map<String, String>,
+      inputsMap: Map<String, JSExpression?>,
+    ): AnalysisResult {
       val substitutors = mutableMapOf<Angular2Directive, JSTypeSubstitutor?>()
       val strictSubstitutors = mutableMapOf<Angular2Directive, JSTypeSubstitutor?>()
       val templateContextTypes: MutableList<JSType> = SmartList()
@@ -375,11 +466,13 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       return AnalysisResult(null, mergedTemplateContextType, directives, substitutors, strictSubstitutors)
     }
 
-    private fun calculateDirectiveTypeSubstitutor(classTypeSource: JSTypeSource,
-                                                  clsTypeParams: Array<TypeScriptTypeParameter>,
-                                                  directiveInputs: List<DirectiveInput>,
-                                                  element: PsiElement,
-                                                  elementTypeSource: JSTypeSource): JSTypeSubstitutor {
+    private fun calculateDirectiveTypeSubstitutor(
+      classTypeSource: JSTypeSource,
+      clsTypeParams: Array<TypeScriptTypeParameter>,
+      directiveInputs: List<DirectiveInput>,
+      element: PsiElement,
+      elementTypeSource: JSTypeSource,
+    ): JSTypeSubstitutor {
       val directiveFactoryType = TypeScriptJSFunctionTypeImpl(
         classTypeSource,
         TypeScriptGenericTypesEvaluator.buildGenericParameterDeclarations(clsTypeParams),
@@ -405,9 +498,11 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         .getTypeSubstitutorForCallItem(directiveFactoryType, directiveFactoryCall, null)
     }
 
-    private fun analyzeNonStrict(directives: List<Angular2Directive>,
-                                 element: PsiElement,
-                                 inputsMap: Map<String, JSExpression?>): AnalysisResult {
+    private fun analyzeNonStrict(
+      directives: List<Angular2Directive>,
+      element: PsiElement,
+      inputsMap: Map<String, JSExpression?>,
+    ): AnalysisResult {
       val genericArguments = MultiMap<JSTypeGenericId, JSType?>()
       val templateContextTypes: MutableList<JSType> = SmartList()
       directives.forEach { directive ->
@@ -433,10 +528,12 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       return AnalysisResult(mergedSubstitutor, mergedTemplateContextType, directives, emptyMap(), emptyMap())
     }
 
-    private fun collectGenericArgumentsNonStrict(inputExpression: JSExpression,
-                                                 propertyType: JSType,
-                                                 processingContext: ProcessingContext,
-                                                 genericArguments: MultiMap<JSTypeGenericId, JSType?>) {
+    private fun collectGenericArgumentsNonStrict(
+      inputExpression: JSExpression,
+      propertyType: JSType,
+      processingContext: ProcessingContext,
+      genericArguments: MultiMap<JSTypeGenericId, JSType?>,
+    ) {
       val inputType = JSPsiBasedTypeOfType(inputExpression, true).substituteIfCompilerType(inputExpression)
       // todo getApparentType is supposed to be used only in JS according to usages in JS plugin
       val apparentType = JSTypeUtils.getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType))
@@ -464,8 +561,10 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       }
     }
 
-    private fun intersectGenerics(arguments: MultiMap<JSTypeGenericId, JSType?>,
-                                  source: JSTypeSource): JSTypeSubstitutor {
+    private fun intersectGenerics(
+      arguments: MultiMap<JSTypeGenericId, JSType?>,
+      source: JSTypeSource,
+    ): JSTypeSubstitutor {
       val result = JSTypeSubstitutorImpl()
       for ((key, value) in arguments.entrySet()) {
         result.put(key, merge(source, value.filterNotNull(), false))
@@ -478,16 +577,20 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       return JSCompositeTypeFactory.optimizeTypeIfComposite(type, OptimizedKind.OPTIMIZED_SIMPLE)
     }
 
-    private fun getTypeSource(element: PsiElement,
-                              templateContextTypes: List<JSType?>,
-                              genericArguments: MultiMap<JSTypeGenericId, JSType?>): JSTypeSource? {
+    private fun getTypeSource(
+      element: PsiElement,
+      templateContextTypes: List<JSType?>,
+      genericArguments: MultiMap<JSTypeGenericId, JSType?>,
+    ): JSTypeSource? {
       val source = getTypeSource(element, templateContextTypes)
       return source
              ?: genericArguments.values().find { it != null }?.source
     }
 
-    private fun getTypeSource(element: PsiElement,
-                              types: List<JSType?>): JSTypeSource? {
+    private fun getTypeSource(
+      element: PsiElement,
+      types: List<JSType?>,
+    ): JSTypeSource? {
       val resolveScope = Angular2EntitiesProvider.findTemplateComponent(element)?.jsResolveScope
       return if (resolveScope != null) {
         JSTypeSourceFactory.createTypeSource(resolveScope, true)

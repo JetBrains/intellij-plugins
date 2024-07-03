@@ -31,19 +31,21 @@ export class AngularVirtualCode implements VirtualCode {
 
   sourceFileUpdated(snapshot: ts.IScriptSnapshot, _languageId?: string): AngularVirtualCode {
     this.associatedScriptMappings.clear()
+    let templateInSync = true
     if (this.transpiledTemplate) {
-      // Check if the template is still valid
+      // Check if the template is in sync
+      // It is possible that the template will be in sync after another update
       if (snapshot.getChangeRange(this.transpiledTemplate.snapshot) !== undefined
           || !sameContents(snapshot, this.transpiledTemplate.sourceCode[this.normalizeId(this.fileName)])) {
-        this.transpiledTemplate = undefined
+        templateInSync = false
       } else if (this.transpiledTemplate.mappings.find(mapping => {
           return !sameContents(this.ctx.getAssociatedScript(mapping.fileName)?.snapshot,
                                this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.fileName)])
         })) {
-        this.transpiledTemplate = undefined
+        templateInSync = false
       }
     }
-    if (this.transpiledTemplate) {
+    if (this.transpiledTemplate && templateInSync) {
       this.snapshot = this.transpiledTemplate.snapshot
       this.mappings = []
       this.transpiledTemplate.mappings.forEach(mappingSet => {

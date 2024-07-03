@@ -14,6 +14,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.SmartList
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
@@ -82,6 +83,8 @@ object Angular2TranspiledComponentFileBuilder {
     val inlineTemplateRanges = SmartList<TextRange>()
 
     val componentFileMappings = SmartList<SourceMapping>()
+    val componentFileContextVarMappings = mutableMapOf<TextRange, TextRange>()
+    val componentFileDirectiveVarMappings = mutableMapOf<Pair<TextRange, Angular2Directive>, TextRange>()
     val mappings = SmartList<FileMappings>()
 
     generatedCode.append("\n\n/* Angular type checking code */\n")
@@ -102,12 +105,30 @@ object Angular2TranspiledComponentFileBuilder {
         template.sourceMappings.mapTo(componentFileMappings) {
           it.offsetBy(sourceOffset = sourceMappingOffset, generatedOffset = generatedMappingsOffset)
         }
+        template.contextVarMappings
+          .associateTo(componentFileContextVarMappings) { mapping ->
+            Pair(mapping.getElementNameRangeWithOffset(sourceMappingOffset),
+                 mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
+          }
+        template.directiveVarMappings
+          .associateTo(componentFileDirectiveVarMappings) { mapping ->
+            Pair(
+              Pair(mapping.getElementNameRangeWithOffset(sourceMappingOffset), mapping.directive),
+              mapping.getGeneratedRangeWithOffset(generatedMappingsOffset)
+            )
+          }
       }
       else {
         val fileMappings = template.sourceMappings.map {
           it.offsetBy(generatedOffset = generatedMappingsOffset)
         }
-        mappings.add(FileMappings(template.templateFile, fileMappings.sorted()))
+        val contextVarMappings = template.contextVarMappings.associate { mapping ->
+          Pair(mapping.getElementNameRangeWithOffset(0), mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
+        }
+        val directiveVarMappings = template.directiveVarMappings.associate { mapping ->
+          Pair(Pair(mapping.getElementNameRangeWithOffset(0), mapping.directive), mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
+        }
+        mappings.add(FileMappings(template.templateFile, fileMappings.sorted(), contextVarMappings, directiveVarMappings))
       }
     }
     inlineTemplateRanges.sortBy { it.startOffset }
@@ -126,10 +147,11 @@ object Angular2TranspiledComponentFileBuilder {
       lastRangeEnd = inlineTemplateRange.endOffset
     }
 
-    mappings.add(FileMappings(componentFile, componentFileMappings))
+    mappings.add(FileMappings(componentFile, componentFileMappings, componentFileContextVarMappings, componentFileDirectiveVarMappings))
     return TranspiledComponentFile(
+      componentFile,
       generatedCode.toString(),
-      mappings
+      mappings.associateBy { it.sourceFile }
     ).also {
       if (ApplicationManager.getApplication().isUnitTestMode) it.verifyMappings()
     }
@@ -139,13 +161,16 @@ object Angular2TranspiledComponentFileBuilder {
     sortedWith(mappingsComparator)
 
   data class TranspiledComponentFile(
+    val originalFile: PsiFile,
     val generatedCode: String,
-    val fileMappings: List<FileMappings>,
+    val fileMappings: Map<PsiFile, FileMappings>,
   )
 
   class FileMappings(
     val sourceFile: PsiFile,
     val sourceMappings: List<SourceMapping>,
+    val contextVarMappings: Map<TextRange, TextRange>,
+    val directiveVarMappings: Map<Pair<TextRange, Angular2Directive>, TextRange>,
   ) {
     val fileName = this.sourceFile.viewProvider.virtualFile.let { TypeScriptCompilerConfigUtil.normalizeNameAndPath(it) }
                    ?: "<non-local>"

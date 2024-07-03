@@ -1,0 +1,7 @@
+package org.angular2.lang.expr.service.protocol.commands
+
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCommandWithArguments
+
+class Angular2GetGeneratedElementTypeCommand(args: Angular2GetGeneratedElementTypeRequestArgs)
+  : JSLanguageServiceObject, TypeScriptCommandWithArguments<Angular2GetGeneratedElementTypeRequestArgs>("ngGetGeneratedElementType", args)

@@ -87,7 +87,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
       )
 
       checkTextByFile(
-        GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(transpiledFile.fileMappings.map { fileInfo ->
+        GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(transpiledFile.fileMappings.map { (_, fileInfo) ->
           val sourceFileText = fileInfo.sourceFile.text
 
           fun rangeToText(text: String, offset: Int, length: Int, offsetPrefix: Int = 0) =
@@ -106,7 +106,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
                       mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
                       mapping.ignored -> " (ignored)"
                       mapping.diagnosticsOffset == null -> " (no diagnostics)"
-                      else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) +")"
+                      else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) + ")"
                     } + when {
                       !mapping.types && !mapping.ignored -> " (no types)"
                       else -> ""

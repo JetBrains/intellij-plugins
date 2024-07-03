@@ -3,6 +3,7 @@ package org.angular2.lang.html.tcb
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
+import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
@@ -24,11 +25,15 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
   private val code: StringBuilder
 
   private val sourceMappings: Set<SourceMappingData>
+  private val contextVarMappings: Set<ContextVarMappingData>
+  private val directiveVarMappings: Set<DirectiveVarMappingData>
 
   init {
     val expression = ExpressionBuilderImpl().apply(builder)
     code = expression.code
     sourceMappings = expression.sourceMappings
+    contextVarMappings = expression.contextVarMappings
+    directiveVarMappings = expression.directiveVarMappings
   }
 
   override fun toString(): String =
@@ -41,6 +46,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       override val templateFile: Angular2HtmlFile = templateFile
       override val generatedCode: String = code.toString()
       override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
+      override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
+      override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
     }
 
   interface ExpressionBuilder {
@@ -51,15 +58,19 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     fun append(
       code: String,
       originalRange: TextRange?,
-      types: Boolean,
+      types: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
+      contextVar: Boolean = false,
+      varOfDirective: Angular2Directive? = null,
     ): ExpressionBuilder
 
     fun append(
       id: Identifier,
       originalRange: TextRange?,
-      types: Boolean,
+      types: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
+      contextVar: Boolean = false,
+      varOfDirective: Angular2Directive? = null,
     ): ExpressionBuilder
 
     fun append(expression: Expression): ExpressionBuilder
@@ -68,7 +79,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     fun withSourceSpan(
       originalRange: TextRange?,
-      types: Boolean,
+      types: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
       builder: ExpressionBuilder.() -> Unit,
     )
@@ -96,6 +107,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     val code = StringBuilder()
 
     val sourceMappings = mutableSetOf<SourceMappingData>()
+    val contextVarMappings = mutableSetOf<ContextVarMappingData>()
+    val directiveVarMappings = mutableSetOf<DirectiveVarMappingData>()
 
     private var ignoreMappings = false
 
@@ -116,24 +129,61 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       return this
     }
 
-    override fun append(code: String, originalRange: TextRange?, types: Boolean, diagnosticsRange: TextRange?): ExpressionBuilder {
+    override fun append(
+      code: String,
+      originalRange: TextRange?,
+      types: Boolean,
+      diagnosticsRange: TextRange?,
+      contextVar: Boolean,
+      varOfDirective: Angular2Directive?,
+    ): ExpressionBuilder {
       if (originalRange != null) {
+        val sourceOffset = originalRange.startOffset
+        val sourceLength = originalRange.length
+        val generatedOffset = this.code.length
+        val generatedLength = code.length
         sourceMappings.add(SourceMappingData(
-          sourceOffset = originalRange.startOffset,
-          sourceLength = originalRange.length,
-          generatedOffset = this.code.length,
-          generatedLength = code.length,
+          sourceOffset = sourceOffset,
+          sourceLength = sourceLength,
+          generatedOffset = generatedOffset,
+          generatedLength = generatedLength,
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
           types = types && !ignoreMappings,
         ))
+        if (!ignoreMappings) {
+          if (contextVar) {
+            contextVarMappings.add(ContextVarMappingData(
+              elementNameOffset = sourceOffset,
+              elementNameLength = sourceLength,
+              generatedOffset = generatedOffset,
+              generatedLength = generatedLength
+            ))
+          }
+          if (varOfDirective != null) {
+            directiveVarMappings.add(DirectiveVarMappingData(
+              elementNameOffset = sourceOffset,
+              elementNameLength = sourceLength,
+              directive = varOfDirective,
+              generatedOffset = generatedOffset,
+              generatedLength = generatedLength
+            ))
+          }
+        }
       }
       this.code.append(code)
       return this
     }
 
-    override fun append(id: Identifier, originalRange: TextRange?, types: Boolean, diagnosticsRange: TextRange?): ExpressionBuilder =
-      append(id.toString(), originalRange, types, diagnosticsRange)
+    override fun append(
+      id: Identifier,
+      originalRange: TextRange?,
+      types: Boolean,
+      diagnosticsRange: TextRange?,
+      contextVar: Boolean,
+      varOfDirective: Angular2Directive?,
+    ): ExpressionBuilder =
+      append(id.toString(), originalRange, types, diagnosticsRange, contextVar, varOfDirective)
 
     override fun append(expression: Expression): ExpressionBuilder {
       val offset = this.code.length
@@ -144,6 +194,18 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           diagnosticsLength = sourceMapping.diagnosticsLength?.takeIf { !ignoreMappings },
           types = sourceMapping.types && !ignoreMappings,
         )
+      }
+      if (!ignoreMappings) {
+        expression.contextVarMappings.mapTo(this.contextVarMappings) { contextVarMapping ->
+          contextVarMapping.copy(
+            generatedOffset = contextVarMapping.generatedOffset + offset,
+          )
+        }
+        expression.directiveVarMappings.mapTo(this.directiveVarMappings) { directiveVarMapping ->
+          directiveVarMapping.copy(
+            generatedOffset = directiveVarMapping.generatedOffset + offset,
+          )
+        }
       }
       this.code.append(expression.code)
       return this
@@ -212,7 +274,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
   }
 }
 
-internal class Identifier(val name: String, val sourceSpan: TextRange? = null, val kind: ExpressionIdentifier? = null) {
+internal class Identifier(val name: String, val sourceSpan: TextRange? = null) {
   override fun toString(): String = name
 }
 
@@ -235,6 +297,20 @@ internal data class SourceMappingData(
          diagnosticsOffset = this.diagnosticsOffset?.let { it + sourceOffset })
 }
 
+internal data class ContextVarMappingData(
+  override val elementNameOffset: Int,
+  override val elementNameLength: Int,
+  override val generatedOffset: Int,
+  override val generatedLength: Int,
+) : Angular2TemplateTranspiler.ContextVarMapping
+
+internal data class DirectiveVarMappingData(
+  override val elementNameOffset: Int,
+  override val elementNameLength: Int,
+  override val directive: Angular2Directive,
+  override val generatedOffset: Int,
+  override val generatedLength: Int,
+) : Angular2TemplateTranspiler.DirectiveVarMapping
 
 private fun rangeToText(text: String, range: TextRange) =
   "«${text.substring(range.startOffset, range.endOffset)}» [${range.startOffset}]"
@@ -244,7 +320,7 @@ fun Angular2TranspiledComponentFileBuilder.TranspiledComponentFile.verifyMapping
   // check for unique mapping for types
   val typeMappings = MultiMap<Pair<PsiFile, TextRange>, TextRange>()
 
-  fileMappings.forEach { fileMappings ->
+  fileMappings.forEach { (_, fileMappings) ->
     fileMappings.sourceMappings.forEach { mapping ->
       if (mapping.types) {
         val key = Pair(fileMappings.sourceFile, TextRange.create(mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength))
@@ -257,8 +333,8 @@ fun Angular2TranspiledComponentFileBuilder.TranspiledComponentFile.verifyMapping
 
   typeMappings.entrySet().forEach { (key, generatedRanges) ->
     if (generatedRanges.size > 1) {
-      errors.add("Duplicated mapping from source file ${key.first.name}: " + rangeToText(key.first.text, key.second) + " to generated file: "+
-      generatedRanges.joinToString { rangeToText(generatedCode, it) })
+      errors.add("Duplicated mapping from source file ${key.first.name}: " + rangeToText(key.first.text, key.second) + " to generated file: " +
+                 generatedRanges.joinToString { rangeToText(generatedCode, it) })
     }
   }
 

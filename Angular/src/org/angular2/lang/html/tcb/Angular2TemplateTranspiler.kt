@@ -1,9 +1,11 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.entities.Angular2ClassBasedComponent
 import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
 
 object Angular2TemplateTranspiler {
@@ -77,6 +79,8 @@ object Angular2TemplateTranspiler {
     val templateFile: Angular2HtmlFile
     val generatedCode: String
     val sourceMappings: List<SourceMapping>
+    val contextVarMappings: List<ContextVarMapping>
+    val directiveVarMappings: List<DirectiveVarMapping>
   }
 
   interface SourceMapping {
@@ -92,4 +96,32 @@ object Angular2TemplateTranspiler {
 
     val ignored get() = !types && diagnosticsOffset == null
   }
+
+  interface ContextVarMapping {
+    val elementNameOffset: Int
+    val elementNameLength: Int
+    val generatedOffset: Int
+    val generatedLength: Int
+
+    fun getElementNameRangeWithOffset(offset: Int): TextRange =
+      TextRange(elementNameOffset + offset, elementNameOffset + offset + elementNameLength)
+
+    fun getGeneratedRangeWithOffset(offset: Int): TextRange =
+      TextRange(generatedOffset + offset, generatedOffset + offset + generatedLength)
+  }
+
+  interface DirectiveVarMapping {
+    val elementNameOffset: Int
+    val elementNameLength: Int
+    val directive: Angular2Directive
+    val generatedOffset: Int
+    val generatedLength: Int
+
+    fun getElementNameRangeWithOffset(offset: Int): TextRange =
+      TextRange(elementNameOffset + offset, elementNameOffset + offset + elementNameLength)
+
+    fun getGeneratedRangeWithOffset(offset: Int): TextRange =
+      TextRange(generatedOffset + offset, generatedOffset + offset + generatedLength)
+  }
+
 }

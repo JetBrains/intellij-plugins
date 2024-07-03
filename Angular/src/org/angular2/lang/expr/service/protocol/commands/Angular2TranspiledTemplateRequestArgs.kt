@@ -45,10 +45,10 @@ internal fun TranspiledComponentFile.toAngular2TranspiledTemplateRequestArgs(vir
   Angular2TranspiledTemplateRequestArgs.build(
     virtualFile,
     this.generatedCode,
-    this.fileMappings.associate {
+    this.fileMappings.values.associate {
       Pair(it.fileName, it.sourceFile.text)
     },
-    this.fileMappings.map {
+    this.fileMappings.values.map {
       it.toCodeMapping()
     }
   )

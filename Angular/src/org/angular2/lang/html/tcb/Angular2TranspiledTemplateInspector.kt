@@ -44,7 +44,7 @@ internal class Angular2TranspiledTemplateInspector(
   private val generatedTextEditor = TextEditorProvider.getInstance().createEditor(project, generatedFile) as TextEditor
   private val generatedEditor = generatedTextEditor.editor as EditorEx
 
-  private val sources: List<SourceInfo> = transpiledTemplate.fileMappings.filter { it.sourceFile != null }.map {
+  private val sources: List<SourceInfo> = transpiledTemplate.fileMappings.values.map {
     SourceInfo(project, disposable, it.sourceFile, it.sourceMappings)
   }
 
