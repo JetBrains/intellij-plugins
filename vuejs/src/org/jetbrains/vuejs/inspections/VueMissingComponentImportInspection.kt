@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PsiSourcedWebSymbol
@@ -14,6 +15,7 @@ import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
 import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
@@ -44,4 +46,6 @@ class VueMissingComponentImportInspection : LocalInspectionTool() {
       }
     }
   }
+
+  override fun isAvailableForFile(file: PsiFile): Boolean = file.isVueFile
 }
