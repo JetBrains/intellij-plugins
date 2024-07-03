@@ -18,12 +18,10 @@ import com.intellij.util.ui.StatusText
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.*
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
+import icons.ClionEmbeddedPlatformioIcons
 import java.awt.Component
 import java.awt.event.*
-import javax.swing.JComponent
-import javax.swing.JTree
-import javax.swing.SwingUtilities
-import javax.swing.ToolTipManager
+import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
@@ -72,7 +70,7 @@ internal class PlatformioActionTree(private val project: Project, private val me
       addNode(ClionEmbeddedPlatformioBundle.message("project.action.folder")).apply {
         addNode(actionManager.getAction("Build"))
         addNode(actionManager.getAction("Debug"))
-        addNode(actionManager.getAction("Clean"))
+        addNode(actionManager.getAction("Clean").withIcon(ClionEmbeddedPlatformioIcons.CleanPlatformIO))
       }
 
       addNode("PlatformIO").apply {
@@ -93,6 +91,12 @@ internal class PlatformioActionTree(private val project: Project, private val me
     val node = DefaultMutableTreeNode(childUserObject)
     this.add(node)
     return node
+  }
+
+  private fun AnAction.withIcon(icon: Icon): AnAction {
+    val presentation = this.getTemplatePresentation()
+    presentation.setIcon(icon)
+    return this
   }
 
   private fun reparseFailed(pioStartFailed: Boolean) {
