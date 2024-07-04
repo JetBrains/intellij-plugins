@@ -21,7 +21,7 @@ export type CustomLinkData = {
     standalone: true,
     imports: [ReactiveFormsModule],
     template: `<input [formControl]="formGroup.controls.text" 
-                      [formControlName]="<error descr="Type FormControl<string | null> is not assignable to type string | number | null  Type FormControl<string | null> is not assignable to type number">formGroup.controls.text</error>">`
+                      <error descr="TS2322: Type 'FormControl<string | null>' is not assignable to type 'string | number | null'.">[formControlName]</error>="formGroup.controls.text">`
 })
 
 export class CustomLinkEditorComponent {

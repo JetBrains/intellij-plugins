@@ -51,6 +51,7 @@ import org.junit.runners.Suite
   Angular17HtmlParsingTest::class,
   Angular2SemanticHighlightingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,
+  Angular2TemplateTranspilerTest::class,
   Angular2DocumentationTest::class,
   Angular2HighlightingTest::class,
   Angular2CompletionTest::class,

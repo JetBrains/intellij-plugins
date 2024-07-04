@@ -42,27 +42,28 @@ export class TestSignalComponent {
     
     <!-- check types -->
     <app-test-signal 
-      [optional]="<error descr="Type number is not assignable to type string | undefined  Type number is not assignable to type string">value3</error>" 
-      (optionalChange)="value3 = <error descr="Assigned expression type string | undefined is not assignable to type number  Type string is not assignable to type number">$event</error>" 
-      [required]="<error descr="Type number is not assignable to type string">value3</error>" 
-      (requiredChange)="value3 = <error descr="Assigned expression type string is not assignable to type number">$event</error>"
+      <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[optional]</error>="value3" 
+      (optionalChange)="<error descr="TS2322: Type 'string | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.">value3</error> = $event" 
+      <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[required]</error>="value3" 
+      (requiredChange)="<error descr="TS2322: Type 'string' is not assignable to type 'number'.">value3</error> = $event"
       <error descr="Property foo is not provided by any applicable directives nor by <app-test-signal> element">[foo]</error>="12"
     ></app-test-signal>
     
     <!-- check signal assignability -->
     <app-test-annotation 
         [(optional)]="signal1" 
-        [(required)]="<error descr="Type WritableSignal<number> is not assignable to type string | WritableSignal<string>...  Type WritableSignal<number> is not assignable to type WritableSignal<string>    Type number is not assignable to type string">signal2</error>"
+        <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[(required)]</error>="signal2"
     ></app-test-annotation>
     <app-test-signal 
         [(optional)]="signal1" 
-        [(required)]="<error descr="Type WritableSignal<number> is not assignable to type string | WritableSignal<string>...  Type WritableSignal<number> is not assignable to type WritableSignal<string>    Type number is not assignable to type string">signal2</error>"
+        <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[(required)]</error>="signal2"
     ></app-test-signal>
     <app-test-annotation 
-        [(optional)]="<error descr="Type Signal<number> is not assignable to type string | undefined | WritableSignal<string | undefined>...  Type Signal<number> is not assignable to type WritableSignal<string | undefined>    Type Signal<number> is not assignable to type string">signal3</error>" 
+        <error descr="TS2322: Type 'Signal<number>' is not assignable to type 'string | undefined'.">[(optional)]</error>="signal3" 
     ></app-test-annotation>
     <<error descr="Missing binding for required input required of component TestSignalComponent">app-test-signal</error> 
-        [(optional)]="<error descr="Type Signal<number> is not assignable to type string | undefined | WritableSignal<string | undefined>...  Type Signal<number> is not assignable to type WritableSignal<string | undefined>    Type Signal<number> is not assignable to type string">signal3</error>" 
+        <error descr="TS2322: Type 'Signal<number>' is not assignable to type 'string | undefined'.">[(optional)]</error>="signal3" 
     ></app-test-signal>
     
     <!-- test readonly signal -->

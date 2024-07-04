@@ -38,8 +38,8 @@ export class TestSignalComponent {
     
     <!-- check types -->
     <app-test-signal  
-      (output)="value3 = <error descr="Assigned expression type string is not assignable to type number">$event</error>"
-      (outputFromObservable)="value3 = <error descr="Assigned expression type string is not assignable to type number">$event</error>"
+      (output)="<error descr="TS2322: Type 'string' is not assignable to type 'number'.">value3</error> = $event"
+      (outputFromObservable)="<error descr="TS2322: Type 'string' is not assignable to type 'number'.">value3</error> = $event"
       <error descr="Property foo is not provided by any applicable directives nor by <app-test-signal> element">[foo]</error>="12"
     />
   `,

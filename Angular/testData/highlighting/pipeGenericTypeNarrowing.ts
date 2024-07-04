@@ -32,11 +32,11 @@ export class ChildComponent {
  standalone: true,
  template: `
         <app-child [value]="{ value: 'foo' } | badUnbox" />
-        <app-child [value]="<error descr="Type \"bar\" is not assignable to type \"foo\" | undefined  Type \"bar\" is not assignable to type \"foo\"">{ value: 'bar' } | badUnbox</error>" />
-        <app-child [value]="<error descr="Type string is not assignable to type \"foo\" | undefined  Type string is not assignable to type \"foo\"">({ value: {foo: 'foo'} } | badUnbox).foo</error>" />
-        <app-child [value]="<error descr="Type string is not assignable to type \"foo\" | undefined  Type string is not assignable to type \"foo\"">({ value: {foo: 'bar'} } | badUnbox).foo</error>" />
+        <app-child <error descr="TS2322: Type '\"bar\"' is not assignable to type '\"foo\"'.">[value]</error>="{ value: 'bar' } | badUnbox" />
+        <app-child <error descr="TS2322: Type 'string' is not assignable to type '\"foo\"'.">[value]</error>="({ value: {foo: 'foo'} } | badUnbox).foo" />
+        <app-child <error descr="TS2322: Type 'string' is not assignable to type '\"foo\"'.">[value]</error>="({ value: {foo: 'bar'} } | badUnbox).foo" />
         <app-child [value]="'' | goodUnbox: { value: 'foo' }" />
-        <app-child [value]="<error descr="Type \"bar\" is not assignable to type \"foo\" | undefined  Type \"bar\" is not assignable to type \"foo\"">'' | goodUnbox: { value: 'bar' }</error>" />
+        <app-child <error descr="TS2322: Type '\"bar\"' is not assignable to type '\"foo\"'.">[value]</error>="'' | goodUnbox: { value: 'bar' }" />
     `,
  imports: [ChildComponent, BadUnboxPipe, GoodUnboxPipe],
 })

@@ -27,7 +27,7 @@ export class BarDirective {
    standalone: true,
    imports: [FooDirective, BarDirective],
    template: `
-        <div [foo]="<error descr="Type number is not assignable to type string">12</error>"></div>
+        <div <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[foo]</error>="12"></div>
         <div *foo="<error descr="Type number is not assignable to type string">12</error>"></div>
         <div <error descr="Property bar is not provided by any applicable directives nor by <div> element">[bar]</error>="12"></div>
         <div *bar="<error descr="Type number is not assignable to type string">12</error>"></div>

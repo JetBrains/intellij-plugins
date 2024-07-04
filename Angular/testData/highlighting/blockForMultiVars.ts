@@ -16,7 +16,7 @@ export interface User {
         track item.name; 
         let first = $first, ev = $even, co = $count;
     ) {
-        {{ item }} {{first}} {{ev}} {{co}} {{<error descr="Unresolved variable or type $foo">$foo</error>}}
+        {{ item }} {{first}} {{ev}} {{co}} {{<error descr="TS2339: Property '$foo' does not exist on type 'RobotProfileComponent'.">$foo</error>}}
     }
   `
 })

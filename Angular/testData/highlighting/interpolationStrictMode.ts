@@ -15,7 +15,8 @@ interface IData {
           <i class="i-{{ data.icon?.toString() }}">data</i>
           <i class="i-{{ data.icon || '' }}">data</i>
           <i [attr.class]="data.icon">data</i>
-          <app-root [foo]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">data.icon</error>"></app-root>
+          <app-root <error descr="TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.">[foo]</error>="data.icon"></app-root>
       </div>
   `,
              standalone: true

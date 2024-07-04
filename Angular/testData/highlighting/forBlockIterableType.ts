@@ -16,16 +16,16 @@ interface Person {
           {{ p.phone + p.foo }}
       }
       @for (p of persons; track p.id) {
-          {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
+          {{ p.phone + p.<error descr="TS2339: Property 'foo' does not exist on type 'Person'.">foo</error> }}
       }
       @for (p of personsAny; track p.id) {
           {{ p.phone + p.foo }}
       }
       @for (p of personsOptional; track p.id) {
-          {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
+          {{ p.phone + p.<error descr="TS2339: Property 'foo' does not exist on type 'Person'.">foo</error> }}
       }
       @for (p of (persons$ | async); track p.id) {
-          {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
+          {{ p.phone + p.<error descr="TS2339: Property 'foo' does not exist on type 'Person'.">foo</error> }}
       }
     `,
    imports: [AsyncPipe]

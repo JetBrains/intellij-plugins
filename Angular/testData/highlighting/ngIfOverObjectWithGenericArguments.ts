@@ -22,7 +22,7 @@ export class TestComponent {
         <div>
           <app-test
             [testInput1]="selectedData.value"
-            [testInput2]="<error descr="Type string is not assignable to type number">selectedData.value</error>">
+            <error descr="TS2322: Type 'string' is not assignable to type 'number'.">[testInput2]</error>="selectedData.value">
           </app-test>
         </div>
       </ng-container>
