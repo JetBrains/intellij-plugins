@@ -10,6 +10,7 @@ import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.QuickDocHighlightingHelper.getStyledCodeFragment
 import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.documentation.JSDocSimpleInfoPrinter.addSections
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSType
@@ -43,6 +44,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import org.jetbrains.annotations.Nls
+import java.util.function.Supplier
 
 class Angular2ElementDocumentationTarget private constructor(
   @NlsSafe val name: String,
@@ -106,12 +108,14 @@ class Angular2ElementDocumentationTarget private constructor(
         is Angular2DirectiveExportAs -> null
         else -> element.sourceElement.takeIf { it !is TypeScriptClass }
       }
-      return (buildDefinition() + Angular2ElementDocProvider(buildAdditionalSections()).renderDocComment(source))
-        .applyIf(element is Angular2Entity) {
-          // remove self links
-          val link = Regex.escape(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + (element as Angular2Entity).entitySourceName)
-          replace(Regex("<span\\s+style='[^']*'><a\\s+href=['\"]$link['\"]\\s*>(.*?)</a\\s*></span>"), "$1")
-        }
+      return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(source, Supplier {
+        (buildDefinition() + Angular2ElementDocProvider(buildAdditionalSections()).renderDocComment(source))
+          .applyIf(element is Angular2Entity) {
+            // remove self links
+            val link = Regex.escape(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + (element as Angular2Entity).entitySourceName)
+            replace(Regex("<span\\s+style='[^']*'><a\\s+href=['\"]$link['\"]\\s*>(.*?)</a\\s*></span>"), "$1")
+          }
+      })
     }
 
     private fun buildAdditionalSections(): List<Pair<String, String>> {
