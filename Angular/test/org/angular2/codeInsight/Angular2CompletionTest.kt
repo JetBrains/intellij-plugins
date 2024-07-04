@@ -87,12 +87,11 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
   fun testTemplatesCompletion() =
     doLookupTest(Angular2TestModule.ANGULAR_COMMON_4_0_0, extension = "html")
 
-  // TODO WEB-67260 - fix issue later
-  fun _testTemplatesCompletion16() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html")
+  fun testTemplatesCompletion16() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html",
+                 configurators = listOf(Angular2TsConfigFile(strict = false )))
 
-  // TODO WEB-67260 - fix issue later
-  fun _testTemplatesCompletion16Strict() =
+  fun testTemplatesCompletion16Strict() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                  extension = "html", configurators = listOf(Angular2TsConfigFile()))
 
