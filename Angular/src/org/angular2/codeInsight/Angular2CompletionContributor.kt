@@ -106,9 +106,21 @@ class Angular2CompletionContributor : CompletionContributor() {
 
   private class TemplateExpressionCompletionProvider : CompletionProvider<CompletionParameters>() {
 
-    override fun addCompletions(parameters: CompletionParameters,
-                                context: ProcessingContext,
-                                result: CompletionResultSet) {
+    override fun addCompletions(
+      parameters: CompletionParameters,
+      context: ProcessingContext,
+      result: CompletionResultSet,
+    ) {
+      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(parameters.originalFile) {
+        addCompletionsUnderEvalLocation(parameters, context, result)
+      }
+    }
+
+    private fun addCompletionsUnderEvalLocation(
+      parameters: CompletionParameters,
+      context: ProcessingContext,
+      result: CompletionResultSet,
+    ) {
       var ref = parameters.position.containingFile.findReferenceAt(parameters.offset)
       if (ref is PsiMultiReference) {
         ref = ref.references.find { it is Angular2PipeReferenceExpression || it is JSReferenceExpressionImpl }
