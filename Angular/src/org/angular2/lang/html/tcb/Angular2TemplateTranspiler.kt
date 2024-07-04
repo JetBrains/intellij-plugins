@@ -1,5 +1,7 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.angular2.codeInsight.config.Angular2Compiler
@@ -68,7 +70,7 @@ object Angular2TemplateTranspiler {
           appendStatement(it)
         }
       }
-    }.asTranspiledTemplate(boundTarget.templateFile)
+    }.asTranspiledTemplate(boundTarget.templateFile, context.oobRecorder.getDiagnostics())
   }
 
   interface FileContext {
@@ -81,6 +83,7 @@ object Angular2TemplateTranspiler {
     val sourceMappings: List<SourceMapping>
     val contextVarMappings: List<ContextVarMapping>
     val directiveVarMappings: List<DirectiveVarMapping>
+    val diagnostics: List<Diagnostic>
   }
 
   interface SourceMapping {
@@ -122,6 +125,16 @@ object Angular2TemplateTranspiler {
 
     fun getGeneratedRangeWithOffset(offset: Int): TextRange =
       TextRange(generatedOffset + offset, generatedOffset + offset + generatedLength)
+  }
+
+  interface Diagnostic {
+    val startOffset: Int
+    val length: Int
+    val message: @InspectionMessage String
+    val category: String? /* JSAnnotationError.*_CATEGORY */
+    val highlightType: ProblemHighlightType?
+
+    fun offsetBy(offset: Int): Diagnostic
   }
 
 }

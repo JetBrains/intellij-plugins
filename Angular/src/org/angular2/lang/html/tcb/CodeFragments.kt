@@ -41,6 +41,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
   fun asTranspiledTemplate(
     templateFile: Angular2HtmlFile,
+    diagnostics: List<Angular2TemplateTranspiler.Diagnostic>,
   ): Angular2TemplateTranspiler.TranspiledTemplate =
     object : Angular2TemplateTranspiler.TranspiledTemplate {
       override val templateFile: Angular2HtmlFile = templateFile
@@ -48,6 +49,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
       override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
       override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
+      override val diagnostics: List<Angular2TemplateTranspiler.Diagnostic> = diagnostics
     }
 
   interface ExpressionBuilder {
