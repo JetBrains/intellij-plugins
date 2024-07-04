@@ -13,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.SmartList
+import com.intellij.util.containers.MultiMap
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
@@ -85,6 +86,7 @@ object Angular2TranspiledComponentFileBuilder {
     val componentFileMappings = SmartList<SourceMapping>()
     val componentFileContextVarMappings = mutableMapOf<TextRange, TextRange>()
     val componentFileDirectiveVarMappings = mutableMapOf<Pair<TextRange, Angular2Directive>, TextRange>()
+    val diagnostics = MultiMap<PsiFile, Angular2TemplateTranspiler.Diagnostic>()
     val mappings = SmartList<FileMappings>()
 
     generatedCode.append("\n\n/* Angular type checking code */\n")
@@ -117,6 +119,7 @@ object Angular2TranspiledComponentFileBuilder {
               mapping.getGeneratedRangeWithOffset(generatedMappingsOffset)
             )
           }
+        diagnostics.putValues(injectionHost.containingFile, template.diagnostics.map { it.offsetBy(sourceMappingOffset) })
       }
       else {
         val fileMappings = template.sourceMappings.map {
@@ -129,6 +132,7 @@ object Angular2TranspiledComponentFileBuilder {
           Pair(Pair(mapping.getElementNameRangeWithOffset(0), mapping.directive), mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
         }
         mappings.add(FileMappings(template.templateFile, fileMappings.sorted(), contextVarMappings, directiveVarMappings))
+        diagnostics.putValues(template.templateFile, template.diagnostics)
       }
     }
     inlineTemplateRanges.sortBy { it.startOffset }
@@ -151,7 +155,8 @@ object Angular2TranspiledComponentFileBuilder {
     return TranspiledComponentFile(
       componentFile,
       generatedCode.toString(),
-      mappings.associateBy { it.sourceFile }
+      mappings.associateBy { it.sourceFile },
+      diagnostics.entrySet().associateBy({ it.key }, { it.value.toList() })
     ).also {
       if (ApplicationManager.getApplication().isUnitTestMode) it.verifyMappings()
     }
@@ -164,6 +169,7 @@ object Angular2TranspiledComponentFileBuilder {
     val originalFile: PsiFile,
     val generatedCode: String,
     val fileMappings: Map<PsiFile, FileMappings>,
+    val diagnostics: Map<PsiFile, List<Angular2TemplateTranspiler.Diagnostic>>,
   )
 
   class FileMappings(

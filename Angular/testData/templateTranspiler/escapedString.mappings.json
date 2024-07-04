@@ -2,8 +2,8 @@
   {
     "file-name": "escapedString.ts",
     "mappings": [
-      "«div» [391] => «_t1» [230]}",
-      "«div» [391] => «_t2» [271]} (no types)",
+      "«div» [391] => «_t1» [230]} (no diagnostics)",
+      "«div» [391] => «_t2» [271]} (ignored)",
       "«red» [406] => «red» [297]} (ignored)",
       "«\\\"red\\\"» [404] => «\"red\"» [296]} (ignored)",
       "«[color]» [395] => «myInput» [309]} (no types)",

@@ -2,14 +2,13 @@
 package org.angular2.lang.expr.service
 
 import com.google.gson.JsonObject
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.ide.highlighter.HtmlFileType
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
+import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSEvaluationStatisticsCollector
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
@@ -22,21 +21,21 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.components.service
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.SmartList
 import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import icons.AngularIcons
 import kotlinx.coroutines.currentCoroutineContext
-import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
@@ -45,6 +44,8 @@ import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElem
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.lang.html.tcb.Angular2TemplateTranspiler
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
@@ -76,7 +77,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
     if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
-      false // For now do not use TS server for highlighting TODO - Angular2Compiler.isStrictTemplates(file)
+      Angular2EntitiesProvider.findTemplateComponent(file) != null
     else
       super.isAcceptableForHighlighting(file)
 
@@ -88,14 +89,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
     computeCancellable<List<JSAnnotationError>, Throwable> {
-      // For now do not use TS server for highlighting TODO - !Angular2Compiler.isStrictTemplates(file)
-      if (file.language is TypeScriptLanguageDialect) {
-        val templateRanges = findTemplatesRanges(file)
-        if (templateRanges.isNotEmpty()) {
-          return@computeCancellable list.filter { error -> templateRanges.none { it.contains(error.line, error.column) } }
-        }
-      }
-      super.postprocessErrors(file, list)
+      list + getAdditionalErrors(file)
     }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
@@ -123,6 +117,19 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun beforeGetErrors(file: VirtualFile) {
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
+  }
+
+  private fun getAdditionalErrors(file: PsiFile): List<JSAnnotationError> {
+    val templateFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
+    val componentFile = if (templateFile.language is Angular2HtmlDialect)
+      Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile ?: return emptyList()
+    else
+      templateFile
+    val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(file) ?: return emptyList()
+    val absoluteFilePath = templateFile.originalFile.virtualFile.toNioPath().toAbsolutePath().toString()
+    return Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)?.diagnostics?.get(templateFile)
+             ?.map { AngularAnnotationRangeError(it, document, absoluteFilePath) }
+           ?: emptyList()
   }
 
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project),
@@ -166,46 +173,6 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       }
       return response
     }
-
-  }
-
-  private fun findTemplatesRanges(file: PsiFile): List<TemplateRange> {
-    val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
-                   ?: return emptyList()
-    val result = SmartList<TemplateRange>()
-    file.acceptChildren(object : JSElementVisitor() {
-      override fun visitTypeScriptClass(typeScriptClass: TypeScriptClass) {
-        Angular2DecoratorUtil.findDecorator(typeScriptClass, Angular2DecoratorUtil.COMPONENT_DEC)
-          ?.let { Angular2DecoratorUtil.getProperty(it, Angular2DecoratorUtil.TEMPLATE_PROP) }
-          ?.value?.textRange
-          ?.let {
-            val startLine = document.getLineNumber(it.startOffset)
-            val endLine = document.getLineNumber(it.endOffset)
-            result.add(TemplateRange(startLine, it.startOffset - document.getLineStartOffset(startLine),
-                                     endLine, it.endOffset - document.getLineStartOffset(endLine)))
-          }
-      }
-
-      override fun visitES6ExportDefaultAssignment(node: ES6ExportDefaultAssignment) {
-        node.acceptChildren(this)
-      }
-    })
-    return result
-  }
-
-  private data class TemplateRange(
-    val startLine: Int,
-    val startColumn: Int,
-    val endLine: Int,
-    val endColumn: Int,
-  ) {
-    fun contains(line: Int, column: Int): Boolean {
-      if (line < startLine) return false
-      if (line == startLine && column < startColumn) return false
-      if (line > endLine) return false
-      if (line == endLine && column >= endColumn) return false
-      return true
-    }
   }
 }
 
@@ -229,4 +196,31 @@ private class Angular2GetGeneratedElementTypeRequest(
   coroutineContext: CoroutineContext,
 ) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs>(args, service, coroutineContext) {
   override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
+}
+
+private class AngularAnnotationRangeError(
+  diagnostic: Angular2TemplateTranspiler.Diagnostic,
+  document: Document,
+  private val absoluteFilePath: String,
+) : JSAnnotationRangeError {
+
+  private val startLine = document.getLineNumber(diagnostic.startOffset)
+  private val startColumn = diagnostic.startOffset - document.getLineStartOffset(startLine)
+  private val endLine = document.getLineNumber(diagnostic.startOffset + diagnostic.length)
+  private val endColumn = diagnostic.startOffset + diagnostic.length - document.getLineStartOffset(endLine)
+  private val message = diagnostic.message
+  private val category = diagnostic.category
+  private val highlightType = diagnostic.highlightType
+
+  override fun getLine(): Int = startLine
+  override fun getColumn(): Int = startColumn
+  override fun getEndLine(): Int = endLine
+  override fun getEndColumn(): Int = endColumn
+  override fun getAbsoluteFilePath(): String = absoluteFilePath
+  override fun getDescription(): String = StringUtil.unescapeXmlEntities(StringUtil.stripHtml(
+    message.replace(Regex("</?code>"), "'"), " "))
+  override fun getTooltipText(): String = message
+  override fun getHighlightType(): ProblemHighlightType? = highlightType
+  override fun getCategory(): String? = category
+
 }

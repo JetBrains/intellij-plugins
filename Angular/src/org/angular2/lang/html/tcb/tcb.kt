@@ -127,7 +127,7 @@ private class TcbElementOp(private val tcb: Context, private val scope: Scope, p
     val id = this.tcb.allocateId(element.startSourceSpan)
     // Add the declaration of the element using document.createElement.
     this.scope.addStatement(
-      tsCreateVariable(id, Expression("document.createElement(\"${element.name}\")"))
+      tsCreateVariable(id, Expression("document.createElement(\"${element.name}\")"), ignoreDiagnostics = true)
     )
     return id
   }
@@ -398,7 +398,7 @@ private abstract class TcbDirectiveTypeOpBase(
       type = Expression("any")
     }
     val id = this.tcb.allocateId(this.node.startSourceSpan)
-    this.scope.addStatement(tsDeclareVariable(id, type, types = false, ofDir = dir.directive))
+    this.scope.addStatement(tsDeclareVariable(id, type, types = false, ofDir = dir.directive, ignoreDiagnostics = true))
     return id
   }
 }
@@ -598,7 +598,7 @@ private class TcbDirectiveCtorOp(
         append(tcbCallTypeCtor(dir, tcb, genericInputs.values))
       }
     }
-    this.scope.addStatement(tsCreateVariable(id, typeCtor, types = false, ofDir = dir.directive))
+    this.scope.addStatement(tsCreateVariable(id, typeCtor, types = false, ofDir = dir.directive, ignoreDiagnostics = true))
     return id
   }
 
@@ -2323,7 +2323,7 @@ private open class TcbExpressionTranslator(
     val pipeCall: Expression
     if (pipeInfo == null) {
       // No pipe by that name exists in scope. Record this as an error.
-      tcb.oobRecorder.missingPipe(tcb.id, pipe)
+      tcb.oobRecorder.missingPipe(pipeName, pipe)
 
       // Use an 'any' value to at least allow the rest in the expression to be checked.
       pipeCall = Expression("(null as any)")
@@ -2762,13 +2762,15 @@ private fun tsCastToAny(expr: Expression): Expression {
  * Unlike with `tsCreateVariable`, the type of the variable is explicitly specified.
  */
 
-internal fun tsDeclareVariable(id: Identifier, type: Expression, types: Boolean = true, ofDir: Angular2Directive? = null): Statement {
+internal fun tsDeclareVariable(id: Identifier, type: Expression,
+                               types: Boolean = true, ofDir: Angular2Directive? = null,
+                               ignoreDiagnostics: Boolean = false): Statement {
   // When we create a variable like `var _t1: boolean = null!`, TypeScript actually infers `_t1`
   // to be `never`, instead of a `boolean`. To work around it, we cast the value
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = types, varOfDirective = ofDir)
+    append(id, id.sourceSpan, types = types, varOfDirective = ofDir, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics })
     append(" = null! as ")
     append(type)
     append(";")
@@ -2796,10 +2798,12 @@ private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputN
  * Unlike with `tsDeclareVariable`, the type of the variable is inferred from the initializer
  * expression.
  */
-private fun tsCreateVariable(id: Identifier, initializer: Expression, types: Boolean = true, ofDir: Angular2Directive? = null): Statement {
+private fun tsCreateVariable(id: Identifier, initializer: Expression,
+                             types: Boolean = true, ofDir: Angular2Directive? = null,
+                             ignoreDiagnostics: Boolean = false): Statement {
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = types, varOfDirective = ofDir)
+    append(id, id.sourceSpan, types = types, varOfDirective = ofDir, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics })
     append(" = ")
     append(initializer)
     append(";")

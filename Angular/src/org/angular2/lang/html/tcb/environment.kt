@@ -1,5 +1,6 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
@@ -10,14 +11,18 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
 import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2Pipe
+import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -255,6 +260,12 @@ internal class Environment(
 
 
 internal class OutOfBandDiagnosticRecorder {
+
+  private val diagnostics = mutableListOf<Angular2TemplateTranspiler.Diagnostic>()
+
+  fun getDiagnostics(): List<Angular2TemplateTranspiler.Diagnostic> =
+    diagnostics
+
   fun deferredComponentUsedEagerly(id: Any, node: TmplAstElement) {
   }
 
@@ -273,7 +284,14 @@ internal class OutOfBandDiagnosticRecorder {
   ) {
   }
 
-  fun missingPipe(id: TemplateId, ast: AST) {
+  fun missingPipe(pipeName: String?, pipeExpression: Angular2PipeExpression) {
+    registerDiagnostics(
+      pipeExpression.methodExpression?.textRange ?: pipeExpression.textRange,
+      Angular2Bundle.htmlMessage(
+        "angular.inspection.unresolved-pipe.message",
+        pipeName?.withColor(NG_PIPE, pipeExpression) ?: ""
+      ),
+      highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
   }
 
   fun deferredPipeUsedEagerly(id: TemplateId, pipe: Angular2PipeExpression) {
@@ -288,8 +306,20 @@ internal class OutOfBandDiagnosticRecorder {
     id: TemplateId, category: ts.DiagnosticCategory,
     child: TmplAstNode, componentName: String,
     originalSelector: String?, root: TmplAstBlockNodeWithChildren,
-    hostPreserveWhitespaces: Boolean) {
+    hostPreserveWhitespaces: Boolean,
+  ) {
 
+  }
+
+  private fun registerDiagnostics(
+    range: TextRange,
+    message: String,
+    category: String? = null,
+    highlightType: ProblemHighlightType? = null,
+  ) {
+    diagnostics.add(DiagnosticData(
+      range.startOffset, range.length, message, category, highlightType
+    ))
   }
 
 }
@@ -304,4 +334,15 @@ internal fun checkIfGenericTypeBoundsCanBeEmitted(node: TypeScriptClass, env: En
   // Generic type parameters are considered context free if they can be emitted into any context.
   val emitter = TypeParameterEmitter(node.typeParameters);
   return emitter.canEmit { ref -> env.canReferenceType(ref) };
+}
+
+internal data class DiagnosticData(
+  override val startOffset: Int,
+  override val length: Int,
+  override val message: String,
+  override val category: String? = null,
+  override val highlightType: ProblemHighlightType? = null,
+) : Angular2TemplateTranspiler.Diagnostic {
+  override fun offsetBy(offset: Int): Angular2TemplateTranspiler.Diagnostic =
+    copy(startOffset = startOffset + offset)
 }

@@ -6,5 +6,5 @@
 <h2>Person Form State</h2>
 <p>{{personFormState.fields.firstName.value}}</p>
 <p>{{personFormState.fields.age.value}}</p>
-<p>{{personFormState.fields.age.<error descr="Unresolved variable foo">foo</error>}}</p>
-<p>{{personFormState.fields.<error descr="Unresolved variable foo">foo</error>.value}}</p>
+<p>{{personFormState.fields.age.<error descr="TS2339: Property 'foo' does not exist on type 'FormStateControl<number>'.">foo</error>}}</p>
+<p>{{personFormState.fields.<error descr="TS2339: Property 'foo' does not exist on type 'FormStateGroupFields<Person>'.">foo</error>.value}}</p>

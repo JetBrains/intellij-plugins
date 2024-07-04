@@ -2,8 +2,8 @@
   {
     "file-name": "safeAccess.ts",
     "mappings": [
-      "«div» [284] => «_t1» [104]}",
-      "«i» [300] => «_t2» [145]}",
+      "«div» [284] => «_t1» [104]} (no diagnostics)",
+      "«i» [300] => «_t2» [145]} (no diagnostics)",
       "«data» [314] => «data» [238]} (no types)",
       "«data» [314] => «this.data» [233]}",
       "«icon» [320] => «icon» [245]}",
@@ -11,7 +11,7 @@
       "«toString» [326] => «toString» [265]}",
       "«data?.icon?.toString» [314] => «((null as any ? ((null as any ? (this.data)!.icon : undefined))!.toString : undefined))!» [200]}",
       "«data?.icon?.toString()» [314] => «(null as any ? ((null as any ? ((null as any ? (this.data)!.icon : undefined))!.toString : undefined))!() : undefined)» [185]}",
-      "«i» [361] => «_t3» [309]}",
+      "«i» [361] => «_t3» [309]} (no diagnostics)",
       "«data» [375] => «data» [386]} (no types)",
       "«data» [375] => «this.data» [381]}",
       "«check» [381] => «check» [393]}",

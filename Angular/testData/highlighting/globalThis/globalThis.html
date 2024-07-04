@@ -1,9 +1,9 @@
 
-{{this.div | <error descr="Unresolved pipe json">json</error>}}
+{{this.div | <error descr="Unresolved pipe 'json'">json</error>}}
 
-{{this | <error descr="Unresolved pipe json">json</error>}}
+{{this | <error descr="Unresolved pipe 'json'">json</error>}}
 
-{{this.<error descr="Unresolved variable foo">foo</error>}}
+{{this.<error descr="TS2339: Property 'foo' does not exist on type 'MyComponent'.">foo</error>}}
 
 <div (click)="this.got_a_click()"></div>
 {{ this.get_title() }}

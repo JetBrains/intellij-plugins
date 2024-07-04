@@ -9,7 +9,7 @@ type IconProp = [Prefix, Icon];
     standalone: true,
     template: `
         <my-icon [icon]="['sm', 'home']"></my-icon>
-        <my-icon [icon]="<error descr="Type [\"foo\", \"home\"] is not assignable to type IconProp | undefined...  Type [\"foo\", \"home\"] is not assignable to type [\"sm\" | \"md\" | \"lg\", \"home\" | \"settings\" | \"user\"] | undefined    Type [\"foo\", \"home\"] is not assignable to type [\"sm\" | \"md\" | \"lg\", \"home\" | \"settings\" | \"user\"]">['foo', 'home']</error>"></my-icon>
+        <my-icon [icon]="[<error descr="TS2322: Type '\"foo\"' is not assignable to type 'Prefix'.">'foo'</error>, 'home']"></my-icon>
     `
 })
 export class InnerComponent {

@@ -1,7 +1,7 @@
 <li <warning descr="Attribute attr is not allowed here">attr</warning>="value"
     *ngFor="let <info descr="ng-variable">hero</info> of <info descr="instance field">heroes</info> as <info descr="ng-variable">test</info>"
     [class.selected]="<info descr="ng-variable">hero</info> === <info descr="instance field">selectedHero</info>"
-    (click)="<error descr="Unresolved function or method onSelect()">onSelect</error>(<info descr="ng-variable">hero</info>)">
+    (click)="<error descr="TS2339: Property 'onSelect' does not exist on type 'AppComponent'."><info descr="Unresolved function or method onSelect()">onSelect</info></error>(<info descr="ng-variable">hero</info>)">
   {{<info descr="ng-variable">hero</info>.<info descr="instance field">name</info>}}
   {{<info descr="ng-variable">test</info>}}
 </li>
