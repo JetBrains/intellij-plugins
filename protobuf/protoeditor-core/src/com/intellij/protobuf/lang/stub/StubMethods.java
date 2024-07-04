@@ -54,8 +54,7 @@ public final class StubMethods {
 
   @NotNull
   static List<PbStatementStub<?>> getStatements(PbStatementOwnerStub<?> stub) {
-    @SuppressWarnings("rawtypes")
-    List<StubElement> children = stub.getChildrenStubs();
+    List<StubElement<?>> children = stub.getChildrenStubs();
 
     return children
         .stream()
