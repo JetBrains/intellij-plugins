@@ -1,6 +1,6 @@
 <html>
 <body>
-<p>Reports unused variables and locals in terraform module.</p>
+<p>Reports unused variables and locals in a Terraform module and provides a quick-fix to remove them.</p>
 <p>Example of a problem:</p>
 
 <pre><code>
@@ -35,10 +35,10 @@ locals {
 </code></pre>
 
 <p>
-  In this example, the `unused_variable1` and `unused_local1` are declared in the file, but they are not used anywhere.
+  In this example, <code>unused_variable1</code> and <code>unused_local1</code> are declared in the file, but are not used anywhere.
 </p>
 
-<p>Example of correction:</p>
+<p>After the quick-fix is applied:</p>
 <pre><code>
 variable "used_variable" {
   description = "This variable is used in resource configuration"
