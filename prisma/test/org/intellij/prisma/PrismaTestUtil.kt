@@ -1,6 +1,12 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma
 
+import com.intellij.lang.html.HTMLLanguage
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import java.io.File
 
@@ -18,3 +24,10 @@ private fun getContribPath(): String {
   }
   else homePath
 }
+
+fun reformatDocumentation(project: Project, text: String): String =
+  WriteCommandAction.runWriteCommandAction(project, Computable {
+    PsiFileFactory.getInstance(project).createFileFromText("doc.html", HTMLLanguage.INSTANCE, text)
+      .let { CodeStyleManager.getInstance(project).reformat(it) }
+      .text
+  })

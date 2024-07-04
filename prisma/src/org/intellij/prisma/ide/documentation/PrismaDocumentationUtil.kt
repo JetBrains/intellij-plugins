@@ -5,7 +5,6 @@ import com.intellij.lang.documentation.QuickDocHighlightingHelper
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -25,6 +24,9 @@ import org.intellij.prisma.lang.psi.PrismaElementTypes
 import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
 import org.intellij.prisma.lang.psi.skipWhitespacesForwardWithoutNewLines
 import java.net.URI
+
+const val NO_WRAP = "white-space: nowrap"
+const val SECTION_START_NO_WRAP = "<td valign='top' style='$NO_WRAP'>"
 
 internal fun stripDocCommentBlockPrefixes(text: String): String {
   return text.trimMargin("///").trimIndent()
@@ -51,20 +53,21 @@ internal fun StringBuilder.sections(block: StringBuilder.() -> Unit) {
 internal fun StringBuilder.section(header: String, block: StringBuilder.() -> Unit) {
   append(DocumentationMarkup.SECTION_HEADER_START)
   append(header)
-  append(DocumentationMarkup.SECTION_SEPARATOR)
-  block()
   append(DocumentationMarkup.SECTION_END)
+  block()
+  if (!endsWith(DocumentationMarkup.SECTION_END)) {
+    append(DocumentationMarkup.SECTION_END)
+  }
+  append("</tr>")
   append("\n")
 }
 
-internal fun StringBuilder.section(header: String, td: HtmlChunk, block: StringBuilder.() -> Unit) {
-  append(DocumentationMarkup.SECTION_HEADER_START)
-  append(header)
-  append(DocumentationMarkup.SECTION_END)
-  td.appendTo(this)
+internal fun StringBuilder.cell(noWrap: Boolean = true, block: StringBuilder.() -> Unit) {
+  append(if (noWrap) SECTION_START_NO_WRAP else DocumentationMarkup.SECTION_START)
   block()
-  append(DocumentationMarkup.SECTION_END)
-  append("\n")
+  if (!endsWith(DocumentationMarkup.SECTION_END)) {
+    append(DocumentationMarkup.SECTION_END)
+  }
 }
 
 internal fun StringBuilder.content(block: StringBuilder.() -> Unit) {
@@ -109,7 +112,7 @@ private class PrismaMarkdownFlavourDescriptor(
   private val base: MarkdownFlavourDescriptor = GFMFlavourDescriptor(
     useSafeLinks = false,
     absolutizeAnchorLinks = true
-  )
+  ),
 ) : MarkdownFlavourDescriptor by base {
 
   override fun createHtmlGeneratingProviders(linkMap: LinkMap, baseURI: URI?): Map<IElementType, GeneratingProvider> {

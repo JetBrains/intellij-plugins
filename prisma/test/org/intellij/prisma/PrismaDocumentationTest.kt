@@ -131,7 +131,7 @@ class PrismaDocumentationTest : PrismaTestCase("documentation") {
     val element = DocumentationManager.getInstance(myFixture.project)
       .findTargetElement(myFixture.editor, file, originalElement)
     val provider = DocumentationManager.getProviderFromElement(element, originalElement)
-    val doc = provider.generateDoc(element, originalElement) ?: "<empty>"
+    val doc = provider.generateDoc(element, originalElement)?.let { reformatDocumentation(project, it) } ?: "<empty>"
     assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc)
   }
 }
