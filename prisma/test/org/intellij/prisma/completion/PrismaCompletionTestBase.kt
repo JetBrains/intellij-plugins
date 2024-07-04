@@ -12,6 +12,7 @@ import org.intellij.prisma.PrismaTestCase
 import org.intellij.prisma.ide.documentation.PrismaDocumentationProvider
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaFileType
+import org.intellij.prisma.reformatDocumentation
 
 abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(testCasePath) {
   protected fun completeSelected(
@@ -68,8 +69,10 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
   protected fun checkLookupDocumentation(lookupElement: LookupElement?) {
     val element = lookupElement?.psiElement
     assertNotNull(element)
-    val doc = PrismaDocumentationProvider().generateDoc(element!!, null)
-    assertNotNull(doc)
+    val doc = PrismaDocumentationProvider().generateDoc(element!!, null)?.let {
+      assertNotNull(it)
+      reformatDocumentation(project, it)
+    }
     assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc!!)
   }
 

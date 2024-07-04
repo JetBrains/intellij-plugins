@@ -1,5 +1,40 @@
-<div class='definition'><pre><span style="color:#cc7832;">model&#32;</span><span style="">User</span></pre></div>
+<div class='definition'>
+    <pre><span style="color:#cc7832;">model&#32;</span><span style="">User</span></pre>
+</div>
 <div class='content'><p>Model Doc</p></div>
-<table class='sections'><tr><td valign='top' class='section'><p>Fields:</td><td valign='top'><code>id</code><p><code>email</code><p><code>firstName</code><p><code>lastName</code><p><code>social</code><p><code>isAdmin</code><p><code>courses</code><p><code>testResults</code><p><code>testsGraded</code><p><code>tokens</code><p><code>feedback</code><p><code>unsup</code><td style="padding-left: 15px" valign="top"/><code>Int</code><p><code>String</code><p><code>String?</code><p><code>String?</code><p><code>Json?</code><p><code>Boolean</code><p><code>CourseEnrollment[]</code><p><code>TestResult[]</code><p><code>TestResult[]</code><p><code>Token[]</code><p><code>CourseFeedback[]</code><p><code>Unsupported(&quot;123&quot;)</code></td>
-<tr><td valign='top' class='section'><p>Attributes:</td><td colspan="2" style="white-space: nowrap" valign="top"/><code>@@index([result, createdAt(sort: Desc)])</code><p><code>@@ignore</code></td>
+<table class='sections'>
+    <tr>
+        <td valign='top' class='section'><p>Fields:</td>
+        <td valign='top' style='white-space: nowrap'><p><code style="white-space: nowrap">id</code></p>
+            <p><code style="white-space: nowrap">email</code></p>
+            <p><code style="white-space: nowrap">firstName</code></p>
+            <p><code style="white-space: nowrap">lastName</code></p>
+            <p><code style="white-space: nowrap">social</code></p>
+            <p><code style="white-space: nowrap">isAdmin</code></p>
+            <p><code style="white-space: nowrap">courses</code></p>
+            <p><code style="white-space: nowrap">testResults</code></p>
+            <p><code style="white-space: nowrap">testsGraded</code></p>
+            <p><code style="white-space: nowrap">tokens</code></p>
+            <p><code style="white-space: nowrap">feedback</code></p>
+            <p><code style="white-space: nowrap">unsup</code></p></td>
+        <td style="padding-left: 10px" valign="top"/>
+        <td valign='top' style='white-space: nowrap'><p><span style="white-space: nowrap">Int</span></p>
+            <p><span style="white-space: nowrap">String</span></p>
+            <p><span style="white-space: nowrap">String?</span></p>
+            <p><span style="white-space: nowrap">String?</span></p>
+            <p><span style="white-space: nowrap">Json?</span></p>
+            <p><span style="white-space: nowrap">Boolean</span></p>
+            <p><span style="white-space: nowrap">CourseEnrollment[]</span></p>
+            <p><span style="white-space: nowrap">TestResult[]</span></p>
+            <p><span style="white-space: nowrap">TestResult[]</span></p>
+            <p><span style="white-space: nowrap">Token[]</span></p>
+            <p><span style="white-space: nowrap">CourseFeedback[]</span></p>
+            <p><span style="white-space: nowrap">Unsupported(&quot;123&quot;)</span></p></td>
+    </tr>
+    <tr>
+        <td valign='top' class='section'><p>Attributes:</td>
+        <td colspan="3" style="white-space: nowrap" valign="top"><p><code style="white-space: nowrap">@@index([result,
+            createdAt(sort: Desc)])</code></p>
+            <p><code style="white-space: nowrap">@@ignore</code></p></td>
+    </tr>
 </table>
