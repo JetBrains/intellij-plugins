@@ -3,7 +3,7 @@
 /* TCB for blockDefer.ts */
 
 function _tcb1(this: RobotProfileComponent) {
-this.user.name;
+(this.user.name);
 "" + this.user.name;
 "" + this.user.name + 0;
 "" + this.user.name + 2;

@@ -353,9 +353,10 @@ private class TcbExpressionOp(
       val expr = tcbExpression(this.expression, this.tcb, this.scope)
       this.scope.addStatement {
         if (isBoundText) {
-          append("\"\" + ")
+          append("\"\" + ").append(expr).append(";")
+        } else {
+          append("(").append(expr).append(");")
         }
-        append(expr).append(";")
       }
     }
     return null
@@ -733,6 +734,10 @@ private class TcbDirectiveInputsOp(
         }
       }
 
+      if (assignment === expr) {
+        assignment = Expression { append("(").append(expr).append(")") }
+      }
+
       this.scope.addStatement(assignment)
     }
 
@@ -951,14 +956,14 @@ private class TcbUnclaimedInputsOp(
           }
         }
         else {
-          this.scope.addStatement { append(expr).append(";") }
+          this.scope.addStatement { append("(").append(expr).append(");") }
         }
       }
       else {
         // A binding to an animation, attribute, class or style. For now, only validate the right-
         // hand side of the expression.
         // TODO: properly check class and style bindings.
-        this.scope.addStatement { append(expr).append(";") }
+        this.scope.addStatement { append("(").append(expr).append(");") }
       }
     }
 
@@ -1457,7 +1462,7 @@ private class TcbForOfOp(private val tcb: Context, private val scope: Scope, pri
         }
         loopScope.render().forEach(::appendStatement)
         appendStatement {
-          append(trackExpression).append(";")
+          append("(").append(trackExpression).append(");")
         }
       }
     }

@@ -16,7 +16,7 @@ var _t7 = null! as boolean;
 "" + this.$last;
 "" + _t3;
 "" + this.$foo;
-_t1.name;
+(_t1.name);
 }
 for (const _t8 of (this.array)!) {
 var _t9 = null! as number;
@@ -31,7 +31,7 @@ var _t14 = null! as number;
 "" + _t13;
 "" + _t9;
 "" + _t14;
-_t8.name;
+(_t8.name);
 }
 for (const __error of (undefined)!) {
 var _t15 = null! as number;
@@ -41,6 +41,6 @@ var _t18 = null! as boolean;
 var _t19 = null! as boolean;
 var _t20 = null! as number;
 "" + this.a;
-undefined;
+(undefined);
 }
 }

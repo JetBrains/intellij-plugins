@@ -3,7 +3,7 @@
 /* TCB for blockSwitch.ts */
 
 function _tcb1(this: RobotProfileComponent) {
-this.user.name;
+(this.user.name);
 if ((this.user.name) === "foo") {
 "" + this.user.name;
 }

@@ -18,7 +18,7 @@ _t2;
 var _t3 = _t2.$implicit;
 var _t4 = _t2.ngForOf;
 var _t5 = document.createElement("li");
-_t3 === this.selectedHero;
+(_t3 === this.selectedHero);
 _t5.addEventListener("click", ($event): any => {
 if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)){
 this.onSelect(_t3);

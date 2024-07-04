@@ -57,7 +57,7 @@ var _t9 = document.createElement("app-test-signal");
 var _t10 = null! as TestSignalComponent;
 _t10.optional[_i1.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = this.value3;
 _t10.required[_i1.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = this.value3;
-12;
+(12);
 _t10["optional"].subscribe(($event): any => {
 this.value3 = $event;
 });
