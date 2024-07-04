@@ -38,6 +38,32 @@ module Minitest
         end
       end
     end
+
+    MINITEST_SUPERCLASSES = %w[Minitest::Spec Minitest::Test ActiveSupport::TestCase ActionController::TestCase ActionDispatch::IntegrationTest ActionMailer::TestCase ActionView::TestCase ActiveJob::TestCase].to_set
+    private_constant :MINITEST_SUPERCLASSES
+
+    # Finds the name of the class that +klass+ is nested inside. E.g.
+    #  class MySpec < ActiveSupport::TestCase
+    #    describe "foo" do; end
+    #  end
+    # For +foo+, the nesting class will be +MySpec+.
+    def class_nesting(klass)
+      if klass.nil?
+        return ""
+      end
+      superclass = klass
+      until MINITEST_SUPERCLASSES.include?(superclass.superclass.name)
+        superclass = superclass.superclass
+      end
+      superclass.nil? || (klass.name.start_with?(superclass.name) ? "" : superclass.name + "::")
+    end
+
+    def class_location(class_name)
+      location = Module.const_source_location(class_name)
+      "file://#{location[0]}:#{location[1]}"
+    rescue NameError, NoMethodError
+      "ruby_minitest_qn://#{class_name}"
+    end
   end
 
   class RubymineTestData
@@ -48,7 +74,7 @@ module Minitest
     end
 
     def fqn
-      "#{@class_name}.#{@method_name}"
+      "#{Minitest.class_nesting(@klass)}#{@class_name}.#{@method_name}"
     end
 
     def location
@@ -61,12 +87,7 @@ module Minitest
     end
 
     def class_location
-      begin
-        location = Module.const_source_location(@class_name)
-        "file://#{location[0]}:#{location[1]}"
-      rescue NameError, NoMethodError
-        "ruby_minitest_qn://#{@class_name}.#{@method_name}"
-      end
+      Minitest.class_location(@class_name)
     end
 
     def klass=(klass)
@@ -93,6 +114,7 @@ module Minitest
           tests_hash[test_name] = RubymineTestData.new(class_name, test_name)
         }
       }
+      @suites_started = Set.new
       @test_count = 0
       @assertion_count = 0
       @failures = 0
@@ -151,12 +173,21 @@ module Minitest
         # Checking for Minitest::Result is for Minitest 5.0 compatibility
         class_name = Object.const_defined?('Minitest::Result') ? test_result.klass : test_result.class.name
         test_name = test_result.name
+        klass = nil
+        # find the test class since it hasn't been passed to this method
+
         unless @test_data[class_name].key?(test_name)
+          klass = Minitest::Runnable.runnables
+                                    .select { |cl| cl.name == class_name }
+                                    .find { |cl| cl.instance_methods.any? { |m| m.to_s == test_name } }
+
           debug("prerecord was not invoked for the #{class_name}.#{test_name}")
-          test_started(class_name, test_name, nil)
+          test_started(class_name, test_name, klass)
         end
         test_data = @test_data[class_name][test_name]
+        test_data.klass = klass if test_data.klass.nil? && !klass.nil?
         test_fqn = test_data.fqn
+        suite_fqn = test_fqn.split(/\./, 2).first
         debug("Test finished #{test_fqn}")
 
         normalized_test_name = normalize(test_name)
@@ -184,12 +215,44 @@ module Minitest
           end
         end
         send_service_message(Rake::TeamCity::MessageFactory.create_test_finished(normalized_test_name, time_in_ms(test_result.time), nil, test_fqn))
-        @tests_to_run[class_name].delete(test_name)
-        suite_finished(class_name) if @tests_to_run[class_name].empty?
+        @tests_to_run[suite_fqn].delete(test_name)
+        @tests_to_run_with_nesting[suite_fqn].delete(test_name)
+
+        # no class => no nesting in test fqn => no nesting in suite_fqn
+        suites_finished(suite_fqn, with_nesting: !test_data.klass.nil?)
       }
     end
 
     private
+
+    def suites_finished(fqn, force: false, with_nesting: false)
+      unless with_nesting
+        suite_finished(fqn) if @tests_to_run[fqn].empty?
+        return
+      end
+
+      parts = fqn.split("::")
+      (0...parts.length).reverse_each do |i|
+        cur = parts[0..i].join("::")
+        # shut the suite down regardless of whether its tests have finished
+        if force
+          if @suites_started.include?(cur)
+            suite_finished(parts[i], cur)
+            @suites_started.delete(cur)
+          end
+          next
+        end
+
+        # only shut the suite down if all its children have terminated
+        should_finish = force && !@suites_started.include?(cur) || !@tests_to_run_with_nesting.keys.any? { |key|
+          (key == cur || (key.start_with?(cur + "::"))) && !@tests_to_run_with_nesting[key].empty? }
+        if should_finish
+          suite_finished(parts[i], cur)
+        elsif !force
+          break
+        end
+      end
+    end
 
     def send_service_message(msg)
       io.flush
@@ -203,24 +266,47 @@ module Minitest
       Minitest.rm_logger.debug(msg)
     end
 
-    def suite_started(class_name, class_location)
+    def suite_started(class_name, class_location, node_id = class_name, parent_node_id = '0')
       debug("Starting suite #{class_name} at #{class_location}")
-      send_service_message(Rake::TeamCity::MessageFactory.create_suite_started(class_name, class_location, '0', class_name))
+      if parent_node_id.nil? || parent_node_id.empty?
+        parent_node_id = '0'
+      end
+      send_service_message(Rake::TeamCity::MessageFactory.create_suite_started(class_name, class_location, parent_node_id, node_id))
     end
 
-    def suite_finished(suite_name)
+    def suite_finished(suite_name, node_id = suite_name)
       debug("Finishing suite #{suite_name}")
-      send_service_message(Rake::TeamCity::MessageFactory.create_suite_finished(suite_name, suite_name))
-      @tests_to_run.delete(suite_name)
+      send_service_message(Rake::TeamCity::MessageFactory.create_suite_finished(suite_name, node_id))
+      @tests_to_run.delete(node_id)
+      @tests_to_run_with_nesting.delete(node_id)
     end
 
     def test_started(class_name, test_name, klass)
       debug("Starting test #{class_name}.#{test_name}")
+      full_class_name = Minitest.class_nesting(klass) + class_name
       first_in_suite = @test_data[class_name].empty?
       test_data = @test_data[class_name][test_name]
       test_data.klass = klass
-      suite_started(class_name, test_data.class_location) if first_in_suite
-      send_service_message(Rake::TeamCity::MessageFactory.create_test_started(normalize(test_name), test_data.location, class_name, test_data.fqn))
+
+      if klass.nil?
+        # don't split into parts if nesting cannot be obtained
+        suite_started(class_name, test_data.class_location) if first_in_suite
+      else
+        # create a node for each part of the FQN. E.g. for
+        # class MySpec < ActiveSupport::TestCase; describe "foo" do; describe "bar" do; it "works" do; end; end; end; end
+        # we split `MySpec::foo::bar` into nodes `MySpec`, `foo`, and `bar`
+        parts = full_class_name.split("::")
+        parts.each_with_index do |part, i|
+          parent_fqn = parts[0...i].join("::")
+          fqn = [*parts[0...i], part].join("::")
+          unless @suites_started.include?(fqn)
+            @suites_started.add(fqn)
+            suite_started(part, Minitest.class_location(fqn), fqn, parent_fqn)
+          end
+        end
+      end
+
+      send_service_message(Rake::TeamCity::MessageFactory.create_test_started(normalize(test_name), test_data.location, full_class_name, test_data.fqn))
       debug("Test started: #{test_data.fqn} from #{test_data.location}")
     end
 
@@ -233,7 +319,13 @@ module Minitest
 
     def collect_tests_to_run
       @tests_to_run = Hash.new { |hash, class_name| hash[class_name] = Set.new }
-      process_suitable_tests { |test_class, method_name| @tests_to_run[test_class.name] << method_name }
+      @tests_to_run_with_nesting = Hash.new { |hash, class_name| hash[class_name] = Set.new }
+      process_suitable_tests do |test_class, method_name|
+        # used when we don't have a class object and can't find out nesting
+        @tests_to_run[test_class.name] << method_name
+        # used when we have a class object and therefore can take nesting into account
+        @tests_to_run_with_nesting[Minitest.class_nesting(test_class) + test_class.name] << method_name
+      end
     end
 
     # processes all tests matched by filtering options and passing each class/method to the processor
@@ -263,7 +355,12 @@ module Minitest
     def close_pending_suites
       @tests_to_run.each_key do |suite_name|
         debug("Force closing test suite #{suite_name}")
-        suite_finished(suite_name)
+        suites_finished(suite_name, force: true)
+      end
+
+      @tests_to_run_with_nesting.each_key do |suite_name|
+        debug("Force closing test suite #{suite_name}")
+        suites_finished(suite_name, force: true)
       end
     end
 
@@ -284,4 +381,3 @@ module Minitest
     end
   end
 end
-
