@@ -7,6 +7,7 @@
       "«red» [406] => «red» [297]} (ignored)",
       "«\\\"red\\\"» [404] => «\"red\"» [296]} (ignored)",
       "«[color]» [395] => «myInput» [309]} (no types)",
+      "«[color]» [395] => «_t2.myInput» [305]} (no types)",
       "«red» [406] => «red» [320]}",
       "«\\\"red\\\"» [404] => «\"red\"» [319]}",
       "0:389 => 0:389 (source)",

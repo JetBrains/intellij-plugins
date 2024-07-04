@@ -17,7 +17,7 @@ type <warning descr="Unused type alias Greeting2"><weak_warning descr="TS6196: '
  template: `
     <ng-container *ngIf="greeting$ | async as greeting">
       {{ greeting.hello }}
-      {{ greeting.<error descr="Unresolved variable foo">foo</error> }}
+      {{ greeting.<error descr="TS2339: Property 'foo' does not exist on type 'Greeting'.">foo</error> }}
     </ng-container>
   `,
 })

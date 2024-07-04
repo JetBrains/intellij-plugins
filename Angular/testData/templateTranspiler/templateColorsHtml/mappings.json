@@ -9,6 +9,7 @@
       "«*ngFor» [21] => «_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)» [922]} (no types)",
       "«hero» [33] => «_t3» [756]}",
       "«of» [38] => «ngForOf» [648]} (no types)",
+      "«of» [38] => «_t1.ngForOf» [644]} (no types)",
       "«heroes» [41] => «heroes» [575]} (ignored)",
       "«heroes» [41] => «this.heroes» [570]} (ignored)",
       "«heroes» [41] => «heroes» [663]} (no types)",
@@ -51,6 +52,7 @@
       "«input» [276] => «_t6» [1098]} (no diagnostics)",
       "«input» [276] => «_t7» [1141]} (ignored)",
       "«[(ngModel)]» [282] => «model» [1173]} (no types)",
+      "«[(ngModel)]» [282] => «_t7.model» [1169]} (no types)",
       "«[(ngModel)]» [282] => «[\"update\"]» [1200]} (no types)",
       "«hero» [295] => «hero» [1186]} (no types)",
       "«hero» [295] => «this.hero» [1181]}",
@@ -73,6 +75,7 @@
       "«true» [350] => «true» [1448]}",
       "«true» [350] => «true» [1550]} (ignored)",
       "«else» [356] => «ngIfElse» [1458]} (no types)",
+      "«else» [356] => «_t9.ngIfElse» [1454]} (no types)",
       "«other» [361] => «_t10» [1404]} (ignored)",
       "«other» [361] => «_t10» [1469]}",
       "«#other» [394] => «_t10» [1314]}"

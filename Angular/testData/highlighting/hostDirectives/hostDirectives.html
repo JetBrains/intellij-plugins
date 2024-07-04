@@ -1,5 +1,5 @@
 <resolved
-        [underlineColor]="<error descr="Type number is not assignable to type string">12</error>"
+        <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[underlineColor]</error>="12"
         (hover)="$event"
         <error descr="Property colr is not provided by any applicable directives nor by <resolved> element">[colr]</error>="12"
         <error descr="Event hovr is not emitted by any applicable directives nor by <resolved> element">(<warning descr="Unrecognized event">hovr</warning>)</error>="$event"
@@ -9,7 +9,7 @@
         ref-b="<error descr="There is no directive with exportAs set to bldDir">bldDir</error>"
 ></resolved>
 <unresolved
-        [underlineColor]="<error descr="Type number is not assignable to type string">12</error>"
+        <error descr="TS2322: Type 'number' is not assignable to type 'string'.">[underlineColor]</error>="12"
         (hover)="$event"
         <weak_warning descr="Property colr is not provided by any applicable directives nor by <unresolved> element">[colr]</weak_warning>="12"
         <weak_warning descr="Event hovr is not emitted by any applicable directives nor by <unresolved> element">(<warning descr="Unrecognized event">hovr</warning>)</weak_warning>="$event"
@@ -25,7 +25,7 @@
         ref-f="<error descr="There is no directive with exportAs set to bldDir">bldDir</error>"
 ></app-test>
 <!-- priority in exportAs resolve goes to the topmost host directive -->
-{{ a.<error descr="Unresolved variable title">title</error> }}
+{{ a.<error descr="TS2339: Property 'title' does not exist on type 'BoldDirective'.">title</error> }}
 {{ a2.title }}
 {{ a3.title }}
 {{a + b + c + d + e + f}}

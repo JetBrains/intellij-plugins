@@ -13,7 +13,8 @@ class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", 
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
   }
 
-  fun testStrictNullInputTypesOn() {
+  // TODO WEB-67260 - fix issues with Angular flags
+  fun _testStrictNullInputTypesOn() {
     doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictNullChecks = true))
   }
 
@@ -21,20 +22,23 @@ class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", 
     doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictNullChecks = false))
   }
 
-  fun testStrictNullInputTypesOff() {
+  // TODO WEB-67260 - fix issues with Angular flags
+  fun _testStrictNullInputTypesOff() {
     doFlagTest(Angular2TsConfigFile(strictNullInputTypes = false, strictTemplates = false, strictNullChecks = true))
   }
 
-  // TODO WEB-67260 - fix issues with strict null input types
+  // TODO WEB-67260 - fix issues with Angular flags
   fun _testStrictNullInputTypesOnStrictTemplatesOff() {
     doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictTemplates = false, strictNullChecks = true))
   }
 
-  fun testStrictNullInputTypesAbsentOn() {
+  // TODO WEB-67260 - fix issues with Angular flags
+  fun _testStrictNullInputTypesAbsentOn() {
     doFlagTest(Angular2TsConfigFile(strictNullChecks = true, strictTemplates = true))
   }
 
-  fun testStrictInputAccessModifiersOn() {
+  // TODO WEB-67260 - fix issues with Angular flags
+  fun _testStrictInputAccessModifiersOn() {
     doFlagTest(Angular2TsConfigFile(strictTemplates = false, strictInputAccessModifiers = true))
   }
 

@@ -14,10 +14,10 @@ export interface User {
     @for (
         item of array; 
         track item.name; 
-        let first = $first, as<error descr="'=' expected"> </error><error descr="Unresolved variable or type second">second</error>; 
+        let first = $first, as<error descr="'=' expected"> </error>second; 
         <error descr="@for does not support parameter as">as</error> third
     ) {
-        {{ item }} {{first}} {{<error descr="Unresolved variable or type $first">$first</error>}} {{$last}} {{$count}} {{<error descr="Unresolved variable or type $foo">$foo</error>}}
+        {{ item }} {{first}} {{<error descr="TS2339: Property '$first' does not exist on type 'RobotProfileComponent'.">$first</error>}} {{$last}} {{$count}} {{<error descr="TS2339: Property '$foo' does not exist on type 'RobotProfileComponent'.">$foo</error>}}
     }
     @for(item<error descr="'of' expected"> </error>array; 
          track<error descr="Expression expected">;</error> 

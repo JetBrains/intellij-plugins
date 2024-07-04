@@ -721,7 +721,10 @@ private class TcbDirectiveInputsOp(
         }
 
         // Finally the assignment is extended by assigning it into the target expression.
-        assignment = Expression { append(target).append(" = ").append(assignment) }
+        assignment = Expression {
+          withSourceSpan(attr.attribute.keySpan, types = false) { append(target) }
+          append(" = ").append(assignment)
+        }
       }
 
       // Ignore diagnostics for text attributes if configured to do so.
