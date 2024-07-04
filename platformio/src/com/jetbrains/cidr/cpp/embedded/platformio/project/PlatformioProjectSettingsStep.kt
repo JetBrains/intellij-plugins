@@ -2,11 +2,12 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.google.gson.JsonParseException
 import com.intellij.execution.process.CapturingProcessHandler
-import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.icons.AllIcons
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.util.Ref
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.ui.ColoredTreeCellRenderer
@@ -15,6 +16,7 @@ import com.intellij.ui.TreeSpeedSearch
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.ConcurrencyUtil
 import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.ui.components.BorderLayoutPanel
@@ -23,7 +25,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettings
 import com.jetbrains.cidr.cpp.embedded.platformio.project.BoardsJsonParser.parse
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenInstallGuide
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenSettings
-import java.util.concurrent.Callable
+import com.jetbrains.cidr.execution.CidrRunProcessUtil
 import javax.swing.*
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.tree.DefaultTreeModel
@@ -38,6 +40,8 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
   PlatformioProjectSettingsStepBase(projectGenerator, callback) {
 
   private val myTree: Tree = Tree(EMPTY_TREE_MODEL)
+  private var platformioProcessIndicator: ProgressIndicator = EmptyProgressIndicator()
+  private val platformioProcessExecutor = ConcurrencyUtil.newSingleScheduledThreadExecutor("PlatformIO Project Setting Process Executor")
 
   init {
     myTree.cellRenderer = object : ColoredTreeCellRenderer() {
@@ -95,45 +99,54 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
             if (myTree.model === EMPTY_TREE_MODEL) {
               myTree.emptyText.setText(ClionEmbeddedPlatformioBundle.message("gathering.info"))
               myTree.invalidate()
-              val outputFuture =
-                application.executeOnPooledThread(
-                  Callable {
-                    val commandLine = PlatfromioCliBuilder(false, null)
-                      .withParams("boards", "--json-output")
-                      .withRedirectErrorStream(true).build()
-                    CapturingProcessRunner(CapturingProcessHandler(commandLine)).runProcess(60000)
-                  })
-              try {
-                val output = outputFuture.get()
-                val newModel: DefaultTreeModel
-                if (output.isExitCodeSet && output.exitCode == 0) {
-                  val pioOutText = output.stdout
-                  try {
-                    newModel = DefaultTreeModel(parse(pioOutText))
-                  } catch (e: JsonParseException) {
-                    LOGGER.warn("Error parsing platformio output: \n\r $pioOutText", e)
-                    throw e
+
+              // Cancel the previous process if it is still running before starting the next one
+              platformioProcessIndicator.cancel()
+              platformioProcessIndicator = EmptyProgressIndicator()
+
+              platformioProcessExecutor.execute {
+                try {
+                  val commandLine = PlatfromioCliBuilder(false, null)
+                    .withParams("boards", "--json-output")
+                    .withRedirectErrorStream(true).build()
+                  val output = CidrRunProcessUtil.runProcess(CapturingProcessHandler(commandLine), platformioProcessIndicator, 60000)
+
+                  application.invokeLater ({
+                    val newModel: DefaultTreeModel
+                    if (output.isExitCodeSet && output.exitCode == 0) {
+                      val pioOutText = output.stdout
+                      try {
+                        newModel = DefaultTreeModel(parse(pioOutText))
+                      }
+                      catch (e: JsonParseException) {
+                        LOGGER.warn("Error parsing platformio output: \n\r $pioOutText", e)
+                        throw e
+                      }
+                    }
+                    else {
+                      newModel = EMPTY_TREE_MODEL
+                    }
+
+                    if (output.isTimeout) {
+                      setErrorText(ClionEmbeddedPlatformioBundle.message("utility.timeout"))
+                    }
+                    else if (output.exitCode != 0) {
+                      setErrorText(ClionEmbeddedPlatformioBundle.message("platformio.exit.code", output.exitCode))
+                    }
+                    else {
+                      myTree.model = newModel
+                      myTree.clearSelection()
+                      checkValid()
+                      myTree.setPaintBusy(false)
+                    }
+                  }, ModalityState.stateForComponent(myTree))
+                }
+                catch (e: Throwable) {
+                  LOG.error(e)
+                  application.invokeLater {
+                    setErrorText(e.message)
                   }
                 }
-                else {
-                  newModel = EMPTY_TREE_MODEL
-                }
-                if (output.isTimeout) {
-                  setErrorText(ClionEmbeddedPlatformioBundle.message("utility.timeout"))
-                }
-                else if (output.exitCode != 0) {
-                  setErrorText(ClionEmbeddedPlatformioBundle.message("platformio.exit.code", output.exitCode))
-                }
-                else {
-                  myTree.model = newModel
-                  myTree.clearSelection()
-                  checkValid()
-                  myTree.setPaintBusy(false)
-                }
-              }
-              catch (e: Throwable) {
-                LOG.error(e)
-                setErrorText(e.message)
               }
             }
           }
@@ -176,5 +189,10 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
       setErrorText(null)
       return true
     }
+  }
+
+  override fun dispose() {
+    platformioProcessIndicator.cancel()
+    super.dispose()
   }
 }
