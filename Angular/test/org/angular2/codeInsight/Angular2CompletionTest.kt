@@ -201,9 +201,8 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
   fun testDeferBlockOnViewport() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
-  // TODO WEB-67260 - fix issue later
-  fun _testKeyofAttribute() =
-    doLookupTest()
+  fun testKeyofAttribute() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, configurators = listOf(Angular2TsConfigFile()))
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
