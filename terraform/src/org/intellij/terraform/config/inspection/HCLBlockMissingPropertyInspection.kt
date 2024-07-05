@@ -21,10 +21,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns.DynamicBlock
 import org.intellij.terraform.config.patterns.TerraformPatterns.ModuleWithEmptySource
 import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElement
-import org.intellij.terraform.hcl.psi.HCLElementVisitor
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.*
 
 class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
 
@@ -106,17 +103,17 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
     required = requiredProps.sortedBy { it.name } + requiredBlocks.sortedBy { it.name }
 
     ProgressIndicatorProvider.checkCanceled()
-
+    val nameOfBlock = block.children.lastOrNull { it !is HCLObject } ?: return
     holder.registerProblem(
-      block,
+      nameOfBlock,
       HCLBundle.message(
         "missing.resource.property.inspection.required.properties.error.message",
-        required.joinToString(", ") { it.name }
+        required.joinToString(", ", limit = 5) { it.name }
       ),
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
       *listOfNotNull(
         AddResourcePropertiesFix(required),
-        TFInitAction.createQuickFixNotInitialized(block),
+        TFInitAction.createQuickFixNotInitialized(nameOfBlock),
         createDisableDeepVariableSearchQuickFix()
       ).toArray(LocalQuickFix.EMPTY_ARRAY)
     )
@@ -126,18 +123,13 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
 
 class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection<PropertyOrBlockType>) : LocalQuickFix {
   override fun getName(): String {
-    return HCLBundle.message(
-      "missing.resource.property.inspection.add.properties.quick.fix.name",
-      add.joinToString(", ") { it.name }
-    )
+    return HCLBundle.message("missing.resource.property.inspection.add.properties.quick.fix.name")
   }
 
-  override fun getFamilyName(): String {
-    return HCLBundle.message("missing.resource.property.inspection.add.properties.quick.fix.family.name")
-  }
+  override fun getFamilyName(): String = name
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-    val element = descriptor.psiElement as? HCLBlock ?: return
+    val element = descriptor.psiElement.parent as? HCLBlock ?: return
     val obj = element.`object` ?: return
     IntentionPreviewUtils.write<Throwable> {
       val generator = TerraformElementGenerator(project)

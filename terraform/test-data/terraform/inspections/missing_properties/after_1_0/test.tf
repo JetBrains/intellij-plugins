@@ -1,6 +1,6 @@
 # intention: "HCLBlockMissingProperty"
-# fix: "Add properties: source"
-# position: 19: "module "test-module" {"
+# fix: "Add missing properties"
+# position: 19: ""test-module""
 #
 terraform {
   required_providers {

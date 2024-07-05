@@ -140,9 +140,9 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
             token = "11"
           }
     
-          <warning descr="Missing required properties: $dummyPropName, name">resource "digitalocean_droplet" "web" {
+          resource "digitalocean_droplet" <warning descr="Missing required properties: $dummyPropName, name">"web"</warning> {
           
-          }</warning>
+          }
         """.trimIndent()
 
   private val localSchemaService: LocalSchemaService
