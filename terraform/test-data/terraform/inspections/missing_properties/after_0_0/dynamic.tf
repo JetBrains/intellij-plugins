@@ -1,6 +1,6 @@
 # intention: "HCLBlockMissingProperty"
-# fix: "Add properties: caching"
-# position: 7: "content {"
+# fix: "Add missing properties"
+# position: 7: "content"
 #
 resource "azurerm_orchestrated_virtual_machine_scale_set" "vm_set" {
   location                    = ""

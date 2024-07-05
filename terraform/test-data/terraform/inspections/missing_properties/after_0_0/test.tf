@@ -1,6 +1,6 @@
 # intention: "HCLBlockMissingProperty"
-# fix: "Add properties: address"
-# position: 10: "provider "vault" {"
+# fix: "Add missing properties"
+# position: 10: ""vault""
 #
 terraform {
   required_providers {
