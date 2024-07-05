@@ -47,8 +47,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     var offset: Int? = null
     val already: Int
     val expected = type.args
-    val insertHandlerService = project.service<InsertHandlerService>()
-    if (parent is HCLBlock && insertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
+    if (parent is HCLBlock && InsertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
       // Count existing arguments and add missing
       val elements = parent.nameElements
       already = elements.size - 1
@@ -61,7 +60,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
         val next = elements[i + 1]
         if (next.textContains('"') && next.textLength < 3) {
           editor.caretModel.moveToOffset(next.textRange.endOffset - 1)
-          insertHandlerService.scheduleBasicCompletion(context)
+          InsertHandlerService.scheduleBasicCompletion(context)
         }
       }
     } else {
@@ -70,15 +69,15 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
 
     if (already < expected) {
       offset = editor.caretModel.offset + 2
-      insertHandlerService.addArguments(expected - already, editor)
+      InsertHandlerService.addArguments(expected - already, editor)
       if (expected - already != 1) { // Do not invoke completion for last name
-        insertHandlerService.scheduleBasicCompletion(context)
+        InsertHandlerService.scheduleBasicCompletion(context)
       }
     }
 
     val provider = getProviderForBlockType(type)
-    if (provider != null && !TypeModel.collectProviderLocalNames(file).containsKey(provider.type)) {
-      insertHandlerService.addRequiredProvidersBlock(provider, file)
+    if (provider != null && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
+      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
     }
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)
 
@@ -86,7 +85,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
       editor.caretModel.moveToOffset(offset)
     }
     if (type.properties.isNotEmpty()) {
-      insertHandlerService.addHCLBlockRequiredPropertiesAsync(file, editor, project)
+      InsertHandlerService.getInstance(project).addBlockRequiredProperties(file, editor, project, type)
     }
   }
 }

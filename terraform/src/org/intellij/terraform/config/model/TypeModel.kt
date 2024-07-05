@@ -263,21 +263,19 @@ class TypeModel(
       listOf(AbstractResource, AbstractDataSource, AbstractProvider, AbstractResourceProvisioner, AbstractBackend)
         .map(BlockType::literal).toSet()
 
-    @JvmStatic
     fun getResourcePrefix(identifier: String): String {
       val stringList = identifier.split("_", limit = 2)
       val prefix = if (stringList.size < 2) identifier else stringList[0]
       return prefix
     }
 
-    @JvmStatic
     fun getResourceName(identifier: String): String {
       val stringList = identifier.split("_", limit = 2)
       val id = if (stringList.size < 2) identifier else stringList[1]
       return id
     }
 
-    @JvmStatic
+    @RequiresReadLock
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val fileTypeManager = FileTypeManager.getInstance()
       val providerNamesService = LocalProviderNamesService.getInstance()

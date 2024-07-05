@@ -83,10 +83,11 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 
   fun showProvidersNotFoundBalloon(startElement: HCLBlock, editor: Editor) {
+    val blockType = startElement.getNameElementUnquoted(0) ?: return
     val blockIdentifier = startElement.getNameElementUnquoted(1) ?: return
     val resourcePrefix = TypeModel.getResourcePrefix(blockIdentifier)
     JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder(HCLBundle.message("popup.content.could.not.find.bundled.provider.for", blockIdentifier, resourcePrefix), MessageType.WARNING)
+      .createHtmlTextBalloonBuilder(HCLBundle.message("popup.content.could.not.find.bundled.provider.for", blockType, blockIdentifier, resourcePrefix), MessageType.WARNING)
       { e ->
         if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
           if (e.url != null) {
@@ -129,9 +130,8 @@ internal suspend fun addRequiredProvider(filePointer: SmartPsiElementPointer<Psi
   readAndWriteAction {
     val file = filePointer.element ?: return@readAndWriteAction value(Unit)
     val project = file.project
-    val insertHandlerService = project.service<InsertHandlerService>()
     writeCommandAction(project, commandName) {
-      getProviderForBlockType(blockType)?.let { insertHandlerService.addRequiredProvidersBlock(it, file) }
+      getProviderForBlockType(blockType)?.let { InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(it, file) }
       PsiDocumentManager.getInstance(project).commitDocument(editor.document)
     }
   }

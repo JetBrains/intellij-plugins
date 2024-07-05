@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight;
 
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.registry.Registry;
 import org.intellij.terraform.config.model.*;
 
@@ -805,5 +807,35 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
       }
       """);
     myFixture.testCompletionVariants("main.tf", "aws_instance.example", "aws_instance.example1");
+  }
+
+  public void testOfficialResourcesVariants() {
+    myFixture.configureByText("main.tf", """ 
+      resource "aws_ec2_host<caret>"
+      """);
+    LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 1);
+    assertEquals(2, lookupElements.length);
+    Set<String> lookupStrings = Arrays.stream(lookupElements).map(el -> {
+      ResourceType resourceType = (ResourceType)el.getObject();
+      String name = resourceType.getType();
+      String provider = resourceType.getProvider().getFullName();
+      return "%s %s".formatted(name, provider);
+    }).collect(Collectors.toSet());
+    assertEquals(lookupStrings, Set.of("aws_ec2_host hashicorp/aws", "awscc_ec2_host hashicorp/awscc"));
+  }
+
+  public void testAllResourcesVariants() {
+    myFixture.configureByText("main.tf", """ 
+      resource "aws_ec2_host<caret>"
+      """);
+    LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
+    assertEquals(3, lookupElements.length);
+    Set<String> lookupStrings = Arrays.stream(lookupElements).map(el -> {
+      ResourceType resourceType = (ResourceType)el.getObject();
+      String name = resourceType.getType();
+      String provider = resourceType.getProvider().getFullName();
+      return "%s %s".formatted(name, provider);
+    }).collect(Collectors.toSet());
+    assertEquals(lookupStrings, Set.of("aws_ec2_host hashicorp/aws", "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"));
   }
 }

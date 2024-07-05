@@ -20,6 +20,7 @@ import com.intellij.testFramework.assertEqualsToFile
 import com.intellij.testFramework.createGlobalContextForTool
 import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests
 import junit.framework.TestCase
+import org.intellij.terraform.hcl.HCLBundle
 import java.io.File
 
 abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() {
@@ -93,17 +94,16 @@ abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() 
     "Convert to HCL2 expression",
     "Rename variable",
     "Run Terraform init",
-    "Unknown type",
   )
 
   open fun skipCheckPreview(intentionAction: IntentionAction): Boolean = intentionAction.text in skipPreview
 
   private val skipQuickFix = setOf(
-    "Navigate to  duplicate",
-    "View duplicates like this",
-    "Run Terraform init",
-    "Disable variable search in nested directories",
-    "Add provider to required providers",
+    HCLBundle.message("duplicated.inspection.base.navigate.to.duplicate.quick.fix.name", ""),
+    HCLBundle.message("duplicated.inspection.base.show.other.duplicates.quick.fix.name"),
+    HCLBundle.message("action.TFInitRequiredAction.text"),
+    HCLBundle.message("disable.deep.variable.search"),
+    HCLBundle.message("action.AddProviderAction.text"),
   )
 
   private val skipQuickFixRegexps = setOf(
