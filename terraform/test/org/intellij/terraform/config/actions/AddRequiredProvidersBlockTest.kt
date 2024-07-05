@@ -1,7 +1,6 @@
 package org.intellij.terraform.config.actions
 
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.components.service
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.config.codeinsight.InsertHandlerService
@@ -19,7 +18,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      this.project.service<InsertHandlerService>().addRequiredProvidersBlock(getProviderType(), myFixture.file)
+      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
@@ -44,7 +43,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      this.project.service<InsertHandlerService>().addRequiredProvidersBlock(getProviderType(), myFixture.file)
+      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
@@ -73,7 +72,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      this.project.service<InsertHandlerService>().addRequiredProvidersBlock(getProviderType(), myFixture.file)
+      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
@@ -115,7 +114,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      this.project.service<InsertHandlerService>().addRequiredProvidersBlock(getProviderType(), myFixture.file)
+      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
