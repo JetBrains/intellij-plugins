@@ -29,7 +29,7 @@ public class LoginState {
   }
 
   public boolean isPasswordInvalid() {
-    return myError != null && myError.contains(PerforceRunner.PASSWORD_INVALID_MESSAGE2);
+    return myError != null && (myError.contains(PerforceRunner.PASSWORD_INVALID_MESSAGE2) || myError.contains(PerforceRunner.AUTHENTICATION_FAILED_MESSAGE));
   }
 
   @Override
