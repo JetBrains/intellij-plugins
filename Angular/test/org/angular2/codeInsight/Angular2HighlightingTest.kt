@@ -22,7 +22,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testSvgTags() = checkHighlighting(ANGULAR_COMMON_16_2_8, extension = "ts")
 
-  fun testDeprecated() = checkHighlighting(dir = true)
+  fun testDeprecated() = checkHighlighting(ANGULAR_CORE_15_1_5, dir = true)
 
   fun testDeprecatedInline() = checkHighlighting(checkInjections = true, extension = "ts")
 
@@ -207,7 +207,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
                                              strictTemplates = true, extension = "ts")
 
   // TODO WEB-67260 - improve error highlighting
-  fun _testOptionalTemplateRef() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
+  fun testOptionalTemplateRef() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
 
   fun testStructuralDirectiveWithNgTemplateSelector() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
 

@@ -69,6 +69,8 @@
       "«model» [328] => «_t8» [1280]}",
       "«span» [338] => «_t13» [1568]} (no diagnostics)",
       "«*ngIf» [343] => «_t9» [1364]} (ignored)",
+      "«*ngIf» [343] => «ngIf» [1441]} (no types)",
+      "«*ngIf» [343] => «_t9.ngIf» [1437]} (no types)",
       "«*ngIf» [343] => «_i1.NgIf.ngTemplateContextGuard(_t9, _t12)» [1504]} (no types)",
       "«*ngIf» [343] => «_t12» [1558]} (no types)",
       "«true» [350] => «true» [1386]} (ignored)",

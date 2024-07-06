@@ -5,6 +5,8 @@
       "«main» [1] => «_t4» [659]} (no diagnostics)",
       "«main» [1] => «_t5» [753]} (ignored)",
       "«*ngIf» [6] => «_t1» [434]} (ignored)",
+      "«*ngIf» [6] => «ngIf» [508]} (no types)",
+      "«*ngIf» [6] => «_t1.ngIf» [504]} (no types)",
       "«*ngIf» [6] => «TestIf.ngTemplateContextGuard(_t1, _t2)» [564]} (no types)",
       "«*ngIf» [6] => «_t2» [630]} (no types)",
       "«title» [13] => «title» [461]} (ignored)",
