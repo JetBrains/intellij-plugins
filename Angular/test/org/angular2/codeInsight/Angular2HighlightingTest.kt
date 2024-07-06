@@ -85,7 +85,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testNgrxLetAsContextGuard() = checkHighlighting(ANGULAR_CORE_16_2_8, RXJS_7_8_1, dir = true, extension = "ts", strictTemplates = true)
 
   // TODO WEB-67260 - improve error highlighting
-  fun _testRequiredInputs() = checkHighlighting(extension = "ts")
+  fun testRequiredInputs() = checkHighlighting(extension = "ts")
 
   fun testStaticAttributes() = checkHighlighting(dir = true)
 

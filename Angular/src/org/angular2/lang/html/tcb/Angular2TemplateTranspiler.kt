@@ -84,6 +84,7 @@ object Angular2TemplateTranspiler {
     val contextVarMappings: List<ContextVarMapping>
     val directiveVarMappings: List<DirectiveVarMapping>
     val diagnostics: List<Diagnostic>
+    val nameMappings: List<Pair<TextRange, Map<String, String>>>
   }
 
   interface SourceMapping {

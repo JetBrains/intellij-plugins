@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerServiceRequest
 import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
@@ -89,7 +90,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
     computeCancellable<List<JSAnnotationError>, Throwable> {
-      list + getAdditionalErrors(file)
+      val (transpiledComponentFile, templateFile) = getTranspiledComponentFile(file)
+                                                    ?: return@computeCancellable list
+
+      translateNamesInErrors(list, transpiledComponentFile, templateFile) +
+      getAdditionalErrors(transpiledComponentFile, templateFile)
     }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
@@ -119,17 +124,46 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
   }
 
-  private fun getAdditionalErrors(file: PsiFile): List<JSAnnotationError> {
+  private fun getTranspiledComponentFile(file: PsiFile): Pair<TranspiledComponentFile, PsiFile>? {
     val templateFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
     val componentFile = if (templateFile.language is Angular2HtmlDialect)
-      Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile ?: return emptyList()
+      Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile
+      ?: return null
     else
       templateFile
-    val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(file) ?: return emptyList()
+    return Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
+      ?.let { Pair(it, templateFile) }
+  }
+
+  private fun getAdditionalErrors(file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
+    val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
+                   ?: return emptyList()
     val absoluteFilePath = templateFile.originalFile.virtualFile.toNioPath().toAbsolutePath().toString()
-    return Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)?.diagnostics?.get(templateFile)
+    return file.diagnostics[templateFile]
              ?.map { AngularAnnotationRangeError(it, document, absoluteFilePath) }
            ?: emptyList()
+  }
+
+  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
+    val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
+                   ?: return emptyList()
+    return errors.map {
+      if (it is TypeScriptLanguageServiceAnnotationResult) {
+        val textRange = it.getTextRange(document)
+        val nameMap = file.nameMaps[templateFile]?.get(textRange)
+        if (nameMap != null) {
+          return@map TypeScriptLanguageServiceAnnotationResult(
+            it.description.replaceNames("'", "'", nameMap),
+            it.absoluteFilePath,
+            it.category,
+            it.source,
+            it.tooltipText?.replaceNames(">", "<", nameMap),
+            it.errorCode, it.line + 1, it.column + 1, it.endLine + 1, it.endColumn + 1,
+          )
+        }
+      }
+      return@map it
+    }
   }
 
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project),
@@ -176,6 +210,20 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   }
 }
 
+private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange {
+  val startOffset = document.getLineStartOffset(this.line) + this.column
+  val endOffset = document.getLineStartOffset(this.endLine) + this.endColumn
+  return TextRange(startOffset, endOffset)
+}
+
+private fun String.replaceNames(prefix: String, suffix: String, nameMap: Map<String, String>): String {
+  var result = this
+  for ((generatedName, originalName) in nameMap) {
+    result = result.replace("$prefix$generatedName$suffix", "$prefix$originalName$suffix")
+  }
+  return result
+}
+
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   val isAngularContext = if (EDT.isCurrentThreadEdt())
     isAngular2Context(project, context)
@@ -219,6 +267,7 @@ private class AngularAnnotationRangeError(
   override fun getAbsoluteFilePath(): String = absoluteFilePath
   override fun getDescription(): String = StringUtil.unescapeXmlEntities(StringUtil.stripHtml(
     message.replace(Regex("</?code>"), "'"), " "))
+
   override fun getTooltipText(): String = message
   override fun getHighlightType(): ProblemHighlightType? = highlightType
   override fun getCategory(): String? = category
