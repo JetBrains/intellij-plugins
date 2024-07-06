@@ -11,10 +11,10 @@ export class FooComponent {
   /**
    * @deprecated
    */
-  fooCmp = '';
+  fooCmp? = '';
 
   @Input()
-  fooCmp2 = '';
+  fooCmp2? = '';
 
 }
 

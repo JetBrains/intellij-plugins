@@ -2514,16 +2514,19 @@ private fun getBoundAttributes(directive: TmplDirectiveMetadata, node: `TmplAstE
 /**
  * Translates the given attribute binding to a `Expression`.
  */
-private fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, tcb: Context, scope: Scope): Expression {
+private fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, tcb: Context, scope: Scope): Expression =
   if (attr is TmplAstBoundAttribute) {
     // Produce an expression representing the value of the binding.
-    return tcbExpression(attr.value, tcb, scope)
+    if (attr.value is JSEmptyExpression) {
+      Expression("undefined")
+    } else {
+      tcbExpression(attr.value, tcb, scope)
+    }
   }
   else {
     // For regular attributes with a static string value, use the represented string literal.
-    return Expression("\"${(attr as TmplAstTextAttribute).value}\"")
+    Expression("\"${(attr as TmplAstTextAttribute).value}\"")
   }
-}
 
 /**
  * Potentially widens the type in `expr` according to the type-checking configuration.

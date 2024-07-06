@@ -171,7 +171,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
                                                                strictTemplates = true, extension = "html", checkInformation = true)
 
   // TODO WEB-67260 - improve error highlighting
-  fun _testInputSignals() = checkHighlighting(ANGULAR_CORE_17_3_0, configureFileName = "test.html",
+  fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_3_0, configureFileName = "test.html",
                                              strictTemplates = true, dir = true)
 
   fun testSvgNoBlocksSyntax() = checkHighlighting(extension = "svg")
