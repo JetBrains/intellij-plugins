@@ -738,7 +738,10 @@ private fun buildInfo(
                    ?.flatMap { buildMetadata(it) }?.toSet() ?: emptySet(),
     inputs = templateBindings.asSequence()
       .filter { !it.keyIsVar() }
-      .map { Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange, BindingType.Property, it.expression, it.textRange)) }
+      .map {
+        Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange ?: attribute.nameElement?.textRange,
+                                           BindingType.Property, it.expression, it.textRange))
+      }
       .toMap(),
     variables = templateBindings.asSequence()
       .filter { it.keyIsVar() }
@@ -883,7 +886,7 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
 
 private fun Angular2HtmlBlock.buildTriggers(prefetch: Boolean): TmplAstDeferredBlockTriggers =
   TmplAstDeferredBlockTriggers(
-    `when` = parameters.find { it.name == PARAMETER_WHEN && prefetch == hasPrefetch(it)}?.let {
+    `when` = parameters.find { it.name == PARAMETER_WHEN && prefetch == hasPrefetch(it) }?.let {
       TmplAstBoundDeferredTrigger(
         nameSpan = it.nameElement?.textRange,
         value = it.expression
@@ -926,7 +929,9 @@ private fun buildContextVariables(forOfBlock: Angular2HtmlBlock, referenceResolv
   val symbols = forOfBlock.definition?.implicitVariables?.associateBy { it.name }
                 ?: emptyMap()
   Scope.forLoopContextVariableTypes.keys.filter { !result.containsKey(it) }.associateByTo(
-    result, { it }, { (symbols[it] ?: throw IllegalStateException("Cannot find symbol for $it")).toTmplAstVariable(forOfBlock, referenceResolver) }
+    result, { it }, {
+    (symbols[it] ?: throw IllegalStateException("Cannot find symbol for $it")).toTmplAstVariable(forOfBlock, referenceResolver)
+  }
   )
   return result
 }
