@@ -124,7 +124,7 @@ private class TcbElementOp(private val tcb: Context, private val scope: Scope, p
     }
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(element.startSourceSpan)
+    val id = this.tcb.allocateId(null, element.startSourceSpan)
     // Add the declaration of the element using document.createElement.
     this.scope.addStatement(
       tsCreateVariable(id, Expression("document.createElement(\"${element.name}\")"), ignoreDiagnostics = true)
@@ -154,10 +154,10 @@ private class TcbTemplateVariableOp(
 
     // Allocate an identifier for the TmplAstVariable, and initialize it to a read of the variable
     // on the template context.
-    val id = this.tcb.allocateId(variable.keySpan)
+    val id = this.tcb.allocateId(variable)
     this.scope.addStatement {
       append("var ")
-      append(id, id.sourceSpan, types = true)
+      append(id, id.sourceSpan, types = true, nameMap = id.sourceName?.let { mapOf(Pair(id.name, it)) })
       append(" = ")
       append(ctx)
       val name = variable.value ?: `$IMPLICIT`
@@ -354,7 +354,8 @@ private class TcbExpressionOp(
       this.scope.addStatement {
         if (isBoundText) {
           append("\"\" + ").append(expr).append(";")
-        } else {
+        }
+        else {
           append("(").append(expr).append(");")
         }
       }
@@ -397,7 +398,7 @@ private abstract class TcbDirectiveTypeOpBase(
     else {
       type = Expression("any")
     }
-    val id = this.tcb.allocateId(this.node.startSourceSpan)
+    val id = this.tcb.allocateId(null, this.node.startSourceSpan)
     this.scope.addStatement(tsDeclareVariable(id, type, types = false, ofDir = dir.directive, ignoreDiagnostics = true))
     return id
   }
@@ -474,7 +475,7 @@ private class TcbReferenceOp(
   override val optional get() = true
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(this.node.keySpan)
+    val id = this.tcb.allocateId(this.node)
     val reference = Expression {
       append(if (target is TmplAstDirectiveContainer)
                scope.resolve(target)
@@ -552,7 +553,7 @@ private class TcbDirectiveCtorOp(
   override val optional = true
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(this.node.startSourceSpan)
+    val id = this.tcb.allocateId(null, this.node.startSourceSpan)
 
     val genericInputs = mutableMapOf<String, TcbDirectiveInput>()
     val boundAttrs = getBoundAttributes(this.dir, this.node)
@@ -1135,7 +1136,7 @@ private class TcbBlockVariableOp(
   override val optional get() = false
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(this.variable.keySpan)
+    val id = this.tcb.allocateId(this.variable)
     val variable = tsCreateVariable(id, this.initializer)
     this.scope.addStatement(variable)
     return id
@@ -1159,7 +1160,7 @@ private class TcbBlockImplicitVariableOp(
   override val optional get() = true
 
   override fun execute(): Identifier {
-    val id = this.tcb.allocateId(this.variable.keySpan)
+    val id = this.tcb.allocateId(this.variable)
     val variable = tsDeclareVariable(id, this.type)
     this.scope.addStatement(variable)
     return id
@@ -1481,7 +1482,7 @@ private class TcbForOfOp(private val tcb: Context, private val scope: Scope, pri
  * assertion of the null value (in TypeScript, the expression `null!`). This construction will infer
  * the least narrow type for whatever it's assigned to.
  */
-private val INFER_TYPE_FOR_CIRCULAR_OP_EXPR = Identifier("null!")
+private val INFER_TYPE_FOR_CIRCULAR_OP_EXPR = Identifier("null!", null)
 
 /**
  * Overall generation context for the type check block.
@@ -1506,9 +1507,15 @@ internal class Context(
    * Currently this uses a monotonically increasing counter, but in the future the variable name
    * might change depending on the type of data being stored.
    */
-  fun allocateId(sourceSpan: TextRange? = null): Identifier {
-    return Identifier("_t${this.nextId++}", sourceSpan)
+  fun allocateId(sourceName: String?, sourceSpan: TextRange?): Identifier {
+    return Identifier("_t${this.nextId++}", sourceName, sourceSpan)
   }
+
+  fun allocateId(symbol: TmplAstExpressionSymbol): Identifier =
+    allocateId(symbol.name, symbol.keySpan)
+
+  fun allocateId(): Identifier =
+    allocateId(null, null)
 
   fun getPipeByName(name: String?): Angular2Pipe? {
     return this.boundTarget.pipes[name]
@@ -1643,7 +1650,7 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
         // Register the variable for the loop so it can be resolved by
         // children. It'll be declared once the loop is created.
         scopedNode.item?.let {
-          val loopInitializer = tcb.allocateId(it.keySpan)
+          val loopInitializer = tcb.allocateId(it)
           scope.varMap[it] = loopInitializer
         }
 
@@ -2244,7 +2251,7 @@ private open class TcbExpressionTranslator(
         qualifier.accept(this@TcbExpressionTranslator)
         append(")!.")
         referenceName?.accept(this@TcbExpressionTranslator)
-          ?: append("_error_")
+        ?: append("_error_")
         append(" : undefined)")
       }
       else if (VeSafeLhsInferenceBugDetector().veWillInferAnyFor(node)) {
@@ -2396,10 +2403,12 @@ private open class TcbExpressionTranslator(
           result.append(text.substring(2, text.length - 2), TextRange(textRange.startOffset + 2, textRange.endOffset - 2), types = true)
           result.append("\"")
         }
-      } else {
+      }
+      else {
         result.append(text, textRange, types = true)
       }
-    } else super.visitJSLiteralExpression(node)
+    }
+    else super.visitJSLiteralExpression(node)
   }
 
 
@@ -2519,7 +2528,8 @@ private fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, t
     // Produce an expression representing the value of the binding.
     if (attr.value is JSEmptyExpression) {
       Expression("undefined")
-    } else {
+    }
+    else {
       tcbExpression(attr.value, tcb, scope)
     }
   }
@@ -2768,15 +2778,21 @@ private fun tsCastToAny(expr: Expression): Expression {
  * Unlike with `tsCreateVariable`, the type of the variable is explicitly specified.
  */
 
-internal fun tsDeclareVariable(id: Identifier, type: Expression,
-                               types: Boolean = true, ofDir: Angular2Directive? = null,
-                               ignoreDiagnostics: Boolean = false): Statement {
+internal fun tsDeclareVariable(
+  id: Identifier, type: Expression,
+  types: Boolean = true, ofDir: Angular2Directive? = null,
+  ignoreDiagnostics: Boolean = false,
+): Statement {
   // When we create a variable like `var _t1: boolean = null!`, TypeScript actually infers `_t1`
   // to be `never`, instead of a `boolean`. To work around it, we cast the value
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = types, varOfDirective = ofDir, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics })
+    append(
+      id, id.sourceSpan, types = types, varOfDirective = ofDir,
+      diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
+      nameMap = id.sourceName?.let { mapOf(Pair(id.name, id.sourceName)) },
+    )
     append(" = null! as ")
     append(type)
     append(";")
@@ -2804,12 +2820,18 @@ private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputN
  * Unlike with `tsDeclareVariable`, the type of the variable is inferred from the initializer
  * expression.
  */
-private fun tsCreateVariable(id: Identifier, initializer: Expression,
-                             types: Boolean = true, ofDir: Angular2Directive? = null,
-                             ignoreDiagnostics: Boolean = false): Statement {
+private fun tsCreateVariable(
+  id: Identifier, initializer: Expression,
+  types: Boolean = true, ofDir: Angular2Directive? = null,
+  ignoreDiagnostics: Boolean = false,
+): Statement {
   return Statement {
     append("var ")
-    append(id, id.sourceSpan, types = types, varOfDirective = ofDir, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics })
+    append(
+      id, id.sourceSpan, types = types, varOfDirective = ofDir,
+      diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
+      nameMap = id.sourceName?.let { mapOf(Pair(id.name, id.sourceName)) },
+    )
     append(" = ")
     append(initializer)
     append(";")

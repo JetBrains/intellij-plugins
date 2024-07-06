@@ -160,7 +160,7 @@ internal class Environment(
 
   private fun getPipeStatements(): List<Statement> =
     pipe2ctor.entries.asSequence().sortedBy { it.value }.map { (pipe, name) ->
-      tsDeclareVariable(Identifier(name), Expression {
+      tsDeclareVariable(Identifier(name, pipe.getName()), Expression {
         (pipe as? Angular2ClassBasedEntity)?.typeScriptClass
           ?.let { append(reference(it)) }
         ?: append("any")

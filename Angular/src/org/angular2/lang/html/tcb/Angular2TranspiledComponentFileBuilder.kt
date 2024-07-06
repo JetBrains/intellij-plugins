@@ -87,6 +87,7 @@ object Angular2TranspiledComponentFileBuilder {
     val componentFileContextVarMappings = mutableMapOf<TextRange, TextRange>()
     val componentFileDirectiveVarMappings = mutableMapOf<Pair<TextRange, Angular2Directive>, TextRange>()
     val diagnostics = MultiMap<PsiFile, Angular2TemplateTranspiler.Diagnostic>()
+    val nameMaps = MultiMap<PsiFile, Pair<TextRange, Map<String, String>>>()
     val mappings = SmartList<FileMappings>()
 
     generatedCode.append("\n\n/* Angular type checking code */\n")
@@ -120,6 +121,7 @@ object Angular2TranspiledComponentFileBuilder {
             )
           }
         diagnostics.putValues(injectionHost.containingFile, template.diagnostics.map { it.offsetBy(sourceMappingOffset) })
+        nameMaps.putValues(injectionHost.containingFile, template.nameMappings.map { (range, map) -> Pair(range.shiftRight(sourceMappingOffset), map) })
       }
       else {
         val fileMappings = template.sourceMappings.map {
@@ -133,6 +135,7 @@ object Angular2TranspiledComponentFileBuilder {
         }
         mappings.add(FileMappings(template.templateFile, fileMappings.sorted(), contextVarMappings, directiveVarMappings))
         diagnostics.putValues(template.templateFile, template.diagnostics)
+        nameMaps.putValues(template.templateFile, template.nameMappings)
       }
     }
     inlineTemplateRanges.sortBy { it.startOffset }
@@ -156,7 +159,8 @@ object Angular2TranspiledComponentFileBuilder {
       componentFile,
       generatedCode.toString(),
       mappings.associateBy { it.sourceFile },
-      diagnostics.entrySet().associateBy({ it.key }, { it.value.toList() })
+      diagnostics.entrySet().associateBy({ it.key }, { it.value.toList() }),
+      nameMaps.entrySet().associateBy({ it.key }, { pair -> pair.value.associateBy({ it.first }, { it.second }) }),
     ).also {
       if (ApplicationManager.getApplication().isUnitTestMode) it.verifyMappings()
     }
@@ -170,6 +174,7 @@ object Angular2TranspiledComponentFileBuilder {
     val generatedCode: String,
     val fileMappings: Map<PsiFile, FileMappings>,
     val diagnostics: Map<PsiFile, List<Angular2TemplateTranspiler.Diagnostic>>,
+    val nameMaps: Map<PsiFile, Map<TextRange, Map<String, String>>>,
   )
 
   class FileMappings(

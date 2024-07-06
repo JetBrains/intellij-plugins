@@ -96,8 +96,8 @@ export class NgForOf {
       myThirdSelector
       theRequiredInput="foo"
     ></div>
-    <div *ngFor="let a of b"></div>
-    <div <error descr="Missing binding for required input ngForOf of directive NgForOf">*ngFor</error>="let a"></div>
+    <div *ngFor="let <weak_warning descr="TS6133: 'a' is declared but its value is never read.">a</weak_warning> of b"></div>
+    <div <error descr="Missing binding for required input ngForOf of directive NgForOf">*ngFor</error>="let <weak_warning descr="TS6133: 'a' is declared but its value is never read.">a</weak_warning>"></div>
     <div
       <warning descr="Attribute foo is not allowed here">foo</warning>
     ></div>
