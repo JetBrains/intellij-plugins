@@ -49,7 +49,7 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
     <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchAnnotator"/>
     <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
 
-    <iconProvider implementation="com.dmarcotte.handlebars.file.HbIconProvider"/>
+    <iconProvider id="handlebars" implementation="com.dmarcotte.handlebars.file.HbIconProvider"/>
     <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.file.HbLanguageSubstitutor"/>
 
     <liveTemplateContext contextId="Handlebars" implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
