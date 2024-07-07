@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.file;
 
-import com.dmarcotte.handlebars.HbLanguage;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
@@ -24,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static com.dmarcotte.handlebars.file.HbTemplateUtilKt.guessTemplateLanguage;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CONTENT;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OUTER_ELEMENT_TYPE;
 
@@ -73,7 +73,7 @@ public final class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileVie
   private static @NotNull Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
     Language dataLang = TemplateDataLanguageMappings.getInstance(manager.getProject()).getMapping(file);
     if (dataLang == null) {
-      dataLang = HbLanguage.getDefaultTemplateLang().getLanguage();
+      dataLang = guessTemplateLanguage(file);
     }
 
     Language substituteLang = LanguageSubstitutors.getInstance().substituteLanguage(dataLang, file, manager.getProject());
@@ -82,7 +82,6 @@ public final class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileVie
     if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang)) {
       dataLang = substituteLang;
     }
-
     return dataLang;
   }
 
