@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
 private object VolarLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
-                                                                            "2.0.22",
+                                                                            "2.0.26",
                                                                             "/bin/vue-language-server.js") {
   override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
 }
