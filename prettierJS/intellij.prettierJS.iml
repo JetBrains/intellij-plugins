@@ -30,5 +30,6 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vuejs" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>
