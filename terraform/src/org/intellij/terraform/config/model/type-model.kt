@@ -11,8 +11,6 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.OFFICIAL_PROVIDERS_NAMESPACE
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 // Model for element types
 
@@ -607,14 +605,4 @@ internal fun getProviderForBlockType(blockType: BlockType?): ProviderType? {
     else -> null
   }
   return provider
-}
-
-internal fun getBlockTypeString(block: HCLBlock): String? {
-  val blockType = block.getNameElementUnquoted(0)?.lowercase() ?: ""
-  return when (blockType) {
-    HCL_RESOURCE_IDENTIFIER -> "resource"
-    HCL_DATASOURCE_IDENTIFIER -> "datasource"
-    HCL_PROVIDER_IDENTIFIER -> "provider"
-    else -> ""
-  }
 }
