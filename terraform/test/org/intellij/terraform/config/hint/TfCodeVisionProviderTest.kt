@@ -4,7 +4,6 @@ import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
 import org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider
 
 class TfCodeVisionProviderTest : CodeVisionTestCase() {
-  private val dollar = '$'
 
   fun testInheritors() = doTest("""
     provider "aws" {
@@ -52,7 +51,7 @@ class TfCodeVisionProviderTest : CodeVisionTestCase() {
       instance_type = each.value.instance_type
 
       tags = {
-        Name = "${dollar}{each.key}-${dollar}{local.tag_suffix}"
+        Name = "${Dollar}{each.key}-${Dollar}{local.tag_suffix}"
       }
     }
 
@@ -69,3 +68,5 @@ class TfCodeVisionProviderTest : CodeVisionTestCase() {
     testProviders(text, "main.tf", *enabledProviderGroupIds)
   }
 }
+
+private const val Dollar = '$'
