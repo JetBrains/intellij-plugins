@@ -9,6 +9,7 @@
   <default-modal-direct></default-modal-direct>
   {{ Bar }}
   {{ Foo }}
+  <div @click="eventHandler" />
 
   <TabGroup>
     <TabList>
@@ -17,7 +18,7 @@
   <<warning descr="Element ScriptSetupComplexImports doesn't have required attribute foo-bar">ScriptSetupComplexImports</warning>/>
 </template>
 <script setup lang="ts">
-import {TreeModal, BasicModal, ComplexModal, DefaultModal, Bar} from './hooks/Modal'
+import {TreeModal, BasicModal, ComplexModal, DefaultModal, Bar, eventHandler} from './hooks/Modal'
 
 import BasicModalDirect from "./hooks/Modal/BasicModal.vue"
 import TreeModalDirect from "./hooks/Modal/BasicModal.vue"
