@@ -237,12 +237,8 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/mixed.stmt:156  mixed multiplicative operators");
     KNOWN_TO_FAIL_STRICT.add("splitting/mixed.stmt:164  mixed additive operators");
     KNOWN_TO_FAIL_STRICT.add("splitting/mixed.stmt:172  mixed shift operators");
-    KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:2  split all chained calls if they don't fit on one line");
     KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:13  don't split before implicit receiver");
     KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:20  trailing functions in a chain do not force it to split");
-    KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:64  one trailing call does not force function to indent");
-    KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:99  do not split leading properties in a chain");
-    KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:170  conditional invocation");
     KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:178  index in property chain");
     KNOWN_TO_FAIL_STRICT.add("whitespace/script.unit:8  multiple lines between script and library");
     KNOWN_TO_FAIL_STRICT.add("whitespace/script.unit:23  multiple lines between script and import");
