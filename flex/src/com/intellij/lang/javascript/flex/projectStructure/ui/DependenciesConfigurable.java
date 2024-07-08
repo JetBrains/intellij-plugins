@@ -41,7 +41,10 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.UIRootConfigurationAccessor;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.*;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.BaseLibrariesConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
@@ -1090,7 +1093,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
 
         @Override
-        public PopupStep onChosen(final AddItemPopupAction selectedValue, final boolean finalChoice) {
+        public PopupStep<?> onChosen(final AddItemPopupAction selectedValue, final boolean finalChoice) {
           if (selectedValue.hasSubStep()) {
             return selectedValue.createSubStep();
           }

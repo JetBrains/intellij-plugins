@@ -92,7 +92,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
           }
 
           @Override
-          public PopupStep onChosen(final CucumberStepDefinitionCreationContext selectedValue, boolean finalChoice) {
+          public PopupStep<?> onChosen(final CucumberStepDefinitionCreationContext selectedValue, boolean finalChoice) {
             return doFinalStep(() -> createStepOrSteps(step, selectedValue));
           }
         });
