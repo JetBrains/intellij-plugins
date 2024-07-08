@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -206,7 +205,7 @@ public final class MeteorLibraryUpdater implements Disposable {
         myQueue.waitForAllExecuted(1, TimeUnit.MINUTES);
         UIUtil.dispatchAllInvocationEvents();
       }
-      catch (InterruptedException | ExecutionException | TimeoutException e) {
+      catch (TimeoutException e) {
         throw new RuntimeException(e);
       }
     } while (!myQueue.isEmpty() || !myProjectStatusAlarm.isEmpty());
