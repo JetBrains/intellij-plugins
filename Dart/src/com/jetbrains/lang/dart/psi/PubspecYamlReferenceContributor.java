@@ -77,7 +77,7 @@ public final class PubspecYamlReferenceContributor extends PsiReferenceContribut
             return result;
           }
 
-          return super.computeDefaultContexts();
+          return getParentDirectoryContext();
         }
 
         @Override
