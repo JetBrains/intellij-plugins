@@ -24,9 +24,9 @@
      <li>Unresolved reference checks (in interpolations)</li>
      <li>Check required/missing properties in resource/provider</li>
      <li><a href="https://www.terraform.io/docs/configuration/interpolation.html">Predefined Terraform methods</a> autocompletion in interpolations</li>
-     <li>(WIP) Better properties validation (type checking)</li>
-     <li>(WIP) Working with dependent modules</li>
-     <li>(WIP) Type-specific autocompletion in interpolations</li>
+     <li>Better properties validation (type checking)</li>
+     <li>Working with dependent modules</li>
+     <li>Type-specific autocompletion in interpolations</li>
    </ul>
     ]]></description>
 
@@ -44,14 +44,14 @@
       <li>Added support for composite extensions for .tfpl files. This allows automatic detection of the data language for templates based on composite extensions. For example, if a file has the extension .js.tftpl, the file will be recognized with JavaScript as the data language and tftpl as the primary language.</li>
       <li>Added support for Terraform resource imports, allowing users to add and manage imported resources directly within the IDE, with automatic detection and matching of resource addresses.</li>
       <li>Provided support for resolving and finding usages for included variables in Terraform projects. This feature allows users to see the final values of variables, navigate through variable references, and view environment-specific values. Additionally, it provides convenient navigation and refactoring options, enabling users to add or change values across all environments and generate necessary binding variables efficiently.</li>
-      <li>Added support for working with projects in the WSL context. If a project is located in WSL and opened from IntelliJ IDEA, the Terraform installed in the WSL distribution where the project resides is used.</li>
+      <li>Added support for working with projects in the WSL context. If a project is located in WSL and opened from JetBrains IDE, the Terraform installed in the WSL distribution where the project resides is used.</li>
       <li>Included support for optional parameters in Terraform variable definitions and module usage, including code completion and documentation.</li>
       <li>Introduced "Deep search for variables" option in Settings | Advanced Settings to enable searching for variables in nested directories (with the ability to disable this behavior).</li>
       <li>Added the ability to use Move Statement Up/Down for multiple selected blocks.</li>
       <li>You can now specify tfvars in the Run configuration.</li>
       <li>Terraform code completion for providers and HCL now scales with the tooltip window, fixing the issue of truncated documentation and enhancing the usefulness of quick documentation.</li>
       <li>Added highlighting for corresponding parentheses in HCL, enhancing code readability and convenience.</li>
-      <li>The Terraform path in Settings now defaults automatically if the field is left empty, ensuring seamless execution of Terraform commands.</li>
+      <li>The default path to the Terraform executable is now used if the path field is left empty in Settings. Additionally, you can now use the <b>Test</b> button to check the presence and version of Terraform.</li>
     </ul>
     2024.1
     <ul>
