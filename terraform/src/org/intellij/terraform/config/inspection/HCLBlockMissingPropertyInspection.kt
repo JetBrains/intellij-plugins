@@ -104,11 +104,12 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
 
     ProgressIndicatorProvider.checkCanceled()
     val nameOfBlock = block.children.lastOrNull { it !is HCLObject } ?: return
+    val size = required.size
     holder.registerProblem(
       nameOfBlock,
       HCLBundle.message(
         "missing.resource.property.inspection.required.properties.error.message",
-        required.joinToString(", ", limit = 5) { it.name }
+        required.joinToString(", ", postfix = if (size > DisplayLimit) " [$size]" else "", limit = DisplayLimit) { it.name }
       ),
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
       *listOfNotNull(
@@ -160,3 +161,5 @@ class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection<Property
     }
   }
 }
+
+private const val DisplayLimit: Int = 5
