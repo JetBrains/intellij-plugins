@@ -4,16 +4,19 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.BasicInsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.components.service
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
 internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
+
+  val tiersNotToInsert = setOf(ProviderTier.TIER_LOCAL, ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL)
+
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
     val project = context.project
     if (project.isDisposed) return
@@ -76,7 +79,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     }
 
     val provider = getProviderForBlockType(type)
-    if (provider != null && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
+    if (provider != null && provider.tier !in tiersNotToInsert && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
       InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
     }
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)

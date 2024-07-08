@@ -49,7 +49,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       terraform {
         required_providers {
           aci = {
-            source  = "ciscodevnet/aci"
+            source  = "CiscoDevNet/aci"
             version = "2.14.0"
           }
         }

@@ -10,7 +10,6 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.documentation.psi.FAKE_PROVIDER_KEY
 import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
 import org.intellij.terraform.hcl.psi.*
@@ -86,7 +85,6 @@ internal abstract class BaseTerraformDocUrlProvider {
     element.getUserData(FAKE_PROVIDER_KEY)?.let { return it }
 
     val model = TypeModelProvider.getModel(element)
-    val prefix = TypeModel.getResourcePrefix(identifier)
-    return model.getProviderType(prefix, element)
+    return model.getProviderType(identifier, element)
   }
 }

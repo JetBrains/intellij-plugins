@@ -327,7 +327,7 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
   private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode, file: ObjectNode): ProviderType? {
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name) ?: return null
     val providerMetadata = TFBaseLoader.parseMetadata(file.obj("metadata"), name, namespace)
-    return ProviderType(name, parsed.properties.values.toList(), namespace, providerMetadata.tier, providerMetadata.version)
+    return ProviderType(providerMetadata.name, parsed.properties.values.toList(), providerMetadata.namespace, providerMetadata.tier, providerMetadata.version)
   }
 
   private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {

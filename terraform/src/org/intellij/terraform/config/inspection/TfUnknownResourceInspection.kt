@@ -14,7 +14,10 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.AddProviderAction
 import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.codeinsight.TfModelHelper.getTypeForBlock
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -34,11 +37,13 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
   inner class TfBlockVisitor(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
       ProgressIndicatorProvider.checkCanceled()
-      if (block.nameElements.size < 2) return
-      val blockType = getTypeForBlock(block)
       val allowedBlockTypeString = getAllowedBlockTypeString(block)
-      if (blockType == null && allowedBlockTypeString.isNotEmpty()) {
-        val blockName = block.getNameElementUnquoted(1) ?: ""
+      if (allowedBlockTypeString.isBlank()) return
+
+      val model = TypeModelProvider.getModel(block)
+      val provider = getProviderForBlock(block, model)
+      val blockName = block.getNameElementUnquoted(1) ?: ""
+      if (provider == null) {
         holder.registerProblem(block,
                                HCLBundle.message("unknown.resource.identifier.inspection.error.message", allowedBlockTypeString, blockName),
                                *listOfNotNull(
@@ -46,8 +51,32 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
                                  AddProviderAction(block)
                                ).toArray(LocalQuickFix.EMPTY_ARRAY)
         )
+      } else if (getTypeForBlock(block, provider, model) == null) {
+        holder.registerProblem(block,
+                               HCLBundle.message("unknown.resource.identifier.for.known.provider", allowedBlockTypeString, blockName, provider.fullName),
+                               *listOfNotNull(
+                                 TFInitAction.createQuickFixNotInitialized(block)
+                               ).toArray(LocalQuickFix.EMPTY_ARRAY)
+        )
       }
     }
+  }
+
+  private fun getProviderForBlock(block: HCLBlock, model: TypeModel): ProviderType? {
+    val identifier = block.getNameElementUnquoted(1) ?: return null
+    return model.getProviderType(identifier, block)
+  }
+
+  private fun getTypeForBlock(block: HCLBlock, providerType: ProviderType, model: TypeModel): BlockType? {
+    val typeString = block.getNameElementUnquoted(0) ?: return null
+    val identifier = block.getNameElementUnquoted(1)?.replaceBefore("_", providerType.type) ?: return null
+    val type = when (typeString) {
+      HCL_RESOURCE_IDENTIFIER -> model.resourcesByProvider[providerType.fullName]?.firstOrNull { it.type == identifier }
+      HCL_DATASOURCE_IDENTIFIER -> model.datasourcesByProvider[providerType.fullName]?.firstOrNull { it.type == identifier }
+      HCL_PROVIDER_IDENTIFIER -> providerType
+      else -> null
+    }
+    return type
   }
 
   private fun getAllowedBlockTypeString(block: HCLBlock): String {
