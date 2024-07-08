@@ -9,9 +9,13 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.testFramework.ExpectedHighlightingData;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+
+import java.util.function.Consumer;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   @Override
@@ -19,28 +23,12 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     return "/highlighting";
   }
 
-  private void excludeFolder(final String relPath) {
+  private void updateModuleRoots(Consumer<ContentEntry> contentEntryModifier) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       final ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
       try {
         final ContentEntry[] contentEntries = model.getContentEntries();
-        contentEntries[0].addExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
-        model.commit();
-      }
-      finally {
-        if (!model.isDisposed()) {
-          model.dispose();
-        }
-      }
-    });
-  }
-
-  private void unexcludeFolder(final String relPath) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      final ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
-      try {
-        final ContentEntry[] contentEntries = model.getContentEntries();
-        contentEntries[0].removeExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
+        contentEntryModifier.accept(contentEntries[0]);
         model.commit();
       }
       finally {
@@ -116,13 +104,15 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.copyDirectoryToProject(getTestName(false), "");
     myFixture.openFileInEditor(ModuleRootManager.getInstance(getModule()).getContentRoots()[0].findChild("pubspec.yaml"));
 
-    excludeFolder("other_project");
-    try {
-      myFixture.checkHighlighting(true, false, true);
-    }
-    finally {
-      unexcludeFolder("other_project");
-    }
+    ExpectedHighlightingData data = new ExpectedHighlightingData(myFixture.getEditor().getDocument(), true, true, false, false);
+    data.init();
+    ((CodeInsightTestFixtureImpl)myFixture).collectAndCheckHighlighting(data);
+
+    updateModuleRoots((contentEntry) -> contentEntry.addExcludeFolder(contentEntry.getUrl() + "/other_project"));
+    ((CodeInsightTestFixtureImpl)myFixture).collectAndCheckHighlighting(data);
+
+    updateModuleRoots((contentEntry) -> contentEntry.addSourceFolder(contentEntry.getUrl() + "/test", true));
+    ((CodeInsightTestFixtureImpl)myFixture).collectAndCheckHighlighting(data);
   }
 
   public void testUriInPartOf() {
