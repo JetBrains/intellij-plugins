@@ -8,13 +8,13 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.AddProviderAction
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.TfModelHelper.getTypeForBlock
-import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.model.getBlockTypeString
-import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -36,21 +36,28 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
       ProgressIndicatorProvider.checkCanceled()
       if (block.nameElements.size < 2) return
       val blockType = getTypeForBlock(block)
-      doCheck(block, holder, blockType)
+      val allowedBlockTypeString = getAllowedBlockTypeString(block)
+      if (blockType == null && allowedBlockTypeString.isNotEmpty()) {
+        val blockName = block.getNameElementUnquoted(1) ?: ""
+        holder.registerProblem(block,
+                               HCLBundle.message("unknown.resource.identifier.inspection.error.message", allowedBlockTypeString, blockName),
+                               *listOfNotNull(
+                                 TFInitAction.createQuickFixNotInitialized(block),
+                                 AddProviderAction(block)
+                               ).toArray(LocalQuickFix.EMPTY_ARRAY)
+        )
+      }
     }
   }
 
-  private fun doCheck(block: HCLBlock, holder: ProblemsHolder, blockType: BlockType?) {
-    val provider = getProviderForBlockType(blockType)
-    if (provider == null) {
-      val type = block.getNameElementUnquoted(1) ?: ""
-      holder.registerProblem(block,
-                             HCLBundle.message("unknown.resource.identifier.inspection.error.message", getBlockTypeString(block), type),
-                             *listOfNotNull(
-                               TFInitAction.createQuickFixNotInitialized(block),
-                               AddProviderAction(block)
-                             ).toArray(LocalQuickFix.EMPTY_ARRAY)
-      )
+  private fun getAllowedBlockTypeString(block: HCLBlock): String {
+    val blockType = block.getNameElementUnquoted(0)?.lowercase() ?: ""
+    return when (blockType) {
+      HCL_RESOURCE_IDENTIFIER -> "resource"
+      HCL_DATASOURCE_IDENTIFIER -> "datasource"
+      HCL_PROVIDER_IDENTIFIER -> "provider"
+      else -> ""
     }
   }
+
 }
