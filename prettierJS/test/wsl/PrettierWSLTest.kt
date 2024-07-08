@@ -1,8 +1,8 @@
 package com.intellij.prettier.wsl
 
-import com.intellij.lang.javascript.wsl.WSLTempDirWithNodeInterpreterBase
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.wsl.WSLTempDirWithNodeInterpreterBase
 import org.junit.Test
 import java.awt.EventQueue
 
