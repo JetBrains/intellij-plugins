@@ -5,10 +5,7 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSFunctionItem
-import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
@@ -117,12 +114,18 @@ class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpress
                                         resolveResult: ResolveResult,
                                         access: ReadWriteAccessDetector.Access) {
     val resolvedElement = resolveResult.element
+    // the goal of importUsed is to apply minimal change and preserve the other previous effects of this code;
+    // namely that problemKind is always ignored;
+    // there's also `resolveResult.actionScriptImport` but Vue doesn't interact with AS, so this is fine;
+    // this code could probably be simplified, I'm not sure if we need so many objects
+    val importUsed = if (resolveResult is JSResolveResult) resolveResult.eS6Import else null
     when (val element = if (resolvedElement is VueImplicitElement) resolvedElement.context else resolvedElement) {
       is JSFunctionItem -> {
         val add: (JSFunctionItem) -> Unit = if (resolvedElement is VueImplicitElement)
-          { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it))) }
+          { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it), importUsed, null)) }
         else
-          { it -> results.add(JSResolveResult(it)) }
+          { it -> results.add(JSResolveResult(it, importUsed, null)) }
+
         when {
           element.isGetProperty && access == ReadWriteAccessDetector.Access.Write ->
             findPropertyAccessor(element, true, add)

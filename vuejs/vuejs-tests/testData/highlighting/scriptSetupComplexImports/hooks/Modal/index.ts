@@ -6,3 +6,7 @@ import DefaultModal from './components/DefaultModal.vue'
 export {BasicModal,TreeModal,ComplexModal,DefaultModal}
 
 export const Bar = 12
+
+export function eventHandler() {
+
+}
