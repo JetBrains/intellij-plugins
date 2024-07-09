@@ -160,7 +160,7 @@ private class TcbTemplateVariableOp(
       append(id, id.sourceSpan, types = true, nameMap = id.sourceName?.let { mapOf(Pair(id.name, it)) })
       append(" = ")
       append(ctx)
-      val name = variable.value ?: `$IMPLICIT`
+      val name = variable.value?.takeIf { it.isNotBlank() } ?: `$IMPLICIT`
       if (StringUtil.isJavaIdentifier(name))
         append(".").append(name, variable.valueSpan, types = true)
       else
