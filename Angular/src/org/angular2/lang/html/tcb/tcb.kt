@@ -18,6 +18,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
@@ -633,6 +634,11 @@ private class TcbDirectiveInputsOp(
     for (attr in boundAttrs) {
       // For bound inputs, the property is assigned the binding expression.
       val expr = widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
+        .applyIf(!tcb.markAttributeExpressionAsTranspiled(attr.attribute)) {
+          Expression{
+            withIgnoreMappings { append(this@applyIf) }
+          }
+        }
 
       var assignment: Expression = expr
 
@@ -1016,16 +1022,12 @@ private class TcbDirectiveOutputsOp(
         // on the directive's output field to let type information flow into the handler function's
         // `$event` parameter.
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, EventParamType.Infer)
+          // Make sure that expression is mapped only once
+          .applyIf(output.type == ParsedEventType.TwoWay || !tcb.markAttributeExpressionAsTranspiled(output)) {
+            Expression { withIgnoreMappings { append(this@applyIf) } }
+          }
         this.scope.addStatement {
-          append(outputField)
-          append(".subscribe(")
-          if (output.type == ParsedEventType.TwoWay)
-            withIgnoreMappings {
-              append(handler)
-            }
-          else
-            append(handler)
-          append(");")
+          append(outputField).append(".subscribe(").append(handler).append(");")
         }
       }
       else {
@@ -1498,6 +1500,7 @@ internal class Context(
   val boundTarget: BoundTarget,
 ) {
   private var nextId = 1
+  private val attributeExpressions = mutableSetOf<TmplAstAttribute>()
 
   val hostPreserveWhitespaces: Boolean get() = true
 
@@ -1520,6 +1523,9 @@ internal class Context(
   fun getPipeByName(name: String?): Angular2Pipe? {
     return this.boundTarget.pipes[name]
   }
+
+  fun markAttributeExpressionAsTranspiled(attribute: TmplAstAttribute): Boolean =
+    attributeExpressions.add(attribute)
 }
 
 /**
