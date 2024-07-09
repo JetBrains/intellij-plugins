@@ -76,7 +76,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         this,
         () ->
             Result.create(
-              PsiTreeUtil.getChildOfType(PbFileImpl.this, PbPackageStatement.class),
+              PsiTreeUtil.getChildOfType(this, PbPackageStatement.class),
               PbCompositeModificationTracker.byElement(this)));
   }
 
@@ -87,7 +87,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         this,
         () ->
             Result.create(
-                PsiTreeUtil.getChildrenOfTypeAsList(PbFileImpl.this, PbImportStatement.class),
+                PsiTreeUtil.getChildrenOfTypeAsList(this, PbImportStatement.class),
                 PbCompositeModificationTracker.byElement(this)));
   }
 
