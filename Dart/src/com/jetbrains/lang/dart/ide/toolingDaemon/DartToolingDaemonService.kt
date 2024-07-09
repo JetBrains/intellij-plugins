@@ -147,6 +147,22 @@ class DartToolingDaemonService private constructor(private val project: Project)
     webSocket.send(requestString)
   }
 
+  fun sendResponse(id: String, result: JsonObject) {
+    if (!webSocketReady) {
+      logger.warn("sendResponse(\"$id\", $result) called when the socket is not ready")
+      return
+    }
+
+    val response = JsonObject()
+    response.addProperty("jsonrpc", "2.0")
+    response.addProperty("id", id)
+    response.add("result", result)
+
+    val responseString = response.toString()
+    logger.debug("--> $responseString")
+    webSocket.send(responseString)
+  }
+
   fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
     eventDispatcher.addListener(listener, parentDisposable)
 
@@ -292,10 +308,14 @@ class DartToolingDaemonService private constructor(private val project: Project)
         eventDispatcher.multicaster.received(streamId, json)
       } else if (servicesMap.contains(method)) {
         val params = json["params"].asJsonObject
+        val id = json["id"].asString
         val consumer = servicesMap.get(method)
         val result = consumer?.received(params)
-        println(result)
-        // Send result back to DTD - how?
+        if (result == null) {
+          logger.warn("No response from request consumer for message: $text")
+        } else {
+          sendResponse(id, result)
+        }
       }
       else {
         val id = json["id"].asString
