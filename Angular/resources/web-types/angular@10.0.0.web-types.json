@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
   "name": "@angular/core",
   "framework": "angular",
-  "version": "2.0.0",
+  "version": "10.0.0",
   "description-markup": "markdown",
   "default-icon": "icons/angular2.svg",
   "framework-config": {
@@ -10,17 +10,6 @@
       "node-packages": [
         "@angular/core"
       ]
-    }
-  },
-  "contexts-config": {
-    "angular-service-support": {
-      "false": {
-        "enable-when": {
-          "node-packages": [
-            "@angular/core"
-          ]
-        }
-      }
     }
   },
   "contributions": {

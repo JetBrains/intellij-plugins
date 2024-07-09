@@ -32,6 +32,7 @@ import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
+import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
 import kotlinx.coroutines.currentCoroutineContext
 import org.angular2.entities.Angular2EntitiesProvider
@@ -200,12 +201,14 @@ private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, su
 }
 
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  val isAngularContext = if (EDT.isCurrentThreadEdt())
-    isAngular2Context(project, context)
+  val isAngularServiceContext = if (EDT.isCurrentThreadEdt())
+    isAngular2Context(project, context) && isAngularServiceSupport(project, context)
   else
-    computeCancellable<Boolean, Throwable> { isAngular2Context(project, context) }
+    computeCancellable<Boolean, Throwable> {
+      isAngular2Context(project, context) && isAngularServiceSupport(project, context)
+    }
 
-  if (!isAngularContext) return false
+  if (!isAngularServiceContext) return false
 
   return when (getAngularSettings(project).serviceType) {
     AngularServiceSettings.AUTO -> true
@@ -220,3 +223,6 @@ private class Angular2GetGeneratedElementTypeRequest(
 ) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs>(args, service, coroutineContext) {
   override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
 }
+
+private fun isAngularServiceSupport(project: Project, context: VirtualFile): Boolean =
+  WebSymbolsContext.get("angular-service-support", context, project) != "false"

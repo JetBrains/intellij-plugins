@@ -3,6 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiLanguageInjectionHost
@@ -63,7 +64,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testCustomUserEvents() = checkHighlighting(dir = true)
 
-  fun testFxLayout() = checkHighlighting(ANGULAR_CORE_9_1_1_MIXED, ANGULAR_FLEX_LAYOUT_13_0_0)
+  fun testFxLayout() = withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
+    checkHighlighting(ANGULAR_CORE_9_1_1_MIXED, ANGULAR_FLEX_LAYOUT_13_0_0)
+  }
 
   fun testHtmlAttributes() = checkHighlighting()
 
