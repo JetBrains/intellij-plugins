@@ -2196,6 +2196,10 @@ private open class TcbExpressionTranslator(
     // - Turn off legacy TemplateDefinitionBuilder
     // - Fix g3, and release in a major version
     if (node.qualifier == null || node.qualifier is JSThisExpression) {
+      if (node.referenceName == "undefined") {
+        result.append("undefined", node.textRange, types = true)
+        return
+      }
       // Try to resolve a bound target for this expression. If no such target is available, then
       // the expression is referencing the top-level component context. In that case, `null` is
       // returned here to let it fall through resolution so it will be caught when the
