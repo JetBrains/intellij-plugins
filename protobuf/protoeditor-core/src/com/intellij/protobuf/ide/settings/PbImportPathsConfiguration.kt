@@ -36,7 +36,8 @@ fun computeDeterministicImportPaths(project: Project, pbSettings: PbProjectSetti
       if (isIncludeProtoDirectories) yieldAll(standardProtoDirectories(project))
       if (isIncludeContentRoots) yieldAll(projectContentRoots(project))
       if (isThirdPartyConfigurationEnabled) yieldAll(thirdPartyImportPaths(project))
-      getBuiltInIncludeEntry()?.let { yield(it) }
+      val builtInWellKnownProtos = getBuiltInIncludeEntry()
+      if (isIncludeWellKnownProtos && builtInWellKnownProtos != null) yield(builtInWellKnownProtos)
     }
   }
 }
@@ -93,6 +94,11 @@ internal fun getDescriptorPathSuggestions(project: Project): Collection<String> 
 }
 
 internal const val BUNDLED_DESCRIPTOR: String = "google/protobuf/descriptor.proto"
+
+internal fun computeWellKnownProtos(project: Project): List<ImportPathEntry> {
+  val bundledEntry = getBuiltInIncludeEntry() ?: return emptyList()
+  return listOf(bundledEntry)
+}
 
 internal fun getBuiltInIncludeEntry(): ImportPathEntry? {
   val includedDescriptorsDirectoryUrl = PbProjectSettings::class.java.classLoader.getResource("include") ?: return null
