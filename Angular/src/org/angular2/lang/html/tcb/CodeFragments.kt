@@ -289,8 +289,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 }
 
 internal class Identifier(
+  /** Name of the identifier as used within TCB */
   val name: String,
+  /** name of the identifier as in the source file */
   val sourceName: String?,
+  /** text range of the original variable within the source file */
   val sourceSpan: TextRange? = null,
 ) {
   override fun toString(): String = name

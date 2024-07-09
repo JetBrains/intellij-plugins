@@ -153,11 +153,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
         val nameMap = file.nameMaps[templateFile]?.get(textRange)
         if (nameMap != null) {
           return@map TypeScriptLanguageServiceAnnotationResult(
-            it.description.replaceNames("'", "'", nameMap),
+            it.description.replaceNames("'", nameMap, "'"),
             it.absoluteFilePath,
             it.category,
             it.source,
-            it.tooltipText?.replaceNames(">", "<", nameMap),
+            it.tooltipText?.replaceNames(">", nameMap, "<"),
             it.errorCode, it.line + 1, it.column + 1, it.endLine + 1, it.endColumn + 1,
           )
         }
@@ -216,7 +216,7 @@ private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange {
   return TextRange(startOffset, endOffset)
 }
 
-private fun String.replaceNames(prefix: String, suffix: String, nameMap: Map<String, String>): String {
+private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, suffix: String): String {
   var result = this
   for ((generatedName, originalName) in nameMap) {
     result = result.replace("$prefix$generatedName$suffix", "$prefix$originalName$suffix")
