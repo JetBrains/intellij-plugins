@@ -2536,11 +2536,13 @@ private fun getBoundAttributes(directive: TmplDirectiveMetadata, node: `TmplAstE
 private fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, tcb: Context, scope: Scope): Expression =
   if (attr is TmplAstBoundAttribute) {
     // Produce an expression representing the value of the binding.
-    if (attr.value is JSEmptyExpression) {
-      Expression("undefined")
-    }
-    else {
-      tcbExpression(attr.value, tcb, scope)
+    when {
+      attr.value == null && attr.isStructuralDirective ->
+        Expression("\"\"")
+      attr.value == null || attr.value is JSEmptyExpression ->
+        Expression("undefined")
+      else ->
+        tcbExpression(attr.value, tcb, scope)
     }
   }
   else {
