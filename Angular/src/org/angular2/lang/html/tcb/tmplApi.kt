@@ -734,6 +734,9 @@ private fun buildInfo(
 ): TemplateBindingsInfo? {
   if (attribute == null) return null
   val templateBindings = Angular2TemplateBindings.get(attribute).bindings
+  val templateName = attribute.name.substring(1)
+  val hasDefaultBinding = templateBindings.any { !it.keyIsVar() && it.key == templateName }
+  val attributeNameRange = attribute.nameElement?.textRange ?: return null
   return TemplateBindingsInfo(
     directives = attribute.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives?.asSequence()
                    ?.flatMap { buildMetadata(it) }?.toSet() ?: emptySet(),
@@ -742,6 +745,10 @@ private fun buildInfo(
       .map {
         Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange ?: attributeNameRange,
                                            BindingType.Property, it.expression, it.textRange, true))
+      }
+      .applyIf(!hasDefaultBinding) {
+        this + Pair(templateName, TmplAstBoundAttribute(templateName, attributeNameRange, BindingType.Property,
+                                                        null, attributeNameRange, true))
       }
       .toMap(),
     variables = templateBindings.asSequence()
