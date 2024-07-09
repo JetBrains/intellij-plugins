@@ -35,6 +35,7 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       AngularInaccessibleSymbolInspection::class.java,
       AngularIncorrectBlockUsageInspection::class.java,
       AngularForBlockNonIterableVarInspection::class.java,
+      AngularUnresolvedPipeInspection::class.java,
       // TS
       TypeScriptUnresolvedReferenceInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,

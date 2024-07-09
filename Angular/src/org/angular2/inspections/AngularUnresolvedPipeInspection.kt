@@ -1,0 +1,5 @@
+package org.angular2.inspections
+
+import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.DiagnosticKind
+
+class AngularUnresolvedPipeInspection : AngularTcbOutOfBandInspectionBase(DiagnosticKind.UnresolvedPipe)

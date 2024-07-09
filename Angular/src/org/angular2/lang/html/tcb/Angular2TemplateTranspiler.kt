@@ -83,7 +83,7 @@ object Angular2TemplateTranspiler {
     val sourceMappings: List<SourceMapping>
     val contextVarMappings: List<ContextVarMapping>
     val directiveVarMappings: List<DirectiveVarMapping>
-    val diagnostics: List<Diagnostic>
+    val diagnostics: Set<Diagnostic>
     val nameMappings: List<Pair<TextRange, Map<String, String>>>
   }
 
@@ -128,7 +128,12 @@ object Angular2TemplateTranspiler {
       TextRange(generatedOffset + offset, generatedOffset + offset + generatedLength)
   }
 
+  enum class DiagnosticKind {
+    UnresolvedPipe
+  }
+
   interface Diagnostic {
+    val kind: DiagnosticKind
     val startOffset: Int
     val length: Int
     val message: @InspectionMessage String

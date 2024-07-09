@@ -31,16 +31,8 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
 
   private fun getUpdateTemplateServiceObject(input: Angular2TranspiledTemplateCommand): ServiceObjectWithCacheUpdate? {
     val templateFile = PsiManager.getInstance(myProject).findFile(input.templateFile)
-    val componentFile =
-      when (templateFile?.language) {
-        is Angular2HtmlDialect, is Angular2Language ->
-          Angular2EntitiesProvider.findTemplateComponent(templateFile)
-            ?.sourceElement
-            ?.containingFile
-        JavaScriptSupportLoader.TYPESCRIPT -> templateFile
-        else -> null
-      }
-
+                       ?: return null
+    val componentFile = Angular2TranspiledComponentFileBuilder.findComponentFile(templateFile)
     val componentVirtualFile = componentFile?.virtualFile ?: return null
     val newContents = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
 

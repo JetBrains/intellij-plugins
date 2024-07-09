@@ -24,6 +24,7 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2Pipe
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
+import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.DiagnosticKind
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -261,9 +262,9 @@ internal class Environment(
 
 internal class OutOfBandDiagnosticRecorder {
 
-  private val diagnostics = mutableListOf<Angular2TemplateTranspiler.Diagnostic>()
+  private val diagnostics = mutableSetOf<Angular2TemplateTranspiler.Diagnostic>()
 
-  fun getDiagnostics(): List<Angular2TemplateTranspiler.Diagnostic> =
+  fun getDiagnostics(): Set<Angular2TemplateTranspiler.Diagnostic> =
     diagnostics
 
   fun deferredComponentUsedEagerly(id: Any, node: TmplAstElement) {
@@ -286,6 +287,7 @@ internal class OutOfBandDiagnosticRecorder {
 
   fun missingPipe(pipeName: String?, pipeExpression: Angular2PipeExpression) {
     registerDiagnostics(
+      DiagnosticKind.UnresolvedPipe,
       pipeExpression.methodExpression?.textRange ?: pipeExpression.textRange,
       Angular2Bundle.htmlMessage(
         "angular.inspection.unresolved-pipe.message",
@@ -312,13 +314,14 @@ internal class OutOfBandDiagnosticRecorder {
   }
 
   private fun registerDiagnostics(
+    kind: DiagnosticKind,
     range: TextRange,
     message: String,
     category: String? = null,
     highlightType: ProblemHighlightType? = null,
   ) {
     diagnostics.add(DiagnosticData(
-      range.startOffset, range.length, message, category, highlightType
+      kind, range.startOffset, range.length, message, category, highlightType
     ))
   }
 
@@ -337,6 +340,7 @@ internal fun checkIfGenericTypeBoundsCanBeEmitted(node: TypeScriptClass, env: En
 }
 
 internal data class DiagnosticData(
+  override val kind: DiagnosticKind,
   override val startOffset: Int,
   override val length: Int,
   override val message: String,

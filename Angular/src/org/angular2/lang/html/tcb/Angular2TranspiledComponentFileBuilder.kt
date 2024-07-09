@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -17,6 +18,7 @@ import com.intellij.util.containers.MultiMap
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
 import java.util.function.Supplier
@@ -25,6 +27,26 @@ object Angular2TranspiledComponentFileBuilder {
 
   private val mappingsComparator: Comparator<SourceMapping> =
     Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength }
+
+  fun getTranspiledComponentAndTopLevelTemplateFile(context: PsiElement): Pair<TranspiledComponentFile, PsiFile>? {
+    val templateFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
+    val componentFile = if (templateFile.language is Angular2HtmlDialect)
+      Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile
+      ?: return null
+    else
+      templateFile
+    return getTranspiledComponentFile(componentFile)
+      ?.let { Pair(it, templateFile) }
+  }
+
+  fun findComponentFile(context: PsiElement): PsiFile? {
+    val templateFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
+    return if (templateFile.language is Angular2HtmlDialect)
+      Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile
+      ?: return null
+    else
+      templateFile
+  }
 
   fun getTranspiledComponentFile(componentFile: PsiFile): TranspiledComponentFile? =
     CachedValuesManager.getCachedValue(componentFile) {

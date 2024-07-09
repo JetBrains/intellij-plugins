@@ -2,9 +2,7 @@
 package org.angular2.lang.expr.service
 
 import com.google.gson.JsonObject
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.ide.highlighter.HtmlFileType
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
@@ -25,7 +23,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiDocumentManager
@@ -45,9 +42,8 @@ import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElem
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.html.Angular2HtmlDialect
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.getAngularSettings
@@ -90,11 +86,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
     computeCancellable<List<JSAnnotationError>, Throwable> {
-      val (transpiledComponentFile, templateFile) = getTranspiledComponentFile(file)
+      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
                                                     ?: return@computeCancellable list
 
-      translateNamesInErrors(list, transpiledComponentFile, templateFile) +
-      getAdditionalErrors(transpiledComponentFile, templateFile)
+      translateNamesInErrors(list, transpiledComponentFile, templateFile)
     }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
@@ -122,26 +117,6 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun beforeGetErrors(file: VirtualFile) {
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
-  }
-
-  private fun getTranspiledComponentFile(file: PsiFile): Pair<TranspiledComponentFile, PsiFile>? {
-    val templateFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
-    val componentFile = if (templateFile.language is Angular2HtmlDialect)
-      Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile
-      ?: return null
-    else
-      templateFile
-    return Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
-      ?.let { Pair(it, templateFile) }
-  }
-
-  private fun getAdditionalErrors(file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
-    val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
-                   ?: return emptyList()
-    val absoluteFilePath = templateFile.originalFile.virtualFile.toNioPath().toAbsolutePath().toString()
-    return file.diagnostics[templateFile]
-             ?.map { AngularAnnotationRangeError(it, document, absoluteFilePath) }
-           ?: emptyList()
   }
 
   private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
@@ -244,32 +219,4 @@ private class Angular2GetGeneratedElementTypeRequest(
   coroutineContext: CoroutineContext,
 ) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs>(args, service, coroutineContext) {
   override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
-}
-
-private class AngularAnnotationRangeError(
-  diagnostic: Angular2TemplateTranspiler.Diagnostic,
-  document: Document,
-  private val absoluteFilePath: String,
-) : JSAnnotationRangeError {
-
-  private val startLine = document.getLineNumber(diagnostic.startOffset)
-  private val startColumn = diagnostic.startOffset - document.getLineStartOffset(startLine)
-  private val endLine = document.getLineNumber(diagnostic.startOffset + diagnostic.length)
-  private val endColumn = diagnostic.startOffset + diagnostic.length - document.getLineStartOffset(endLine)
-  private val message = diagnostic.message
-  private val category = diagnostic.category
-  private val highlightType = diagnostic.highlightType
-
-  override fun getLine(): Int = startLine
-  override fun getColumn(): Int = startColumn
-  override fun getEndLine(): Int = endLine
-  override fun getEndColumn(): Int = endColumn
-  override fun getAbsoluteFilePath(): String = absoluteFilePath
-  override fun getDescription(): String = StringUtil.unescapeXmlEntities(StringUtil.stripHtml(
-    message.replace(Regex("</?code>"), "'"), " "))
-
-  override fun getTooltipText(): String = message
-  override fun getHighlightType(): ProblemHighlightType? = highlightType
-  override fun getCategory(): String? = category
-
 }

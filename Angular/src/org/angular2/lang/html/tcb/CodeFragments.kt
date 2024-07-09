@@ -43,7 +43,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
   fun asTranspiledTemplate(
     templateFile: Angular2HtmlFile,
-    diagnostics: List<Angular2TemplateTranspiler.Diagnostic>,
+    diagnostics: Set<Angular2TemplateTranspiler.Diagnostic>,
   ): Angular2TemplateTranspiler.TranspiledTemplate =
     object : Angular2TemplateTranspiler.TranspiledTemplate {
       override val templateFile: Angular2HtmlFile = templateFile
@@ -51,11 +51,13 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
       override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
       override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
-      override val diagnostics: List<Angular2TemplateTranspiler.Diagnostic> = diagnostics
+      override val diagnostics: Set<Angular2TemplateTranspiler.Diagnostic> = diagnostics
       override val nameMappings: List<Pair<TextRange, Map<String, String>>> = this@Expression.nameMappings
     }
 
   interface ExpressionBuilder {
+    val isIgnoreDiagnostics: Boolean
+
     fun append(code: String): ExpressionBuilder
 
     fun append(id: Identifier): ExpressionBuilder
@@ -119,6 +121,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     val nameMappings = mutableListOf<Pair<TextRange, Map<String, String>>>()
 
     private var ignoreMappings = false
+
+    override val isIgnoreDiagnostics: Boolean
+      get() = ignoreMappings
 
     override fun removeMappings(range: TextRange) {
       sourceMappings.removeIf {
