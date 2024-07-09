@@ -180,6 +180,81 @@ Dart File
                 LITERAL_EXPRESSION
                   PsiElement(NUMBER)('1.1234e+444')
                 PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('100__000_000__000_000__000_000')
+                PsiElement(;)(';')
+                PsiComment(SINGLE_LINE_COMMENT)('// one hundred million million millions!')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('0x4000_FABC_0000_0000')
+                PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('0.000_000_000_01')
+                PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('0x00_14_22_01_23_45')
+                PsiElement(;)(';')
+                PsiComment(SINGLE_LINE_COMMENT)('// MAC address')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('555_123_4567')
+                PsiElement(;)(';')
+                PsiComment(SINGLE_LINE_COMMENT)('// US Phone number')
+                PsiComment(SINGLE_LINE_COMMENT)('// Invalid literals:')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('100')
+                PsiErrorElement:';' expected, got '_'
+                  <empty list>
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('_')
+                PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('0x')
+                PsiErrorElement:';' expected, got '_00_14_22_01_23_45'
+                  <empty list>
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('_00_14_22_01_23_45')
+                PsiElement(;)(';')
+                REFERENCE_EXPRESSION
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('0')
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('_000_000_000_1')
+                PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('0')
+                PsiErrorElement:';' expected, got '_'
+                  <empty list>
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('_')
+                PsiErrorElement:';' expected, got '.000_000_000_1'
+                  <empty list>
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('.000_000_000_1')
+                PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('100')
+                PsiErrorElement:';' expected, got '_'
+                  <empty list>
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('_')
+                PsiErrorElement:';' expected, got '.1'
+                  <empty list>
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('.1')
+                PsiElement(;)(';')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('1.2e')
+                PsiErrorElement:';' expected, got '_3'
+                  <empty list>
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('_3')
+                PsiElement(;)(';')
                 PsiComment(SINGLE_LINE_COMMENT)('// incorrect, but anyway parsed as numbers')
                 LITERAL_EXPRESSION
                   PsiElement(NUMBER)('1e')
