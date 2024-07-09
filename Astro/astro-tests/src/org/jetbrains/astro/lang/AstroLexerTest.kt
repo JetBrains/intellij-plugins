@@ -146,6 +146,12 @@ open class AstroLexerTest : LexerTestCase() {
     |</script>
   """)
 
+  fun testLessThanTokenInsideScript() = doTest("""
+    |<script>
+    |  n<p
+    |</script>
+  """)
+
   fun testEmptyFrontmatter1() = doTest("""
     |Some comment
     |------

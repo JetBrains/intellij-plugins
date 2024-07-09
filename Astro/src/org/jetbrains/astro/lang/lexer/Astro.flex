@@ -607,7 +607,8 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_START;
       }
   \<[>a-zA-Z] {
-        if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
+        if (!elementNameStack.isEmpty() && elementNameStack.peek().equals("script")
+             || yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
           yypushback(yylength() - 1);
           return JSTokenTypes.LT;
         }

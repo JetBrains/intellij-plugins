@@ -2725,7 +2725,8 @@ public class _AstroLexer implements FlexLexer {
           // fall through
           case 310: break;
           case 85:
-            { if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
+            { if (!elementNameStack.isEmpty() && elementNameStack.peek().equals("script")
+             || yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
           yypushback(yylength() - 1);
           return JSTokenTypes.LT;
         }
