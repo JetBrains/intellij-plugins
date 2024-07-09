@@ -149,6 +149,14 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     state.includeContentRoots = includeSourceRoots;
   }
 
+  public boolean isIncludeWellKnownProtos() {
+    return state.includeWellKnownProtos;
+  }
+
+  public void setIncludeWellKnownProtos(boolean includeWellKnownProtos) {
+    state.includeWellKnownProtos = includeWellKnownProtos;
+  }
+
   public PbProjectSettings copy() {
     return new PbProjectSettings(project, XmlSerializer.deserialize(XmlSerializer.serialize(state), State.class));
   }
@@ -238,7 +246,7 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     public boolean thirdPartyConfiguration = true;
     public boolean includeContentRoots = true;
     public boolean includeProtoDirectories = true;
-
+    public boolean includeWellKnownProtos = true;
     public boolean indexBasedResolveEnabled = false;
     public List<ImportPathEntry> importPathEntries = new SmartList<>();
     @NlsSafe

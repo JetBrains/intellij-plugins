@@ -79,6 +79,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private JCheckBox isIncludeContentRootsCheckbox;
   private JCheckBox autoConfigCheckbox;
   private JCheckBox isIndexBasedResolveEnabledCheckbox;
+  private JCheckBox isIncludeWellKnownProtosCheckbox;
 
   PbLanguageSettingsForm(Project project) {
     this.project = project;
@@ -97,6 +98,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
              && isIncludeStandardProtoDirectories() == settings.isIncludeProtoDirectories()
              && isIncludeProjectContentRoots() == settings.isIncludeContentRoots()
              && isIndexBasedResolveEnabled() == settings.isIndexBasedResolveEnabled()
+             && isIncludeWellKnownProtos() == settings.isIncludeWellKnownProtos()
              && getImportPathEntries().equals(settings.getImportPathEntries())
     );
   }
@@ -118,6 +120,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     isIncludeStandardProtoDirectoriesCheckbox.setSelected(settings.isIncludeProtoDirectories());
     isIncludeContentRootsCheckbox.setSelected(settings.isIncludeContentRoots());
     isIndexBasedResolveEnabledCheckbox.setSelected(settings.isIndexBasedResolveEnabled());
+    isIncludeWellKnownProtosCheckbox.setSelected(settings.isIncludeWellKnownProtos());
     descriptorPathField.setSelectedItem(settings.getDescriptorPath());
     importPathModel.setItems(new CopyOnWriteArrayList<>());
     importPathModel.addRows(ContainerUtil.map(settings.getImportPathEntries(), ImportPath::new));
@@ -128,6 +131,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     settings.setIncludeContentRoots(isIncludeProjectContentRoots());
     settings.setIncludeProtoDirectories(isIncludeStandardProtoDirectories());
     settings.setIndexBasedResolveEnabled(isIndexBasedResolveEnabled());
+    settings.setIncludeWellKnownProtos(isIncludeWellKnownProtos());
     settings.setDescriptorPath(getDescriptorPath());
     settings.setImportPathEntries(getImportPathEntries());
   }
@@ -142,6 +146,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     isIncludeStandardProtoDirectoriesCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.include.std.proto.dirs"));
     isIncludeContentRootsCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.include.project.content.roots"));
     isIndexBasedResolveEnabledCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.index.based.resolve.enabled"));
+    isIncludeWellKnownProtosCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.well.known.protos.enabled"));
     JPanel autoDetectionPanel = new JPanel(new VerticalLayout(0));
     UIUtil.addBorder(
       autoDetectionPanel,
@@ -151,6 +156,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     autoDetectionPanel.add(isIncludeStandardProtoDirectoriesCheckbox, VerticalLayout.CENTER);
     autoDetectionPanel.add(isIncludeContentRootsCheckbox, VerticalLayout.CENTER);
     autoDetectionPanel.add(isIndexBasedResolveEnabledCheckbox, VerticalLayout.CENTER);
+    autoDetectionPanel.add(isIncludeWellKnownProtosCheckbox, VerticalLayout.CENTER);
 
     panel = new BorderLayoutPanel();
     panel.add(autoDetectionPanel, BorderLayout.NORTH);
@@ -164,6 +170,9 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       groupItemPresentationUpdater(contentRootsGroup, PbImportPathsConfiguration::projectContentRoots));
     isIndexBasedResolveEnabledCheckbox.addActionListener(
       groupItemPresentationUpdater(filesFromIndexesGroup, PbImportPathsConfiguration::computeImportPathsForAllImportStatements)
+    );
+    isIncludeWellKnownProtosCheckbox.addActionListener(
+      groupItemPresentationUpdater(bundledGoogleStdLibGroup, PbImportPathsConfiguration::computeWellKnownProtos)
     );
     computePreciseAutoConfiguredEntriesCount();
   }
@@ -233,7 +242,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
                                                   contentRootsGroup.copyWithPreciseCount(contentRootsSize));
               processVirtualGroupItemPresentation(isIndexBasedResolveEnabledCheckbox,
                                                   filesFromIndexesGroup.copyWithPreciseCount(protoDirectoriesFromIndexSize));
-              addVirtualGroup(bundledGoogleStdLibGroup);
+              processVirtualGroupItemPresentation(isIncludeWellKnownProtosCheckbox,
+                                                  bundledGoogleStdLibGroup);
             });
           });
         }
@@ -367,6 +377,10 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   private boolean isIndexBasedResolveEnabled() {
     return isIndexBasedResolveEnabledCheckbox.isSelected();
+  }
+
+  private boolean isIncludeWellKnownProtos() {
+    return isIncludeWellKnownProtosCheckbox.isSelected();
   }
 
   private boolean isDescriptorPathValid() {

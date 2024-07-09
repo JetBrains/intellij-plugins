@@ -27,6 +27,8 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.*;
 
 import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.BUNDLED_DESCRIPTOR;
@@ -126,7 +128,20 @@ public final class SettingsFileResolveProvider implements FileResolveProvider {
         return imported;
       }
     }
-    return null;
+
+    return tryFindFileByAbsolutePath(path);
+  }
+
+  private static @Nullable VirtualFile tryFindFileByAbsolutePath(@NotNull String maybeAbsolutePath) {
+    Path parsedAbsolutePath;
+    try {
+      parsedAbsolutePath = Path.of(maybeAbsolutePath);
+    }
+    catch (InvalidPathException e) {
+      Logger.getInstance(SettingsFileResolveProvider.class).warn("Attempt to parse given path as an absolute path failed", e);
+      return null;
+    }
+    return VirtualFileManager.getInstance().findFileByNioPath(parsedAbsolutePath);
   }
 
   /** For the given path, return a non-null string that, if not empty, ends with a slash. */
