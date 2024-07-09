@@ -13,6 +13,7 @@ import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDelegate
@@ -610,7 +611,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
         name = info.name,
         keySpan = attr.nameElement.textRange,
         value = attr.value ?: "",
-        valueSpan = attr.valueTextRange,
+        valueSpan = attr.valueTextRange.takeIf { it.length > 0 },
       ).apply {
         referenceResolver[attr] = this
       }
