@@ -25,27 +25,27 @@
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<error descr="Type string is not assignable to type number"><error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase</error>"
+    [plainNumber]="<error descr="Type string | null is not assignable to type number  Type null is not assignable to type number    Type string is not assignable to type number"><error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase</error>"
     [dependency]="<error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase"
 ></my-comp>
 <my-comp
-    [simpleStringEnum]="<error descr="Type string is not assignable to type MyType...  Type string is not assignable to type \"off\" | \"polite\" | \"assertive\"    Type string is not assignable to type \"assertive\"">'off' | lowercase</error>"
+    [simpleStringEnum]="<error descr="Type string | null is not assignable to type MyType...  Type string | null is not assignable to type \"off\" | \"polite\" | \"assertive\"    Type string | null is not assignable to type \"assertive\"">'off' | lowercase</error>"
     [dependency]="'12' | lowercase"
 ></my-comp>
 
 <my-comp
-    [dependency]="<error descr="Type NgModel | null is not assignable to type string  Type NgModel is not assignable to type string">asyncModel() | async</error>"
+    [dependency]="<error descr="Type NgModel | null is not assignable to type string  Type null is not assignable to type string    Type NgModel is not assignable to type string">asyncModel() | async</error>"
     [model]="asyncModel() | async"
 ></my-comp>
 
 <my-comp
     [dependency]="asyncString() | async"
-    [model]="<error descr="Type string | null is not assignable to type NgModel  Type string is not assignable to type NgModel">asyncString() | async</error>"
+    [model]="<error descr="Type string | null is not assignable to type NgModel  Type null is not assignable to type NgModel    Type string is not assignable to type NgModel">asyncString() | async</error>"
 ></my-comp>
 
 <my-comp
-    [dependency]="<error descr="Argument type \"foo\" is not assignable to parameter type null">'foo'</error> | async"
-    [model]="<error descr="Argument type \"foo\" is not assignable to parameter type null">'foo'</error> | async"
+    [dependency]="<error descr="Argument type \"foo\" is not assignable to parameter type Observable<string> | Subscribable<string> | Promise<string>  Type \"foo\" is not assignable to type Promise<string>    Type \"foo\" is not assignable to type Subscribable<string>">'foo'</error> | async"
+    [model]="<error descr="Argument type \"foo\" is not assignable to parameter type Observable<NgModel> | Subscribable<NgModel> | Promise<NgModel>  Type \"foo\" is not assignable to type Promise<NgModel>    Type \"foo\" is not assignable to type Subscribable<NgModel>">'foo'</error> | async"
 ></my-comp>
 
 <my-comp

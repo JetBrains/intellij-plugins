@@ -1,21 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.inspections
 
-import com.intellij.javascript.web.configure
-import com.intellij.lang.javascript.TypeScriptTestUtil
-import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.Angular2TemplateInspectionsProvider
-import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
-import org.angular2.Angular2TestModule.Companion.configureLink
-import org.angular2.Angular2TsConfigFile
+import org.angular2.*
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
-import org.angular2.Angular2TestUtil
 
-class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return Angular2TestUtil.getBaseTestDataPath() + "inspections/expressionType"
-  }
+class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType", false) {
 
   @Throws(Exception::class)
   override fun setUp() {
@@ -23,227 +12,145 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
     myFixture.enableInspections(Angular2TemplateInspectionsProvider(true))
   }
 
-  fun testSimpleTypes() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                  Angular2TestModule.ANGULAR_FORMS_8_2_14)
-    myFixture.configureByFiles("simple.html", "simpleComponent.ts", "componentWithTypes.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testSimpleTypes() =
+    checkHighlighting(
+      Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.ANGULAR_FORMS_8_2_14,
+      dir = true,
+      configureFileName = "simple.html"
+    )
 
-  fun testExpressions() {
-    TypeScriptTestUtil.forceConfig(project, null, testRootDisposable)
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                  Angular2TestModule.ANGULAR_FORMS_8_2_14, Angular2TestModule.RXJS_6_4_0)
-    myFixture.configureByFiles("expressions.html", "expressions.ts", "componentWithTypes.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testExpressions() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                      Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
+                      configurators = listOf(Angular2TsConfigFile()),
+                      dir = true,
+                      configureFileName = "expressions.html")
 
-  fun testTemplateBindings() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
-    myFixture.configureByFiles("template.html", "template.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testTemplateBindings() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                      dir = true,
+                      configureFileName = "template.html")
 
-  fun testGenericsValidation() {
-    configureLink(myFixture)
-    myFixture.configureByFiles("generics.html", "generics.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testGenericsValidation() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                      dir = true,
+                      configureFileName = "generics.html")
 
-  fun testGenericsValidationStrict() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
-    myFixture.configure(Angular2TsConfigFile())
-    myFixture.configureByFiles("generics-strict.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testGenericsValidationStrict() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                      configurators = listOf(Angular2TsConfigFile()))
 
-  fun testNgForOfAnyTypeNonStrictTemplates() {
-    TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
-    myFixture.configureByFiles("ngForOfAnyType.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgForOfAnyTypeNonStrictTemplates() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                      configurators = listOf(Angular2TsConfigFile(strict = false)))
 
-  fun testNgForOfAnyTypeStrict() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngForOfAnyTypeStrict.ts")
-    myFixture.checkHighlighting()
-  }
 
-  fun testAnyType() {
-    TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    configureLink(myFixture)
-    myFixture.configureByFiles("any-type.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgForOfAnyTypeStrict() =
+    checkHighlightingNg15()
 
-  fun testSlicePipe() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
-    myFixture.configureByFiles("slice_pipe_test.ts")
-    myFixture.checkHighlighting()
-  }
 
-  fun testNgForOfQueryList() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
-    myFixture.configureByFiles("ngForOfQueryList.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testAnyType() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                      configurators = listOf(Angular2TsConfigFile()))
 
-  fun testInputValue() {
-    configureLink(myFixture)
-    myFixture.configureByFiles("inputValue.html", "inputValue.ts")
-    myFixture.checkHighlighting()
-  }
+
+  fun testSlicePipe() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+
+
+  fun testNgForOfQueryList() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+
+  fun testInputValue() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                      dir = true,
+                      configureFileName = "inputValue.html")
 
   /**
    * @see Angular2AttributesTest.testTypeMismatchErrorWithOptionalInputs
    */
-  fun testNullChecks() {
-    configureCommonFiles()
-    myFixture.configureByFiles("NullChecks.html", "NullChecks.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNullChecks() =
+    checkHighlightingNg15(dir = true)
 
   /**
    * @see Angular2AttributesTest.testTypeMismatchErrorWithOptionalInputs
    */
-  fun testNullChecksInline() {
-    configureCommonFiles()
-    myFixture.configureByFiles("NullChecksInline.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNullChecksInline() =
+    checkHighlightingNg15()
 
-  fun testNgIfAsContextGuardStrictNullChecks() {
-    configureCommonFiles()
-    myFixture.configureByFiles("NgIfAsContextGuardStrictNullChecks.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgIfAsContextGuardStrictNullChecks() =
+    checkHighlightingNg15()
 
-  fun testNgIfAsContextGuardRemovesFalsy() {
-    configureCommonFiles()
-    myFixture.configureByFiles("NgIfAsContextGuardRemovesFalsy.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgIfAsContextGuardRemovesFalsy() =
+    checkHighlightingNg15()
 
-  fun testNgForContextGuard() {
-    configureCommonFiles()
-    myFixture.configureByFiles("NgForContextGuard.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgForContextGuard() =
+    checkHighlightingNg15()
 
-  fun testNgrxLetContextGuard() {
-    configureCommonFiles()
-    myFixture.configureByFile("let.directive.ts")
-    myFixture.configureByFiles("NgrxLetContextGuard.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgrxLetContextGuard() =
+    checkHighlightingNg15(dir = true, extension = "ts")
 
-  fun testNgTemplateContextGuardNonGeneric() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardNonGeneric.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardNonGeneric() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardDoubleGeneric() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardDoubleGeneric.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardDoubleGeneric() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardPartialGeneric() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardPartialGeneric.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardPartialGeneric() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardOmitted() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardOmitted.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardOmitted() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardOmittedGenericType() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardOmittedGenericType.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardOmittedGenericType() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardMalformed() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardMalformed.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardMalformed() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardEmptyInputs() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardEmptyInputs.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardEmptyInputs() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardTwoDirectivesOneGuard() {
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardTwoDirectivesOneGuard.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testNgTemplateContextGuardTwoDirectivesOneGuard() =
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardTwoGuards() {
+  fun testNgTemplateContextGuardTwoGuards() =
     // the test documents an edge case, in Angular language-tools results are different, we have false-negative
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardTwoGuards.ts")
-    myFixture.checkHighlighting()
-  }
+    checkHighlightingNg15()
 
-  fun testNgTemplateContextGuardInferenceFromTwoInputs() {
-    // There are 2 things of interest:
-    // * type of person
+  fun testNgTemplateContextGuardInferenceFromTwoInputs() =
+  // There are 2 things of interest:
+  // * type of person
     // * type checking for assignment of expressions to directive inputs
-    configureCommonFiles()
-    myFixture.configureByFiles("ngTemplateContextGuardInferenceFromTwoInputs.ts")
-    myFixture.checkHighlighting()
-  }
+    checkHighlightingNg15()
 
-  fun testExpectedTypeTwoDirectives() {
-    configureCommonFiles()
-    myFixture.configureByFiles("expectedTypeTwoDirectives.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testExpectedTypeTwoDirectives() =
+    checkHighlightingNg15()
 
-  fun testExpectedTypeTwoDirectivesWithCommonType() {
-    configureCommonFiles()
-    myFixture.configureByFiles("expectedTypeTwoDirectivesWithCommonType.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testExpectedTypeTwoDirectivesWithCommonType() =
+    checkHighlightingNg15()
 
-  fun testExpectedTypeGenericInferenceFromTwoInputs() {
-    configureCommonFiles()
-    myFixture.configureByFiles("expectedTypeGenericInferenceFromTwoInputs.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testExpectedTypeGenericInferenceFromTwoInputs() =
+    checkHighlightingNg15()
 
-  fun testGenericDirectiveReferenceNonStrict() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                  Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8)
-    myFixture.configureByFile("genericDirectiveReference.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testGenericDirectiveReferenceNonStrict() =
+    checkHighlighting(Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8,
+                      configureFileName = "genericDirectiveReference.ts")
 
-  fun testGenericDirectiveReferenceStrictTemplates() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                  Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8)
-    myFixture.configure(Angular2TsConfigFile())
-    myFixture.configureByFile("genericDirectiveReference.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testGenericDirectiveReferenceStrictTemplates() =
+    checkHighlighting(Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                      Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8,
+                      configurators = listOf(Angular2TsConfigFile()),
+                      configureFileName = "genericDirectiveReference.ts")
 
-  fun testGenericDirectiveReferenceUnsubstitutedFallsBackToAny() {
-    configureCommonFiles()
-    myFixture.configureByFiles("genericDirectiveReferenceUnsubstitutedFallsBackToAny.ts")
-    myFixture.checkHighlighting()
-  }
+  fun testGenericDirectiveReferenceUnsubstitutedFallsBackToAny() =
+    checkHighlightingNg15()
 
-  private fun configureCommonFiles() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5,
-                  Angular2TestModule.RXJS_6_4_0)
-    myFixture.configure(Angular2TsConfigFile())
-  }
+  private fun checkHighlightingNg15(dir: Boolean = false, extension: String = if (dir) "html" else "ts") =
+    checkHighlighting(
+      Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5, Angular2TestModule.RXJS_6_4_0,
+      configurators = listOf(Angular2TsConfigFile()),
+      dir = dir, extension = extension
+    )
 }

@@ -6,7 +6,7 @@ import {CommonModule} from "@angular/common";
   selector: 'null-checks',
   imports: [CommonModule],
   standalone: true,
-  templateUrl: './NullChecks.html'
+  templateUrl: './nullChecks.html'
 })
 export class TestComponent {
   @Input foo!: string;
