@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.imports
 
 import com.intellij.lang.Language
@@ -165,20 +165,17 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
                                      imports: Collection<OpenApiPair<CreateImportExportInfo, PsiElement>>,
                                      pasteContextLanguage: Language) {
     if (imports.isEmpty()) return
-    WriteAction.run<RuntimeException> {
-      val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(pasteContext))
-                                ?: return@run
-      val scriptScope = componentSourceEdit.getOrCreateScriptScope() ?: return@run
-      for (import in imports) {
-        val info = import.first
-        val elementToImport = import.second
-        val name = info.effectiveName
-        if (componentSourceEdit.isScriptSetup() || componentSourceEdit.addClassicPropertyReference(COMPONENTS_PROP, name)) {
-          ES6ImportPsiUtil.insertJSImport(scriptScope, info, elementToImport)
-        }
+    val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(pasteContext)) ?: return
+    val scriptScope = componentSourceEdit.getOrCreateScriptScope() ?: return
+    for (import in imports) {
+      val info = import.first
+      val elementToImport = import.second
+      val name = info.effectiveName
+      if (componentSourceEdit.isScriptSetup() || componentSourceEdit.addClassicPropertyReference(COMPONENTS_PROP, name)) {
+        ES6ImportPsiUtil.insertJSImport(scriptScope, info, elementToImport)
       }
-      componentSourceEdit.reformatChanges()
     }
+    componentSourceEdit.reformatChanges()
   }
 
   private fun processComponentsFromOriginContext(

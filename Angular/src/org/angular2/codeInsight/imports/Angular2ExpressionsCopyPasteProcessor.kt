@@ -21,7 +21,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -113,13 +112,11 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
         null
     }
     if (imports.isNotEmpty() || globalImports.isNotEmpty()) {
-      WriteAction.run<RuntimeException> {
-        ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2Language, imports)
+      ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2Language, imports)
 
-        globalImports.forEach {
-          JSImportAction(null, pasteContext, it.name)
-            .executeFor(JSImportCandidateWithExecutor(it, Angular2AddImportExecutor(pasteContext)), null)
-        }
+      globalImports.forEach {
+        JSImportAction(null, pasteContext, it.name)
+          .executeFor(JSImportCandidateWithExecutor(it, Angular2AddImportExecutor(pasteContext)), null)
       }
     }
   }

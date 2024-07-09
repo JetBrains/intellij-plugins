@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.pasteAndWaitJSImports
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
@@ -13,7 +14,7 @@ class VueCopyPasteTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("Source.vue")
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
     myFixture.configureFromTempProjectFile("Destination.vue")
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
+    myFixture.pasteAndWaitJSImports()
     myFixture.checkResultByFile(getTestName(false) + "/Destination_after.vue")
   }
 
