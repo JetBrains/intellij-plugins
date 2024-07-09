@@ -117,6 +117,7 @@ internal data class TmplAstBoundAttribute(
   val type: BindingType,
   val value: JSExpression?,
   override val sourceSpan: TextRange,
+  val isStructuralDirective: Boolean = false,
 ) : TmplAstAttribute
 
 internal class TmplAstTextAttribute(
@@ -739,8 +740,8 @@ private fun buildInfo(
     inputs = templateBindings.asSequence()
       .filter { !it.keyIsVar() }
       .map {
-        Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange ?: attribute.nameElement?.textRange,
-                                           BindingType.Property, it.expression, it.textRange))
+        Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange ?: attributeNameRange,
+                                           BindingType.Property, it.expression, it.textRange, true))
       }
       .toMap(),
     variables = templateBindings.asSequence()
