@@ -1,5 +1,5 @@
 <script setup>
-    import {Colors} from "./colors";
+import {Colors} from "./colors";
 
-    Colors.blue
+Colors.blue
 </script>
