@@ -274,8 +274,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
       //}
 
       // Example request to test registering a service method
-      registerServiceMethod("Test", "testMethod") {request ->
-        println(request)
+      registerServiceMethod("Test", "testMethod") {requestParams ->
+        println(requestParams)
         val params = JsonObject()
         params.addProperty("success", true)
         params
