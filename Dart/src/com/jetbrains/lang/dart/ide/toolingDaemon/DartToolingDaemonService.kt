@@ -60,6 +60,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
+  private val servicesMap: MutableMap<String, DartToolingDaemonServiceConsumer> = mutableMapOf()
 
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
@@ -102,6 +103,24 @@ class DartToolingDaemonService private constructor(private val project: Project)
     }
     catch (e: Exception) {
       logger.error("Failed to connect to Dart Tooling Daemon, uri: $uri", e)
+    }
+  }
+
+  fun registerServiceMethod(service: String, method: String, consumer: DartToolingDaemonServiceConsumer) {
+    val params = JsonObject()
+    params.addProperty("service", service)
+    params.addProperty("method", method)
+    sendRequest("registerService", params, false) {response ->
+      val result = response.getAsJsonObject("result")
+      if (result == null) {
+        logger.error("No result from attempt to register service $service.$method", service, method)
+      }
+      val type = result.getAsJsonPrimitive("type")
+      if (type == null || "Success" != type.asString) {
+        logger.error("Failed to register service $service.$method", service, method)
+      }
+
+      servicesMap["$service.$method"] = consumer
     }
   }
 
@@ -237,6 +256,21 @@ class DartToolingDaemonService private constructor(private val project: Project)
       //  println("received response from streamListen")
       //  println(response)
       //}
+
+      // Example request to test registering a service method
+      registerServiceMethod("Test", "testMethod") {request ->
+        println(request)
+        val params = JsonObject()
+        params.addProperty("success", true)
+        params
+      }
+
+      // Try using the service method
+      val methodParams = JsonObject()
+      methodParams.addProperty("param1", "1")
+      sendRequest("Test.testMethod", methodParams, false) {response ->
+        println(response)
+      }
     }
 
     override fun onMessage(message: WebSocketMessage) {
@@ -256,6 +290,12 @@ class DartToolingDaemonService private constructor(private val project: Project)
         val params = json["params"].asJsonObject
         val streamId = params["streamId"].asString
         eventDispatcher.multicaster.received(streamId, json)
+      } else if (servicesMap.contains(method)) {
+        val params = json["params"].asJsonObject
+        val consumer = servicesMap.get(method)
+        val result = consumer?.received(params)
+        println(result)
+        // Send result back to DTD - how?
       }
       else {
         val id = json["id"].asString
