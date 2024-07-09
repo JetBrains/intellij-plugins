@@ -18,9 +18,9 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters;
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceMultipleConnections;
 
 import javax.swing.*;
@@ -453,8 +453,6 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
       } else if (NodeType.info.equals(type)) {
         setIcon(AllIcons.General.Information);
         append((String)uo);
-      } else {
-        assert true;
       }
     }
   }
