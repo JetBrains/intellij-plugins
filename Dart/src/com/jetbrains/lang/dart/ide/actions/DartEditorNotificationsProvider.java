@@ -2,7 +2,10 @@
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.notification.*;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroupManager;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -32,8 +35,6 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.function.Function;
 
 public final class DartEditorNotificationsProvider implements EditorNotificationProvider {
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Support");
-
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
@@ -170,7 +171,11 @@ public final class DartEditorNotificationsProvider implements EditorNotification
           }
         };
 
-        NOTIFICATION_GROUP.createNotification(title, message, NotificationType.INFORMATION).setListener(listener).notify(project);
+        NotificationGroupManager.getInstance()
+          .getNotificationGroup("Dart Support")
+          .createNotification(title, message, NotificationType.INFORMATION)
+          .setListener(listener)
+          .notify(project);
       }
     }
   }
