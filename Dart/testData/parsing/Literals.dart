@@ -26,6 +26,20 @@ class NumberSyntax {
 
     1.1234e+444;
 
+    100__000_000__000_000__000_000;  // one hundred million million millions!
+    0x4000_FABC_0000_0000;
+    0.000_000_000_01;
+    0x00_14_22_01_23_45;  // MAC address
+    555_123_4567;  // US Phone number
+
+    // Invalid literals:
+    100_;
+    0x_00_14_22_01_23_45;
+    0._000_000_000_1;
+    0_.000_000_000_1;
+    100_.1;
+    1.2e_3;
+
     // incorrect, but anyway parsed as numbers
     1e;
     1e+;
