@@ -87,9 +87,9 @@ class TypeModel(
     resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName }
     datasourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName }
 
-    providerDefaultPrefixes = providersByFullName.mapNotNull { (name, _) ->
-      val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(datasourcesByProvider[name])
-      prefix?.let { name to it }
+    providerDefaultPrefixes = providersByFullName.mapNotNull { (name, provider) ->
+      val prefix = getDefaultPrefix(resourcesByProvider[provider.fullName]) ?: getDefaultPrefix(datasourcesByProvider[provider.fullName])
+      prefix?.let { provider.fullName to it }
     }.toMap()
   }
 
