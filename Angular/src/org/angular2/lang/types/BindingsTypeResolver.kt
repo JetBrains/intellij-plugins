@@ -45,7 +45,7 @@ import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.function.BiFunction
 import java.util.function.Predicate
@@ -264,7 +264,8 @@ internal class BindingsTypeResolver private constructor(
             .distinctBy { it.first }
             .toMap()
         }, {
-          val attribute = (InjectedLanguageManager.getInstance(bindings.project).getInjectionHost(bindings).takeIf { it !is JSElement } ?: bindings)
+          val attribute = (InjectedLanguageManager.getInstance(bindings.project).getInjectionHost(bindings).takeIf { it !is JSElement }
+                           ?: bindings)
             .parentOfType<XmlAttribute>(true)
           attribute?.nameElement?.textRange ?: bindings.textRange
         })
@@ -323,15 +324,10 @@ internal class BindingsTypeResolver private constructor(
     }
 
     private fun analyzeService(directives: List<Angular2Directive>, element: PsiElement, nameRange: TextRange, service: Angular2TypeScriptService): AnalysisResult? {
-
-      val componentFile = Angular2EntitiesProvider.findTemplateComponent(element)?.sourceElement?.containingFile
-                          ?: return null
-
-      val transpiledComponentFile = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
-                                    ?: return null
+      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(element)
+                                                    ?: return null
 
       val injectedLanguageManager = InjectedLanguageManager.getInstance(element.project)
-      val templateFile = injectedLanguageManager.getTopLevelFile(element)
       val templateMappings = transpiledComponentFile.fileMappings[templateFile]
                              ?: return null
 
