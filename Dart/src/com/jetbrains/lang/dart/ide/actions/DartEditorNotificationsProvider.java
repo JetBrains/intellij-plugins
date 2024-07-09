@@ -31,9 +31,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.util.function.Function;
 
-public class DartEditorNotificationsProvider implements EditorNotificationProvider {
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Support");
-
+public final class DartEditorNotificationsProvider implements EditorNotificationProvider {
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
@@ -170,7 +168,11 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
           }
         };
 
-        NOTIFICATION_GROUP.createNotification(title, message, NotificationType.INFORMATION).setListener(listener).notify(project);
+        NotificationGroupManager.getInstance()
+          .getNotificationGroup("Dart Support")
+          .createNotification(title, message, NotificationType.INFORMATION)
+          .setListener(listener)
+          .notify(project);
       }
     }
   }
