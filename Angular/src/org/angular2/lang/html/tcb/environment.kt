@@ -21,6 +21,7 @@ import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
 import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
 import org.angular2.entities.Angular2Pipe
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
@@ -197,9 +198,17 @@ internal class Environment(
           append(typeScriptTypeParameter.name ?: "?")
         }
         append(">, ")
+
+        val coercedInputs = cls.staticJSType.asRecordType(cls)
+          .properties
+          .mapNotNullTo(LinkedHashSet()) { prop ->
+            prop.memberName.takeIf { it.startsWith(NG_ACCEPT_INPUT_TYPE_PREFIX) }
+              ?.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length)
+          }
+
         directive.bindings.inputs
           .asSequence()
-          .mapNotNull { it.fieldName }
+          .mapNotNull { input -> input.fieldName?.takeIf { !coercedInputs.contains(it) } }
           .distinct()
           .forEachIndexed { index, fieldName ->
             if (index > 0) {
@@ -207,7 +216,15 @@ internal class Environment(
             }
             append("\"$fieldName\"")
           }
-        append(">) => $typeName<")
+        append(">")
+        if (coercedInputs.isNotEmpty()) {
+          append(" & {").newLine()
+          for (input in coercedInputs) {
+            append(input).append(": typeof $typeName.$NG_ACCEPT_INPUT_TYPE_PREFIX$input;").newLine()
+          }
+          append("}")
+        }
+        append(") => $typeName<")
         cls.typeParameters.forEachIndexed { index, typeScriptTypeParameter ->
           if (index > 0) {
             append(", ")
