@@ -337,10 +337,13 @@ internal class BoundTarget(component: Angular2Component) {
    * a directive on a particular node.
    */
   fun getReferenceTarget(ref: TmplAstReference): `TmplDirectiveMetadata|TmplAstElement|TmplAstTemplate`? {
-    ref.value.takeIf { it.isNotBlank() }?.let { exportAs ->
-      return ref.parent?.directives?.find { it.exportAs.contains(exportAs) }
+    val exportAs = ref.value.takeIf { it.isNotBlank() }
+    return if (exportAs != null) {
+      ref.parent?.directives?.find { it.exportAs.contains(exportAs) }
+    } else {
+      ref.parent?.directives?.find { it.directive.isComponent }
+      ?: ref.parent
     }
-    return ref.parent
   }
 
   /**
