@@ -4,15 +4,15 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, FancyIfFromDirective],
+  imports: [CommonModule, <error descr="TS2449: Class 'FancyIfFromDirective' used before its declaration.">FancyIfFromDirective</error>],
   standalone: true,
   template: `
     <div *fancyIf="let person from personPromise | async also 5 as other">
       {{expectPerson(person)}}
-      {{expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'.">person</error>)}}
       {{person.familyName}}
-      {{person.<error descr="Unresolved variable accomplishments">accomplishments</error>}}
-      {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">other</error>)}}
+      {{person.<error descr="TS2339: Property 'accomplishments' does not exist on type 'Person'.">accomplishments</error>}}
+      {{expectPerson(<error descr="TS2345: Argument of type 'number' is not assignable to parameter of type 'Person'.">other</error>)}}
       {{expectNumber(other)}}
     </div>
   `,
@@ -58,7 +58,7 @@ export class FancyIfFromDirective<One = unknown, Two = unknown> {
   static ngTemplateGuard_fancyIfAlso: 'binding';
 
   // different type parameters names and order
-  static ngTemplateContextGuard<Dos, Uno>(dir: FancyIfFromDirective<Uno, Dos>, ctx: any): ctx is FancyIfFromContext<ExcludeFalsy<Uno>, ExcludeFalsy<Dos>> {
+  static ngTemplateContextGuard<Dos, Uno>(_dir: FancyIfFromDirective<Uno, Dos>, _ctx: any): _ctx is FancyIfFromContext<ExcludeFalsy<Uno>, ExcludeFalsy<Dos>> {
     return true;
   }
 }

@@ -10,41 +10,41 @@ import {LetDirective} from "./let.directive";
   standalone: true,
   template: `
     <ng-container *ngrxLet="number$ as number">{{number.toFixed()}}</ng-container>
-    <ng-container *ngrxLet="number$OrNot as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</ng-container>
-    <ng-container *ngrxLet="numberOrNot$ as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</ng-container>
+    <ng-container *ngrxLet="number$OrNot as number">{{<error descr="TS18048: 'number' is possibly 'undefined'.">number</error>.toFixed()}}</ng-container>
+    <ng-container *ngrxLet="numberOrNot$ as number">{{<error descr="TS18048: 'number' is possibly 'undefined'.">number</error>.toFixed()}}</ng-container>
     
     <ng-container *ngrxLet="number$ as n1; let n2; error as e; complete as c">
       {{n1.toFixed()}}
       {{n2.toFixed()}}
       {{acceptBoolean(e)}}
       {{acceptBoolean(c)}}
-      {{acceptBoolean(<error descr="Argument type number is not assignable to parameter type boolean">n1</error>)}}
+      {{acceptBoolean(<error descr="TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.">n1</error>)}}
     </ng-container>
     
     <ng-container *ngrxLet="{ number1: number$, number2: numberOrNot$ } as vm">
       <div>{{vm.number1.toFixed()}}</div>
-      <div>{{vm.number2.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</div>
+      <div>{{<error descr="TS18048: 'vm.number2' is possibly 'undefined'.">vm.number2</error>.toFixed()}}</div>
     </ng-container>
     
     <!-- can't pass nullable Observable in the "Combining Multiple Observables" mode-->
     <ng-container *ngrxLet="{ number1: number$, number2: numberOrNot$, number3: number$OrNot } as vm">
-      <div>{{vm.number1.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}</div>
-      <div>{{vm.number2.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}</div>
-      <div>{{vm.number3.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}</div>
+      <div>{{vm.number1.<error descr="TS2339: Property 'toFixed' does not exist on type 'Observable<number>'.">toFixed</error>()}}</div>
+      <div>{{vm.number2.<error descr="TS2339: Property 'toFixed' does not exist on type 'Observable<number | undefined>'.">toFixed</error>()}}</div>
+      <div>{{<error descr="TS18048: 'vm.number3' is possibly 'undefined'.">vm.number3</error>.<error descr="TS2339: Property 'toFixed' does not exist on type 'Observable<number>'.">toFixed</error>()}}</div>
     </ng-container>
     
     <ng-container *ngrxLet="{ number$: deep$ } as vm">
-      <div>{{vm.number$.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}</div>
+      <div>{{vm.number$.<error descr="TS2339: Property 'toFixed' does not exist on type 'Observable<number>'.">toFixed</error>()}}</div>
       <div>{{vm.number$.subscribe()}}</div>
     </ng-container>
     
     <ng-container *ngrxLet="deep$ as number$">
-      <div>{{number$.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}</div>
+      <div>{{number$.<error descr="TS2339: Property 'toFixed' does not exist on type 'Observable<number>'.">toFixed</error>()}}</div>
       <div>{{number$.subscribe()}}</div>
     </ng-container>
     
     <ng-container *ngrxLet="foo.bar.baz as baz">{{baz?.toUpperCase()}}</ng-container>
-    <ng-container *ngrxLet="foo.bar.baz as baz">{{baz.<error descr="Qualifier of 'toUpperCase' is possibly undefined">toUpperCase</error>()}}</ng-container>
+    <ng-container *ngrxLet="foo.bar.baz as baz">{{<error descr="TS18048: 'baz' is possibly 'undefined'.">baz</error>.toUpperCase()}}</ng-container>
   `,
 })
 export class TestComponent {

@@ -12,7 +12,7 @@ export interface Moment extends Object {
 }
 
 // noinspection JSUnusedLocalSymbols
-function moment(input?: string, strict?: boolean): Moment {
+function moment(_input?: string, _strict?: boolean): Moment {
   return {
     month(): number {
       return 0;
@@ -40,7 +40,7 @@ function moment(input?: string, strict?: boolean): Moment {
         #dp
         startView="multi-year"
         (monthSelected)="setMonthAndYear($event, dp)"
-        (yearSelected)="acceptBoolean(<error descr="Argument type MatDatepicker<any> is not assignable to parameter type boolean">dp</error>)"
+        (yearSelected)="acceptBoolean(<error descr="TS2345: Argument of type 'MatDatepicker<any>' is not assignable to parameter of type 'boolean'.">dp</error>)"
         panelClass="example-month-picker"
       >
       </mat-datepicker>
@@ -49,8 +49,8 @@ function moment(input?: string, strict?: boolean): Moment {
       #dp2
       [startAt]="12"
       startView="multi-year"
-      (monthSelected)="setMonthAndYear(<error descr="Argument type number is not assignable to parameter type Moment">$event</error>, <error descr="Argument type MatDatepicker<number> is not assignable to parameter type MatDatepicker<Moment>...  Type (date: number) => void is not assignable to type (date: Moment) => void    Type Moment is not assignable to type number">dp2</error>)"
-      (yearSelected)="acceptBoolean(<error descr="Argument type MatDatepicker<number> is not assignable to parameter type boolean">dp2</error>)"
+      (monthSelected)="setMonthAndYear(<error descr="TS2345: Argument of type 'number' is not assignable to parameter of type 'Moment'.">$event</error>, dp2)"
+      (yearSelected)="acceptBoolean(<error descr="TS2345: Argument of type 'MatDatepicker<number>' is not assignable to parameter of type 'boolean'.">dp2</error>)"
       panelClass="example-month-picker"
     />
   `,
@@ -66,7 +66,7 @@ export class DatepickerViewsSelectionExample {
   my = moment();
 
   setMonthAndYear(
-    normalizedMonthAndYear: Moment,
+    _normalizedMonthAndYear: Moment,
     datepicker: MatDatepicker<Moment>
   ) {
     const ctrlValue = this.date.value!;

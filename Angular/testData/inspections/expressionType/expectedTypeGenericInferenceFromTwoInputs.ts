@@ -4,7 +4,7 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test-one',
-  imports: [CommonModule, AgreeDirective],
+  imports: [CommonModule, <error descr="TS2449: Class 'AgreeDirective' used before its declaration." textAttributesKey="ERRORS_ATTRIBUTES">AgreeDirective</error>],
   standalone: true,
   template: `
     <span [appAgree]="null" [appAgreeSecond]="simpleField"></span> <!-- todo no errors, bug in TS -->
@@ -12,23 +12,26 @@ import {CommonModule} from "@angular/common";
     <span [(appAgree)]="simpleField" [appAgreeSecond]="simpleField"></span>
     <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async"></span>
 
-    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectNumber(<error descr="Argument type number | null is not assignable to parameter type number  Type null is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
+    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectNumber(<error descr="TS2345: Argument of type 'number | null' is not assignable to parameter of type 'number'.
+  Type 'null' is not assignable to type 'number'." textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
     <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectNumber($event!)"></span>
-    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectPerson(<error descr="Argument type number is not assignable to parameter type Person" textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
-    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
+    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectPerson(<error descr="TS2345: Argument of type 'number' is not assignable to parameter of type 'Person'." textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
+    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectPerson(<error descr="TS2345: Argument of type 'Person | null' is not assignable to parameter of type 'Person'.
+  Type 'null' is not assignable to type 'Person'." textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
     <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectPerson($event!)"></span>
-    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectNumber(<error descr="Argument type Person is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
+    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'." textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
 
-    <footer>{{<error descr="Indexed expression can be null or undefined" textAttributesKey="ERRORS_ATTRIBUTES">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
+    <footer>{{<error descr="TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Person'.
+  Property '0' does not exist on type 'Person'." textAttributesKey="ERRORS_ATTRIBUTES"><error descr="TS2531: Object is possibly 'null'." textAttributesKey="ERRORS_ATTRIBUTES">(personPromise | async)</error>[0]</error>}}</footer> <!-- ensure that null checks work -->
   `,
 })
-export class TestComponentOne extends TestComponentBase {
+export class TestComponentOne extends <error descr="TS2449: Class 'TestComponentBase' used before its declaration." textAttributesKey="ERRORS_ATTRIBUTES">TestComponentBase</error> {
 }
 
 // including AgreeDirectiveDuplicate previously produced still wrong errors, though slightly differently wrong
 @Component({
   selector: 'app-test-two',
-  imports: [CommonModule, AgreeDirective, AgreeDirectiveDuplicate],
+  imports: [CommonModule, <error descr="TS2449: Class 'AgreeDirective' used before its declaration." textAttributesKey="ERRORS_ATTRIBUTES">AgreeDirective</error>, <error descr="TS2449: Class 'AgreeDirectiveDuplicate' used before its declaration." textAttributesKey="ERRORS_ATTRIBUTES">AgreeDirectiveDuplicate</error>],
   standalone: true,
   template: `
     <span [appAgree]="null" [appAgreeSecond]="simpleField"></span>
@@ -36,17 +39,20 @@ export class TestComponentOne extends TestComponentBase {
     <span [(appAgree)]="simpleField" [appAgreeSecond]="simpleField"></span>
     <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async"></span>
 
-    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectNumber(<error descr="Argument type number | null is not assignable to parameter type number  Type null is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
+    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectNumber(<error descr="TS2345: Argument of type 'number | null' is not assignable to parameter of type 'number'.
+  Type 'null' is not assignable to type 'number'." textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
     <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectNumber($event!)"></span>
-    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectPerson(<error descr="Argument type number is not assignable to parameter type Person" textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
-    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectPerson(<error descr="Argument type Person | (Person & undefined) | (Person & null) | (null & Person) | null is not assignable to parameter type Person  Type null is not assignable to type Person" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
+    <span [appAgree]="simpleField" [appAgreeSecond]="simpleField" (appAgreeChange)="expectPerson(<error descr="TS2345: Argument of type 'number' is not assignable to parameter of type 'Person'." textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
+    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectPerson(<error descr="TS2345: Argument of type 'Person | null' is not assignable to parameter of type 'Person'.
+  Type 'null' is not assignable to type 'Person'." textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)"></span>
     <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectPerson($event!)"></span>
-    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectNumber(<error descr="Argument type Person | (Person & undefined) | (Person & null) | (null & Person) is not assignable to parameter type number  Type Person is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
+    <span [appAgree]="personPromise | async" [appAgreeSecond]="personPromise | async" (appAgreeChange)="expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'." textAttributesKey="ERRORS_ATTRIBUTES">$event!</error>)"></span>
 
-    <footer>{{<error descr="Indexed expression can be null or undefined" textAttributesKey="ERRORS_ATTRIBUTES">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
+    <footer>{{<error descr="TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Person'.
+  Property '0' does not exist on type 'Person'." textAttributesKey="ERRORS_ATTRIBUTES"><error descr="TS2531: Object is possibly 'null'." textAttributesKey="ERRORS_ATTRIBUTES">(personPromise | async)</error>[0]</error>}}</footer> <!-- ensure that null checks work -->
   `,
 })
-export class TestComponentTwo extends TestComponentBase {
+export class TestComponentTwo extends <error descr="TS2449: Class 'TestComponentBase' used before its declaration." textAttributesKey="ERRORS_ATTRIBUTES">TestComponentBase</error> {
 }
 
 abstract class TestComponentBase {

@@ -5,28 +5,29 @@ import {NgModel} from '@angular/forms';
 export declare type MyType = 'off' | 'polite' | 'assertive';
 
 @Component({
-    selector: 'my-comp',
-    template: `
-      <div></div>`,
-    inputs: [
-        'id:dependency'
-    ],
+  selector: 'my-comp',
+  standalone: true,
+  template: `
+    <div></div>`,
+  inputs: [
+    'id:dependency'
+  ],
 })
 export class ComponentWithTypes {
     @Input()
     plainBoolean: boolean;
 
     @Input()
-    plainNumber: number;
+    plainNumber: number | null;
 
     @Input()
-    simpleStringEnum: MyType;
+    simpleStringEnum: MyType | null;
 
     @Input()
     element: HTMLElement;
 
     @Input()
-    model: NgModel;
+    model: NgModel | null;
 
     @Input
     obj: { f: string, e: MyType }
@@ -41,5 +42,5 @@ export class ComponentWithTypes {
         return false;
     }
 
-    id: string;
+    id: string | null;
 }
