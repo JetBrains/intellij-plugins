@@ -4,11 +4,11 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, HelloDirective],
+  imports: [CommonModule, <error descr="TS2449: Class 'HelloDirective' used before its declaration.">HelloDirective</error>],
   standalone: true,
   template: `
     <div *appHello="true as local; let foo = somethingOmitted">
-      {{expectNumber(<error descr="Argument type boolean is not assignable to parameter type number">local</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.">local</error>)}}
       {{expectNumber(foo)}}
       {{foo.allYouEverWanted}}
     </div>
@@ -37,7 +37,7 @@ export class HelloDirective<T, U> {
   @Input() appHello!: T;
   @Input() appHelloOmitted!: U;
 
-  static ngTemplateContextGuard<T, U>(dir: HelloDirective<T, U>, ctx: unknown): ctx is HelloContext<T, U> {
+  static ngTemplateContextGuard<T, U>(_dir: HelloDirective<T, U>, _ctx: unknown): _ctx is HelloContext<T, U> {
     return true;
   }
 }

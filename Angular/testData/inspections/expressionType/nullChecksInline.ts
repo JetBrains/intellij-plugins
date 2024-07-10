@@ -7,17 +7,20 @@ import {CommonModule} from "@angular/common";
   imports: [CommonModule],
   standalone: true,
   template: `
-    {{bar.<error descr="Qualifier of 'length' is possibly undefined">length</error>}}
-    {{bar.<error descr="Unresolved variable unresolved">unresolved</error>}}
-    <div [title]="bar.<error descr="Qualifier of 'length' is possibly undefined">length</error>"></div>
-    {{acceptString(<error descr="Argument type string | undefined is not assignable to parameter type string  Type undefined is not assignable to type string">bar</error>)}}
-    <null-checks [foo]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">bar</error>"></null-checks>
-    <null-checks [foo]="<error descr="Type string | null is not assignable to type string  Type null is not assignable to type string">bazPromise | async</error>"></null-checks>
+    {{<error descr="TS2532: Object is possibly 'undefined'.">bar</error>.length}}
+    {{<error descr="TS2532: Object is possibly 'undefined'.">bar</error>.<error descr="TS2339: Property 'unresolved' does not exist on type 'string'.">unresolved</error>}}
+    <div [title]="<error descr="TS2532: Object is possibly 'undefined'.">bar</error>.length"></div>
+    {{acceptString(<error descr="TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.">bar</error>)}}
+    <null-checks <error descr="TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.">[foo]</error>="bar"></null-checks>
+    <null-checks <error descr="TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.">[foo]</error>="bazPromise | async"></null-checks>
     <null-checks [foo]="(bazPromise | async)!"></null-checks>
   `
 })
 export class TestComponent {
-  @Input foo!: string;
+  @Input() foo!: string;
 
   bar: string | undefined = (() => undefined)();
 

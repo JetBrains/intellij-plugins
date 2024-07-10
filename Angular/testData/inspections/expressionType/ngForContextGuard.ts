@@ -10,25 +10,25 @@ import {CommonModule} from "@angular/common";
     <div *ngFor="let person of personsPromise | async as iterable; index as i">
       {{i.toFixed()}}
       {{expectPerson(person)}}
-      {{expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>)}}
-      {{expectNumber(<error descr="Argument type Person[] is not assignable to parameter type number">iterable</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'.">person</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person[]' is not assignable to parameter of type 'number'.">iterable</error>)}}
       {{expectPerson(iterable[0])}}
     </div>
     <div *ngFor="let person of personsPromise | async as iterable; index as i; trackBy: trackByPerson">
       {{i.toFixed()}}
       {{expectPerson(person)}}
-      {{expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>)}}
-      {{expectNumber(<error descr="Argument type Person[] is not assignable to parameter type number">iterable</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'.">person</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person[]' is not assignable to parameter of type 'number'.">iterable</error>)}}
       {{expectPerson(iterable[0])}}
     </div>
     <div *ngFor="let person of personsPromise | async as iterable; index as i; trackBy: trackByEntity">
       {{i.toFixed()}}
-      {{expectPerson(<error descr="Argument type Entity is not assignable to parameter type Person">person</error>)}} <!--todo bug in TS plugin itself -->
-      {{expectNumber(<error descr="Argument type Entity is not assignable to parameter type number">person</error>)}}
-      {{expectNumber(<error descr="Argument type Person[] is not assignable to parameter type number">iterable</error>)}}
+      {{expectPerson(person)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'.">person</error>)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person[]' is not assignable to parameter of type 'number'.">iterable</error>)}}
       {{expectPerson(iterable[0])}}
     </div>
-    <footer>{{<error descr="Indexed expression can be null or undefined">(personsPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
+    <footer>{{<error descr="TS2531: Object is possibly 'null'.">(personsPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
   `,
 })
 export class TestComponent {
@@ -37,11 +37,11 @@ export class TestComponent {
     familyName: 'Doe'
   }]);
 
-  trackByEntity = (index: number, item: Entity): any => {
+  trackByEntity = (_index: number, item: Entity): any => {
     return item.id;
   }
 
-  trackByPerson = (index: number, item: Person): any => {
+  trackByPerson = (_index: number, item: Person): any => {
     return item.familyName;
   }
 

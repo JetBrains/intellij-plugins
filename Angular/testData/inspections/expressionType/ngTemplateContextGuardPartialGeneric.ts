@@ -4,16 +4,16 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, WeirdIfFromDirective],
+  imports: [CommonModule, <error descr="TS2449: Class 'WeirdIfFromDirective' used before its declaration.">WeirdIfFromDirective</error>],
   standalone: true,
   template: `
-    <div *weirdIf="let local from personPromise | async also 5 as other">
-      {{expectPerson(local)}} <-- todo Argument type unknown is not assignable to parameter type Person -->
-      {{local.length}} <!-- todo Unresolved variable length -->
-      {{local.familyName}}
-      {{local.accomplishments}}
-      {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">other</error>)}}
-      {{expectNumber(other)}}
+    <div *weirdIf="let local from 12 also personPromise | async as other">
+      {{expectPerson(<error descr="TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Person'.">local</error>)}}
+      {{other.<error descr="TS2339: Property 'length' does not exist on type 'Person'.">length</error>}} <!-- todo Unresolved variable length -->
+      {{other.familyName}}
+      {{other.<error descr="TS2339: Property 'accomplishments' does not exist on type 'Person'.">accomplishments</error>}}
+      {{expectPerson(other)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'.">other</error>)}}
     </div>
   `,
 })
@@ -58,7 +58,7 @@ export class WeirdIfFromDirective<One = unknown, Two = unknown> {
   static ngTemplateGuard_fancyIfAlso: 'binding';
 
   // different type parameters names and order
-  static ngTemplateContextGuard<Dos>(dir: WeirdIfFromDirective<unknown, Dos>, ctx: any): ctx is WeirdIfFromContext<unknown, ExcludeFalsy<Dos>> {
+  static ngTemplateContextGuard<Dos>(_dir: WeirdIfFromDirective<unknown, Dos>, _ctx: any): _ctx is WeirdIfFromContext<unknown, ExcludeFalsy<Dos>> {
     return true;
   }
 }

@@ -8,24 +8,24 @@ import {CommonModule} from "@angular/common";
   selector: 'app-test',
   imports: [
     CommonModule,
-    MalformedDirective1,
-    MalformedDirective2,
-    MalformedDirective3,
-    MalformedDirective4,
-    MalformedDirective5,
-    MalformedDirective6
+    <error descr="TS2449: Class 'MalformedDirective1' used before its declaration.">MalformedDirective1</error>,
+    <error descr="TS2449: Class 'MalformedDirective2' used before its declaration.">MalformedDirective2</error>,
+    <error descr="TS2449: Class 'MalformedDirective3' used before its declaration.">MalformedDirective3</error>,
+    <error descr="TS2449: Class 'MalformedDirective4' used before its declaration.">MalformedDirective4</error>,
+    <error descr="TS2449: Class 'MalformedDirective5' used before its declaration.">MalformedDirective5</error>,
+    <error descr="TS2449: Class 'MalformedDirective6' used before its declaration.">MalformedDirective6</error>
   ],
   standalone: true,
   template: `
     <section>
-      <!-- Angular evaluates local as any -->
+      <!-- Angular evaluates local as the $implict -->
       <div *appMalformed1="true; let local">
-        {{expectNumber(local)}}
-        {{local.allYouEverWanted}}
+        {{expectNumber(<error descr="TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.">local</error>)}}
+        {{local.<error descr="TS2339: Property 'allYouEverWanted' does not exist on type 'boolean'.">allYouEverWanted</error>}}
       </div>
       <div *appMalformed1="1; let local">
         {{expectNumber(local)}}
-        {{local.allYouEverWanted}}
+        {{local.<error descr="TS2339: Property 'allYouEverWanted' does not exist on type 'number'.">allYouEverWanted</error>}}
       </div>
     </section>
     <section>
@@ -53,12 +53,12 @@ import {CommonModule} from "@angular/common";
     <section>
       <!-- Angular highlights the whole embedded template as error, WebStorm is more permissive -->
       <div *appMalformed4="true; let local">
-        {{expectNumber(<error descr="Argument type boolean is not assignable to parameter type number">local</error>)}}
-        {{local.<error descr="Unresolved variable allYouEverWanted">allYouEverWanted</error>}}
+        {{expectNumber(<error descr="TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.">local</error>)}}
+        {{local.<error descr="TS2339: Property 'allYouEverWanted' does not exist on type 'boolean'.">allYouEverWanted</error>}}
       </div>
       <div *appMalformed4="1; let local">
         {{expectNumber(local)}}
-        {{local.<error descr="Unresolved variable allYouEverWanted">allYouEverWanted</error>}}
+        {{local.<error descr="TS2339: Property 'allYouEverWanted' does not exist on type 'number'.">allYouEverWanted</error>}}
       </div>
     </section>
     <section>
@@ -102,7 +102,7 @@ export class MalformedDirective1<T> {
   @Input() appMalformed1!: T;
 
   // arrow function instead of method
-  static ngTemplateContextGuard = <T>(dir: MalformedDirective1<T>, ctx: unknown): ctx is { $implicit: T; appMalformed1: T } => {
+  static ngTemplateContextGuard = <T>(_dir: MalformedDirective1<T>, _ctx: unknown): _ctx is { $implicit: T; appMalformed1: T } => {
     return null!;
   }
 }
@@ -118,7 +118,7 @@ export class MalformedDirective2<T> {
   @Input() appMalformed2!: T;
 
   // instance instead of static method
-  ngTemplateContextGuard<T>(dir: MalformedDirective2<T>, ctx: unknown): ctx is { $implicit: T; appMalformed2: T } {
+  ngTemplateContextGuard<T>(_dir: MalformedDirective2<T>, _ctx: unknown): _ctx is { $implicit: T; appMalformed2: T } {
     return null!;
   }
 }
@@ -134,7 +134,7 @@ export class MalformedDirective3<T> {
   @Input() appMalformed3!: T;
 
   // random return type
-  static ngTemplateContextGuard<T>(dir: MalformedDirective3<T>, ctx: unknown): boolean {
+  static ngTemplateContextGuard<T>(_dir: MalformedDirective3<T>, _ctx: unknown): boolean {
     return null!;
   }
 }
@@ -150,7 +150,7 @@ export class MalformedDirective4<T> {
   @Input() appMalformed4!: T;
 
   // redundant trailing parameters – divergence, WebStorm is more permissive
-  static ngTemplateContextGuard<T>(dir: MalformedDirective4<T>, ctx: unknown, hello: number): ctx is { $implicit: T; appMalformed4: T } {
+  static ngTemplateContextGuard<T>(_dir: MalformedDirective4<T>, _ctx: unknown, _hello: number): _ctx is { $implicit: T; appMalformed4: T } {
     return null!;
   }
 }
@@ -166,7 +166,7 @@ export class MalformedDirective5<T> {
   @Input() appMalformed5!: T;
 
   // flipped parameters
-  static ngTemplateContextGuard<T>(ctx: unknown, dir: MalformedDirective5<T>): ctx is { $implicit: T; appMalformed5: T } {
+  static ngTemplateContextGuard<T>(_ctx: unknown, _dir: MalformedDirective5<T>): _ctx is { $implicit: T; appMalformed5: T } {
     return null!;
   }
 }
@@ -182,7 +182,7 @@ export class MalformedDirective6<T> {
   @Input() appMalformed6!: T;
 
   // normal return instead of type predicate
-  static ngTemplateContextGuard<T>(dir: MalformedDirective6<T>, ctx: unknown): { $implicit: T; appMalformed6: T } {
+  static ngTemplateContextGuard<T>(_dir: MalformedDirective6<T>, _ctx: unknown): { $implicit: T; appMalformed6: T } {
     return null!;
   }
 }

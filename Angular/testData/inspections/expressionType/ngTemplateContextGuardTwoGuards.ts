@@ -5,14 +5,15 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, FooDirective1, FooDirective2],
+  imports: [CommonModule, <error descr="TS2449: Class 'FooDirective1' used before its declaration.">FooDirective1</error>, <error descr="TS2449: Class 'FooDirective2' used before its declaration.">FooDirective2</error>],
   standalone: true,
   template: `
     <div *appFoo="personPromise | async as person">
-      {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}} <!-- should be no error -->
-      {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
+      {{expectPerson(person)}}
+      {{expectNumber(<error descr="TS2345: Argument of type 'Person' is not assignable to parameter of type 'number'.">person</error>)}}
     </div>
-    <footer>{{<error descr="Indexed expression can be null or undefined">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
+    <footer>{{<error descr="TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Person'.
+  Property '0' does not exist on type 'Person'."><error descr="TS2531: Object is possibly 'null'.">(personPromise | async)</error>[0]</error>}}</footer> <!-- ensure that null checks work -->
   `,
 })
 export class TestComponent {
@@ -48,7 +49,7 @@ export class FooDirective1<T> {
 
   @Input() appFoo!: T;
 
-  static ngTemplateContextGuard<T>(dir: FooDirective1<T>, ctx: unknown): ctx is FooContext<T> {
+  static ngTemplateContextGuard<T>(_dir: FooDirective1<T>, _ctx: unknown): _ctx is FooContext<T> {
     return true;
   }
 }
@@ -63,7 +64,7 @@ export class FooDirective2<T> {
 
   @Input() appFoo: T | undefined | null;
 
-  static ngTemplateContextGuard<T>(dir: FooDirective2<T>, ctx: unknown): ctx is FooContext<T> {
+  static ngTemplateContextGuard<T>(_dir: FooDirective2<T>, _ctx: unknown): _ctx is FooContext<T> {
     return true;
   }
 }

@@ -4,10 +4,10 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, AmbiguousDirective, AmbiguousDirectiveDuplicate],
+  imports: [CommonModule, <error descr="TS2449: Class 'AmbiguousDirective' used before its declaration.">AmbiguousDirective</error>, <error descr="TS2449: Class 'AmbiguousDirectiveDuplicate' used before its declaration.">AmbiguousDirectiveDuplicate</error>],
   standalone: true,
   template: `
-    <span [appAmbiguous]="<error descr="Type 1 is not assignable to type 2">1</error>"></span>
+    <span <error descr="TS2322: Type '1' is not assignable to type '2'.">[appAmbiguous]</error>="1"></span>
     <span [appAmbiguous]="2"></span>
   `,
 })

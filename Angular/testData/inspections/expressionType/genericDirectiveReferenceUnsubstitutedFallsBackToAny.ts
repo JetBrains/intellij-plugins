@@ -4,7 +4,7 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, ExportedDirective],
+  imports: [CommonModule, <error descr="TS2449: Class 'ExportedDirective' used before its declaration.">ExportedDirective</error>],
   standalone: true,
   template: `
     <div [appExported]="true" #hello="exported"></div>

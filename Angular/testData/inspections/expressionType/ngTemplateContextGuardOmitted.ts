@@ -5,7 +5,7 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, FooDirective1, FooDirective2],
+  imports: [CommonModule, <error descr="TS2449: Class 'FooDirective1' used before its declaration.">FooDirective1</error>, <error descr="TS2449: Class 'FooDirective2' used before its declaration.">FooDirective2</error>],
   standalone: true,
   template: `
     <div *appFoo1="personPromise | async as local; let another = whatever">
@@ -15,7 +15,7 @@ import {CommonModule} from "@angular/common";
       {{expectPerson(another)}}
       {{expectNumber(another)}}
       {{another.allYouEverWanted}}
-      {{expectNumber(<error descr="Unresolved variable or type whatever">whatever</error>)}}
+      {{expectNumber(<error descr="TS2339: Property 'whatever' does not exist on type 'TestComponent'.">whatever</error>)}}
     </div>
     <div *appFoo2="personPromise | async as local; let another = whatever">
       {{expectPerson(local)}}
@@ -24,9 +24,10 @@ import {CommonModule} from "@angular/common";
       {{expectPerson(another)}}
       {{expectNumber(another)}}
       {{another.allYouEverWanted}}
-      {{expectNumber(<error descr="Unresolved variable or type whatever">whatever</error>)}}
+      {{expectNumber(<error descr="TS2339: Property 'whatever' does not exist on type 'TestComponent'.">whatever</error>)}}
     </div>
-    <footer>{{<error descr="Indexed expression can be null or undefined">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
+    <footer>{{<error descr="TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Person'.
+  Property '0' does not exist on type 'Person'."><error descr="TS2531: Object is possibly 'null'.">(personPromise | async)</error>[0]</error>}}</footer> <!-- ensure that null checks work -->
   `,
 })
 export class TestComponent {
