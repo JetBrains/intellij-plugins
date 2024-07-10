@@ -60,6 +60,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
+  private val servicesMap: MutableMap<String, DartToolingDaemonServiceConsumer> = mutableMapOf()
 
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
@@ -105,6 +106,25 @@ class DartToolingDaemonService private constructor(private val project: Project)
     }
   }
 
+  fun registerServiceMethod(service: String, method: String, consumer: DartToolingDaemonServiceConsumer) {
+    val params = JsonObject()
+    params.addProperty("service", service)
+    params.addProperty("method", method)
+    sendRequest("registerService", params, false) { response ->
+      val result = response.getAsJsonObject("result")
+      if (result == null) {
+        logger.error("No result from attempt to register service $service.$method")
+      }
+
+      val type = result.getAsJsonPrimitive("type")
+      if (type == null || "Success" != type.asString) {
+        logger.error("Failed to register service $service.$method")
+      }
+
+      servicesMap["$service.$method"] = consumer
+    }
+  }
+
   @Throws(WebSocketException::class)
   fun sendRequest(method: String, params: JsonObject, includeSecret: Boolean, consumer: DartToolingDaemonConsumer) {
     if (!webSocketReady) {
@@ -126,6 +146,22 @@ class DartToolingDaemonService private constructor(private val project: Project)
     val requestString = request.toString()
     logger.debug("--> $requestString")
     webSocket.send(requestString)
+  }
+
+  private fun sendResponse(id: String, result: JsonObject) {
+    if (!webSocketReady) {
+      logger.warn("sendResponse(\"$id\", $result) called when the socket is not ready")
+      return
+    }
+
+    val response = JsonObject()
+    response.addProperty("jsonrpc", "2.0")
+    response.addProperty("id", id)
+    response.add("result", result)
+
+    val responseString = response.toString()
+    logger.debug("--> $responseString")
+    webSocket.send(responseString)
   }
 
   fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
@@ -237,6 +273,23 @@ class DartToolingDaemonService private constructor(private val project: Project)
       //  println("received response from streamListen")
       //  println(response)
       //}
+
+      // Example request to test registering a service method
+      /*
+      registerServiceMethod("Test", "testMethod") { requestParams ->
+        println(requestParams)
+        val params = JsonObject()
+        params.addProperty("success", true)
+        params
+      }
+
+      // Try using the service method
+      val methodParams = JsonObject()
+      methodParams.addProperty("param1", "1")
+      sendRequest("Test.testMethod", methodParams, false) { response ->
+        println(response)
+      }
+      */
     }
 
     override fun onMessage(message: WebSocketMessage) {
@@ -252,10 +305,17 @@ class DartToolingDaemonService private constructor(private val project: Project)
       }
 
       val method = json["method"]?.asString
+      val serviceConsumer = servicesMap[method]
       if (method == "streamNotify") {
         val params = json["params"].asJsonObject
         val streamId = params["streamId"].asString
         eventDispatcher.multicaster.received(streamId, json)
+      }
+      else if (serviceConsumer != null) {
+        val params = json["params"].asJsonObject
+        val id = json["id"].asString
+        val result = serviceConsumer.received(params)
+        sendResponse(id, result)
       }
       else {
         val id = json["id"].asString
