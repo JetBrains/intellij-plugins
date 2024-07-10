@@ -1,0 +1,60 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/material/input";
+import * as _i2 from "@angular/forms";
+import * as _i3 from "@angular/material/datepicker";
+/* Directives */
+const _ctor1 = null! as <D = any>(init: Pick<_i3.MatDatepicker<D>, "panelClass" | "yPosition" | "calendarHeaderComponent" | "startView" | "xPosition" | "color" | "startAt" | "dateClass"> & {
+disabled: typeof _i3.MatDatepicker.ngAcceptInputType_disabled;
+touchUi: typeof _i3.MatDatepicker.ngAcceptInputType_touchUi;
+restoreFocus: typeof _i3.MatDatepicker.ngAcceptInputType_restoreFocus;
+opened: typeof _i3.MatDatepicker.ngAcceptInputType_opened;
+}) => _i3.MatDatepicker<D>;
+const _ctor2 = null! as <D = any>(init: Pick<_i3.MatDatepickerInput<D>, "matDatepicker" | "dateFilter" | "min" | "value" | "max"> & {
+disabled: typeof _i3.MatDatepickerInput.ngAcceptInputType_disabled;
+}) => _i3.MatDatepickerInput<D>;
+const _ctor3 = null! as <D = any>(init: Pick<_i3.MatDatepickerToggle<D>, "tabIndex" | "datepicker" | "ariaLabel" | "disableRipple"> & {
+disabled: typeof _i3.MatDatepickerToggle.ngAcceptInputType_disabled;
+}) => _i3.MatDatepickerToggle<D>;
+
+/* TCB for directiveReferences.ts */
+
+function _tcb1(this: DatepickerViewsSelectionExample) {
+var _t1 = document.createElement("mat-form-field");
+var _t2 = null! as _i1.MatFormField;
+var _t3 = document.createElement("input");
+var _t4 = null! as _i1.MatInput;
+_t4.placeholder = "Month and Year";
+var _t7 = _ctor1({"startView": "multi-year", "panelClass": "example-month-picker", "yPosition": null as any, "restoreFocus": null as any, "calendarHeaderComponent": null as any, "opened": null as any, "xPosition": null as any, "color": null as any, "disabled": null as any, "startAt": null as any, "touchUi": null as any, "dateClass": null as any});
+var _t6 = _t7;
+var _t5 = _ctor2({"matDatepicker": _t6, "max": this.my, "dateFilter": null as any, "min": null as any, "disabled": null as any, "value": null as any});
+_t5.matDatepicker = _t6;
+_t5.max = this.my;
+var _t8 = null! as _i2.FormControlDirective;
+_t8.form = this.date;
+var _t9 = document.createElement("mat-datepicker-toggle");
+var _t10 = null! as _i1.MatSuffix;
+var _t11 = _ctor3({"datepicker": _t6, "tabIndex": null as any, "ariaLabel": null as any, "disableRipple": null as any, "disabled": null as any});
+_t11.datepicker = _t6;
+var _t12 = document.createElement("mat-datepicker");
+_t7.startView = "multi-year";
+_t7.panelClass = "example-month-picker";
+_t7["monthSelected"].subscribe(($event): any => {
+this.setMonthAndYear($event, _t6);
+});
+_t7["yearSelected"].subscribe(($event): any => {
+this.acceptBoolean(_t6);
+});
+var _t13 = document.createElement("mat-datepicker");
+var _t14 = _ctor1({"startAt": 12, "startView": "multi-year", "panelClass": "example-month-picker", "yPosition": null as any, "restoreFocus": null as any, "calendarHeaderComponent": null as any, "opened": null as any, "xPosition": null as any, "color": null as any, "disabled": null as any, "touchUi": null as any, "dateClass": null as any});
+_t14.startAt = 12;
+_t14.startView = "multi-year";
+_t14.panelClass = "example-month-picker";
+var _t15 = _t14;
+_t14["monthSelected"].subscribe(($event): any => {
+this.setMonthAndYear($event, _t15);
+});
+_t14["yearSelected"].subscribe(($event): any => {
+this.acceptBoolean(_t15);
+});
+}

@@ -63,6 +63,13 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  fun testDirectiveReferences() = checkTranspilation(
+    Angular2TestModule.ANGULAR_MATERIAL_17_3_0,
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+    Angular2TestModule.ANGULAR_COMMON_17_3_0,
+    Angular2TestModule.ANGULAR_FORMS_16_2_8,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
