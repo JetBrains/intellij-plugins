@@ -1,5 +1,6 @@
 package org.intellij.terraform.template
 
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.HCLBundle
@@ -15,8 +16,9 @@ class TerraformTemplateHighlightingTest : BasePlatformTestCase() {
   }
 
   fun `test detect unselected data language`() {
+    val errorMessage = HCLBundle.message("inspection.unselected.data.language.name")
     myFixture.configureByText("test.tftpl", """
-      %{if condition}<warning descr="No template data language selected">
+      %{if condition}<warning descr="$errorMessage">
         Hello world!
       </warning>%{endif}
     """.trimIndent())
@@ -31,8 +33,9 @@ class TerraformTemplateHighlightingTest : BasePlatformTestCase() {
         })
       }
     """.trimIndent())
+    val errorMessage = HCLBundle.message("inspection.possible.template.name")
     myFixture.configureByText("noExtension.json", """
-      <warning descr="Possible template file"><error descr="<value> expected, got '%'">%</error>{if condition}
+      <warning descr="$errorMessage"><error descr="<value> expected, got '%'">%</error>{if condition}
         console.log("Hello world!")
         debugger
       %{endif}</warning>
@@ -42,6 +45,7 @@ class TerraformTemplateHighlightingTest : BasePlatformTestCase() {
     Assert.assertNotNull(considerAsTemplateIntention)
     considerAsTemplateIntention!!.invoke(myFixture.project, myFixture.editor, myFixture.file)
 
+    PsiDocumentManager.getInstance(myFixture.project).reparseFiles(listOf(myFixture.file.virtualFile), true)
     myFixture.checkResult("""
       %{if condition}
         console.log("Hello world!")
