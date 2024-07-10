@@ -123,22 +123,28 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
     val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
                    ?: return emptyList()
-    return errors.map {
-      if (it is TypeScriptLanguageServiceAnnotationResult) {
-        val textRange = it.getTextRange(document)
-        val nameMap = file.nameMaps[templateFile]?.get(textRange)
+    return errors.map { error ->
+      if (error is TypeScriptLanguageServiceAnnotationResult) {
+        val textRange = error.getTextRange(document)
+        val nameMap = file.nameMaps[templateFile]
+          ?.subMap(textRange.startOffset, true, textRange.endOffset, false)
+          ?.values
+          ?.asSequence()
+          ?.flatMap { it.entries }
+          ?.map { (key, value) -> key to value }
+          ?.toMap()
         if (nameMap != null) {
           return@map TypeScriptLanguageServiceAnnotationResult(
-            it.description.replaceNames("'", nameMap, "'"),
-            it.absoluteFilePath,
-            it.category,
-            it.source,
-            it.tooltipText?.replaceNames(">", nameMap, "<"),
-            it.errorCode, it.line + 1, it.column + 1, it.endLine + 1, it.endColumn + 1,
+            error.description.replaceNames("'", nameMap, "'"),
+            error.absoluteFilePath,
+            error.category,
+            error.source,
+            error.tooltipText?.replaceNames(">", nameMap, "<"),
+            error.errorCode, error.line + 1, error.column + 1, error.endLine + 1, error.endColumn + 1,
           )
         }
       }
-      return@map it
+      return@map error
     }
   }
 
@@ -195,7 +201,7 @@ private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange {
 private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, suffix: String): String {
   var result = this
   for ((generatedName, originalName) in nameMap) {
-    result = result.replace("$prefix$generatedName$suffix", "$prefix$originalName$suffix")
+    result = result.replace(Regex("([$prefix.])${Regex.escape(generatedName)}([$suffix.])"), "\$1$originalName\$2")
   }
   return result
 }
