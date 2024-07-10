@@ -3,6 +3,7 @@ package org.angular2
 
 import com.intellij.javascript.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -10,11 +11,14 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.angular2.lang.expr.service.Angular2TypeScriptService
+import kotlin.reflect.KClass
 
 abstract class Angular2TestCase(
   override val testCasePath: String,
-  private val useTsc: Boolean,
+  private var useTsc: Boolean,
 ) : WebFrameworkTestCase() {
+
+  private var expectedServerClass: KClass<out TypeScriptService> = Angular2TypeScriptService::class
 
   override val testDataRoot: String
     get() = Angular2TestUtil.getBaseTestDataPath()
@@ -39,7 +43,7 @@ abstract class Angular2TestCase(
         UIUtil.dispatchAllInvocationEvents()
       }
       TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
-        it is Angular2TypeScriptService
+        it::class == expectedServerClass
       }
       runInEdtAndWait {
         FileDocumentManager.getInstance().saveAllDocuments()
@@ -55,5 +59,25 @@ abstract class Angular2TestCase(
       mode = INITIAL_MODE
     }
     super.tearDown()
+  }
+
+  fun withTscDisabled(runnable: () -> Unit) {
+    val oldUseTsc = useTsc
+    try {
+      useTsc = false
+      runnable()
+    } finally {
+      useTsc = oldUseTsc
+    }
+  }
+
+  fun withTypeScriptServerService(clazz: KClass<out TypeScriptService>, runnable: () -> Unit) {
+    expectedServerClass = clazz
+    try {
+      runnable()
+    }
+    finally {
+      expectedServerClass = Angular2TypeScriptService::class
+    }
   }
 }
