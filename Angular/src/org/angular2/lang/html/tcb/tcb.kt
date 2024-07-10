@@ -158,7 +158,7 @@ private class TcbTemplateVariableOp(
     val id = this.tcb.allocateId(variable)
     this.scope.addStatement {
       append("var ")
-      append(id, id.sourceSpan, types = true, nameMap = id.sourceName?.let { mapOf(Pair(id.name, it)) })
+      append(id, id.sourceSpan, types = true)
       append(" = ")
       append(ctx)
       val name = variable.value?.takeIf { it.isNotBlank() } ?: `$IMPLICIT`
@@ -2801,9 +2801,8 @@ internal fun tsDeclareVariable(
   return Statement {
     append("var ")
     append(
-      id, id.sourceSpan, types = types, varOfDirective = ofDir,
-      diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
-      nameMap = id.sourceName?.let { mapOf(Pair(id.name, id.sourceName)) },
+      id, id.sourceSpan, types = types, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
+      varOfDirective = ofDir,
     )
     append(" = null! as ")
     append(type)
@@ -2840,9 +2839,8 @@ private fun tsCreateVariable(
   return Statement {
     append("var ")
     append(
-      id, id.sourceSpan, types = types, varOfDirective = ofDir,
-      diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
-      nameMap = id.sourceName?.let { mapOf(Pair(id.name, id.sourceName)) },
+      id, id.sourceSpan, types = types, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
+      varOfDirective = ofDir,
     )
     append(" = ")
     append(initializer)

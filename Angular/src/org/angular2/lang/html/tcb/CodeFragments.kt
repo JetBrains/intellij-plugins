@@ -27,7 +27,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
   private val sourceMappings: Set<SourceMappingData>
   private val contextVarMappings: Set<ContextVarMappingData>
   private val directiveVarMappings: Set<DirectiveVarMappingData>
-  private val nameMappings: List<Pair<TextRange, Map<String, String>>>
+  private val nameMappings: List<Pair<Int, Map<String, String>>>
 
   init {
     val expression = ExpressionBuilderImpl().apply(builder)
@@ -52,7 +52,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
       override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
       override val diagnostics: Set<Angular2TemplateTranspiler.Diagnostic> = diagnostics
-      override val nameMappings: List<Pair<TextRange, Map<String, String>>> = this@Expression.nameMappings
+      override val nameMappings: List<Pair<Int, Map<String, String>>> = this@Expression.nameMappings
     }
 
   interface ExpressionBuilder {
@@ -79,7 +79,6 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       diagnosticsRange: TextRange? = originalRange,
       contextVar: Boolean = false,
       varOfDirective: Angular2Directive? = null,
-      nameMap: Map<String, String>? = null,
     ): ExpressionBuilder
 
     fun append(expression: Expression): ExpressionBuilder
@@ -118,7 +117,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     val sourceMappings = mutableSetOf<SourceMappingData>()
     val contextVarMappings = mutableSetOf<ContextVarMappingData>()
     val directiveVarMappings = mutableSetOf<DirectiveVarMappingData>()
-    val nameMappings = mutableListOf<Pair<TextRange, Map<String, String>>>()
+    val nameMappings = mutableListOf<Pair<Int, Map<String, String>>>()
 
     private var ignoreMappings = false
 
@@ -184,7 +183,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
             ))
           }
           if (nameMap != null) {
-            nameMappings.add(Pair(originalRange, nameMap))
+            nameMappings.add(Pair(originalRange.startOffset, nameMap))
           }
         }
       }
@@ -199,9 +198,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       diagnosticsRange: TextRange?,
       contextVar: Boolean,
       varOfDirective: Angular2Directive?,
-      nameMap: Map<String, String>?,
     ): ExpressionBuilder =
-      append(id.toString(), originalRange, types, diagnosticsRange, contextVar, varOfDirective, nameMap)
+      append(id.toString(), originalRange, types, diagnosticsRange, contextVar, varOfDirective,
+             nameMap = id.sourceName?.let { mapOf(Pair(id.name, it)) })
 
     override fun append(expression: Expression): ExpressionBuilder {
       val offset = this.code.length
