@@ -15,10 +15,9 @@
  */
 package com.intellij.protobuf.ide.views;
 
-import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.testFramework.PlatformTestUtil;
 
-import static com.intellij.testFramework.PlatformTestUtil.assertTreeEqual;
 
 /** Test structure view. */
 public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
@@ -29,13 +28,10 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
   }
 
   private void testStructureView(String expectedLines) {
-    myFixture.testStructureView(
-        viewComponent -> {
-          // since IJ moved to an async structure tree model, expanded state isn't correctly set up
-          // in integration tests. So run 'restoreState' to reset it.
-          viewComponent.restoreState();
-          assertTreeEqual(viewComponent.getTree(), expectedLines);
-        });
+    myFixture.testStructureView(it  -> {
+      PlatformTestUtil.expandAll(it.getTree());
+      PlatformTestUtil.assertTreeEqual(it.getTree(), expectedLines);
+    });
   }
 
   public void testExtends() {
@@ -57,19 +53,32 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestDataPath() + "NestedMessage.proto");
     String expectedLines =
       """
-        -NestedMessage.proto
-         -WithoutNest
-          field1
-          field2
-         -WithNest
-          field1
-          field2
-          +NestedMessage
-          +NestedEnum
-          msg_instance
-          enum_instance
-          +Group
-          +oneof_field
+      -NestedMessage.proto
+       -WithoutNest
+        field1
+        field2
+       -WithNest
+        field1
+        field2
+        -NestedMessage
+         -NestedMessage2
+          inner_nested1
+         nested1
+         nested2
+         inner_nested_instance
+        -NestedEnum
+         VARIANT1
+         VARIANT2
+        msg_instance
+        enum_instance
+        -Group
+         field1
+         field2
+        -oneof_field
+         oneof_uint32
+         oneof_nested_message
+         oneof_string
+         oneof_bytes
         """;
     testStructureView(expectedLines);
   }
