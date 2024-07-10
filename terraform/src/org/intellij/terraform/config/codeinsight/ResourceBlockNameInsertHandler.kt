@@ -42,7 +42,7 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
     val current: Int
     val expected = type.args
     var addBraces = false
-    if (parent is HCLBlock && InsertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
+    if (parent is HCLBlock && TfInsertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
       // Count existing arguments and add missing
       val elements = parent.nameElements
       current = elements.size - 1
@@ -59,11 +59,11 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
 
     if (current < expected) {
       offset = editor.caretModel.offset + 2
-      InsertHandlerService.addArguments(expected - current, editor)
-      InsertHandlerService.scheduleBasicCompletion(context)
+      TfInsertHandlerService.addArguments(expected - current, editor)
+      TfInsertHandlerService.scheduleBasicCompletion(context)
     }
     if (addBraces) {
-      InsertHandlerService.addBraces(editor)
+      TfInsertHandlerService.addBraces(editor)
     }
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)
 
@@ -71,7 +71,7 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
       editor.caretModel.moveToOffset(offset)
     }
     if (type.properties.isNotEmpty()) {
-      InsertHandlerService.getInstance(project).addBlockRequiredProperties(file, editor, project, type)
+      TfInsertHandlerService.getInstance(project).addBlockRequiredProperties(file, editor, project)
     }
   }
 }

@@ -14,7 +14,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThrowableRunnable
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.InsertHandlerService
+import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.refactoring.TerraformElementRenameValidator
@@ -97,7 +97,7 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
       WriteAction.run(ThrowableRunnable {
         val offset = nameElements.last().let { it.textOffset + it.textLength }
         editor.caretModel.moveToOffset(offset)
-        InsertHandlerService.addArguments(required, editor)
+        TfInsertHandlerService.addArguments(required, editor)
         editor.caretModel.moveToOffset(offset + required * 3 - 1)
       })
       CodeCompletionHandlerBase.createHandler(CompletionType.BASIC).invokeCompletion(project, editor)

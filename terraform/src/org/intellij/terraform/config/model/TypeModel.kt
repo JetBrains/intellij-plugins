@@ -305,10 +305,6 @@ class TypeModel(
       val terraformRootBlock = psiFile?.childrenOfType<HCLBlock>()?.firstOrNull { TerraformPatterns.TerraformRootBlock.accepts(it) }
       return terraformRootBlock
     }
-
-    fun requiresModelLoad(blockType: BlockType): Boolean {
-        return blockType.literal in blockTypesStoredInModel
-    }
   }
 
   private fun <T> List<T>.findBinary(elt: String, k: (T) -> String): T? =

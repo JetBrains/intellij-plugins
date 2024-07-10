@@ -31,7 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.TerraformIcons
-import org.intellij.terraform.config.codeinsight.InsertHandlerService
+import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper.getAllTypesForBlockByIdentifier
 import org.intellij.terraform.config.model.BlockType
@@ -63,7 +63,7 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
   }
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-    project.service<ImportProviderService>().addProvider(file.createSmartPointer(), editor, startElement)
+    project.service<ImportProviderService>().addProvider(editor, startElement)
   }
 
   override fun isAvailable(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean {
@@ -103,9 +103,14 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 
 
-  fun addProvider(filePointer: SmartPsiElementPointer<PsiFile>, editor: Editor?, startElement: PsiElement) {
+  fun addProvider(editor: Editor?, startElement: PsiElement) {
     coroutineScope.launch(Dispatchers.Default) {
-      val possibleTypes = if (startElement is HCLBlock && editor != null) readAction { getAllTypesForBlockByIdentifier(startElement) } else return@launch
+      val possibleTypes = if (startElement is HCLBlock && editor != null) {
+        readAction { getAllTypesForBlockByIdentifier(startElement) }
+      }
+      else {
+        return@launch
+      }
       if (possibleTypes.isEmpty()) {
         withContext(Dispatchers.EDT) {
           showProvidersNotFoundBalloon(startElement, editor)
@@ -113,6 +118,7 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
       }
       else {
         val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
+        val filePointer = readAction { startElement.containingFile.createSmartPointer() }
         if (possibleTypes.size == 1) {
           addRequiredProvider(filePointer, editor, title, possibleTypes.first())
         }
@@ -131,8 +137,7 @@ internal suspend fun addRequiredProvider(filePointer: SmartPsiElementPointer<Psi
     val file = filePointer.element ?: return@readAndWriteAction value(Unit)
     val project = file.project
     writeCommandAction(project, commandName) {
-      getProviderForBlockType(blockType)?.let { InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(it, file) }
-      PsiDocumentManager.getInstance(project).commitDocument(editor.document)
+      getProviderForBlockType(blockType)?.let { TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(it, file) }
     }
   }
 }
@@ -142,7 +147,7 @@ private class SelectUnknownResourceStep(
   @NlsSafe title: String, types: List<BlockType>,
   private val pointer: SmartPsiElementPointer<PsiFile>,
   val coroutineScope: CoroutineScope,
-  private val editor: Editor
+  private val editor: Editor,
 ) : BaseListPopupStep<BlockType>(title, types) {
 
   override fun getTextFor(value: BlockType?): String {
