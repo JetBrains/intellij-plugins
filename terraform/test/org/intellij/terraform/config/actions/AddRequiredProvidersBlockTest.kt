@@ -1,9 +1,10 @@
 package org.intellij.terraform.config.actions
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.config.codeinsight.InsertHandlerService
+import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.getProviderForBlockType
@@ -18,7 +19,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
+      TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
@@ -43,7 +44,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
+      TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
@@ -72,7 +73,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
+      TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {
@@ -114,7 +115,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
       }
     """.trimIndent())
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
+      TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(getProviderType(), myFixture.file)
     }
     myFixture.checkResult("""
       terraform {

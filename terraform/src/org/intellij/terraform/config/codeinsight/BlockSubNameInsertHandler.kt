@@ -15,7 +15,7 @@ import org.intellij.terraform.hcl.psi.*
 
 internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
 
-  val tiersNotToInsert = setOf(ProviderTier.TIER_LOCAL, ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL)
+  val tiersNotToInsert = setOf(ProviderTier.TIER_LOCAL, ProviderTier.TIER_BUILTIN)
 
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
     val project = context.project
@@ -50,7 +50,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     var offset: Int? = null
     val already: Int
     val expected = type.args
-    if (parent is HCLBlock && InsertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
+    if (parent is HCLBlock && TfInsertHandlerService.isNextNameOnTheSameLine(element, context.document)) {
       // Count existing arguments and add missing
       val elements = parent.nameElements
       already = elements.size - 1
@@ -63,7 +63,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
         val next = elements[i + 1]
         if (next.textContains('"') && next.textLength < 3) {
           editor.caretModel.moveToOffset(next.textRange.endOffset - 1)
-          InsertHandlerService.scheduleBasicCompletion(context)
+          TfInsertHandlerService.scheduleBasicCompletion(context)
         }
       }
     } else {
@@ -72,15 +72,15 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
 
     if (already < expected) {
       offset = editor.caretModel.offset + 2
-      InsertHandlerService.addArguments(expected - already, editor)
+      TfInsertHandlerService.addArguments(expected - already, editor)
       if (expected - already != 1) { // Do not invoke completion for last name
-        InsertHandlerService.scheduleBasicCompletion(context)
+        TfInsertHandlerService.scheduleBasicCompletion(context)
       }
     }
 
     val provider = getProviderForBlockType(type)
     if (provider != null && provider.tier !in tiersNotToInsert && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
-      InsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
+      TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
     }
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)
 
@@ -88,7 +88,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
       editor.caretModel.moveToOffset(offset)
     }
     if (type.properties.isNotEmpty()) {
-      InsertHandlerService.getInstance(project).addBlockRequiredProperties(file, editor, project, type)
+      TfInsertHandlerService.getInstance(project).addBlockRequiredProperties(file, editor, project)
     }
   }
 }
