@@ -9,8 +9,11 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServerState
+import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import kotlinx.coroutines.delay
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
@@ -26,16 +29,19 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
+    awaitServerRunningState(server)
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getElementType(args) }
   }
 
   override suspend fun getIdeSymbolType(args: TypeScriptGetSymbolTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
+    awaitServerRunningState(server)
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getSymbolType(args) }
   }
 
   override suspend fun getIdeTypeProperties(args: TypeScriptGetTypePropertiesRequestArgs): JsonElement? {
     val server = getServer() ?: return null
+    awaitServerRunningState(server)
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getTypeProperties(args) }
   }
 
@@ -47,4 +53,12 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     return file.language is VueJSLanguage || file.language is VueTSLanguage
   }
 
+  private suspend fun awaitServerRunningState(server: LspServerImpl) {
+    while (true) {
+      when (server.state) {
+        LspServerState.Initializing -> delay(10L)
+        else -> return
+      }
+    }
+  }
 }
