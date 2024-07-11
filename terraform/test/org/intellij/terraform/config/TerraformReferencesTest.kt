@@ -523,5 +523,23 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     assertEquals("main.tf", targetResource.containingFile.name)
   }
 
+  @Test
+  fun testResolveKeyOfProperty() {
+    val file = myFixture.configureByText("main.tf", """
+      locals {
+        dev  = "dev"
+        test = "test"
+
+        ips = {
+          (local.dev) = "127.0.0.2"
+          "${DLR}{local.test}" = "127.0.0.3"
+        }
+      }
+    """.trimIndent())
+
+    assertResolvedNames(file.findReferenceByText("local.dev", -1), "dev")
+    assertResolvedNames(file.findReferenceByText("local.test", -1), "test")
+  }
+
   private val DLR = "$"
 }

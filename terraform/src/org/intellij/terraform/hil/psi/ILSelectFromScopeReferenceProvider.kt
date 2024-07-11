@@ -11,7 +11,6 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.psi.HCLElement
-import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.codeinsight.AddVariableFix
@@ -31,8 +30,6 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
 
     if (from === element) return PsiReference.EMPTY_ARRAY
 
-    if (HCLPsiUtil.isPartOfPropertyKey(element)) return PsiReference.EMPTY_ARRAY
-
     when (from.name) {
       "var" -> {
         return arrayOf(VariableReference(element))
@@ -45,11 +42,6 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
         if (element.name == "module") {
           val file = host.containingFile.originalFile
           return arrayOf(PsiReferenceBase.Immediate(element, true, file.containingDirectory ?: file))
-        }
-      }
-      "terraform" -> {
-        if (element.name == "workspace") {
-          // TODO: Reference to '.terraform/environment'?
         }
       }
       "module" -> {
@@ -104,4 +96,3 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
     })
   })
 }
-
