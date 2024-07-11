@@ -1,6 +1,5 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
-import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
@@ -8,6 +7,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdater;
 
+import static com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdaterKt.findAndInitMeteorRoots;
 
 public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
   @Override
@@ -45,13 +45,10 @@ public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
   }
 
   private void updateMeteorStatus() {
-    MeteorLibraryUpdater.get(getProject()).scheduleProjectUpdate();
-    while (!StartupManagerEx.getInstanceEx(getProject()).postStartupActivityPassed()) {
-      UIUtil.dispatchAllInvocationEvents();
-    }
-    MeteorLibraryUpdater.get(getProject()).waitForUpdate();
+    findAndInitMeteorRoots(getProject());
+    MeteorLibraryUpdater.getInstance(getProject()).waitForUpdate();
     UIUtil.dispatchAllInvocationEvents();
-    MeteorLibraryUpdater.get(getProject()).waitForUpdate();
+    MeteorLibraryUpdater.getInstance(getProject()).waitForUpdate();
     IndexingTestUtil.waitUntilIndexesAreReady(getProject());
     assertTrue(MeteorFacade.getInstance().isMeteorProject(getProject()));
   }
@@ -60,7 +57,7 @@ public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     MeteorTestUtil.enableMeteor();
-    MeteorLibraryUpdater.get(getProject()).waitForUpdate();
+    MeteorLibraryUpdater.getInstance(getProject()).waitForUpdate();
   }
 
   @Override
@@ -75,5 +72,4 @@ public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
       super.tearDown();
     }
   }
-
 }

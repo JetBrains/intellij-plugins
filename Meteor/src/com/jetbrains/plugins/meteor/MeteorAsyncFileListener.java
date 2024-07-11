@@ -36,7 +36,7 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
 
   @NotNull
   private static MeteorLibraryUpdater getPackageUpdater(@NotNull Project project) {
-    return MeteorLibraryUpdater.get(project);
+    return MeteorLibraryUpdater.getInstance(project);
   }
 
   @Nullable

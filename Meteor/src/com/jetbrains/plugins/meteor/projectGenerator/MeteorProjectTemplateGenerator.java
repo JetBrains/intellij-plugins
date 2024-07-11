@@ -31,7 +31,6 @@ import com.intellij.platform.templates.github.ZipUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.MeteorFacade;
-import com.jetbrains.plugins.meteor.MeteorProjectStartupActivity;
 import com.jetbrains.plugins.meteor.runner.MeteorConfigurationType;
 import com.jetbrains.plugins.meteor.runner.MeteorRunConfiguration;
 import com.jetbrains.plugins.meteor.settings.MeteorSettings;
@@ -44,9 +43,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProjectTemplateGenerator.MeteorProjectSettings> {
+import static com.jetbrains.plugins.meteor.MeteorProjectStartupActivityKt.initMeteorProject;
 
-
+final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProjectTemplateGenerator.MeteorProjectSettings> {
   private static final Logger LOG = Logger.getInstance(MeteorProjectTemplateGenerator.class);
   public static final String DEFAULT_TEMPLATE_NAME = "hello";
 
@@ -101,7 +100,7 @@ public final class MeteorProjectTemplateGenerator extends WebProjectTemplate<Met
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       if (noErrorOnProjectCreating.get()) {
-        MeteorProjectStartupActivity.initMeteorProject(project, false);
+        initMeteorProject(project, false);
         createRunConfiguration(project, baseDir);
         if (!StringUtil.equals(settings.myMeteorExecutablePath, MeteorSettings.getInstance().getExecutablePath())) {
           MeteorSettings.getInstance().setExecutablePath(settings.myMeteorExecutablePath);
@@ -111,10 +110,10 @@ public final class MeteorProjectTemplateGenerator extends WebProjectTemplate<Met
     });
   }
 
-  public void createDefaultProject(@NotNull final Project project,
-                                   @NotNull final VirtualFile baseDir,
-                                   @NotNull final MeteorProjectSettings settings,
-                                   final Ref<Boolean> noErrorOnProjectCreating) {
+  public static void createDefaultProject(@NotNull final Project project,
+                                          @NotNull final VirtualFile baseDir,
+                                          @NotNull final MeteorProjectSettings settings,
+                                          final Ref<Boolean> noErrorOnProjectCreating) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
 
       try {
@@ -166,10 +165,10 @@ public final class MeteorProjectTemplateGenerator extends WebProjectTemplate<Met
     }
   }
 
-  public void executeCommandLineForDefaultProject(ProgressIndicator indicator,
-                                                  @NotNull MeteorProjectSettings settings,
-                                                  @NotNull VirtualFile baseDir,
-                                                  Ref<Boolean> noErrorOnProjectCreating)
+  public static void executeCommandLineForDefaultProject(ProgressIndicator indicator,
+                                                         @NotNull MeteorProjectSettings settings,
+                                                         @NotNull VirtualFile baseDir,
+                                                         Ref<Boolean> noErrorOnProjectCreating)
     throws IOException, ExecutionException {
     File tempProject = createTemp();
     List<String> params = ContainerUtil.prepend(settings.params(), settings.getCommand());
@@ -205,11 +204,11 @@ public final class MeteorProjectTemplateGenerator extends WebProjectTemplate<Met
     runManager.setSelectedConfiguration(configuration);
   }
 
-  private File createTemp() throws IOException {
+  private static File createTemp() throws IOException {
     return FileUtil.createTempDirectory("intellij-meteor-generator", null, false);
   }
 
-  private void deleteTemp(File tempProject) {
+  private static void deleteTemp(File tempProject) {
     if (!FileUtil.delete(tempProject)) {
       LOG.warn("Cannot delete " + tempProject);
     }

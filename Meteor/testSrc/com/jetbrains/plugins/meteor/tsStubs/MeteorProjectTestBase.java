@@ -9,8 +9,9 @@ import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdater;
 import com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplateIndex;
+
+import static com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdaterKt.findAndInitMeteorRoots;
 
 public abstract class MeteorProjectTestBase extends CodeInsightFixtureTestCase<ModuleFixtureBuilder<?>> {
   @Override
@@ -32,8 +33,10 @@ public abstract class MeteorProjectTestBase extends CodeInsightFixtureTestCase<M
 
   public static void initMeteorDirs(Project project) {
     ApplicationManager.getApplication().assertReadAccessNotAllowed();
-    ReadAction.run(() -> FileBasedIndex.getInstance().ensureUpToDate(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX, project, GlobalSearchScope.allScope(project)));
-    MeteorLibraryUpdater.findAndInitMeteorRoots(project);
+    ReadAction.run(() -> {
+      FileBasedIndex.getInstance().ensureUpToDate(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX, project, GlobalSearchScope.allScope(project));
+      findAndInitMeteorRoots(project);
+    });
     UIUtil.pump(); // invokelater in com.jetbrains.plugins.meteor.MeteorProjectStartupActivity.findMeteorRoots
     IndexingTestUtil.waitUntilIndexesAreReady(project);
   }

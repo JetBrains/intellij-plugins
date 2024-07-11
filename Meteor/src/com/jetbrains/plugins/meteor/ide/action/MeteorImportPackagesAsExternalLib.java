@@ -1,6 +1,5 @@
 package com.jetbrains.plugins.meteor.ide.action;
 
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
@@ -24,8 +23,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class MeteorImportPackagesAsExternalLib {
+import static com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdaterKt.refreshMeteorLibraries;
+import static com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdaterKt.updateMeteorLibraryIfRequired;
 
+public final class MeteorImportPackagesAsExternalLib {
   public static final String METEOR_PACKAGES_LIB_NAME = "meteor-packages-auto-import";
   public static final String PACKAGES_FILE = "packages";
 
@@ -128,10 +129,10 @@ public class MeteorImportPackagesAsExternalLib {
     MeteorPackagesUtil.setCodes(project, dialogCodeTypes);
 
     if (!oldCodes.equals(dialogCodeTypes) || !oldPath.equals(pathToMeteorGlobal)) {
-      MeteorLibraryUpdater.refreshLibraries(project, false);
+      refreshMeteorLibraries(project, false);
     }
     else {
-      MeteorLibraryUpdater.updateLibraryIfRequired(project);
+      updateMeteorLibraryIfRequired(project);
     }
   }
 

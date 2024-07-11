@@ -1,45 +1,60 @@
+@file:OptIn(FlowPreview::class)
+
 package com.jetbrains.plugins.meteor.ide.action
 
 import com.intellij.lang.javascript.library.JSLibraryManager
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.smartReadAction
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.Alarm
-import com.intellij.util.SingleAlarm
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import com.intellij.util.concurrency.annotations.RequiresReadLock
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.plugins.meteor.MeteorFacade
 import com.jetbrains.plugins.meteor.MeteorProjectStartupActivity
+import com.jetbrains.plugins.meteor.initMeteorProject
 import com.jetbrains.plugins.meteor.settings.MeteorSettings
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.time.Duration.Companion.seconds
 
-internal class MeteorLibraryUpdater(project: Project) : Disposable {
-  private val project: Project
+private val LOG = logger<MeteorLibraryUpdater>()
+
+internal class MeteorLibraryUpdater(private val project: Project, coroutineScope: CoroutineScope) : Disposable {
   private val queue: MergingUpdateQueue
-  private val projectStatusAlarm: SingleAlarm
+
+  private val projectStatusRequests = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   init {
     LOG.assertTrue(!project.isDefault)
-    this.project = project
     queue = MergingUpdateQueue("Meteor update packages", 300, true, null, this, null, false)
-    projectStatusAlarm = SingleAlarm({ this.findAndInitMeteorRootsWhenSmart() }, 1000, this, Alarm.ThreadToUse.POOLED_THREAD)
+    coroutineScope.launch {
+      projectStatusRequests
+        .debounce(1.seconds)
+        .collectLatest {
+          smartReadAction(project) {
+            findAndInitMeteorRoots(project)
+          }
+        }
+    }
   }
 
   fun update() {
@@ -50,15 +65,12 @@ internal class MeteorLibraryUpdater(project: Project) : Disposable {
     queue.queue(object : Update(this) {
       override fun run() {
         DumbService.getInstance(project).runReadActionInSmartMode {
-          LOG.debug(
-            "Check meteor libraries")
+          LOG.debug { "Check meteor libraries" }
           if (updateStoredMeteorFolders()) {
-            refreshLibraries(
-              project, true)
+            refreshMeteorLibraries(project = project, removeDeprecated = true)
             return@runReadActionInSmartMode
           }
-          updateLibraryIfRequired(
-            project)
+          updateMeteorLibraryIfRequired(project)
         }
       }
     })
@@ -78,140 +90,127 @@ internal class MeteorLibraryUpdater(project: Project) : Disposable {
   }
 
   fun scheduleProjectUpdate() {
-    projectStatusAlarm.cancelAndRequest()
-  }
-
-  @RequiresBackgroundThread
-  private fun findAndInitMeteorRootsWhenSmart() {
-    DumbService.getInstance(project).runReadActionInSmartMode {
-      findAndInitMeteorRoots(project)
-    }
+    check(projectStatusRequests.tryEmit(Unit))
   }
 
   override fun dispose() {
     queue.cancelAllUpdates()
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @TestOnly
   fun waitForUpdate() {
     do {
       try {
-        projectStatusAlarm.waitForAllExecuted(1, TimeUnit.MINUTES)
         queue.waitForAllExecuted(1, TimeUnit.MINUTES)
         UIUtil.dispatchAllInvocationEvents()
+        if (projectStatusRequests.replayCache.isNotEmpty()) {
+          projectStatusRequests.resetReplayCache()
+          @Suppress("SSBasedInspection")
+          runBlocking {
+            readAction {
+              findAndInitMeteorRoots(project)
+            }
+          }
+        }
       }
       catch (e: TimeoutException) {
         throw RuntimeException(e)
       }
     }
-    while (!queue.isEmpty || !projectStatusAlarm.isEmpty)
+    while (!queue.isEmpty)
   }
 
   companion object {
-    private val LOG = Logger.getInstance(MeteorLibraryUpdater::class.java)
+    @JvmStatic
+    fun getInstance(project: Project): MeteorLibraryUpdater = project.service()
+  }
+}
 
-    fun get(project: Project): MeteorLibraryUpdater {
-      return project.getService(MeteorLibraryUpdater::class.java)
-    }
+internal fun updateMeteorLibraryIfRequired(project: Project) {
+  ApplicationManager.getApplication().assertReadAccessAllowed()
 
-    fun updateLibraryIfRequired(project: Project) {
-      ApplicationManager.getApplication().assertReadAccessAllowed()
+  val codes = MeteorPackagesUtil.getCodes(project)
 
-      val codes = MeteorPackagesUtil.getCodes(project)
+  val pathToMeteorGlobal = MeteorPackagesUtil.getPathToGlobalMeteorRoot(project)
+  if (pathToMeteorGlobal.isNullOrEmpty()) {
+    return
+  }
 
-      val pathToMeteorGlobal = MeteorPackagesUtil.getPathToGlobalMeteorRoot(project)
-      if (StringUtil.isEmpty(pathToMeteorGlobal)) return
+  val dotMeteorVirtualFile = MeteorPackagesUtil.getDotMeteorVirtualFile(project, null)
+  if (dotMeteorVirtualFile == null) {
+    LOG.debug { "Cannot find .meteor folder" }
+    return
+  }
 
-      val dotMeteorVirtualFile = MeteorPackagesUtil.getDotMeteorVirtualFile(project, null)
-      if (dotMeteorVirtualFile == null) {
-        LOG.debug("Cannot find .meteor folder")
-        return
-      }
+  if (codes.isEmpty()) {
+    return
+  }
 
-      if (codes.isEmpty()) return
+  val roots = MeteorSyntheticLibraryProvider.getRoots(project)
+  val index = ProjectFileIndex.getInstance(project)
+  val needToUpdateLibrary = roots.any { !index.isInLibrary(it) }
+  if (needToUpdateLibrary) {
+    refreshMeteorLibraries(project, false)
+  }
+}
 
-      val roots = MeteorSyntheticLibraryProvider.getRoots(project)
-      val index = ProjectFileIndex.getInstance(project)
-      val needToUpdateLibrary = ContainerUtil.exists(roots
-      ) { el: VirtualFile? ->
-        !index.isInLibrary(
-          el!!)
-      }
-      if (needToUpdateLibrary) {
-        refreshLibraries(project, false)
-      }
-    }
-
-    fun refreshLibraries(project: Project, removeDeprecated: Boolean) {
-      ApplicationManager.getApplication().invokeLater(
-        {
-          WriteAction.run<RuntimeException> {
-            val libraryManager = JSLibraryManager.getInstance(project)
-            if (removeDeprecated) {
-              removeDeprecatedLibraries(libraryManager)
-            }
-            libraryManager.commitChanges(RootsChangeRescanningInfo.RESCAN_DEPENDENCIES_IF_NEEDED)
-          }
-        }, project.disposed)
-    }
-
-    private fun removeDeprecatedLibraries(libraryManager: JSLibraryManager) {
-      for (value in MeteorImportPackagesAsExternalLib.CodeType.entries) {
-        val name = MeteorImportPackagesAsExternalLib.getLibraryName(value)
-        val model = libraryManager.getLibraryByName(name)
-        if (model != null) {
-          libraryManager.removeLibrary(model)
+internal fun refreshMeteorLibraries(project: Project, removeDeprecated: Boolean) {
+  ApplicationManager.getApplication().invokeLater(
+    {
+      WriteAction.run<RuntimeException> {
+        val libraryManager = JSLibraryManager.getInstance(project)
+        if (removeDeprecated) {
+          removeDeprecatedLibraries(libraryManager)
         }
+        libraryManager.commitChanges(RootsChangeRescanningInfo.RESCAN_DEPENDENCIES_IF_NEEDED)
       }
-    }
+    }, project.disposed)
+}
 
-    @RequiresReadLock
-    @RequiresBackgroundThread
-    fun findAndInitMeteorRoots(project: Project) {
-      val shouldUpdateFileTypes =
-        ReadAction.compute<Boolean, RuntimeException> {
-          if (project.isDisposed) {
-            return@compute null
-          }
-          val meteorFacade = MeteorFacade.getInstance()
-          val shouldUpdate: Boolean
-          if (!meteorFacade.isMeteorProject(project) &&
-              (meteorFacade.hasMeteorFolders(project) || projectHasExcludedMeteorFolder(project))
-          ) {
-            meteorFacade.setIsMeteorProject(project)
-            shouldUpdate = true
-          }
-          else {
-            shouldUpdate = false
-          }
-
-          if (!meteorFacade.isMeteorProject(project)) {
-            return@compute null
-          }
-          shouldUpdate
-        }
-      if (shouldUpdateFileTypes != null) {
-        MeteorProjectStartupActivity.initMeteorProject(project, shouldUpdateFileTypes)
-      }
-    }
-
-    /**
-     * Some users want to exclude and hide '.meteor' folder from the project.
-     * So we have to implement a logic for checking that the folder '.meteor' was excluded from the project
-     *
-     *
-     * return true if excluded '.meteor' folder was detected
-     */
-    fun projectHasExcludedMeteorFolder(project: Project): Boolean {
-      for (module in ModuleManager.getInstance(project).modules) {
-        for (url in ModuleRootManager.getInstance(module).excludeRootUrls) {
-          val trimEnd = url.removeSuffix("/")
-          if (trimEnd.endsWith("/" + MeteorProjectStartupActivity.METEOR_FOLDER) && !JSLibraryUtil.isProbableLibraryPath(trimEnd)) {
-            return true
-          }
-        }
-      }
-      return false
+private fun removeDeprecatedLibraries(libraryManager: JSLibraryManager) {
+  for (value in MeteorImportPackagesAsExternalLib.CodeType.entries) {
+    val name = MeteorImportPackagesAsExternalLib.getLibraryName(value)
+    val model = libraryManager.getLibraryByName(name)
+    if (model != null) {
+      libraryManager.removeLibrary(model)
     }
   }
 }
+
+@VisibleForTesting
+internal fun findAndInitMeteorRoots(project: Project) {
+  val meteorFacade = MeteorFacade.getInstance()
+  val shouldUpdate = if (!meteorFacade.isMeteorProject(project) &&
+                         (meteorFacade.hasMeteorFolders(project) || projectHasExcludedMeteorFolder(project))) {
+    meteorFacade.setIsMeteorProject(project)
+    true
+  }
+  else {
+    false
+  }
+
+  if (meteorFacade.isMeteorProject(project)) {
+    initMeteorProject(project, shouldUpdate)
+  }
+}
+
+/**
+ * Some users want to exclude and hide '.meteor' folder from the project.
+ * So we have to implement a logic for checking that the folder '.meteor' was excluded from the project
+ *
+ *
+ * return true if excluded '.meteor' folder was detected
+ */
+private fun projectHasExcludedMeteorFolder(project: Project): Boolean {
+  for (module in ModuleManager.getInstance(project).modules) {
+    for (url in ModuleRootManager.getInstance(module).excludeRootUrls) {
+      val trimEnd = url.removeSuffix("/")
+      if (trimEnd.endsWith("/" + MeteorProjectStartupActivity.METEOR_FOLDER) && !JSLibraryUtil.isProbableLibraryPath(trimEnd)) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
