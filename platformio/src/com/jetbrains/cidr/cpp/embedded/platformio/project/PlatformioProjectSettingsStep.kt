@@ -41,7 +41,8 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
 
   private val myTree: Tree = Tree(EMPTY_TREE_MODEL)
   private var platformioProcessIndicator: ProgressIndicator = EmptyProgressIndicator()
-  private val platformioProcessExecutor = ConcurrencyUtil.newSingleScheduledThreadExecutor("PlatformIO Project Setting Process Executor")
+  private val platformioProcessExecutor = ConcurrencyUtil.newSingleThreadExecutor("PlatformIO Project Setting Process Executor")
+  @Volatile private var isDisposed: Boolean = false
 
   init {
     myTree.cellRenderer = object : ColoredTreeCellRenderer() {
@@ -69,6 +70,9 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
       }
     }
   }
+
+  private fun shouldCancelProcess() =
+    platformioProcessIndicator.isCanceled || isDisposed
 
   private fun watchPlatformio(presense: Presense) {
     application.invokeLater(
@@ -109,24 +113,25 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
                   val commandLine = PlatfromioCliBuilder(false, null)
                     .withParams("boards", "--json-output")
                     .withRedirectErrorStream(true).build()
-                  val output = CidrRunProcessUtil.runProcess(CapturingProcessHandler(commandLine), platformioProcessIndicator, 60000)
-
-                  application.invokeLater ({
-                    val newModel: DefaultTreeModel
-                    if (output.isExitCodeSet && output.exitCode == 0) {
-                      val pioOutText = output.stdout
-                      try {
-                        newModel = DefaultTreeModel(parse(pioOutText))
-                      }
-                      catch (e: JsonParseException) {
-                        LOGGER.warn("Error parsing platformio output: \n\r $pioOutText", e)
-                        throw e
-                      }
+                  val output = CidrRunProcessUtil.runProcess(CapturingProcessHandler(commandLine), platformioProcessIndicator,60000)
+                  if (shouldCancelProcess()) {
+                   return@execute
+                  }
+                  val newModel: DefaultTreeModel
+                  if (output.isExitCodeSet && output.exitCode == 0) {
+                    val pioOutText = output.stdout
+                    try {
+                      newModel = DefaultTreeModel(parse(pioOutText))
                     }
-                    else {
-                      newModel = EMPTY_TREE_MODEL
+                    catch (e: JsonParseException) {
+                      LOGGER.warn("Error parsing platformio output: \n\r $pioOutText", e)
+                      throw e
                     }
-
+                  }
+                  else {
+                    newModel = EMPTY_TREE_MODEL
+                  }
+                  application.invokeLater({
                     if (output.isTimeout) {
                       setErrorText(ClionEmbeddedPlatformioBundle.message("utility.timeout"))
                     }
@@ -139,13 +144,18 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
                       checkValid()
                       myTree.setPaintBusy(false)
                     }
-                  }, ModalityState.stateForComponent(myTree))
+                  },
+                    ModalityState.stateForComponent(myTree),
+                    { shouldCancelProcess() }
+                  )
                 }
                 catch (e: Throwable) {
                   LOG.error(e)
-                  application.invokeLater {
-                    setErrorText(e.message)
-                  }
+                  // Also add the condition here
+                  application.invokeLater (
+                    { setErrorText(e.message) },
+                    { shouldCancelProcess() }
+                  )
                 }
               }
             }
@@ -193,6 +203,8 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
 
   override fun dispose() {
     platformioProcessIndicator.cancel()
+    platformioProcessExecutor.shutdown()
     super.dispose()
+    isDisposed = true
   }
 }
