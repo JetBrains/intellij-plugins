@@ -10,6 +10,7 @@ import com.intellij.execution.process.KillableProcessHandler
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.Service
@@ -60,7 +61,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
-  private val servicesMap: MutableMap<String, DartToolingDaemonServiceConsumer> = mutableMapOf()
+  private val servicesMap: MutableMap<String, DartToolingDaemonRequestHandler> = mutableMapOf()
 
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
@@ -106,7 +107,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
     }
   }
 
-  fun registerServiceMethod(service: String, method: String, consumer: DartToolingDaemonServiceConsumer) {
+  @Suppress("unused") // for the Flutter plugin
+  fun registerServiceMethod(service: String, method: String, consumer: DartToolingDaemonRequestHandler) {
     val params = JsonObject()
     params.addProperty("service", service)
     params.addProperty("method", method)
@@ -114,11 +116,13 @@ class DartToolingDaemonService private constructor(private val project: Project)
       val result = response.getAsJsonObject("result")
       if (result == null) {
         logger.error("No result from attempt to register service $service.$method")
+        return@sendRequest
       }
 
       val type = result.getAsJsonPrimitive("type")
       if (type == null || "Success" != type.asString) {
         logger.error("Failed to register service $service.$method")
+        return@sendRequest
       }
 
       servicesMap["$service.$method"] = consumer
@@ -164,6 +168,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     webSocket.send(responseString)
   }
 
+  @Suppress("unused") // for the Flutter plugin
   fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
     eventDispatcher.addListener(listener, parentDisposable)
 
@@ -314,8 +319,10 @@ class DartToolingDaemonService private constructor(private val project: Project)
       else if (serviceConsumer != null) {
         val params = json["params"].asJsonObject
         val id = json["id"].asString
-        val result = serviceConsumer.received(params)
-        sendResponse(id, result)
+        ApplicationManager.getApplication().executeOnPooledThread {
+          val result = serviceConsumer.handleRequest(params)
+          sendResponse(id, result)
+        }
       }
       else {
         val id = json["id"].asString
