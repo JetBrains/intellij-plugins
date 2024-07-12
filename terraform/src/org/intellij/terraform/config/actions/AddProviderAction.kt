@@ -21,11 +21,11 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +49,7 @@ internal const val FADEOUT_TIME_MILLIS: Long = 10_000L
 internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
 
   override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
-    val possibleTypes = getAllTypesForBlockByIdentifier(startElement as HCLBlock)
+    val possibleTypes = getAllTypesForBlockByIdentifier((startElement as HCLBlock).createSmartPointer())
     if (possibleTypes.size == 1) return super.generatePreview(project, editor, file)
     return IntentionPreviewInfo.EMPTY
   }
@@ -82,7 +82,9 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
       .showInBestPositionFor(editor)
   }
 
-  fun showProvidersNotFoundBalloon(startElement: HCLBlock, editor: Editor) {
+  @RequiresReadLock
+  fun showProvidersNotFoundBalloon(startElementPointer: SmartPsiElementPointer<HCLBlock>, editor: Editor) {
+    val startElement = startElementPointer.element ?: return
     val blockType = startElement.getNameElementUnquoted(0) ?: return
     val blockIdentifier = startElement.getNameElementUnquoted(1) ?: return
     val resourcePrefix = TypeModel.getResourcePrefix(blockIdentifier)
@@ -104,23 +106,20 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
 
 
   fun addProvider(editor: Editor?, startElement: PsiElement) {
+    if (startElement !is HCLBlock || editor == null) return
     coroutineScope.launch(Dispatchers.Default) {
-      val possibleTypes = if (startElement is HCLBlock && editor != null) {
-        readAction { getAllTypesForBlockByIdentifier(startElement) }
-      }
-      else {
-        return@launch
-      }
+      val blockPointer = readAction {  startElement.createSmartPointer() }
+      val possibleTypes = readAction { getAllTypesForBlockByIdentifier(blockPointer) }
       if (possibleTypes.isEmpty()) {
         withContext(Dispatchers.EDT) {
-          showProvidersNotFoundBalloon(startElement, editor)
+          showProvidersNotFoundBalloon(blockPointer, editor)
         }
       }
       else {
         val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
-        val filePointer = readAction { startElement.containingFile.createSmartPointer() }
+        val filePointer = readAction { blockPointer.element?.containingFile?.createSmartPointer() } ?: return@launch
         if (possibleTypes.size == 1) {
-          addRequiredProvider(filePointer, editor, title, possibleTypes.first())
+          addRequiredProvider(filePointer, title, possibleTypes.first())
         }
         else {
           withContext(Dispatchers.EDT) {
@@ -132,7 +131,7 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 }
 
-internal suspend fun addRequiredProvider(filePointer: SmartPsiElementPointer<PsiFile>, editor: Editor, commandName: @Nls String, blockType: BlockType) {
+internal suspend fun addRequiredProvider(filePointer: SmartPsiElementPointer<PsiFile>, commandName: @Nls String, blockType: BlockType) {
   readAndWriteAction {
     val file = filePointer.element ?: return@readAndWriteAction value(Unit)
     val project = file.project
@@ -164,7 +163,7 @@ private class SelectUnknownResourceStep(
     if (selectedValue != null) {
       coroutineScope.launch(Dispatchers.Default) {
         val commandName = HCLBundle.message("terraform.add.provider.dialog.title", selectedValue.literal)
-        addRequiredProvider(pointer, editor, commandName, selectedValue)
+        addRequiredProvider(pointer, commandName, selectedValue)
       }
     }
     return FINAL_CHOICE

@@ -1,0 +1,3 @@
+provider "tsuru<caret>" {
+
+}

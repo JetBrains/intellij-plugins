@@ -1,6 +1,9 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.common.waitUntilAssertSucceeds
+
 internal class TFBackendCompletionTestCase: TFBaseCompletionTestCase() {
 
   fun testTerraformBlockAdvised() {
@@ -22,17 +25,26 @@ internal class TFBackendCompletionTestCase: TFBaseCompletionTestCase() {
     doBasicCompletionTest("terraform{backend \"s3\" {<caret>}}", "bucket", "key")
   }
 
-  fun _testImportBlockCompletion() {
+  fun testImportBlockCompletion() {
     val textBefore = "im<caret>"
-    val textAfter = """import {
-                         id = ""
-                         to = ""
-                       }""".trim()
+    val textAfter = """
+      import {
+        id = ""
+        to = ""
+      }""".trimIndent()
 
     myFixture.configureByText(fileName, textBefore)
     val variants = myFixture.completeBasic()
     assertNull(variants)
-    myFixture.checkResult(textAfter)
+    timeoutRunBlocking {
+      waitUntilAssertSucceeds("") {
+        myFixture.checkResult(textAfter)
+      }
+    }
+  }
+
+  override fun runInDispatchThread(): Boolean {
+    return false
   }
 
   fun testImportToCompletion() {

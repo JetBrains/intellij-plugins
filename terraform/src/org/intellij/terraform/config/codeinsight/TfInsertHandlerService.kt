@@ -14,8 +14,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
+import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
@@ -26,6 +28,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
@@ -42,6 +45,7 @@ import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.withGuaranteedProgressIndicator
 
 @Service(Service.Level.PROJECT)
 class TfInsertHandlerService(val project: Project, val coroutineScope: CoroutineScope) {
@@ -96,15 +100,17 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
 
   private suspend fun addHCLBlockRequiredProperties(project: Project, pointer: SmartPsiElementPointer<HCLBlock>, inspection: HCLBlockMissingPropertyInspection, ) {
     var hasChanges: Boolean = false
-    do {
-      readAndWriteAction {
-        val fixes = processBlockInspections(pointer, inspection)
-        writeCommandAction(project, HCLBundle.message("terraform.add.required.properties.command.name")) {
-          hasChanges = applyFixes(fixes, project)
+    withBackgroundProgress(project, HCLBundle.message("progress.title.adding.required.properties"), true) {
+      do {
+        readAndWriteAction {
+          val fixes = processBlockInspections(pointer, inspection)
+          writeCommandAction(project, HCLBundle.message("terraform.add.required.properties.command.name")) {
+            hasChanges = applyFixes(fixes, project)
+          }
         }
       }
+      while (hasChanges)
     }
-    while (hasChanges)
   }
 
   private fun applyFixes(fixes: List<Pair<ProblemDescriptor, AddResourcePropertiesFix>>, project: Project, ): Boolean {
