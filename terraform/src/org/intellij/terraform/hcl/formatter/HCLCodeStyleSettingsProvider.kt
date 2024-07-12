@@ -11,18 +11,18 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import org.intellij.terraform.hcl.HCLLanguage
 
-open class HCLCodeStyleSettingsProvider(val _language: Language = HCLLanguage) : CodeStyleSettingsProvider() {
+open class HCLCodeStyleSettingsProvider(private val language: Language = HCLLanguage) : CodeStyleSettingsProvider() {
   override fun createConfigurable(settings: CodeStyleSettings, originalSettings: CodeStyleSettings): CodeStyleConfigurable {
-    return object : CodeStyleAbstractConfigurable(settings, originalSettings, _language.displayName) {
+    return object : CodeStyleAbstractConfigurable(settings, originalSettings, language.displayName) {
       override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel {
         val currentSettings = currentSettings
-        return object : TabbedLanguageCodeStylePanel(_language, currentSettings, settings) {
+        return object : TabbedLanguageCodeStylePanel(language, currentSettings, settings) {
           override fun initTabs(settings: CodeStyleSettings) {
             addIndentOptionsTab(settings)
             addSpacesTab(settings)
             addBlankLinesTab(settings)
             addWrappingAndBracesTab(settings)
-            addTab(HCLCodeStylePanel(_language, settings))
+            addTab(HCLCodeStylePanel(language, settings))
           }
         }
       }
@@ -30,10 +30,10 @@ open class HCLCodeStyleSettingsProvider(val _language: Language = HCLLanguage) :
   }
 
   override fun getLanguage(): Language? {
-    return _language
+    return language
   }
 
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
-    return HCLCodeStyleSettings(settings, _language)
+    return HCLCodeStyleSettings(settings, language)
   }
 }

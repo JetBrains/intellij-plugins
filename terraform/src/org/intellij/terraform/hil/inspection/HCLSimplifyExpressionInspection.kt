@@ -44,10 +44,10 @@ class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspe
   }
 
   class ReplaceWithListIndexing(e: HCLMethodCallExpression) : LocalQuickFixAndIntentionActionOnPsiElement(e), BatchQuickFix {
-    override fun getText() = HCLBundle.message("hcl.simplify.expression.inspection.replace.with.list.indexing.quick.fix.text")
-    override fun getFamilyName() = HCLBundle.message("hcl.simplify.expression.inspection.replace.with.list.indexing.quick.fix.family.name")
+    override fun getText(): String = HCLBundle.message("hcl.simplify.expression.inspection.replace.with.list.indexing.quick.fix.text")
+    override fun getFamilyName(): String = HCLBundle.message("hcl.simplify.expression.inspection.replace.with.list.indexing.quick.fix.family.name")
 
-    override fun startInWriteAction() = false
+    override fun startInWriteAction(): Boolean = false
 
     override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
       if (file.language !in listOf(HCLLanguage, TerraformLanguage)) return false

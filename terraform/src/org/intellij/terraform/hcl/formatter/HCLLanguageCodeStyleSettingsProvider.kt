@@ -12,10 +12,10 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 
 open class HCLLanguageCodeStyleSettingsProvider(private val language:Language = HCLLanguage) : LanguageCodeStyleSettingsProvider() {
-  override fun getLanguage() = language
+  override fun getLanguage(): Language = language
 
   companion object {
-    const val SAMPLE = """
+    const val SAMPLE: String = """
     name = value
     block 'name' {
       long_array = [ 'a', 100, "b", 1234567890, 1234567890, 1234567890, 1234567890, 10e100, true, false ]
