@@ -5,12 +5,17 @@ import com.google.gson.JsonElement
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetElementTypeRequestArgs
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetSymbolTypeRequestArgs
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetTypePropertiesRequestArgs
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServerState
+import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import kotlinx.coroutines.delay
+import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
@@ -23,6 +28,24 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     get() = VueBundle.message("vue.service.prefix")
 
   override fun isAcceptable(file: VirtualFile) = VueServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)
+
+  override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
+    // Feel free to replace with the longer version
+    // ```typescript
+    // let __VLS_ctx: CreateComponentPublicInstance<Readonly<ExtractPropTypes<__VLS_TypePropsToOption<{
+    val internalVolarLeakMarker = """
+      ```typescript
+      let __VLS_ctx
+    """.trimIndent()
+    val hrMarker = "\n\n---\n\n"
+    if (markupContent.value.startsWith(internalVolarLeakMarker)) {
+      val index = markupContent.value.indexOf(hrMarker)
+      if (index > -1) {
+        markupContent.value = markupContent.value.substring(index + hrMarker.length)
+      }
+    }
+    return super.createQuickInfoResponse(markupContent)
+  }
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
