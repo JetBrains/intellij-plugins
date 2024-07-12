@@ -3,6 +3,7 @@ package org.intellij.terraform.config.codeinsight
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiFile
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -235,7 +236,8 @@ internal object TfModelHelper {
   }
 
   @RequiresReadLock
-  fun getAllTypesForBlockByIdentifier(block: HCLBlock): List<BlockType> {
+  fun getAllTypesForBlockByIdentifier(blockPointer: SmartPsiElementPointer<HCLBlock>): List<BlockType> {
+    val block = blockPointer.element ?: return emptyList()
     val model = TypeModelProvider.getModel(block)
     val typeString = block.getNameElementUnquoted(0) ?: return emptyList()
     val identifier = block.getNameElementUnquoted(1) ?: return emptyList()
