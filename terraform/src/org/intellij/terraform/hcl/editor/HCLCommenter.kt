@@ -2,6 +2,7 @@
 package org.intellij.terraform.hcl.editor
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.codeInsight.generation.IndentedCommenter
 import com.intellij.codeInsight.generation.SelfManagingCommenter
 import com.intellij.codeInsight.generation.SelfManagingCommenterUtil
 import com.intellij.lang.CodeDocumentationAwareCommenter
@@ -15,7 +16,7 @@ import org.intellij.terraform.hcl.HCLElementTypes.*
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings.LineCommenterPrefix
 
-class HCLCommenter : CodeDocumentationAwareCommenter, SelfManagingCommenter<HCLCommenterDataHolder> {
+class HCLCommenter : CodeDocumentationAwareCommenter, SelfManagingCommenter<HCLCommenterDataHolder>, IndentedCommenter {
   private val BLOCK_COMMENT_PREFIX = "/*"
   private val BLOCK_COMMENT_SUFFIX = "*/"
   private val LINE_POUND_COMMENT = LineCommenterPrefix.LINE_POUND_SIGN.prefix
@@ -87,6 +88,8 @@ class HCLCommenter : CodeDocumentationAwareCommenter, SelfManagingCommenter<HCLC
 
   override fun commentLine(line: Int, offset: Int, document: Document, data: HCLCommenterDataHolder): Unit =
     document.insertString(offset, lineCommentPrefix(data))
+
+  override fun forceIndentedLineComment(): Boolean = true
 
   private fun isPoundSignComment(offset: Int, document: Document): Boolean =
     CharArrayUtil.regionMatches(document.charsSequence, offset, LINE_POUND_COMMENT)
