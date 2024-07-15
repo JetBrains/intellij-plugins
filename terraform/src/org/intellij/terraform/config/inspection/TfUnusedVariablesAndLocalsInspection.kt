@@ -2,9 +2,11 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.getTerraformModule
@@ -18,39 +20,52 @@ class TfUnusedVariablesAndLocalsInspection : LocalInspectionTool() {
       return PsiElementVisitor.EMPTY_VISITOR
     }
 
-    return BlockVisitor(holder)
+    return TfVisitor(holder)
   }
 
-  inner class BlockVisitor(private val holder: ProblemsHolder) : HCLElementVisitor() {
+  inner class TfVisitor(private val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
-      if (TerraformPatterns.VariableRootBlock.accepts(block) && isElementUnused(block)) {
-        holder.registerProblem(
-          block,
-          HCLBundle.message("unused.variable.inspection.error.message", block.getNameElementUnquoted(1)),
-          ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-          RemoveVariableQuickFix(block)
-        )
-      }
-
-      if (TerraformPatterns.LocalsRootBlock.accepts(block)) {
-        val localObject = block.`object`
-        localObject?.propertyList?.forEach { local ->
-          if (isElementUnused(local)) {
-            holder.registerProblem(
-              local,
-              HCLBundle.message("unused.local.inspection.error.message", local.name),
-              ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-              RemoveLocalQuickFix(local)
-            )
-          }
-        }
+      if (TerraformPatterns.VariableRootBlock.accepts(block)) {
+        object : HclUnusedElement(holder, block) {
+          override val inspectionMessage: String = HCLBundle.message("unused.variable.inspection.error.message", name)
+          override val quickFix: LocalQuickFix = RemoveVariableQuickFix(block)
+        }.checkElement()
       }
     }
 
-    private fun isElementUnused(element: HCLElement): Boolean {
-      val module = element.getTerraformModule()
-      val searchScope = module.getTerraformModuleScope()
-      return ReferencesSearch.search(element, searchScope, false).findFirst() == null
+    override fun visitProperty(property: HCLProperty) {
+      if (TerraformPatterns.LocalProperty.accepts(property)) {
+        object : HclUnusedElement(holder, property) {
+          override val inspectionMessage: String = HCLBundle.message("unused.local.inspection.error.message", name)
+          override val quickFix: LocalQuickFix = RemoveLocalQuickFix(property)
+        }.checkElement()
+      }
+    }
+  }
+}
+
+internal abstract class HclUnusedElement(private val holder: ProblemsHolder, private val element: HCLElement) {
+  abstract val inspectionMessage: String
+  abstract val quickFix: LocalQuickFix
+
+  val name: String? by lazy { element.getElementName() }
+
+  private fun isElementUnused(): Boolean {
+    val module = element.getTerraformModule()
+    val searchScope = module.getTerraformModuleScope()
+
+    val elementName = name ?: return false
+    val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(elementName, searchScope, element.containingFile)
+    if (costSearch != PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES) {
+      return false
+    }
+
+    return ReferencesSearch.search(element, searchScope, false).findFirst() == null
+  }
+
+  fun checkElement() {
+    if (isElementUnused()) {
+      holder.registerProblem(element, inspectionMessage, ProblemHighlightType.LIKE_UNUSED_SYMBOL, quickFix)
     }
   }
 }

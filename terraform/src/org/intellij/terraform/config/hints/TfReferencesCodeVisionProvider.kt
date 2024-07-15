@@ -6,6 +6,8 @@ import com.intellij.codeInsight.hints.codeVision.ReferencesCodeVisionProvider
 import com.intellij.openapi.options.advanced.AdvancedSettings.Companion.getInt
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.PsiSearchHelper
+import com.intellij.psi.search.PsiSearchHelper.SearchCostResult
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.intellij.terraform.config.TerraformFileType
@@ -15,6 +17,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.getElementName
 import java.util.concurrent.atomic.AtomicInteger
 
 class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
@@ -30,6 +33,11 @@ class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
     if (element !is HCLElement)
       return null
     val scope = element.getTerraformModule().getTerraformModuleScope()
+
+    val elementName = element.getElementName() ?: return null
+    val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(elementName, scope, file)
+    if (costSearch == SearchCostResult.TOO_MANY_OCCURRENCES)
+      return null
 
     val usagesCount = AtomicInteger()
     val limit = getInt("org.intellij.terraform.code.vision.usages.limit")
