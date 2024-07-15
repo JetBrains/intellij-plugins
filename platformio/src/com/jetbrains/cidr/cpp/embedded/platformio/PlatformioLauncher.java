@@ -79,15 +79,17 @@ public class PlatformioLauncher extends CLionLauncher {
   @NotNull
   @Override
   public ProcessHandler createProcess(@NotNull CommandLineState state) throws ExecutionException {
-    ActionManager actionManager = ActionManager.getInstance();
-    AnAction uploadAction = actionManager.getAction("target-platformio-upload");
-    if (uploadAction != null) {
-      actionManager.tryToExecute(uploadAction, null, null, null, true);
-    }
-    else {
-      notifyUploadUnavailable(getProject());
-    }
-    throw new CantRunException.CustomProcessedCantRunException();
+    return CidrCoroutineHelper.runOnEDT(() -> {
+      ActionManager actionManager = ActionManager.getInstance();
+      AnAction uploadAction = actionManager.getAction("target-platformio-upload");
+      if (uploadAction != null) {
+        actionManager.tryToExecute(uploadAction, null, null, null, true);
+      }
+      else {
+        notifyUploadUnavailable(getProject());
+      }
+      throw new CantRunException.CustomProcessedCantRunException();
+    });
   }
 
   @Override
