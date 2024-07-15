@@ -152,7 +152,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
           val name = it["name"] ?: throw ExternalSystemException("Malformed metadata targets section")
           PlatformioTargetData(name, it["title"], it["description"], it["group"])
         }
-        platformioService.setTargets(targets ?: emptyList())
+        platformioService.setTargets(addUploadIfMissing(targets.orEmpty()))
 
         val srcFolderPath = projectDir.toNioPath().resolve(platformioSection["src_dir"].asSafely<String>() ?: "src")
         val srcFolder: VirtualFile = VfsUtil.findFile(srcFolderPath, false) ?: throw ExternalSystemException(
@@ -319,4 +319,11 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     }
   }
 
+  private fun addUploadIfMissing(targets: List<PlatformioTargetData>): List<PlatformioTargetData> =
+    if (targets.any { it.name == "upload" }) {
+      targets
+    }
+    else {
+      targets + PlatformioTargetData("upload", "Upload", null, "Platform")
+    }
 }
