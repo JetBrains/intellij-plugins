@@ -24,6 +24,13 @@ fun HCLBlock.getNameElementUnquoted(i: Int): String? {
   }
 }
 
+fun HCLElement.getElementName(): String? = when (this) {
+  // For now, consider the name of 'Local' property and 'Variable' block
+  is HCLProperty -> this.name
+  is HCLBlock -> this.getNameElementUnquoted(1)
+  else -> null
+}
+
 fun <T : PsiElement, Self : PsiElementPattern<T, Self>> PsiElementPattern<T, Self>.afterSiblingSkipping2(skip: ElementPattern<out Any>, pattern: ElementPattern<out PsiElement>): Self {
   return with(object : PatternCondition<T>("afterSiblingSkipping2") {
     override fun accepts(t: T, context: ProcessingContext): Boolean {
