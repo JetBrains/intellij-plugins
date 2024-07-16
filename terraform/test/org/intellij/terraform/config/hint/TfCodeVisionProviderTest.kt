@@ -62,6 +62,36 @@ class TfCodeVisionProviderTest : CodeVisionTestCase() {
     output "total_instances" {
       value = local.instance_count
     }
+    
+    data "aws_ami" "latest_amazon_linux" {/*<# [2 usages] #>*/
+      most_recent = true
+
+      filter {
+        name   = "name"
+        values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+      }
+
+      filter {
+        name   = "owner-alias"
+        values = ["amazon"]
+      }
+
+      owners = ["amazon"]
+    }
+
+    data "aws_vpc" "default" {/*<# [no usages] #>*/
+      default = true
+    }
+
+    resource "aws_instance" "test" {
+      ami           = data.aws_ami.latest_amazon_linux.id
+      instance_type = "t2.micro"
+      subnet_id     = data.aws_ami.latest_amazon_linux.tpm_support
+
+      tags = {
+        Name = "ExampleInstance"
+      }
+    }
   """.trimIndent(), TfReferencesCodeVisionProvider().groupId)
 
   private fun doTest(text: String, vararg enabledProviderGroupIds: String) {
