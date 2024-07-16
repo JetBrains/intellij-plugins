@@ -293,11 +293,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 }
 
 internal class Identifier(
-  /** Name of the identifier as used within TCB */
+  /** Name of the identifier as used in the generated file within TCB */
   val name: String,
-  /** name of the identifier as in the source file */
+  /** name of the identifier as in the source HTML file */
   val sourceName: String?,
-  /** text range of the original variable within the source file */
+  /** text range of the original variable within the source HTML file */
   val sourceSpan: TextRange? = null,
 ) {
   override fun toString(): String = name
