@@ -114,6 +114,7 @@
                              key="prisma.settings.configurable.title"
                              nonDefaultProject="true"
         />
+        <dependencySupport kind="javascript" coordinate="npm:prisma" displayName="Prisma"/>
 
         <!-- Find Usages -->
        <lang.findUsagesProvider language="Prisma" implementationClass="org.intellij.prisma.lang.findUsages.PrismaFindUsagesProvider"/>
