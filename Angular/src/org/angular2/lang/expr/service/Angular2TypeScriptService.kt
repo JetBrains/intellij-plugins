@@ -201,7 +201,7 @@ private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange {
 private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, suffix: String): String {
   var result = this
   for ((generatedName, originalName) in nameMap) {
-    result = result.replace(Regex("([$prefix.])${Regex.escape(generatedName)}([$suffix.])"), "\$1$originalName\$2")
+    result = result.replace(Regex("$prefix${Regex.escape(generatedName)}([.$suffix])"), "$prefix$originalName\$1")
   }
   return result
 }
