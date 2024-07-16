@@ -1,7 +1,3 @@
-# intention: "TfUnusedVariablesAndLocals"
-# fix: "Remove unused variable"
-# position: 25: "variable "unused_variable2" {"
-#
 variable "used_variable" {
   description = "This variable is used in resource configuration"
   type        = string
@@ -25,6 +21,12 @@ variable "unused_variable1" {
   description = "This variable is not used anywhere in the configuration"
   type        = string
   default     = "default_value1"
+}
+
+variable "unused_variable2" {
+  description = "Another unused variable"
+  type        = bool
+  default     = true
 }
 
 locals {
@@ -62,4 +64,33 @@ resource "aws_instance" "example3" {
 
 output "partial_local_output" {
   value = local.partially_used_local
+}
+
+data "aws_ami" "latest_amazon_linux" {
+  most_recent = true
+
+  filter {
+    name = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name = "owner-alias"
+    values = ["amazon"]
+  }
+
+  owners = ["amazon"]
+}
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+resource "aws_instance" "test" {
+  ami           = data.aws_ami.latest_amazon_linux.id
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "ExampleInstance"
+  }
 }

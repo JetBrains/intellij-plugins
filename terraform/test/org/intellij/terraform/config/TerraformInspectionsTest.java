@@ -162,6 +162,6 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
   }
 
   public void testUnusedVariableAndLocals() {
-    doTest("unused_vars_and_locals", new TfUnusedVariablesAndLocalsInspection());
+    doTest("unused_elements", new TfUnusedElementsInspection());
   }
 }

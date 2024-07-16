@@ -14,7 +14,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 
-class TfUnusedVariablesAndLocalsInspection : LocalInspectionTool() {
+class TfUnusedElementsInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     if (holder.file.fileType != TerraformFileType) {
       return PsiElementVisitor.EMPTY_VISITOR
@@ -25,12 +25,19 @@ class TfUnusedVariablesAndLocalsInspection : LocalInspectionTool() {
 
   inner class TfVisitor(private val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
-      if (TerraformPatterns.VariableRootBlock.accepts(block)) {
-        object : HclUnusedElement(holder, block) {
+      val unusedElement: HclUnusedElement? = when {
+        TerraformPatterns.VariableRootBlock.accepts(block) -> object : HclUnusedElement(holder, block) {
           override val inspectionMessage: String = HCLBundle.message("unused.variable.inspection.error.message", name)
           override val quickFix: LocalQuickFix = RemoveVariableQuickFix(block)
-        }.checkElement()
+        }
+        TerraformPatterns.DataSourceRootBlock.accepts(block) -> object : HclUnusedElement(holder, block) {
+          override val inspectionMessage: String = HCLBundle.message("unused.data.source.inspection.error.message", name)
+          override val quickFix: LocalQuickFix = RemoveDataSourceQuickFix(block)
+        }
+        else -> null
       }
+
+      unusedElement?.checkElement()
     }
 
     override fun visitProperty(property: HCLProperty) {
@@ -76,4 +83,8 @@ internal class RemoveVariableQuickFix(element: HCLBlock) : RemovePsiElementQuick
 
 internal class RemoveLocalQuickFix(element: HCLProperty) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.local.inspection.quick.fix.name")
+}
+
+internal class RemoveDataSourceQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
+  override fun getText(): String = HCLBundle.message("unused.data.source.inspection.quick.fix.name")
 }
