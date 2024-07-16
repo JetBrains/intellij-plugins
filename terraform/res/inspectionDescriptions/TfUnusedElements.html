@@ -1,9 +1,33 @@
 <html>
 <body>
-<p>Reports unused variables and locals in a Terraform module and provides a quick-fix to remove them.</p>
+<p>Reports unused variables, locals and data sources in a Terraform module and provides a quick-fix to remove them.</p>
 <p>Example of a problem:</p>
 
 <pre><code>
+data "aws_ami" "latest_amazon_linux" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  owners = ["amazon"]
+}
+
+data "aws_vpc" "unused_data_source" {
+  default = true
+}
+
+resource "aws_instance" "example" {
+  ami           = data.aws_ami.latest_amazon_linux.id
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "ExampleInstance"
+  }
+}
+
 variable "used_variable" {
   description = "This variable is used in resource configuration"
   type        = string
@@ -35,11 +59,32 @@ locals {
 </code></pre>
 
 <p>
-  In this example, <code>unused_variable1</code> and <code>unused_local1</code> are declared in the file, but are not used anywhere.
+  In this example, <code>unused_data_source</code>, <code>unused_variable1</code> and <code>unused_local1</code> are declared in the file,
+  but are not used anywhere.
 </p>
 
 <p>After the quick-fix is applied:</p>
 <pre><code>
+data "aws_ami" "latest_amazon_linux" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  owners = ["amazon"]
+}
+
+resource "aws_instance" "example" {
+  ami           = data.aws_ami.latest_amazon_linux.id
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "ExampleInstance"
+  }
+}
+
 variable "used_variable" {
   description = "This variable is used in resource configuration"
   type        = string

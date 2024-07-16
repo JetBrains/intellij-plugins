@@ -297,10 +297,10 @@
                      key="unknown.resource.identifier.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.intellij.terraform.config.inspection.TfUnknownResourceInspection"/>
-    <localInspection language="HCL" applyToDialects="true" shortName="TfUnusedVariablesAndLocals" bundle="messages.HCLBundle"
+    <localInspection language="HCL" applyToDialects="true" shortName="TfUnusedElements" bundle="messages.HCLBundle"
                      key="unused.local.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
-                     implementationClass="org.intellij.terraform.config.inspection.TfUnusedVariablesAndLocalsInspection"/>
+                     implementationClass="org.intellij.terraform.config.inspection.TfUnusedElementsInspection"/>
 
     <!--region TF Duplicates-->
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedProvider" bundle="messages.HCLBundle"
