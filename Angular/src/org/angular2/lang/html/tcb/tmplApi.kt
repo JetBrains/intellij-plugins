@@ -738,7 +738,7 @@ private fun buildInfo(
 ): TemplateBindingsInfo? {
   if (attribute == null) return null
   val templateBindings = Angular2TemplateBindings.get(attribute).bindings
-  val templateName = attribute.name.substring(1)
+  val templateName = attribute.name.removePrefix("*")
   val hasDefaultBinding = templateBindings.any { !it.keyIsVar() && it.key == templateName }
   val attributeNameRange = attribute.nameElement?.textRange ?: return null
   return TemplateBindingsInfo(
