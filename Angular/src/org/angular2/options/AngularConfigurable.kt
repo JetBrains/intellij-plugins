@@ -10,7 +10,7 @@ import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
 import org.angular2.lang.Angular2Bundle
 
-class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
+class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable, Configurable.Beta {
   private val settings = getAngularSettings(project)
 
   override fun Panel.createContent() {
