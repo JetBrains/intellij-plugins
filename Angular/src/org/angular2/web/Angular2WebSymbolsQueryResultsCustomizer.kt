@@ -2,6 +2,7 @@
 package org.angular2.web
 
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
@@ -29,6 +30,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import java.util.*
+import java.util.function.Supplier
 
 class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
@@ -39,27 +41,29 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
                      strict: Boolean,
                      qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
     if (kinds.contains(qualifiedName.qualifiedKind)) {
-      if (strict) {
-        matches.filter { symbol ->
-          symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
-          && symbol.properties[PROP_ERROR_SYMBOL] != true
+      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(context, Supplier {
+        if (strict) {
+          matches.filter { symbol ->
+            symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
+            && symbol.properties[PROP_ERROR_SYMBOL] != true
+          }
         }
-      }
-      else {
-        val proximityMap = matches.groupBy {
-          val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
-          if (directive != null)
-            scope.getDeclarationProximity(directive)
-          else if (it.properties[PROP_ERROR_SYMBOL] == true)
-            DeclarationProximity.NOT_REACHABLE
-          else
-            DeclarationProximity.IN_SCOPE
+        else {
+          val proximityMap = matches.groupBy {
+            val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
+            if (directive != null)
+              scope.getDeclarationProximity(directive)
+            else if (it.properties[PROP_ERROR_SYMBOL] == true)
+              DeclarationProximity.NOT_REACHABLE
+            else
+              DeclarationProximity.IN_SCOPE
+          }
+          DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
+            proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
+          }
+          ?: emptyList()
         }
-        DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
-          proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
-        }
-        ?: emptyList()
-      }
+      })
     }
     else if (qualifiedName.namespace == NAMESPACE_HTML) {
       if (matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol })
@@ -89,19 +93,21 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       null
     }
     else if (directives.isNotEmpty()) {
-      val proximity = scope.getDeclarationsProximity(directives)
-      if (proximity == DeclarationProximity.NOT_REACHABLE) {
-        null
-      }
-      else {
-        wrapWithImportDeclarationModuleHandler(
-          Angular2CodeInsightUtils.decorateCodeCompletionItem(item, directives, proximity, scope),
-          when (qualifiedKind) {
-            NG_DIRECTIVE_ELEMENT_SELECTORS -> XmlTag::class.java
-            NG_STRUCTURAL_DIRECTIVES -> Angular2TemplateBindings::class.java
-            else -> XmlAttribute::class.java
-          })
-      }
+      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(context, Supplier {
+        val proximity = scope.getDeclarationsProximity(directives)
+        if (proximity == DeclarationProximity.NOT_REACHABLE) {
+          null
+        }
+        else {
+          wrapWithImportDeclarationModuleHandler(
+            Angular2CodeInsightUtils.decorateCodeCompletionItem(item, directives, proximity, scope),
+            when (qualifiedKind) {
+              NG_DIRECTIVE_ELEMENT_SELECTORS -> XmlTag::class.java
+              NG_STRUCTURAL_DIRECTIVES -> Angular2TemplateBindings::class.java
+              else -> XmlAttribute::class.java
+            })
+        }
+      })
     }
     else item
   }
