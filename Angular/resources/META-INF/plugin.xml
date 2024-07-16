@@ -79,7 +79,6 @@
     <platform.backend.documentation.psiTargetProvider
       implementation="org.angular2.codeInsight.documentation.Angular2ElementDocumentationTargetFactory"/>
 
-    <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="WARNING" language="JSON"
@@ -194,7 +193,6 @@
     <langCodeStyleSettingsProvider implementation="org.angular2.options.Angular2HtmlCodeStyleSettingsProvider"/>
     <fileIndentOptionsProvider implementation="org.angular2.lang.html.psi.formatter.Angular2HtmlFileIndentOptionsProvider"
                                id="angular2html" order="before html"/>
-    <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Html"/>
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
                        id="angular2"/>
@@ -302,7 +300,6 @@
               language="Angular2Svg"/>
     <fileType name="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgFileType" fieldName="INSTANCE"
               language="Angular17Svg"/>
-    <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
 
     <!-- Angular 2 Expression Language contributions -->
