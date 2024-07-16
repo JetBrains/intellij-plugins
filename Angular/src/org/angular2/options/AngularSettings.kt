@@ -37,7 +37,7 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
 }
 
 class AngularSettingsState : BaseState() {
-  var innerServiceType by enum(AngularServiceSettings.AUTO)
+  var innerServiceType by enum(AngularServiceSettings.DISABLED)
   var packageName by string(defaultPackageKey)
 }
 
