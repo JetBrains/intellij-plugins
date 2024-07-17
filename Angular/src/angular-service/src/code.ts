@@ -35,12 +35,13 @@ export class AngularVirtualCode implements VirtualCode {
     if (this.transpiledTemplate) {
       // Check if the template is in sync
       // It is possible that the template will be in sync after another update
-      if (snapshot.getChangeRange(this.transpiledTemplate.snapshot) !== undefined
-          || !sameContents(snapshot, this.transpiledTemplate.sourceCode[this.normalizeId(this.fileName)])) {
+      let sourceText = getNormalizedSnapshotText(snapshot)
+      if (!getNormalizedSnapshotText(this.transpiledTemplate.snapshot).startsWith(sourceText)
+          || sourceText !== this.transpiledTemplate.sourceCode[this.normalizeId(this.fileName)]) {
         templateInSync = false
       } else if (this.transpiledTemplate.mappings.find(mapping => {
-          return !sameContents(this.ctx.getAssociatedScript(mapping.fileName)?.snapshot,
-                               this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.fileName)])
+          return getNormalizedSnapshotText(this.ctx.getAssociatedScript(mapping.fileName)?.snapshot)
+            !== this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.fileName)]
         })) {
         templateInSync = false
       }
@@ -158,6 +159,15 @@ export class AngularVirtualCode implements VirtualCode {
 
 }
 
+function getNormalizedSnapshotText(snapshot: IScriptSnapshot | undefined): string {
+  if (!snapshot) return ""
+  if ((snapshot as any).__normalizedSnapshotText)
+    return (snapshot as any).__normalizedSnapshotText
+  const result = snapshot.getText(0, snapshot.getLength()).replaceAll(/\r\n|\n\r/g, "\n");
+  (snapshot as any).__normalizedSnapshotText = result
+  return result;
+}
+
 function fullDiffTextChangeRange(oldText: string, newText: string): ts.TextChangeRange | undefined {
   for (let start = 0; start < oldText.length && start < newText.length; start++) {
     if (oldText[start] !== newText[start]) {
@@ -181,10 +191,6 @@ function fullDiffTextChangeRange(oldText: string, newText: string): ts.TextChang
     }
   }
   return undefined
-}
-
-function sameContents(snapshot: IScriptSnapshot | undefined, code: string | undefined): boolean {
-  return !!snapshot && !!code && snapshot.getText(0, snapshot.getLength()) === code
 }
 
 function createScriptSnapshot(code: string): IScriptSnapshot {

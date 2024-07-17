@@ -49,7 +49,7 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
     }
 
     return ServiceObjectWithCacheUpdate(
-      newContents.toAngular2TranspiledTemplateRequestArgs(componentVirtualFile),
+      newContents.toAngular2TranspiledTemplateRequestArgs(myProject, componentVirtualFile),
       listOf(Runnable {
         transpiledComponentCache[componentVirtualFile] = newInfo
       })
