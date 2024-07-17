@@ -45,7 +45,7 @@ function loadLanguagePlugins(ts: typeof import('tsc-ide-plugin/tsserverlibrary.s
       typescript: {
         extraFileExtensions: [{
           extension: "html",
-          scriptKind: ts.ScriptKind.External,
+          scriptKind: ts.ScriptKind.Deferred,
           isMixedContent: true,
         }],
         getServiceScript(rootVirtualCode: AngularVirtualCode): TypeScriptServiceScript | undefined {
