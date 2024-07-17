@@ -154,7 +154,8 @@ export class AngularVirtualCode implements VirtualCode {
   }
 
   normalizeId(id: string): string {
-    return this.useCaseSensitiveFileNames ? id : id.toLowerCase()
+    let withProperCase = this.useCaseSensitiveFileNames ? id : id.toLowerCase();
+    return withProperCase.replaceAll("/", "\\")
   }
 
 }
