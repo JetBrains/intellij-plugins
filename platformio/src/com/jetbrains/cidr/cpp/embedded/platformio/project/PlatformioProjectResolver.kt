@@ -282,8 +282,8 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     val processHandler = CapturingAnsiEscapesAwareProcessHandler(commandLine.build())
     processHandlerToKill = processHandler
 
-    val configTaskDescriptor = TaskOperationDescriptorImpl(taskDescription, System.currentTimeMillis(), "pio-project-config")
-    val configStartEvent = ExternalSystemStartEventImpl(pioRunEventId, null, configTaskDescriptor)
+    val configTaskDescriptor = TaskOperationDescriptor(taskDescription, System.currentTimeMillis(), "pio-project-config")
+    val configStartEvent = ExternalSystemStartEvent(pioRunEventId, null, configTaskDescriptor)
     listener.onStatusChange(ExternalSystemTaskExecutionEvent(id, configStartEvent))
 
     processHandler.addProcessListener(object : ProcessListener {
@@ -298,24 +298,26 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     try {
       val pioOutput = processHandler.runProcess()
       if (pioOutput.exitCode != 0) {
-        operationResult = FailureResultImpl(configStartEvent.eventTime, System.currentTimeMillis(), emptyList())
+        operationResult = FailureResult(configStartEvent.eventTime, System.currentTimeMillis(), emptyList())
         throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("platformio.utility.exit.code", pioOutput.exitCode))
       }
       return pioOutput
     }
     catch (e: Throwable) {
-      operationResult = FailureResultImpl(configStartEvent.eventTime, System.currentTimeMillis(),
-                                          listOf(FailureImpl(e.localizedMessage, null, emptyList())))
+      operationResult = FailureResult(configStartEvent.eventTime, System.currentTimeMillis(),
+                                                                                                              listOf(Failure(e.localizedMessage, null, emptyList())))
       throw ExternalSystemException(e)
     }
     finally {
       processHandlerToKill = null
       if (operationResult == null) {
-        operationResult = SuccessResultImpl(configStartEvent.eventTime, System.currentTimeMillis(), true)
+        operationResult = SuccessResult(configStartEvent.eventTime, System.currentTimeMillis(), true)
       }
       listener.onStatusChange(
-        ExternalSystemTaskExecutionEvent(id, ExternalSystemFinishEventImpl(pioRunEventId, null,
-                                                                           configStartEvent.descriptor, operationResult)))
+        ExternalSystemTaskExecutionEvent(id,
+                                         ExternalSystemFinishEvent(
+                                           pioRunEventId, null,
+                                           configStartEvent.descriptor, operationResult)))
     }
   }
 
