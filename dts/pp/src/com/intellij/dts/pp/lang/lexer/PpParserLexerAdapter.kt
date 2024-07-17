@@ -51,7 +51,7 @@ private class IfState {
  * requires the entire file to be processed at once. For highlighting use [PpHighlightingLexerAdapter].
  */
 open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : PpLexerAdapterBase(tokenTypes, baseLexer) {
-  private val defines = mutableListOf("I_AM_DEFINED")
+  private val defines = mutableListOf<String>()
   private val ifState = IfState()
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
