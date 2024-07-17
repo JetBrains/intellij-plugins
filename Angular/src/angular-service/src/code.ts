@@ -1,5 +1,5 @@
 import {CodeMapping, VirtualCode} from "@volar/language-core"
-import * as ts from "typescript";
+import type * as ts from "typescript";
 import {IScriptSnapshot} from "typescript";
 import {CodegenContext} from "@volar/language-core/lib/types"
 import {Angular2TcbMappingInfo} from "./mappings"
@@ -29,7 +29,11 @@ export class AngularVirtualCode implements VirtualCode {
   constructor(private fileName: string, private ctx: CodegenContext<string>, private useCaseSensitiveFileNames: boolean) {
   }
 
-  sourceFileUpdated(snapshot: ts.IScriptSnapshot, _languageId?: string): AngularVirtualCode {
+  sourceFileUpdated(
+    ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+    snapshot: ts.IScriptSnapshot,
+    _languageId?: string
+  ): AngularVirtualCode {
     this.associatedScriptMappings.clear()
     let templateInSync = true
     if (this.transpiledTemplate) {
@@ -37,11 +41,11 @@ export class AngularVirtualCode implements VirtualCode {
       // It is possible that the template will be in sync after another update
       let sourceText = getNormalizedSnapshotText(snapshot)
       if (!getNormalizedSnapshotText(this.transpiledTemplate.snapshot).startsWith(sourceText)
-          || sourceText !== this.transpiledTemplate.sourceCode[this.normalizeId(this.fileName)]) {
+          || sourceText !== this.transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
         templateInSync = false
       } else if (this.transpiledTemplate.mappings.find(mapping => {
           return getNormalizedSnapshotText(this.ctx.getAssociatedScript(mapping.fileName)?.snapshot)
-            !== this.transpiledTemplate?.sourceCode?.[this.normalizeId(mapping.fileName)]
+            !== this.transpiledTemplate?.sourceCode?.[ts.server.toNormalizedPath(mapping.fileName)]
         })) {
         templateInSync = false
       }
@@ -51,7 +55,7 @@ export class AngularVirtualCode implements VirtualCode {
       this.mappings = []
       this.transpiledTemplate.mappings.forEach(mappingSet => {
         let mappingsWithData: CodeMapping[]
-        if (this.normalizeId(mappingSet.fileName) === this.normalizeId(this.fileName)) {
+        if (ts.server.toNormalizedPath(mappingSet.fileName) === ts.server.toNormalizedPath(this.fileName)) {
           mappingsWithData = this.mappings
         }
         else {
@@ -68,8 +72,6 @@ export class AngularVirtualCode implements VirtualCode {
         }
         // Split the mapping set for Volar
         for (let i = 0 ; i < mappingSet.sourceOffsets.length; i++) {
-          const isComponentFile = mappingSet.fileName === this.fileName
-
           const sourceOffset = mappingSet.sourceOffsets[i]
           const sourceLength = mappingSet.sourceLengths[i]
 
@@ -135,15 +137,19 @@ export class AngularVirtualCode implements VirtualCode {
   }
 
   transpiledTemplateUpdated(
+    ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
     transpiledCode: string | undefined,
     sourceCode: { [fileName: string]: string },
     mappings: Angular2TcbMappingInfo[]
   ) {
     if (transpiledCode) {
       this.transpiledTemplate = {
-        mappings,
+        mappings: mappings.map(it => ({
+          ...it,
+          fileName: ts.server.toNormalizedPath(it.fileName),
+        })),
         sourceCode: Object.fromEntries(Object.entries(sourceCode).map(([key, value]) => {
-          return [this.normalizeId(key), value]
+          return [ts.server.toNormalizedPath(key), value]
         })),
         snapshot: createScriptSnapshot(transpiledCode)
       }
@@ -152,12 +158,6 @@ export class AngularVirtualCode implements VirtualCode {
       this.transpiledTemplate = undefined
     }
   }
-
-  normalizeId(id: string): string {
-    let withProperCase = this.useCaseSensitiveFileNames ? id : id.toLowerCase();
-    return withProperCase.replaceAll("/", "\\")
-  }
-
 }
 
 function getNormalizedSnapshotText(snapshot: IScriptSnapshot | undefined): string {

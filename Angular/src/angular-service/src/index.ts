@@ -30,17 +30,18 @@ function loadLanguagePlugins(ts: typeof import('tsc-ide-plugin/tsserverlibrary.s
       },
       createVirtualCode(scriptId: string, languageId: string, snapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
         if (languageId === "typescript" && !scriptId.endsWith(".d.ts") && scriptId.indexOf("/node_modules/") < 0) {
-          let virtualCode = ngTcbBlocks.get(scriptId)
+          const normalizedScriptId = ts.server.toNormalizedPath(scriptId)
+          let virtualCode = ngTcbBlocks.get(normalizedScriptId)
           if (!virtualCode) {
-            virtualCode = new AngularVirtualCode(scriptId, ctx, ts.sys.useCaseSensitiveFileNames)
-            ngTcbBlocks.set(scriptId, virtualCode)
+            virtualCode = new AngularVirtualCode(normalizedScriptId, ctx, ts.sys.useCaseSensitiveFileNames)
+            ngTcbBlocks.set(normalizedScriptId, virtualCode)
           }
-          return virtualCode.sourceFileUpdated(snapshot)
+          return virtualCode.sourceFileUpdated(ts, snapshot)
         }
         return undefined
       },
       updateVirtualCode(scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
-        return virtualCode.sourceFileUpdated(newSnapshot)
+        return virtualCode.sourceFileUpdated(ts, newSnapshot)
       },
       typescript: {
         extraFileExtensions: [{

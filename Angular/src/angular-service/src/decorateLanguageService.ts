@@ -126,12 +126,12 @@ export function decorateNgLanguageServiceExtensions(
   unboundReverseMapper: UnboundReverseMapper,
   webStormGetElementType: TS.LanguageService["webStormGetElementType"]) {
   languageService.webStormNgUpdateTranspiledTemplate = (
-    _ts, fileName,transpiledCode,sourceCode: { [key: string]: string }, mappings
+    ts, fileName,transpiledCode,sourceCode: { [key: string]: string }, mappings
   ) => {
-    const sourceScript = language.scripts.get(fileName)
+    const sourceScript = language.scripts.get(ts.server.toNormalizedPath(fileName))
     const virtualCode = sourceScript?.generated?.root
     if (sourceScript && virtualCode instanceof AngularVirtualCode) {
-      virtualCode.transpiledTemplateUpdated(transpiledCode, sourceCode, mappings);
+      virtualCode.transpiledTemplateUpdated(ts, transpiledCode, sourceCode, mappings);
     }
   }
 
