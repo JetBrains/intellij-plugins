@@ -4,6 +4,9 @@ package org.angular2.codeInsight
 import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiLanguageInjectionHost
@@ -11,6 +14,7 @@ import com.intellij.psi.SyntaxTraverser
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
+import junit.framework.TestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -18,6 +22,7 @@ import org.angular2.Angular2TestModule.*
 import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import java.io.File
+import java.io.IOException
 
 class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
@@ -135,7 +140,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   // TODO WEB-67260 - fix issues with RainbowColors
   fun _testRainbowColorsHtml() = doConfiguredTest(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
-                                                 configureFile = false) {
+                                                  configureFile = false) {
     myFixture.testRainbow("colors.html", FileUtil.loadFile(File("$testDataPath/$testName/colors.html")), true, true)
   }
 
@@ -231,6 +236,11 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
                                                           dir = true, configureFileName = "apps/app.component.html",
                                                           configurators = listOf(Angular2TsConfigFile()))
 
+  fun testCrLfComponentFile() =
+    doConfiguredTest(ANGULAR_CORE_17_3_0, ANGULAR_COMMON_17_3_0, extension = "ts", configurators = listOf(Angular2TsConfigFile())) {
+      checkHighlightingWithCrLfEnsured()
+    }
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
@@ -279,6 +289,25 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     SyntaxTraverser.psiTraverser(myFixture.getFile())
       .forEach { if (it is PsiLanguageInjectionHost) injectedLanguageManager.getInjectedPsiFiles(it) }
     (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
+  }
+
+  private fun checkHighlightingWithCrLfEnsured() {
+    val virtualFile = myFixture.file.virtualFile
+    val data = ExpectedHighlightingData(myFixture.getEditor().getDocument(), true, true, false, true)
+    data.init()
+    WriteCommandAction.writeCommandAction(project).withName("Change line separators").run<RuntimeException> {
+      try {
+        FileDocumentManager.getInstance().saveAllDocuments()
+        LoadTextUtil.changeLineSeparators(project, virtualFile, "\r\n", virtualFile)
+        FileDocumentManager.getInstance().reloadFromDisk(myFixture.editor.document)
+      }
+      catch (e: IOException) {
+        throw RuntimeException(e)
+      }
+    }
+    TestCase.assertEquals("\r\n", FileDocumentManager.getInstance().getLineSeparator(virtualFile, project))
+    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
+    TestCase.assertEquals("\r\n", FileDocumentManager.getInstance().getLineSeparator(virtualFile, project))
   }
 
 }
