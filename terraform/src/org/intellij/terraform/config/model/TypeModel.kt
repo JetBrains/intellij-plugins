@@ -75,12 +75,12 @@ class TypeModel(
 
   init {
     fun getDefaultPrefix(provider: List<ResourceOrDataSourceType>?): String? {
-      return provider?.mapNotNull { getResourcePrefix(it.type) }?.firstOrNull()
+      return provider?.firstNotNullOfOrNull { getResourcePrefix(it.type) }
     }
 
     providersByFullName = providers
       .groupBy { it.fullName.lowercase() }
-      .mapValues { (_, values) -> values.sortedBy { it.tier }.first() }
+      .mapValues { (_, values) -> values.minByOrNull { it.tier }!! }
 
     val loadedProviders = providersByFullName.values.toSet()
 
@@ -268,10 +268,6 @@ class TypeModel(
                                              AbstractResource, AbstractDataSource, Terraform,
                                              Locals, Moved, Import, CheckBlock, RemovedBlock)
     val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
-
-    private val blockTypesStoredInModel =
-      listOf(AbstractResource, AbstractDataSource, AbstractProvider, AbstractResourceProvisioner, AbstractBackend)
-        .map(BlockType::literal).toSet()
 
     fun getResourcePrefix(identifier: String): String {
       val stringList = identifier.split("_", limit = 2)

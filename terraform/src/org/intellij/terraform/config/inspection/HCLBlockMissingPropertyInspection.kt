@@ -15,6 +15,7 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.codeinsight.TfModelHelper
+import org.intellij.terraform.config.inspection.TfInspectionUtils.EMPTY_HCL_ELEMENT_VISITOR
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns.ConfigOverrideFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.DynamicBlock
@@ -26,16 +27,7 @@ import org.intellij.terraform.hcl.psi.*
 class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    return createVisitor(holder, false)
-  }
-
-  fun createVisitor(holder: ProblemsHolder, recursive: Boolean): PsiElementVisitor {
-    val ft = holder.file.fileType
-    if (ft != TerraformFileType) {
-      return PsiElementVisitor.EMPTY_VISITOR
-    }
-
-    return MyEV(holder, recursive)
+    return MissingPropertyVisitor.create(holder, false)
   }
 
   override fun getID(): String {
@@ -46,30 +38,72 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
     return super.getBatchSuppressActions(PsiTreeUtil.getParentOfType(element, HCLBlock::class.java, false))
   }
 
-  private inner class MyEV(val holder: ProblemsHolder, val recursive: Boolean) : HCLElementVisitor() {
-    override fun visitBlock(block: HCLBlock) {
-      ProgressIndicatorProvider.checkCanceled()
-      block.getNameElementUnquoted(0) ?: return
-      val obj = block.`object` ?: return
-      // TODO: Generify
-      if (ModuleWithEmptySource.accepts(block)) {
-        // Check 'source' and report missing one
-        doCheck(block, holder, TypeModel.Module.properties)
-        return
-      }
-      if (ConfigOverrideFile.accepts(block.containingFile)) return
-      val properties = TfModelHelper.getBlockProperties(block)
-      doCheck(block, holder, properties)
-      if (recursive) {
-        visitElement(obj)
-      }
-    }
+}
 
-    override fun visitElement(element: HCLElement) {
-      super.visitElement(element)
-      if (recursive) {
-        element.acceptChildren(this)
+internal class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection<PropertyOrBlockType>) : LocalQuickFix {
+  override fun getName(): String {
+    return HCLBundle.message("missing.resource.property.inspection.add.properties.quick.fix.name")
+  }
+
+  override fun getFamilyName(): String = name
+
+  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    val element = descriptor.psiElement.parent as? HCLBlock ?: return
+    val obj = element.`object` ?: return
+    IntentionPreviewUtils.write<Throwable> {
+      val generator = TerraformElementGenerator(project)
+      val elements = add.map {
+        if (it is PropertyType) {
+          val type = it.type
+          // TODO: Use property 'default' value
+          var value: String = ResourcePropertyInsertHandler.getPlaceholderValue(type)?.first ?: when (type) {
+            Types.Boolean -> "false"
+            Types.Number -> "0"
+            Types.Null -> "null"
+            else -> "\"\""
+          }
+
+          value = ResourcePropertyInsertHandler.getProposedValueFromModelAndHint(it, element.getTerraformModule())?.first ?: value
+
+          generator.createProperty(it.name, value)
+        }
+        else generator.createBlock(it.name)
       }
+      for (it in elements) {
+        obj.addBefore(it, obj.lastChild)
+        obj.node.addLeaf(TokenType.WHITE_SPACE, "\n", obj.node.lastChildNode)
+      }
+      // TODO: Investigate why reformat fails
+      // CodeStyleManager.getInstance(project).reformat(block, true)
+      // TODO: Navigate cursor to added.last() or added.first()
+    }
+  }
+}
+
+internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive: Boolean) : HCLElementVisitor() {
+
+  override fun visitBlock(block: HCLBlock) {
+    ProgressIndicatorProvider.checkCanceled()
+    block.getNameElementUnquoted(0) ?: return
+    val obj = block.`object` ?: return
+    // TODO: Generify
+    if (ModuleWithEmptySource.accepts(block)) {
+      // Check 'source' and report missing one
+      doCheck(block, holder, TypeModel.Module.properties)
+      return
+    }
+    if (ConfigOverrideFile.accepts(block.containingFile)) return
+    val properties = TfModelHelper.getBlockProperties(block)
+    doCheck(block, holder, properties)
+    if (recursive) {
+      visitElement(obj)
+    }
+  }
+
+  override fun visitElement(element: HCLElement) {
+    super.visitElement(element)
+    if (recursive) {
+      element.acceptChildren(this)
     }
   }
 
@@ -120,44 +154,13 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
     )
   }
 
-}
-
-class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection<PropertyOrBlockType>) : LocalQuickFix {
-  override fun getName(): String {
-    return HCLBundle.message("missing.resource.property.inspection.add.properties.quick.fix.name")
-  }
-
-  override fun getFamilyName(): String = name
-
-  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-    val element = descriptor.psiElement.parent as? HCLBlock ?: return
-    val obj = element.`object` ?: return
-    IntentionPreviewUtils.write<Throwable> {
-      val generator = TerraformElementGenerator(project)
-      val elements = add.map {
-        if (it is PropertyType) {
-          val type = it.type
-          // TODO: Use property 'default' value
-          var value: String = ResourcePropertyInsertHandler.getPlaceholderValue(type)?.first ?: when (type) {
-            Types.Boolean -> "false"
-            Types.Number -> "0"
-            Types.Null -> "null"
-            else -> "\"\""
-          }
-
-          value = ResourcePropertyInsertHandler.getProposedValueFromModelAndHint(it, element.getTerraformModule())?.first ?: value
-
-          generator.createProperty(it.name, value)
-        }
-        else generator.createBlock(it.name)
+  companion object {
+    fun create(holder: ProblemsHolder, recursive: Boolean): HCLElementVisitor {
+      val ft = holder.file.fileType
+      if (ft != TerraformFileType) {
+        return EMPTY_HCL_ELEMENT_VISITOR
       }
-      for (it in elements) {
-        obj.addBefore(it, obj.lastChild)
-        obj.node.addLeaf(TokenType.WHITE_SPACE, "\n", obj.node.lastChildNode)
-      }
-      // TODO: Investigate why reformat fails
-      // CodeStyleManager.getInstance(project).reformat(block, true)
-      // TODO: Navigate cursor to added.last() or added.first()
+      return MissingPropertyVisitor(holder, recursive)
     }
   }
 }

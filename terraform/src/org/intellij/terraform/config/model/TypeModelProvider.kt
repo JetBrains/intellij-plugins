@@ -6,7 +6,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.psi.PsiElement
-import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.resettableLazy
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
@@ -32,7 +31,7 @@ internal class TypeModelProvider {
     val globalModel: TypeModel
       get() = service<TypeModelProvider>()._model
 
-    @RequiresBackgroundThread(generateAssertion = false)
+    @RequiresBackgroundThread(generateAssertion = true)
     fun getModel(psiElement: PsiElement): TypeModel {
       val virtualFile = getContainingFile(psiElement)?.virtualFile ?: return globalModel
       return psiElement.containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel

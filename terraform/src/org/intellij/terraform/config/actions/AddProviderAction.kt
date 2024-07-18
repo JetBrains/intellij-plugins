@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.concurrency.annotations.RequiresReadLock
+import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +50,7 @@ internal const val FADEOUT_TIME_MILLIS: Long = 10_000L
 internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
 
   override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
-    val possibleTypes = getAllTypesForBlockByIdentifier((startElement as HCLBlock).createSmartPointer())
+    val possibleTypes = (startElement as? HCLBlock)?.createSmartPointer()?.let { getAllTypesForBlockByIdentifier(it) } ?: emptyList()
     if (possibleTypes.size == 1) return super.generatePreview(project, editor, file)
     return IntentionPreviewInfo.EMPTY
   }
@@ -63,7 +64,9 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
   }
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-    project.service<ImportProviderService>().addProvider(editor, startElement)
+    if (editor != null && startElement is HCLBlock) {//It runs in write action, so we can get pointers etc. safely
+      project.service<ImportProviderService>().addProvider(editor, startElement.createSmartPointer())
+    }
   }
 
   override fun isAvailable(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean {
@@ -78,7 +81,7 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
 
   private fun showResourceSelectionPopup(title: String, possibleTypes: List<BlockType>, editor: Editor, filePointer: SmartPsiElementPointer<PsiFile>) {
     JBPopupFactory.getInstance()
-      .createListPopup(SelectUnknownResourceStep(title, possibleTypes, filePointer, coroutineScope, editor))
+      .createListPopup(SelectUnknownResourceStep(title, possibleTypes, filePointer, coroutineScope))
       .showInBestPositionFor(editor)
   }
 
@@ -105,10 +108,8 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 
 
-  fun addProvider(editor: Editor?, startElement: PsiElement) {
-    if (startElement !is HCLBlock || editor == null) return
+  fun addProvider(editor: Editor, blockPointer: SmartPsiElementPointer<HCLBlock>) {
     coroutineScope.launch(Dispatchers.Default) {
-      val blockPointer = readAction {  startElement.createSmartPointer() }
       val possibleTypes = readAction { getAllTypesForBlockByIdentifier(blockPointer) }
       if (possibleTypes.isEmpty()) {
         withContext(Dispatchers.EDT) {
@@ -146,7 +147,6 @@ private class SelectUnknownResourceStep(
   @NlsSafe title: String, types: List<BlockType>,
   private val pointer: SmartPsiElementPointer<PsiFile>,
   val coroutineScope: CoroutineScope,
-  private val editor: Editor,
 ) : BaseListPopupStep<BlockType>(title, types) {
 
   override fun getTextFor(value: BlockType?): String {
