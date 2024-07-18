@@ -36,5 +36,6 @@
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.web" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.webSymbols" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lsp.impl" />
   </component>
 </module>
