@@ -20,7 +20,7 @@ import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getElementName
 import java.util.concurrent.atomic.AtomicInteger
 
-class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
+internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
   override fun acceptsFile(file: PsiFile): Boolean = file.fileType is TerraformFileType
 
   override fun acceptsElement(element: PsiElement): Boolean = when (element) {
@@ -32,9 +32,9 @@ class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
   override fun getHint(element: PsiElement, file: PsiFile): String? {
     if (element !is HCLElement)
       return null
-    val scope = element.getTerraformModule().getTerraformModuleScope()
 
     val elementName = element.getElementName() ?: return null
+    val scope = element.getTerraformModule().getTerraformModuleScope()
     val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(elementName, scope, file)
     if (costSearch == SearchCostResult.TOO_MANY_OCCURRENCES)
       return null
@@ -48,7 +48,7 @@ class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
 
     val result = usagesCount.get()
     return CodeVisionInfo(
-      HCLBundle.message("terraform.inlay.hints.usages.text", Math.min(result, limit), if (result > limit) 1 else 0),
+      HCLBundle.message("terraform.inlay.hints.usages.text", result.coerceAtMost(limit), if (result > limit) 1 else 0),
       result,
       result <= limit
     ).text
