@@ -1,0 +1,6 @@
+#ifdef I_AM_NOT_DEFINED
+  A sentence.
+  #if 1
+  Nested sentence.
+  #endif
+#endif

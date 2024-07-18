@@ -146,6 +146,7 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
         }
       }
 
+      inactiveEnd = baseLexer.tokenEnd
       baseLexer.advance()
     }
 

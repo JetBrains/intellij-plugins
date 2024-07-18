@@ -24,5 +24,7 @@ class PpParserTest : ParsingTestCase("parser", "test", TestParserDefinition()) {
 
   fun `test elifdef active`() = doTest()
 
+  fun `test if nested`() = doTest()
+
   fun doTest() = super.doTest(true, true)
 }
