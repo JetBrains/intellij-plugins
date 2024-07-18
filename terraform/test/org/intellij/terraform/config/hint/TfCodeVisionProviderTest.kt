@@ -3,7 +3,7 @@ package org.intellij.terraform.config.hint
 import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
 import org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider
 
-class TfCodeVisionProviderTest : CodeVisionTestCase() {
+internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
 
   fun testInheritors() = doTest("""
     provider "aws" {
@@ -35,7 +35,6 @@ class TfCodeVisionProviderTest : CodeVisionTestCase() {
       type    = string
       default = "ExampleInstance"
     }
-
 
     locals {
       non_using      = ""/*<# [no usages] #>*/

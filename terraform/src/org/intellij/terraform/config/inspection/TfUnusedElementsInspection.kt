@@ -14,7 +14,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 
-class TfUnusedElementsInspection : LocalInspectionTool() {
+internal class TfUnusedElementsInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     if (holder.file.fileType != TerraformFileType) {
       return PsiElementVisitor.EMPTY_VISITOR
@@ -58,10 +58,10 @@ internal abstract class HclUnusedElement(private val holder: ProblemsHolder, pri
   val name: String? by lazy { element.getElementName() }
 
   private fun isElementUnused(): Boolean {
+    val elementName = name ?: return false
     val module = element.getTerraformModule()
     val searchScope = module.getTerraformModuleScope()
 
-    val elementName = name ?: return false
     val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(elementName, searchScope, element.containingFile)
     if (costSearch != PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES) {
       return false
@@ -77,14 +77,14 @@ internal abstract class HclUnusedElement(private val holder: ProblemsHolder, pri
   }
 }
 
-internal class RemoveVariableQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
+private class RemoveVariableQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.variable.inspection.quick.fix.name")
 }
 
-internal class RemoveLocalQuickFix(element: HCLProperty) : RemovePsiElementQuickFix(element) {
+private class RemoveLocalQuickFix(element: HCLProperty) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.local.inspection.quick.fix.name")
 }
 
-internal class RemoveDataSourceQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
+private class RemoveDataSourceQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.data.source.inspection.quick.fix.name")
 }

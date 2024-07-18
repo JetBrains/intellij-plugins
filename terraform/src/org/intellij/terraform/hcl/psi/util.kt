@@ -25,7 +25,7 @@ fun HCLBlock.getNameElementUnquoted(i: Int): String? {
   }
 }
 
-fun HCLElement.getElementName(): String? = when (this) {
+internal fun HCLElement.getElementName(): String? = when (this) {
   // For now, consider the name of 'Local' property, 'Variable' and 'Data source'
   is HCLProperty -> this.name
   is HCLBlock -> when {

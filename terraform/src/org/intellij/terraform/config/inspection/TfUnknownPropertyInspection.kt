@@ -58,6 +58,6 @@ internal abstract class RemovePsiElementQuickFix(element: HCLElement) : LocalQui
   }
 }
 
-internal class RemovePropertyQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
+private class RemovePropertyQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unknown.property.in.block.inspection.quick.fix.name")
 }
