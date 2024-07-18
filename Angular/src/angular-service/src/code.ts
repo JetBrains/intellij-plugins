@@ -30,23 +30,7 @@ export class AngularVirtualCode implements VirtualCode {
     transpiledTemplate: AngularTranspiledTemplate | undefined,
   ): AngularVirtualCode {
     this.associatedScriptMappings.clear()
-    let templateInSync = true
-    if (transpiledTemplate) {
-      // Check if the template is in sync
-      // It is possible that the template will be in sync after another update
-      let sourceText = getNormalizedSnapshotText(snapshot)
-      if (!getNormalizedSnapshotText(transpiledTemplate.snapshot).startsWith(sourceText)
-        || sourceText !== transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
-        templateInSync = false
-      }
-      else if (transpiledTemplate.mappings.find(mapping => {
-        return getNormalizedSnapshotText(ctx.getAssociatedScript(mapping.fileName)?.snapshot)
-          !== transpiledTemplate?.sourceCode?.[ts.server.toNormalizedPath(mapping.fileName)]
-      })) {
-        templateInSync = false
-      }
-    }
-    if (transpiledTemplate && templateInSync) {
+    if (transpiledTemplate && this.isTemplateInSync(ts, snapshot, ctx, transpiledTemplate)) {
       this.snapshot = transpiledTemplate.snapshot
       this.mappings = []
       transpiledTemplate.mappings.forEach(mappingSet => {
@@ -131,6 +115,26 @@ export class AngularVirtualCode implements VirtualCode {
       }]
     }
     return this
+  }
+
+  private isTemplateInSync(
+    ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+    snapshot: ts.IScriptSnapshot,
+    ctx: CodegenContext<string>,
+    transpiledTemplate: AngularTranspiledTemplate,
+  ) {
+    const sourceText = getNormalizedSnapshotText(snapshot)
+    if (!getNormalizedSnapshotText(transpiledTemplate.snapshot).startsWith(sourceText)
+      || sourceText !== transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
+      return false
+    }
+    else if (transpiledTemplate.mappings.find(mapping => {
+      return getNormalizedSnapshotText(ctx.getAssociatedScript(mapping.fileName)?.snapshot)
+        !== transpiledTemplate.sourceCode[ts.server.toNormalizedPath(mapping.fileName)]
+    })) {
+      return false
+    }
+    return true
   }
 }
 
