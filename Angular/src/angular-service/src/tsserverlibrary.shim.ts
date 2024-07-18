@@ -5,14 +5,6 @@ import {Angular2TcbMappingInfo} from "./mappings"
 declare module "tsc-ide-plugin/tsserverlibrary.shim" {
 
   interface LanguageService {
-    webStormNgUpdateTranspiledTemplate(
-      ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
-      fileName: string,
-      transpiledCode: string | undefined,
-      sourceCodeLength: { [key: string]: string },
-      mappings: Angular2TcbMappingInfo[]
-    ): void
-
     webStormNgGetGeneratedElementType(
       ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
       fileName: string,
