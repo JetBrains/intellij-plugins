@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.frameworks.JSXmlAttributePathUtil
 import com.intellij.lang.javascript.frameworks.modules.JSPathResolution
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSParsedPathElement
 import com.intellij.lang.javascript.frameworks.nextjs.isNextJsContext
+import com.intellij.lang.javascript.patterns.JSPatterns
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -16,7 +17,7 @@ import com.intellij.util.PathUtilRt
 
 class NextJsPathReferenceResolverProvider : JSDirectFileReferenceResolverProvider {
   override fun accept(element: PsiElement): Boolean {
-    return element is XmlAttributeValue && isNextJsContext(element)
+    return (element is XmlAttributeValue || JSPatterns.jsLiteral().inJSXEmbeddedContent().accepts(element)) && isNextJsContext(element)
   }
 
   override fun provideResolver(element: PsiElement, resolveContext: JSImportResolveContext): JSDirectFileReferenceResolver {

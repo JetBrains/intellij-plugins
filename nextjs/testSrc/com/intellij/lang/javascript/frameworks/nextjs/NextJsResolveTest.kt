@@ -26,6 +26,10 @@ class NextJsResolveTest : BasePlatformTestCase() {
     doTest("[slug]")
   }
 
+  fun testJSEmbeddedContentResolving() {
+    doTest("declaration")
+  }
+
   private fun doTest(destination: String = "", testProjectName: String? = null) {
     checkResolveToDestination(destination, testProjectName ?: "pathAttributeResolve", myFixture, getTestName(false), "tsx")
   }
