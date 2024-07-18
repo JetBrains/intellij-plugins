@@ -3,7 +3,7 @@
 import type * as ts from "./tsserverlibrary.shim";
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
 import {Language, LanguagePlugin} from "@volar/language-core"
-import {AngularVirtualCode} from "./code"
+import {AngularTranspiledTemplate, AngularVirtualCode, buildAngularTranspiledTemplate} from "./code"
 import {
   createUnboundReverseMapper,
   decorateIdeLanguageServiceExtensions,
@@ -13,13 +13,14 @@ import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/
 import {AngularSourceMap} from "./ngSourceMap"
 import {Angular2TcbMappingInfo} from "./mappings"
 
+let ngTranspiledTemplates = new Map<string, AngularTranspiledTemplate>()
+
 function loadLanguagePlugins(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
                              info: ts.server.PluginCreateInfo): {
   languagePlugins: [LanguagePlugin<string, AngularVirtualCode>];
   setup?: (language: Language<string>) => void;
 } {
   addNgCommands(ts, info);
-  let ngTcbBlocks = new Map<string, AngularVirtualCode>()
   return {
     languagePlugins: [{
       getLanguageId(scriptId: string): string | undefined {
@@ -31,17 +32,13 @@ function loadLanguagePlugins(ts: typeof import('tsc-ide-plugin/tsserverlibrary.s
       createVirtualCode(scriptId: string, languageId: string, snapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
         if (languageId === "typescript" && !scriptId.endsWith(".d.ts") && scriptId.indexOf("/node_modules/") < 0) {
           const normalizedScriptId = ts.server.toNormalizedPath(scriptId)
-          let virtualCode = ngTcbBlocks.get(normalizedScriptId)
-          if (!virtualCode) {
-            virtualCode = new AngularVirtualCode(normalizedScriptId, ctx, ts.sys.useCaseSensitiveFileNames)
-            ngTcbBlocks.set(normalizedScriptId, virtualCode)
-          }
-          return virtualCode.sourceFileUpdated(ts, snapshot)
+          let virtualCode = new AngularVirtualCode(normalizedScriptId)
+          return virtualCode.sourceFileUpdated(ts, snapshot, ctx, ngTranspiledTemplates.get(normalizedScriptId))
         }
         return undefined
       },
       updateVirtualCode(scriptId: string, virtualCode: AngularVirtualCode, newSnapshot: ts.IScriptSnapshot, ctx: CodegenContext<string>): AngularVirtualCode | undefined {
-        return virtualCode.sourceFileUpdated(ts, newSnapshot)
+        return virtualCode.sourceFileUpdated(ts, newSnapshot, ctx, ngTranspiledTemplates.get(ts.server.toNormalizedPath(scriptId)))
       },
       typescript: {
         extraFileExtensions: [{
@@ -120,8 +117,11 @@ const ngTranspiledTemplateHandler = (ts: typeof import('tsc-ide-plugin/tsserverl
   let fileName = ts.server.toNormalizedPath(requestArguments.file)
   let project = projectService.getDefaultProjectForFile(fileName, true)
   if (project) {
-    project.getLanguageService().webStormNgUpdateTranspiledTemplate(
-      ts, fileName, requestArguments.transpiledContent, requestArguments.sourceCode, requestArguments.mappings);
+    const transpiledTemplate = buildAngularTranspiledTemplate(ts, requestArguments.transpiledContent, requestArguments.sourceCode, requestArguments.mappings)
+    if (transpiledTemplate)
+      ngTranspiledTemplates.set(fileName, transpiledTemplate);
+    else
+      ngTranspiledTemplates.delete(fileName);
 
     // trigger reload
     (session as any).change(

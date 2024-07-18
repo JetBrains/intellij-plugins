@@ -20,58 +20,55 @@ export class AngularVirtualCode implements VirtualCode {
     return "typescript"
   }
 
-  private transpiledTemplate: {
-    sourceCode: { [fileName: string]: string },
-    snapshot: IScriptSnapshot
-    mappings: Angular2TcbMappingInfo[]
-  } | undefined
-
-  constructor(private fileName: string, private ctx: CodegenContext<string>, private useCaseSensitiveFileNames: boolean) {
+  constructor(private fileName: string) {
   }
 
   sourceFileUpdated(
     ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
     snapshot: ts.IScriptSnapshot,
-    _languageId?: string
+    ctx: CodegenContext<string>,
+    transpiledTemplate: AngularTranspiledTemplate | undefined,
   ): AngularVirtualCode {
     this.associatedScriptMappings.clear()
     let templateInSync = true
-    if (this.transpiledTemplate) {
+    if (transpiledTemplate) {
       // Check if the template is in sync
       // It is possible that the template will be in sync after another update
       let sourceText = getNormalizedSnapshotText(snapshot)
-      if (!getNormalizedSnapshotText(this.transpiledTemplate.snapshot).startsWith(sourceText)
-          || sourceText !== this.transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
+      if (!getNormalizedSnapshotText(transpiledTemplate.snapshot).startsWith(sourceText)
+        || sourceText !== transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
         templateInSync = false
-      } else if (this.transpiledTemplate.mappings.find(mapping => {
-          return getNormalizedSnapshotText(this.ctx.getAssociatedScript(mapping.fileName)?.snapshot)
-            !== this.transpiledTemplate?.sourceCode?.[ts.server.toNormalizedPath(mapping.fileName)]
-        })) {
+      }
+      else if (transpiledTemplate.mappings.find(mapping => {
+        return getNormalizedSnapshotText(ctx.getAssociatedScript(mapping.fileName)?.snapshot)
+          !== transpiledTemplate?.sourceCode?.[ts.server.toNormalizedPath(mapping.fileName)]
+      })) {
         templateInSync = false
       }
     }
-    if (this.transpiledTemplate && templateInSync) {
-      this.snapshot = this.transpiledTemplate.snapshot
+    if (transpiledTemplate && templateInSync) {
+      this.snapshot = transpiledTemplate.snapshot
       this.mappings = []
-      this.transpiledTemplate.mappings.forEach(mappingSet => {
+      transpiledTemplate.mappings.forEach(mappingSet => {
         let mappingsWithData: CodeMapping[]
         if (ts.server.toNormalizedPath(mappingSet.fileName) === ts.server.toNormalizedPath(this.fileName)) {
           mappingsWithData = this.mappings
         }
         else {
-          const associatedScript = this.ctx.getAssociatedScript(mappingSet.fileName)
+          const associatedScript = ctx.getAssociatedScript(mappingSet.fileName)
           const scriptId = associatedScript?.id
           if (scriptId) {
             if (!this.associatedScriptMappings.has(scriptId)) {
               this.associatedScriptMappings.set(scriptId, [])
             }
             mappingsWithData = this.associatedScriptMappings.get(scriptId)!!
-          } else {
+          }
+          else {
             return
           }
         }
         // Split the mapping set for Volar
-        for (let i = 0 ; i < mappingSet.sourceOffsets.length; i++) {
+        for (let i = 0; i < mappingSet.sourceOffsets.length; i++) {
           const sourceOffset = mappingSet.sourceOffsets[i]
           const sourceLength = mappingSet.sourceLengths[i]
 
@@ -135,29 +132,36 @@ export class AngularVirtualCode implements VirtualCode {
     }
     return this
   }
+}
 
-  transpiledTemplateUpdated(
-    ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
-    transpiledCode: string | undefined,
-    sourceCode: { [fileName: string]: string },
-    mappings: Angular2TcbMappingInfo[]
-  ) {
-    if (transpiledCode) {
-      this.transpiledTemplate = {
-        mappings: mappings.map(it => ({
-          ...it,
-          fileName: ts.server.toNormalizedPath(it.fileName),
-        })),
-        sourceCode: Object.fromEntries(Object.entries(sourceCode).map(([key, value]) => {
-          return [ts.server.toNormalizedPath(key), value]
-        })),
-        snapshot: createScriptSnapshot(transpiledCode)
-      }
-    }
-    else {
-      this.transpiledTemplate = undefined
+export function buildAngularTranspiledTemplate(
+  ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+  transpiledCode: string | undefined,
+  sourceCode: { [fileName: string]: string },
+  mappings: Angular2TcbMappingInfo[]
+): AngularTranspiledTemplate | undefined {
+  if (transpiledCode) {
+    return {
+      mappings: mappings.map(it => ({
+        ...it,
+        fileName: ts.server.toNormalizedPath(it.fileName),
+      })),
+      sourceCode: Object.fromEntries(Object.entries(sourceCode).map(([key, value]) => {
+        return [ts.server.toNormalizedPath(key), value]
+      })),
+      snapshot: createScriptSnapshot(transpiledCode)
     }
   }
+  else {
+    return undefined
+  }
+}
+
+
+export interface AngularTranspiledTemplate {
+  sourceCode: { [fileName: string]: string },
+  snapshot: IScriptSnapshot
+  mappings: Angular2TcbMappingInfo[]
 }
 
 function getNormalizedSnapshotText(snapshot: IScriptSnapshot | undefined): string {
