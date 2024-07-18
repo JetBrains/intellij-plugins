@@ -34,6 +34,7 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.inspection.AddResourcePropertiesFix
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
+import org.intellij.terraform.config.inspection.MissingPropertyVisitor
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersBlock
@@ -90,20 +91,19 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
 
   @RequiresReadLock
   internal fun addBlockRequiredProperties(file: PsiFile, editor: Editor, project: Project) {
-    val inspection = HCLBlockMissingPropertyInspection()
     val blockPointer = PsiTreeUtil.getParentOfType<HCLBlock>(file.findElementAt(editor.caretModel.offset),
                                                              HCLBlock::class.java)?.createSmartPointer() ?: return
     coroutineScope.launch(Dispatchers.Default) {
-      addHCLBlockRequiredProperties(project, blockPointer, inspection)
+      addHCLBlockRequiredProperties(project, blockPointer)
     }
   }
 
-  private suspend fun addHCLBlockRequiredProperties(project: Project, pointer: SmartPsiElementPointer<HCLBlock>, inspection: HCLBlockMissingPropertyInspection, ) {
+  private suspend fun addHCLBlockRequiredProperties(project: Project, pointer: SmartPsiElementPointer<HCLBlock>) {
     var hasChanges: Boolean = false
     withBackgroundProgress(project, HCLBundle.message("progress.title.adding.required.properties"), true) {
       do {
         readAndWriteAction {
-          val fixes = processBlockInspections(pointer, inspection)
+          val fixes = processBlockInspections(pointer)
           writeCommandAction(project, HCLBundle.message("terraform.add.required.properties.command.name")) {
             hasChanges = applyFixes(fixes, project)
           }
@@ -120,10 +120,10 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     return fixes.isNotEmpty()
   }
 
-  private fun processBlockInspections(pointer: SmartPsiElementPointer<HCLBlock>, inspection: HCLBlockMissingPropertyInspection): List<Pair<ProblemDescriptor, AddResourcePropertiesFix>> {
+  private fun processBlockInspections(pointer: SmartPsiElementPointer<HCLBlock>): List<Pair<ProblemDescriptor, AddResourcePropertiesFix>> {
     val element = pointer.element ?: return emptyList()
     val holder = ProblemsHolder(InspectionManager.getInstance(project), element.containingFile, true)
-    val visitor = inspection.createVisitor(holder, true) as HCLElementVisitor
+    val visitor = MissingPropertyVisitor.create(holder, true)
     element.let { visitor.visitBlock(it) }
     val fixPairs = holder.results.flatMap { inspectionResult ->
       inspectionResult.fixes
