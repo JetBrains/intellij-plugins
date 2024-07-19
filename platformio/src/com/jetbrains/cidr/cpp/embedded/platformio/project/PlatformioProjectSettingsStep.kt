@@ -82,12 +82,12 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
                           + ModalityState.stateForComponent(step.myTree).asContextElement()
                           + CoroutineName("PlatformIO Watch"))
       cs.launch(watchContext){
-        step.watchPlatformio(presense)
+        step.notifyPlatformioPresense(presense)
       }.cancelOnDispose(step) // Cancel the scope when [step] gets disposed
     }
   }
 
-  private suspend fun watchPlatformio(presense: Presense) = coroutineScope {
+  private suspend fun notifyPlatformioPresense(presense: Presense) = coroutineScope {
     EDT.assertIsEdt()
 
     when (presense) {
