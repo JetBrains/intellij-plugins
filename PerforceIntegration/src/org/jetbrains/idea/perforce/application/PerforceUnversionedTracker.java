@@ -38,7 +38,7 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.io.File;
 import java.util.*;
 
-public class PerforceUnversionedTracker {
+public final class PerforceUnversionedTracker {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
 
   private final Object LOCK = new Object();
@@ -129,7 +129,7 @@ public class PerforceUnversionedTracker {
     List<VirtualFile> dirtyFiles;
     synchronized (LOCK) {
       LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
-      if (myDirtyLocalFiles.size() == 0) {
+      if (myDirtyLocalFiles.isEmpty()) {
         myInUpdate = false;
         return;
       }
@@ -207,8 +207,7 @@ public class PerforceUnversionedTracker {
     }));
   }
 
-  @Nullable
-  private static String getClientSpecPath(VirtualFile file, String clientName, List<String> roots) {
+  private static @Nullable String getClientSpecPath(VirtualFile file, String clientName, List<String> roots) {
     String path = file.getPath();
     for (String root : roots) {
       if (FileUtil.startsWith(path, root)) {
@@ -218,8 +217,7 @@ public class PerforceUnversionedTracker {
     return null;
   }
 
-  @NotNull
-  private static Set<VirtualFile> getIgnoredFiles(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
+  private static @NotNull Set<VirtualFile> getIgnoredFiles(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
     throws VcsException{
 
     if (toCheckIgnored.isEmpty() || !AdvancedSettings.getBoolean("vcs.process.ignored")) {
@@ -255,8 +253,7 @@ public class PerforceUnversionedTracker {
     return ignoredFiles;
   }
 
-  @NotNull
-  private static Set<VirtualFile> getIgnoredFilesByPreviewAdd(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
+  private static @NotNull Set<VirtualFile> getIgnoredFilesByPreviewAdd(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
     throws VcsException {
     Stopwatch sw = Stopwatch.createStarted();
     ExecResult execResult = PerforceRunner.getInstance(project).previewAdd(connection, toCheckIgnored);
@@ -287,8 +284,7 @@ public class PerforceUnversionedTracker {
     return ignored;
   }
 
-  @NotNull
-  private static Set<VirtualFile> getIgnoredFilesByIgnores(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored) {
+  private static @NotNull Set<VirtualFile> getIgnoredFilesByIgnores(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored) {
     Stopwatch sw = Stopwatch.createStarted();
     Set<VirtualFile> ignored = new LinkedHashSet<>();
     // 'p4 ignores' doesn't support '-x argfile', so we split manually
