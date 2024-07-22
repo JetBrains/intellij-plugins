@@ -52,6 +52,7 @@ class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
     return token
   }
 
+  @Synchronized
   fun parse(tokens: List<PpToken>): PpStatement {
     iterator = tokens.iterator()
     statement = StatementImpl(tokens, tokenTypes)
