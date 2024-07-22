@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
+import kotlinx.coroutines.CoroutineScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.operations.*;
@@ -35,13 +36,13 @@ import java.util.*;
 public final class PerforceVFSListener extends VcsVFSListener {
   private static final Logger LOG = Logger.getInstance(PerforceVFSListener.class);
 
-  private PerforceVFSListener(@NotNull Project project) {
-    super(PerforceVcs.getInstance(project));
+  private PerforceVFSListener(@NotNull Project project, @NotNull CoroutineScope coroutineScope) {
+    super(PerforceVcs.getInstance(project), coroutineScope);
   }
 
   @NotNull
-  public static PerforceVFSListener createInstance(@NotNull Project project) {
-    PerforceVFSListener listener = new PerforceVFSListener(project);
+  public static PerforceVFSListener createInstance(@NotNull Project project, @NotNull CoroutineScope coroutineScope) {
+    PerforceVFSListener listener = new PerforceVFSListener(project, coroutineScope);
     listener.installListeners();
     return listener;
   }
@@ -49,7 +50,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
   @Override
   protected void installListeners() {
     super.installListeners();
-    myProject.getMessageBus().connect(myProject).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+    myProject.getMessageBus().connect(coroutineScope).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         for (VFileEvent event : events) {

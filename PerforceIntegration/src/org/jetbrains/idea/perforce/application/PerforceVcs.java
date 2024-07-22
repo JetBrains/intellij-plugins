@@ -47,6 +47,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
+import kotlinx.coroutines.CoroutineScope;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,6 +72,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class PerforceVcs extends AbstractVcs {
   public static final @NlsSafe String NAME = "Perforce";
   private static final VcsKey ourKey = createKey(NAME);
+  @NotNull private final CoroutineScope coroutineScope;
   private PerforceCheckinEnvironment myPerforceCheckinEnvironment;
   private PerforceUpdateEnvironment myPerforceUpdateEnvironment;
   private PerforceIntegrateEnvironment myPerforceIntegrateEnvironment;
@@ -96,8 +98,9 @@ public final class PerforceVcs extends AbstractVcs {
 
   private final ReentrantReadWriteLock myP4Lock = new ReentrantReadWriteLock();
 
-  public PerforceVcs(@NotNull Project project) {
+  public PerforceVcs(@NotNull Project project, @NotNull CoroutineScope coroutineScope) {
     super(project, NAME);
+    this.coroutineScope = coroutineScope;
     myMyEditFileProvider = new MyEditFileProvider();
   }
 
@@ -375,7 +378,7 @@ public final class PerforceVcs extends AbstractVcs {
     Disposable disposable = Disposer.newDisposable();
     myDisposable = disposable;
 
-    Disposer.register(disposable, PerforceVFSListener.createInstance(myProject));
+    Disposer.register(disposable, PerforceVFSListener.createInstance(myProject, coroutineScope));
 
     PerforceManager.getInstance(myProject).startListening(disposable);
     ((PerforceConnectionManager)PerforceConnectionManager.getInstance(myProject)).startListening(disposable);
