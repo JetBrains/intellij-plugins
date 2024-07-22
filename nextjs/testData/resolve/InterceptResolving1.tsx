@@ -1,0 +1,1 @@
+export const Usage = <link href="/intercepting/slots/slug<caret>Value"/>

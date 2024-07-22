@@ -12,11 +12,6 @@
         {
           "name": "pages"
         }
-      ],
-      "additional-leaf-files": [
-        {
-          "name": "page"
-        }
       ]
     }
   }
