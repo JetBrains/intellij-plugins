@@ -18,7 +18,7 @@ class HCLCodeStylePanel(private val language: Language, settings: CodeStyleSetti
 
   override fun initTables() {
     // Format alignment
-    val alignmentValues = HCLCodeStyleSettings.PropertyAlignment.entries.toTypedArray()
+    val alignmentValues = HCLCodeStyleSettings.PropertyAlignment.entries
     val alignmentStrings = arrayOfNulls<String>(alignmentValues.size)
     val alignmentInts = IntArray(alignmentValues.size)
     for (i in alignmentValues.indices) {
@@ -27,7 +27,7 @@ class HCLCodeStylePanel(private val language: Language, settings: CodeStyleSetti
     }
 
     // Line Commenter character
-    val lineCommenterPrefixValues = HCLCodeStyleSettings.LineCommenterPrefix.entries.toTypedArray()
+    val lineCommenterPrefixValues = HCLCodeStyleSettings.LineCommenterPrefix.entries
     val lineCommenterPrefixStrings = arrayOfNulls<String>(lineCommenterPrefixValues.size)
     val lineCommenterPrefixInts = IntArray(lineCommenterPrefixValues.size)
     for (i in lineCommenterPrefixValues.indices) {
@@ -49,19 +49,17 @@ class HCLCodeStylePanel(private val language: Language, settings: CodeStyleSetti
   override fun getDefaultLanguage(): Language = language
 
   override fun getPreviewText(): String = ALIGNMENT_SAMPLE
-
-  companion object {
-    const val ALIGNMENT_SAMPLE: String = "#first logical block\n" +
-                                         "first = true\n" +
-                                         "second = false\n" +
-                                         "t_h_i_r_d = 1\n" +
-                                         "object = {\n" +
-                                         "  nested = true\n" +
-                                         "  z = false\n" +
-                                         "}\n" +
-                                         "\n" +
-                                         "#another logical block\n" +
-                                         "x = true\n" +
-                                         "long = 'acceptable'"
-  }
 }
+
+private const val ALIGNMENT_SAMPLE: String = "#first logical block\n" +
+                                             "first = true\n" +
+                                             "second = false\n" +
+                                             "t_h_i_r_d = 1\n" +
+                                             "object = {\n" +
+                                             "  nested = true\n" +
+                                             "  z = false\n" +
+                                             "}\n" +
+                                             "\n" +
+                                             "#another logical block\n" +
+                                             "x = true\n" +
+                                             "long = 'acceptable'"
