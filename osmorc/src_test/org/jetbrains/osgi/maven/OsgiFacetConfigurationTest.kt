@@ -16,7 +16,7 @@
 package org.jetbrains.osgi.maven
 
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.tools.ide.metrics.benchmark.PerformanceTestUtil
+import com.intellij.tools.ide.metrics.benchmark.Benchmark
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase
 import org.assertj.core.api.Assertions.assertThat
 import org.jdom.Element
@@ -43,7 +43,7 @@ class OsgiFacetConfigurationTest : JavaCodeInsightFixtureTestCase() {
     val resources = StringBuilder("Include-Resource=")
     for (i in 1..5000) resources.append(if (i > 1) "," else "").append("images/image$i.png=/src/images/image$i.png")
     config.setAdditionalProperties(resources.toString())
-    PerformanceTestUtil.newPerformanceTest("OSGi Facet Serialization", { (1..5).forEach { serialize() } }).start()
+    Benchmark.newBenchmark("OSGi Facet Serialization", { (1..5).forEach { serialize() } }).start()
   }
 
   private fun serialize(): Element {
