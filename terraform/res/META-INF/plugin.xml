@@ -417,7 +417,10 @@
 
     <dependencySupport kind="executable" coordinate="terraform"/>
 
-    <internalFileTemplate name="Terraform File"/>
+    <internalFileTemplate name="Empty File"/>
+    <internalFileTemplate name="Template File"/>
+    <internalFileTemplate name="Outputs File"/>
+    <internalFileTemplate name="Variables File"/>
   </extensions>
 
   <actions>
@@ -426,7 +429,7 @@
 
     <action id="NewTerraformFile" class="org.intellij.terraform.config.actions.TfCreateFileFromTemplateAction"
             icon="org.intellij.terraform.TerraformIcons.Terraform">
-      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewWebDevelopment"/>
     </action>
 
     <group id="TFTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"

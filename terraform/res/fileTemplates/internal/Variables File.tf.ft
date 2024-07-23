@@ -1,0 +1,4 @@
+variable "#[[$END$]]#" {
+  type    = string
+  default = ""
+}
