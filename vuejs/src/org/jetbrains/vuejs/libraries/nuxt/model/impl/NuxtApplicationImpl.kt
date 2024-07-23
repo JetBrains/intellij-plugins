@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
 import com.intellij.ide.util.PropertiesComponent
@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.Alarm
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.EdtScheduler
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
@@ -32,7 +32,7 @@ import org.jetbrains.vuejs.libraries.nuxt.actions.InstallNuxtTypesAction
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtApplication
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtConfig
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStore
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 class NuxtApplicationImpl(override val configFile: VirtualFile, override val project: Project) : NuxtApplication {
 
@@ -132,10 +132,7 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     PropertiesComponent.getInstance(project).setValue(NUXT_TYPES_NOTIFICATION_SHOWN, true)
     notification.notify(project)
 
-    Alarm().addRequest(
-      Runnable { notification.hideBalloon() },
-      TimeUnit.SECONDS.toMillis(30)
-    )
+    EdtScheduler.getInstance().schedule(30.seconds) { notification.hideBalloon() }
   }
 
   companion object {
