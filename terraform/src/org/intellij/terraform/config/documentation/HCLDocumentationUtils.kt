@@ -65,32 +65,37 @@ internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
       }
     }
     is HCLBlock -> {
-      val type = element.getNameElementUnquoted(0)
-      val name = element.name
-      if (TerraformPatterns.RootBlock.accepts(element)) {
-        if (name == element.getNameElementUnquoted(1)) {
-          HCLBundle.message("terraform.doc.block.type.0", type?.replaceFirstChar { it.uppercase(Locale.getDefault()) }, element.name)
-        }
-        else
-          when (type) {
-            HCL_MODULE_IDENTIFIER -> HCLBundle.message("terraform.doc.module.0", name) // todo: add short source
-            HCL_VARIABLE_IDENTIFIER -> HCLBundle.message("terraform.doc.input.variable.0", name) // todo: add short type
-            HCL_OUTPUT_IDENTIFIER -> HCLBundle.message("terraform.doc.output.value.0", name) // todo: add short type
-            HCL_PROVIDER_IDENTIFIER -> HCLBundle.message("terraform.doc.provider.0", name)
-            HCL_RESOURCE_IDENTIFIER -> HCLBundle.message("terraform.doc.resource.0.of.type.1", name, element.getNameElementUnquoted(1))
-            HCL_DATASOURCE_IDENTIFIER -> HCLBundle.message("terraform.doc.data.source.0.of.type.1", name, element.getNameElementUnquoted(1))
-            HCL_TERRAFORM_IDENTIFIER -> HCLBundle.message("terraform.doc.terraform.configuration")
-            HCL_LOCALS_IDENTIFIER -> HCLBundle.message("terraform.doc.local.values")
-            else -> NO_DOC
-          }
-      }
-      else {
-        NO_DOC
-      }
+      calculateBlockDescription(element)
     }
     is TerraformDocumentPsi -> {
-      HCLBundle.message("terraform.doc.block.type.0", HCLBundle.message("terraform.doc.generic.block"), element.name)
+      val block = element.parent
+      (block as? HCLBlock)?.let { calculateBlockDescription(it) } ?: HCLBundle.message("terraform.doc.block.type.0", HCLBundle.message("terraform.doc.generic.block"), element.name)
     }
     else -> NO_DOC
+  }
+}
+
+internal fun calculateBlockDescription(element: HCLBlock): @Nls String {
+  val type = element.getNameElementUnquoted(0)
+  val name = element.name
+  return if (TerraformPatterns.RootBlock.accepts(element)) {
+    if (name == element.getNameElementUnquoted(1)) {
+      HCLBundle.message("terraform.doc.block.type.0", type?.replaceFirstChar { it.uppercase(Locale.getDefault()) }, element.name)
+    }
+    else
+      when (type) {
+        HCL_MODULE_IDENTIFIER -> HCLBundle.message("terraform.doc.module.0", name) // todo: add short source
+        HCL_VARIABLE_IDENTIFIER -> HCLBundle.message("terraform.doc.input.variable.0", name) // todo: add short type
+        HCL_OUTPUT_IDENTIFIER -> HCLBundle.message("terraform.doc.output.value.0", name) // todo: add short type
+        HCL_PROVIDER_IDENTIFIER -> HCLBundle.message("terraform.doc.provider.0", name)
+        HCL_RESOURCE_IDENTIFIER -> HCLBundle.message("terraform.doc.resource.0.of.type.1", name, element.getNameElementUnquoted(1))
+        HCL_DATASOURCE_IDENTIFIER -> HCLBundle.message("terraform.doc.data.source.0.of.type.1", name, element.getNameElementUnquoted(1))
+        HCL_TERRAFORM_IDENTIFIER -> HCLBundle.message("terraform.doc.terraform.configuration")
+        HCL_LOCALS_IDENTIFIER -> HCLBundle.message("terraform.doc.local.values")
+        else -> NO_DOC
+      }
+  }
+  else {
+    NO_DOC
   }
 }
