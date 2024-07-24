@@ -327,7 +327,7 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
   private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode, file: ObjectNode): ProviderType? {
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name) ?: return null
     val providerMetadata = TFBaseLoader.parseMetadata(file.obj("metadata"), name, namespace)
-    return ProviderType(providerMetadata.name, parsed.properties.values.toList(), providerMetadata.namespace, providerMetadata.tier, providerMetadata.version)
+    return ProviderType(providerMetadata.name, parsed.properties.values.toList(), providerMetadata.namespace, providerMetadata.tier, providerMetadata.version, parsed)
   }
 
   private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {
@@ -336,7 +336,7 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
     val obj = entry.value as ObjectNode
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name)
                             ?: throw IllegalArgumentException("can't parse schema parseResourceInfo $name, entry = $entry")
-    return ResourceType(name, info, parsed.properties.values.toList())    // TODO: Support description and version
+    return ResourceType(name, info, parsed.properties.values.toList(), parsed)
   }
 
   private fun parseDataSourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): DataSourceType {
@@ -345,8 +345,7 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
     val obj = entry.value as ObjectNode
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name)
                             ?: throw IllegalArgumentException("can't parse schema parseDataSourceInfo $name, entry = $entry")
-    // TODO: Support description
-    return DataSourceType(name, info, parsed.properties.values.toList())
+    return DataSourceType(name, info, parsed.properties.values.toList(), parsed)
   }
 }
 

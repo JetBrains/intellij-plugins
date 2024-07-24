@@ -12,12 +12,15 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLIdentifier
 
 internal abstract class BaseTerraformDocumentationProvider {
 
   protected fun computeDocumentationTarget(element: PsiElement): DocumentationTarget? {
     if (element !is HCLElement) return null
+    if (element is HCLIdentifier && TerraformPatterns.RootBlock.accepts(element.parent)) return null //TODO IJPL-158379
     return TerraformDocumentationTarget(element.createSmartPointer())
   }
 
