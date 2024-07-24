@@ -143,8 +143,9 @@ class PlatformioConfigurable : SearchableConfigurable {
     private val PIO_EXECUTABLE = "pio" + if (SystemInfo.isWindows) { ".exe" } else { "" }
     private val BIN_FOLDER = if (SystemInfo.isWindows) { "Scripts" } else { "bin" }
 
-    // Stores what the User has entered as the location of PIO.
-    // Empty if the user did not enter anything
+    /** Contains what the User has entered as the location of PIO.
+     *  Empty if the user did not enter anything.
+     */
     private var manualPioLocation: String
       get() = service<PlatformioConfigurableService>().manualPioLocation
       set(path) { service<PlatformioConfigurableService>().manualPioLocation = path }
@@ -157,7 +158,7 @@ class PlatformioConfigurable : SearchableConfigurable {
         pioBinLookup()
       }
 
-    // Adjusts the path entered by the user to the bin folder of pio
+    /** Adjusts the path entered by the user to the bin folder of pio */
     private fun adjustPioPath(path: String): String? =
       listOf(
         Path.of(path),                                              // Case 1: points to the executable
