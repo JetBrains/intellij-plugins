@@ -8,6 +8,7 @@ import com.intellij.build.progress.BuildProgressDescriptor
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessListener
+import com.intellij.execution.process.ProcessNotCreatedException
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.ide.impl.isTrusted
 import com.intellij.openapi.application.EDT
@@ -25,6 +26,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.notifyPlatformioNotFound
 import com.jetbrains.cidr.cpp.execution.build.runners.CLionCompileResolveConfigurationTaskRunner
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.execution.build.runners.CidrProjectTaskRunner
@@ -134,6 +136,11 @@ class PlatformioTaskRunner : CidrTaskRunner {
     catch (e: ProcessCanceledException) {
       buildProgress.fail()
       promise.setResult(TaskRunnerResults.ABORTED)
+    }
+    catch (e: ProcessNotCreatedException) {
+      LOG.warn(e)
+      notifyPlatformioNotFound(project)
+      promise.setResult(TaskRunnerResults.FAILURE)
     }
     catch (e: Throwable) {
       LOG.warn(e)
