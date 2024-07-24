@@ -1,6 +1,6 @@
 # intention: "TfUnusedElements"
 # fix: "Remove unused data source"
-# position: 84: "data "aws_vpc" "default" {"
+# position: 84: ""default""
 #
 variable "used_variable" {
   description = "This variable is used in resource configuration"

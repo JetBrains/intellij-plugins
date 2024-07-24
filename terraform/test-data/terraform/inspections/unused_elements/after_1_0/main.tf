@@ -1,6 +1,6 @@
 # intention: "TfUnusedElements"
 # fix: "Remove unused variable"
-# position: 25: "variable "unused_variable2" {"
+# position: 25: ""unused_variable2""
 #
 variable "used_variable" {
   description = "This variable is used in resource configuration"

@@ -137,7 +137,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
     required = requiredProps.sortedBy { it.name } + requiredBlocks.sortedBy { it.name }
 
     ProgressIndicatorProvider.checkCanceled()
-    val nameOfBlock = block.children.lastOrNull { it !is HCLObject } ?: return
+    val nameOfBlock = HCLPsiUtil.getPsiIdentifierName(block) ?: return
     val size = required.size
     holder.registerProblem(
       nameOfBlock,

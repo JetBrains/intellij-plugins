@@ -72,7 +72,8 @@ internal abstract class HclUnusedElement(private val holder: ProblemsHolder, pri
 
   fun checkElement() {
     if (isElementUnused()) {
-      holder.registerProblem(element, inspectionMessage, ProblemHighlightType.LIKE_UNUSED_SYMBOL, quickFix)
+      val highlightedElement = HCLPsiUtil.getPsiIdentifierName(element) ?: return
+      holder.registerProblem(highlightedElement, inspectionMessage, ProblemHighlightType.LIKE_UNUSED_SYMBOL, quickFix)
     }
   }
 }
