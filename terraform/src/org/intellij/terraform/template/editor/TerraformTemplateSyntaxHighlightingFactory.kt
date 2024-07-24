@@ -19,12 +19,12 @@ class TerraformTemplateSyntaxHighlightingFactory : HILSyntaxHighlighterFactory()
 }
 
 private class TerraformTemplateSyntaxHighlighter : HILSyntaxHighlighter() {
-  override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
+  override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
     return if (tokenType == TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED) {
       emptyArray()
     }
     else {
-      pack(ourAttributes[tokenType], TEMPLATE_BACKGROUND)
+      pack(super.getTokenHighlights(tokenType), TEMPLATE_BACKGROUND)
     }
   }
 

@@ -23,8 +23,22 @@ open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 }
 
 class HCLSyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
-  override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
-    return pack(ourAttributes[tokenType])
+  override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> = when (tokenType) {
+    HCLElementTypes.L_CURLY, HCLElementTypes.R_CURLY -> pack(HCL_BRACES)
+    HCLElementTypes.L_BRACKET, HCLElementTypes.R_BRACKET -> pack(HCL_BRACKETS)
+    HCLElementTypes.COMMA -> pack(HCL_COMMA)
+    HCLElementTypes.EQUALS -> pack(HCL_OPERATION_SIGN)
+    HCLElementTypes.DOUBLE_QUOTED_STRING, HCLElementTypes.SINGLE_QUOTED_STRING -> pack(HCL_STRING)
+    HCLElementTypes.NUMBER -> pack(HCL_NUMBER)
+    HCLElementTypes.TRUE, HCLElementTypes.FALSE, HCLElementTypes.NULL -> pack(HCL_KEYWORD)
+    HCLElementTypes.LINE_C_COMMENT, HCLElementTypes.LINE_HASH_COMMENT -> pack(HCL_LINE_COMMENT)
+    HCLElementTypes.BLOCK_COMMENT -> pack(HCL_BLOCK_COMMENT)
+    HCLElementTypes.ID -> pack(HCL_IDENTIFIER)
+
+    TokenType.BAD_CHARACTER -> pack(HighlighterColors.BAD_CHARACTER)
+    StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN -> pack(HCL_VALID_ESCAPE)
+    StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN, StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN -> pack(HCL_INVALID_ESCAPE)
+    else -> emptyArray()
   }
 
   override fun getHighlightingLexer(): Lexer {
@@ -37,8 +51,6 @@ class HCLSyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
   }
 
   companion object {
-    private val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
-
     val HCL_BRACKETS: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.BRACKETS", BRACKETS)
     val HCL_BRACES: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.BRACES", BRACES)
     val HCL_COMMA: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.COMMA", COMMA)
@@ -63,24 +75,5 @@ class HCLSyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
     // String escapes
     val HCL_VALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.VALID_ESCAPE", VALID_STRING_ESCAPE)
     val HCL_INVALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.INVALID_ESCAPE", INVALID_STRING_ESCAPE)
-
-    init {
-      fillMap(ourAttributes, HCL_BRACES, HCLElementTypes.L_CURLY, HCLElementTypes.R_CURLY)
-      fillMap(ourAttributes, HCL_BRACKETS, HCLElementTypes.L_BRACKET, HCLElementTypes.R_BRACKET)
-      fillMap(ourAttributes, HCL_COMMA, HCLElementTypes.COMMA)
-      fillMap(ourAttributes, HCL_OPERATION_SIGN, HCLElementTypes.EQUALS)
-      fillMap(ourAttributes, HCL_STRING, HCLElementTypes.DOUBLE_QUOTED_STRING)
-      fillMap(ourAttributes, HCL_STRING, HCLElementTypes.SINGLE_QUOTED_STRING)
-      fillMap(ourAttributes, HCL_NUMBER, HCLElementTypes.NUMBER)
-      fillMap(ourAttributes, HCL_KEYWORD, HCLElementTypes.TRUE, HCLElementTypes.FALSE, HCLElementTypes.NULL)
-      fillMap(ourAttributes, HCL_LINE_COMMENT, HCLElementTypes.LINE_C_COMMENT, HCLElementTypes.LINE_HASH_COMMENT)
-      fillMap(ourAttributes, HCL_BLOCK_COMMENT, HCLElementTypes.BLOCK_COMMENT)
-      fillMap(ourAttributes, HCL_IDENTIFIER, HCLElementTypes.ID)
-      fillMap(ourAttributes, HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
-
-      fillMap(ourAttributes, HCL_VALID_ESCAPE, StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN)
-      fillMap(ourAttributes, HCL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN)
-      fillMap(ourAttributes, HCL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN)
-    }
   }
 }

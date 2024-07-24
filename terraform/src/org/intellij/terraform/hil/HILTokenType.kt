@@ -38,17 +38,15 @@ object HILTokenTypes {
     OP_QUEST, OP_COLON
   )
 
-  val IL_ALL_OPERATORS = TokenSet.orSet(IL_UNARY_OPERATORS, IL_BINARY_OPERATORS, IL_TERNARY_OPERATOR_TOKENS)
+  val IL_ALL_OPERATORS: TokenSet = TokenSet.orSet(IL_UNARY_OPERATORS, IL_BINARY_OPERATORS, IL_TERNARY_OPERATOR_TOKENS)
 
-  val STRING_LITERALS: TokenSet = TokenSet.create(HILElementTypes.DOUBLE_QUOTED_STRING)
+  val STRING_LITERALS: TokenSet = TokenSet.create(DOUBLE_QUOTED_STRING)
 
   val FILE: IFileElementType = IFileElementType(HILLanguage)
 
-  val TIL_BRACES: TokenSet = TokenSet.create(HILElementTypes.INTERPOLATION_START, HILElementTypes.TEMPLATE_START, HILElementTypes.L_CURLY, HILElementTypes.R_CURLY)
-  val TIL_BRACKETS: TokenSet = TokenSet.create(HILElementTypes.L_BRACKET, HILElementTypes.R_BRACKET)
-  val TIL_PARENS: TokenSet = TokenSet.create(HILElementTypes.L_PAREN, HILElementTypes.R_PAREN)
-  val TIL_BOOLEANS: TokenSet = TokenSet.create(HILElementTypes.TRUE, HILElementTypes.FALSE)
-  val TIL_KEYWORDS: TokenSet = TokenSet.create(HILElementTypes.TRUE, HILElementTypes.FALSE, HILElementTypes.NULL)
-  val TIL_LITERALS: TokenSet = TokenSet.create(HILElementTypes.IL_LITERAL_EXPRESSION, HILElementTypes.TRUE, HILElementTypes.FALSE)
-  val TIL_VALUES: TokenSet = TokenSet.orSet(TIL_LITERALS)
+  val TIL_BRACES: TokenSet = TokenSet.create(INTERPOLATION_START, TEMPLATE_START, L_CURLY, R_CURLY)
+  val TIL_BRACKETS: TokenSet = TokenSet.create(L_BRACKET, R_BRACKET)
+  val TIL_PARENS: TokenSet = TokenSet.create(L_PAREN, R_PAREN)
+  val TIL_KEYWORDS: TokenSet = TokenSet.create(TRUE, FALSE, NULL)
+  val TIL_LITERALS: TokenSet = TokenSet.create(IL_LITERAL_EXPRESSION, TRUE, FALSE)
 }
