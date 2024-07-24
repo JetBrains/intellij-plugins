@@ -14,6 +14,12 @@ import org.intellij.terraform.hcl.psi.common.SelectExpression
  * Various helper methods for working with PSI of JSON language.
  */
 object HCLPsiUtil {
+  internal fun getPsiIdentifierName(element: HCLElement): PsiElement? = when (element) {
+    is HCLProperty -> element.firstChild
+    is HCLBlock -> element.children.lastOrNull { it !is HCLObject }
+    else -> null
+  }
+
   /**
    * Checks that PSI element represents exact key of HCL property
    *
