@@ -11,10 +11,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.asSafely
-import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable.Companion.pioExePath
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
+import com.jetbrains.cidr.cpp.embedded.platformio.*
 import java.nio.file.Path
 
 private const val POSIX_HOME_ENV_VAR_NAME = "HOME"
@@ -62,7 +59,7 @@ class PlatfromioCliBuilder(
   fun build(): GeneralCommandLine {
     val service = project?.service<PlatformioService>()
     if (verboseAllowed && service?.verbose == true) commandLine.withParameters("-v")
-    commandLine.exePath = pioExePath()
+    commandLine.exePath = PlatformioConfigurable.pioExePath()
 
     if (useEnvName && project != null) {
       val envName = ExecutionTargetManager.getActiveTarget(project).asSafely<PlatformioExecutionTarget>()?.id
@@ -80,7 +77,6 @@ class PlatfromioCliBuilder(
     }
     commandLine.withWorkDirectory(project?.basePath ?: FileUtil.getTempDirectory())
     return commandLine
-
   }
 
   fun withGdbHomeCompatibility(): PlatfromioCliBuilder {

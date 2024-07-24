@@ -4,7 +4,6 @@ import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
 import com.intellij.ide.util.projectWizard.ProjectSettingsStepBase
 import com.intellij.openapi.observable.properties.AtomicProperty
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
@@ -28,10 +27,7 @@ abstract class PlatformioProjectSettingsStepBase(projectGenerator: DirectoryProj
   protected fun startPlatformioWatcher() {
     platformioWatcher.scheduleWithFixedDelay(
       {
-        var pioExePath = PlatformioConfigurable.pioExePath()
-        if (SystemInfo.isWindows) {
-          pioExePath = "$pioExePath.exe"
-        }
+        val pioExePath = PlatformioConfigurable.pioExePath()
         val value = if (File(pioExePath).exists()) Presense.YES else Presense.NO
         if (platformioPresent.get() != value) {
           platformioPresent.set(value)
