@@ -45,7 +45,6 @@ class PlatformioConfigurable : SearchableConfigurable {
   }
 
   override fun createComponent(): JComponent {
-    this.disposable = Disposer.newDisposable()
     val newSettingsPanel = panel {
       row {
         textFieldWithBrowseButton(
@@ -76,6 +75,7 @@ class PlatformioConfigurable : SearchableConfigurable {
           }
       }
     }
+    this.disposable = Disposer.newDisposable()
     newSettingsPanel.registerValidators(this.disposable!!)
     newSettingsPanel.validateAll()
     settingsPanel = newSettingsPanel
