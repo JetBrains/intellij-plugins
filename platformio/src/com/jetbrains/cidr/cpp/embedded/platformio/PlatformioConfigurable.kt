@@ -51,7 +51,7 @@ class PlatformioConfigurable : SearchableConfigurable {
         textFieldWithBrowseButton(
           project = null,
           browseDialogTitle = ClionEmbeddedPlatformioBundle.message("dialog.title.home.location"),
-          fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withShowHiddenFiles(true))
+          fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor().withShowHiddenFiles(true))
           .align(Align.FILL)
           .label(ClionEmbeddedPlatformioBundle.message("home.location"), LabelPosition.TOP)
           .bindText(::manualPioLocation.toMutableProperty())
@@ -141,6 +141,7 @@ class PlatformioConfigurable : SearchableConfigurable {
     private const val PIO_VENV_FOLDER = "penv"
 
     private val PIO_EXECUTABLE = "pio" + if (SystemInfo.isWindows) { ".exe" } else { "" }
+    private val PLATFORMIO_EXECUTABLE = "platformio" + if (SystemInfo.isWindows) { ".exe" } else { "" }
     private val BIN_FOLDER = if (SystemInfo.isWindows) { "Scripts" } else { "bin" }
 
     /** Contains what the User has entered as the location of PIO.
@@ -159,15 +160,20 @@ class PlatformioConfigurable : SearchableConfigurable {
       }
 
     /** Adjusts the path entered by the user to the bin folder of pio */
-    private fun adjustPioPath(path: String): String? =
-      listOf(
-        Path.of(path),                                              // Case 1: points to the executable
-        Path.of(path, PIO_EXECUTABLE),                              // Case 2: points to bin folder
-        Path.of(path, BIN_FOLDER, PIO_EXECUTABLE),                  // Case 3: points to venv
-        Path.of(path, PIO_VENV_FOLDER, BIN_FOLDER, PIO_EXECUTABLE), // Case 4: points to installation folder of platformio
-      ).firstOrNull {
-        it.isExecutable() && it.fileName.pathString == PIO_EXECUTABLE
-      }?.parent?.pathString
+    private fun adjustPioPath(pathString: String): String? {
+      // Case 1: points to the executable
+      val path = Path.of(pathString)
+      val fileName = path.fileName.pathString
+      if (path.isExecutable() && (fileName == PIO_EXECUTABLE || fileName == PLATFORMIO_EXECUTABLE)){
+        return pathString
+      }
+      // Else do backup fuzzy search
+      return listOf(
+        Path.of(pathString, PIO_EXECUTABLE),                              // Case 2: points to bin folder
+        Path.of(pathString, BIN_FOLDER, PIO_EXECUTABLE),                  // Case 3: points to venv
+        Path.of(pathString, PIO_VENV_FOLDER, BIN_FOLDER, PIO_EXECUTABLE), // Case 4: points to installation folder of platformio
+      ).firstOrNull { it.isExecutable() }?.parent?.pathString
+    }
 
     // Searches for pio executable bin folder
     private fun pioBinLookup(): Path {
