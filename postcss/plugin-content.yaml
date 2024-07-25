@@ -1,0 +1,3 @@
+- name: lib/postcss.jar
+  modules:
+  - name: intellij.postcss

@@ -1,0 +1,6 @@
+- name: lib/cloudFormation.jar
+  modules:
+  - name: intellij.cloudFormation
+    libraries:
+      intellij.aws.cloudformation.meta:
+      - name: $MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2023/cloudformation-meta-2023.jar

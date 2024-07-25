@@ -1,0 +1,15 @@
+- name: lib/jssc-2.9.5.jar
+  projectLibraries:
+  - name: io.github.java.native.jssc
+    files:
+    - name: $MAVEN_REPOSITORY$/io/github/java-native/jssc/2/jssc-2.jar
+    reason: withProjectLibrary
+- name: lib/native-lib-loader-2.4.0.jar
+  projectLibraries:
+  - name: io.github.java.native.jssc
+    files:
+    - name: $MAVEN_REPOSITORY$/org/scijava/native-lib-loader/2/native-lib-loader-2.jar
+    reason: withProjectLibrary
+- name: lib/serial-monitor.jar
+  modules:
+  - name: intellij.serial.monitor

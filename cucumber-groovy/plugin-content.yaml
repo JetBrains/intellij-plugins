@@ -1,0 +1,6 @@
+- name: lib/cucumber-groovy.jar
+  modules:
+  - name: intellij.cucumber.groovy
+    libraries:
+      cucumber-groovy:
+      - name: $MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1/cucumber-groovy-1.jar

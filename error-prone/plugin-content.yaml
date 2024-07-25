@@ -1,0 +1,6 @@
+- name: lib/errorProne.jar
+  modules:
+  - name: intellij.errorProne
+- name: lib/jps/errorProne-jps.jar
+  modules:
+  - name: intellij.errorProne.jps

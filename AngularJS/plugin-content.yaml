@@ -1,0 +1,3 @@
+- name: lib/angularJS.jar
+  modules:
+  - name: intellij.angularJS

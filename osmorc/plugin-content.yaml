@@ -1,0 +1,21 @@
+- name: lib/osgi-jps.jar
+  modules:
+  - name: intellij.osgi.jps
+    libraries:
+      bndlib:
+      - name: $MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5/biz.aQute.bndlib-5.jar
+      bndlib-repository:
+      - name: $MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5/biz.aQute.repository-5.jar
+      bndlib-resolve:
+      - name: $MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5/biz.aQute.resolve-5.jar
+      bundlor:
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/bundlor-all.jar
+- name: lib/osgi.jar
+  modules:
+  - name: intellij.osgi
+    libraries:
+      OSGi namespaces:
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.contract-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.extender-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.implementation-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.service-1.jar

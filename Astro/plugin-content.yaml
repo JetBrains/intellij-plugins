@@ -1,0 +1,3 @@
+- name: lib/astro.jar
+  modules:
+  - name: intellij.astro

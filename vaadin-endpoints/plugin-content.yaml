@@ -1,0 +1,3 @@
+- name: lib/vaadin-endpoints.jar
+  modules:
+  - name: intellij.vaadin.endpoints

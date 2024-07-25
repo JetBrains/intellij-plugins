@@ -1,0 +1,3 @@
+- name: lib/javascript-bower.jar
+  modules:
+  - name: intellij.javascript.bower

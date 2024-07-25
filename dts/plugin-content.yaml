@@ -1,0 +1,5 @@
+- name: lib/dts.jar
+  modules:
+  - name: intellij.dts
+  - name: intellij.dts.pp
+    reason: <- intellij.dts

@@ -1,0 +1,3 @@
+- name: lib/jhipster.jar
+  modules:
+  - name: intellij.jhipster

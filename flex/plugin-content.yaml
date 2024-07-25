@@ -1,0 +1,9 @@
+- name: lib/flex-jps.jar
+  modules:
+  - name: intellij.flex.jps
+- name: lib/flex-shared.jar
+  modules:
+  - name: intellij.flex.shared
+- name: lib/flex.jar
+  modules:
+  - name: intellij.flex
