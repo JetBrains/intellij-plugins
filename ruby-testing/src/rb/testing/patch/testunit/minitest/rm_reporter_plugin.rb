@@ -39,7 +39,7 @@ module Minitest
       end
     end
 
-    MINITEST_SUPERCLASSES = %w[Minitest::Spec Minitest::Test ActiveSupport::TestCase ActionController::TestCase ActionDispatch::IntegrationTest ActionMailer::TestCase ActionView::TestCase ActiveJob::TestCase].to_set
+    MINITEST_SUPERCLASSES = %w[Minitest::Spec Minitest::Test ActiveSupport::TestCase ActionController::TestCase ActionDispatch::IntegrationTest ActionMailer::TestCase ActionView::TestCase ActiveJob::TestCase ActiveModel::TestCase].to_set
     private_constant :MINITEST_SUPERCLASSES
 
     # Finds the name of the class that +klass+ is nested inside. E.g.
@@ -52,10 +52,10 @@ module Minitest
         return ""
       end
       superclass = klass
-      until MINITEST_SUPERCLASSES.include?(superclass.superclass.name)
+      until MINITEST_SUPERCLASSES.include?(superclass.superclass.name) || superclass.superclass.name.end_with?("::TestCase")
         superclass = superclass.superclass
       end
-      superclass.nil? || (klass.name.start_with?(superclass.name) ? "" : superclass.name + "::")
+      (superclass.nil? || superclass == klass || klass.name.start_with?(superclass.name + "::")) ? "" : (superclass.name + "::")
     end
 
     def class_location(class_name)
