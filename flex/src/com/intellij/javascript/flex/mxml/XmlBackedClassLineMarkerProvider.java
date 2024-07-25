@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -47,7 +48,7 @@ public final class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDe
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)parent);
         if (classQuery.findFirst() != null && nameElement != null) {
           result.add(new LineMarkerInfo<>(element, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
-                                          JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
+                                          JavaScriptLineMarkerProvider::getClassInheritorsTooltip,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }
       }
