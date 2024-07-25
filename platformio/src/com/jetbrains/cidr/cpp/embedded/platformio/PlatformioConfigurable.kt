@@ -38,7 +38,7 @@ class PlatformioConfigurable : SearchableConfigurable {
     "configurable.ClionEmbeddedPlatformioBundle.display.name")
 
   private var disposable: Disposable? = null
-  private fun checkHome(path: String): Boolean {
+  private fun checkLocation(path: String): Boolean {
     EDT.assertIsEdt()
     if (path.isBlank()) return false
     return adjustPioPath(path).isNullOrEmpty()
@@ -55,7 +55,7 @@ class PlatformioConfigurable : SearchableConfigurable {
           .label(ClionEmbeddedPlatformioBundle.message("home.location"), LabelPosition.TOP)
           .bindText(::manualPioLocation.toMutableProperty())
           .trimmedTextValidation(
-            validationErrorIf(ClionEmbeddedPlatformioBundle.message("dialog.message.platformio.utility.not.found.inside"), ::checkHome))
+            validationErrorIf(ClionEmbeddedPlatformioBundle.message("dialog.message.platformio.utility.not.found.inside"), ::checkLocation))
           .applyToComponent {
             EDT.assertIsEdt()
             val location = pioBinLookup()
