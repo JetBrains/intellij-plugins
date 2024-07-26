@@ -165,7 +165,7 @@ class PlatformioConfigurable : SearchableConfigurable {
       val path = Path.of(pathString)
       val fileName = path.fileName?.pathString
       if (path.isExecutable() && (fileName == PIO_EXECUTABLE || fileName == PLATFORMIO_EXECUTABLE)){
-        return pathString
+        return path.parent?.pathString
       }
       // Else do backup fuzzy search
       return listOf(
