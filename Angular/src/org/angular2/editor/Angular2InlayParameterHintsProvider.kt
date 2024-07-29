@@ -17,7 +17,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 
-class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider() {
+class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider({ true }) {
 
   override fun getShowNameForAllArgsOption(): Option {
     return Options.NAMES_FOR_ALL_ARGS
