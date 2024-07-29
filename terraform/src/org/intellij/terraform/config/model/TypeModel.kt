@@ -80,7 +80,7 @@ class TypeModel(
 
     providersByFullName = providers
       .groupBy { it.fullName.lowercase() }
-      .mapValues { (_, values) -> values.minByOrNull { it.tier }!! }
+      .mapValues { (_, values) -> values.minBy { it.tier } }
 
     val loadedProviders = providersByFullName.values.toSet()
 

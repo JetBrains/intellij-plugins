@@ -23,7 +23,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
     val variants = myFixture.complete(CompletionType.BASIC, 2)
     assertNull(variants)
     timeoutRunBlocking {
-      waitUntilAssertSucceeds("") {
+      waitUntilAssertSucceeds("Cannot complete variants asynchronously for test file: $filePath") {
         myFixture.checkResultByFile("$filePath.after.tf")
       }
     }

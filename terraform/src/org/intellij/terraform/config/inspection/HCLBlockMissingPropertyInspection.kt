@@ -73,7 +73,7 @@ internal class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection
         obj.addBefore(it, obj.lastChild)
         obj.node.addLeaf(TokenType.WHITE_SPACE, "\n", obj.node.lastChildNode)
       }
-      // TODO: Investigate why reformat fails
+      // TODO: Investigate why reformat fails: IJPL-159260
       // CodeStyleManager.getInstance(project).reformat(block, true)
       // TODO: Navigate cursor to added.last() or added.first()
     }

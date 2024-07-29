@@ -37,7 +37,7 @@ internal class TFBackendCompletionTestCase: TFBaseCompletionTestCase() {
     val variants = myFixture.completeBasic()
     assertNull(variants)
     timeoutRunBlocking {
-      waitUntilAssertSucceeds("") {
+      waitUntilAssertSucceeds("Cannot add required properties to the import block") {
         myFixture.checkResult(textAfter)
       }
     }
