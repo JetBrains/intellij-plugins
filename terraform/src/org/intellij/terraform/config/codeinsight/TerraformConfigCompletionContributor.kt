@@ -9,9 +9,11 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
@@ -44,6 +46,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformVariablesFile
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.codeinsight.HCLCompletionContributor
@@ -252,14 +255,14 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
 
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
-      doCompletion(position, parameters, Processor {
+      doCompletion(position, parameters, result, Processor {
         result.addElement(it)
         !result.isStopped
       })
     }
 
 
-    private fun doCompletion(position: PsiElement, parameters: CompletionParameters, consumer: Processor<LookupElement>): Boolean {
+    private fun doCompletion(position: PsiElement, parameters: CompletionParameters, result: CompletionResultSet, consumer: Processor<LookupElement>): Boolean {
       val parent = position.parent
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent}" }
       val obj = when {
@@ -275,6 +278,10 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val typeModel = TypeModelProvider.getModel(position)
       val localProviders = TypeModel.collectProviderLocalNames(position)
       val tiers = setOf(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL)
+      if (parameters.invocationCount == 1) {
+        val message = HCLBundle.message("popup.advertisement.press.to.show.partner.community.providers", KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION))
+        result.addLookupAdvertisement(message)
+      }
       return when (type) {
         HCL_RESOURCE_IDENTIFIER -> {
           typeModel.allResources().toPlow()

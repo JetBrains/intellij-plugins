@@ -25,8 +25,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
-import com.intellij.util.concurrency.annotations.RequiresReadLock
-import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,8 +62,8 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
   }
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-    if (editor != null && startElement is HCLBlock) {//It runs in write action, so we can get pointers etc. safely
-      project.service<ImportProviderService>().addProvider(editor, startElement.createSmartPointer())
+    if (editor != null && startElement is HCLBlock) {
+      project.service<ImportProviderService>().scheduleAddProvider(editor, startElement.createSmartPointer())
     }
   }
 
@@ -85,14 +83,9 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
       .showInBestPositionFor(editor)
   }
 
-  @RequiresReadLock
-  fun showProvidersNotFoundBalloon(startElementPointer: SmartPsiElementPointer<HCLBlock>, editor: Editor) {
-    val startElement = startElementPointer.element ?: return
-    val blockType = startElement.getNameElementUnquoted(0) ?: return
-    val blockIdentifier = startElement.getNameElementUnquoted(1) ?: return
-    val resourcePrefix = TypeModel.getResourcePrefix(blockIdentifier)
+  private fun showProvidersNotFoundBalloon(@NlsSafe message: String, editor: Editor) {
     JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder(HCLBundle.message("popup.content.could.not.find.bundled.provider.for", blockType, blockIdentifier, resourcePrefix), MessageType.WARNING)
+      .createHtmlTextBalloonBuilder(message, MessageType.WARNING)
       { e ->
         if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
           if (e.url != null) {
@@ -108,19 +101,27 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 
 
-  fun addProvider(editor: Editor, blockPointer: SmartPsiElementPointer<HCLBlock>) {
+  fun scheduleAddProvider(editor: Editor, blockPointer: SmartPsiElementPointer<HCLBlock>) {
     coroutineScope.launch(Dispatchers.Default) {
       val possibleTypes = readAction { getAllTypesForBlockByIdentifier(blockPointer) }
       if (possibleTypes.isEmpty()) {
+        val message = readAction {
+          blockPointer.element ?.let { block ->
+            HCLBundle.message("popup.content.could.not.find.bundled.provider.for",
+                                                block.getNameElementUnquoted(0) ?: "",
+                                                block.getNameElementUnquoted(1) ?: "",
+                                                TypeModel.getResourcePrefix(block.getNameElementUnquoted(1) ?: ""))
+          }
+        } ?: return@launch
         withContext(Dispatchers.EDT) {
-          showProvidersNotFoundBalloon(blockPointer, editor)
+          showProvidersNotFoundBalloon(message, editor)
         }
       }
       else {
-        val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
         val filePointer = readAction { blockPointer.element?.containingFile?.createSmartPointer() } ?: return@launch
+        val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
         if (possibleTypes.size == 1) {
-          addRequiredProvider(filePointer, title, possibleTypes.first())
+          addRequiredProvider(title, possibleTypes.first(), filePointer)
         }
         else {
           withContext(Dispatchers.EDT) {
@@ -132,7 +133,7 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
   }
 }
 
-internal suspend fun addRequiredProvider(filePointer: SmartPsiElementPointer<PsiFile>, commandName: @Nls String, blockType: BlockType) {
+internal suspend fun addRequiredProvider(commandName: @Nls String, blockType: BlockType, filePointer: SmartPsiElementPointer<PsiFile>) {
   readAndWriteAction {
     val file = filePointer.element ?: return@readAndWriteAction value(Unit)
     val project = file.project
@@ -163,7 +164,7 @@ private class SelectUnknownResourceStep(
     if (selectedValue != null) {
       coroutineScope.launch(Dispatchers.Default) {
         val commandName = HCLBundle.message("terraform.add.provider.dialog.title", selectedValue.literal)
-        addRequiredProvider(pointer, commandName, selectedValue)
+        addRequiredProvider(commandName, selectedValue, pointer)
       }
     }
     return FINAL_CHOICE
