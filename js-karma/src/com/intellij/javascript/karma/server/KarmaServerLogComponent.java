@@ -115,7 +115,7 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
                                              ExecutionUtil.getLiveIndicator(emptyIcon),
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
-    content.putUserData(ToolWindowContentExtractor.SYNC_TAB_TO_GUEST, true);
+    content.putUserData(ToolWindowContentExtractor.SYNC_TAB_TO_REMOTE_CLIENTS, true);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
     NopProcessHandler wrapperProcessHandler = new NopProcessHandler();
     // we can't attach console to real process handler to not lose any messages
