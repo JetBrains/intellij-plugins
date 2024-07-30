@@ -37,7 +37,7 @@ internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
     val scope = element.getTerraformModule().getTerraformModuleScope()
     val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(elementName, scope, file)
     if (costSearch == SearchCostResult.TOO_MANY_OCCURRENCES)
-      return null
+      return HCLBundle.message("terraform.inlay.hints.indefinite.usages.text")
 
     val usagesCount = AtomicInteger()
     val limit = getInt("org.intellij.terraform.code.vision.usages.limit")

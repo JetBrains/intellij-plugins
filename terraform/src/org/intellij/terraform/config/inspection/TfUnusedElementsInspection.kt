@@ -25,44 +25,30 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
 
   inner class TfVisitor(private val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
-      val unusedElement: HclUnusedElement? = when {
-        TerraformPatterns.VariableRootBlock.accepts(block) -> object : HclUnusedElement(holder, block) {
-          override val inspectionMessage: String = HCLBundle.message("unused.variable.inspection.error.message", name)
-          override val quickFix: LocalQuickFix = RemoveVariableQuickFix(block)
-        }
-        TerraformPatterns.DataSourceRootBlock.accepts(block) -> object : HclUnusedElement(holder, block) {
-          override val inspectionMessage: String = HCLBundle.message("unused.data.source.inspection.error.message", name)
-          override val quickFix: LocalQuickFix = RemoveDataSourceQuickFix(block)
-        }
-        else -> null
-      }
-
-      unusedElement?.checkElement()
+      checkElement(holder, block)
     }
 
     override fun visitProperty(property: HCLProperty) {
-      if (TerraformPatterns.LocalProperty.accepts(property)) {
-        object : HclUnusedElement(holder, property) {
-          override val inspectionMessage: String = HCLBundle.message("unused.local.inspection.error.message", name)
-          override val quickFix: LocalQuickFix = RemoveLocalQuickFix(property)
-        }.checkElement()
-      }
+      checkElement(holder, property)
     }
   }
-}
 
-internal abstract class HclUnusedElement(private val holder: ProblemsHolder, private val element: HCLElement) {
-  abstract val inspectionMessage: String
-  abstract val quickFix: LocalQuickFix
+  private fun checkElement(holder: ProblemsHolder, element: HCLElement) {
+    val name = element.getElementName() ?: return
+    // Need to know is that a suitable hclElement before reference search (isElementUnused method)
+    val unused = getHclUnusedElement(element, name) ?: return
 
-  val name: String? by lazy { element.getElementName() }
+    if (isElementUnused(element, name)) {
+      val highlighted = HCLPsiUtil.getIdentifierPsi(element) ?: return
+      holder.registerProblem(highlighted, unused.inspectionMessage, ProblemHighlightType.LIKE_UNUSED_SYMBOL, unused.quickFix)
+    }
+  }
 
-  private fun isElementUnused(): Boolean {
-    val elementName = name ?: return false
+  private fun isElementUnused(element: HCLElement, name: String): Boolean {
     val module = element.getTerraformModule()
     val searchScope = module.getTerraformModuleScope()
 
-    val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(elementName, searchScope, element.containingFile)
+    val costSearch = PsiSearchHelper.getInstance(element.project).isCheapEnoughToSearch(name, searchScope, element.containingFile)
     if (costSearch != PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES) {
       return false
     }
@@ -70,22 +56,38 @@ internal abstract class HclUnusedElement(private val holder: ProblemsHolder, pri
     return ReferencesSearch.search(element, searchScope, false).findFirst() == null
   }
 
-  fun checkElement() {
-    if (isElementUnused()) {
-      val highlightedElement = HCLPsiUtil.getPsiIdentifierName(element) ?: return
-      holder.registerProblem(highlightedElement, inspectionMessage, ProblemHighlightType.LIKE_UNUSED_SYMBOL, quickFix)
+  private fun getHclUnusedElement(element: HCLElement, name: String): HclUnusedElement? = when {
+    TerraformPatterns.LocalProperty.accepts(element) -> object : HclUnusedElement {
+      override val inspectionMessage: String = HCLBundle.message("unused.local.inspection.error.message", name)
+      override val quickFix: LocalQuickFix = RemoveLocalQuickFix(element)
     }
+
+    TerraformPatterns.VariableRootBlock.accepts(element) -> object : HclUnusedElement {
+      override val inspectionMessage: String = HCLBundle.message("unused.variable.inspection.error.message", name)
+      override val quickFix: LocalQuickFix = RemoveVariableQuickFix(element)
+    }
+
+    TerraformPatterns.DataSourceRootBlock.accepts(element) -> object : HclUnusedElement {
+      override val inspectionMessage: String = HCLBundle.message("unused.data.source.inspection.error.message", name)
+      override val quickFix: LocalQuickFix = RemoveDataSourceQuickFix(element)
+    }
+    else -> null
   }
 }
 
-private class RemoveVariableQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
+private interface HclUnusedElement {
+  val inspectionMessage: String
+  val quickFix: LocalQuickFix
+}
+
+private class RemoveVariableQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.variable.inspection.quick.fix.name")
 }
 
-private class RemoveLocalQuickFix(element: HCLProperty) : RemovePsiElementQuickFix(element) {
+private class RemoveLocalQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.local.inspection.quick.fix.name")
 }
 
-private class RemoveDataSourceQuickFix(element: HCLBlock) : RemovePsiElementQuickFix(element) {
+private class RemoveDataSourceQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
   override fun getText(): String = HCLBundle.message("unused.data.source.inspection.quick.fix.name")
 }
