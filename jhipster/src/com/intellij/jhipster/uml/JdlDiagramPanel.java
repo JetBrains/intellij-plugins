@@ -7,20 +7,19 @@ import com.intellij.diagram.DiagramBuilderFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
+import com.intellij.openapi.actionSystem.DataSink;
+import com.intellij.openapi.actionSystem.UiDataProvider;
 import com.intellij.openapi.graph.GraphDataKeys;
+import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.services.GraphLayoutService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.intellij.uml.UmlFileEditorImpl;
 import com.intellij.uml.components.UmlGraphZoomableViewport;
 import com.intellij.util.ui.JBUI;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +38,7 @@ final class JdlDiagramPanel implements Disposable {
   private final JdlUmlProvider umlProvider = new JdlUmlProvider();
   private final JdlPreviewFileEditor fileEditor;
 
-  public JdlDiagramPanel(JdlPreviewFileEditor fileEditor) {
+  JdlDiagramPanel(JdlPreviewFileEditor fileEditor) {
     this.fileEditor = fileEditor;
   }
 
@@ -79,48 +78,34 @@ final class JdlDiagramPanel implements Disposable {
     }
   }
 
-  private JComponent createSimpleGraphView(@NotNull DiagramBuilder builder) {
+  private static JComponent createSimpleGraphView(@NotNull DiagramBuilder builder) {
     builder.getPresentationModel().registerActions();
-
     var view = builder.getView();
-    GraphDataKeys.addDataProvider(view, chartPanel);
-
     view.getCanvasComponent().setBackground(JBColor.GRAY);
     GraphLayoutService.getInstance().queryLayout(builder.getGraphBuilder()).withFitContent(AFTER).run();
-
     return new UmlGraphZoomableViewport(builder);
   }
 
-  private class MyPanel extends JPanel implements DataProvider {
-    public MyPanel() {
+  private class MyPanel extends JPanel implements UiDataProvider {
+    MyPanel() {
       super(new BorderLayout());
     }
 
     @Override
-    public @Nullable Object getData(@NotNull @NonNls String dataId) {
-      if (builder == null) return null;
+    public void uiDataSnapshot(@NotNull DataSink sink) {
+      if (builder == null) return;
 
-      if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.is(dataId)) {
-        return (DataProvider)this::getSlowData;
+      DataSink.uiDataSnapshot(sink, dataId -> UmlFileEditorImpl.getData(dataId, builder));
+      if (builder instanceof GraphBuilder<?, ?> o) {
+        sink.set(GraphDataKeys.GRAPH_BUILDER, o);
       }
-      if (GraphDataKeys.GRAPH_BUILDER.is(dataId)) {
-        return builder;
-      }
-      if (GraphDataKeys.GRAPH.is(dataId)) {
-        return builder.getGraph();
-      }
-      return UmlFileEditorImpl.getData(dataId, builder);
-    }
-
-    @Nullable
-    private UserDataHolder getSlowData(@NonNls @NotNull String dataId) {
-      if (CommonDataKeys.VIRTUAL_FILE.is(dataId)) {
+      sink.set(GraphDataKeys.GRAPH, builder.getGraph());
+      sink.lazy(CommonDataKeys.VIRTUAL_FILE, () -> {
         return fileEditor.getFile();
-      }
-      if (CommonDataKeys.PSI_FILE.is(dataId)) {
+      });
+      sink.lazy(CommonDataKeys.PSI_FILE, () -> {
         return PsiManager.getInstance(fileEditor.getProject()).findFile(fileEditor.getFile());
-      }
-      return null;
+      });
     }
   }
 }
