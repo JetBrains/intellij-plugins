@@ -5,6 +5,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -34,6 +35,7 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
   }
 
   private fun checkElement(holder: ProblemsHolder, element: HCLElement) {
+    ProgressIndicatorProvider.checkCanceled()
     val name = element.getElementName() ?: return
     // Need to know is that a suitable hclElement before reference search (isElementUnused method)
     val unused = getHclUnusedElement(element, name) ?: return
@@ -45,6 +47,7 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
   }
 
   private fun isElementUnused(element: HCLElement, name: String): Boolean {
+    ProgressIndicatorProvider.checkCanceled()
     val module = element.getTerraformModule()
     val searchScope = module.getTerraformModuleScope()
 
