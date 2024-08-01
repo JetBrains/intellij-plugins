@@ -14,7 +14,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
-import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.ide.progress.withBackgroundProgress
@@ -28,12 +27,10 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.inspection.AddResourcePropertiesFix
-import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.inspection.MissingPropertyVisitor
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModel
@@ -42,11 +39,9 @@ import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.withGuaranteedProgressIndicator
 
 @Service(Service.Level.PROJECT)
 class TfInsertHandlerService(val project: Project, val coroutineScope: CoroutineScope) {
@@ -113,7 +108,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     }
   }
 
-  private fun applyFixes(fixes: List<Pair<ProblemDescriptor, AddResourcePropertiesFix>>, project: Project, ): Boolean {
+  private fun applyFixes(fixes: List<Pair<ProblemDescriptor, AddResourcePropertiesFix>>, project: Project): Boolean {
     fixes.forEach {
       it.second.applyFix(project, it.first)
     }

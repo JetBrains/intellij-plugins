@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.model.*
+import java.util.Locale
 
 object TFBaseLoader {
   /*
@@ -120,7 +121,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       MaxItems    uint64 `json:"max_items,omitempty"`
     }
  */
-  private fun parseBlockType(context: LoadContext, name: String, value: Any?, fqnPrefix: String): PropertyOrBlockType {
+  private fun parseBlockType(context: LoadContext, name: String, value: Any?): PropertyOrBlockType {
     if (value !is ObjectNode) {
       error("Right part of schema element (field parameters) should be object")
     }
@@ -129,14 +130,10 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       throw IllegalStateException(Constants.TIMEOUTS + " not expected here")
     }
 
-    val fqn = "$fqnPrefix.$name"
-
     val block = value.obj("block")!!
     val nesting_mode = value.string("nesting_mode")
     val min_items = value.number("min_items")
     val max_items = value.number("max_items")
-
-    val additional = context.model.external[fqn]
 
     val parsed = parseBlock(context, block, name,
                             NestingInfo(NestingType.fromString(nesting_mode!!)!!, min_items?.toInt(), max_items?.toInt()))
@@ -167,7 +164,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     }?.toList() ?: emptyList()
 
     val blocks: List<PropertyOrBlockType> = block_types?.fields()?.asSequence()?.map {
-      parseBlockType(context, it.key, it.value, name)
+      parseBlockType(context, it.key, it.value)
     }?.toList() ?: emptyList()
 
     return BlockType(name.pool(context),
@@ -181,7 +178,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
   private fun parseType(context: LoadContext, node: JsonNode): Type {
     if (node.isTextual) {
       val string = node.asText()
-      return when (string?.toLowerCase()) {
+      return when ( string?.lowercase(Locale.getDefault())) {
         "bool" -> Types.Boolean
         "number" -> Types.Number
         "string" -> Types.String
@@ -302,9 +299,8 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
     val model = context.model
     val providerSchemas = (json.obj("schemas") ?: json).obj("provider_schemas") ?: return
     for ((n, provider) in providerSchemas.fields().asSequence()) {
-      val stringList = n.split("/")
-      val (name, namespace) = stringList.takeIf { it.size == 3 && it[0] == "registry.terraform.io" || it[0] == "terraform.io" }?.let { Pair(it[2], it[1]) } ?: Pair(n, n)
-      val providerFullName = "$namespace/$name"
+      val coordinates = ProviderType.parseCoordinates(n)
+      val providerFullName = "${coordinates.namespace}/${coordinates.name}"
       val providerKey = "provider.$providerFullName"
       if (model.loaded.containsKey(providerKey)) {
         TerraformMetadataLoader.LOG.warn("Provider '$providerFullName' is already loaded from '${model.loaded[providerKey]}'")
@@ -312,7 +308,7 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
       }
       provider as ObjectNode
       model.loaded[providerKey] = fileName
-      val info = provider.obj("provider")?.let { parseProviderInfo(context, name, namespace, it, json) } ?: ProviderType(name, emptyList(), namespace)
+      val info = provider.obj("provider")?.let { parseProviderInfo(context, coordinates.name, coordinates.namespace, it, json) } ?: ProviderType(coordinates.name, emptyList(), coordinates.namespace)
       model.providers.add(info)
       val resources = provider.obj("resource_schemas")
       val dataSources = provider.obj("data_source_schemas")

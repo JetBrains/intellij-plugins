@@ -7,8 +7,7 @@ import com.intellij.psi.SyntaxTraverser
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.LATEST_VERSION
-import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
-import org.intellij.terraform.config.Constants.TERRAFORM_DOMAIN
+import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 
@@ -32,9 +31,9 @@ internal class LockFileObject private constructor (lockFile: PsiFile) {
     val version: String
 
     init {
-      val strings = block.name.split("/").takeIf { it.size == 3 && it[0] == REGISTRY_DOMAIN || it[0] == TERRAFORM_DOMAIN }
-      name = strings?.let { it[2] }
-      namespace = strings?.let { it[1] }
+      val coordinates = ProviderType.parseCoordinates(block.name)
+      this.name = coordinates.name
+      this.namespace = coordinates.namespace
       fullName = "$namespace/$name"
       version = if (block.`object` != null && block.`object` is HCLObject) {
         val providerVersion = (block.`object` as HCLObject).propertyList.firstOrNull { it.name == VERSION }?.value?.text

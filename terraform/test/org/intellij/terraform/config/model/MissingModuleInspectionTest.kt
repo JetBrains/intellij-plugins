@@ -148,7 +148,7 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
         source = "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git///modules/vpc-endpoints?ref=v3.14.2"
       }
 
-      <warning descr="Cannot locate module locally: Unknown reason">module "unresolved" {
+      <warning descr="Cannot locate module locally: Could not find module directory in 'src/.terraform/modules'">module "unresolved" {
         source = "git::ssh://git@github.com/not-found"
       }</warning>
 

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.util.ThrowableConsumer
 import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
+import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModel.Companion.getTerraformBlock
 import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersData
 import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersSource
@@ -51,8 +52,10 @@ internal class LocalProviderNamesService {
       if (RequiredProvidersData.accepts(element)) {
         element as HCLProperty
         val localName = element.name
-        val source = element.value?.children?.filter { RequiredProvidersSource.accepts(it) }?.firstOrNull() as? HCLProperty
-        source?.value?.name?.let { localNames.put(localName, it) }
+        val source = element.value?.children?.firstOrNull { RequiredProvidersSource.accepts(it) } as? HCLProperty
+        source?.value?.name
+          ?.let { name -> ProviderType.parseCoordinates(name) }
+          ?.run { localNames.put(localName, "${namespace}/${name}") }
       }
       element.acceptChildren(this)
     }

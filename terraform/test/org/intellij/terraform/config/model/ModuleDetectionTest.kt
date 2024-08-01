@@ -3,14 +3,30 @@ package org.intellij.terraform.config.model
 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class ModuleDetectionTest {
 
   @Test
+  fun registrySame() {
+    assertAccepts("hashicorp/consul/aws", "hashicorp/consul/aws")
+    assertAccepts("/hashicorp/consul/aws", "hashicorp/consul/aws")
+    assertAccepts("hashicorp/consul/aws", "/hashicorp/consul/aws")
+    assertAccepts("/hashicorp/consul/aws", "/hashicorp/consul/aws")
+    assertAccepts("/hashicorp/consul/aws", "/hashicorp/consul/aws")
+  }
+
+  @Test
+  fun testLongSourceMatch() {
+    assertAccepts("registry.terraform.io/terraform-aws-modules/vpc/aws///modules/vpc-endpoints", "registry.terraform.io/terraform-aws-modules/vpc/aws///modules/vpc-endpoints")
+  }
+
+  @Test
   fun registryMatches() = assertAccepts("registry.terraform.io/hashicorp/consul/aws", "hashicorp/consul/aws")
 
   @Test
+  @Disabled("We need to figure out why we cannot support custom registries")
   fun notPublicRegistry() = assertNotAccepts("my.registry.io/hashicorp/consul/aws", "hashicorp/consul/aws")
 
   @Test

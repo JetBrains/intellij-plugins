@@ -421,6 +421,10 @@
     <internalFileTemplate name="Template File"/>
     <internalFileTemplate name="Outputs File"/>
     <internalFileTemplate name="Variables File"/>
+
+    <!--OpenTofu support-->
+    <fileType name="OpenTofu" language="HCL-Terraform" extensions="tofu" implementationClass="org.intellij.terraform.opentofu.OpenTofuFileType" fieldName="INSTANCE"/>
+
   </extensions>
 
   <actions>

@@ -35,7 +35,6 @@ object Constants {
   internal const val HCL_POSTCONDITION_BLOCK_IDENTIFIER: String = "postcondition"
 
 
-  internal const val TERRAFORM_DOMAIN: String = "terraform.io"
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   internal const val LATEST_VERSION: String = "latest"
 

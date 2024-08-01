@@ -10,8 +10,12 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class TerraformIcons {
+  private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
+    return IconManager.getInstance().loadRasterizedIcon(path, TerraformIcons.class.getClassLoader(), cacheKey, flags);
+  }
   private static @NotNull Icon load(@NotNull String expUIPath, @NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, expUIPath, TerraformIcons.class.getClassLoader(), cacheKey, flags);
   }
+  /** 16x16 */ public static final @NotNull Icon Opentofu = load("icons/opentofu.svg", -778658980, 0);
   /** 16x16 */ public static final @NotNull Icon Terraform = load("icons/newui/terraform.svg", "icons/terraform.svg", -828836963, 2);
 }

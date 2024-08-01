@@ -11,6 +11,7 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.OFFICIAL_PROVIDERS_NAMESPACE
+import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
 
 // Model for element types
 
@@ -597,6 +598,20 @@ class ProviderType(
 
   override val presentableText: String
     get() = "$literal ($fullName: $version) "
+
+  companion object {
+    internal fun parseCoordinates(coordinates: String): ProviderCoordinates {
+      val stringList = coordinates.split("/")
+      return when (stringList.size) {
+        3 -> ProviderCoordinates(stringList[0], stringList[1], stringList[2])
+        2 -> ProviderCoordinates(REGISTRY_DOMAIN, stringList[0], stringList[1])
+        1 -> ProviderCoordinates("", stringList[0], "hashicorp")
+        else -> ProviderCoordinates("", "", "")
+      }
+    }
+  }
+
+  internal data class ProviderCoordinates(val registryUrl: String, val namespace: String, val name: String)
 }
 
 class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner)) {

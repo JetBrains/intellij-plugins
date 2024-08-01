@@ -1,11 +1,12 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
+import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
 import org.intellij.terraform.config.model.TypeModel
 
 internal object TerraformWebDocUrlProvider : BaseTerraformDocUrlProvider() {
 
-  private const val PROVIDERS_WEB_DOCS: String = "https://registry.terraform.io/providers"
+  private const val PROVIDERS_WEB_DOCS: String = "https://${REGISTRY_DOMAIN}/providers"
 
   override suspend fun getDocUrl(blockData: BlockData, context: String): String? {
     val (org, provider, version) = blockData.provider ?: return null

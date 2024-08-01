@@ -157,12 +157,7 @@ object ModuleDetectionUtil {
   }
 
   fun sourceMatch(modulesJsonSource: String, moduleReference: String): Boolean {
-    if (modulesJsonSource == moduleReference) return true
-
-    if (modulesJsonSource.startsWith("registry.terraform.io")) {
-      return modulesJsonSource.removePrefix("registry.terraform.io").removePrefix("/") == moduleReference.removePrefix("/")
-    }
-
+    if (modulesJsonSource == moduleReference || modulesJsonSource.removePrefix("/").endsWith(moduleReference.removePrefix("/"))) return true
     val modUri = ModuleUri.fromModulesJsonSource(modulesJsonSource) ?: return false
     val refUri = ModuleUri.fromReference(moduleReference) ?: return false
     return modUri.couldBeReferencedBy(refUri)
@@ -187,7 +182,7 @@ object ModuleDetectionUtil {
                     ?: return CachedValueProvider.Result(Result.Failure("No 'source' property"), moduleBlock)
 
     val file = moduleBlock.containingFile.originalFile
-    val directory = file.containingDirectory ?: return CachedValueProvider.Result(Result.Failure("Unknown reason"), moduleBlock, file)
+    val directory = file.containingDirectory ?: return CachedValueProvider.Result(Result.Failure("File ${file.name} does not have containing directory"), moduleBlock, file)
 
     val source = sourceVal.value
     val project = moduleBlock.project
@@ -213,7 +208,7 @@ object ModuleDetectionUtil {
       val version = (moduleBlock.`object`?.findProperty("version")?.value as? HCLStringLiteral)?.value
       val constraint = getVersionConstraint(version) ?: VersionConstraint.AnyVersion
       module = newestModuleManifest(constraint, manifest.modules
-        .filter { sourceMatch(it.source, source) })
+        .filter { it.key == name })
     }
     else {
       val pair = getKeyPrefix(directory, dotTerraform, manifest, name, source)
@@ -277,7 +272,7 @@ object ModuleDetectionUtil {
   ): CachedValueProvider.Result<Result<Module>> {
     val relativeModule = findRelativeModule(directory, source)
                            ?.let { Result.Success(it) }
-                         ?: Result.Failure(err ?: "Unknown reason")
+                         ?: Result.Failure(err ?: "Could not find module directory in '${directory.name}/.terraform/modules'")
     return CachedValueProvider.Result(relativeModule, *dependencies, directory, *getVFSChainOrVFS(directory),
                                       *getModuleFiles(relativeModule.value))
   }
@@ -334,9 +329,7 @@ object ModuleDetectionUtil {
     var result: Boolean? = element.getUserData(IsRegistrySourceKey)
     if (result != null) return result
     synchronized(IsRegistrySourceLock.get(source)) {
-      result = element.getUserData(IsRegistrySourceKey)
-      if (result != null) return result!!
-      result = RegistryModuleUtil.parseRegistryModule(source) != null
+      result = element.getUserData(IsRegistrySourceKey) ?: (RegistryModuleUtil.parseRegistryModule(source) != null)
       element.putUserData(IsRegistrySourceKey, result)
     }
     return result!!
@@ -382,7 +375,7 @@ object ModuleDetectionUtil {
 
   private fun parseManifest(file: VirtualFile): ModulesManifest? {
     LOG.debug("Parsing manifest file $file")
-    val stream = file.inputStream ?: return null
+    val stream = file.inputStream
     val context = file.parent.parent.parent ?: return null
     val application = ApplicationManager.getApplication()
     try {
@@ -393,7 +386,7 @@ object ModuleDetectionUtil {
         logErrorAndFailInInternalMode(application, "In file '$file' no JSON found")
         return null
       }
-      return ModulesManifest(context, json.array("Modules")?.filterIsInstance(ObjectNode::class.java)?.map {
+      return ModulesManifest(context, json.array("Modules")?.filterIsInstance<ObjectNode>()?.map {
         ModuleManifest(
           source = it.string("Source") ?: "",
           key = it.string("Key") ?: "",
@@ -426,7 +419,7 @@ object ModuleDetectionUtil {
 
     val relative = directory.virtualFile.findFileByRelativePath(source) ?: return null
     if (!relative.exists() || !relative.isDirectory) return null
-    return PsiManager.getInstance(directory.project).findDirectory(relative)?.let { Module(it) }
+    return directory.manager.findDirectory(relative)?.let { Module(it) }
   }
 
   private fun getKeyPrefix(directory: PsiDirectory,
