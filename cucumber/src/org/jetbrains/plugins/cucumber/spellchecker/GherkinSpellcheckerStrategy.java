@@ -1,8 +1,9 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.spellchecker;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
@@ -14,7 +15,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementType;
 
 import java.util.List;
 
-public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy {
+public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy implements DumbAware {
   @NotNull
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {

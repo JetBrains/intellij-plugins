@@ -1,11 +1,12 @@
 package com.jetbrains.lang.makefile
 
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.*
 import com.intellij.spellchecker.inspections.*
 import com.intellij.spellchecker.tokenizer.*
 import com.jetbrains.lang.makefile.psi.*
 
-class MakefileSpellcheckingStrategy : SpellcheckingStrategy() {
+class MakefileSpellcheckingStrategy : SpellcheckingStrategy(), DumbAware {
   override fun getTokenizer(element: PsiElement): Tokenizer<out PsiElement> = when (element) {
     is MakefileComment -> MakefileCommentTokenizer
     is MakefileDocComment -> MakefileDocCommentTokenizer

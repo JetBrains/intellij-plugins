@@ -1,8 +1,9 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.spellchecker
 
 import com.intellij.codeInspection.SuppressionUtil
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.*
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
@@ -13,7 +14,7 @@ import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.Her
 import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.StringLiteralTokenizer
 import org.intellij.terraform.hcl.psi.*
 
-open class HCLSpellcheckerStrategy : SpellcheckingStrategy() {
+open class HCLSpellcheckerStrategy : SpellcheckingStrategy(), DumbAware {
   override fun getTokenizer(element: PsiElement?): Tokenizer<*> {
     if (element == null) return EMPTY_TOKENIZER
 

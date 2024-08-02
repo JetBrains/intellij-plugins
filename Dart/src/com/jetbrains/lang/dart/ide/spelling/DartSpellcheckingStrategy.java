@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.spelling;
 
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -15,7 +16,7 @@ import com.jetbrains.lang.dart.ide.annotator.DartAnnotator;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import org.jetbrains.annotations.NotNull;
 
-public final class DartSpellcheckingStrategy extends SpellcheckingStrategy {
+public final class DartSpellcheckingStrategy extends SpellcheckingStrategy implements DumbAware {
   private final Tokenizer<PsiElement> myStringLiteralTokenizer = new DartStringLiteralTokenizer();
 
   @Override

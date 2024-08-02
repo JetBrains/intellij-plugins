@@ -4,6 +4,7 @@ package com.intellij.jhipster;
 
 import com.intellij.jhipster.model.JdlOptionModel;
 import com.intellij.jhipster.psi.*;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -13,10 +14,10 @@ import com.intellij.spellchecker.tokenizer.TokenConsumer;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.jetbrains.annotations.NotNull;
 
-final class JdlSpellcheckingStrategy extends SpellcheckingStrategy {
+final class JdlSpellcheckingStrategy extends SpellcheckingStrategy implements DumbAware {
   private final Tokenizer<JdlStringLiteral> ourStringLiteralTokenizer = new Tokenizer<>() {
     @Override
-    public void tokenize(@NotNull JdlStringLiteral element, TokenConsumer consumer) {
+    public void tokenize(@NotNull JdlStringLiteral element, @NotNull TokenConsumer consumer) {
       final PlainTextSplitter textSplitter = PlainTextSplitter.getInstance();
       if (element.textContains('\\')) {
         var fragments = element.getTextFragments();

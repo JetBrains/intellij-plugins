@@ -15,16 +15,17 @@
  */
 package com.intellij.protobuf.ide.spelling;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
-import com.intellij.spellchecker.tokenizer.Tokenizer;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.protobuf.lang.psi.PbOptionExpression;
 import com.intellij.protobuf.lang.psi.PbTextStringPart;
 import com.intellij.protobuf.lang.psi.ProtoStringPart;
+import com.intellij.psi.PsiElement;
+import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
+import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.jetbrains.annotations.NotNull;
 
 /** A {@link SpellcheckingStrategy} for protobuf files */
-public class PbSpellcheckingStrategy extends SpellcheckingStrategy {
+public class PbSpellcheckingStrategy extends SpellcheckingStrategy implements DumbAware {
   @NotNull
   @Override
   public Tokenizer<?> getTokenizer(PsiElement element) {
