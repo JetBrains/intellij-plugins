@@ -1,0 +1,7 @@
+{
+  "resources/org/jetbrains/plugins/cucumber/icons": {
+    "newui": {
+      "cucumber.svg": "org/jetbrains/plugins/cucumber/icons/cucumber.svg"
+    }
+  }
+}
