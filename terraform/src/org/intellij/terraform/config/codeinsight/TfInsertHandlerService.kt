@@ -119,7 +119,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     val element = pointer.element ?: return emptyList()
     val holder = ProblemsHolder(InspectionManager.getInstance(project), element.containingFile, true)
     val visitor = MissingPropertyVisitor.create(holder, true)
-    element.let { visitor.visitBlock(it) }
+    element.accept(visitor)
     val fixPairs = holder.results.flatMap { inspectionResult ->
       inspectionResult.fixes
         ?.filterIsInstance<AddResourcePropertiesFix>()

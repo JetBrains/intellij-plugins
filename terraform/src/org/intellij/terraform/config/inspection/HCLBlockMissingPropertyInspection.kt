@@ -15,7 +15,6 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.codeinsight.TfModelHelper
-import org.intellij.terraform.config.inspection.TfInspectionUtils.EMPTY_HCL_ELEMENT_VISITOR
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns.ConfigOverrideFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.DynamicBlock
@@ -155,10 +154,10 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
   }
 
   companion object {
-    fun create(holder: ProblemsHolder, recursive: Boolean): HCLElementVisitor {
+    fun create(holder: ProblemsHolder, recursive: Boolean): PsiElementVisitor {
       val ft = holder.file.fileType
       if (ft != TerraformFileType) {
-        return EMPTY_HCL_ELEMENT_VISITOR
+        return EMPTY_VISITOR
       }
       return MissingPropertyVisitor(holder, recursive)
     }
