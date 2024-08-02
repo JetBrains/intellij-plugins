@@ -48,6 +48,7 @@ class TestProjectResolve : LightPlatformTestCase() {
     "nothingA.cpp" to CLanguageKind.CPP,
     "nothingB.cpp" to CLanguageKind.CPP,
     "nothingC.cpp" to CLanguageKind.CPP,
+    "extra.c" to CLanguageKind.C
   )
 
   private lateinit var projectPath: String
@@ -136,7 +137,9 @@ class TestProjectResolve : LightPlatformTestCase() {
     val actualSourceFiles = externalModule
       .data.asSafely<ExternalModule>()!!
       .resolveConfigurations.first()
-      .fileConfigurations.associate { it.file.name to it.languageKind }
+      .fileConfigurations
+      .filter { it.file.path.startsWith(projectPath) } // Filter out framework sources
+      .associate { it.file.name to it.languageKind }
     assertEquals("Source file", expectedSourceFiles, actualSourceFiles)
   }
 
@@ -174,6 +177,14 @@ class TestProjectResolve : LightPlatformTestCase() {
     }
 
     override fun createRunConfigurationIfRequired(project: Project) {}
+
+    /**
+     * Mock data is loaded from compile_commands.json
+     * The file is created by invoking `pio run -t compiledb`
+     */
+    override fun gatherCompDB(id: ExternalSystemTaskId, pioRunEventId: String, project: Project, activeEnvName: String, listener: ExternalSystemTaskNotificationListener, projectPath: String): String {
+      return projectDir.findChild("compile_commands.json")!!.readText()
+    }
   }
 }
 

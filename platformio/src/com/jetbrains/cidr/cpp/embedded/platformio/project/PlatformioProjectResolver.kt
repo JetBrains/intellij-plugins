@@ -1,6 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.intellij.execution.DefaultExecutionTarget
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.ExecutionTargetManager
@@ -26,7 +27,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.*
@@ -34,11 +34,18 @@ import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.*
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.cpp.external.system.project.attachExternalModule
+import com.jetbrains.cidr.external.system.model.ExternalLanguageConfiguration
 import com.jetbrains.cidr.external.system.model.ExternalModule
+import com.jetbrains.cidr.external.system.model.impl.ExternalLanguageConfigurationImpl
 import com.jetbrains.cidr.external.system.model.impl.ExternalModuleImpl
 import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
+import com.jetbrains.cidr.lang.CLanguageKind
+import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
+import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerKind
+import com.jetbrains.cidr.lang.workspace.compiler.UnknownCompilerKind
 import org.jetbrains.annotations.Nls
 import java.io.File
+import java.nio.file.Path
 import java.io.FileNotFoundException
 import java.util.*
 
@@ -136,7 +143,6 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         }
         val activeEnvName = ExecutionTargetManager.getActiveTarget(project).asSafely<PlatformioExecutionTarget>()?.id ?: defaultEnv?.id
         if (activeEnvName == null) throw ExternalSystemException("No active platformio environment")
-        val buildSrcFilter = scanner.gatherBuildSrcFilter(configMap, activeEnvName)
 
         var pioActiveMetadataText = platformioService.metadataJson[activeEnvName]
         if (pioActiveMetadataText == null) {
@@ -156,17 +162,34 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         }
         platformioService.setTargets(addUploadIfMissing(targets.orEmpty()))
 
-        val srcFolderPath = projectDir.toNioPath().resolve(platformioSection["src_dir"].asSafely<String>() ?: "src")
-        val srcFolder: VirtualFile = VfsUtil.findFile(srcFolderPath, false) ?: throw ExternalSystemException(
-          ClionEmbeddedPlatformioBundle.message("source.folder.not.found", srcFolderPath))
-
         val buildDirectory: File = calcBuildDir(projectDir, platformioSection)
         platformioService.buildDirectory = buildDirectory.toPath()
         val name = pioActiveMetadata["env_name"] as String
-        val confBuilder = ExternalResolveConfigurationBuilder(id = name, configName = "PlatformIO", buildWorkingDir = buildDirectory)
+        val confBuilder = ExternalResolveConfigurationBuilder(id = name, configName = "PlatformIO", buildWorkingDir = projectDir.toNioPath().toFile())
           .withVariants(name)
 
-        platformioService.librariesPaths = scanner.parseResolveConfig(confBuilder, pioActiveMetadata, srcFolder, buildSrcFilter)
+        checkCancelled()
+
+        val languageConfigurations = configureLanguages(pioActiveMetadata, confBuilder)
+
+        checkCancelled()
+
+        var compDbText = platformioService.compileDbText
+        if (compDbText == null) {
+          compDbText = gatherCompDB(id, "pio-run:${UUID.randomUUID()}", project, activeEnvName, listener, projectPath)
+          platformioService.compileDbText = compDbText
+        }
+
+        val compDbTokenType = object : TypeToken<List<Map<String, String>>>(){}.type
+        val compDbJson: List<Map<String, String>> = Gson().fromJson(compDbText, compDbTokenType)
+        scanner.scanSources(compDbJson, project.service<PlatformioWorkspace>(), languageConfigurations, confBuilder)
+
+        checkCancelled()
+
+        platformioService.librariesPaths = scanner.scanLibraries(pioActiveMetadata)
+
+        checkCancelled()
+
         val module = ExternalModuleImpl(mutableSetOf(confBuilder.invoke()))
         val cppModuleNode = DataNode(ExternalModule.OC_MODULE_KEY, module, null)
         projectNode = DataNode(ProjectKeys.PROJECT, projectData, null)
@@ -199,6 +222,44 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       LOG.error(e)
       throw ExternalSystemException(e)
     }
+  }
+
+  private fun configureLanguages(
+    jsonConfig: Map<String, Any>,
+    confBuilder: ExternalResolveConfigurationBuilder
+  ): List<ExternalLanguageConfiguration> {
+    val compilerKind: OCCompilerKind = if (jsonConfig["compiler_type"] == "gcc") GCCCompilerKind else UnknownCompilerKind
+
+    fun extractCompilerSwitches(key: String, includeSwitches: List<String>, defineSwitches: List<String>): MutableList<String> {
+      val switches = when (val rawSwitches = jsonConfig[key]) {
+        is String -> rawSwitches.split(' ')
+        is List<*> -> rawSwitches.map { it.toString() }.toList()
+        else -> emptyList()
+      }
+      return switches.toMutableList().apply { addAll(includeSwitches); addAll(defineSwitches) }
+    }
+
+    val includeSwitches: List<String> = jsonConfig["includes"]
+                                          .asSafely<Map<String, List<String>>>()
+                                          ?.flatMap { it.value }
+                                          ?.toSet()
+                                          ?.map { "-I$it" } ?: emptyList()
+    val defineSwitches: List<String> = jsonConfig["defines"]
+                                         .asSafely<List<String>>()
+                                         ?.map { "-D$it" } ?: emptyList()
+    val cLanguageConfiguration = ExternalLanguageConfigurationImpl(
+      languageKind = CLanguageKind.C, compilerKind = compilerKind,
+      compilerExecutable = jsonConfig["cc_path"].asSafely<String>()?.let(::File),
+      compilerSwitches = extractCompilerSwitches("cc_flags", includeSwitches, defineSwitches)
+    )
+    confBuilder.withLanguageConfiguration(cLanguageConfiguration)
+    val cxxLanguageConfiguration = ExternalLanguageConfigurationImpl(
+      languageKind = CLanguageKind.CPP, compilerKind = compilerKind,
+      compilerExecutable = jsonConfig["cxx_path"].asSafely<String>()?.let(::File),
+      compilerSwitches = extractCompilerSwitches("cxx_flags", includeSwitches, defineSwitches)
+    )
+    confBuilder.withLanguageConfiguration(cxxLanguageConfiguration)
+    return listOf(cLanguageConfiguration, cxxLanguageConfiguration)
   }
 
   private fun calcBuildDir(projectDir: VirtualFile, platformioSection: Map<String, Any>): File {
@@ -273,6 +334,27 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     val configOutput = runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.project"),
                               listOf("project", "config", "--json-output"))
     return configOutput.stdout
+  }
+
+  protected open fun gatherCompDB(id: ExternalSystemTaskId,
+                                  pioRunEventId: String,
+                                  project: Project, activeEnvName: String,
+                                  listener: ExternalSystemTaskNotificationListener,
+                                  projectPath: String): String {
+    val compDbFile = Path.of(projectPath).resolve("compile_commands.json").toFile()
+    val compDbPresent = compDbFile.isFile
+
+    try {
+      runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.sources"), listOf("run", "-t", "compiledb"))
+      return compDbFile.readText()
+    }
+    finally {
+      if (!compDbPresent) {
+        // Don't delete the file if it was present
+        // we still update it though
+        FileUtil.delete(compDbFile)
+      }
+    }
   }
 
   private fun runPio(id: ExternalSystemTaskId,

@@ -3,6 +3,7 @@
   "build": {
     "includeDir": "include_me",
     "srcDir": "src_me",
+    "srcFilter": "+<*>+<../../../extra_lib/extra_nothing/*>",
     "flags": [
       "-DNOTHING_B_MANDATORY_DEFINE_B1",
       "-D NOTHING_B_MANDATORY_DEFINE_B2"

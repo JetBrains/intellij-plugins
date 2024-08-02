@@ -12,26 +12,17 @@ import com.intellij.openapi.vfs.*
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
-import com.jetbrains.cidr.external.system.model.impl.ExternalFileConfigurationImpl
-import com.jetbrains.cidr.external.system.model.impl.ExternalLanguageConfigurationImpl
+import com.jetbrains.cidr.cpp.project.command.*
+import com.jetbrains.cidr.cpp.toolchains.CPPCompilerSwitchesUtil
+import com.jetbrains.cidr.external.system.model.ExternalLanguageConfiguration
 import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
-import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCFileTypeHelpers
-import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
-import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerKind
-import com.jetbrains.cidr.lang.workspace.compiler.UnknownCompilerKind
+import com.jetbrains.cidr.lang.toolchains.CidrSwitchBuilder
 import org.jetbrains.annotations.Nls
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
-import java.util.regex.Pattern
-
-private val BUILD_SRC_FILTER_RE: Pattern = Regex("([+-])<([^>]*)>").toPattern()
-
-private const val DEFAULT_SRC_FILTER = "+<*> -<.git/> -<.svn/>"
-
-private typealias PlatformioSrcFilters = List<Pair<PathMatcher, Boolean>>
 
 internal class PlatformioFileScanner(private val projectDir: VirtualFile,
                                      private val listener: ExternalSystemTaskNotificationListener,
@@ -80,110 +71,84 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     return result
   }
 
-  internal fun parseResolveConfig(
-    confBuilder: ExternalResolveConfigurationBuilder,
-    jsonConfig: Map<String, Any>,
-    srcFolder: VirtualFile,
-    buildSrcFilter: PlatformioSrcFilters): Map<String, String> {
+  internal fun scanSources(
+    compDbJson: List<Map<String, String>>,
+    workspace: PlatformioWorkspace,
+    languageConfigurations: List<ExternalLanguageConfiguration>,
+    confBuilder: ExternalResolveConfigurationBuilder
+  ) {
 
     val scanFilesEventId = publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.scanning.source.files"))
-
-    val compilerKind: OCCompilerKind = if (jsonConfig["compiler_type"] == "gcc") GCCCompilerKind else UnknownCompilerKind
-
-    fun extractCompilerSwitches(key: String, includeSwitches: List<String>, defineSwitches: List<String>): MutableList<String> {
-      val switches = when (val rawSwitches = jsonConfig[key]) {
-        is String -> rawSwitches.split(' ')
-        is List<*> -> rawSwitches.map { it.toString() }.toList()
-        else -> emptyList()
-      }
-      return switches.toMutableList().apply { addAll(includeSwitches); addAll(defineSwitches) }
-    }
-
-    val includeSwitches: List<String> = jsonConfig["includes"]
-                                          .asSafely<Map<String, List<String>>>()
-                                          ?.flatMap { it.value }
-                                          ?.toSet()
-                                          ?.map { "-I$it" } ?: emptyList()
-    val defineSwitches: List<String> = jsonConfig["defines"]
-                                         .asSafely<List<String>>()
-                                         ?.map { "-D$it" } ?: emptyList()
-    val cLanguageConfiguration = ExternalLanguageConfigurationImpl(
-      languageKind = CLanguageKind.C, compilerKind = compilerKind,
-      compilerExecutable = jsonConfig["cc_path"].asSafely<String>()?.let(::File),
-      compilerSwitches = extractCompilerSwitches("cc_flags", includeSwitches, defineSwitches)
-    )
-    confBuilder.withLanguageConfiguration(cLanguageConfiguration)
-    val cxxLanguageConfiguration = ExternalLanguageConfigurationImpl(
-      languageKind = CLanguageKind.CPP, compilerKind = compilerKind,
-      compilerExecutable = jsonConfig["cxx_path"].asSafely<String>()?.let(::File),
-      compilerSwitches = extractCompilerSwitches("cxx_flags", includeSwitches, defineSwitches)
-    )
-    confBuilder.withLanguageConfiguration(cxxLanguageConfiguration)
-    checkCancelled.run()
     val fileList = mutableListOf<String>()
+    val environment = workspace.environment
+    val commandParser = CPPCompilationCommandParser(environment)
+    val commandConverter = CPPCompilationCommandConverter(environment, workspace.project)
 
-    fun addSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters, additionalFlags: List<String>? = null) {
-      val cCompilerSwitches: MutableList<String>
-      val cxxCompilerSwitches: MutableList<String>
-      if (additionalFlags == null) {
-        cCompilerSwitches = cLanguageConfiguration.compilerSwitches ?: mutableListOf()
-        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches ?: mutableListOf()
+    compDbJson.mapNotNull {
+      if (it["command"] == null || it["file"] == null || it["directory"] == null) {
+        throw ExternalSystemException("Unable to parse entry in compile_commands.json : $it")
       }
-      else {
-        cCompilerSwitches = cLanguageConfiguration.compilerSwitches?.toMutableList() ?: mutableListOf()
-        cCompilerSwitches.addAll(additionalFlags)
-        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches?.toMutableList() ?: mutableListOf()
-        cxxCompilerSwitches.addAll(additionalFlags)
-      }
-      scanSources(srcFolder, buildSrcFilter).forEach {
-        if (OCFileTypeHelpers.isSourceFile(it.name)) {
-          fileList.add(it.absolutePath)
-          when (val kind = OCFileTypeHelpers.getLanguageKind(it.name)) {
-            CLanguageKind.CPP -> confBuilder.withFileConfiguration(
-              ExternalFileConfigurationImpl(it, kind, cxxCompilerSwitches))
-            CLanguageKind.C -> confBuilder.withFileConfiguration(
-              ExternalFileConfigurationImpl(it, kind, cCompilerSwitches))
+      val command = it["command"]!!
+      val file = it["file"]!!
+      val directory = it["directory"]!!
+
+      fileList.add(file)
+      when (val parseResult = commandParser.parse(CPPCompilationCommand(directory, file, command, emptyList()))) {
+        is CPPCommandParserResult.SuccessCommandObject -> parseResult.commandObject
+        is CantFindCompilerExecutable -> {
+          val fallback = languageConfigurations.find { conf ->
+            conf.languageKind == OCFileTypeHelpers.getLanguageKind(file)
           }
+          if (fallback == null) { return@mapNotNull null }
+          CPPCommandObject(
+            File(directory),
+            File(file),
+            file,
+            fallback.compilerExecutable!!,
+            CidrSwitchBuilder().parseAndAdd(command, CPPCompilerSwitchesUtil.getFlagsFormat(environment)).args.drop(1).filter { f -> f != file },
+          )
+        }
+        else -> {
+          // If the parse failed, try to fall back to project-wide configuration
+          val fallback = languageConfigurations.find { conf ->
+            conf.languageKind == OCFileTypeHelpers.getLanguageKind(file)
+          }
+          if (fallback == null) { return@mapNotNull null }
+          CPPCommandObject(
+            File(directory),
+            File(file),
+            file,
+            fallback.compilerExecutable!!,
+            fallback.compilerSwitches?.toMutableList() ?: mutableListOf(),
+          )
         }
       }
+    }.flatMap {
+      commandConverter.convert(it).fileConfigurations
+    }.forEach {
+      confBuilder.withFileConfiguration(it)
     }
-
-    addSources(srcFolder, buildSrcFilter)
 
     publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.sources", fileList.size),
                    parentEventId = scanFilesEventId,
-                   details = @Suppress("HardCodedStringLiteral") fileList.joinToString("\n"))
+                   details = fileList.joinToString("\n"))
+  }
+
+  internal fun scanLibraries(
+    jsonConfig: Map<String, Any>,
+  ): MutableMap<String, String> {
+
     val scanLibId = publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.scanning.libraries"))
     val parsedLibPaths = mutableMapOf<String, String>()
-    jsonConfig["libsource_dirs"].asSafely<List<String>>()?.forEach { libSource ->
 
+    // Scans libraries, making note of their names
+    jsonConfig["libsource_dirs"].asSafely<List<String>>()?.forEach { libSource ->
       val librariesDir = VfsUtil.findFile(projectDir.toNioPath().resolve(Path.of(libSource)), true)
       librariesDir?.children?.filter(VirtualFile::isDirectory)?.forEach { libDir ->
-        var libName = libDir.name
+        val libName = libDir.name
         try {
           val manifest = libDir.findFile("library.json")?.readText()?.let { Gson().fromJson<Map<String, Any>>(it, Map::class.java) }
-          libName = manifest?.get("name").asSafely<String>() ?: libName
-          val manifestBuildPart = manifest?.get("build").asSafely<Map<String, Any>>() ?: emptyMap()
-
-          var libSrcFolder = manifestBuildPart["srcDir"].asSafely<String>()?.let {
-            VfsUtil.findRelativeFile(libDir, *it.split('/', '\\').toTypedArray())
-          }
-          if (libSrcFolder == null) {
-            libSrcFolder = VfsUtil.findRelativeFile(libDir, "src")
-          }
-          parsedLibPaths[libDir.path] = libName
-          val libSrcFilterValue = manifestBuildPart["srcFilter"]
-          val libSrcFilterString: String? =
-            if (libSrcFilterValue is String)
-              libSrcFilterValue
-            else
-              if (libSrcFilterValue is List<*>) libSrcFilterValue.joinToString("")
-              else
-                null
-
-          val libSrcFilter = createSrcFilter(libSrcFilterString)
-          val libFlags = manifestBuildPart["flags"].asSafely<List<String>>()
-          addSources(libSrcFolder ?: libDir, libSrcFilter, libFlags)
+          parsedLibPaths[libDir.path] = manifest?.get("name").asSafely<String>() ?: libName
         }
         catch (e: Throwable) {
           LOG.warn(e)
@@ -194,71 +159,8 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       }
     }
     publishMessage(message = ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.libraries", parsedLibPaths.size),
-                   details = @Suppress("HardCodedStringLiteral") parsedLibPaths.values.joinToString("\n"),
+                   details = parsedLibPaths.values.joinToString("\n"),
                    parentEventId = scanLibId)
     return parsedLibPaths
-  }
-
-  private fun scanSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters): List<File> {
-    val srcFolderPath = srcFolder.toNioPath()
-    val sourceFiles = mutableListOf<File>()
-    val subfoldersFilter = mutableMapOf<Path, Boolean>()
-
-    VfsUtil.processFilesRecursively(srcFolder)
-    { virtualFile ->
-      checkCancelled.run()
-      val path = srcFolderPath.relativize(virtualFile.toNioPath())
-      var inclusion: Boolean? = buildSrcFilter.findLast { it.first.matches(path) }?.second
-      if (virtualFile.isFile) {
-        when (inclusion) {
-          true -> sourceFiles.add(VfsUtil.virtualToIoFile(virtualFile))
-          false -> {}
-          null -> if (subfoldersFilter[path.parent] == true) {
-            sourceFiles.add(VfsUtil.virtualToIoFile(virtualFile))
-          }
-        }
-      }
-      else if (virtualFile.isDirectory) {
-        if (inclusion == null) {
-          inclusion = subfoldersFilter[path.parent]
-        }
-        if (inclusion != null) {
-          subfoldersFilter[path] = inclusion
-        }
-      }
-      true
-    }
-    return sourceFiles
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  /**
-   * See https://docs.platformio.org/en/latest/projectconf/sections/env/options/build/build_src_filter.html#build-src-filter
-   */
-  internal fun gatherBuildSrcFilter(configMap: Map<String, List<Any>>,
-                                    defaultEnvName: String?): List<Pair<PathMatcher, Boolean>> {
-    val envConfigSection = configMap["env:${defaultEnvName}"]
-    val buildSrcFilterClause = envConfigSection?.firstOrNull { (it as? List<Any>)?.getOrNull(0) == "build_src_filter" }
-    var buildSrcFilterString: String? = null
-    if (buildSrcFilterClause != null) {
-      try {
-        buildSrcFilterString = ((buildSrcFilterClause as List<Any>)[1] as List<String>).joinToString("")
-      }
-      catch (_: RuntimeException) {
-        throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("wrong.build.src.filter"))
-      }
-    }
-    return createSrcFilter(buildSrcFilterString)
-  }
-
-  private fun createSrcFilter(buildSrcFilterString: String?): List<Pair<PathMatcher, Boolean>> {
-    val matcher = BUILD_SRC_FILTER_RE.matcher(buildSrcFilterString ?: DEFAULT_SRC_FILTER)
-    val result = mutableListOf<Pair<PathMatcher, Boolean>>()
-    while (matcher.find()) {
-      val pathMatcher = FileSystems.getDefault().getPathMatcher("glob:${matcher.group(2)}")
-      val includeExclude = "+" == matcher.group(1)
-      result.add(pathMatcher to includeExclude)
-    }
-    return result
   }
 }

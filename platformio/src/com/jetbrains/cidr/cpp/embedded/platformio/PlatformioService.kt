@@ -64,9 +64,17 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
   val metadataJson: Map<String, String?>
     get() = state.metadataJson
 
+  var compileDbText: String?
+    get() = state.compileDbText
+    set(value) {
+      state.compileDbText = value
+      stateModCounter.incrementAndGet()
+    }
+
   fun cleanCache() {
     state.metadataJson.clear()
     state.configJson = null
+    state.compileDbText = null
     stateModCounter.incrementAndGet()
   }
 
@@ -171,6 +179,9 @@ class PlatformioState {
 
   @MapAnnotation(keyAttributeName = "env")
   val metadataJson: MutableMap<String, String?> = mutableMapOf()
+
+  @Tag
+  var compileDbText: String? = null
 
 }
 

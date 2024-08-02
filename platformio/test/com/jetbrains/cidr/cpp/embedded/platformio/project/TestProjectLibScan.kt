@@ -47,14 +47,19 @@ class TestProjectLibScan : LightPlatformTestCase() {
     val actualSourceFiles = projectNode.children.first().children.first()
       .data.asSafely<ExternalModule>()!!
       .resolveConfigurations.first()
-      .fileConfigurations.associate {
+      .fileConfigurations
+      .filter {
+        // Ignore framework sources
+        it.file.path.startsWith(projectPath)
+      }
+      .associate {
         it.file.path.replace(projectPath, "").replace('\\', '/') to it
       }
     assertEquals("Source file", expectedSourceFiles, actualSourceFiles.keys)
     val switchesWithDefines = actualSourceFiles["/lib/confusing-name-no-src/confusing-name-no-src.cpp"]!!.compilerSwitches
     assertNotNull(switchesWithDefines)
     assertTrue("MANDATORY_DEFINE_B1", switchesWithDefines!!.contains("-DMANDATORY_DEFINE_B1"))
-    assertTrue("MANDATORY_DEFINE_B2", switchesWithDefines.contains("-D MANDATORY_DEFINE_B2"))
+    assertTrue("MANDATORY_DEFINE_B2", switchesWithDefines.contains("-DMANDATORY_DEFINE_B2"))
   }
 
   private inner class PlatformioProjectResolverForTest() : PlatformioProjectResolver() {
@@ -84,5 +89,13 @@ class TestProjectLibScan : LightPlatformTestCase() {
       projectDir.findChild("pio-project-metadata.json")!!.readText().replace("T:", projectDir.path)
 
     override fun createRunConfigurationIfRequired(project: Project) {}
+
+    /**
+     * Mock data is loaded from compile_commands.json
+     * The file is created by invoking `pio run -t compiledb`
+     */
+    override fun gatherCompDB(id: ExternalSystemTaskId, pioRunEventId: String, project: Project, activeEnvName: String, listener: ExternalSystemTaskNotificationListener, projectPath: String): String {
+      return projectDir.findChild("compile_commands.json")!!.readText()
+    }
   }
 }
