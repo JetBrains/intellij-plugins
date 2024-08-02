@@ -21,6 +21,7 @@
 
   <depends>com.intellij.modules.javascript</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.json</depends>
 
   <resource-bundle>messages.PrettierBundle</resource-bundle>
 
