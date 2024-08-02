@@ -2,6 +2,7 @@ package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.UseDeno
+import com.intellij.javascript.debugger.DenoAppRule
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
@@ -15,9 +16,14 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
+  private val denoAppRule: DenoAppRule = DenoAppRule.LATEST
+
   override fun setUp() {
     super.setUp()
-    DenoSettings.getService(project).setUseDenoAndReload(UseDeno.ENABLE)
+    denoAppRule.executeBefore()
+    val service = DenoSettings.getService(project)
+    service.setDenoPath(denoAppRule.exePath)
+    service.setUseDenoAndReload(UseDeno.ENABLE)
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     TypeScriptLanguageServiceUtil.setUseService(true)
     Disposer.register(testRootDisposable) {
@@ -101,7 +107,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
 
   fun testDenoModulePathCompletion() {
     myFixture.configureByText("main.ts", """
-      import {join} from <warning>"https://deno.land/std/path<caret>/mod.ts"</warning>;
+      import {join} from <error descr="Deno: Uncached or missing remote URL: https://deno.land/std/path/mod.ts">"https://deno.land/std/path<caret>/mod.ts"</error>;
       
       join("1", "2");
     """.trimIndent())
