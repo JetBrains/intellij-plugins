@@ -221,7 +221,6 @@ public final class TFExecutor {
     commandLine.withCharset(StandardCharsets.UTF_8);
     if(wslPath != null){
       var wslOptions = new WSLCommandLineOptions()
-        .setLaunchWithWslExe(true)
         .setExecuteCommandInShell(false)
         .setPassEnvVarsUsingInterop(true);
       commandLine = wslPath.getDistribution().patchCommandLine(commandLine, myProject, wslOptions);
