@@ -3,7 +3,6 @@ package org.intellij.terraform.hcl.psi
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.DebugUtil
@@ -58,13 +57,7 @@ open class HCLElementGenerator(private val project: Project) {
 
   fun createObject(properties: Map<String, String> = emptyMap()): HCLObject {
     val propertiesString = properties.map { (name, value) -> createPropertyString(name, value) }.joinToString("\n")
-    val file = createDummyFile("""
-      foo {
-      ${propertiesString}
-      }
-    """.trimIndent())
-    val block = file.children.first { it is HCLBlock }
-    return (block as HCLBlock).`object`!!
+    return createObject(propertiesString)
   }
 
 

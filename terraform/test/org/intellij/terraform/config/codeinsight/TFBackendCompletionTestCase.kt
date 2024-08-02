@@ -15,10 +15,6 @@ internal class TFBackendCompletionTestCase: TFBaseCompletionTestCase() {
     doBasicCompletionTest("terraform{<caret>}", "backend")
     doBasicCompletionTest("terraform{backend \"<caret>\" {}}", "s3")
     doBasicCompletionTest("terraform{backend <caret> {}}", "s3")
-
-    //    TODO: Investigate and uncomment. For now it's ok since autocompletion handler on 'backend' would add name and braces
-    //    doBasicCompletionTest("terraform{backend \"<caret>\"}", "s3")
-    //    doBasicCompletionTest("terraform{backend <caret>}", "s3")
   }
 
   fun testPropertiesInBackend() {
