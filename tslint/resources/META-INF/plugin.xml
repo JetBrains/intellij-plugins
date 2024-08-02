@@ -15,6 +15,7 @@
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <resource-bundle>messages.TsLintBundle</resource-bundle>
+  <depends>com.intellij.modules.json</depends>
 
   <extensionPoints>
     <extensionPoint dynamic="true" qualifiedName="com.intellij.tslint.configDetector"
