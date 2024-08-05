@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -19,8 +20,7 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, 
 
   private final ModulePointer myModulePointer;
 
-  @NotNull
-  private final String myBcName;
+  private final @NotNull String myBcName;
 
   BuildConfigurationEntryImpl(@NotNull Module module, @NotNull String bcName) {
     this(ModulePointerManager.getInstance(module.getProject()).create(module), bcName);
@@ -36,34 +36,29 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, 
   }
 
   @Override
-  @NotNull
-  public String getModuleName() {
+  public @NotNull String getModuleName() {
     return myModulePointer.getModuleName();
   }
 
-  @NotNull
   @Override
-  public DependencyTypeImpl getDependencyType() {
+  public @NotNull DependencyTypeImpl getDependencyType() {
     return myDependencyType;
   }
 
   @Override
-  @Nullable
-  public Module findModule() {
+  public @Nullable Module findModule() {
     final Module module = myModulePointer.getModule();
     return module != null && ModuleType.get(module) instanceof FlexModuleType ? module : null;
   }
 
   @Override
-  @Nullable
-  public FlexBuildConfiguration findBuildConfiguration() {
+  public @Nullable FlexBuildConfiguration findBuildConfiguration() {
     Module module = findModule();
     return module != null ? FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myBcName) : null;
   }
 
   @Override
-  @NotNull
-  public String getBcName() {
+  public @NotNull String getBcName() {
     return myBcName;
   }
 

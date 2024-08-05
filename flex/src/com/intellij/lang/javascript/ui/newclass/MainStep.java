@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.ui.newclass;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -69,9 +69,9 @@ public class MainStep extends AbstractWizardStepEx {
   private final WizardModel myModel;
   protected final Project myProject;
   private final SortedListModel<String> myInterfacesListModel;
-  @Nullable private Module myModule;
+  private final @Nullable JSClass myBaseClassifier;
   private final String myPackageNameInitial;
-  @Nullable private final JSClass myBaseClassifier;
+  private @Nullable Module myModule;
   private final PsiElement myContext;
 
   private final JPanel myPanel;
@@ -99,21 +99,18 @@ public class MainStep extends AbstractWizardStepEx {
   private final JPanel mySpacer;
   private final JLabel myNameLabel;
 
-  @NotNull
   @Override
-  public Object getStepId() {
+  public @NotNull Object getStepId() {
     return ID;
   }
 
-  @Nullable
   @Override
-  public Object getNextStepId() {
+  public @Nullable Object getNextStepId() {
     return myUnsetAttributes.isEmpty() ? null : CustomVariablesStep.ID;
   }
 
-  @Nullable
   @Override
-  public Object getPreviousStepId() {
+  public @Nullable Object getPreviousStepId() {
     return null;
   }
 
@@ -418,8 +415,8 @@ public class MainStep extends AbstractWizardStepEx {
     myUnsetAttributes = attrs;
   }
 
-  public void addListener(@NotNull final ChangeListener listener,
-                          @NotNull final Disposable parentDisposable) {
+  public void addListener(final @NotNull ChangeListener listener,
+                          final @NotNull Disposable parentDisposable) {
     myResizeDispatcher.addListener(listener, parentDisposable);
   }
 
@@ -442,7 +439,7 @@ public class MainStep extends AbstractWizardStepEx {
 
     final AnAction arrow = new AnAction() {
       @Override
-      public void actionPerformed(@NotNull final AnActionEvent e) {
+      public void actionPerformed(final @NotNull AnActionEvent e) {
         if (e.getInputEvent() instanceof KeyEvent) {
           final int code = ((KeyEvent)e.getInputEvent()).getKeyCode();
           final int delta = code == KeyEvent.VK_DOWN ? 1 : code == KeyEvent.VK_UP ? -1 : 0;

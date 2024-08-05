@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
@@ -189,8 +189,56 @@ public final class CompilerConfigGenerator {
     }
   }
 
-  @Nullable
-  private static String getAirVersionIfCustomDescriptor(final FlexBuildConfiguration bc) {
+  private void addFilesIncludedInSwc(final Element rootElement) {
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
+    final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
+
+    final Map<String, String> filePathToPathInSwc = new HashMap<>();
+
+    for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
+      final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
+      if (fileOrDir == null ||
+          compilerConfiguration.isExcludedFromCompilation(fileOrDir) ||
+          FileTypeManager.getInstance().isFileIgnored(fileOrDir)) {
+        continue;
+      }
+
+      if (fileOrDir.isDirectory()) {
+        final VirtualFile srcRoot = fileIndex.getModuleForFile(fileOrDir) == myModule ? fileIndex.getSourceRootForFile(fileOrDir) : null;
+        final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
+        assert baseRelativePath != null;
+
+        VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor<Void>() {
+          @Override
+          public boolean visitFile(final @NotNull VirtualFile file) {
+            if (FileTypeManager.getInstance().isFileIgnored(file)) return false;
+
+            if (!file.isDirectory() &&
+                !FlexCommonUtils.isSourceFile(file.getName()) &&
+                !compilerConfiguration.isExcludedFromCompilation(file)) {
+              final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
+              final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
+              filePathToPathInSwc.put(file.getPath(), pathInSwc);
+            }
+            return true;
+          }
+        });
+      }
+      else {
+        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
+        final String relativePath = srcRoot == null ? null : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
+        final String pathInSwc = StringUtil.notNullize(relativePath, fileOrDir.getName());
+        filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
+      }
+    }
+
+    for (Map.Entry<String, String> entry : filePathToPathInSwc.entrySet()) {
+      final String value = entry.getValue() + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR + entry.getKey();
+      addOption(rootElement, CompilerOptionInfo.INCLUDE_FILE_INFO, value);
+    }
+  }
+
+  private static @Nullable String getAirVersionIfCustomDescriptor(final FlexBuildConfiguration bc) {
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
       final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
       if (!packagingOptions.isUseGeneratedDescriptor()) {
@@ -224,43 +272,6 @@ public final class CompilerConfigGenerator {
       // return minimal
       return StringUtil.compareVersionNumbers(androidAirVersion, iosAirVersion) > 0 ? iosAirVersion : androidAirVersion;
     }
-    return null;
-  }
-
-  @Nullable
-  private static String getCustomLinkReportPath(final Module module, final FlexBuildConfiguration rlmBC) {
-    final FlexBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
-    if (appBC != null) {
-      final List<String> linkReports = FlexCommonUtils.getOptionValues(appBC.getCompilerOptions().getAdditionalOptions(), "link-report");
-      if (!linkReports.isEmpty()) {
-        final String path = linkReports.get(0);
-        if (new File(path).isFile()) return path;
-        final String absPath = FlexUtils.getFlexCompilerWorkDirPath(module.getProject(), null) + "/" + path;
-        if (new File(absPath).isFile()) return absPath;
-      }
-      else {
-        final String configFilePath = appBC.getCompilerOptions().getAdditionalConfigFilePath();
-        if (!configFilePath.isEmpty()) {
-          final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
-          if (configFile != null) {
-            try {
-              String path = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><link-report>");
-              if (path != null) {
-                path = path.trim();
-                if (new File(path).isFile()) return path;
-                // I have no idea why Flex compiler treats path relative to source root for "link-report" option
-                for (VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
-                  final String absPath = srcRoot.getPath() + "/" + path;
-                  if (new File(absPath).isFile()) return absPath;
-                }
-              }
-            }
-            catch (IOException ignore) {/*ignore*/}
-          }
-        }
-      }
-    }
-
     return null;
   }
 
@@ -615,53 +626,40 @@ public final class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myBC.getActualOutputFilePath());
   }
 
-  private void addFilesIncludedInSwc(final Element rootElement) {
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
-    final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
-
-    final Map<String, String> filePathToPathInSwc = new HashMap<>();
-
-    for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
-      final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
-      if (fileOrDir == null ||
-          compilerConfiguration.isExcludedFromCompilation(fileOrDir) ||
-          FileTypeManager.getInstance().isFileIgnored(fileOrDir)) {
-        continue;
-      }
-
-      if (fileOrDir.isDirectory()) {
-        final VirtualFile srcRoot = fileIndex.getModuleForFile(fileOrDir) == myModule ? fileIndex.getSourceRootForFile(fileOrDir) : null;
-        final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
-        assert baseRelativePath != null;
-
-        VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor<Void>() {
-          @Override
-          public boolean visitFile(@NotNull final VirtualFile file) {
-            if (FileTypeManager.getInstance().isFileIgnored(file)) return false;
-
-            if (!file.isDirectory() &&
-                !FlexCommonUtils.isSourceFile(file.getName()) &&
-                !compilerConfiguration.isExcludedFromCompilation(file)) {
-              final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
-              final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
-              filePathToPathInSwc.put(file.getPath(), pathInSwc);
-            }
-            return true;
-          }
-        });
+  private static @Nullable String getCustomLinkReportPath(final Module module, final FlexBuildConfiguration rlmBC) {
+    final FlexBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
+    if (appBC != null) {
+      final List<String> linkReports = FlexCommonUtils.getOptionValues(appBC.getCompilerOptions().getAdditionalOptions(), "link-report");
+      if (!linkReports.isEmpty()) {
+        final String path = linkReports.get(0);
+        if (new File(path).isFile()) return path;
+        final String absPath = FlexUtils.getFlexCompilerWorkDirPath(module.getProject(), null) + "/" + path;
+        if (new File(absPath).isFile()) return absPath;
       }
       else {
-        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
-        final String relativePath = srcRoot == null ? null : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
-        final String pathInSwc = StringUtil.notNullize(relativePath, fileOrDir.getName());
-        filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
+        final String configFilePath = appBC.getCompilerOptions().getAdditionalConfigFilePath();
+        if (!configFilePath.isEmpty()) {
+          final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
+          if (configFile != null) {
+            try {
+              String path = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><link-report>");
+              if (path != null) {
+                path = path.trim();
+                if (new File(path).isFile()) return path;
+                // I have no idea why Flex compiler treats path relative to source root for "link-report" option
+                for (VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
+                  final String absPath = srcRoot.getPath() + "/" + path;
+                  if (new File(absPath).isFile()) return absPath;
+                }
+              }
+            }
+            catch (IOException ignore) {/*ignore*/}
+          }
+        }
       }
     }
 
-    for (Map.Entry<String, String> entry : filePathToPathInSwc.entrySet()) {
-      final String value = entry.getValue() + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR + entry.getKey();
-      addOption(rootElement, CompilerOptionInfo.INCLUDE_FILE_INFO, value);
-    }
+    return null;
   }
 
   private void addLibClasses(final Element rootElement) throws IOException {

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.lang.ASTNode;
@@ -39,7 +39,7 @@ public class MxmlTagNameReference extends TagNameReference {
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
+  public PsiElement bindToElement(final @NotNull PsiElement element) throws IncorrectOperationException {
     final String newPackage = getNewPackage(element);
     if (newPackage == null) {
       return super.bindToElement(element);
@@ -117,8 +117,7 @@ public class MxmlTagNameReference extends TagNameReference {
     }
   }
 
-  @Nullable
-  private static SchemaPrefixReference getSchemaPrefixReference(final XmlTag tag) {
+  private static @Nullable SchemaPrefixReference getSchemaPrefixReference(final XmlTag tag) {
     for (final PsiReference reference : tag.getReferences()) {
       if (reference instanceof SchemaPrefixReference) {
         return (SchemaPrefixReference)reference;
@@ -127,8 +126,7 @@ public class MxmlTagNameReference extends TagNameReference {
     return null;
   }
 
-  @Nullable
-  private static String getNewPackage(final PsiElement element) {
+  private static @Nullable String getNewPackage(final PsiElement element) {
     /*
     if (element instanceof JSFile) {
       final JSPackageStatement packageStatement = JSPsiImplUtils.findPackageStatement((JSFile)element);
@@ -167,7 +165,7 @@ public class MxmlTagNameReference extends TagNameReference {
       }
     }
 
-    @NonNls final String qname = "xmlns" + (prefix.length() > 0 ? ":" + prefix : "");
+    final @NonNls String qname = "xmlns" + (prefix.length() > 0 ? ":" + prefix : "");
     final XmlAttribute attribute = XmlElementFactory.getInstance(tag.getProject()).createXmlAttribute(qname, namespace);
     if (anchor == null) {
       tag.add(attribute);

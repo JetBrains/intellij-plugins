@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -49,8 +49,7 @@ public final class FlexImporter {
     return abcDumper.getResult();
   }
 
-  @NonNls
-  public static String buildInterfaceFromStream(final InputStream in) {
+  public static @NonNls String buildInterfaceFromStream(final InputStream in) {
     try {
       final AbstractDumpProcessor abcDumper = new AS3InterfaceDumper();
       processFlexByteCode(in, abcDumper);
@@ -71,7 +70,7 @@ public final class FlexImporter {
     processFlexByteCode(in, new AS3InterfaceStubDumper(parent));
   }
 
-  private static void processFlexByteCode(@NotNull final InputStream in, @NotNull FlexByteCodeInformationProcessor processor) throws IOException {
+  private static void processFlexByteCode(final @NotNull InputStream in, @NotNull FlexByteCodeInformationProcessor processor) throws IOException {
     ByteBuffer data = new ByteBuffer();
     data.read(in);
     data.setLittleEndian();

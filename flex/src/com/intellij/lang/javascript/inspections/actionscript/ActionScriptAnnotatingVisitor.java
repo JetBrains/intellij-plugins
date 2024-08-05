@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
@@ -77,9 +78,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     super(psiElement, holder);
   }
 
-  @NotNull
   @Override
-  protected ActionScriptConstructorChecker createConstructorChecker() {
+  protected @NotNull ActionScriptConstructorChecker createConstructorChecker() {
     return new ActionScriptConstructorChecker(myProblemReporter);
   }
 
@@ -158,13 +158,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return true;
   }
 
-  @NotNull
   @Override
-  protected JSAnnotatorProblemReporter createProblemReporter(PsiElement context) {
+  protected @NotNull JSAnnotatorProblemReporter createProblemReporter(PsiElement context) {
     return new JSAnnotatorProblemReporter(myHolder) {
-      @Nullable
       @Override
-      protected String getAnnotatorInspectionId() {
+      protected @Nullable String getAnnotatorInspectionId() {
         return null;
       }
     };
@@ -218,7 +216,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSAttributeNameValuePair(@NotNull final JSAttributeNameValuePair attributeNameValuePair) {
+  public void visitJSAttributeNameValuePair(final @NotNull JSAttributeNameValuePair attributeNameValuePair) {
     final boolean ok = checkReferences(attributeNameValuePair);
 
     if (!ok) return;
@@ -284,7 +282,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSIncludeDirective(@NotNull final JSIncludeDirective includeDirective) {
+  public void visitJSIncludeDirective(final @NotNull JSIncludeDirective includeDirective) {
     checkReferences(includeDirective);
   }
 
@@ -293,98 +291,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkActionScriptImplementedMethods(jsClass, reportingClient);
   }
 
-  public static void checkActionScriptImplementedMethods(@NotNull final JSClass jsClass, final ErrorReportingClient reportingClient) {
-    final JSCollectMembersToImplementProcessor implementedMethodProcessor = new ActionScriptImplementedMethodProcessor(jsClass) {
-      ImplementMethodsFix implementMethodsFix = null;
-
-      @Override
-      protected void addNonImplementedFunction(final JSFunction function) {
-        final ASTNode node = myJsClass.findNameIdentifier();
-        if (node == null) return;
-        if (implementMethodsFix == null) implementMethodsFix = new ImplementMethodsFix(myJsClass);
-        implementMethodsFix.addElementToProcess(function);
-        String messageId = JSClosureCompilerSyntaxInspection.getNotImplementedTextId(false, function.isGetProperty(),
-                           function.isSetProperty());
-        String message = JavaScriptBundle.message(messageId,
-                                                  function.getName(),
-                                                  ((JSClass)JSResolveUtil.findParent(function)).getQualifiedName());
-        reportingClient.reportError(node, message,
-                                    ErrorReportingClient.ProblemKind.ERROR,
-                                    implementMethodsFix);
-      }
-
-      @Override
-      protected void addImplementedFunction(final JSFunction interfaceFunction, final JSFunction implementationFunction) {
-        final JSAttributeList attributeList = implementationFunction.getAttributeList();
-        if (attributeList == null || attributeList.getAccessType() != JSAttributeList.AccessType.PUBLIC) {
-          final ASTNode node = findElementForAccessModifierError(implementationFunction, attributeList);
-          reportingClient.reportError(node,
-                                      JavaScriptBundle.message("javascript.validation.message.interface.method.invalid.access.modifier"),
-                                      ErrorReportingClient.ProblemKind.ERROR,
-                                      JSFixFactory.getInstance().createChangeVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC, null)
-          );
-        }
-
-        final SignatureMatchResult incompatibleSignature = checkCompatibleSignature(implementationFunction, interfaceFunction);
-
-        if (incompatibleSignature != SignatureMatchResult.COMPATIBLE_SIGNATURE) {
-          PsiElement parent = JSResolveUtil.findParent(implementationFunction);
-          if (parent instanceof JSFile) {
-            parent = JSResolveUtil.getClassReferenceForXmlFromContext(parent);
-          }
-
-          if (parent != myJsClass) {
-            // some parent incorrectly implements method from our interface
-            addNonImplementedFunction(interfaceFunction);
-            return;
-          }
-
-          if (incompatibleSignature == SignatureMatchResult.PARAMETERS_DIFFERS) {
-            final JSParameterList parameterList = implementationFunction.getParameterList();
-            final JSParameterList expectedParameterList = interfaceFunction.getParameterList();
-
-            JSChangeSignatureFix changeSignatureFix = new JSChangeSignatureFix(interfaceFunction, parameterList);
-            reportingClient.reportError(parameterList.getNode(),
-                                        JavaScriptBundle.message(
-                                          "javascript.validation.message.interface.method.invalid.signature",
-                                          expectedParameterList != null ? expectedParameterList.getText() : "()"
-                                        ),
-                                        ErrorReportingClient.ProblemKind.ERROR,
-                                        new JSChangeSignatureFix(implementationFunction, expectedParameterList, false) {
-                                          @Override
-                                          @NotNull
-                                          public String getText() {
-                                            return JavaScriptBundle.message("javascript.fix.message.change.parameters.to.expected");
-                                          }
-                                        },
-                                        changeSignatureFix);
-          }
-          else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
-            PsiElement implementationReturnTypeExpr = implementationFunction.getReturnTypeElement();
-            JSType type = interfaceFunction.getReturnType();
-            final String interfaceReturnType = type != null ? type.getResolvedTypeText() : null;
-            String msg = JavaScriptBundle
-              .message("javascript.validation.message.interface.method.invalid.signature2", StringUtil.notNullize(interfaceReturnType));
-            reportingClient.reportError(
-              implementationReturnTypeExpr != null ? implementationReturnTypeExpr.getNode() : implementationFunction.findNameIdentifier(),
-              msg, ErrorReportingClient.ProblemKind.ERROR,
-              new JSChangeTypeFix(implementationFunction, interfaceReturnType, "javascript.fix.message.change.return.type.to.expected"),
-              createChangeBaseMethodSignatureFix(interfaceFunction, implementationFunction));
-          }
-          else if (incompatibleSignature == SignatureMatchResult.FUNCTION_KIND_DIFFERS) {
-            String msg = JavaScriptBundle.message("javascript.validation.message.interface.method.invalid.signature3", interfaceFunction.getKind());
-            reportingClient.reportError(
-              implementationFunction.findNameIdentifier(),
-              msg, ErrorReportingClient.ProblemKind.ERROR);       // TODO: fix
-          }
-        }
-      }
-    };
-    JSResolveUtil.processInterfaceMembers(jsClass, implementedMethodProcessor);
-  }
-
   @Override
-  public void visitJSFunctionDeclaration(@NotNull final JSFunction node) {
+  public void visitJSFunctionDeclaration(final @NotNull JSFunction node) {
     super.visitJSFunctionDeclaration(node);
 
     checkPackageElement(node);
@@ -423,7 +331,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final Ref<JSFunction> set = new Ref<>();
         boolean b = JSResolveUtil.iterateOverrides(node, null, new JSOverrideHandler() {
           @Override
-          public boolean process(@NotNull final List<? extends JSPsiElementBase> elements, final PsiElement scope, final @Nullable String className) {
+          public boolean process(final @NotNull List<? extends JSPsiElementBase> elements, final PsiElement scope, final @Nullable String className) {
             if (Objects.equals(qName, className)) return true;
             JSFunction value = (JSFunction)elements.iterator().next();
             set.set(value);
@@ -516,8 +424,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               .range(nodeParameterList != null ? nodeParameterList.getNode() : node.findNameIdentifier())
               .withFix(new JSChangeSignatureFix(node, overrideParameterList, false) {
                 @Override
-                @NotNull
-                public String getText() {
+                public @NotNull String getText() {
                   return JavaScriptBundle.message("javascript.fix.message.change.parameters.to.expected");
                 }
               })
@@ -545,6 +452,50 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     }
+  }
+
+  private void checkPackageStatement(final JSPackageStatement packageStatement) {
+    final String s = packageStatement.getQualifiedName();
+
+    final PsiFile containingFile = packageStatement.getContainingFile();
+    final String expected = JSResolveUtil.getExpectedPackageNameFromFile(containingFile.getVirtualFile(), containingFile.getProject());
+
+    if (expected != null && (s == null && expected.length() != 0 || s != null && !expected.equals(s))) {
+      final ASTNode nameIdentifier = packageStatement.findNameIdentifier();
+      myHolder.newAnnotation(HighlightSeverity.ERROR,
+                             FlexBundle.message(
+          "javascript.validation.message.incorrect.package.name", s, expected
+        )
+      ).range(nameIdentifier != null ? nameIdentifier : packageStatement.getFirstChild().getNode())
+      .withFix(new IntentionAction() {
+        @Override
+        public @NotNull String getText() {
+          return FlexBundle.message("javascript.fix.package.name", expected);
+        }
+
+        @Override
+        public @NotNull String getFamilyName() {
+          return getText();
+        }
+
+        @Override
+        public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+          return packageStatement.isValid();
+        }
+
+        @Override
+        public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+          JSPackageStatementImpl.doChangeName(project, packageStatement, expected);
+        }
+
+        @Override
+        public boolean startInWriteAction() {
+          return true;
+        }
+      }).create();
+    }
+
+    checkFileUnderSourceRoot(packageStatement, new SimpleErrorReportingClient());
   }
 
   @Override
@@ -588,42 +539,53 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     .withFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", astNode.getPsi())).create();
   }
 
+  private void checkNamedObjectIsInCorrespondingFile(final JSNamedElement aClass) {
+    final PsiFile containingFile = aClass.getContainingFile();
 
-  private static class AddOverrideIntentionAction implements IntentionAction {
-    private final JSFunction myNode;
+    if (containingFile.getContext() != null) return;
+    final VirtualFile file = containingFile.getVirtualFile();
 
-    AddOverrideIntentionAction(final JSFunction node) {
-      myNode = node;
+    if (file != null &&
+        !file.getNameWithoutExtension().equals(aClass.getName()) &&
+        ProjectRootManager.getInstance(containingFile.getProject()).getFileIndex().getSourceRootForFile(file) != null) {
+      final ASTNode node = aClass.findNameIdentifier();
+
+      if (node != null) {
+        final String name = aClass.getName();
+        String nameWithExtension = name + "." + file.getExtension();
+        final String message = FlexBundle.message(aClass instanceof JSClass
+                                                ? "javascript.validation.message.class.should.be.in.file" :
+                                                aClass instanceof JSNamespaceDeclaration
+                                                ? "javascript.validation.message.namespace.should.be.in.file" :
+                                                aClass instanceof JSVariable
+                                                ? "javascript.validation.message.variable.should.be.in.file"
+                                                : "javascript.validation.message.function.should.be.in.file", name, nameWithExtension);
+        myHolder.newAnnotation(HighlightSeverity.ERROR, message).range(node)
+        .withFix(new RenameFileFix(nameWithExtension))
+        .withFix(new RenameElementFix(aClass) {
+          final String text;
+          final String familyName;
+
+          {
+            String term = message.substring(0, message.indexOf(' '));
+            text = super.getText().replace("class", StringUtil.decapitalize(term));
+            familyName = super.getFamilyName().replace("Class", term);
+          }
+
+          @Override
+          public @NotNull String getText() {
+            return text;
+          }
+
+          @Override
+          public @NotNull String getFamilyName() {
+            return familyName;
+          }
+        }).create();
+      }
     }
 
-    @Override
-    @NotNull
-    public String getText() {
-      return JavaScriptBundle.message("javascript.fix.add.override.modifier");
-    }
-
-    @Override
-    @NotNull
-    public String getFamilyName() {
-      return getText();
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
-      return myNode.isValid();
-    }
-
-    @Override
-    public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      JSAttributeListWrapper w = new JSAttributeListWrapper(myNode);
-      w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
-      w.applyTo(myNode);
-    }
-
-    @Override
-    public boolean startInWriteAction() {
-      return true;
-    }
+    checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
   }
 
   @Override
@@ -648,50 +610,93 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     if (node == null) checkPackageStatement(packageStatement);
   }
 
-  private void checkPackageStatement(final JSPackageStatement packageStatement) {
-    final String s = packageStatement.getQualifiedName();
+  public static void checkActionScriptImplementedMethods(final @NotNull JSClass jsClass, final ErrorReportingClient reportingClient) {
+    final JSCollectMembersToImplementProcessor implementedMethodProcessor = new ActionScriptImplementedMethodProcessor(jsClass) {
+      ImplementMethodsFix implementMethodsFix = null;
 
-    final PsiFile containingFile = packageStatement.getContainingFile();
-    final String expected = JSResolveUtil.getExpectedPackageNameFromFile(containingFile.getVirtualFile(), containingFile.getProject());
+      @Override
+      protected void addNonImplementedFunction(final JSFunction function) {
+        final ASTNode node = myJsClass.findNameIdentifier();
+        if (node == null) return;
+        if (implementMethodsFix == null) implementMethodsFix = new ImplementMethodsFix(myJsClass);
+        implementMethodsFix.addElementToProcess(function);
+        String messageId = JSClosureCompilerSyntaxInspection.getNotImplementedTextId(false, function.isGetProperty(),
+                           function.isSetProperty());
+        String message = JavaScriptBundle.message(messageId,
+                                                  function.getName(),
+                                                  ((JSClass)JSResolveUtil.findParent(function)).getQualifiedName());
+        reportingClient.reportError(node, message,
+                                    ErrorReportingClient.ProblemKind.ERROR,
+                                    implementMethodsFix);
+      }
 
-    if (expected != null && (s == null && expected.length() != 0 || s != null && !expected.equals(s))) {
-      final ASTNode nameIdentifier = packageStatement.findNameIdentifier();
-      myHolder.newAnnotation(HighlightSeverity.ERROR,
-                             FlexBundle.message(
-          "javascript.validation.message.incorrect.package.name", s, expected
-        )
-      ).range(nameIdentifier != null ? nameIdentifier : packageStatement.getFirstChild().getNode())
-      .withFix(new IntentionAction() {
-        @Override
-        @NotNull
-        public String getText() {
-          return FlexBundle.message("javascript.fix.package.name", expected);
+      @Override
+      protected void addImplementedFunction(final JSFunction interfaceFunction, final JSFunction implementationFunction) {
+        final JSAttributeList attributeList = implementationFunction.getAttributeList();
+        if (attributeList == null || attributeList.getAccessType() != JSAttributeList.AccessType.PUBLIC) {
+          final ASTNode node = findElementForAccessModifierError(implementationFunction, attributeList);
+          reportingClient.reportError(node,
+                                      JavaScriptBundle.message("javascript.validation.message.interface.method.invalid.access.modifier"),
+                                      ErrorReportingClient.ProblemKind.ERROR,
+                                      JSFixFactory.getInstance().createChangeVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC, null)
+          );
         }
 
-        @Override
-        @NotNull
-        public String getFamilyName() {
-          return getText();
-        }
+        final SignatureMatchResult incompatibleSignature = checkCompatibleSignature(implementationFunction, interfaceFunction);
 
-        @Override
-        public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
-          return packageStatement.isValid();
-        }
+        if (incompatibleSignature != SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+          PsiElement parent = JSResolveUtil.findParent(implementationFunction);
+          if (parent instanceof JSFile) {
+            parent = JSResolveUtil.getClassReferenceForXmlFromContext(parent);
+          }
 
-        @Override
-        public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-          JSPackageStatementImpl.doChangeName(project, packageStatement, expected);
-        }
+          if (parent != myJsClass) {
+            // some parent incorrectly implements method from our interface
+            addNonImplementedFunction(interfaceFunction);
+            return;
+          }
 
-        @Override
-        public boolean startInWriteAction() {
-          return true;
-        }
-      }).create();
-    }
+          if (incompatibleSignature == SignatureMatchResult.PARAMETERS_DIFFERS) {
+            final JSParameterList parameterList = implementationFunction.getParameterList();
+            final JSParameterList expectedParameterList = interfaceFunction.getParameterList();
 
-    checkFileUnderSourceRoot(packageStatement, new SimpleErrorReportingClient());
+            JSChangeSignatureFix changeSignatureFix = new JSChangeSignatureFix(interfaceFunction, parameterList);
+            reportingClient.reportError(parameterList.getNode(),
+                                        JavaScriptBundle.message(
+                                          "javascript.validation.message.interface.method.invalid.signature",
+                                          expectedParameterList != null ? expectedParameterList.getText() : "()"
+                                        ),
+                                        ErrorReportingClient.ProblemKind.ERROR,
+                                        new JSChangeSignatureFix(implementationFunction, expectedParameterList, false) {
+                                          @Override
+                                          public @NotNull String getText() {
+                                            return JavaScriptBundle.message("javascript.fix.message.change.parameters.to.expected");
+                                          }
+                                        },
+                                        changeSignatureFix);
+          }
+          else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
+            PsiElement implementationReturnTypeExpr = implementationFunction.getReturnTypeElement();
+            JSType type = interfaceFunction.getReturnType();
+            final String interfaceReturnType = type != null ? type.getResolvedTypeText() : null;
+            String msg = JavaScriptBundle
+              .message("javascript.validation.message.interface.method.invalid.signature2", StringUtil.notNullize(interfaceReturnType));
+            reportingClient.reportError(
+              implementationReturnTypeExpr != null ? implementationReturnTypeExpr.getNode() : implementationFunction.findNameIdentifier(),
+              msg, ErrorReportingClient.ProblemKind.ERROR,
+              new JSChangeTypeFix(implementationFunction, interfaceReturnType, "javascript.fix.message.change.return.type.to.expected"),
+              createChangeBaseMethodSignatureFix(interfaceFunction, implementationFunction));
+          }
+          else if (incompatibleSignature == SignatureMatchResult.FUNCTION_KIND_DIFFERS) {
+            String msg = JavaScriptBundle.message("javascript.validation.message.interface.method.invalid.signature3", interfaceFunction.getKind());
+            reportingClient.reportError(
+              implementationFunction.findNameIdentifier(),
+              msg, ErrorReportingClient.ProblemKind.ERROR);       // TODO: fix
+          }
+        }
+      }
+    };
+    JSResolveUtil.processInterfaceMembers(jsClass, implementedMethodProcessor);
   }
 
   private void checkPackageElement(@NotNull JSNamedElement el) {
@@ -1099,55 +1104,39 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  private void checkNamedObjectIsInCorrespondingFile(final JSNamedElement aClass) {
-    final PsiFile containingFile = aClass.getContainingFile();
+  private static class AddOverrideIntentionAction implements IntentionAction {
+    private final JSFunction myNode;
 
-    if (containingFile.getContext() != null) return;
-    final VirtualFile file = containingFile.getVirtualFile();
-
-    if (file != null &&
-        !file.getNameWithoutExtension().equals(aClass.getName()) &&
-        ProjectRootManager.getInstance(containingFile.getProject()).getFileIndex().getSourceRootForFile(file) != null) {
-      final ASTNode node = aClass.findNameIdentifier();
-
-      if (node != null) {
-        final String name = aClass.getName();
-        String nameWithExtension = name + "." + file.getExtension();
-        final String message = FlexBundle.message(aClass instanceof JSClass
-                                                ? "javascript.validation.message.class.should.be.in.file" :
-                                                aClass instanceof JSNamespaceDeclaration
-                                                ? "javascript.validation.message.namespace.should.be.in.file" :
-                                                aClass instanceof JSVariable
-                                                ? "javascript.validation.message.variable.should.be.in.file"
-                                                : "javascript.validation.message.function.should.be.in.file", name, nameWithExtension);
-        myHolder.newAnnotation(HighlightSeverity.ERROR, message).range(node)
-        .withFix(new RenameFileFix(nameWithExtension))
-        .withFix(new RenameElementFix(aClass) {
-          final String text;
-          final String familyName;
-
-          {
-            String term = message.substring(0, message.indexOf(' '));
-            text = super.getText().replace("class", StringUtil.decapitalize(term));
-            familyName = super.getFamilyName().replace("Class", term);
-          }
-
-          @NotNull
-          @Override
-          public String getText() {
-            return text;
-          }
-
-          @NotNull
-          @Override
-          public String getFamilyName() {
-            return familyName;
-          }
-        }).create();
-      }
+    AddOverrideIntentionAction(final JSFunction node) {
+      myNode = node;
     }
 
-    checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
+    @Override
+    public @NotNull String getText() {
+      return JavaScriptBundle.message("javascript.fix.add.override.modifier");
+    }
+
+    @Override
+    public @NotNull String getFamilyName() {
+      return getText();
+    }
+
+    @Override
+    public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+      return myNode.isValid();
+    }
+
+    @Override
+    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+      JSAttributeListWrapper w = new JSAttributeListWrapper(myNode);
+      w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
+      w.applyTo(myNode);
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+      return true;
+    }
   }
 
   @Override

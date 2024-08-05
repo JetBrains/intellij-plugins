@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -29,17 +29,15 @@ public final class FlexStylesIndexableSetContributor extends IndexableSetContrib
     }
   });
 
-  @NotNull
   @Override
-  public Set<VirtualFile> getAdditionalRootsToIndex() {
+  public @NotNull Set<VirtualFile> getAdditionalRootsToIndex() {
     return ourFiles.getValue();
   }
 
-  @NotNull
-  public static GlobalSearchScope enlarge(@NotNull final GlobalSearchScope scope) {
+  public static @NotNull GlobalSearchScope enlarge(final @NotNull GlobalSearchScope scope) {
     return scope.union(new DelegatingGlobalSearchScope(scope) {
       @Override
-      public boolean contains(@NotNull final VirtualFile file) {
+      public boolean contains(final @NotNull VirtualFile file) {
         return ourFiles.getValue().contains(file);
       }
     });

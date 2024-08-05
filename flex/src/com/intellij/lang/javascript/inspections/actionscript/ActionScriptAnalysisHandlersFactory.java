@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
@@ -13,9 +14,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Konstantin.Ulitin
  */
 public final class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
-  @NotNull
   @Override
-  public JSAnnotatingVisitor createAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+  public @NotNull JSAnnotatingVisitor createAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     return new ActionScriptAnnotatingVisitor(psiElement, holder);
   }
 
@@ -25,9 +25,8 @@ public final class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandler
     return new ActionScriptKeywordHighlighterVisitor(holder);
   }
 
-  @NotNull
   @Override
-  public JSReferenceChecker getReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
+  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
     return new ActionScriptReferenceChecker(reporter);
   }
 
@@ -36,9 +35,8 @@ public final class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandler
     return new ActionScriptTypeChecker(problemReporter);
   }
 
-  @NotNull
   @Override
-  public JSFunctionSignatureChecker getFunctionSignatureChecker(@NotNull ProblemsHolder holder, @NotNull JSTypeChecker typeChecker) {
+  public @NotNull JSFunctionSignatureChecker getFunctionSignatureChecker(@NotNull ProblemsHolder holder, @NotNull JSTypeChecker typeChecker) {
     return new ActionScriptFunctionSignatureChecker(typeChecker);
   }
 }

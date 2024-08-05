@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.model.bc.ComponentSet;
@@ -24,23 +25,18 @@ class DependenciesImpl implements ModifiableDependencies {
 
   private static final LinkageType DEFAULT_FRAMEWORK_LINKAGE = LinkageType.Default;
 
-  @NotNull
-  private String myTargetPlayer = "";
+  private @NotNull String myTargetPlayer = "";
 
-  @NotNull
-  private ComponentSet myComponentSet = ComponentSet.SparkAndMx;
+  private @NotNull ComponentSet myComponentSet = ComponentSet.SparkAndMx;
 
-  @NotNull
-  private LinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
+  private @NotNull LinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
 
   private final List<ModifiableDependencyEntry> myEntries = new ArrayList<>();
 
-  @Nullable
-  private SdkEntryImpl mySdk;
+  private @Nullable SdkEntryImpl mySdk;
 
   @Override
-  @Nullable
-  public SdkEntry getSdkEntry() {
+  public @Nullable SdkEntry getSdkEntry() {
     return mySdk;
   }
 
@@ -60,8 +56,7 @@ class DependenciesImpl implements ModifiableDependencies {
   }
 
   @Override
-  @NotNull
-  public LinkageType getFrameworkLinkage() {
+  public @NotNull LinkageType getFrameworkLinkage() {
     return myFrameworkLinkage;
   }
 
@@ -71,8 +66,7 @@ class DependenciesImpl implements ModifiableDependencies {
   }
 
   @Override
-  @NotNull
-  public String getTargetPlayer() {
+  public @NotNull String getTargetPlayer() {
     return myTargetPlayer;
   }
 
@@ -87,8 +81,7 @@ class DependenciesImpl implements ModifiableDependencies {
   }
 
   @Override
-  @NotNull
-  public ComponentSet getComponentSet() {
+  public @NotNull ComponentSet getComponentSet() {
     return myComponentSet;
   }
 

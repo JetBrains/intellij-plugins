@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.ui;
 
 import com.intellij.CommonBundle;
@@ -154,8 +154,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     return myTree;
   }
 
-  @Nullable
-  public String getSelectedPackage() {
+  public @Nullable String getSelectedPackage() {
     VirtualFile file = getTreeSelection();
     return file != null ? PlatformPackageUtil.getPackageName(file, myProject) : null;
   }
@@ -176,8 +175,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
    }, ModalityState.stateForComponent(getRootPane()));*/
   }
 
-  @Nullable
-  private VirtualFile getTreeSelection() {
+  private @Nullable VirtualFile getTreeSelection() {
     if (myTree == null) return null;
     TreePath path = myTree.getSelectionPath();
     if (path == null) return null;
@@ -205,8 +203,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     });
   }
 
-  @NotNull
-  private DefaultMutableTreeNode addPackage(VirtualFile aPackage) {
+  private @NotNull DefaultMutableTreeNode addPackage(VirtualFile aPackage) {
     final String qualifiedPackageName = PlatformPackageUtil.getPackageName(aPackage, myProject);
     final VirtualFile parentPackage = aPackage.getParent();
     if (parentPackage == null || PlatformPackageUtil.getPackageName(parentPackage, myProject) == null) {
@@ -235,8 +232,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     }
   }
 
-  @Nullable
-  private DefaultMutableTreeNode findPackageNode(DefaultMutableTreeNode rootNode, String qualifiedName) {
+  private @Nullable DefaultMutableTreeNode findPackageNode(DefaultMutableTreeNode rootNode, String qualifiedName) {
     for (int i = 0; i < rootNode.getChildCount(); i++) {
       final DefaultMutableTreeNode child = (DefaultMutableTreeNode)rootNode.getChildAt(i);
       final VirtualFile nodePackage = (VirtualFile)child.getUserObject();
@@ -247,8 +243,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     return null;
   }
 
-  @Nullable
-  private DefaultMutableTreeNode findNodeForPackage(String qualifiedPackageName) {
+  private @Nullable DefaultMutableTreeNode findNodeForPackage(String qualifiedPackageName) {
     DefaultMutableTreeNode root = (DefaultMutableTreeNode)myModel.getRoot();
     Enumeration<TreeNode> enumeration = root.depthFirstEnumeration();
     while (enumeration.hasMoreElements()) {
@@ -327,7 +322,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
 
   public static @NotNull JSReferenceEditor createPackageReferenceEditor(final String text,
                                                                         final @NotNull Project project,
-                                                                        @Nullable final String recentsKey,
+                                                                        final @Nullable String recentsKey,
                                                                         GlobalSearchScope scope,
                                                                         @NlsContexts.DialogTitle @NotNull String chooserTitle) {
     return new JSReferenceEditor(text, project, recentsKey, scope, null, null, chooserTitle, true, null) {

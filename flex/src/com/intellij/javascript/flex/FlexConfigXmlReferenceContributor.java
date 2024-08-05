@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.flex.ReferenceSupport;
@@ -25,7 +26,7 @@ public final class FlexConfigXmlReferenceContributor extends PsiReferenceContrib
       true,
       new PsiReferenceProvider() {
         @Override
-        public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, final @NotNull ProcessingContext context) {
           TextRange myRange = ElementManipulators.getValueTextRange(element);
           if (myRange.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
           XmlTag tag = (XmlTag)element;
@@ -45,7 +46,7 @@ public final class FlexConfigXmlReferenceContributor extends PsiReferenceContrib
       xmlAttributeValue(xmlAttribute("class").withParent(xmlTag().withName("component").withParent(xmlTag().withName("componentPackage")))),
       new PsiReferenceProvider() {
         @Override
-        public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, final @NotNull ProcessingContext context) {
           TextRange myRange = ElementManipulators.getValueTextRange(element);
           if (myRange.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
           final String attrValue = ((XmlAttributeValue)element).getValue();

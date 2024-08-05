@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -36,14 +36,14 @@ import java.util.Map;
 
 
 public class MxmlJSClass extends XmlBackedJSClassImpl {
-  @NonNls public static final String XML_TAG_NAME = "XML";
-  @NonNls public static final String XMLLIST_TAG_NAME = "XMLList";
-  @NonNls public static final String PRIVATE_TAG_NAME = MxmlLanguageInjector.PRIVATE_TAG_NAME;
-  @NonNls public static final String MXML_URI4 = "library://ns.adobe.com/flex/spark";
-  @NonNls public static final String MXML_URI5 = "library://ns.adobe.com/flex/halo";
-  @NonNls public static final String MXML_URI6 = "library://ns.adobe.com/flex/mx";
-  @NonNls public static final String[] MXML_URIS = {JavaScriptSupportLoader.MXML_URI, JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
-  @NonNls public static final String[] FLEX_4_NAMESPACES = {JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
+  public static final @NonNls String XML_TAG_NAME = "XML";
+  public static final @NonNls String XMLLIST_TAG_NAME = "XMLList";
+  public static final @NonNls String PRIVATE_TAG_NAME = MxmlLanguageInjector.PRIVATE_TAG_NAME;
+  public static final @NonNls String MXML_URI4 = "library://ns.adobe.com/flex/spark";
+  public static final @NonNls String MXML_URI5 = "library://ns.adobe.com/flex/halo";
+  public static final @NonNls String MXML_URI6 = "library://ns.adobe.com/flex/mx";
+  public static final @NonNls String[] MXML_URIS = {JavaScriptSupportLoader.MXML_URI, JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
+  public static final @NonNls String[] FLEX_4_NAMESPACES = {JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
   private static final String OPERATION_TAG_NAME = "operation";
   private static final String HTTP_SERVICE_TAG_NAME = "HTTPService";
   private static final String WEB_SERVICE_TAG_NAME = "WebService";
@@ -52,12 +52,72 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   private static final String REQUEST_TAG_NAME = "request";
   private static final String[] TAGS_THAT_ALLOW_ANY_XML_CONTENT = {PRIVATE_TAG_NAME, XML_TAG_NAME, XMLLIST_TAG_NAME,
     FlexPredefinedTagNames.MODEL};
-  @NonNls private static final String FXG_SUPER_CLASS = "spark.core.SpriteVisualElement";
+  private static final @NonNls String FXG_SUPER_CLASS = "spark.core.SpriteVisualElement";
 
   private static final Logger LOG = Logger.getInstance(MxmlJSClass.class);
 
-  @NotNull
-  private static List<JSField> computeSkinComponentPredefinedFields(XmlFile file) {
+  private @Nullable String getExplicitName() {
+    XmlTag parent = getParent();
+    if (parent.getParentTag() != null) {
+      return parent.getParentTag().getAttributeValue(CLASS_NAME_ATTRIBUTE_NAME, parent.getParentTag().getNamespace());
+    }
+    else {
+      return null;
+    }
+  }
+
+  private volatile JSReferenceList myImplementsList;
+  private final boolean isFxgBackedClass;
+
+  public MxmlJSClass(XmlTag tag) {
+    super(tag);
+    final PsiFile psiFile = tag.getContainingFile();
+    isFxgBackedClass = psiFile != null && isFxgFile(psiFile);
+  }
+
+  public static XmlTag[] findLanguageSubTags(final XmlTag tag, final String languageTagName) {
+    return tag.findSubTags(languageTagName, getLanguageNamespace(tag));
+  }
+
+  public static boolean isFxgFile(final PsiFile file) {
+    return JavaScriptSupportLoader.isFxgFile(file.getViewProvider().getVirtualFile());
+  }
+
+  @Override
+  public @Nullable JSReferenceList getImplementsList() {
+    if (isFxgBackedClass) {
+      return null;
+    }
+    JSReferenceList refList = myImplementsList;
+
+    if (refList == null) {
+      final XmlTag rootTag = getParent();
+      myImplementsList = refList = createReferenceList(rootTag != null ? rootTag.getAttributeValue(IMPLEMENTS_ATTRIBUTE) : null);
+    }
+    return refList;
+  }
+
+  @Override
+  protected String getSuperClassName() {
+    if (isFxgBackedClass) {
+      return FXG_SUPER_CLASS;
+    }
+    return super.getSuperClassName();
+  }
+
+  @Override
+  public String getName() {
+    XmlTag parent = getParent();
+    if (parent.getParentTag() != null && isComponentTag(parent.getParentTag())) {
+      String explicitName = getExplicitName();
+      if (explicitName != null) {
+        return explicitName;
+      }
+    }
+    return super.getName();
+  }
+
+  private static @NotNull List<JSField> computeSkinComponentPredefinedFields(XmlFile file) {
     List<JSField> vars = new SmartList<>();
     for (XmlTag t : file.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
       JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
@@ -88,75 +148,11 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     return vars;
   }
 
-  private volatile JSReferenceList myImplementsList;
-  private final boolean isFxgBackedClass;
-
-  public MxmlJSClass(XmlTag tag) {
-    super(tag);
-    final PsiFile psiFile = tag.getContainingFile();
-    isFxgBackedClass = psiFile != null && isFxgFile(psiFile);
-  }
-
-  public static XmlTag[] findLanguageSubTags(final XmlTag tag, final String languageTagName) {
-    return tag.findSubTags(languageTagName, getLanguageNamespace(tag));
-  }
-
-  public static boolean isFxgFile(final PsiFile file) {
-    return JavaScriptSupportLoader.isFxgFile(file.getViewProvider().getVirtualFile());
-  }
-
-  @NotNull
-  private static String getLanguageNamespace(final XmlTag rootTag) {
+  private static @NotNull String getLanguageNamespace(final XmlTag rootTag) {
     assert JavaScriptSupportLoader.isFlexMxmFile(rootTag.getContainingFile()) : rootTag.getContainingFile();
     return rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null
            ? JavaScriptSupportLoader.MXML_URI3
            : JavaScriptSupportLoader.MXML_URI;
-  }
-
-  @Override
-  protected String getSuperClassName() {
-    if (isFxgBackedClass) {
-      return FXG_SUPER_CLASS;
-    }
-    return super.getSuperClassName();
-  }
-
-  @Override
-  public String getName() {
-    XmlTag parent = getParent();
-    if (parent.getParentTag() != null && isComponentTag(parent.getParentTag())) {
-      String explicitName = getExplicitName();
-      if (explicitName != null) {
-        return explicitName;
-      }
-    }
-    return super.getName();
-  }
-
-  @Nullable
-  private String getExplicitName() {
-    XmlTag parent = getParent();
-    if (parent.getParentTag() != null) {
-      return parent.getParentTag().getAttributeValue(CLASS_NAME_ATTRIBUTE_NAME, parent.getParentTag().getNamespace());
-    }
-    else {
-      return null;
-    }
-  }
-
-  @Nullable
-  @Override
-  public JSReferenceList getImplementsList() {
-    if (isFxgBackedClass) {
-      return null;
-    }
-    JSReferenceList refList = myImplementsList;
-
-    if (refList == null) {
-      final XmlTag rootTag = getParent();
-      myImplementsList = refList = createReferenceList(rootTag != null ? rootTag.getAttributeValue(IMPLEMENTS_ATTRIBUTE) : null);
-    }
-    return refList;
   }
 
   @Override

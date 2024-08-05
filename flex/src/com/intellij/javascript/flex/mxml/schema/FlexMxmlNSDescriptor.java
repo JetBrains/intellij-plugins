@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
@@ -45,8 +46,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     {"Array", "Boolean", "Component", "Class", "Date", "DesignLayer", "Function", "Number", "String", "XML", "int", "uint"};
 
   @Override
-  @Nullable
-  public XmlElementDescriptor getElementDescriptor(@NotNull final XmlTag tag) {
+  public @Nullable XmlElementDescriptor getElementDescriptor(final @NotNull XmlTag tag) {
     if (MxmlJSClass.isInsideTagThatAllowsAnyXmlContent(tag)) {
       return new AnyXmlElementWithAnyChildrenDescriptor();
     }
@@ -110,7 +110,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @Override
-  public XmlElementDescriptor @NotNull [] getRootElementsDescriptors(@Nullable final XmlDocument document) {
+  public XmlElementDescriptor @NotNull [] getRootElementsDescriptors(final @Nullable XmlDocument document) {
     XmlElementDescriptor[] elementDescriptors = getCodeContext(namespace).getDescriptorsWithAllowedDeclaration();
     ArrayList<XmlElementDescriptor> results = new ArrayList<>(elementDescriptors.length);
 
@@ -141,8 +141,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @Override
-  @Nullable
-  public XmlFile getDescriptorFile() {
+  public @Nullable XmlFile getDescriptorFile() {
     return myFile;
   }
 
@@ -152,14 +151,12 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @Override
-  @NonNls
-  public String getName(final PsiElement context) {
+  public @NonNls String getName(final PsiElement context) {
     return null;
   }
 
   @Override
-  @NonNls
-  public String getName() {
+  public @NonNls String getName() {
     return null;
   }
 
@@ -183,7 +180,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @Override
-  public void validate(@NotNull final XmlDocument context, @NotNull final ValidationHost host) {}
+  public void validate(final @NotNull XmlDocument context, final @NotNull ValidationHost host) {}
 
   public boolean hasElementDescriptorWithName(String name, String className) {
     CodeContext context = getCodeContext(namespace);

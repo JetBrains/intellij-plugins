@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.lang.javascript.psi.JSElement;
@@ -87,9 +88,8 @@ public class FlexExtractInterfaceDialog extends FlexExtractSuperBaseDialog {
            : RefactoringBundle.message(mySourceClass.isInterface() ? "package.for.original.interface" : "package.for.original.class");
   }
 
-  @NotNull
   @Override
-  protected String getEntityName() {
+  protected @NotNull String getEntityName() {
     return RefactoringBundle.message("extractSuperInterface.interface");
   }
 

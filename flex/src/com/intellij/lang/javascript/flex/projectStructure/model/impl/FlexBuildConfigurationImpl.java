@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -24,39 +25,29 @@ import java.util.*;
 
 class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
 
-  @NotNull
-  private String myName = UNNAMED;
+  private @NotNull String myName = UNNAMED;
 
-  @NotNull
-  private TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;
+  private @NotNull TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;
 
   private boolean myPureAs = BuildConfigurationNature.DEFAULT.pureAS;
 
-  @NotNull
-  private OutputType myOutputType = BuildConfigurationNature.DEFAULT.outputType;
+  private @NotNull OutputType myOutputType = BuildConfigurationNature.DEFAULT.outputType;
 
-  @NotNull
-  private String myOptimizeFor = "";
+  private @NotNull String myOptimizeFor = "";
 
-  @NotNull
-  private String myMainClass = "";
+  private @NotNull String myMainClass = "";
 
-  @NotNull
-  private String myOutputFileName = "";
+  private @NotNull String myOutputFileName = "";
 
-  @NotNull
-  private String myOutputFolder = "";
+  private @NotNull String myOutputFolder = "";
 
   private boolean myUseHtmlWrapper = false;
 
-  @NotNull
-  private String myWrapperTemplatePath = "";
+  private @NotNull String myWrapperTemplatePath = "";
 
-  @NotNull
-  private String myRLMs = "";
+  private @NotNull String myRLMs = "";
 
-  @NotNull
-  private String myCssFilesToCompile = "";
+  private @NotNull String myCssFilesToCompile = "";
 
   private boolean mySkipCompile = false;
 
@@ -68,14 +59,12 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   private boolean myTempBCForCompilation = false;
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
   @Override
-  @NotNull
-  public TargetPlatform getTargetPlatform() {
+  public @NotNull TargetPlatform getTargetPlatform() {
     return myTargetPlatform;
   }
 
@@ -85,32 +74,27 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   }
 
   @Override
-  @NotNull
-  public OutputType getOutputType() {
+  public @NotNull OutputType getOutputType() {
     return myOutputType;
   }
 
   @Override
-  @NotNull
-  public String getOptimizeFor() {
+  public @NotNull String getOptimizeFor() {
     return myOptimizeFor;
   }
 
   @Override
-  @NotNull
-  public String getMainClass() {
+  public @NotNull String getMainClass() {
     return myMainClass;
   }
 
   @Override
-  @NotNull
-  public String getOutputFileName() {
+  public @NotNull String getOutputFileName() {
     return myOutputFileName;
   }
 
   @Override
-  @NotNull
-  public String getOutputFolder() {
+  public @NotNull String getOutputFolder() {
     return myOutputFolder;
   }
 
@@ -120,14 +104,12 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   }
 
   @Override
-  @NotNull
-  public String getWrapperTemplatePath() {
+  public @NotNull String getWrapperTemplatePath() {
     return myWrapperTemplatePath;
   }
 
   @Override
-  @NotNull
-  public Collection<RLMInfo> getRLMs() {
+  public @NotNull Collection<RLMInfo> getRLMs() {
     if (myRLMs.isEmpty()) return Collections.emptyList();
 
     final List<String> entries = StringUtil.split(myRLMs, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
@@ -141,8 +123,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   }
 
   @Override
-  @NotNull
-  public Collection<String> getCssFilesToCompile() {
+  public @NotNull Collection<String> getCssFilesToCompile() {
     if (myCssFilesToCompile.isEmpty()) return Collections.emptyList();
     return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
@@ -229,39 +210,33 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
     mySkipCompile = skipCompile;
   }
 
-  @NotNull
   @Override
-  public ModifiableDependencies getDependencies() {
+  public @NotNull ModifiableDependencies getDependencies() {
     return myDependencies;
   }
 
-  @NotNull
   @Override
-  public CompilerOptionsImpl getCompilerOptions() {
+  public @NotNull CompilerOptionsImpl getCompilerOptions() {
     return myCompilerOptions;
   }
 
-  @NotNull
   @Override
-  public ModifiableAirDesktopPackagingOptions getAirDesktopPackagingOptions() {
+  public @NotNull ModifiableAirDesktopPackagingOptions getAirDesktopPackagingOptions() {
     return myAirDesktopPackagingOptions;
   }
 
-  @NotNull
   @Override
-  public ModifiableAndroidPackagingOptions getAndroidPackagingOptions() {
+  public @NotNull ModifiableAndroidPackagingOptions getAndroidPackagingOptions() {
     return myAndroidPackagingOptions;
   }
 
-  @NotNull
   @Override
-  public ModifiableIosPackagingOptions getIosPackagingOptions() {
+  public @NotNull ModifiableIosPackagingOptions getIosPackagingOptions() {
     return myIosPackagingOptions;
   }
 
-  @NotNull
   @Override
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     return getNature().getIcon();
   }
 
@@ -342,8 +317,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   }
 
   @Override
-  @Nullable
-  public Sdk getSdk() {
+  public @Nullable Sdk getSdk() {
     final SdkEntry sdkEntry = myDependencies.getSdkEntry();
     return sdkEntry == null ? null : ContainerUtil.find(FlexSdkUtils.getFlexAndFlexmojosSdks(),
                                                         sdk -> sdkEntry.getName().equals(sdk.getName()));

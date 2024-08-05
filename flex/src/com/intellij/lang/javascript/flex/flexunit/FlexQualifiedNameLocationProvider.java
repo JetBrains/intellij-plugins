@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.Location;
@@ -24,9 +25,8 @@ public class FlexQualifiedNameLocationProvider implements SMTestLocator {
 
   public static final FlexQualifiedNameLocationProvider INSTANCE = new FlexQualifiedNameLocationProvider();
 
-  @NotNull
   @Override
-  public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+  public @NotNull List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
     if (PROTOCOL_ID.equals(protocol)) {
       JSElement element = findElement(path, project);
       if (element != null) {
@@ -37,8 +37,7 @@ public class FlexQualifiedNameLocationProvider implements SMTestLocator {
     return Collections.emptyList();
   }
 
-  @Nullable
-  private static JSElement findElement(String link, Project project) {
+  private static @Nullable JSElement findElement(String link, Project project) {
     String moduleName = link.substring(0, link.indexOf(":"));
     Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
     link = link.substring(link.indexOf(":") + 1);

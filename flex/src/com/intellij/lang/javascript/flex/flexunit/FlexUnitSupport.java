@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -35,9 +35,9 @@ public final class FlexUnitSupport {
 
   private static final Logger LOG = Logger.getInstance(FlexUnitSupport.class.getName());
 
-  @NotNull public final JSClass flexUnit1TestClass;
-  @Nullable public final JSClass flunitTestClass;
-  @Nullable private final JSClass flunitTestSuite;
+  private final @Nullable JSClass flunitTestSuite;
+  public final @NotNull JSClass flexUnit1TestClass;
+  public final @Nullable JSClass flunitTestClass;
   public final boolean flexUnit4Present;
   private final JSClass flexUnit1TestSuite;
 
@@ -64,22 +64,19 @@ public final class FlexUnitSupport {
     this.flexUnit4Present = flexUnit4Present;
   }
 
-  @Nullable
-  public static Pair<Module, FlexUnitSupport> getModuleAndSupport(@NotNull PsiElement context) {
+  public static @Nullable Pair<Module, FlexUnitSupport> getModuleAndSupport(@NotNull PsiElement context) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(context);
     final FlexUnitSupport support = getSupport(module);
     return support != null ? Pair.create(module, support) : null;
   }
 
-  @Nullable
-  public static FlexUnitSupport getSupport(@Nullable FlexBuildConfiguration bc, final Module module) {
+  public static @Nullable FlexUnitSupport getSupport(@Nullable FlexBuildConfiguration bc, final Module module) {
     if (bc == null) return null;
 
     return getSupport(FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, true));
   }
 
-  @Nullable
-  public static FlexUnitSupport getSupport(@Nullable Module module) {
+  public static @Nullable FlexUnitSupport getSupport(@Nullable Module module) {
     if (module == null) return null;
     if (ModuleType.get(module) != FlexModuleType.getInstance() || FlexUtils.getSdkForActiveBC(module) == null) return null;
 
@@ -194,8 +191,7 @@ public final class FlexUnitSupport {
   /**
    * @return [RunWith] metadata default attribute value. Can be {@code null}, empty string or whatever.
    */
-  @Nullable
-  public static String getCustomRunner(JSClass clazz) {
+  public static @Nullable String getCustomRunner(JSClass clazz) {
     final JSAttribute[] attrs = clazz.getAttributeList().getAttributesByName(RUN_WITH_ATTRIBUTE);
     if (attrs.length == 0) return null;
     final JSAttributeNameValuePair attr = attrs[0].getValueByName(null);

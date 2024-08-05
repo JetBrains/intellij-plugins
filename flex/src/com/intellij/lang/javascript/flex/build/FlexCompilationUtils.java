@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -79,8 +79,7 @@ public final class FlexCompilationUtils {
     return ArrayUtilRt.toStringArray(extensionIDs);
   }
 
-  @Nullable
-  private static String getExtensionId(final VirtualFile aneFile) {
+  private static @Nullable String getExtensionId(final VirtualFile aneFile) {
     final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(aneFile);
     if (jarRoot == null) return null;
     final VirtualFile xmlFile = VfsUtilCore.findRelativeFile("META-INF/ANE/extension.xml", jarRoot);
@@ -162,8 +161,7 @@ public final class FlexCompilationUtils {
     return outputFileRef.get();
   }
 
-  @Nullable
-  public static VirtualFile getRealFile(final VirtualFile libFile) {
+  public static @Nullable VirtualFile getRealFile(final VirtualFile libFile) {
     if (libFile.getFileSystem() instanceof JarFileSystem) {
       return JarFileSystem.getInstance().getVirtualFileForJar(libFile);
     }

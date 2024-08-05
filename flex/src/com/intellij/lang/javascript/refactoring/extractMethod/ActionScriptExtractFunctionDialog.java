@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.refactoring.extractMethod;
 
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -54,7 +55,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
   private final JSExtractFunctionHandler.ContextInfo contextInfo;
   private final JSExtractFunctionHandler.IntroductionScope myIntroductionScope;
 
-  public ActionScriptExtractFunctionDialog(@NotNull final ExtractedFunctionSignatureGenerator signatureGenerator,
+  public ActionScriptExtractFunctionDialog(final @NotNull ExtractedFunctionSignatureGenerator signatureGenerator,
                                            @NotNull JSExtractFunctionHandler.ContextInfo ci,
                                            @NotNull JSExtractFunctionHandler.IntroductionScope introductionScope,
                                            JSExpression @NotNull [] occurrences) {
@@ -67,8 +68,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
         }
 
         @Override
-        @Nullable
-        public String evaluateType() {
+        public @Nullable String evaluateType() {
           return null;
         }
 
@@ -176,8 +176,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
   }
 
   @Override
-  @Nullable
-  public ParametersInfo getParametersInfo() {
+  public @Nullable ParametersInfo getParametersInfo() {
     return parametersInfo;
   }
 
@@ -397,9 +396,8 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
     ActionScriptExtractFunctionHandler.saveClassMemberVisibility(type);
   }
 
-  @Nullable
   @Override
-  protected JSAttributeList.AccessType getLastUsedVisibility() {
+  protected @Nullable JSAttributeList.AccessType getLastUsedVisibility() {
     return ActionScriptExtractFunctionHandler.getClassMemberVisibility();
   }
 }

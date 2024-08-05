@@ -117,7 +117,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private final Module myModule;
   private final ModifiableFlexBuildConfiguration myConfiguration;
-  private @NotNull final FlexProjectConfigurationEditor myConfigEditor;
+  private final @NotNull FlexProjectConfigurationEditor myConfigEditor;
   private final ProjectSdksModel mySdksModel;
   private final StructureConfigurableContext myContext;
   private String myName;
@@ -151,7 +151,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
     myStructureElement = new BuildConfigurationProjectStructureElement(bc, module, context) {
       @Override
-      protected void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
+      protected void libraryReplaced(final @NotNull Library library, final @Nullable Library replacement) {
         myDependenciesConfigurable.libraryReplaced(library, replacement);
       }
     };
@@ -457,8 +457,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   @Override
-  @Nls
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return myName;
   }
 
@@ -746,7 +745,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   @Override
-  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+  public ActionCallback navigateTo(final @Nullable Place place, final boolean requestFocus) {
     if (place != null && place.getPath(LOCATION_ON_TAB) instanceof Location location) {
       return switch (location) {
         case Nature -> IdeFocusManager.findInstance().requestFocus(myChangeNatureHyperlink, true);

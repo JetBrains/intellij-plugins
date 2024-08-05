@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
@@ -17,9 +17,8 @@ import java.io.File;
 import java.util.Collections;
 
 public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBuilderImporter> {
-  @NotNull
   @Override
-  protected FlashBuilderImporter doGetBuilder() {
+  protected @NotNull FlashBuilderImporter doGetBuilder() {
     return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(FlashBuilderImporter.class);
   }
 
@@ -33,14 +32,13 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
   }
 
   @Override
-  @Nullable
-  public Icon getIcon(@NotNull final VirtualFile file) {
+  public @Nullable Icon getIcon(final @NotNull VirtualFile file) {
     if ("zip".equalsIgnoreCase(file.getExtension())) return null; // standard icon is better for zip, it is not Flash Builder specific extension
     return super.getIcon(file);
   }
 
   @Override
-  public boolean canOpenProject(@NotNull final VirtualFile file) {
+  public boolean canOpenProject(final @NotNull VirtualFile file) {
     // do not look inside archives here - it may be too expensive, fail later if not a suitable archive
     return file.isDirectory()
            ? FlashBuilderProjectFinder.isFlashBuilderProject(file.findChild(FlashBuilderImporter.DOT_PROJECT))
@@ -50,7 +48,7 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
   }
 
   @Override
-  protected boolean doQuickImport(@NotNull final VirtualFile file, @NotNull final WizardContext wizardContext) {
+  protected boolean doQuickImport(final @NotNull VirtualFile file, final @NotNull WizardContext wizardContext) {
     assert !file.isDirectory() : file.getPath();
     final String title = FlexBundle.message("open.project.0", file.getName());
 

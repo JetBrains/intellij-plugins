@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.lang.javascript.psi.JSElement;
@@ -79,9 +80,8 @@ public class FlexExtractSuperClassDialog extends FlexExtractSuperBaseDialog {
            : RefactoringBundle.message("package.for.original.class");
   }
 
-  @NotNull
   @Override
-  protected String getEntityName() {
+  protected @NotNull String getEntityName() {
     return RefactoringBundle.message("ExtractSuperClass.superclass");
   }
 

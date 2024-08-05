@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -35,35 +36,12 @@ import java.util.List;
 public final class FlexUnitTestFinder implements TestFinder {
 
   @Override
-  @Nullable
-  public JSClass findSourceElement(@NotNull final PsiElement element) {
+  public @Nullable JSClass findSourceElement(final @NotNull PsiElement element) {
     return findContextClass(element);
   }
 
-  @Nullable
-  static JSClass findContextClass(final @NotNull PsiElement element) {
-    if (FlexUnitSupport.getModuleAndSupport(element) == null) {
-      return null;
-    }
-
-    PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class, false);
-    if (psiFile instanceof JSFile) {
-      psiFile = InjectedLanguageManager.getInstance(psiFile.getProject()).getTopLevelFile(psiFile);
-    }
-
-    if (psiFile instanceof JSFile) {
-      return JSPsiImplUtils.findClass((JSFile)psiFile);
-    }
-    else if (psiFile instanceof XmlFile) {
-      return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)psiFile);
-    }
-
-    return null;
-  }
-
   @Override
-  @NotNull
-  public Collection<PsiElement> findTestsForClass(@NotNull final PsiElement element) {
+  public @NotNull Collection<PsiElement> findTestsForClass(final @NotNull PsiElement element) {
     final VirtualFile file = element.getContainingFile().getVirtualFile();
     final JSClass jsClass = findSourceElement(element);
     final String className = jsClass == null ? null : jsClass.getName();
@@ -99,8 +77,7 @@ public final class FlexUnitTestFinder implements TestFinder {
   }
 
   @Override
-  @NotNull
-  public Collection<PsiElement> findClassesForTest(@NotNull final PsiElement element) {
+  public @NotNull Collection<PsiElement> findClassesForTest(final @NotNull PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
     final String className = jsClass == null ? null : jsClass.getName();
 
@@ -130,7 +107,7 @@ public final class FlexUnitTestFinder implements TestFinder {
   }
 
   @Override
-  public boolean isTest(@NotNull final PsiElement element) {
+  public boolean isTest(final @NotNull PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
     final PsiFile psiFile = element.getContainingFile();
@@ -139,5 +116,25 @@ public final class FlexUnitTestFinder implements TestFinder {
            ((file != null && file.getName().contains("Test") &&
              ModuleRootManager.getInstance(moduleAndSupport.first).getFileIndex().isInTestSourceContent(file))
             || moduleAndSupport.second.isTestClass(jsClass, true));
+  }
+
+  static @Nullable JSClass findContextClass(final @NotNull PsiElement element) {
+    if (FlexUnitSupport.getModuleAndSupport(element) == null) {
+      return null;
+    }
+
+    PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class, false);
+    if (psiFile instanceof JSFile) {
+      psiFile = InjectedLanguageManager.getInstance(psiFile.getProject()).getTopLevelFile(psiFile);
+    }
+
+    if (psiFile instanceof JSFile) {
+      return JSPsiImplUtils.findClass((JSFile)psiFile);
+    }
+    else if (psiFile instanceof XmlFile) {
+      return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)psiFile);
+    }
+
+    return null;
   }
 }

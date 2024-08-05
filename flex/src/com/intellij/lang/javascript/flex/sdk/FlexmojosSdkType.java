@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -40,8 +40,7 @@ public final class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  @NotNull
-  public FileChooserDescriptor getHomeChooserDescriptor() {
+  public @NotNull FileChooserDescriptor getHomeChooserDescriptor() {
     final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, false, false, false, false, false) {
       @Override
       public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
@@ -52,43 +51,40 @@ public final class FlexmojosSdkType extends SdkType {
     return descriptor;
   }
 
-  @NotNull
   @Override
-  public String suggestSdkName(@Nullable final String currentSdkName, final @NotNull String sdkHome) {
+  public @NotNull String suggestSdkName(final @Nullable String currentSdkName, final @NotNull String sdkHome) {
     return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 
   @Override
-  public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
+  public AdditionalDataConfigurable createAdditionalDataConfigurable(final @NotNull SdkModel sdkModel, final @NotNull SdkModificator sdkModificator) {
     return new FlexmojosSdkDataConfigurable();
   }
 
   @Override
-  public SdkAdditionalData loadAdditionalData(@NotNull final Element element) {
+  public SdkAdditionalData loadAdditionalData(final @NotNull Element element) {
     final FlexmojosSdkAdditionalData additionalData = new FlexmojosSdkAdditionalData();
     additionalData.load(element);
     return additionalData;
   }
 
   @Override
-  public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element element) {
+  public void saveAdditionalData(final @NotNull SdkAdditionalData additionalData, final @NotNull Element element) {
     ((FlexmojosSdkAdditionalData)additionalData).save(element);
   }
 
   @Override
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return "Flexmojos SDK";
   }
 
   @Override
-  @NotNull
-  public @NlsContexts.Label String getHomeFieldLabel() {
+  public @NotNull @NlsContexts.Label String getHomeFieldLabel() {
     return "Flex Compiler POM:";
   }
 
   @Override
-  public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
+  public boolean isRootTypeApplicable(final @NotNull OrderRootType type) {
     return false;
   }
 
@@ -97,14 +93,13 @@ public final class FlexmojosSdkType extends SdkType {
     return FlexIcons.Flex.Sdk.MavenFlex;
   }
 
-  @NotNull
   @Override
-  public String getHelpTopic() {
+  public @NotNull String getHelpTopic() {
     return "reference.project.structure.sdk.flexmojos";
   }
 
   @Override
-  public void setupSdkPaths(@NotNull final Sdk sdk) {
+  public void setupSdkPaths(final @NotNull Sdk sdk) {
     final VirtualFile sdkRoot = sdk.getHomeDirectory();
     if (sdkRoot == null || !sdkRoot.isValid() || sdkRoot.isDirectory()) {
       return;

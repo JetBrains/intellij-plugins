@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.javascript.flex.FlexReferenceContributor;
@@ -139,7 +140,7 @@ public class FlashUmlDependencyProvider {
       }
 
       @Override
-      public void visitElement(@NotNull final PsiElement element) {
+      public void visitElement(final @NotNull PsiElement element) {
         super.visitElement(element);
         element.acceptChildren(this);
       }
@@ -206,7 +207,7 @@ public class FlashUmlDependencyProvider {
                   private boolean myInClassReference; // to prevent extra references resolve
 
                   @Override
-                  public void visitElement(@NotNull final PsiElement element) {
+                  public void visitElement(final @NotNull PsiElement element) {
                     super.visitElement(element);
                     element.acceptChildren(this);
                   }
@@ -242,7 +243,7 @@ public class FlashUmlDependencyProvider {
         }
 
         @Override
-        public void visitElement(@NotNull final PsiElement element) {
+        public void visitElement(final @NotNull PsiElement element) {
           super.visitElement(element);
           element.acceptChildren(this);
         }
@@ -251,7 +252,7 @@ public class FlashUmlDependencyProvider {
 
     myClazz.processDeclarations(new PsiScopeProcessor() {
       @Override
-      public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
+      public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
         element.accept(visitor);
         return true;
       }

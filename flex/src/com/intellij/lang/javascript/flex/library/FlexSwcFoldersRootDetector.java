@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -20,9 +21,8 @@ class FlexSwcFoldersRootDetector extends RootDetector {
     super(OrderRootType.CLASSES, true, FlexBundle.message("swc.folders.root.detector.name"));
   }
 
-  @NotNull
   @Override
-  public Collection<VirtualFile> detectRoots(@NotNull final VirtualFile rootCandidate, @NotNull final ProgressIndicator progressIndicator) {
+  public @NotNull Collection<VirtualFile> detectRoots(final @NotNull VirtualFile rootCandidate, final @NotNull ProgressIndicator progressIndicator) {
     List<VirtualFile> result = new ArrayList<>();
     collectRoots(rootCandidate, result, progressIndicator);
     return result;
@@ -32,9 +32,8 @@ class FlexSwcFoldersRootDetector extends RootDetector {
     if (!file.isDirectory() || file.getFileSystem() instanceof JarFileSystem) return;
 
     VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
-      @NotNull
       @Override
-      public Result visitFileEx(@NotNull VirtualFile child) {
+      public @NotNull Result visitFileEx(@NotNull VirtualFile child) {
         progressIndicator.checkCanceled();
         if (child.isDirectory()) {
           progressIndicator.setText2(child.getPresentableUrl());

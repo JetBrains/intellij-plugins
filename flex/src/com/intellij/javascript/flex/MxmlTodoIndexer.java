@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.mxml.FlexXmlBackedMembersIndex;
@@ -18,9 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class MxmlTodoIndexer extends XmlTodoIndexer {
-  @NotNull
   @Override
-  public Map<TodoIndexEntry, Integer> map(@NotNull final FileContent inputData) {
+  public @NotNull Map<TodoIndexEntry, Integer> map(final @NotNull FileContent inputData) {
     final Map<TodoIndexEntry, Integer> map = new HashMap<>(super.map(inputData));
     FlexXmlBackedMembersIndex.visitScriptTagInjectedFilesForIndexing((XmlFile)inputData.getPsiFile(),
                                                                      new JSResolveUtil.JSInjectedFilesVisitor() {

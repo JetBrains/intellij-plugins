@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -22,8 +23,8 @@ import java.util.Collection;
 
 public class NewFlexComponentAction extends NewActionScriptClassAction {
 
-  @NonNls private static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
-  @NonNls private static final String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
+  private static final @NonNls String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
+  private static final @NonNls String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
 
   private static final String[] FLEX_CLASSIFIER_TEMPLATES =
     new String[]{FLEX3_COMPONENT_TEMPLATE_NAME, FLEX4_COMPONENT_TEMPLATE_NAME};

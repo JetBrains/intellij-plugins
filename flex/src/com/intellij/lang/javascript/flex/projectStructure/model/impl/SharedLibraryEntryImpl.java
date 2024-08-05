@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
@@ -8,11 +9,9 @@ class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDe
 
   private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();
 
-  @NotNull
-  private final String myLibraryName;
+  private final @NotNull String myLibraryName;
 
-  @NotNull
-  private final String myLibraryLevel;
+  private final @NotNull String myLibraryLevel;
 
 
   SharedLibraryEntryImpl(@NotNull String libraryName, @NotNull String libraryLevel) {
@@ -21,20 +20,17 @@ class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDe
   }
 
   @Override
-  @NotNull
-  public String getLibraryName() {
+  public @NotNull String getLibraryName() {
     return myLibraryName;
   }
 
   @Override
-  @NotNull
-  public String getLibraryLevel() {
+  public @NotNull String getLibraryLevel() {
     return myLibraryLevel;
   }
 
-  @NotNull
   @Override
-  public DependencyTypeImpl getDependencyType() {
+  public @NotNull DependencyTypeImpl getDependencyType() {
     return myDependencyType;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.ProjectViewNode;
@@ -95,8 +95,49 @@ public final class SwfProjectViewStructureProvider implements SelectableTreeStru
     return ((PsiFileNode)parent).contains(file);
   }
 
-  @Nullable
-  private static PsiElement findDecompiledElement(JSQualifiedNamedElement element) {
+  @Override
+  public @NotNull Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent, @NotNull Collection<AbstractTreeNode<?>> children, ViewSettings settings) {
+    if (!(parent instanceof PsiFileNode)) {
+      return children;
+    }
+
+    final PsiFile psiFile = ((PsiFileNode)parent).getValue();
+    if (!(psiFile instanceof PsiCompiledFile) || !(psiFile instanceof JSFile)) {
+      return children;
+    }
+
+    final VirtualFile vFile = psiFile.getVirtualFile();
+    if (vFile == null || !FileTypeRegistry.getInstance().isFileOfType(vFile, FlexApplicationComponent.SWF_FILE_TYPE)) {
+      return children;
+    }
+
+    if (isTooManySWFs(vFile.getParent())) {
+      return children;
+    }
+
+    List<JSQualifiedNamedElement> elements = new ArrayList<>();
+    for (JSSourceElement e : ((JSFile)psiFile).getStatements()) {
+      if (e instanceof JSQualifiedNamedElement) {
+        String qName = ((JSQualifiedNamedElement)e).getQualifiedName();
+        if (qName == null) {
+          final Attachment attachment = e.getParent() != null
+                                        ? new Attachment("Parent element.txt", e.getParent().getText())
+                                        : new Attachment("Element text.txt", e.getText());
+          LOG.error("Null qname: '" + e.getClass().getName() + "'", new Throwable(), attachment);
+          continue;
+        }
+        elements.add((JSQualifiedNamedElement)e);
+      }
+      else if (e instanceof JSVarStatement) {
+        Collections.addAll(elements, ((JSVarStatement)e).getVariables());
+      }
+    }
+
+    elements.sort(QNAME_COMPARATOR);
+    return getChildrenForPackage("", elements, 0, elements.size(), psiFile.getProject(), ((PsiFileNode)parent).getSettings());
+  }
+
+  private static @Nullable PsiElement findDecompiledElement(JSQualifiedNamedElement element) {
     if (DumbService.isDumb(element.getProject())) {
       return null;
     }
@@ -148,49 +189,6 @@ public final class SwfProjectViewStructureProvider implements SelectableTreeStru
       }
     }
     return null;
-  }
-
-  @NotNull
-  @Override
-  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent, @NotNull Collection<AbstractTreeNode<?>> children, ViewSettings settings) {
-    if (!(parent instanceof PsiFileNode)) {
-      return children;
-    }
-
-    final PsiFile psiFile = ((PsiFileNode)parent).getValue();
-    if (!(psiFile instanceof PsiCompiledFile) || !(psiFile instanceof JSFile)) {
-      return children;
-    }
-
-    final VirtualFile vFile = psiFile.getVirtualFile();
-    if (vFile == null || !FileTypeRegistry.getInstance().isFileOfType(vFile, FlexApplicationComponent.SWF_FILE_TYPE)) {
-      return children;
-    }
-
-    if (isTooManySWFs(vFile.getParent())) {
-      return children;
-    }
-
-    List<JSQualifiedNamedElement> elements = new ArrayList<>();
-    for (JSSourceElement e : ((JSFile)psiFile).getStatements()) {
-      if (e instanceof JSQualifiedNamedElement) {
-        String qName = ((JSQualifiedNamedElement)e).getQualifiedName();
-        if (qName == null) {
-          final Attachment attachment = e.getParent() != null
-                                        ? new Attachment("Parent element.txt", e.getParent().getText())
-                                        : new Attachment("Element text.txt", e.getText());
-          LOG.error("Null qname: '" + e.getClass().getName() + "'", new Throwable(), attachment);
-          continue;
-        }
-        elements.add((JSQualifiedNamedElement)e);
-      }
-      else if (e instanceof JSVarStatement) {
-        Collections.addAll(elements, ((JSVarStatement)e).getVariables());
-      }
-    }
-
-    elements.sort(QNAME_COMPARATOR);
-    return getChildrenForPackage("", elements, 0, elements.size(), psiFile.getProject(), ((PsiFileNode)parent).getSettings());
   }
 
   private static boolean isTooManySWFs(final VirtualFile folder) {
@@ -272,8 +270,7 @@ public final class SwfProjectViewStructureProvider implements SelectableTreeStru
     }
   }
 
-  @Nullable
-  private static String getEmptyMiddlePackageQname(List<JSQualifiedNamedElement> elements, int from, int to, String packageName) {
+  private static @Nullable String getEmptyMiddlePackageQname(List<JSQualifiedNamedElement> elements, int from, int to, String packageName) {
     if (from == to) {
       return null;
     }

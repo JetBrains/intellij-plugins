@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
@@ -49,17 +49,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
-  @NotNull private final String myInherit;
+  private final @NotNull String myInherit;
   private final boolean myShorthand;
-  @NotNull private final String myPropertyName;
-  @NotNull private final CssPropertyValue myValue;
-  @NotNull private final Set<String> myClassNames;
-  @NotNull private final Set<String> myFileNames;
+  private final @NotNull String myPropertyName;
+  private final @NotNull CssPropertyValue myValue;
+  private final @NotNull Set<String> myClassNames;
+  private final @NotNull Set<String> myFileNames;
   private final FlexStyleIndexInfo myStyleInfo;
 
   public static final String COLOR_FORMAT = "Color";
   private static final String LENGTH_FORMAT = "Length";
-  @NotNull private final CssValueDescriptor myValueDescriptor;
+  private final @NotNull CssValueDescriptor myValueDescriptor;
 
   public FlexCssPropertyDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos) {
     FlexStyleIndexInfo firstInfo = infos.iterator().next();
@@ -128,159 +128,12 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  @NotNull
-  public FlexStyleIndexInfo getStyleInfo() {
+  public @NotNull FlexStyleIndexInfo getStyleInfo() {
     return myStyleInfo;
   }
 
-  @NotNull
-  private static Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
-    Set<String> formats = new LinkedHashSet<>();
-    for (FlexStyleIndexInfo info : infos) {
-      ContainerUtil.addIfNotNull(formats, info.getFormat());
-    }
-
-    if (formats.contains(COLOR_FORMAT)) {
-      children.add(createCssColorValue());
-    }
-    if (formats.contains(LENGTH_FORMAT)) {
-      children.add(createCssLengthValue());
-    }
-    return formats;
-  }
-
-  @NotNull
-  private static Set<String> addValuesFromFormats(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull List<CssPropertyValue> children) {
-    Set<String> formats = new LinkedHashSet<>();
-    for (FlexStyleIndexInfo info : infos) {
-      String format = info.getFormat();
-      if (format != null) {
-        formats.add(format);
-      }
-    }
-    if (formats.contains(COLOR_FORMAT)) {
-      children.add(new FlexCssColorValue());
-    }
-    if (formats.contains(LENGTH_FORMAT)) {
-      children.add(new CssLookupValue(new LengthUserLookup(), CssTermTypes.LENGTH, CssTermTypes.NUMBER, CssTermTypes.NEGATIVE_NUMBER,
-                                      CssTermTypes.NEGATIVE_LENGTH));
-    }
-    return formats;
-  }
-
-  private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
-    Set<String> types = new HashSet<>();
-    for (FlexStyleIndexInfo info : infos) {
-      ContainerUtil.addIfNotNull(types, info.getType());
-    }
-    if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
-      children.add(createCssNumberValue());
-    }
-    if (types.contains("Class")) {
-      children.add(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("ClassReference", 1, 1, null));
-    }
-  }
-
-  private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
-    Set<String> types = new LinkedHashSet<>();
-    for (FlexStyleIndexInfo info : infos) {
-      String type = info.getType();
-      if (type != null) {
-        types.add(type);
-      }
-    }
-    if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
-      children.add(new CssLookupValue(CssPropertyValueImpl.Type.OR, CssTermTypes.NUMBER, CssTermTypes.NEGATIVE_NUMBER));
-    }
-  }
-
-  @NotNull
-  private static CssValueDescriptor createPropertyValueDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
-    List<CssValueDescriptor> children = new ArrayList<>();
-    Set<String> formats = addValuesFromFormats(children, infos);
-    addValuesFromEnumerations2(infos, children);
-    addValuesFromTypes2(infos, formats, children);
-
-    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null);
-    if (!children.isEmpty()) {
-      for (CssValueDescriptor child : children) {
-        result.addChild(CssValueDescriptorModificator.withParent(child, result));
-      }
-      if (!formats.contains(COLOR_FORMAT)) {
-        result.addChild(CssElementDescriptorFactory2.getInstance().createStringValueDescriptor(null, 1, 1, result));
-      }
-    }
-    else {
-      result.addChild(CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(1, 1, result));
-    }
-
-    result.addChild(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor("undefined", "undefined", 1, 1, result));
-    result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("PropertyReference", 1, 1, result));
-    result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("Embed", 1, 1, result));
-    return result;
-  }
-
-  private static CssColorValue createCssColorValue() {
-    String id = CssBundle.message("color.value.presentable.name");
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
-    return new CssColorValue(commonDescriptorData, valueDescriptorData, false);
-  }
-
-  private static CssLengthValue createCssLengthValue() {
-    String id = CssBundle.message("length.value.presentable.name");
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
-    return new CssLengthValue(commonDescriptorData, valueDescriptorData);
-  }
-
-  private static CssNumberValue createCssNumberValue() {
-    String id = CssBundle.message("number.value.presentable.name");
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
-    return new CssNumberValue(commonDescriptorData, valueDescriptorData);
-  }
-
-  /**
-   * @deprecated use this#createPropertyValueDescriptor
-   */
-  @Deprecated
-  @NotNull
-  private static CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
-    List<CssPropertyValue> children = new ArrayList<>();
-    Set<String> formats = addValuesFromFormats(infos, children);
-    addValuesFromEnumerations(infos, children);
-    addValuesFromTypes(infos, formats, children);
-    CssPropertyValueImpl value = null;
-    if (children.size() >= 1) {
-      value = new FlexCssPropertyValue(shorthand, false);
-      for (CssPropertyValue child : children) {
-        value.addChild(child);
-      }
-    }
-    if (value == null) {
-      value = new FlexCssPropertyValue(shorthand, true);
-    }
-    else if (!formats.contains(COLOR_FORMAT)) {
-      value.addChild(new FlexStringPropertyValue());
-    }
-    value.addChild(new FlexCssPropertyValue("undefined"));
-    return value;
-  }
-
-  private static final class DocumentationElement {
-    String header;
-    String documentation;
-
-    private DocumentationElement(@NotNull String header, @NotNull String documentation) {
-      this.header = header;
-      this.documentation = documentation;
-    }
-  }
-
   @Override
-  @Nullable
-  public String getDocumentationString(@Nullable PsiElement context) {
+  public @Nullable String getDocumentationString(@Nullable PsiElement context) {
     if (context == null) return null;
     PsiElement[] declarations = getDeclarations(context);
     List<DocumentationElement> docElements = new ArrayList<>();
@@ -323,6 +176,93 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return builder.toString();
   }
 
+  @Override
+  public @NotNull CssPropertyValue getValue() {
+    return myValue;
+  }
+
+  private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
+    Set<String> types = new HashSet<>();
+    for (FlexStyleIndexInfo info : infos) {
+      ContainerUtil.addIfNotNull(types, info.getType());
+    }
+    if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
+      children.add(createCssNumberValue());
+    }
+    if (types.contains("Class")) {
+      children.add(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("ClassReference", 1, 1, null));
+    }
+  }
+
+  private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
+    Set<String> types = new LinkedHashSet<>();
+    for (FlexStyleIndexInfo info : infos) {
+      String type = info.getType();
+      if (type != null) {
+        types.add(type);
+      }
+    }
+    if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
+      children.add(new CssLookupValue(CssPropertyValueImpl.Type.OR, CssTermTypes.NUMBER, CssTermTypes.NEGATIVE_NUMBER));
+    }
+  }
+
+  @Override
+  public @NotNull String getPropertyName() {
+    return myPropertyName;
+  }
+
+  private static CssColorValue createCssColorValue() {
+    String id = CssBundle.message("color.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
+    return new CssColorValue(commonDescriptorData, valueDescriptorData, false);
+  }
+
+  private static CssLengthValue createCssLengthValue() {
+    String id = CssBundle.message("length.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
+    return new CssLengthValue(commonDescriptorData, valueDescriptorData);
+  }
+
+  private static CssNumberValue createCssNumberValue() {
+    String id = CssBundle.message("number.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
+    return new CssNumberValue(commonDescriptorData, valueDescriptorData);
+  }
+
+  @Override
+  public @NotNull CssValueDescriptor getValueDescriptor() {
+    return myValueDescriptor;
+  }
+
+  private static final class DocumentationElement {
+    String header;
+    String documentation;
+
+    private DocumentationElement(@NotNull String header, @NotNull String documentation) {
+      this.header = header;
+      this.documentation = documentation;
+    }
+  }
+
+  private static @NotNull Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
+    Set<String> formats = new LinkedHashSet<>();
+    for (FlexStyleIndexInfo info : infos) {
+      ContainerUtil.addIfNotNull(formats, info.getFormat());
+    }
+
+    if (formats.contains(COLOR_FORMAT)) {
+      children.add(createCssColorValue());
+    }
+    if (formats.contains(LENGTH_FORMAT)) {
+      children.add(createCssLengthValue());
+    }
+    return formats;
+  }
+
   private static void addDeclaredIn(StringBuilder builder, DocumentationElement docElement) {
     builder.append(DocumentationMarkup.SECTION_HEADER_START);
     builder.append("Declared in:");
@@ -332,10 +272,22 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     builder.append(DocumentationMarkup.SECTION_END);
   }
 
-  @NotNull
-  @Override
-  public CssPropertyValue getValue() {
-    return myValue;
+  private static @NotNull Set<String> addValuesFromFormats(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull List<CssPropertyValue> children) {
+    Set<String> formats = new LinkedHashSet<>();
+    for (FlexStyleIndexInfo info : infos) {
+      String format = info.getFormat();
+      if (format != null) {
+        formats.add(format);
+      }
+    }
+    if (formats.contains(COLOR_FORMAT)) {
+      children.add(new FlexCssColorValue());
+    }
+    if (formats.contains(LENGTH_FORMAT)) {
+      children.add(new CssLookupValue(new LengthUserLookup(), CssTermTypes.LENGTH, CssTermTypes.NUMBER, CssTermTypes.NEGATIVE_NUMBER,
+                                      CssTermTypes.NEGATIVE_LENGTH));
+    }
+    return formats;
   }
 
   private boolean checkIncludes(JSClass c) {
@@ -460,10 +412,29 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return myShorthand;
   }
 
-  @Override
-  @NotNull
-  public String getPropertyName() {
-    return myPropertyName;
+  private static @NotNull CssValueDescriptor createPropertyValueDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
+    List<CssValueDescriptor> children = new ArrayList<>();
+    Set<String> formats = addValuesFromFormats(children, infos);
+    addValuesFromEnumerations2(infos, children);
+    addValuesFromTypes2(infos, formats, children);
+
+    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null);
+    if (!children.isEmpty()) {
+      for (CssValueDescriptor child : children) {
+        result.addChild(CssValueDescriptorModificator.withParent(child, result));
+      }
+      if (!formats.contains(COLOR_FORMAT)) {
+        result.addChild(CssElementDescriptorFactory2.getInstance().createStringValueDescriptor(null, 1, 1, result));
+      }
+    }
+    else {
+      result.addChild(CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(1, 1, result));
+    }
+
+    result.addChild(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor("undefined", "undefined", 1, 1, result));
+    result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("PropertyReference", 1, 1, result));
+    result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("Embed", 1, 1, result));
+    return result;
   }
 
   @Override
@@ -492,10 +463,30 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  @NotNull
-  @Override
-  public CssValueDescriptor getValueDescriptor() {
-    return myValueDescriptor;
+  /**
+   * @deprecated use this#createPropertyValueDescriptor
+   */
+  @Deprecated
+  private static @NotNull CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
+    List<CssPropertyValue> children = new ArrayList<>();
+    Set<String> formats = addValuesFromFormats(infos, children);
+    addValuesFromEnumerations(infos, children);
+    addValuesFromTypes(infos, formats, children);
+    CssPropertyValueImpl value = null;
+    if (children.size() >= 1) {
+      value = new FlexCssPropertyValue(shorthand, false);
+      for (CssPropertyValue child : children) {
+        value.addChild(child);
+      }
+    }
+    if (value == null) {
+      value = new FlexCssPropertyValue(shorthand, true);
+    }
+    else if (!formats.contains(COLOR_FORMAT)) {
+      value.addChild(new FlexStringPropertyValue());
+    }
+    value.addChild(new FlexCssPropertyValue("undefined"));
+    return value;
   }
 
   @Override

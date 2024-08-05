@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.addAsLib;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -53,8 +53,7 @@ public class AddAsSwcLibAction extends AnAction {
     return ActionUpdateThread.BGT;
   }
 
-  @NotNull
-  private static List<VirtualFile> getRoots(AnActionEvent e) {
+  private static @NotNull List<VirtualFile> getRoots(AnActionEvent e) {
     final Project project = getEventProject(e);
     final VirtualFile[] files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
     if (project == null || files == null || files.length == 0) return Collections.emptyList();

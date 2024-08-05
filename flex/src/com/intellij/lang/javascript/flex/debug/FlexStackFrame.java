@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.icons.AllIcons;
@@ -40,17 +40,17 @@ public class FlexStackFrame extends XStackFrame {
   private static final String ANONYMOUS = "<anonymous>";
 
   private final FlexDebugProcess myDebugProcess;
-  @Nullable private final XSourcePosition mySourcePosition;
-  @Nullable private final String myFileNameIfSourcePositionIsNull;  // for presentation only
+  protected static final @NonNls String UNKNOWN_SCOPE = "<unknown>";
+  static final @NonNls String DELIM = " = ";
   private final int myLineIfSourcePositionIsNull; // for presentation only
-  @NonNls static final String DELIM = " = ";
+  private final @Nullable XSourcePosition mySourcePosition;
 
   private Map<String,String> qName2IdMap;
   private List<String> scopeChain;
   private final XDebuggerEvaluator myXDebuggerEvaluator = new FlexDebuggerEvaluator();
   private String myScope = UNKNOWN_SCOPE;
   private int myFrameIndex;
-  @NonNls protected static final String UNKNOWN_SCOPE = "<unknown>";
+  private final @Nullable String myFileNameIfSourcePositionIsNull;  // for presentation only
   static final String CLASS_MARKER = ", class='";
   static final String CANNOT_EVALUATE_EXPRESSION = "Cannot evaluate expression: ";
 
@@ -64,7 +64,7 @@ public class FlexStackFrame extends XStackFrame {
   /**
    * Use this constructor only if it is not possible to find existing VirtualFile and create corresponding XSourcePosition
    */
-  FlexStackFrame(final FlexDebugProcess debugProcess, @Nullable final String fileName, final int line) {
+  FlexStackFrame(final FlexDebugProcess debugProcess, final @Nullable String fileName, final int line) {
     myDebugProcess = debugProcess;
     mySourcePosition = null;
     myFileNameIfSourcePositionIsNull = "<null>".equals(fileName) ? null : fileName;
@@ -72,13 +72,12 @@ public class FlexStackFrame extends XStackFrame {
   }
 
   @Override
-  @Nullable
-  public XSourcePosition getSourcePosition() {
+  public @Nullable XSourcePosition getSourcePosition() {
     return mySourcePosition;
   }
 
   @Override
-  public void computeChildren(@NotNull final XCompositeNode node) {
+  public void computeChildren(final @NotNull XCompositeNode node) {
     List<DebuggerCommand> commands = new ArrayList<>();
     commands.add(new MyDebuggerCommand("print this", node, true, FlexValue.ValueType.This));
     commands.add(new MyDebuggerCommand("info arguments", node, false, FlexValue.ValueType.Parameter));
@@ -230,7 +229,7 @@ public class FlexStackFrame extends XStackFrame {
     qName2IdMap = new LinkedHashMap<>();
     final DebuggerCommand command = new DebuggerCommand("info scopechain", CommandOutputProcessingType.SPECIAL_PROCESSING) {
       @Override
-      CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
+      CommandOutputProcessingMode onTextAvailable(final @NonNls String s) {
         final StringTokenizer tokenizer = new StringTokenizer(s, "\r\n");
         while (tokenizer.hasMoreElements()) {
           String line = tokenizer.nextToken();
@@ -255,6 +254,33 @@ public class FlexStackFrame extends XStackFrame {
       FlexDebugProcess.log(e);
       return null;
     });
+  }
+
+  @Override
+  public void customizePresentation(final @NotNull ColoredTextContainer component) {
+    component.append(myScope, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+
+    if (mySourcePosition != null) {
+      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(mySourcePosition.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(":" + (mySourcePosition.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    }
+    else if (myFileNameIfSourcePositionIsNull != null) {
+      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(myFileNameIfSourcePositionIsNull, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      if (myLineIfSourcePositionIsNull >= 0) {
+        component.append(":" + myLineIfSourcePositionIsNull, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      }
+    }
+
+    component.setIcon(AllIcons.Debugger.Frame);
+  }
+
+  static String validObjectId(String s) {
+    // some object ids from Flash player are negative (e.g. on Linux) and can not be consumed back e.g. for tracing
+    // so we transform them into unsigned ones assuming there is just sign transmition problem (see IDEA-49837)
+    long idVal = Long.parseLong(s);
+    return s.charAt(0) == '-' ? Long.toString(idVal & 0xFFFFFFFFL) : Long.toString(idVal);
   }
 
   class EvaluateCommand extends DebuggerCommand {
@@ -340,7 +366,7 @@ public class FlexStackFrame extends XStackFrame {
           handled = true;
           DebuggerCommand evaluateCommand = new EvaluateCommand("#"+id+(dotPos != -1 ?expression.substring(dotPos):""), callback) {
             @Override
-            CommandOutputProcessingMode doOnTextAvailable(@NonNls final String s) {
+            CommandOutputProcessingMode doOnTextAvailable(final @NonNls String s) {
               dispatchResult(s);
               return CommandOutputProcessingMode.DONE;
             }
@@ -355,7 +381,7 @@ public class FlexStackFrame extends XStackFrame {
             final Ref<Boolean> resolved = new Ref<>();
             DebuggerCommand evaluateCommand = new EvaluateCommand(id2 + "." + expression, callback) {
               @Override
-              CommandOutputProcessingMode doOnTextAvailable(@NonNls final String s) {
+              CommandOutputProcessingMode doOnTextAvailable(final @NonNls String s) {
                 if (!cannotEvaluateResponse(s)) {
                   resolved.set(Boolean.TRUE);
                   dispatchResult(s);
@@ -408,32 +434,6 @@ public class FlexStackFrame extends XStackFrame {
     }
   }
 
-  static String validObjectId(String s) {
-    // some object ids from Flash player are negative (e.g. on Linux) and can not be consumed back e.g. for tracing
-    // so we transform them into unsigned ones assuming there is just sign transmition problem (see IDEA-49837)
-    long idVal = Long.parseLong(s);
-    return s.charAt(0) == '-' ? Long.toString(idVal & 0xFFFFFFFFL) : Long.toString(idVal);
-  }
-
-  private class FlexDebuggerEvaluator extends XDebuggerEvaluator {
-    @Override
-    public boolean isCodeFragmentEvaluationSupported() {
-      return false;
-    }
-
-    @Override
-    public void evaluate(@NotNull final String expression, @NotNull final XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
-      final EvaluateCommand command = new EvaluateCommand(expression, callback);
-      myDebugProcess.sendCommand(command);
-    }
-
-    @Nullable
-    @Override
-    public ExpressionInfo getExpressionInfoAtOffset(@NotNull Project project, @NotNull Document document, final int offset, boolean sideEffectsAllowed) {
-      return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset);
-    }
-  }
-
   String eval(final String expression, FlexDebugProcess process) {
     final EvaluateCommand command = new EvaluateCommand(expression, null);
     process.sendAndProcessOneCommand(command, null);
@@ -445,24 +445,22 @@ public class FlexStackFrame extends XStackFrame {
     return myDebugProcess;
   }
 
-  @Override
-  public void customizePresentation(@NotNull final ColoredTextContainer component) {
-    component.append(myScope, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-
-    if (mySourcePosition != null) {
-      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      component.append(mySourcePosition.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      component.append(":" + (mySourcePosition.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    }
-    else if (myFileNameIfSourcePositionIsNull != null) {
-      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      component.append(myFileNameIfSourcePositionIsNull, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      if (myLineIfSourcePositionIsNull >= 0) {
-        component.append(":" + myLineIfSourcePositionIsNull, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      }
+  private class FlexDebuggerEvaluator extends XDebuggerEvaluator {
+    @Override
+    public boolean isCodeFragmentEvaluationSupported() {
+      return false;
     }
 
-    component.setIcon(AllIcons.Debugger.Frame);
+    @Override
+    public void evaluate(final @NotNull String expression, final @NotNull XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
+      final EvaluateCommand command = new EvaluateCommand(expression, callback);
+      myDebugProcess.sendCommand(command);
+    }
+
+    @Override
+    public @Nullable ExpressionInfo getExpressionInfoAtOffset(@NotNull Project project, @NotNull Document document, final int offset, boolean sideEffectsAllowed) {
+      return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset);
+    }
   }
 
   public void setScope(final String scope) {
@@ -510,7 +508,7 @@ public class FlexStackFrame extends XStackFrame {
     }
 
     @Override
-    CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
+    CommandOutputProcessingMode onTextAvailable(final @NonNls String s) {
       final int offsetIndex = hasFrame ? 1:0; // frame command
       if (current >= offsetIndex) {
         final StringTokenizer tokenizer = new StringTokenizer(s, "\r\n", true);

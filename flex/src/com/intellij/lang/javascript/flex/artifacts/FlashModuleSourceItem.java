@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.artifacts;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -22,14 +23,12 @@ public class FlashModuleSourceItem extends PackagingSourceItem {
   }
 
   @Override
-  @NotNull
-  public List<? extends PackagingElement<?>> createElements(@NotNull ArtifactEditorContext context) {
+  public @NotNull List<? extends PackagingElement<?>> createElements(@NotNull ArtifactEditorContext context) {
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
+  public @NotNull SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
     return new SourceItemPresentation() {
 
       @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.module.Module;
@@ -23,7 +23,7 @@ public class JSFlexFileReference extends FileReference {
 
   private final ReferenceSupport.RelativeToWhat myRelativeToWhat;
 
-  public JSFlexFileReference(@NotNull final FileReferenceSet fileReferenceSet,
+  public JSFlexFileReference(final @NotNull FileReferenceSet fileReferenceSet,
                              TextRange range,
                              int index,
                              String text,
@@ -36,7 +36,7 @@ public class JSFlexFileReference extends FileReference {
   // - absolute paths remain absolute (i.e. not relative to project root)
   // - relative paths are kept relative to what they were relative to before refactoring
   @Override
-  public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
+  public PsiElement bindToElement(final @NotNull PsiElement element) throws IncorrectOperationException {
     if (!(element instanceof PsiFileSystemItem fileSystemItem)) {
       throw new IncorrectOperationException("Cannot bind to element, should be instanceof PsiFileSystemItem: " + element);
     }
@@ -94,8 +94,7 @@ public class JSFlexFileReference extends FileReference {
   }
 
   // the difference from VfsUtil.getPath() is that if srcFile is a directory then one more "../" may be needed
-  @Nullable
-  private static String getRelativePath(@NotNull VirtualFile src, @NotNull VirtualFile dst, final char separatorChar) {
+  private static @Nullable String getRelativePath(@NotNull VirtualFile src, @NotNull VirtualFile dst, final char separatorChar) {
     final VirtualFile commonAncestor = VfsUtilCore.getCommonAncestor(src, dst);
     if (commonAncestor != null) {
       StringBuilder buffer = new StringBuilder();

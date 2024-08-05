@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +30,7 @@ public class FlexCompilerException extends Exception {
     myColumn = -1;
   }
 
-  @Nullable
-  public String getUrl() {
+  public @Nullable String getUrl() {
     return myUrl;
   }
 

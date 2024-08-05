@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.lang.javascript.uml;
 
@@ -14,7 +14,7 @@ import javax.swing.*;
 
 public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
 
-  @NotNull private final String myPackage;
+  private final @NotNull String myPackage;
 
   public FlashUmlPackageNode(@NotNull String aPackage, @NotNull DiagramProvider provider) {
     super(provider);
@@ -27,8 +27,7 @@ public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
   }
 
   @Override
-  @NotNull
-  public String getIdentifyingElement() {
+  public @NotNull String getIdentifyingElement() {
     return myPackage;
   }
 

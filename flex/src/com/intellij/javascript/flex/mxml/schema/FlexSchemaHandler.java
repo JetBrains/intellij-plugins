@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -52,8 +52,7 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
   private static final Pattern prefixPattern = Pattern.compile("[a-z_][a-z_0-9]*");
 
   @Override
-  @Nullable
-  public XmlFile getSchema(@NotNull @NonNls final String url, final Module module, @NotNull final PsiFile baseFile) {
+  public @Nullable XmlFile getSchema(final @NotNull @NonNls String url, final Module module, final @NotNull PsiFile baseFile) {
     return url.length() > 0 && JavaScriptSupportLoader.isFlexMxmFile(baseFile)
            ? getFakeSchemaReference(url, module, baseFile.getResolveScope())
            : null;
@@ -62,50 +61,8 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
   private static final Key<Map<String, ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>>>> DESCRIPTORS_MAP_IN_MODULE =
     Key.create("FLEX_DESCRIPTORS_MAP_IN_MODULE");
 
-  @Nullable
-  private static synchronized XmlFile getFakeSchemaReference(String uri, @Nullable Module module, @NotNull GlobalSearchScope scope) {
-    if (module == null) {
-      return null;
-    }
-
-    if (ModuleType.get(module) == FlexModuleType.getInstance() || !CodeContext.isStdNamespace(uri)) {
-      Map<String, ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
-      if (descriptors == null) {
-        descriptors = new HashMap<>();
-        module.putUserData(DESCRIPTORS_MAP_IN_MODULE, descriptors);
-      }
-
-      ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>> reference = descriptors.get(uri);
-      if (reference == null) {
-        reference = CachedValuesManager.getManager(module.getProject())
-          .createParameterizedCachedValue(pair -> {
-            final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
-            final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
-
-            XmlFile result = (XmlFile)PsiManager.getInstance(pair.first.getProject()).findFile(fileByURL).copy();
-            result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
-            result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, pair.first);
-            result.putUserData(FlexMxmlNSDescriptor.SCOPE_KEY, pair.second);
-
-            return new CachedValueProvider.Result<>(result, PsiModificationTracker.MODIFICATION_COUNT);
-          }, false);
-
-        descriptors.put(uri, reference);
-      }
-      assert !module.getProject().isDisposed() : module.getProject() + " already disposed";
-      return reference.getValue(Pair.create(module, scope));
-    }
-    return null;
-  }
-
   @Override
-  public boolean isAvailable(final @NotNull XmlFile file) {
-    return JavaScriptSupportLoader.isFlexMxmFile(file);
-  }
-
-  @NotNull
-  @Override
-  public Set<String> getAvailableNamespaces(@NotNull XmlFile _file, @Nullable @NonNls final String tagName) {
+  public @NotNull Set<String> getAvailableNamespaces(@NotNull XmlFile _file, final @Nullable @NonNls String tagName) {
     // tagName == null => tag name completion
     // tagName != null => guess namespace of unresolved tag
 
@@ -196,6 +153,16 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
     return result;
   }
 
+  @Override
+  public boolean isAvailable(final @NotNull XmlFile file) {
+    return JavaScriptSupportLoader.isFlexMxmFile(file);
+  }
+
+  @Override
+  public String getDefaultPrefix(final @NotNull @NonNls String namespace, final @NotNull XmlFile context) {
+    return getUniquePrefix(namespace, context);
+  }
+
   private static Collection<String> getIllegalNamespaces(final XmlFile file) {
     final XmlDocument document = file.getDocument();
     final XmlTag rootTag = document == null ? null : document.getRootTag();
@@ -212,9 +179,39 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
     return illegalNamespaces;
   }
 
-  @Override
-  public String getDefaultPrefix(@NotNull @NonNls final String namespace, @NotNull final XmlFile context) {
-    return getUniquePrefix(namespace, context);
+  private static synchronized @Nullable XmlFile getFakeSchemaReference(String uri, @Nullable Module module, @NotNull GlobalSearchScope scope) {
+    if (module == null) {
+      return null;
+    }
+
+    if (ModuleType.get(module) == FlexModuleType.getInstance() || !CodeContext.isStdNamespace(uri)) {
+      Map<String, ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
+      if (descriptors == null) {
+        descriptors = new HashMap<>();
+        module.putUserData(DESCRIPTORS_MAP_IN_MODULE, descriptors);
+      }
+
+      ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>> reference = descriptors.get(uri);
+      if (reference == null) {
+        reference = CachedValuesManager.getManager(module.getProject())
+          .createParameterizedCachedValue(pair -> {
+            final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
+            final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
+
+            XmlFile result = (XmlFile)PsiManager.getInstance(pair.first.getProject()).findFile(fileByURL).copy();
+            result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
+            result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, pair.first);
+            result.putUserData(FlexMxmlNSDescriptor.SCOPE_KEY, pair.second);
+
+            return new CachedValueProvider.Result<>(result, PsiModificationTracker.MODIFICATION_COUNT);
+          }, false);
+
+        descriptors.put(uri, reference);
+      }
+      assert !module.getProject().isDisposed() : module.getProject() + " already disposed";
+      return reference.getValue(Pair.create(module, scope));
+    }
+    return null;
   }
 
   static String getUniquePrefix(final String namespace, final XmlFile xmlFile) {

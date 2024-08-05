@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramVfsResolver;
@@ -34,8 +34,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
     return getQualifiedNameStatic(element);
   }
 
-  @Nullable
-  public static String getQualifiedNameStatic(Object element) {
+  public static @Nullable String getQualifiedNameStatic(Object element) {
     if (element == null) {
       return null;
     }
@@ -66,8 +65,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
     return null;
   }
 
-  @Nullable
-  private static String combineWithModuleName(@NotNull final PsiElement element, @Nullable final String qName) {
+  private static @Nullable String combineWithModuleName(final @NotNull PsiElement element, final @Nullable String qName) {
     if (qName == null) return null;
     if (ApplicationManager.getApplication().isUnitTestMode()) return qName;
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
@@ -82,8 +80,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
     return resolveElementByFqnStatic(fqn, project);
   }
 
-  @Nullable
-  public static Object resolveElementByFqnStatic(String fqn, Project project) {
+  public static @Nullable Object resolveElementByFqnStatic(String fqn, Project project) {
     final GlobalSearchScope searchScope;
     int separatorIndex = fqn.indexOf(SEPARATOR);
     if (separatorIndex != -1) {

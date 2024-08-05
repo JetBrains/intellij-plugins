@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -47,9 +47,8 @@ import static com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHa
 import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 
 public final class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
-  @Nullable
   @Override
-  public List<LookupElement> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
+  public @Nullable List<LookupElement> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
     final PsiElement parent = location.getParent();
 
     List<LookupElement> variants = new ArrayList<>();
@@ -60,7 +59,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
       final JSExpression calledExpr = ((JSCallExpression)parent.getParent()).getMethodExpression();
 
       if (calledExpr instanceof JSReferenceExpression expression) {
-        @NonNls final String s = expression.getReferencedName();
+        final @NonNls String s = expression.getReferencedName();
 
         if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(s) ||
             ActionScriptResolveUtil.REMOVE_EVENT_LISTENER_METHOD.equals(s) ||
@@ -217,8 +216,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
     }
   }
 
-  @Nullable
-  public static JSClass findClassOfQualifier(JSReferenceExpression expression) {
+  public static @Nullable JSClass findClassOfQualifier(JSReferenceExpression expression) {
     JSExpression qualifier = expression.getQualifier();
 
     JSClass clazzToProcess = null;
@@ -250,7 +248,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
       }
 
       @Override
-      public boolean process(@NotNull final JSAttribute jsAttribute) {
+      public boolean process(final @NotNull JSAttribute jsAttribute) {
         if ("Event".equals(jsAttribute.getName())) {
           final JSAttributeNameValuePair eventAttr = jsAttribute.getValueByName("name");
           JSAttributeNameValuePair typeAttr = jsAttribute.getValueByName("type");
@@ -367,7 +365,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
     }
 
     @Override
-    public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
+    public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
       if (element instanceof JSVariable variable) {
         final JSAttributeList attributeList = variable.getAttributeList();
 

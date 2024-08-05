@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.intentions;
 
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
@@ -20,8 +21,7 @@ public final class CreateEventHandlerIntention extends BaseIntentionAction {
   }
 
   @Override
-  @NotNull
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return getText();
   }
 
@@ -45,7 +45,7 @@ public final class CreateEventHandlerIntention extends BaseIntentionAction {
   }
 
   @Override
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     new ActionScriptGenerateEventHandler().invoke(project, editor, file);
   }
 

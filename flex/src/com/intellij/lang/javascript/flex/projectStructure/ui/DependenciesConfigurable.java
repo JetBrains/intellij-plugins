@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -97,67 +97,229 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private static final Icon MISSING_BC_ICON = null;
 
-  public static abstract class Location {
-    public final String errorId;
+  public DependenciesConfigurable(final ModifiableFlexBuildConfiguration bc,
+                                  Project project,
+                                  @NotNull FlexProjectConfigurationEditor configEditor,
+                                  final ProjectSdksModel sdksModel,
+                                  @NotNull ProjectStructureConfigurable projectStructureConfigurable) {
+    mySkdsModel = sdksModel;
+    myConfigEditor = configEditor;
+    myDependencies = bc.getDependencies();
+    myProject = project;
+    myNature = bc.getNature();
+    myProjectStructureConfigurable = projectStructureConfigurable;
 
-    protected Location(final String id) {
-      errorId = id;
-    }
+    mySdkChangeDispatcher = EventDispatcher.create(ChangeListener.class);
+    myDisposable = Disposer.newDisposable();
 
-    public static final Location SDK = new Location("sdk") {
+    final SdkModel.Listener listener = new SdkModel.Listener() {
+      @Override
+      public void sdkAdded(final @NotNull Sdk sdk) {
+        rebuildSdksModel();
+      }
+
+      @Override
+      public void beforeSdkRemove(final @NotNull Sdk sdk) {
+        rebuildSdksModel();
+      }
+
+      @Override
+      public void sdkChanged(final @NotNull Sdk sdk, final String previousName) {
+        rebuildSdksModel();
+      }
+
+      @Override
+      public void sdkHomeSelected(final @NotNull Sdk sdk, final @NotNull String newSdkHome) {
+        rebuildSdksModel();
+      }
+    };
+    sdksModel.addListener(listener);
+    Disposer.register(myDisposable, () -> sdksModel.removeListener(listener));
+
+    mySdkCombo.showNoneSdkItem();
+    mySdkCombo.setEditButton(myEditButton, myProject, () -> mySdkCombo.getSelectedJdk());
+
+    mySdkLabel.setLabelFor(mySdkCombo);
+
+    mySdkCombo.addActionListener(e -> {
+      if (myFreeze) {
+        return;
+      }
+      updateOnSelectedSdkChange();
+    });
+
+    myComponentSetCombo.setModel(new DefaultComboBoxModel<>(ComponentSet.values()));
+    myComponentSetCombo.setRenderer(SimpleListCellRenderer.create("", ComponentSet::getPresentableText));
+
+    myFrameworkLinkageCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
+      if (value == LinkageType.Default) {
+        Sdk sdk = mySdkCombo.getSelectedJdk();
+        String sdkVersion = sdk != null ? sdk.getVersionString() : null;
+        return sdkVersion == null ? "Default" : MessageFormat.format(
+          "Default ({0})", FlexCommonUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText());
+      }
+      else {
+        return value.getLongText();
+      }
+    }));
+
+    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel<>(BCUtils.getSuitableFrameworkLinkages(myNature)));
+
+    ItemListener updateSdkItemsListener = new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if (myFreeze) {
+          return;
+        }
+        DefaultMutableTreeNode sdkNode = findSdkNode();
+        Sdk currentSdk = mySdkCombo.getSelectedJdk();
+        if (sdkNode != null && currentSdk != null) {
+          updateSdkEntries(sdkNode, currentSdk);
+          myTable.refresh();
+        }
+      }
     };
 
-    public static final class TableEntry extends Location {
-      private final String locationString;
+    myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
+    myComponentSetCombo.addItemListener(updateSdkItemsListener);
+    myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
 
-      private TableEntry(final String locationString) {
-        super(locationString);
-        this.locationString = locationString;
+    myTargetPlayerWarning.setIcon(AllIcons.General.BalloonWarning12);
+    myWarning.setIcon(UIUtil.getBalloonWarningIcon());
+
+    myTable = new EditableTreeTable<>("", DEPENDENCY_TYPE_COLUMN) {
+      @Override
+      protected void render(SimpleColoredComponent c, MyTableItem item) {
+        if (item != null) {
+          item.getPresentableText().appendToComponent(c);
+          c.setIcon(item.getIcon());
+        }
       }
+    };
+    myTable.setRootVisible(false);
+    myTable.getTree().setShowsRootHandles(true);
 
-      public static TableEntry forSdkRoot(final String url) {
-        return new TableEntry("sdkroot\t" + url);
+    myTablePanel.add(
+      ToolbarDecorator.createDecorator(myTable)
+        .setAddAction(this::addItem).setAddActionName(FlexBundle.message("add.dependency.action.name"))
+        .setRemoveAction(anActionButton -> removeSelection()).setEditAction(button -> {
+          MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
+          if (item instanceof SharedLibraryItem) {
+            editLibrary((SharedLibraryItem)item);
+          }
+          if (item instanceof ModuleLibraryItem) {
+            editLibrary(((ModuleLibraryItem)item));
+          }
+        }).setRemoveActionUpdater(e -> {
+          if (myTable.getSelectedRowCount() == 0) return false;
+          for (int row : myTable.getSelectedRows()) {
+            MyTableItem item = myTable.getItemAt(row);
+            if (item instanceof SdkItem || item instanceof SdkEntryItem) return false;
+          }
+          return true;
+        }).setEditActionUpdater(e -> {
+          MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
+          return item != null && item.canEdit();
+        }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
+
+    new DoubleClickListener() {
+      @Override
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
+        if (myTable.getSelectedRowCount() == 1) {
+          myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
+          return true;
+        }
+        return false;
       }
+    }.installOn(myTable);
 
-      public static TableEntry forSharedLibrary(final String libraryLevel, final String libraryName) {
-        return new TableEntry("sharedlib\t" + libraryLevel + "\t" + libraryName);
+    FlexBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexBCConfigurator.Listener() {
+      @Override
+      public void moduleRemoved(Module module) {
+        // TODO return if module == this module
+        Set<MyTableItem> itemsToRemove = new HashSet<>();
+        // 1st-level nodes are always visible
+        // 2nd-level nodes cannot refer to BC
+        for (int row = 0; row < myTable.getRowCount(); row++) {
+          MyTableItem item = myTable.getItemAt(row);
+          if (item instanceof BCItem) {
+            FlexBCConfigurable configurable = ((BCItem)item).configurable;
+            if (configurable != null && configurable.getModule() == module) {
+              itemsToRemove.add(item);
+            }
+          }
+        }
+
+        removeItems(itemsToRemove, true);
       }
-
-      public static TableEntry forSharedLibrary(final Library liveLibrary) {
-        return new TableEntry("sharedlib\t" + liveLibrary.getTable().getTableLevel() + "\t" + liveLibrary.getName());
-      }
-
-      public static TableEntry forModuleLibrary(final String libraryId) {
-        return new TableEntry("modulelib\t" + libraryId);
-      }
-
-      public static TableEntry forBc(FlexBCConfigurable configurable) {
-        return new TableEntry("bc\t" + configurable.getModuleName() + "\t" + configurable.getDisplayName());
-      }
-
-      public static TableEntry forBc(String moduleName, String bcName) {
-        return new TableEntry("bc\t" + moduleName + "\t" + bcName);
-      }
-
-      public static final TableEntry SDK_ENTRY = new TableEntry("sdk_entry");
 
       @Override
-      public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final TableEntry that = (TableEntry)o;
-
-        if (!locationString.equals(that.locationString)) return false;
-
-        return true;
+      public void buildConfigurationRemoved(FlexBCConfigurable configurable) {
+        Pair<BCItem, Integer> item = findDependencyItem(configurable);
+        if (item != null) {
+          removeItems(Collections.singleton(item.first), true);
+        }
       }
 
       @Override
-      public int hashCode() {
-        return locationString.hashCode();
+      public void buildConfigurationRenamed(final FlexBCConfigurable configurable) {
+        Pair<BCItem, Integer> item = findDependencyItem(configurable);
+        if (item != null) {
+          myTable.refreshItemAt(item.second);
+        }
       }
-    }
+
+      @Override
+      public void natureChanged(final FlexBCConfigurable configurable) {
+        Pair<BCItem, Integer> item = findDependencyItem(configurable);
+        if (item != null) {
+          final BuildConfigurationNature dependencyNature = item.first.configurable.getEditableObject().getNature();
+          if (!FlexCommonUtils.checkDependencyType(myNature.outputType, dependencyNature.outputType, item.first.getLinkageType())) {
+            removeItems(Collections.singleton(item.first), true);
+          }
+        }
+      }
+
+      private @Nullable Pair<BCItem, Integer> findDependencyItem(FlexBCConfigurable configurable) {
+        if (configurable.isParentFor(DependenciesConfigurable.this)) {
+          return null;
+        }
+
+        // 1st-level nodes are always visible
+        // 2nd-level nodes cannot refer to BC
+        for (int row = 0; row < myTable.getRowCount(); row++) {
+          final MyTableItem item = myTable.getItemAt(row);
+
+          if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
+            // there may be only one dependency on a BC
+            return Pair.create((BCItem)item, row);
+          }
+        }
+        return null;
+      }
+    }, myDisposable);
+
+    myConfigEditor.addModulesModelChangeListener(modules -> {
+      FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+      for (Module module : modules) {
+        for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
+          FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
+          if (flexBCConfigurable.isParentFor(this)) {
+            resetTable(myDependencies.getSdkEntry(), true);
+          }
+        }
+      }
+    }, myDisposable);
+
+    UserActivityWatcher watcher = new UserActivityWatcher();
+    watcher.register(myMainPanel);
+    myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
+    watcher.addUserActivityListener(() -> {
+      if (myFreeze) {
+        return;
+      }
+      myUserActivityDispatcher.getMulticaster().stateChanged();
+    }, myDisposable);
   }
 
   private JPanel myMainPanel;
@@ -191,361 +353,94 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private boolean myReset;
 
-  private abstract static class MyTableItem {
-    @Nullable
-    public Icon getIcon() {
-      return PlatformIcons.LIBRARY_ICON;
-    }
-
-    public boolean showLinkage() {
-      return true;
-    }
-
-    public abstract boolean isLinkageEditable();
-
-    public boolean isANE() {
-      return false;
-    }
-
-    public abstract LinkageType getLinkageType();
-
-    public abstract void setLinkageType(LinkageType linkageType);
-
-    public void onDoubleClick() {
-    }
-
-    @Nullable
-    public ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
-      return null;
-    }
-
-    public boolean isModified(DependencyEntry entry) {
-      return false;
-    }
-
-    public boolean canEdit() {
-      return false;
-    }
-
-    public abstract Location.TableEntry getLocation();
-
-    public abstract SimpleColoredText getPresentableText();
-  }
-
-  private class BCItem extends MyTableItem {
-    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
-    public final FlexBCConfigurable configurable;
-    public final String moduleName;
-    public final String bcName;
-
-    BCItem(@NotNull String moduleName, @NotNull String bcName) {
-      this.moduleName = moduleName;
-      this.bcName = bcName;
-      this.configurable = null;
-    }
-
-    BCItem(@NotNull FlexBCConfigurable configurable) {
-      this.moduleName = null;
-      this.bcName = null;
-      this.configurable = configurable;
-      if (configurable.getOutputType() != OutputType.Library) {
-        dependencyType.setLinkageType(LinkageType.LoadInRuntime);
-      }
-    }
-
-    @Override
-    public SimpleColoredText getPresentableText() {
-      if (configurable != null) {
-        return BCUtils.renderBuildConfiguration(configurable.getEditableObject(), configurable.getModuleName());
-      }
-      else {
-        return BCUtils.renderMissingBuildConfiguration(bcName, moduleName);
-      }
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-      return configurable != null ? configurable.getIcon() : MISSING_BC_ICON;
-    }
-
-    @Override
-    public boolean showLinkage() {
-      return configurable != null;
-    }
-
-    @Override
-    public boolean isLinkageEditable() {
-      return configurable != null && configurable.getOutputType() == OutputType.Library;
-    }
-
-    @Override
-    public LinkageType getLinkageType() {
-      return dependencyType.getLinkageType();
-    }
-
-    @Override
-    public void setLinkageType(LinkageType linkageType) {
-      dependencyType.setLinkageType(linkageType);
-    }
-
-    @Override
-    public void onDoubleClick() {
-      if (configurable != null) {
-        Project project = configurable.getModule().getProject();
-        ProjectStructureConfigurable.getInstance(project).navigateTo(FlexProjectStructureUtil.createPlace(configurable, null), true);
-      }
-    }
-
-    @Override
-    public ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
-      ModifiableDependencyEntry entry;
-      if (configurable != null) {
-        // configurable may be not yet applied at the moment
-        entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject(), configurable.getDisplayName());
-      }
-      else {
-        entry = myConfigEditor.createBcEntry(dependencies, moduleName, bcName);
-      }
-      entry.getDependencyType().copyFrom(dependencyType);
-      return entry;
-    }
-
-    @Override
-    public boolean isModified(final DependencyEntry entry) {
-      if (!(entry instanceof BuildConfigurationEntry bcEntry)) {
-        return true;
-      }
-      if (configurable != null) {
-        if (configurable.getModule() != bcEntry.findModule()) return true;
-        if (!configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
-      }
-      else {
-        if (!moduleName.equals(bcEntry.getModuleName())) return true;
-        if (!bcName.equals(bcEntry.getBcName())) return true;
-      }
-      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
-
-      return false;
-    }
-
-    @Override
-    public Location.TableEntry getLocation() {
-      return configurable != null ? Location.TableEntry.forBc(configurable) : Location.TableEntry.forBc(moduleName, bcName);
-    }
-  }
-
-  private class ModuleLibraryItem extends MyTableItem {
-    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
-    public final String libraryId;
-    @Nullable
-    public final LibraryOrderEntry orderEntry;
-
-    private final Project project;
-
-    ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
-      this.libraryId = libraryId;
-      this.orderEntry = orderEntry;
-      this.project = project;
-    }
-
-    @Override
-    public SimpleColoredText getPresentableText() {
-      if (orderEntry != null) {
-        Library library = orderEntry.getLibrary();
-        if (library != null) {
-          if (((LibraryEx)library).isDisposed()) {
-            Pair<String, String> moduleAndBcName = getModuleAndBcName();
-            LOG.error("Module library '" +
-                      library.getName() +
-                      "' is disposed, used in BC: " +
-                      moduleAndBcName.second +
-                      " of module " +
-                      moduleAndBcName.first);
-            return new SimpleColoredText("<unknown>", SimpleTextAttributes.ERROR_ATTRIBUTES);
-          }
-          boolean hasInvalidRoots = !((LibraryEx)library).getInvalidRootUrls(OrderRootType.CLASSES).isEmpty();
-          String text = OrderEntryAppearanceService.getInstance().forLibrary(project, library, hasInvalidRoots).getText();
-          return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+  private @Nullable DefaultMutableTreeNode findSdkNode() {
+    for (int row = 0; row < myTable.getRowCount(); row++) {
+      MyTableItem item = myTable.getItemAt(row);
+      if (myTable.getItemAt(row) instanceof SdkItem) {
+        if (item instanceof SdkItem) {
+          return (DefaultMutableTreeNode)myTable.getRoot().getChildAt(row);
         }
       }
-      return new SimpleColoredText("<unknown>", SimpleTextAttributes.ERROR_ATTRIBUTES);
     }
-
-    @Override
-    public boolean isLinkageEditable() {
-      return !isANE();
-    }
-
-    @Override
-    public boolean isANE() {
-      final Library library = orderEntry == null ? null : orderEntry.getLibrary();
-      final VirtualFile[] files = library == null ? VirtualFile.EMPTY_ARRAY : library.getFiles(OrderRootType.CLASSES);
-      for (VirtualFile file : files) {
-        if ("ane".equalsIgnoreCase(file.getExtension())) return true;
-      }
-      return false;
-    }
-
-    @Override
-    public LinkageType getLinkageType() {
-      return dependencyType.getLinkageType();
-    }
-
-    @Override
-    public void setLinkageType(LinkageType linkageType) {
-      dependencyType.setLinkageType(linkageType);
-    }
-
-    @Override
-    public void onDoubleClick() {
-      if (canEdit()) {
-        editLibrary(this);
-      }
-    }
-
-    @Override
-    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
-      ModifiableDependencyEntry entry = myConfigEditor.createModuleLibraryEntry(dependencies, libraryId);
-      entry.getDependencyType().copyFrom(dependencyType);
-      return entry;
-    }
-
-    @Override
-    public boolean isModified(final DependencyEntry entry) {
-      if (!(entry instanceof ModuleLibraryEntry libraryEntry)) {
-        return true;
-      }
-      if (!libraryEntry.getLibraryId().equals(libraryId)) {
-        return true;
-      }
-      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
-
-      return false;
-    }
-
-    @Override
-    public boolean canEdit() {
-      return orderEntry != null;
-    }
-
-    @Override
-    public Location.TableEntry getLocation() {
-      return Location.TableEntry.forModuleLibrary(libraryId);
-    }
+    return null;
   }
 
-  private class SharedLibraryItem extends MyTableItem {
-    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
-    public final String libraryName;
-    public final String libraryLevel;
-    @Nullable
-    public final Library liveLibrary;
+  private void editLibrary(ModuleLibraryItem item) {
+    if (!item.canEdit()) return;
 
-    private final Project project;
+    final LibraryOrderEntry entry = item.orderEntry;
+    assert entry != null;
 
-    SharedLibraryItem(@NotNull String libraryName,
-                      @NotNull String libraryLevel,
-                      @Nullable Library liveLibrary,
-                      @NotNull Project project) {
-      this.libraryName = libraryName;
-      this.libraryLevel = libraryLevel;
-      this.liveLibrary = liveLibrary;
-      this.project = project;
+    Library library = entry.getLibrary();
+    if (library == null) {
+      return;
     }
 
-    @Override
-    public SimpleColoredText getPresentableText() {
-      Library liveLibrary = findLiveLibrary();
-      if (liveLibrary != null) {
-        String text = OrderEntryAppearanceService.getInstance().forLibrary(project, liveLibrary, false).getText();
-        return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      }
-      else {
-        return new SimpleColoredText(libraryName, SimpleTextAttributes.ERROR_ATTRIBUTES);
-      }
-    }
-
-    @Nullable
-    public Library findLiveLibrary() {
-      // TODO call myConfigEditor.findLiveLibrary(library, libraryName, libraryLevel);
-      return new UIRootConfigurationAccessor(project).getLibrary(liveLibrary, libraryName, libraryLevel);
-    }
-
-    @Override
-    public boolean isLinkageEditable() {
-      return !isANE();
-    }
-
-    @Override
-    public boolean isANE() {
-      final VirtualFile[] files = liveLibrary == null ? VirtualFile.EMPTY_ARRAY : liveLibrary.getFiles(OrderRootType.CLASSES);
-      for (VirtualFile file : files) {
-        if ("ane".equalsIgnoreCase(file.getExtension())) return true;
-      }
-      return false;
-    }
-
-    @Override
-    public LinkageType getLinkageType() {
-      return dependencyType.getLinkageType();
-    }
-
-    @Override
-    public void setLinkageType(LinkageType linkageType) {
-      dependencyType.setLinkageType(linkageType);
-    }
-
-    @Override
-    public void onDoubleClick() {
-      editLibrary(this);
-    }
-
-    @Override
-    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
-      ModifiableDependencyEntry entry;
-      Library liveLibrary = findLiveLibrary();
-      if (liveLibrary != null) {
-        entry = myConfigEditor.createSharedLibraryEntry(dependencies, liveLibrary.getName(), liveLibrary.getTable().getTableLevel());
-      }
-      else {
-        entry = myConfigEditor.createSharedLibraryEntry(dependencies, libraryName, libraryLevel);
-      }
-      entry.getDependencyType().copyFrom(dependencyType);
-      return entry;
-    }
-
-    @Override
-    public boolean isModified(final DependencyEntry entry) {
-      if (!(entry instanceof ModifiableSharedLibraryEntry libraryEntry)) {
-        return true;
-      }
-      Library liveLibrary = findLiveLibrary();
-      if (liveLibrary != null) {
-        if (!libraryEntry.getLibraryName().equals(liveLibrary.getName())) return true;
-        if (!liveLibrary.getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
-      }
-      else {
-        if (!libraryName.equals(libraryEntry.getLibraryName())) return true;
-        if (!libraryLevel.equals(libraryEntry.getLibraryLevel())) return true;
+    LibraryTablePresentation presentation = new LibraryTablePresentation() {
+      @Override
+      public @NotNull String getDisplayName(boolean plural) {
+        return FlexBundle.message(plural ? "library.editor.title.plural" : "library.editor.title.singular");
       }
 
-      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
-      return false;
-    }
+      @Override
+      public @NotNull String getDescription() {
+        return ProjectModelBundle.message("libraries.node.text.module");
+      }
 
-    @Override
-    public boolean canEdit() {
-      return true;
-    }
+      @Override
+      public @NotNull String getLibraryTableEditorTitle() {
+        return "Configure Library"; // not used as far as I see
+      }
+    };
 
-    @Override
-    public Location.TableEntry getLocation() {
-      Library liveLibrary = findLiveLibrary();
-      return liveLibrary != null
-             ? Location.TableEntry.forSharedLibrary(liveLibrary)
-             : Location.TableEntry.forSharedLibrary(libraryLevel, libraryName);
-    }
+    LibraryTableModifiableModelProvider provider = () -> myConfigEditor.getLibraryModel(myDependencies);
+
+    StructureConfigurableContext context = myProjectStructureConfigurable.getContext();
+    EditExistingLibraryDialog dialog =
+      EditExistingLibraryDialog.createDialog(myMainPanel, provider, library, myProject, presentation, context);
+    dialog.setContextModule(myConfigEditor.getModule(myDependencies));
+    dialog.show();
+    myTable.refresh();
+  }
+
+  private void addItem(AnActionButton button) {
+    initPopupActions();
+    final JBPopup popup = JBPopupFactory.getInstance().createListPopup(
+      new BaseListPopupStep<>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
+        @Override
+        public Icon getIconFor(AddItemPopupAction aValue) {
+          return aValue.getIcon();
+        }
+
+        @Override
+        public boolean hasSubstep(AddItemPopupAction selectedValue) {
+          return selectedValue.hasSubStep();
+        }
+
+        @Override
+        public boolean isMnemonicsNavigationEnabled() {
+          return true;
+        }
+
+        @Override
+        public PopupStep<?> onChosen(final AddItemPopupAction selectedValue, final boolean finalChoice) {
+          if (selectedValue.hasSubStep()) {
+            return selectedValue.createSubStep();
+          }
+          return doFinalStep(selectedValue);
+        }
+
+        @Override
+        public @NotNull String getTextFor(AddItemPopupAction value) {
+          return "&" + value.getIndex() + "  " + value.getTitle();
+        }
+      });
+    popup.show(button.getPreferredPopupPoint());
+  }
+
+  @Override
+  public @Nls String getDisplayName() {
+    return getTabName();
   }
 
   private static class SdkItem extends MyTableItem {
@@ -729,230 +624,32 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   };
 
-  public DependenciesConfigurable(final ModifiableFlexBuildConfiguration bc,
-                                  Project project,
-                                  @NotNull FlexProjectConfigurationEditor configEditor,
-                                  final ProjectSdksModel sdksModel,
-                                  @NotNull ProjectStructureConfigurable projectStructureConfigurable) {
-    mySkdsModel = sdksModel;
-    myConfigEditor = configEditor;
-    myDependencies = bc.getDependencies();
-    myProject = project;
-    myNature = bc.getNature();
-    myProjectStructureConfigurable = projectStructureConfigurable;
-
-    mySdkChangeDispatcher = EventDispatcher.create(ChangeListener.class);
-    myDisposable = Disposer.newDisposable();
-
-    final SdkModel.Listener listener = new SdkModel.Listener() {
-      @Override
-      public void sdkAdded(@NotNull final Sdk sdk) {
-        rebuildSdksModel();
-      }
-
-      @Override
-      public void beforeSdkRemove(@NotNull final Sdk sdk) {
-        rebuildSdksModel();
-      }
-
-      @Override
-      public void sdkChanged(@NotNull final Sdk sdk, final String previousName) {
-        rebuildSdksModel();
-      }
-
-      @Override
-      public void sdkHomeSelected(@NotNull final Sdk sdk, @NotNull final String newSdkHome) {
-        rebuildSdksModel();
-      }
-    };
-    sdksModel.addListener(listener);
-    Disposer.register(myDisposable, () -> sdksModel.removeListener(listener));
-
-    mySdkCombo.showNoneSdkItem();
-    mySdkCombo.setEditButton(myEditButton, myProject, () -> mySdkCombo.getSelectedJdk());
-
-    mySdkLabel.setLabelFor(mySdkCombo);
-
-    mySdkCombo.addActionListener(e -> {
-      if (myFreeze) {
-        return;
-      }
-      updateOnSelectedSdkChange();
-    });
-
-    myComponentSetCombo.setModel(new DefaultComboBoxModel<>(ComponentSet.values()));
-    myComponentSetCombo.setRenderer(SimpleListCellRenderer.create("", ComponentSet::getPresentableText));
-
-    myFrameworkLinkageCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
-      if (value == LinkageType.Default) {
-        Sdk sdk = mySdkCombo.getSelectedJdk();
-        String sdkVersion = sdk != null ? sdk.getVersionString() : null;
-        return sdkVersion == null ? "Default" : MessageFormat.format(
-          "Default ({0})", FlexCommonUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText());
-      }
-      else {
-        return value.getLongText();
-      }
-    }));
-
-    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel<>(BCUtils.getSuitableFrameworkLinkages(myNature)));
-
-    ItemListener updateSdkItemsListener = new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        if (myFreeze) {
-          return;
-        }
-        DefaultMutableTreeNode sdkNode = findSdkNode();
-        Sdk currentSdk = mySdkCombo.getSelectedJdk();
-        if (sdkNode != null && currentSdk != null) {
-          updateSdkEntries(sdkNode, currentSdk);
-          myTable.refresh();
+  @Override
+  public ActionCallback navigateTo(final @Nullable Place place, final boolean requestFocus) {
+    if (place != null) {
+      final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
+      if (location == Location.SDK) {
+        if (requestFocus) {
+          return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
         }
       }
-    };
-
-    myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
-    myComponentSetCombo.addItemListener(updateSdkItemsListener);
-    myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
-
-    myTargetPlayerWarning.setIcon(AllIcons.General.BalloonWarning12);
-    myWarning.setIcon(UIUtil.getBalloonWarningIcon());
-
-    myTable = new EditableTreeTable<>("", DEPENDENCY_TYPE_COLUMN) {
-      @Override
-      protected void render(SimpleColoredComponent c, MyTableItem item) {
-        if (item != null) {
-          item.getPresentableText().appendToComponent(c);
-          c.setIcon(item.getIcon());
-        }
-      }
-    };
-    myTable.setRootVisible(false);
-    myTable.getTree().setShowsRootHandles(true);
-
-    myTablePanel.add(
-      ToolbarDecorator.createDecorator(myTable)
-        .setAddAction(this::addItem).setAddActionName(FlexBundle.message("add.dependency.action.name"))
-        .setRemoveAction(anActionButton -> removeSelection()).setEditAction(button -> {
-          MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-          if (item instanceof SharedLibraryItem) {
-            editLibrary((SharedLibraryItem)item);
-          }
-          if (item instanceof ModuleLibraryItem) {
-            editLibrary(((ModuleLibraryItem)item));
-          }
-        }).setRemoveActionUpdater(e -> {
-          if (myTable.getSelectedRowCount() == 0) return false;
-          for (int row : myTable.getSelectedRows()) {
-            MyTableItem item = myTable.getItemAt(row);
-            if (item instanceof SdkItem || item instanceof SdkEntryItem) return false;
-          }
-          return true;
-        }).setEditActionUpdater(e -> {
-          MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-          return item != null && item.canEdit();
-        }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
-
-    new DoubleClickListener() {
-      @Override
-      protected boolean onDoubleClick(@NotNull MouseEvent e) {
-        if (myTable.getSelectedRowCount() == 1) {
-          myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
-          return true;
-        }
-        return false;
-      }
-    }.installOn(myTable);
-
-    FlexBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexBCConfigurator.Listener() {
-      @Override
-      public void moduleRemoved(Module module) {
-        // TODO return if module == this module
-        Set<MyTableItem> itemsToRemove = new HashSet<>();
-        // 1st-level nodes are always visible
-        // 2nd-level nodes cannot refer to BC
+      else if (location instanceof Location.TableEntry) {
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
-          if (item instanceof BCItem) {
-            FlexBCConfigurable configurable = ((BCItem)item).configurable;
-            if (configurable != null && configurable.getModule() == module) {
-              itemsToRemove.add(item);
-            }
+          Location.TableEntry loc = item.getLocation();
+          if (loc.equals(location)) {
+            myTable.clearSelection();
+            myTable.getSelectionModel().addSelectionInterval(row, row);
+            TableUtil.scrollSelectionToVisible(myTable);
+            break;
           }
         }
-
-        removeItems(itemsToRemove, true);
-      }
-
-      @Override
-      public void buildConfigurationRemoved(FlexBCConfigurable configurable) {
-        Pair<BCItem, Integer> item = findDependencyItem(configurable);
-        if (item != null) {
-          removeItems(Collections.singleton(item.first), true);
+        if (requestFocus) {
+          return IdeFocusManager.findInstance().requestFocus(myTable, true);
         }
       }
-
-      @Override
-      public void buildConfigurationRenamed(final FlexBCConfigurable configurable) {
-        Pair<BCItem, Integer> item = findDependencyItem(configurable);
-        if (item != null) {
-          myTable.refreshItemAt(item.second);
-        }
-      }
-
-      @Override
-      public void natureChanged(final FlexBCConfigurable configurable) {
-        Pair<BCItem, Integer> item = findDependencyItem(configurable);
-        if (item != null) {
-          final BuildConfigurationNature dependencyNature = item.first.configurable.getEditableObject().getNature();
-          if (!FlexCommonUtils.checkDependencyType(myNature.outputType, dependencyNature.outputType, item.first.getLinkageType())) {
-            removeItems(Collections.singleton(item.first), true);
-          }
-        }
-      }
-
-      @Nullable
-      private Pair<BCItem, Integer> findDependencyItem(FlexBCConfigurable configurable) {
-        if (configurable.isParentFor(DependenciesConfigurable.this)) {
-          return null;
-        }
-
-        // 1st-level nodes are always visible
-        // 2nd-level nodes cannot refer to BC
-        for (int row = 0; row < myTable.getRowCount(); row++) {
-          final MyTableItem item = myTable.getItemAt(row);
-
-          if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
-            // there may be only one dependency on a BC
-            return Pair.create((BCItem)item, row);
-          }
-        }
-        return null;
-      }
-    }, myDisposable);
-
-    myConfigEditor.addModulesModelChangeListener(modules -> {
-      FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
-      for (Module module : modules) {
-        for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
-          FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
-          if (flexBCConfigurable.isParentFor(this)) {
-            resetTable(myDependencies.getSdkEntry(), true);
-          }
-        }
-      }
-    }, myDisposable);
-
-    UserActivityWatcher watcher = new UserActivityWatcher();
-    watcher.register(myMainPanel);
-    myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
-    watcher.addUserActivityListener(() -> {
-      if (myFreeze) {
-        return;
-      }
-      myUserActivityDispatcher.getMulticaster().stateChanged();
-    }, myDisposable);
+    }
+    return ActionCallback.DONE;
   }
 
   private void rebuildSdksModel() {
@@ -1004,17 +701,20 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     mySdkChangeDispatcher.addListener(changeListener);
   }
 
-  @Nullable
-  private DefaultMutableTreeNode findSdkNode() {
-    for (int row = 0; row < myTable.getRowCount(); row++) {
-      MyTableItem item = myTable.getItemAt(row);
-      if (myTable.getItemAt(row) instanceof SdkItem) {
-        if (item instanceof SdkItem) {
-          return (DefaultMutableTreeNode)myTable.getRoot().getChildAt(row);
-        }
+  public void libraryReplaced(final @NotNull Library library, final @Nullable Library replacement) {
+    assert myReset;
+    // look in UI as there is no way to find just-created-and-then-renamed library in model
+    List<MyTableItem> items = myTable.getItems();
+    for (int i = 0; i < items.size(); i++) {
+      MyTableItem item = items.get(i);
+      if (item instanceof SharedLibraryItem && ((SharedLibraryItem)item).findLiveLibrary() == library) {
+        removeItems(Collections.singleton(item), replacement == null);
+        break;
       }
     }
-    return null;
+    if (replacement != null) {
+      addSharedLibraries(Collections.singletonList(replacement));
+    }
   }
 
   private void editLibrary(final SharedLibraryItem item) {
@@ -1032,81 +732,106 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private void editLibrary(ModuleLibraryItem item) {
-    if (!item.canEdit()) return;
+  public abstract static class Location {
+    public final String errorId;
 
-    final LibraryOrderEntry entry = item.orderEntry;
-    assert entry != null;
-
-    Library library = entry.getLibrary();
-    if (library == null) {
-      return;
+    protected Location(final String id) {
+      errorId = id;
     }
 
-    LibraryTablePresentation presentation = new LibraryTablePresentation() {
-      @NotNull
-      @Override
-      public String getDisplayName(boolean plural) {
-        return FlexBundle.message(plural ? "library.editor.title.plural" : "library.editor.title.singular");
-      }
-
-      @NotNull
-      @Override
-      public String getDescription() {
-        return ProjectModelBundle.message("libraries.node.text.module");
-      }
-
-      @NotNull
-      @Override
-      public String getLibraryTableEditorTitle() {
-        return "Configure Library"; // not used as far as I see
-      }
+    public static final Location SDK = new Location("sdk") {
     };
 
-    LibraryTableModifiableModelProvider provider = () -> myConfigEditor.getLibraryModel(myDependencies);
+    public static final class TableEntry extends Location {
+      private final String locationString;
 
-    StructureConfigurableContext context = myProjectStructureConfigurable.getContext();
-    EditExistingLibraryDialog dialog =
-      EditExistingLibraryDialog.createDialog(myMainPanel, provider, library, myProject, presentation, context);
-    dialog.setContextModule(myConfigEditor.getModule(myDependencies));
-    dialog.show();
-    myTable.refresh();
+      private TableEntry(final String locationString) {
+        super(locationString);
+        this.locationString = locationString;
+      }
+
+      public static TableEntry forSdkRoot(final String url) {
+        return new TableEntry("sdkroot\t" + url);
+      }
+
+      public static TableEntry forSharedLibrary(final String libraryLevel, final String libraryName) {
+        return new TableEntry("sharedlib\t" + libraryLevel + "\t" + libraryName);
+      }
+
+      public static TableEntry forSharedLibrary(final Library liveLibrary) {
+        return new TableEntry("sharedlib\t" + liveLibrary.getTable().getTableLevel() + "\t" + liveLibrary.getName());
+      }
+
+      public static TableEntry forModuleLibrary(final String libraryId) {
+        return new TableEntry("modulelib\t" + libraryId);
+      }
+
+      public static TableEntry forBc(FlexBCConfigurable configurable) {
+        return new TableEntry("bc\t" + configurable.getModuleName() + "\t" + configurable.getDisplayName());
+      }
+
+      public static TableEntry forBc(String moduleName, String bcName) {
+        return new TableEntry("bc\t" + moduleName + "\t" + bcName);
+      }
+
+      public static final TableEntry SDK_ENTRY = new TableEntry("sdk_entry");
+
+      @Override
+      public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final TableEntry that = (TableEntry)o;
+
+        if (!locationString.equals(that.locationString)) return false;
+
+        return true;
+      }
+
+      @Override
+      public int hashCode() {
+        return locationString.hashCode();
+      }
+    }
   }
 
-  private void addItem(AnActionButton button) {
-    initPopupActions();
-    final JBPopup popup = JBPopupFactory.getInstance().createListPopup(
-      new BaseListPopupStep<>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
-        @Override
-        public Icon getIconFor(AddItemPopupAction aValue) {
-          return aValue.getIcon();
-        }
+  private abstract static class MyTableItem {
+    public @Nullable Icon getIcon() {
+      return PlatformIcons.LIBRARY_ICON;
+    }
 
-        @Override
-        public boolean hasSubstep(AddItemPopupAction selectedValue) {
-          return selectedValue.hasSubStep();
-        }
+    public boolean showLinkage() {
+      return true;
+    }
 
-        @Override
-        public boolean isMnemonicsNavigationEnabled() {
-          return true;
-        }
+    public abstract boolean isLinkageEditable();
 
-        @Override
-        public PopupStep<?> onChosen(final AddItemPopupAction selectedValue, final boolean finalChoice) {
-          if (selectedValue.hasSubStep()) {
-            return selectedValue.createSubStep();
-          }
-          return doFinalStep(selectedValue);
-        }
+    public boolean isANE() {
+      return false;
+    }
 
-        @Override
-        @NotNull
-        public String getTextFor(AddItemPopupAction value) {
-          return "&" + value.getIndex() + "  " + value.getTitle();
-        }
-      });
-    popup.show(button.getPreferredPopupPoint());
+    public abstract LinkageType getLinkageType();
+
+    public abstract void setLinkageType(LinkageType linkageType);
+
+    public void onDoubleClick() {
+    }
+
+    public @Nullable ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
+      return null;
+    }
+
+    public boolean isModified(DependencyEntry entry) {
+      return false;
+    }
+
+    public boolean canEdit() {
+      return false;
+    }
+
+    public abstract Location.TableEntry getLocation();
+
+    public abstract SimpleColoredText getPresentableText();
   }
 
   private void removeSelection() {
@@ -1144,10 +869,66 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  @Override
-  @Nls
-  public String getDisplayName() {
-    return getTabName();
+  private static final class LibraryTableModifiableModelWrapper implements LibraryTable.ModifiableModel {
+    private final LibraryTable.ModifiableModel myDelegate;
+    private final Condition<Library> myLibraryFilter;
+
+    private LibraryTableModifiableModelWrapper(LibraryTable.ModifiableModel delegate, Condition<Library> libraryFilter) {
+      myDelegate = delegate;
+      myLibraryFilter = libraryFilter;
+    }
+
+    @Override
+    public @NotNull Library createLibrary(String name) {
+      return myDelegate.createLibrary(name);
+    }
+
+    @Override
+    public void removeLibrary(@NotNull Library library) {
+      myDelegate.removeLibrary(library);
+    }
+
+    @Override
+    public void commit() {
+      myDelegate.commit();
+    }
+
+    @Override
+    public @NotNull Iterator<Library> getLibraryIterator() {
+      return new FilteringIterator<>(myDelegate.getLibraryIterator(), myLibraryFilter);
+    }
+
+    @Override
+    public @Nullable Library getLibraryByName(@NotNull String name) {
+      Library library = myDelegate.getLibraryByName(name);
+      return myLibraryFilter.value(library) ? library : null;
+    }
+
+    @Override
+    public Library @NotNull [] getLibraries() {
+      List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
+      return filtered.toArray(Library.EMPTY_ARRAY);
+    }
+
+    @Override
+    public boolean isChanged() {
+      return myDelegate.isChanged();
+    }
+
+    @Override
+    public @NotNull Library createLibrary(String name, @Nullable PersistentLibraryKind<?> kind) {
+      return myDelegate.createLibrary(name, kind);
+    }
+
+    @Override
+    public @NotNull Library createLibrary(String name, @Nullable PersistentLibraryKind<?> type, @Nullable ProjectModelExternalSource externalSource) {
+      return myDelegate.createLibrary(name, type, externalSource);
+    }
+
+    @Override
+    public void dispose() {
+      Disposer.dispose(myDelegate);
+    }
   }
 
   @Override
@@ -1663,47 +1444,204 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
   }
 
-  @Override
-  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
-    if (place != null) {
-      final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
-      if (location == Location.SDK) {
-        if (requestFocus) {
-          return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
-        }
-      }
-      else if (location instanceof Location.TableEntry) {
-        for (int row = 0; row < myTable.getRowCount(); row++) {
-          MyTableItem item = myTable.getItemAt(row);
-          Location.TableEntry loc = item.getLocation();
-          if (loc.equals(location)) {
-            myTable.clearSelection();
-            myTable.getSelectionModel().addSelectionInterval(row, row);
-            TableUtil.scrollSelectionToVisible(myTable);
-            break;
-          }
-        }
-        if (requestFocus) {
-          return IdeFocusManager.findInstance().requestFocus(myTable, true);
-        }
+  private class BCItem extends MyTableItem {
+    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
+    public final FlexBCConfigurable configurable;
+    public final String moduleName;
+    public final String bcName;
+
+    BCItem(@NotNull String moduleName, @NotNull String bcName) {
+      this.moduleName = moduleName;
+      this.bcName = bcName;
+      this.configurable = null;
+    }
+
+    BCItem(@NotNull FlexBCConfigurable configurable) {
+      this.moduleName = null;
+      this.bcName = null;
+      this.configurable = configurable;
+      if (configurable.getOutputType() != OutputType.Library) {
+        dependencyType.setLinkageType(LinkageType.LoadInRuntime);
       }
     }
-    return ActionCallback.DONE;
+
+    @Override
+    public SimpleColoredText getPresentableText() {
+      if (configurable != null) {
+        return BCUtils.renderBuildConfiguration(configurable.getEditableObject(), configurable.getModuleName());
+      }
+      else {
+        return BCUtils.renderMissingBuildConfiguration(bcName, moduleName);
+      }
+    }
+
+    @Override
+    public @Nullable Icon getIcon() {
+      return configurable != null ? configurable.getIcon() : MISSING_BC_ICON;
+    }
+
+    @Override
+    public boolean showLinkage() {
+      return configurable != null;
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return configurable != null && configurable.getOutputType() == OutputType.Library;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return dependencyType.getLinkageType();
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      dependencyType.setLinkageType(linkageType);
+    }
+
+    @Override
+    public void onDoubleClick() {
+      if (configurable != null) {
+        Project project = configurable.getModule().getProject();
+        ProjectStructureConfigurable.getInstance(project).navigateTo(FlexProjectStructureUtil.createPlace(configurable, null), true);
+      }
+    }
+
+    @Override
+    public ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
+      ModifiableDependencyEntry entry;
+      if (configurable != null) {
+        // configurable may be not yet applied at the moment
+        entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject(), configurable.getDisplayName());
+      }
+      else {
+        entry = myConfigEditor.createBcEntry(dependencies, moduleName, bcName);
+      }
+      entry.getDependencyType().copyFrom(dependencyType);
+      return entry;
+    }
+
+    @Override
+    public boolean isModified(final DependencyEntry entry) {
+      if (!(entry instanceof BuildConfigurationEntry bcEntry)) {
+        return true;
+      }
+      if (configurable != null) {
+        if (configurable.getModule() != bcEntry.findModule()) return true;
+        if (!configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
+      }
+      else {
+        if (!moduleName.equals(bcEntry.getModuleName())) return true;
+        if (!bcName.equals(bcEntry.getBcName())) return true;
+      }
+      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
+
+      return false;
+    }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      return configurable != null ? Location.TableEntry.forBc(configurable) : Location.TableEntry.forBc(moduleName, bcName);
+    }
   }
 
-  public void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
-    assert myReset;
-    // look in UI as there is no way to find just-created-and-then-renamed library in model
-    List<MyTableItem> items = myTable.getItems();
-    for (int i = 0; i < items.size(); i++) {
-      MyTableItem item = items.get(i);
-      if (item instanceof SharedLibraryItem && ((SharedLibraryItem)item).findLiveLibrary() == library) {
-        removeItems(Collections.singleton(item), replacement == null);
-        break;
+  private class ModuleLibraryItem extends MyTableItem {
+    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
+    public final String libraryId;
+    public final @Nullable LibraryOrderEntry orderEntry;
+
+    private final Project project;
+
+    ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
+      this.libraryId = libraryId;
+      this.orderEntry = orderEntry;
+      this.project = project;
+    }
+
+    @Override
+    public SimpleColoredText getPresentableText() {
+      if (orderEntry != null) {
+        Library library = orderEntry.getLibrary();
+        if (library != null) {
+          if (((LibraryEx)library).isDisposed()) {
+            Pair<String, String> moduleAndBcName = getModuleAndBcName();
+            LOG.error("Module library '" +
+                      library.getName() +
+                      "' is disposed, used in BC: " +
+                      moduleAndBcName.second +
+                      " of module " +
+                      moduleAndBcName.first);
+            return new SimpleColoredText("<unknown>", SimpleTextAttributes.ERROR_ATTRIBUTES);
+          }
+          boolean hasInvalidRoots = !((LibraryEx)library).getInvalidRootUrls(OrderRootType.CLASSES).isEmpty();
+          String text = OrderEntryAppearanceService.getInstance().forLibrary(project, library, hasInvalidRoots).getText();
+          return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+        }
+      }
+      return new SimpleColoredText("<unknown>", SimpleTextAttributes.ERROR_ATTRIBUTES);
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return !isANE();
+    }
+
+    @Override
+    public boolean isANE() {
+      final Library library = orderEntry == null ? null : orderEntry.getLibrary();
+      final VirtualFile[] files = library == null ? VirtualFile.EMPTY_ARRAY : library.getFiles(OrderRootType.CLASSES);
+      for (VirtualFile file : files) {
+        if ("ane".equalsIgnoreCase(file.getExtension())) return true;
+      }
+      return false;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return dependencyType.getLinkageType();
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      dependencyType.setLinkageType(linkageType);
+    }
+
+    @Override
+    public void onDoubleClick() {
+      if (canEdit()) {
+        editLibrary(this);
       }
     }
-    if (replacement != null) {
-      addSharedLibraries(Collections.singletonList(replacement));
+
+    @Override
+    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
+      ModifiableDependencyEntry entry = myConfigEditor.createModuleLibraryEntry(dependencies, libraryId);
+      entry.getDependencyType().copyFrom(dependencyType);
+      return entry;
+    }
+
+    @Override
+    public boolean isModified(final DependencyEntry entry) {
+      if (!(entry instanceof ModuleLibraryEntry libraryEntry)) {
+        return true;
+      }
+      if (!libraryEntry.getLibraryId().equals(libraryId)) {
+        return true;
+      }
+      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
+
+      return false;
+    }
+
+    @Override
+    public boolean canEdit() {
+      return orderEntry != null;
+    }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      return Location.TableEntry.forModuleLibrary(libraryId);
     }
   }
 
@@ -1717,70 +1655,114 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private static final class LibraryTableModifiableModelWrapper implements LibraryTable.ModifiableModel {
-    private final LibraryTable.ModifiableModel myDelegate;
-    private final Condition<Library> myLibraryFilter;
+  private class SharedLibraryItem extends MyTableItem {
+    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
+    public final String libraryName;
+    public final String libraryLevel;
+    public final @Nullable Library liveLibrary;
 
-    private LibraryTableModifiableModelWrapper(LibraryTable.ModifiableModel delegate, Condition<Library> libraryFilter) {
-      myDelegate = delegate;
-      myLibraryFilter = libraryFilter;
-    }
+    private final Project project;
 
-    @NotNull
-    @Override
-    public Library createLibrary(String name) {
-      return myDelegate.createLibrary(name);
-    }
-
-    @Override
-    public void removeLibrary(@NotNull Library library) {
-      myDelegate.removeLibrary(library);
-    }
-
-    @Override
-    public void commit() {
-      myDelegate.commit();
+    SharedLibraryItem(@NotNull String libraryName,
+                      @NotNull String libraryLevel,
+                      @Nullable Library liveLibrary,
+                      @NotNull Project project) {
+      this.libraryName = libraryName;
+      this.libraryLevel = libraryLevel;
+      this.liveLibrary = liveLibrary;
+      this.project = project;
     }
 
     @Override
-    @NotNull
-    public Iterator<Library> getLibraryIterator() {
-      return new FilteringIterator<>(myDelegate.getLibraryIterator(), myLibraryFilter);
+    public SimpleColoredText getPresentableText() {
+      Library liveLibrary = findLiveLibrary();
+      if (liveLibrary != null) {
+        String text = OrderEntryAppearanceService.getInstance().forLibrary(project, liveLibrary, false).getText();
+        return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      }
+      else {
+        return new SimpleColoredText(libraryName, SimpleTextAttributes.ERROR_ATTRIBUTES);
+      }
+    }
+
+    public @Nullable Library findLiveLibrary() {
+      // TODO call myConfigEditor.findLiveLibrary(library, libraryName, libraryLevel);
+      return new UIRootConfigurationAccessor(project).getLibrary(liveLibrary, libraryName, libraryLevel);
     }
 
     @Override
-    @Nullable
-    public Library getLibraryByName(@NotNull String name) {
-      Library library = myDelegate.getLibraryByName(name);
-      return myLibraryFilter.value(library) ? library : null;
+    public boolean isLinkageEditable() {
+      return !isANE();
     }
 
     @Override
-    public Library @NotNull [] getLibraries() {
-      List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
-      return filtered.toArray(Library.EMPTY_ARRAY);
+    public boolean isANE() {
+      final VirtualFile[] files = liveLibrary == null ? VirtualFile.EMPTY_ARRAY : liveLibrary.getFiles(OrderRootType.CLASSES);
+      for (VirtualFile file : files) {
+        if ("ane".equalsIgnoreCase(file.getExtension())) return true;
+      }
+      return false;
     }
 
     @Override
-    public boolean isChanged() {
-      return myDelegate.isChanged();
-    }
-
-    @NotNull
-    @Override
-    public Library createLibrary(String name, @Nullable PersistentLibraryKind<?> kind) {
-      return myDelegate.createLibrary(name, kind);
-    }
-
-    @NotNull
-    @Override
-    public Library createLibrary(String name, @Nullable PersistentLibraryKind<?> type, @Nullable ProjectModelExternalSource externalSource) {
-      return myDelegate.createLibrary(name, type, externalSource);
+    public LinkageType getLinkageType() {
+      return dependencyType.getLinkageType();
     }
 
     @Override
-    public void dispose() {
-      Disposer.dispose(myDelegate);
+    public void setLinkageType(LinkageType linkageType) {
+      dependencyType.setLinkageType(linkageType);
+    }
+
+    @Override
+    public void onDoubleClick() {
+      editLibrary(this);
+    }
+
+    @Override
+    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
+      ModifiableDependencyEntry entry;
+      Library liveLibrary = findLiveLibrary();
+      if (liveLibrary != null) {
+        entry = myConfigEditor.createSharedLibraryEntry(dependencies, liveLibrary.getName(), liveLibrary.getTable().getTableLevel());
+      }
+      else {
+        entry = myConfigEditor.createSharedLibraryEntry(dependencies, libraryName, libraryLevel);
+      }
+      entry.getDependencyType().copyFrom(dependencyType);
+      return entry;
+    }
+
+    @Override
+    public boolean isModified(final DependencyEntry entry) {
+      if (!(entry instanceof ModifiableSharedLibraryEntry libraryEntry)) {
+        return true;
+      }
+      Library liveLibrary = findLiveLibrary();
+      if (liveLibrary != null) {
+        if (!libraryEntry.getLibraryName().equals(liveLibrary.getName())) return true;
+        if (!liveLibrary.getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
+      }
+      else {
+        if (!libraryName.equals(libraryEntry.getLibraryName())) return true;
+        if (!libraryLevel.equals(libraryEntry.getLibraryLevel())) return true;
+      }
+
+      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
+      return false;
+    }
+
+    @Override
+    public boolean canEdit() {
+      return true;
+    }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      Library liveLibrary = findLiveLibrary();
+      return liveLibrary != null
+             ? Location.TableEntry.forSharedLibrary(liveLibrary)
+             : Location.TableEntry.forSharedLibrary(libraryLevel, libraryName);
     }
   }
 
@@ -1806,7 +1788,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    protected Library @NotNull [] getLibraries(@NotNull final LibraryTable table) {
+    protected Library @NotNull [] getLibraries(final @NotNull LibraryTable table) {
       final StructureConfigurableContext context = ProjectStructureConfigurable.getInstance(myProject).getContext();
       final Library[] libraries = context.createModifiableModelProvider(table.getTableLevel()).getModifiableModel().getLibraries();
       final List<Library> filtered = ContainerUtil.mapNotNull(libraries, library -> {

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.detection;
 
 import com.intellij.ide.util.DelegatingProgressIndicator;
@@ -40,11 +41,10 @@ public final class FlexProjectStructureDetector extends ProjectStructureDetector
   }
 
   @Override
-  @NotNull
-  public DirectoryProcessingResult detectRoots(@NotNull final File dir,
-                                               final File @NotNull [] children,
-                                               @NotNull final File base,
-                                               @NotNull final List<DetectedProjectRoot> result) {
+  public @NotNull DirectoryProcessingResult detectRoots(final @NotNull File dir,
+                                                        final File @NotNull [] children,
+                                                        final @NotNull File base,
+                                                        final @NotNull List<DetectedProjectRoot> result) {
     for (File child : children) {
       if (child.isFile()) {
         if (isActionScriptFile(child)) {
@@ -88,8 +88,7 @@ public final class FlexProjectStructureDetector extends ProjectStructureDetector
     return steps;
   }
 
-  @Nullable
-  public static String readPackageName(final CharSequence charSequence, final Lexer lexer) {
+  public static @Nullable String readPackageName(final CharSequence charSequence, final Lexer lexer) {
     skipWhiteSpaceAndComments(lexer);
     if (!JSTokenTypes.PACKAGE_KEYWORD.equals(lexer.getTokenType())) {
       return null;
@@ -100,8 +99,7 @@ public final class FlexProjectStructureDetector extends ProjectStructureDetector
     return readQualifiedName(charSequence, lexer, false);
   }
 
-  @Nullable
-  static String readQualifiedName(final CharSequence charSequence, final Lexer lexer, boolean allowStar) {
+  static @Nullable String readQualifiedName(final CharSequence charSequence, final Lexer lexer, boolean allowStar) {
     final StringBuilder buffer = new StringBuilder();
     while (true) {
       if (lexer.getTokenType() != JSTokenTypes.IDENTIFIER && !(allowStar && lexer.getTokenType() != JSTokenTypes.MULT)) break;

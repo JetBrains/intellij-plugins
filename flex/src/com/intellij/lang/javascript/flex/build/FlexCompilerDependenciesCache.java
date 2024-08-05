@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -44,7 +44,7 @@ public class FlexCompilerDependenciesCache {
 
     project.getMessageBus().connect().subscribe(ModuleListener.TOPIC, new ModuleListener() {
       @Override
-      public void moduleRemoved(@NotNull final Project project, @NotNull final Module module) {
+      public void moduleRemoved(final @NotNull Project project, final @NotNull Module module) {
         myCache.remove(module);
       }
     });
@@ -146,8 +146,7 @@ public class FlexCompilerDependenciesCache {
     }
   }
 
-  @Nullable
-  private static BCInfo findCacheForBC(final @NotNull Collection<BCInfo> bcInfos, @NotNull final FlexBuildConfiguration bc) {
+  private static @Nullable BCInfo findCacheForBC(final @NotNull Collection<BCInfo> bcInfos, final @NotNull FlexBuildConfiguration bc) {
     return ContainerUtil.find(bcInfos, info -> info.myBC.isEqual(bc));
   }
 

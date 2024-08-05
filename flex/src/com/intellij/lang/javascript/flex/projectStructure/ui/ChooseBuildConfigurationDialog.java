@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -40,11 +40,28 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
   private JPanel myContentPane;
   private final boolean myAllowEmptySelection;
 
+  private ChooseBuildConfigurationDialog(String title,
+                                         final @Nullable String labelText,
+                                         Project project,
+                                         final boolean allowEmptySelection,
+                                         Map<Module, List<FlexBCConfigurable>> treeItems) {
+    super(project, true);
+    myAllowEmptySelection = allowEmptySelection;
+    if (labelText != null) {
+      myLabel.setText(labelText);
+    }
+    else {
+      myLabel.setVisible(false);
+    }
+    myTreeItems = treeItems;
+    setTitle(title);
+    init();
+  }
+
   /**
    * @return {@code null} if there's no applicable BC configurables according to the filter provided
    */
-  @Nullable
-  public static ChooseBuildConfigurationDialog createForApplicableBCs(String title,
+  public static @Nullable ChooseBuildConfigurationDialog createForApplicableBCs(String title,
                                                                       @Nullable String labelText,
                                                                       Project project,
                                                                       boolean allowEmptySelection,
@@ -75,24 +92,6 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
     }
 
     return new ChooseBuildConfigurationDialog(title, labelText, project, allowEmptySelection, treeItems);
-  }
-
-  private ChooseBuildConfigurationDialog(String title,
-                                         @Nullable final String labelText,
-                                         Project project,
-                                         final boolean allowEmptySelection,
-                                         Map<Module, List<FlexBCConfigurable>> treeItems) {
-    super(project, true);
-    myAllowEmptySelection = allowEmptySelection;
-    if (labelText != null) {
-      myLabel.setText(labelText);
-    }
-    else {
-      myLabel.setVisible(false);
-    }
-    myTreeItems = treeItems;
-    setTitle(title);
-    init();
   }
 
   @Override

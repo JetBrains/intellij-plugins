@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSFlexAdapter;
@@ -26,8 +26,8 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   private boolean isInterface;
   private boolean myDumpTypeRef;
 
-  @Override
-  public void dumpStat(@NotNull final String stat) {}
+  private static final @NonNls Set<String> doNotNeedQoting =
+    Set.of("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity");
 
   @Override
   public void dumpToplevelAnonymousMethod(final @NotNull Abc abc, final @NotNull MethodInfo m) {}
@@ -113,8 +113,8 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     return value;
   }
 
-  private static @NonNls final Set<String> doNotNeedQoting =
-    Set.of("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity");
+  @Override
+  public void dumpStat(final @NotNull String stat) {}
   private static boolean needsQuoting(final String value) {
     return !doNotNeedQoting.contains(value);
   }
@@ -163,7 +163,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   @Override
-  public void hasError(@NotNull final String error) {
+  public void hasError(final @NotNull String error) {
     sb.append("/*" + error + "*/");
   }
 
@@ -187,8 +187,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     }
   }
 
-  @NotNull
-  protected String serializeQName(String qName) {
+  protected @NotNull String serializeQName(String qName) {
     JSType type = JSNamedTypeFactory.createType(qName, JSTypeSource.EMPTY_AS, JSContext.INSTANCE);
     return JSTypeUtils.serializeType(type);
   }

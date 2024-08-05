@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -91,9 +92,8 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
     myTabs.removeTabAt(index);
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return getMainChild().getDisplayName();
   }
 
@@ -143,7 +143,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   @Override
-  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+  public ActionCallback navigateTo(final @Nullable Place place, final boolean requestFocus) {
     if (place == null) {
       return ActionCallback.DONE;
     }
@@ -162,15 +162,14 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   @Override
-  public void queryPlace(@NotNull final Place place) {
+  public void queryPlace(final @NotNull Place place) {
     final NamedConfigurable child = myChildren.get(myTabs.getSelectedIndex());
     place.putPath(TAB_NAME, child.getDisplayName());
     //Place.queryFurther(child, place); we don't want to localize place to text field level (and actually it is impossible because the field hasn't got focus yet when this method is called)
   }
 
   @Override
-  @Nullable
-  public ProjectStructureElement getProjectStructureElement() {
+  public @Nullable ProjectStructureElement getProjectStructureElement() {
     NamedConfigurable mainChild = getMainChild();
     if (mainChild instanceof ProjectStructureElementConfigurable) {
       return ((ProjectStructureElementConfigurable<?>)mainChild).getProjectStructureElement();

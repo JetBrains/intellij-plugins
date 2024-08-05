@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.openapi.options.ConfigurationException;
@@ -47,13 +48,12 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
   }
 
   @Override
-  @NotNull
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final RemoteFlashRunConfiguration configuration) {
+  protected void resetEditorFrom(final @NotNull RemoteFlashRunConfiguration configuration) {
     final RemoteFlashRunnerParameters params = configuration.getRunnerParameters();
     myBCCombo.resetFrom(params);
 
@@ -69,7 +69,7 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final RemoteFlashRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(final @NotNull RemoteFlashRunConfiguration configuration) throws ConfigurationException {
     final RemoteFlashRunnerParameters params = configuration.getRunnerParameters();
     myBCCombo.applyTo(params);
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
@@ -56,7 +56,7 @@ public final class FlashUmlExtras extends DiagramExtras<Object> {
   }
 
   @Override
-  public Object getData(@NotNull final String dataId, final @NotNull List<DiagramNode<Object>> diagramNodes, final @NotNull DiagramBuilder builder) {
+  public Object getData(final @NotNull String dataId, final @NotNull List<DiagramNode<Object>> diagramNodes, final @NotNull DiagramBuilder builder) {
     if (!CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return null;
     }

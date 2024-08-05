@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.module.Module;
@@ -21,13 +22,13 @@ public class LibrarySourcesSearchScope extends GlobalSearchScope {
   }
 
   @Override
-  public boolean contains(@NotNull final VirtualFile file) {
+  public boolean contains(final @NotNull VirtualFile file) {
     final VirtualFile libSrcRoot = myIndex.getSourceRootForFile(file);
     return libSrcRoot != null && myLibrarySourceRoots.contains(libSrcRoot);
   }
 
   @Override
-  public boolean isSearchInModuleContent(@NotNull final Module aModule) {
+  public boolean isSearchInModuleContent(final @NotNull Module aModule) {
     return false;
   }
 

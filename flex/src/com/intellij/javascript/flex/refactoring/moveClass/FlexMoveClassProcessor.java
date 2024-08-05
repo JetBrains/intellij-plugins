@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -51,15 +51,13 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     myTargetPackage = targetPackage;
   }
 
-  @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
+  protected @NotNull UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new FlexMoveClassUsageViewDescriptor();
   }
 
-  @NotNull
   @Override
-  protected String getCommandName() {
+  protected @NotNull String getCommandName() {
     StringBuilder s = new StringBuilder();
     for (JSQualifiedNamedElement element : myElements) {
       if (s.length() > 0) {
@@ -175,9 +173,8 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
       }
     }
 
-    @NotNull
     @Override
-    public String getCodeReferencesText(int usagesCount, int filesCount) {
+    public @NotNull String getCodeReferencesText(int usagesCount, int filesCount) {
       String prefix;
       if (getElements().length == 1) {
         prefix = FlexBundle.message("references.in.code.to.0", UsageViewUtil.getLongName(getElements()[0]));

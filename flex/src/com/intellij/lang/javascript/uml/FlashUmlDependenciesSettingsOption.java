@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramProvider;
@@ -18,7 +19,7 @@ public enum FlashUmlDependenciesSettingsOption {
 
   private final String myResourceBundleKey;
 
-  FlashUmlDependenciesSettingsOption(@PropertyKey(resourceBundle = FlexBundle.BUNDLE) final String resourceBundleKey) {
+  FlashUmlDependenciesSettingsOption(final @PropertyKey(resourceBundle = FlexBundle.BUNDLE) String resourceBundleKey) {
     myResourceBundleKey = resourceBundleKey;
   }
 

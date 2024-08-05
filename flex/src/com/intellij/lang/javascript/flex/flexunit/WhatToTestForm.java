@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.ExecutionBundle;
@@ -244,8 +244,8 @@ public class WhatToTestForm {
 
   private static class TestClassFilter implements Condition<JSClass> {
 
-    @NotNull private final Project myProject;
-    @Nullable private FlexUnitSupport mySupport;
+    private final @NotNull Project myProject;
+    private @Nullable FlexUnitSupport mySupport;
     private boolean myAllowSuite;
 
     private Condition<JSClass> myCondition;

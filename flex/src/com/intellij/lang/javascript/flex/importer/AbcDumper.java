@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,12 +15,12 @@ class AbcDumper extends AbstractDumpProcessor {
   }
 
   @Override
-  public void dumpStat(@NotNull final String stat) {
+  public void dumpStat(final @NotNull String stat) {
     sb.append(stat);
   }
 
   @Override
-  public void hasError(@NotNull final String error) {
+  public void hasError(final @NotNull String error) {
     sb.append(error);
   }
 
@@ -30,8 +31,8 @@ class AbcDumper extends AbstractDumpProcessor {
   }
 
   @Override
-  public void processMultinameAsPackageName(@NotNull final Multiname name,
-                                            @Nullable final String parentName) {
+  public void processMultinameAsPackageName(final @NotNull Multiname name,
+                                            final @Nullable String parentName) {
     append(name.hasNotEmptyNs() ? (name.getValidNsName(classNameTable) + "::" + name.name) : name.name);
   }
 

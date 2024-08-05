@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -95,14 +96,14 @@ public class FlexBCConfigurator {
         }
 
         @Override
-        public Library findSourceLibraryForLiveName(final String name, @NotNull final String level) {
+        public Library findSourceLibraryForLiveName(final String name, final @NotNull String level) {
           final LibrariesModifiableModel model =
             ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
           return ContainerUtil.find(model.getLibraries(), library -> name.equals(model.getLibraryEditor(library).getModel().getName()));
         }
 
         @Override
-        public Library findSourceLibrary(final String name, @NotNull final String level) {
+        public Library findSourceLibrary(final String name, final @NotNull String level) {
           return getLibrariesModifiableModel(level).getLibraryByName(name);
         }
       });
@@ -120,8 +121,7 @@ public class FlexBCConfigurator {
   /**
    * @return current editor if Project Structure dialog is open
    */
-  @Nullable
-  public FlexProjectConfigurationEditor getConfigEditor() {
+  public @Nullable FlexProjectConfigurationEditor getConfigEditor() {
     return myConfigEditor;
   }
 
@@ -349,10 +349,8 @@ public class FlexBCConfigurator {
     createConfigurableNode(bc, module, treeNodeNameUpdater);
   }
 
-  @Nullable
-  private static SdkEntry findAnySdk() {
-    final List<Sdk> sdks = FlexSdkUtils.getFlexSdks();
-    return sdks.isEmpty() ? null : Factory.createSdkEntry(sdks.get(0).getName());
+  public @Nullable List<ModifiableFlexBuildConfiguration> getBCsByOutputPath(final String outputPath) {
+    return myBCToOutputPathMap.getKeysByValue(outputPath);
   }
 
   public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {
@@ -435,9 +433,9 @@ public class FlexBCConfigurator {
     return FlexBCConfigurable.unwrap(myConfigurablesMap.get(bc));
   }
 
-  @Nullable
-  public List<ModifiableFlexBuildConfiguration> getBCsByOutputPath(final String outputPath) {
-    return myBCToOutputPathMap.getKeysByValue(outputPath);
+  private static @Nullable SdkEntry findAnySdk() {
+    final List<Sdk> sdks = FlexSdkUtils.getFlexSdks();
+    return sdks.isEmpty() ? null : Factory.createSdkEntry(sdks.get(0).getName());
   }
 
   public Place getPlaceFor(final Module module, final String bcName) {

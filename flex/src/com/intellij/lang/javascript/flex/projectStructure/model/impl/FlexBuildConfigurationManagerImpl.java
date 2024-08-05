@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -32,14 +32,13 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
 
   public static final String COMPONENT_NAME = "FlexBuildConfigurationManager";
 
-  @Nullable
-  private final Module myModule;
+  private final @Nullable Module myModule;
   private FlexBuildConfigurationImpl[] myConfigurations = new FlexBuildConfigurationImpl[]{new FlexBuildConfigurationImpl()};
 
   private final CompilerOptionsImpl myModuleLevelCompilerOptions;
   private FlexBuildConfigurationImpl myActiveConfiguration = myConfigurations[0];
 
-  public FlexBuildConfigurationManagerImpl(@Nullable final Module module) {
+  public FlexBuildConfigurationManagerImpl(final @Nullable Module module) {
     myModule = module;
     myModuleLevelCompilerOptions = module == null ? new CompilerOptionsImpl() : new CompilerOptionsImpl(module.getProject(), true);
 
@@ -68,8 +67,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
   }
 
   @Override
-  @Nullable
-  public FlexBuildConfiguration findConfigurationByName(final String name) {
+  public @Nullable FlexBuildConfiguration findConfigurationByName(final String name) {
     for (ModifiableFlexBuildConfiguration configuration : myConfigurations) {
       if (configuration.getName().equals(name)) {
         return configuration;
@@ -133,7 +131,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     myConfigurations = configurations;
   }
 
-  private void updateActiveConfiguration(@Nullable final String activeName) {
+  private void updateActiveConfiguration(final @Nullable String activeName) {
     if (myConfigurations.length > 0) {
       myActiveConfiguration =
         activeName != null ? ContainerUtil.find(myConfigurations, bc -> bc.getName().equals(activeName)) : null;
@@ -158,7 +156,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
   }
 
   @Override
-  public void loadState(@NotNull final State state) {
+  public void loadState(final @NotNull State state) {
     if (myModule == null) {
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     }

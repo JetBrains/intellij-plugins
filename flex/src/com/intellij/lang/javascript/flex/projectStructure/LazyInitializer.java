@@ -1,11 +1,11 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import org.jetbrains.annotations.Nullable;
 
 public abstract class LazyInitializer<T> {
 
-  @Nullable
-  private T myInitializedFor;
+  private @Nullable T myInitializedFor;
 
   public void ensureInitialized(T t) {
     if (myInitializedFor == null) {

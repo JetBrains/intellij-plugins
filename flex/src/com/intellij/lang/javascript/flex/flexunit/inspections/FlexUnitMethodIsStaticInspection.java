@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -10,14 +11,12 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.fixes.RemoveASTNodeFix;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public final class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspectionBase {
 
   @Override
-  @NotNull
-  public String getShortName() {
+  public @NotNull String getShortName() {
     return "FlexUnitMethodIsStaticInspection";
   }
 
@@ -31,9 +30,8 @@ public final class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspec
         assert node != null;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodisstatic.message"), ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                new RemoveASTNodeFix("0.is.not.a.legal.name", node.getPsi()) {
-                                 @NotNull
                                  @Override
-                                 public String getText() {
+                                 public @NotNull String getText() {
                                    return FlexBundle.message("flexunit.fix.remove.static.modifier");
                                  }
                                });

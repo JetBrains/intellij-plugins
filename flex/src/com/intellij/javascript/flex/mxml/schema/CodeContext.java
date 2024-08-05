@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -57,16 +57,15 @@ public final class CodeContext {
   private static final CodeContext EMPTY = new CodeContext(null, null, null);
   private static final String CLASS_FACTORY = "mx.core.ClassFactory";
 
-  @NonNls static final String DEFINITION_TAG_NAME = "Definition";
-  @NonNls public static final String REPARENT_TAG_NAME = "Reparent";
-  @NonNls public static final String TARGET_ATTR_NAME = "target";
+  public static final @NonNls String REPARENT_TAG_NAME = "Reparent";
+  public static final @NonNls String TARGET_ATTR_NAME = "target";
+  static final @NonNls String DEFINITION_TAG_NAME = "Definition";
   public static final String AS3_VEC_VECTOR_QUALIFIED_NAME = "__AS3__.vec.Vector";
   static final String FORMAT_ATTR_NAME = "format";
   static final String TWO_WAY_ATTR_NAME = "twoWay";
   private static final String XML_CLASS = "XML";
   private static final String XMLNODE_CLASS = "flash.xml.XMLNode";
-
-  final static String[] GUMBO_ATTRIBUTES = {FlexStateElementNames.INCLUDE_IN, FlexStateElementNames.EXCLUDE_FROM,
+  static final String[] GUMBO_ATTRIBUTES = {FlexStateElementNames.INCLUDE_IN, FlexStateElementNames.EXCLUDE_FROM,
     FlexStateElementNames.ITEM_CREATION_POLICY, FlexStateElementNames.ITEM_DESTRUCTION_POLICY};
 
   // Component name to descriptor
@@ -400,8 +399,7 @@ public final class CodeContext {
     return context != null ? context : EMPTY;
   }
 
-  @Nullable
-  public XmlElementDescriptor getElementDescriptor(final @NonNls String localName, final @Nullable XmlTag tag) {
+  public @Nullable XmlElementDescriptor getElementDescriptor(final @NonNls String localName, final @Nullable XmlTag tag) {
     ClassBackedElementDescriptor descriptor = this == EMPTY ? null : myNameToDescriptorsMap.get(localName);
 
     if (tag != null && MxmlJSClass.XML_TAG_NAME.equals(localName)
@@ -443,8 +441,7 @@ public final class CodeContext {
     return myNameToDescriptorsMap.size();
   }
 
-  @Nullable
-  public ClassBackedElementDescriptor getElementDescriptor(@NotNull final String name, @NotNull final String qname) {
+  public @Nullable ClassBackedElementDescriptor getElementDescriptor(final @NotNull String name, final @NotNull String qname) {
     ClassBackedElementDescriptor descriptor = myNameToDescriptorsMap.get(name);
 
     if (descriptor != null && !qname.equals(descriptor.getQualifiedName())) {
@@ -456,7 +453,7 @@ public final class CodeContext {
     return descriptor;
   }
 
-  private static void handleAllStandardManifests(final Module module, @NotNull final FlexBuildConfiguration bc) {
+  private static void handleAllStandardManifests(final Module module, final @NotNull FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     final String homePath = sdk == null ? null : sdk.getHomePath();
     final VirtualFile sdkHome = homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);

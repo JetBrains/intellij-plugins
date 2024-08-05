@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.detection;
 
 import com.intellij.ide.util.projectWizard.importSources.DetectedProjectRoot;
@@ -13,19 +14,18 @@ public class FlexModuleSourceRoot extends DetectedSourceRoot {
     super(directory, null);
   }
 
-  @NotNull
   @Override
-  public String getRootTypeName() {
+  public @NotNull String getRootTypeName() {
     return FlexBundle.message("autodetected.source.root.type");
   }
 
   @Override
-  public boolean canContainRoot(@NotNull final DetectedProjectRoot root) {
+  public boolean canContainRoot(final @NotNull DetectedProjectRoot root) {
     return !(root instanceof FlexModuleSourceRoot);
   }
 
   @Override
-  public DetectedProjectRoot combineWith(@NotNull final DetectedProjectRoot root) {
+  public DetectedProjectRoot combineWith(final @NotNull DetectedProjectRoot root) {
     if (root instanceof FlexModuleSourceRoot) {
       return this;
     }

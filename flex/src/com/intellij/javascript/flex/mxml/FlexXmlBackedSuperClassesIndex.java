@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -11,14 +12,12 @@ public final class FlexXmlBackedSuperClassesIndex extends FlexXmlBackedClassesIn
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedSuperClassesIndex");
 
   @Override
-  @NotNull
-  public ID<String, Void> getName() {
+  public @NotNull ID<String, Void> getName() {
     return NAME;
   }
 
   @Override
-  @Nullable
-  protected JSReferenceList getSupers(JSClass clazz) {
+  protected @Nullable JSReferenceList getSupers(JSClass clazz) {
     return clazz.getExtendsList();
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -41,9 +41,8 @@ public class SwfPackageElementNode extends ProjectViewNode<String> {
     return SwfProjectViewStructureProvider.nodeContainsFile(this, file);
   }
 
-  @NotNull
   @Override
-  public Collection<? extends AbstractTreeNode<?>> getChildren() {
+  public @NotNull Collection<? extends AbstractTreeNode<?>> getChildren() {
     return SwfProjectViewStructureProvider.getChildrenForPackage(getValue(), myElements, myFrom, myTo, myProject, getSettings());
   }
 

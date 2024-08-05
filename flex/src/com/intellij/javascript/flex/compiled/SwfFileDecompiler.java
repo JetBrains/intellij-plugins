@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
@@ -17,8 +17,7 @@ import java.io.IOException;
  */
 public final class SwfFileDecompiler implements BinaryFileDecompiler {
   @Override
-  @NotNull
-  public CharSequence decompile(@NotNull final VirtualFile file) {
+  public @NotNull CharSequence decompile(final @NotNull VirtualFile file) {
     Project project = ArrayUtil.getFirstElement(ProjectManager.getInstance().getOpenProjects());
     try {
       return project != null ? FlexImporter.buildInterfaceFromStream(file.getInputStream()) : "";

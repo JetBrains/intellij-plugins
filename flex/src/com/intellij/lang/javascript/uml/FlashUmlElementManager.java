@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.lang.javascript.uml;
 
@@ -275,8 +275,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return text != null ? new SimpleColoredText(text, DEFAULT_TEXT_ATTR) : null;
   }
 
-  @Nullable
-  public static String getPresentableTypeStatic(Object element) {
+  public static @Nullable String getPresentableTypeStatic(Object element) {
     if (element instanceof JSFunction) {
       return JSFormatUtil.formatMethod(((JSFunction)element), PsiFormatUtilBase.SHOW_TYPE, 0);
     }

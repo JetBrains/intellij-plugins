@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
@@ -34,7 +35,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
     return new BaseCreateMembersFix<JSVariable>(jsClass) {
       @Override
-      public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+      public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
         evalAnchor(editor, file);
 
         final boolean[] needOverride = new boolean[1];

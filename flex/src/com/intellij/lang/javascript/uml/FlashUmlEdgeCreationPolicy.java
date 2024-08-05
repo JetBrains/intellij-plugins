@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramEdgeCreationPolicy;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object> {
 
   @Override
-  public boolean acceptSource(@NotNull final DiagramNode<Object> source) {
+  public boolean acceptSource(final @NotNull DiagramNode<Object> source) {
     if (!(source.getIdentifyingElement() instanceof JSClass clazz)) return false;
     JSAttributeList attributeList = clazz.getAttributeList();
     if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) return false;
@@ -19,7 +20,7 @@ public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object
   }
 
   @Override
-  public boolean acceptTarget(@NotNull final DiagramNode<Object> target) {
+  public boolean acceptTarget(final @NotNull DiagramNode<Object> target) {
     if (!(target.getIdentifyingElement() instanceof JSClass clazz)) return false;
     JSAttributeList attributeList = clazz.getAttributeList();
     if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) return false;

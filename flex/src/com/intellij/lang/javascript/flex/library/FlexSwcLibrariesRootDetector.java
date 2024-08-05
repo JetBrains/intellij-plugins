@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -15,7 +16,7 @@ class FlexSwcLibrariesRootDetector extends RootFilter {
   }
 
   @Override
-  public boolean isAccepted(@NotNull final VirtualFile rootCandidate, @NotNull final ProgressIndicator progressIndicator) {
+  public boolean isAccepted(final @NotNull VirtualFile rootCandidate, final @NotNull ProgressIndicator progressIndicator) {
     if (!rootCandidate.isDirectory()){
       return false;
     }

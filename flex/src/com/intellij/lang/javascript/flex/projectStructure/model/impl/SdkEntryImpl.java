@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
@@ -13,8 +13,7 @@ import java.util.*;
 
 final class SdkEntryImpl implements SdkEntry {
 
-  @NotNull
-  private final String myName;
+  private final @NotNull String myName;
 
   private final Map<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<>();
 
@@ -57,8 +56,7 @@ final class SdkEntryImpl implements SdkEntry {
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -21,7 +21,7 @@ import javax.swing.*;
  */
 public class SendCommandToDebuggerAction extends AnAction {
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
@@ -36,7 +36,7 @@ public class SendCommandToDebuggerAction extends AnAction {
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
@@ -70,7 +70,7 @@ public class SendCommandToDebuggerAction extends AnAction {
       ((FlexDebugProcess)session.getDebugProcess()).sendCommand(
           new DebuggerCommand(myCommandArea.getText(), CommandOutputProcessingType.SPECIAL_PROCESSING) {
             @Override
-            CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
+            CommandOutputProcessingMode onTextAvailable(final @NonNls String s) {
               ApplicationManager.getApplication().invokeLater(() -> {
                 myResultArea.setText(s);
                 getOKAction().setEnabled(true);

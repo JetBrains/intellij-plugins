@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.addAsLib;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -93,14 +94,12 @@ public class AddAsSwcLibDialog extends DialogWrapper {
   }
 
   @Override
-  @Nullable
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     return myMainPanel;
   }
 
   @Override
-  @Nullable
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return myBCTree;
   }
 
@@ -111,8 +110,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
   }
 
   @Override
-  @Nullable
-  protected ValidationInfo doValidate() {
+  protected @Nullable ValidationInfo doValidate() {
     if (myBCTree.getSelectedBCs().isEmpty()) {
       return new ValidationInfo("No build configurations selected");
     }

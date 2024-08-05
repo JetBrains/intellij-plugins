@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.icons.AllIcons;
@@ -25,28 +25,25 @@ import java.util.List;
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
 
   @Override
-  public OrderRootTypePresentation getRootTypePresentation(@NotNull final OrderRootType type) {
+  public OrderRootTypePresentation getRootTypePresentation(final @NotNull OrderRootType type) {
     if (type instanceof JavadocOrderRootType) {
       return new OrderRootTypePresentation(FlexBundle.message("documentation.order.root.type.name"), AllIcons.FileTypes.Text);
     }
     return DefaultLibraryRootsComponentDescriptor.getDefaultPresentation(type);
   }
 
-  @NotNull
   @Override
-  public LibraryRootsDetector getRootsDetector() {
+  public @NotNull LibraryRootsDetector getRootsDetector() {
     return new FlexLibraryRootsDetector();
   }
 
-  @NotNull
   @Override
-  public List<? extends RootDetector> getRootDetectors() {
+  public @NotNull List<? extends RootDetector> getRootDetectors() {
     return FlexLibraryRootsDetector.getRootDetectors();
   }
 
-  @NotNull
   @Override
-  public FileChooserDescriptor createAttachFilesChooserDescriptor(String libraryName) {
+  public @NotNull FileChooserDescriptor createAttachFilesChooserDescriptor(String libraryName) {
     FileChooserDescriptor d = super.createAttachFilesChooserDescriptor(libraryName);
     d.setTitle(UIBundle.message("file.chooser.default.title"));
     d.setDescription(FlexBundle.message("choose.library.files.description", ApplicationNamesInfo.getInstance().getFullProductName()));
@@ -59,8 +56,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
   }
 
   @Override
-  @NotNull
-  public List<? extends AttachRootButtonDescriptor> createAttachButtons() {
+  public @NotNull List<? extends AttachRootButtonDescriptor> createAttachButtons() {
     return Collections.singletonList(new AddDocUrlDescriptor());
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -40,7 +40,7 @@ public class AirPackageAction extends DumbAwareAction {
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("AIR Packaging");
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     final Project project = e.getProject();
 
     boolean flexModulePresent = false;
@@ -77,7 +77,7 @@ public class AirPackageAction extends DumbAwareAction {
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 
@@ -98,7 +98,7 @@ public class AirPackageAction extends DumbAwareAction {
 
     compilerManager.make(compileScope, new CompileStatusNotification() {
       @Override
-      public void finished(final boolean aborted, final int errors, final int warnings, @NotNull final CompileContext compileContext) {
+      public void finished(final boolean aborted, final int errors, final int warnings, final @NotNull CompileContext compileContext) {
         if (!aborted && errors == 0) {
           createPackages(project, modulesAndBCs, dialog.getPasswords());
         }
@@ -199,7 +199,7 @@ public class AirPackageAction extends DumbAwareAction {
 
         final NotificationListener listener = new NotificationListener() {
           @Override
-          public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+          public void hyperlinkUpdate(final @NotNull Notification notification, final @NotNull HyperlinkEvent event) {
             if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
               notification.expire();
               final String packagePath = event.getDescription();
@@ -245,9 +245,8 @@ public class AirPackageAction extends DumbAwareAction {
     };
   }
 
-  @Nullable
-  public static PasswordStore getPasswords(final Project project,
-                                           final Collection<? extends AirPackagingOptions> allPackagingOptions) {
+  public static @Nullable PasswordStore getPasswords(final Project project,
+                                                     final Collection<? extends AirPackagingOptions> allPackagingOptions) {
     final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords = new ArrayList<>();
 
     for (AirPackagingOptions packagingOptions : allPackagingOptions) {

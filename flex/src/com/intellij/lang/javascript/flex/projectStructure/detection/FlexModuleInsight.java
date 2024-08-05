@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.detection;
 
 import com.intellij.ide.util.importProject.ModuleDescriptor;
@@ -30,7 +30,7 @@ import java.util.zip.ZipInputStream;
 public class FlexModuleInsight extends ModuleInsight {
 
 
-  public FlexModuleInsight(@Nullable final ProgressIndicator progress,
+  public FlexModuleInsight(final @Nullable ProgressIndicator progress,
                            Set<String> existingModuleNames,
                            Set<String> existingProjectLibraryNames) {
     super(progress, existingModuleNames, existingProjectLibraryNames);

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -17,8 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public final class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspectionBase {
 
   @Override
-  @NotNull
-  public String getShortName() {
+  public @NotNull String getShortName() {
     return "FlexUnitClassInProductSourceInspection";
   }
 
@@ -42,14 +42,12 @@ public final class FlexUnitClassInProductSourceInspection extends FlexUnitClassI
   private static class MoveClassFix implements RefactoringQuickFix {
 
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return "Move class";
     }
 
-    @NotNull
     @Override
-    public RefactoringActionHandler getHandler() {
+    public @NotNull RefactoringActionHandler getHandler() {
       return RefactoringActionHandlerFactory.getInstance().createMoveHandler();
     }
   }

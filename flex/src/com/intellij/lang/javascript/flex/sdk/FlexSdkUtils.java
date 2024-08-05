@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -70,18 +70,15 @@ public final class FlexSdkUtils {
     }
   }
 
-  @Nullable
-  public static String doReadFlexSdkVersion(final VirtualFile sdkRoot) {
+  public static @Nullable String doReadFlexSdkVersion(final VirtualFile sdkRoot) {
     return doReadSdkVersion(sdkRoot, false);
   }
 
-  @Nullable
-  public static String doReadAirSdkVersion(final VirtualFile sdkRoot) {
+  public static @Nullable String doReadAirSdkVersion(final VirtualFile sdkRoot) {
     return doReadSdkVersion(sdkRoot, true);
   }
 
-  @Nullable
-  private static String doReadSdkVersion(final VirtualFile sdkRoot, final boolean airSdk) {
+  private static @Nullable String doReadSdkVersion(final VirtualFile sdkRoot, final boolean airSdk) {
     if (sdkRoot == null) {
       return null;
     }
@@ -104,8 +101,7 @@ public final class FlexSdkUtils {
     }
   }
 
-  @Nullable
-  public static Sdk createOrGetSdk(final SdkType sdkType, final String path) {
+  public static @Nullable Sdk createOrGetSdk(final SdkType sdkType, final String path) {
     // todo work with sdk modifiable model if Project Structure is open!
     final VirtualFile sdkHome = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
     if (sdkHome == null) return null;
@@ -176,8 +172,7 @@ public final class FlexSdkUtils {
     return sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH;
   }
 
-  @Nullable
-  public static String getAirRuntimePath(final @NotNull Sdk sdk) {
+  public static @Nullable String getAirRuntimePath(final @NotNull Sdk sdk) {
     if (sdk.getSdkType() instanceof FlexmojosSdkType) {
       final SdkAdditionalData data = sdk.getSdkAdditionalData();
       if (data instanceof FlexmojosSdkAdditionalData) {
@@ -241,8 +236,7 @@ public final class FlexSdkUtils {
     return systemTempDir.getPath() + File.separatorChar + tempDirName;
   }
 
-  @NotNull
-  private static VirtualFile unzip(final String zipFilePath, final String outputDirPath) throws IOException {
+  private static @NotNull VirtualFile unzip(final String zipFilePath, final String outputDirPath) throws IOException {
     final Ref<IOException> ioExceptionRef = new Ref<>();
     final VirtualFile dir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
       try {
@@ -445,8 +439,7 @@ public final class FlexSdkUtils {
                                 sdk -> sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType);
   }
 
-  @Nullable
-  public static Sdk findFlexOrFlexmojosSdk(final String name) {
+  public static @Nullable Sdk findFlexOrFlexmojosSdk(final String name) {
     return ContainerUtil.find(getFlexAndFlexmojosSdks(), sdk -> name.equals(sdk.getName()));
   }
 

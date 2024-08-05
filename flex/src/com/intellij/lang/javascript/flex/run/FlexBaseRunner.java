@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
@@ -92,9 +92,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   @Override
-  @Nullable
-  protected RunContentDescriptor doExecute(@NotNull final RunProfileState state,
-                                           @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  protected @Nullable RunContentDescriptor doExecute(final @NotNull RunProfileState state,
+                                                     final @NotNull ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final RunProfile runProfile = env.getRunProfile();
@@ -196,14 +195,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(module.getProject()).startSession(env, new XDebugProcessStarter() {
         @Override
-        @NotNull
-        public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+        public @NotNull XDebugProcess start(final @NotNull XDebugSession session) throws ExecutionException {
           try {
             if (params instanceof FlexUnitRunnerParameters) {
               return new FlexDebugProcess(session, bc, params) {
-                @NotNull
                 @Override
-                public ExecutionConsole createConsole() {
+                public @NotNull ExecutionConsole createConsole() {
                   try {
                     return createFlexUnitRunnerConsole(session.getProject(), env, getProcessHandler());
                   }
@@ -247,12 +244,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
   }
 
-  @Nullable
-  protected abstract RunContentDescriptor launchAirFlexUnit(final Project project,
-                                                            final RunProfileState state,
-                                                            final RunContentDescriptor contentToReuse,
-                                                            final ExecutionEnvironment env,
-                                                            final FlexUnitRunnerParameters params) throws ExecutionException;
+  protected abstract @Nullable RunContentDescriptor launchAirFlexUnit(final Project project,
+                                                                      final RunProfileState state,
+                                                                      final RunContentDescriptor contentToReuse,
+                                                                      final ExecutionEnvironment env,
+                                                                      final FlexUnitRunnerParameters params) throws ExecutionException;
 
   protected abstract RunContentDescriptor launchWebFlexUnit(final Project project,
                                                             final RunContentDescriptor contentToReuse,
@@ -260,13 +256,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                             final FlexUnitRunnerParameters params,
                                                             final String swfFilePath) throws ExecutionException;
 
-  @Nullable
-  protected abstract RunContentDescriptor launchFlexConfig(final Module module,
-                                                           final FlexBuildConfiguration config,
-                                                           final FlashRunnerParameters params,
-                                                           final RunProfileState state,
-                                                           final RunContentDescriptor contentToReuse,
-                                                           final ExecutionEnvironment environment) throws ExecutionException;
+  protected abstract @Nullable RunContentDescriptor launchFlexConfig(final Module module,
+                                                                     final FlexBuildConfiguration config,
+                                                                     final FlashRunnerParameters params,
+                                                                     final RunProfileState state,
+                                                                     final RunContentDescriptor contentToReuse,
+                                                                     final ExecutionEnvironment environment) throws ExecutionException;
 
   public static ExecutionConsole createFlexUnitRunnerConsole(Project project,
                                                              ExecutionEnvironment env,
@@ -387,8 +382,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
            AirPackageUtil.installOnIosDevice(module.getProject(), bc.getSdk(), runnerParameters, ipaPath);
   }
 
-  @Nullable
-  public static String getApplicationId(final String airDescriptorPath) {
+  public static @Nullable String getApplicationId(final String airDescriptorPath) {
     final VirtualFile descriptorFile = WriteAction.compute(() -> {
       final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
       if (file != null) {
@@ -406,8 +400,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return null;
   }
 
-  @Nullable
-  public static String getApplicationName(final String airDescriptorPath) {
+  public static @Nullable String getApplicationName(final String airDescriptorPath) {
     final VirtualFile descriptorFile = WriteAction.compute(() -> {
       final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
       if (file != null) {
@@ -604,8 +597,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return commandLine;
   }
 
-  @Nullable
-  private static String getSupportedProfiles(final String descriptorPath) {
+  private static @Nullable String getSupportedProfiles(final String descriptorPath) {
     final File descriptorFile = new File(descriptorPath);
     if (descriptorFile.isFile()) {
       try {
@@ -651,7 +643,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final String message = FlexBundle.message("run.when.compile.before.run.turned.off");
     getCompileBeforeLaunchNotificationGroup().createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
       @Override
-      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+      public void hyperlinkUpdate(final @NotNull Notification notification, final @NotNull HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           notification.expire();
 
@@ -670,7 +662,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
     getCompileBeforeLaunchNotificationGroup().createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
       @Override
-      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+      public void hyperlinkUpdate(final @NotNull Notification notification, final @NotNull HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           notification.expire();
 
@@ -728,9 +720,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       super(runConfiguration, "FlexUnit", env.getExecutor());
     }
 
-    @Nullable
     @Override
-    public SMTestLocator getTestLocator() {
+    public @Nullable SMTestLocator getTestLocator() {
       return FlexQualifiedNameLocationProvider.INSTANCE;
     }
   }

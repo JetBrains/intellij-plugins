@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.completion;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class FlexTextReferenceCompletionProvider extends CompletionContributor {
   @Override
-  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull CompletionResultSet result) {
+  public void fillCompletionVariants(final @NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     LegacyCompletionContributor.processReferences(parameters, result, (reference, set) -> {
       if (reference instanceof ActionScriptTextReference) {
         JSTextReferenceCompletionProvider.addVariants((JSTextReference)reference, parameters, set);

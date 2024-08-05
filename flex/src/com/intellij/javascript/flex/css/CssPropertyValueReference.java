@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.util.TextRange;
@@ -32,9 +32,8 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     }
   }
 
-  @NotNull
   @Override
-  public String getUnresolvedMessagePattern() {
+  public @NotNull String getUnresolvedMessagePattern() {
     return CssBundle.message("invalid.css.property.name.message");
   }
 
@@ -52,21 +51,18 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     return ResolveResult.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return myElement;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     return new TextRange(myStart, myEnd);
   }
 
   @Override
-  @NotNull
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     String text = myElement.getText();
     if (FlexCssUtil.inQuotes(text)) {
       return text.substring(1, text.length() - 1);
@@ -82,8 +78,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   }
 
   @Override
-  @Nullable
-  public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
+  public @Nullable PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     return null;
   }
 

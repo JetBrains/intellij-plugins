@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.ide.util.projectWizard.importSources.util.CommonSourceRootDetectionUtil;
@@ -27,12 +28,11 @@ class FlexSourcesRootDetector extends RootDetector {
     myDetectMxml = true;
   }
 
-  @NotNull
   @Override
-  public Collection<VirtualFile> detectRoots(@NotNull final VirtualFile rootCandidate, @NotNull final ProgressIndicator progressIndicator) {
+  public @NotNull Collection<VirtualFile> detectRoots(final @NotNull VirtualFile rootCandidate, final @NotNull ProgressIndicator progressIndicator) {
     DistinctRootsCollection<VirtualFile> result = new DistinctRootsCollection<>() {
       @Override
-      protected boolean isAncestor(@NotNull final VirtualFile ancestor, @NotNull final VirtualFile virtualFile) {
+      protected boolean isAncestor(final @NotNull VirtualFile ancestor, final @NotNull VirtualFile virtualFile) {
         return VfsUtilCore.isAncestor(ancestor, virtualFile, false);
       }
     };
@@ -45,9 +45,8 @@ class FlexSourcesRootDetector extends RootDetector {
                             final VirtualFile topmostRoot,
                             final ProgressIndicator progressIndicator) {
     VfsUtilCore.visitChildrenRecursively(startFile, new VirtualFileVisitor<Void>() {
-      @NotNull
       @Override
-      public Result visitFileEx(@NotNull VirtualFile file) {
+      public @NotNull Result visitFileEx(@NotNull VirtualFile file) {
         progressIndicator.checkCanceled();
         progressIndicator.setText2(file.getPresentableUrl());
 

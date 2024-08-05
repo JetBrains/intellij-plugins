@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -16,8 +16,8 @@ import java.util.Set;
 
 final class Abc {
   static final @NonNls String TAB = "  ";
-  @NonNls static final String $CINIT = "$cinit";
-  @NonNls static final String $ = "$";
+  static final @NonNls String $CINIT = "$cinit";
+  static final @NonNls String $ = "$";
 
   private static final int ATTR_final = 0x01; // 1=final, 0=virtual
   private static final int ATTR_override = 0x02; // 1=override, 0=new
@@ -79,9 +79,9 @@ final class Abc {
 
   static final @NonNls String[] traitKinds = {"var", "function", "function get", "function set", "class", "function", "const"};
 
-  final static @NonNls String PUBLIC_NS = "";
+  static final @NonNls String PUBLIC_NS = "";
   static final String PRIVATE_NS = "private";
-  final static @NonNls String anyNs = "*";
+  static final @NonNls String anyNs = "*";
   static final String[] PUBLIC_NS_SET = new String[]{PUBLIC_NS};
   static final String[] PRIVATE_NS_SET = new String[]{PRIVATE_NS};
 

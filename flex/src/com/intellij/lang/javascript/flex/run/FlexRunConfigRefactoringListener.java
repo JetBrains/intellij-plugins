@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfigurationBase;
@@ -32,7 +33,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
   }
 
   @Override
-  public void undoElementMovedOrRenamed(@NotNull final PsiElement newElement, @NotNull final String oldQualifiedName) {
+  public void undoElementMovedOrRenamed(final @NotNull PsiElement newElement, final @NotNull String oldQualifiedName) {
     undo(newElement, oldQualifiedName);
   }
 

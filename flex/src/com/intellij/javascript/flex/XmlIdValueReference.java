@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.openapi.util.Key;
@@ -26,23 +27,39 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     super(element);
   }
 
-  @Nullable
-  private static PsiElement getIdValueElement(PsiElement element) {
-    if (element instanceof XmlTag) {
-      final XmlAttribute attribute = ((XmlTag)element).getAttribute(IdReferenceProvider.ID_ATTR_NAME, null);
-      return attribute != null ? attribute.getValueElement() : null;
-    }
-    else {
-      return element;
-    }
+  @Override
+  public @Nullable PsiElement resolve() {
+    final Ref<PsiElement> result = new Ref<>();
+    process(new PsiElementProcessor<>() {
+      final String canonicalText = getCanonicalText();
+
+      @Override
+      public boolean execute(final @NotNull PsiElement element) {
+        final String idValue = getIdValue(element);
+        if (idValue != null && idValue.equals(canonicalText)) {
+          result.set(getIdValueElement(element));
+          return false;
+        }
+        return true;
+      }
+    });
+
+    return result.get();
   }
 
-  @Nullable
-  protected static String getIdValue(final PsiElement element) {
-    if (element instanceof XmlTag) {
-      return ((XmlTag)element).getAttributeValue(IdReferenceProvider.ID_ATTR_NAME);
-    }
-    return null;
+  @Override
+  public Object @NotNull [] getVariants() {
+    final List<String> result = new LinkedList<>();
+
+    process(new PsiElementProcessor<>() {
+      @Override
+      public boolean execute(final @NotNull PsiElement element) {
+        result.add(getIdValue(element));
+        return true;
+      }
+    });
+
+    return ArrayUtil.toObjectArray(result);
   }
 
   protected static boolean isAcceptableTagType(final XmlTag subTag) {
@@ -82,40 +99,21 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     }
   }
 
-  @Override
-  @Nullable
-  public PsiElement resolve() {
-    final Ref<PsiElement> result = new Ref<>();
-    process(new PsiElementProcessor<>() {
-      final String canonicalText = getCanonicalText();
-
-      @Override
-      public boolean execute(@NotNull final PsiElement element) {
-        final String idValue = getIdValue(element);
-        if (idValue != null && idValue.equals(canonicalText)) {
-          result.set(getIdValueElement(element));
-          return false;
-        }
-        return true;
-      }
-    });
-
-    return result.get();
+  private static @Nullable PsiElement getIdValueElement(PsiElement element) {
+    if (element instanceof XmlTag) {
+      final XmlAttribute attribute = ((XmlTag)element).getAttribute(IdReferenceProvider.ID_ATTR_NAME, null);
+      return attribute != null ? attribute.getValueElement() : null;
+    }
+    else {
+      return element;
+    }
   }
 
-  @Override
-  public Object @NotNull [] getVariants() {
-    final List<String> result = new LinkedList<>();
-
-    process(new PsiElementProcessor<>() {
-      @Override
-      public boolean execute(@NotNull final PsiElement element) {
-        result.add(getIdValue(element));
-        return true;
-      }
-    });
-
-    return ArrayUtil.toObjectArray(result);
+  protected static @Nullable String getIdValue(final PsiElement element) {
+    if (element instanceof XmlTag) {
+      return ((XmlTag)element).getAttributeValue(IdReferenceProvider.ID_ATTR_NAME);
+    }
+    return null;
   }
 
   @Override

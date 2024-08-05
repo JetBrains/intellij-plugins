@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.impl.BuildTargetScopeProvider;
@@ -152,10 +153,9 @@ public final class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider
   }
 
   @Override
-  @NotNull
-  public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
-                                                         @NotNull final Project project,
-                                                         boolean forceBuild) {
+  public @NotNull List<TargetTypeBuildScope> getBuildTargetScopes(final @NotNull CompileScope baseScope,
+                                                                  final @NotNull Project project,
+                                                                  boolean forceBuild) {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(baseScope);
     final Collection<Pair<Module, FlexBuildConfiguration>> bcsToCompileForPackaging =
       FlexResourceBuildTargetScopeProvider.getBCsToCompileForPackaging(baseScope);

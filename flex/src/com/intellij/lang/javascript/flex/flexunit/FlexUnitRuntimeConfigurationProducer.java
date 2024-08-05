@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -33,16 +33,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigurationProducer<FlexUnitRunConfiguration> {
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return ConfigurationTypeUtil.findConfigurationType(FlexUnitRunConfigurationType.class);
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(@NotNull final FlexUnitRunConfiguration configuration,
-                                                  @NotNull final ConfigurationContext context,
-                                                  @NotNull final Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(final @NotNull FlexUnitRunConfiguration configuration,
+                                                  final @NotNull ConfigurationContext context,
+                                                  final @NotNull Ref<PsiElement> sourceElement) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
 
@@ -56,8 +55,8 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
   }
 
   @Override
-  public boolean isConfigurationFromContext(@NotNull final FlexUnitRunConfiguration configuration,
-                                            @NotNull final ConfigurationContext context) {
+  public boolean isConfigurationFromContext(final @NotNull FlexUnitRunConfiguration configuration,
+                                            final @NotNull ConfigurationContext context) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
 
@@ -184,8 +183,7 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
     params.setScope(FlexUnitRunnerParameters.Scope.Class);
   }
 
-  @Nullable
-  private static PsiElement findTestElement(PsiElement element) {
+  private static @Nullable PsiElement findTestElement(PsiElement element) {
     if (element.getLanguage().isKindOf(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())) {
       final PsiNamedElement parent = PsiTreeUtil.getNonStrictParentOfType(element, JSFunction.class, JSClass.class, JSFile.class);
       if (parent instanceof JSClass) {

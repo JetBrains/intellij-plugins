@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -19,7 +19,7 @@ import com.intellij.psi.meta.MetaDataRegistrar;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-// In fact it is not an application component any more.
+// in fact, it is not an application component anymore
 public final class FlexApplicationComponent implements MetaDataContributor, StandardResourceProvider {
   public static final FileType SWF_FILE_TYPE = SwfFileType.SWF_FILE_TYPE;
 
@@ -28,7 +28,7 @@ public final class FlexApplicationComponent implements MetaDataContributor, Stan
 
   public static final LanguageFileType MXML = MxmlFileType.MXML;
 
-  @NonNls public static final String HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG = "http://www.adobe.com/2006/flex-config";
+  public static final @NonNls String HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG = "http://www.adobe.com/2006/flex-config";
 
   public static final String[] AIR_VERSIONS =
     {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7",
@@ -36,7 +36,7 @@ public final class FlexApplicationComponent implements MetaDataContributor, Stan
       "27.0", "28.0", "29.0", "30.0", "31.0", "32.0", "33.0", "33.1", "50.0", "50.1", "50.2", "50.3", "51.0"};
 
   @Override
-  public void contributeMetaData(@NotNull final MetaDataRegistrar registrar) {
+  public void contributeMetaData(final @NotNull MetaDataRegistrar registrar) {
     registrar.registerMetaData(
       new RootTagFilter(new NamespaceFilter(MxmlJSClass.MXML_URIS)),
       FlexMxmlNSDescriptor.class

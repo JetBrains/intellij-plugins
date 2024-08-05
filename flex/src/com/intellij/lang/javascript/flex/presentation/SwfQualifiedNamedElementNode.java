@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -33,9 +33,8 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
            Objects.equals(value.getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
   }
 
-  @NotNull
   @Override
-  public Collection<? extends AbstractTreeNode<?>> getChildren() {
+  public @NotNull Collection<? extends AbstractTreeNode<?>> getChildren() {
     return new ArrayList<>();
   }
 

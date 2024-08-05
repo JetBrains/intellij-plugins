@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramRelationshipInfo;
@@ -59,19 +59,18 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
       private final RelationshipType myType;
       private final boolean myAllowMultipleLinks;
 
-      @Nullable
-      private final SmartPsiElementPointer<PsiElement> myElementPointer;
+      private final @Nullable SmartPsiElementPointer<PsiElement> myElementPointer;
 
-      Impl(@NotNull final RelationshipType type,
-                  final DiagramLineType lineType,
-                  @Nullable final String label,
-                  @Nullable final String fromLabel,
-                  @Nullable final String toLabel,
-                  final int width,
-                  final Shape startArrow,
-                  final Shape endArrow,
-                  @Nullable PsiElement element,
-                  boolean allowMultipleLinks) {
+      Impl(final @NotNull RelationshipType type,
+           final DiagramLineType lineType,
+           final @Nullable String label,
+           final @Nullable String fromLabel,
+           final @Nullable String toLabel,
+           final int width,
+           final Shape startArrow,
+           final Shape endArrow,
+           @Nullable PsiElement element,
+           boolean allowMultipleLinks) {
         super(type.name(), lineType, width, startArrow, endArrow, label, null, fromLabel, null, toLabel, null);
         myType = type;
         myAllowMultipleLinks = allowMultipleLinks;
@@ -80,8 +79,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
       }
 
       @Override
-      @Nullable
-      public PsiElement getElement() {
+      public @Nullable PsiElement getElement() {
         return myElementPointer != null ? myElementPointer.getElement() : null;
       }
 

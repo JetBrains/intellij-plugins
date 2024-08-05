@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
@@ -45,8 +45,7 @@ public final class FlexResolveHelper implements JSResolveHelper {
   public static final PsiScopedImportSet ourPsiScopedImportSet = new PsiScopedImportSet();
 
   @Override
-  @Nullable
-  public PsiElement findClassByQName(final String link, final Project project, final String className, final GlobalSearchScope scope) {
+  public @Nullable PsiElement findClassByQName(final String link, final Project project, final String className, final GlobalSearchScope scope) {
     final Ref<JSClass> result = new Ref<>();
 
     final String expectedPackage = link.equals(className) ? "" : link.substring(0, link.length() - className.length() - 1);

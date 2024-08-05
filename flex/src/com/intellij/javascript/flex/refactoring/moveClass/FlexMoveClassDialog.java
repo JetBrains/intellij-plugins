@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.ide.util.PlatformPackageUtil;
@@ -57,8 +57,8 @@ public class FlexMoveClassDialog extends RefactoringDialog {
   private JTextField myClassNameField;
   private JLabel myClassNameLabel;
   private final Collection<JSQualifiedNamedElement> myElements;
-  @Nullable private final PsiElement myTargetContainer;
-  @Nullable private final MoveCallback myCallback;
+  private final @Nullable PsiElement myTargetContainer;
+  private final @Nullable MoveCallback myCallback;
   private final boolean myFileLocal;
 
   public FlexMoveClassDialog(Project project,

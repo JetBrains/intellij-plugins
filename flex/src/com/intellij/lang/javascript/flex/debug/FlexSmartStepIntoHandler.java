@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -29,9 +30,8 @@ final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmar
     myDebugProcess = debugProcess;
   }
 
-  @NotNull
   @Override
-  public List<PsiBackedSmartStepIntoVariant> computeSmartStepVariants(@NotNull XSourcePosition position) {
+  public @NotNull List<PsiBackedSmartStepIntoVariant> computeSmartStepVariants(@NotNull XSourcePosition position) {
     final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
 
     final SortedMap<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap =
@@ -106,7 +106,7 @@ final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmar
   }
 
   @Override
-  public void startStepInto(@NotNull final PsiBackedSmartStepIntoVariant stepIntoVariant) {
+  public void startStepInto(final @NotNull PsiBackedSmartStepIntoVariant stepIntoVariant) {
     myDebugProcess.sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
       @Override
       CommandOutputProcessingMode onTextAvailable(@NonNls String s) {

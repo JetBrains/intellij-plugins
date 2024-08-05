@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.CommonBundle;
@@ -91,8 +91,7 @@ public final class FlashBuilderProjectFinder {
     the logic is taken from
     org.eclipse.core.internal.resources.LocalMetaArea.readPrivateDescription(IProject target, IProjectDescription description)
    */
-  @Nullable
-  private static String getDotProjectFileLocation(final String workspacePath, final File projectCacheDir) {
+  private static @Nullable String getDotProjectFileLocation(final String workspacePath, final File projectCacheDir) {
     final String projectName = projectCacheDir.getName();
 
     final File dotLocationFile = new File(projectCacheDir + "/" + DOT_LOCATION);

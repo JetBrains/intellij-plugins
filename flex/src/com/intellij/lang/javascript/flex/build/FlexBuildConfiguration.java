@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.util.xmlb.annotations.Transient;
@@ -13,7 +14,7 @@ public class FlexBuildConfiguration {
   public enum Type {
     Default("idea-flex"), FlexUnit("idea-flexunit"), OverriddenMainClass("idea-flex-main-class");
 
-    @NonNls private final String myConfigFilePrefix;
+    private final @NonNls String myConfigFilePrefix;
 
     Type(final @NonNls String configFilePrefix) {
       myConfigFilePrefix = configFilePrefix;

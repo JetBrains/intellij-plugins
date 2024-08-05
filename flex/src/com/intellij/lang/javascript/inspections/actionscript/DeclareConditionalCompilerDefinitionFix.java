@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -30,13 +31,12 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return FlexBundle.message("define.0", myConditionalCompilerDefinitionName);
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull final PsiFile file, @Nullable final Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, final @NotNull PsiFile file, final @Nullable Editor editor) {
     final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(project);
 
     ShowSettingsUtil.getInstance().editConfigurable(project, configurable, () -> {

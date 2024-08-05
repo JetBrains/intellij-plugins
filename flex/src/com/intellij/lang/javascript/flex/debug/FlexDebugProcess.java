@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.CantRunException;
@@ -109,21 +109,20 @@ public class FlexDebugProcess extends XDebugProcess {
   private final String myDebuggerSdkHome;
   private final String myDebuggerVersion;
 
-  @NonNls static final String RESOLVED_BREAKPOINT_MARKER = "Resolved breakpoint ";
-  @NonNls static final String BREAKPOINT_MARKER = "Breakpoint ";
-  @NonNls private static final String FDB_MARKER = "(fdb) ";
-  @NonNls private static final String WAITING_PLAYER_MARKER_1 = "Waiting for Player to connect";
-  @NonNls private static final String WAITING_PLAYER_MARKER_2 = "Trying to connect to Player";
-  @NonNls static final String ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER = "Attempting to resolve breakpoint ";
-
-  @NonNls private static final String ADL_PREFIX = "[AIR Debug Launcher]: ";
+  static final @NonNls String RESOLVED_BREAKPOINT_MARKER = "Resolved breakpoint ";
+  static final @NonNls String BREAKPOINT_MARKER = "Breakpoint ";
+  static final @NonNls String ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER = "Attempting to resolve breakpoint ";
+  static final @NonNls String AMBIGUOUS_MATCHING_FILE_NAMES = "Ambiguous matching file names:";
+  private static final @NonNls String FDB_MARKER = "(fdb) ";
+  private static final @NonNls String WAITING_PLAYER_MARKER_1 = "Waiting for Player to connect";
+  private static final @NonNls String WAITING_PLAYER_MARKER_2 = "Trying to connect to Player";
 
   private boolean myCheckForUnexpectedStartupStop;
   private Thread myDebuggerManagerThread;
-  @NonNls static final String AMBIGUOUS_MATCHING_FILE_NAMES = "Ambiguous matching file names:";
+  private static final @NonNls String ADL_PREFIX = "[AIR Debug Launcher]: ";
 
   private final FlexBreakpointsHandler myBreakpointsHandler;
-  @NonNls private static final String FAULT_MARKER = "[Fault] ";
+  private static final @NonNls String FAULT_MARKER = "[Fault] ";
   private static final Logger LOG = Logger.getInstance(FlexDebugProcess.class.getName());
   private static final boolean doSimpleTracing = ApplicationManager.getApplication().isInternal();
 
@@ -277,8 +276,7 @@ public class FlexDebugProcess extends XDebugProcess {
     startCommandProcessingThread();
   }
 
-  @Nullable
-  public Module getModule() {
+  public @Nullable Module getModule() {
     return myModule.isDisposed() ? null : myModule;
   }
 
@@ -465,9 +463,8 @@ public class FlexDebugProcess extends XDebugProcess {
                : FlexBundle.message("initializing.flex.debugger");
   }
 
-  @NotNull
   @Override
-  public XDebuggerEditorsProvider getEditorsProvider() {
+  public @NotNull XDebuggerEditorsProvider getEditorsProvider() {
     return new FlexDebuggerEditorsProvider();
   }
 
@@ -684,8 +681,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  @Nullable
-  private String evaluateMessage(@Nullable XExpression expression, FlexStackFrame frame) {
+  private @Nullable String evaluateMessage(@Nullable XExpression expression, FlexStackFrame frame) {
     if (expression == null || StringUtil.isEmptyOrSpaces(expression.getExpression())) {
       return null;
     }
@@ -786,8 +782,7 @@ public class FlexDebugProcess extends XDebugProcess {
   /**
    * @see #findFileByNameOrId(String, String, String)
    */
-  @Nullable
-  private VirtualFile findFile(final String fileName, @NotNull String packageName) {
+  private @Nullable VirtualFile findFile(final String fileName, @NotNull String packageName) {
     final String packagePath = packageName.replace('.', '/');
 
     // [2]
@@ -823,8 +818,7 @@ public class FlexDebugProcess extends XDebugProcess {
   /**
    * @see #findFileByNameOrId(String, String, String)
    */
-  @Nullable
-  private VirtualFile findFile(final String fileName) {
+  private @Nullable VirtualFile findFile(final String fileName) {
     // [4]
     final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
     Collection<VirtualFile> files = getFilesByName(bcScope, fileName);
@@ -851,8 +845,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return null;
   }
 
-  @NotNull
-  private VirtualFile getThisOrSimilarFileInProject(final @NotNull VirtualFile file, final String packageName) {
+  private @NotNull VirtualFile getThisOrSimilarFileInProject(final @NotNull VirtualFile file, final String packageName) {
     final Project project = getSession().getProject();
     final GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
@@ -878,19 +871,9 @@ public class FlexDebugProcess extends XDebugProcess {
     return FilenameIndex.getVirtualFilesByName(fileName, scope);
   }
 
-  @Nullable
-  private static VirtualFile getFileMatchingPackageName(final Project project,
-                                                        final Collection<VirtualFile> files,
-                                                        final String packageName) {
-    for (VirtualFile file : files) {
-      final VirtualFile sourceRoot = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(file);
-      final String relPath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(file, sourceRoot, '/');
-      final String packagePath = relPath == null ? null : PathUtil.getParentPath(relPath).replace('/', '.');
-      if (packagePath != null && packagePath.equals(packageName)) {
-        return file;
-      }
-    }
-    return null;
+  @Override
+  public void runToPosition(final @NotNull XSourcePosition position, @Nullable XSuspendContext context) {
+    myBreakpointsHandler.handleRunToPosition(position, this);
   }
 
   private static GlobalSearchScope uniteWithLibrarySourcesOfBC(GlobalSearchScope scope,
@@ -1148,8 +1131,32 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void runToPosition(@NotNull final XSourcePosition position, @Nullable XSuspendContext context) {
-    myBreakpointsHandler.handleRunToPosition(position, this);
+  public XValueMarkerProvider<FlexValue, String> createValueMarkerProvider() {
+    return new XValueMarkerProvider<>(FlexValue.class) {
+      @Override
+      public boolean canMark(final @NotNull FlexValue value) {
+        return getObjectId(value) != null;
+      }
+
+      @Override
+      public String getMarker(final @NotNull FlexValue value) {
+        return getObjectId(value);
+      }
+
+      private static String getObjectId(final FlexValue value) {
+        final String text = value.getResult();
+        final String prefix = "[Object ";
+        final String suffix = FlexStackFrame.CLASS_MARKER;
+        int suffixIndex;
+        if (text.startsWith(prefix) && (suffixIndex = text.indexOf(suffix, prefix.length())) > 0) {
+          try {
+            return FlexStackFrame.validObjectId(text.substring(prefix.length(), suffixIndex));
+          }
+          catch (NumberFormatException e) {/*ignore*/}
+        }
+        return null;
+      }
+    };
   }
 
   public void sendAndProcessOneCommand(final DebuggerCommand command, final @Nullable Function<Exception, Void> onException) {
@@ -1281,32 +1288,10 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public XValueMarkerProvider<FlexValue, String> createValueMarkerProvider() {
-    return new XValueMarkerProvider<>(FlexValue.class) {
-      @Override
-      public boolean canMark(@NotNull final FlexValue value) {
-        return getObjectId(value) != null;
-      }
-
-      @Override
-      public String getMarker(@NotNull final FlexValue value) {
-        return getObjectId(value);
-      }
-
-      private static String getObjectId(final FlexValue value) {
-        final String text = value.getResult();
-        final String prefix = "[Object ";
-        final String suffix = FlexStackFrame.CLASS_MARKER;
-        int suffixIndex;
-        if (text.startsWith(prefix) && (suffixIndex = text.indexOf(suffix, prefix.length())) > 0) {
-          try {
-            return FlexStackFrame.validObjectId(text.substring(prefix.length(), suffixIndex));
-          }
-          catch (NumberFormatException e) {/*ignore*/}
-        }
-        return null;
-      }
-    };
+  public void registerAdditionalActions(final @NotNull DefaultActionGroup leftToolbar,
+                                        final @NotNull DefaultActionGroup topToolbar,
+                                        @NotNull DefaultActionGroup settings) {
+    topToolbar.addAction(ActionManager.getInstance().getAction("Flex.Debugger.FilterSwfLoadUnloadMessages"));
   }
 
   static class QuitCommand extends DebuggerCommand {
@@ -1623,30 +1608,18 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  private class SuspendDebuggerCommand extends DebuggerCommand {
-    protected final DebuggerCommand myCommand1;
-
-    SuspendDebuggerCommand(final DebuggerCommand command1) {
-      super("suspend", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.RUNNING, VMState.SUSPENDED);
-      myCommand1 = command1;
+  private static @Nullable VirtualFile getFileMatchingPackageName(final Project project,
+                                                                  final Collection<VirtualFile> files,
+                                                                  final String packageName) {
+    for (VirtualFile file : files) {
+      final VirtualFile sourceRoot = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(file);
+      final String relPath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(file, sourceRoot, '/');
+      final String packagePath = relPath == null ? null : PathUtil.getParentPath(relPath).replace('/', '.');
+      if (packagePath != null && packagePath.equals(packageName)) {
+        return file;
+      }
     }
-
-    @Override
-    CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
-      insertCommand(new DebuggerCommand("y", CommandOutputProcessingType.SPECIAL_PROCESSING) {
-        @Override
-        CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
-          doCommandAfterSuspend();
-          return CommandOutputProcessingMode.DONE;
-        }
-      });
-
-      return CommandOutputProcessingMode.DONE;
-    }
-
-    protected void doCommandAfterSuspend() {
-      insertCommand(myCommand1);
-    }
+    return null;
   }
 
   private class DumpOutputCommand extends DebuggerCommand {
@@ -1665,10 +1638,29 @@ public class FlexDebugProcess extends XDebugProcess {
     return new FlexSmartStepIntoHandler(this);
   }
 
-  @Override
-  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
-                                        @NotNull final DefaultActionGroup topToolbar,
-                                        @NotNull DefaultActionGroup settings) {
-    topToolbar.addAction(ActionManager.getInstance().getAction("Flex.Debugger.FilterSwfLoadUnloadMessages"));
+  private class SuspendDebuggerCommand extends DebuggerCommand {
+    protected final DebuggerCommand myCommand1;
+
+    SuspendDebuggerCommand(final DebuggerCommand command1) {
+      super("suspend", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.RUNNING, VMState.SUSPENDED);
+      myCommand1 = command1;
+    }
+
+    @Override
+    CommandOutputProcessingMode onTextAvailable(final @NonNls String s) {
+      insertCommand(new DebuggerCommand("y", CommandOutputProcessingType.SPECIAL_PROCESSING) {
+        @Override
+        CommandOutputProcessingMode onTextAvailable(final @NonNls String s) {
+          doCommandAfterSuspend();
+          return CommandOutputProcessingMode.DONE;
+        }
+      });
+
+      return CommandOutputProcessingMode.DONE;
+    }
+
+    protected void doCommandAfterSuspend() {
+      insertCommand(myCommand1);
+    }
   }
 }

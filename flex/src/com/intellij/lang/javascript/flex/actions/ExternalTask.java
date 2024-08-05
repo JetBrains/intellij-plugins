@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -78,8 +78,7 @@ public abstract class ExternalTask {
   protected void prepareEnvVars(Map<String, String> envVars) {
   }
 
-  @Nullable
-  protected File getProcessDir() {
+  protected @Nullable File getProcessDir() {
     return null;
   }
 
@@ -180,7 +179,7 @@ public abstract class ExternalTask {
                                      final @Nullable Consumer<? super List<String>> onFailure) {
     ProgressManager.getInstance().run(new Task.Backgroundable(task.myProject, progressTitle, true) {
       @Override
-      public void run(@NotNull final ProgressIndicator indicator) {
+      public void run(final @NotNull ProgressIndicator indicator) {
         createRunnable(task).run();
       }
 

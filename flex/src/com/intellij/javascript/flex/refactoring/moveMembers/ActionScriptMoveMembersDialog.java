@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.ide.util.PlatformPackageUtil;
@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ActionScriptMoveMembersDialog extends RefactoringDialog implements JSMoveMembersOptions {
-  @NonNls private static final String RECENTS_KEY = "JSMoveMembersDialog.RECENTS_KEY";
+  private static final @NonNls String RECENTS_KEY = "JSMoveMembersDialog.RECENTS_KEY";
   private final JSClass mySourceClass;
   private final String mySourceClassName;
   private final List<JSMemberInfo> myMemberInfos = new ArrayList<>();
@@ -109,8 +109,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
   }
 
   @Override
-  @Nullable
-  public String getMemberVisibility() {
+  public @Nullable String getMemberVisibility() {
     return myVisibilityPanel.getVisibility();
   }
 
@@ -254,8 +253,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     }
   }
 
-  @Nullable
-  private String validateInputData() {
+  private @Nullable String validateInputData() {
     final String fqName = getTargetClassName();
     if (fqName != null && fqName.isEmpty()) {
       return RefactoringBundle.message("no.destination.class.specified");
@@ -286,8 +284,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     }
   }
 
-  @Nullable
-  private JSClass findOrCreateTargetClass(final String fqName) {
+  private @Nullable JSClass findOrCreateTargetClass(final String fqName) {
     final String className = StringUtil.getShortName(fqName);
     final String packageName = StringUtil.getPackageName(fqName);
 

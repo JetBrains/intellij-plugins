@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -89,7 +89,7 @@ public final class SwcCatalogXmlUtil {
     }
 
     @Override
-    public void doctype(@Nullable final CharSequence publicId, @Nullable final CharSequence systemId, final int start, final int end) {
+    public void doctype(final @Nullable CharSequence publicId, final @Nullable CharSequence systemId, final int start, final int end) {
     }
 
     @Override
@@ -120,7 +120,7 @@ public final class SwcCatalogXmlUtil {
     }
 
     @Override
-    public void error(@NotNull final String message, final int start, final int end) {
+    public void error(final @NotNull String message, final int start, final int end) {
     }
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
@@ -28,14 +28,13 @@ public final class FlexProjectStructureUtil {
     return createPlace(bcConfigurable, DependenciesConfigurable.getTabName());
   }
 
-  public static Place createPlace(final Module module, final FlexBuildConfiguration bc, @Nullable final String tabName) {
+  public static Place createPlace(final Module module, final FlexBuildConfiguration bc, final @Nullable String tabName) {
     final FlexBCConfigurable bcConfigurable = findBcConfigurable(module, bc);
     return createPlace(bcConfigurable, tabName);
 
   }
 
-  @Nullable
-  private static FlexBCConfigurable findBcConfigurable(Module module, final DependenciesConfigurable configurable) {
+  private static @Nullable FlexBCConfigurable findBcConfigurable(Module module, final DependenciesConfigurable configurable) {
     final List<CompositeConfigurable> configurables =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getBCConfigurables(module);
 
@@ -48,8 +47,7 @@ public final class FlexProjectStructureUtil {
     return null;
   }
 
-  @Nullable
-  private static FlexBCConfigurable findBcConfigurable(Module module, final FlexBuildConfiguration bc) {
+  private static @Nullable FlexBCConfigurable findBcConfigurable(Module module, final FlexBuildConfiguration bc) {
     final List<CompositeConfigurable> configurables =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getBCConfigurables(module);
 

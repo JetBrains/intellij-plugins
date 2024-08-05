@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -119,13 +120,12 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
   }
 
   @Override
-  @NotNull
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final FlexUnitRunConfiguration config) {
+  protected void resetEditorFrom(final @NotNull FlexUnitRunConfiguration config) {
     final FlexUnitRunnerParameters params = config.getRunnerParameters();
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
@@ -143,7 +143,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final FlexUnitRunConfiguration config) throws ConfigurationException {
+  protected void applyEditorTo(final @NotNull FlexUnitRunConfiguration config) throws ConfigurationException {
     final FlexUnitRunnerParameters params = config.getRunnerParameters();
 
     myBCCombo.applyTo(params);

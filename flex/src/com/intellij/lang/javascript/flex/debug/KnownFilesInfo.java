@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -27,8 +28,7 @@ public final class KnownFilesInfo {
     myUpToDate = upToDate;
   }
 
-  @Nullable
-  public String getFilePathById(final int worker, final String id) {
+  public @Nullable String getFilePathById(final int worker, final String id) {
     ensureUpToDate();
 
     final BidirectionalMap<String, String> filePathToId = myWorkerToFilePathToIdMap.get(worker);
@@ -37,8 +37,7 @@ public final class KnownFilesInfo {
     return paths != null && paths.size() > 0 ? paths.get(0) : null;
   }
 
-  @Nullable
-  public String getIdByFilePath(final String filePath) {
+  public @Nullable String getIdByFilePath(final String filePath) {
     ensureUpToDate();
 
     final int worker = 0; // todo calculate correct worker
@@ -47,16 +46,14 @@ public final class KnownFilesInfo {
     return filePathToId == null ? null : filePathToId.get(filePath);
   }
 
-  @Nullable
-  public String getIdByFilePathNoUpdate(final String filePath) {
+  public @Nullable String getIdByFilePathNoUpdate(final String filePath) {
     final int worker = 0; // todo calculate correct worker
 
     final BidirectionalMap<String, String> filePathToId = myWorkerToFilePathToIdMap.get(worker);
     return filePathToId == null ? null : filePathToId.get(filePath);
   }
 
-  @Nullable
-  public Collection<String> getPathsByName(final int worker, final String fileName) {
+  public @Nullable Collection<String> getPathsByName(final int worker, final String fileName) {
     ensureUpToDate();
 
     final Map<String, Collection<String>> fileNameToPaths = myWorkerToFileNameToPathsMap.get(worker);

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -60,8 +60,7 @@ public final class BCUtils {
     return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
-  @Nullable
-  public static String getBCSpecifier(final FlexBuildConfiguration bc) {
+  public static @Nullable String getBCSpecifier(final FlexBuildConfiguration bc) {
     if (!bc.isTempBCForCompilation()) return null;
     if (isFlexUnitBC(bc)) return "flexunit";
     if (isRLMTemporaryBC(bc)) return "module " + StringUtil.getShortName(bc.getMainClass());
@@ -104,8 +103,7 @@ public final class BCUtils {
    *
    * @return {@code null} if entry should not be included at all
    */
-  @Nullable
-  public static LinkageType getSdkEntryLinkageType(String swcPath, FlexBuildConfiguration bc) {
+  public static @Nullable LinkageType getSdkEntryLinkageType(String swcPath, FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     LOG.assertTrue(sdk != null);
     return FlexCommonUtils.getSdkEntryLinkageType(sdk.getHomePath(), swcPath, bc.getNature(), bc.getDependencies().getTargetPlayer(),
@@ -173,7 +171,7 @@ public final class BCUtils {
   }
 
   public static boolean isValidMainClass(final Module module,
-                                         @Nullable final FlexBuildConfiguration buildConfiguration,
+                                         final @Nullable FlexBuildConfiguration buildConfiguration,
                                          final JSClass clazz,
                                          final boolean includeTests) {
     return getMainClassFilter(module, buildConfiguration, false, includeTests, false).value(clazz);

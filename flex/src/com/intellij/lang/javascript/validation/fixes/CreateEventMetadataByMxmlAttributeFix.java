@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -35,8 +36,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return JavaScriptBundle.message("declare.event.0", myEventName);
   }
 

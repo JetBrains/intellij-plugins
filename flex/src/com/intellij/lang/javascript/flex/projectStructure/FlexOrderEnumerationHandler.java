@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -30,18 +31,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   public static Key<FlexBuildConfiguration> FORCE_BC = Key.create(FlexOrderEnumerationHandler.class.getName() + ".forceBc");
 
-  public static final class FactoryImpl extends Factory {
-    @Override
-    public boolean isApplicable(@NotNull Module module) {
-      return ModuleType.get(module) == FlexModuleType.getInstance();
-    }
-
-    @NotNull
-    @Override
-    public OrderEnumerationHandler createHandler(@NotNull Module module) {
-      return new FlexOrderEnumerationHandler(module);
-    }
-  }
+  private final @Nullable Map<Module, ModuleData> myActiveConfigurations;
 
   // TODO our special handling for myWithoutJdk, myWithoutLibraries
 
@@ -55,80 +45,9 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
   }
 
-  @Nullable
-  private final Map<Module, ModuleData> myActiveConfigurations;
-  private final Module myRootModule;
-
-
-  public FlexOrderEnumerationHandler(@NotNull Module module) {
-    myRootModule = module;
-
-    myActiveConfigurations = new HashMap<>();
-    // last argument can be whatever
-    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<>(), true);
-  }
-
-  // configuration is null for root module (one for which scope is being computed)
-  private static void processModuleWithBuildConfiguration(@NotNull Module module,
-                                                          @Nullable FlexBuildConfiguration bc,
-                                                          Map<Module, ModuleData> modules2activeConfigurations,
-                                                          Set<FlexBuildConfiguration> processedConfigurations,
-                                                          boolean productionDependency) {
-    if (ModuleType.get(module) != FlexModuleType.getInstance()) {
-      return;
-    }
-
-
-    final boolean isRootModule = bc == null;
-    if (isRootModule) {
-      bc = getActiveConfiguration(module);
-    }
-
-    if (bc == null || !processedConfigurations.add(bc)) {
-      return;
-    }
-
-    ModuleData moduleData = modules2activeConfigurations.get(module);
-    if (moduleData == null) {
-      modules2activeConfigurations.put(module, moduleData = new ModuleData());
-    }
-    moduleData.addBc(bc, productionDependency);
-    for (DependencyEntry entry : bc.getDependencies().getEntries()) {
-      if (!(entry instanceof BuildConfigurationEntry)) {
-        continue;
-      }
-
-      final LinkageType linkageType = entry.getDependencyType().getLinkageType();
-      if (linkageType == LinkageType.LoadInRuntime) {
-        continue;
-      }
-
-      FlexBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-      if (dependencyBc == null || !FlexCommonUtils.checkDependencyType(bc.getOutputType(), dependencyBc.getOutputType(), linkageType)) {
-        continue;
-      }
-      if (!isRootModule && !BCUtils.isTransitiveDependency(linkageType)) {
-        continue;
-      }
-
-      Module dependencyModule = ((BuildConfigurationEntry)entry).findModule();
-      if (dependencyModule == null || dependencyModule == module) {
-        continue;
-      }
-      processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations,
-                                          entry.getDependencyType().getLinkageType() != LinkageType.Test);
-    }
-  }
-
-  private static FlexBuildConfiguration getActiveConfiguration(final Module module) {
-    final FlexBuildConfiguration forced = FORCE_BC.get(module);
-    return forced != null ? forced : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-  }
-
-  @NotNull
   @Override
-  public AddDependencyType shouldAddDependency(@NotNull OrderEntry orderEntry,
-                                               @NotNull OrderEnumeratorSettings settings) {
+  public @NotNull AddDependencyType shouldAddDependency(@NotNull OrderEntry orderEntry,
+                                                        @NotNull OrderEnumeratorSettings settings) {
     Module module = orderEntry.getOwnerModule();
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return super.shouldAddDependency(orderEntry, settings);
@@ -202,11 +121,78 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return AddDependencyType.DEFAULT;
     }
   }
+  private final Module myRootModule;
+
+
+  public FlexOrderEnumerationHandler(@NotNull Module module) {
+    myRootModule = module;
+
+    myActiveConfigurations = new HashMap<>();
+    // last argument can be whatever
+    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<>(), true);
+  }
+
+  // configuration is null for root module (one for which scope is being computed)
+  private static void processModuleWithBuildConfiguration(@NotNull Module module,
+                                                          @Nullable FlexBuildConfiguration bc,
+                                                          Map<Module, ModuleData> modules2activeConfigurations,
+                                                          Set<FlexBuildConfiguration> processedConfigurations,
+                                                          boolean productionDependency) {
+    if (ModuleType.get(module) != FlexModuleType.getInstance()) {
+      return;
+    }
+
+
+    final boolean isRootModule = bc == null;
+    if (isRootModule) {
+      bc = getActiveConfiguration(module);
+    }
+
+    if (bc == null || !processedConfigurations.add(bc)) {
+      return;
+    }
+
+    ModuleData moduleData = modules2activeConfigurations.get(module);
+    if (moduleData == null) {
+      modules2activeConfigurations.put(module, moduleData = new ModuleData());
+    }
+    moduleData.addBc(bc, productionDependency);
+    for (DependencyEntry entry : bc.getDependencies().getEntries()) {
+      if (!(entry instanceof BuildConfigurationEntry)) {
+        continue;
+      }
+
+      final LinkageType linkageType = entry.getDependencyType().getLinkageType();
+      if (linkageType == LinkageType.LoadInRuntime) {
+        continue;
+      }
+
+      FlexBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+      if (dependencyBc == null || !FlexCommonUtils.checkDependencyType(bc.getOutputType(), dependencyBc.getOutputType(), linkageType)) {
+        continue;
+      }
+      if (!isRootModule && !BCUtils.isTransitiveDependency(linkageType)) {
+        continue;
+      }
+
+      Module dependencyModule = ((BuildConfigurationEntry)entry).findModule();
+      if (dependencyModule == null || dependencyModule == module) {
+        continue;
+      }
+      processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations,
+                                          entry.getDependencyType().getLinkageType() != LinkageType.Test);
+    }
+  }
+
+  private static FlexBuildConfiguration getActiveConfiguration(final Module module) {
+    final FlexBuildConfiguration forced = FORCE_BC.get(module);
+    return forced != null ? forced : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+  }
 
   @Override
-  public boolean addCustomRootsForLibraryOrSdk(@NotNull final LibraryOrSdkOrderEntry forOrderEntry,
-                                               @NotNull final OrderRootType type,
-                                               @NotNull final Collection<String> urls) {
+  public boolean addCustomRootsForLibraryOrSdk(final @NotNull LibraryOrSdkOrderEntry forOrderEntry,
+                                               final @NotNull OrderRootType type,
+                                               final @NotNull Collection<String> urls) {
     if (!(forOrderEntry instanceof JdkOrderEntry)) {
       return false;
     }
@@ -235,5 +221,17 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     });
     urls.addAll(new HashSet<>(allAccessibleUrls));
     return true;
+  }
+
+  public static final class FactoryImpl extends Factory {
+    @Override
+    public boolean isApplicable(@NotNull Module module) {
+      return ModuleType.get(module) == FlexModuleType.getInstance();
+    }
+
+    @Override
+    public @NotNull OrderEnumerationHandler createHandler(@NotNull Module module) {
+      return new FlexOrderEnumerationHandler(module);
+    }
   }
 }

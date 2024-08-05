@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
@@ -8,22 +9,19 @@ class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry, StatefulDe
 
   private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();
 
-  @NotNull
-  private final String myLibraryId;
+  private final @NotNull String myLibraryId;
 
   ModuleLibraryEntryImpl(@NotNull String libraryId) {
     myLibraryId = libraryId;
   }
 
   @Override
-  @NotNull
-  public String getLibraryId() {
+  public @NotNull String getLibraryId() {
     return myLibraryId;
   }
 
-  @NotNull
   @Override
-  public DependencyTypeImpl getDependencyType() {
+  public @NotNull DependencyTypeImpl getDependencyType() {
     return myDependencyType;
   }
 

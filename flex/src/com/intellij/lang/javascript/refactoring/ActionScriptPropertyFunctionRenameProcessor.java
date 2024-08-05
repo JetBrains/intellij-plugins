@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.refactoring;
 
 import com.intellij.lang.javascript.DialectDetector;
@@ -20,7 +21,7 @@ public final class ActionScriptPropertyFunctionRenameProcessor extends JSDefault
   }
 
   @Override
-  public void prepareRenaming(@NotNull PsiElement element, @NotNull final String newName, @NotNull final Map<PsiElement, String> allRenames) {
+  public void prepareRenaming(@NotNull PsiElement element, final @NotNull String newName, final @NotNull Map<PsiElement, String> allRenames) {
     JSClass containingClass = JSUtils.getMemberContainingClass(element);
     if (containingClass != null) {
       allRenames.putAll(JSGetterSetterRenameUtil.getRelatedElementsInClass(element, containingClass, newName));

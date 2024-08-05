@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
@@ -34,8 +35,7 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
   }
 
   @Override
-  @NotNull
-  public String getText() {
+  public @NotNull String getText() {
     return FlexBundle.message("create.skin", myClassName);
   }
 
@@ -126,8 +126,7 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
     }
   }
 
-  @Nullable
-  private JSClass getHostComponentClass() {
+  private @Nullable JSClass getHostComponentClass() {
     final XmlTag tag = myElement instanceof XmlTag
                        ? ((XmlTag)myElement).getParentTag()
                        : myElement instanceof XmlAttributeValue ? (XmlTag)myElement.getParent().getParent() : null;

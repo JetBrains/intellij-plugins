@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
@@ -14,21 +15,19 @@ public class NonStructuralModifiableCompilerOptions implements CompilerOptions {
     myOriginal = compilerOptions;
   }
 
-  public void setAdditionalConfigFilePath(@NotNull final String path) {
-    // TODO is this really non-structural? should we restart highlighting?
-    myOriginal.setAdditionalConfigFilePath(path);
-  }
-
-  @NotNull
   @Override
-  public ResourceFilesMode getResourceFilesMode() {
+  public @NotNull ResourceFilesMode getResourceFilesMode() {
     return myOriginal.getResourceFilesMode();
   }
 
   @Override
-  @Nullable
-  public String getOption(@NotNull final String name) {
+  public @Nullable String getOption(final @NotNull String name) {
     return myOriginal.getOption(name);
+  }
+
+  @Override
+  public @NotNull String getAdditionalConfigFilePath() {
+    return myOriginal.getAdditionalConfigFilePath();
   }
 
   @Override
@@ -41,15 +40,13 @@ public class NonStructuralModifiableCompilerOptions implements CompilerOptions {
     return myOriginal.getFilesToIncludeInSWC();
   }
 
-  @Override
-  @NotNull
-  public String getAdditionalConfigFilePath() {
-    return myOriginal.getAdditionalConfigFilePath();
+  public void setAdditionalConfigFilePath(final @NotNull String path) {
+    // TODO is this really non-structural? should we restart highlighting?
+    myOriginal.setAdditionalConfigFilePath(path);
   }
 
   @Override
-  @NotNull
-  public String getAdditionalOptions() {
+  public @NotNull String getAdditionalOptions() {
     return myOriginal.getAdditionalOptions();
   }
 

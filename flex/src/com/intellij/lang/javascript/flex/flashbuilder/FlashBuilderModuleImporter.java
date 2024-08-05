@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -310,8 +310,7 @@ public class FlashBuilderModuleImporter {
     }
   }
 
-  @Nullable
-  private static String findThemeFilePath(final File themeDir) {
+  private static @Nullable String findThemeFilePath(final File themeDir) {
     final String fileName = ContainerUtil.find(themeDir.list(),
                                                path -> FileUtilRt.extensionEquals(path, "css") || FileUtilRt.extensionEquals(path, "swc"));
     return fileName == null ? null : FileUtil.toSystemIndependentName(themeDir + "/" + fileName);
@@ -474,10 +473,9 @@ public class FlashBuilderModuleImporter {
     }
   }
 
-  @Nullable
-  private static String getPathToSourceRootSetInAdditionalOptions(final String rawPath,
-                                                                  final String mainContentEntryUrl,
-                                                                  final ContentEntry mainContentEntry) {
+  private static @Nullable String getPathToSourceRootSetInAdditionalOptions(final String rawPath,
+                                                                            final String mainContentEntryUrl,
+                                                                            final ContentEntry mainContentEntry) {
     // sourcePath can be absolute or relative to project root or relative to main source root
     String path = rawPath;
     if (new File(path).isDirectory()) return path;
@@ -527,8 +525,7 @@ public class FlashBuilderModuleImporter {
     if (srcDir != null && !"src".equals(srcDir.getName())) {
       VfsUtilCore.visitChildrenRecursively(srcDir, new VirtualFileVisitor<Void>() {
         @Override
-        @NotNull
-        public Result visitFileEx(@NotNull final VirtualFile file) {
+        public @NotNull Result visitFileEx(final @NotNull VirtualFile file) {
           if (nonTestClassesFound.get()) {
             return SKIP_CHILDREN;
           }

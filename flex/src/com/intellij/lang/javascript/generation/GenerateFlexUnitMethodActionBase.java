@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -20,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJSGenerateAction {
   @Override
-  @NotNull
-  protected BaseJSGenerateHandler getGenerateHandler() {
+  protected @NotNull BaseJSGenerateHandler getGenerateHandler() {
     return new BaseJSGenerateHandler() {
 
       @Override

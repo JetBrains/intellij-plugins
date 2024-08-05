@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -29,13 +29,12 @@ import java.util.List;
 
 public final class FlexFileReferenceHelper extends FileReferenceHelper {
   @Override
-  @NotNull
-  public Collection<PsiFileSystemItem> getContexts(final @NotNull Project project, @NotNull final VirtualFile file) {
+  public @NotNull Collection<PsiFileSystemItem> getContexts(final @NotNull Project project, final @NotNull VirtualFile file) {
     return Collections.emptyList();
   }
 
   @Override
-  public boolean isMine(final @NotNull Project project, @NotNull final VirtualFile file) {
+  public boolean isMine(final @NotNull Project project, final @NotNull VirtualFile file) {
     return false;
   }
 
@@ -74,8 +73,7 @@ public final class FlexFileReferenceHelper extends FileReferenceHelper {
     }
 
     @Override
-    @NotNull
-    public String getText() {
+    public @NotNull String getText() {
       return "Add leading slash";
     }
 

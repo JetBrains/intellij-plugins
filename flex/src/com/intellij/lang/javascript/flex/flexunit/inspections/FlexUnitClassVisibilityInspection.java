@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -8,14 +9,12 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public final class FlexUnitClassVisibilityInspection extends FlexUnitClassInspectionBase {
 
   @Override
-  @NotNull
-  public String getShortName() {
+  public @NotNull String getShortName() {
     return "FlexUnitClassVisibilityInspection";
   }
 

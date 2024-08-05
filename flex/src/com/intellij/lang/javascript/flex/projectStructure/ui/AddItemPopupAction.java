@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -20,8 +21,7 @@ abstract class AddItemPopupAction implements Runnable {
     return false;
   }
 
-  @Nullable
-  public PopupStep createSubStep() {
+  public @Nullable PopupStep createSubStep() {
     return null;
   }
 

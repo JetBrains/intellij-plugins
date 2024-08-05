@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.openapi.project.Project;
@@ -134,8 +135,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
     }
 
     @Override
-    @Nullable
-    public abstract String getColumnName(int column);
+    public abstract @Nullable String getColumnName(int column);
 
     @Override
     public abstract Class getColumnClass(int column);

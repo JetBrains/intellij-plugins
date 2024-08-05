@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
@@ -80,13 +80,13 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
   private static final Pattern ourClassHeaderTable =
     Pattern.compile("<table .*?class=\"classHeaderTable\".*?>.*?</table>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
   private static final Pattern ourLinkPattern = Pattern.compile("<a.*?href=\"(.*?)\".*?>(.*?)</a>", Pattern.CASE_INSENSITIVE);
-  private static @NonNls final Pattern ourHREFselector = Pattern.compile("<a.*?href=\"([^>\"]*)\"", Pattern.CASE_INSENSITIVE);
-  private static @NonNls final Pattern ourIMGselector =
+  private static final @NonNls Pattern ourHREFselector = Pattern.compile("<a.*?href=\"([^>\"]*)\"", Pattern.CASE_INSENSITIVE);
+  private static final @NonNls Pattern ourIMGselector =
     Pattern.compile("<img.*?src=\"([^>\"]*)\"", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
-  @NonNls private static final String PACKAGE = "package";
-  @NonNls private static final String HTML_EXTENSION = ".html";
-  @NonNls private static final String PACKAGE_FILE = PACKAGE + HTML_EXTENSION;
+  private static final @NonNls String PACKAGE = "package";
+  private static final @NonNls String HTML_EXTENSION = ".html";
+  private static final @NonNls String PACKAGE_FILE = PACKAGE + HTML_EXTENSION;
 
   private static final Map<String, String> DOCUMENTED_ATTRIBUTES;
   static {
@@ -101,9 +101,8 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return new FlexQuickNavigateBuilder();
   }
 
-  @Nullable
   @Override
-  protected @Nls String generateDoc(PsiElement _element, @Nullable PsiElement originalElement, @Nullable Ref<String> definitionDetails) {
+  protected @Nullable @Nls String generateDoc(PsiElement _element, @Nullable PsiElement originalElement, @Nullable Ref<String> definitionDetails) {
     String doc = super.generateDoc(_element, originalElement, null);
     if (doc != null && doc.contains(DocumentationMarkup.CONTENT_START)) {
       return doc;
@@ -281,8 +280,29 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return doc;
   }
 
-  @NotNull
-  private static PsiElement findElementToShowDoc(PsiElement _element) {
+  @Override
+  public @Nullable List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
+    List<String> url = super.getUrlFor(element, originalElement);
+    if (url != null) {
+      return url;
+    }
+
+    final PsiElement elementToShowDoc = findElementToShowDoc(element);
+    final List<String> urls = findUrls(elementToShowDoc);
+    return urls != null && !urls.isEmpty() ? urls : null;
+  }
+
+  @Override
+  public @Nullable PsiElement getDocumentationElementForLink(@NotNull PsiManager psiManager, @NotNull String link, @Nullable PsiElement context) {
+    return getDocumentationElementForLinkStatic(psiManager, link, context);
+  }
+
+  @Override
+  protected @NotNull JSDocumentationBuilder createDocumentationBuilder(@NotNull PsiElement element, PsiElement contextElement) {
+    return new FlexDocumentationBuilder(element, null, this);
+  }
+
+  private static @NotNull PsiElement findElementToShowDoc(PsiElement _element) {
     PsiElement navigationElement = findNavigationElement(_element);
     if (navigationElement == null) {
       if (_element instanceof JSQualifiedNamedElement) {
@@ -293,99 +313,6 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
       }
     }
     return navigationElement;
-  }
-
-  @Nullable
-  private static PsiElement findNavigationElement(PsiElement element) {
-    JSQualifiedNamedElement parentQualifiedElement = findParentQualifiedElement(element);
-    if (parentQualifiedElement == null) {
-      return null;
-    }
-
-    PsiElement navElement = findTopLevelNavigationElement(parentQualifiedElement);
-    if (element instanceof JSClass) {
-      return navElement;
-    }
-    if (element instanceof JSFunction && JSResolveUtil.findParent(element) instanceof JSClass && navElement instanceof JSClass) {
-      return ((JSClass)navElement).findFunctionByNameAndKind(((JSFunction)element).getName(), ((JSFunction)element).getKind());
-    }
-    if (element instanceof JSVariable && JSResolveUtil.findParent(element) instanceof JSClass && navElement instanceof JSClass) {
-      return ((JSClass)navElement).findFieldByName(((JSVariable)element).getName());
-    }
-
-    JSAttribute attribute = null;
-    if (element instanceof JSAttributeNameValuePair) {
-      attribute = (JSAttribute)element.getParent();
-    }
-    if (element instanceof JSAttribute) {
-      attribute = (JSAttribute)element;
-    }
-
-    if (attribute != null && navElement instanceof JSClass) {
-      final String type = attribute.getName();
-      if (DOCUMENTED_ATTRIBUTES.containsKey(type)) {
-        JSAttributeNameValuePair namePair = attribute.getValueByName("name");
-        if (namePair != null) {
-          return findNamedAttribute((JSClass)navElement, type, namePair.getSimpleValue());
-        }
-      }
-    }
-
-    if (element.getClass() == navElement.getClass()) {
-      return navElement;
-    }
-    return null;
-  }
-
-  @NotNull
-  public static PsiElement findTopLevelNavigationElement(JSQualifiedNamedElement element) {
-    if (element.getName() == null) return element;
-
-    final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<>();
-    final PsiElement sourceElement =
-      JSPsiImplUtils.findTopLevelNavigatableElementWithSource(element, candidate -> {
-        if (withAsdoc.isNull()) {
-          ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(candidate.getProject()).getFileIndex();
-          String relPath = getAsDocRelativePath(candidate);
-          final PsiFile file = candidate.getContainingFile();
-          if (file == null) {
-            return;
-          }
-
-          VirtualFile containingFile = file.getVirtualFile();
-          if (containingFile == null || projectFileIndex.getClassRootForFile(containingFile) == null) {
-            return;
-          }
-
-          final List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(containingFile);
-          for (OrderEntry orderEntry : orderEntries) {
-            String[] roots = JavadocOrderRootType.getUrls(orderEntry);
-            if (PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(roots), relPath) != null) {
-              withAsdoc.set(candidate);
-            }
-          }
-        }
-      });
-    if (sourceElement != null) {
-      return sourceElement;
-    }
-    if (!withAsdoc.isNull()) {
-      return withAsdoc.get();
-    }
-    return element;
-  }
-
-  @Override
-  @Nullable
-  public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    List<String> url = super.getUrlFor(element, originalElement);
-    if (url != null) {
-      return url;
-    }
-
-    final PsiElement elementToShowDoc = findElementToShowDoc(element);
-    final List<String> urls = findUrls(elementToShowDoc);
-    return urls != null && !urls.isEmpty() ? urls : null;
   }
 
   private static String makeLink(String input) {
@@ -603,33 +530,45 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return null;
   }
 
+  private static @Nullable PsiElement findNavigationElement(PsiElement element) {
+    JSQualifiedNamedElement parentQualifiedElement = findParentQualifiedElement(element);
+    if (parentQualifiedElement == null) {
+      return null;
+    }
 
-  @NotNull
-  private static List<String> findUrlForVirtualFile(final Project project, final VirtualFile virtualFile, final String relPath) {
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    Module module = fileIndex.getModuleForFile(virtualFile);
-    if (module == null) {
-      final VirtualFileSystem fs = virtualFile.getFileSystem();
-      if (fs instanceof JarFileSystem) {
-        final VirtualFile jar = ((JarFileSystem)fs).getVirtualFileForJar(virtualFile);
-        if (jar != null) {
-          module = fileIndex.getModuleForFile(jar);
+    PsiElement navElement = findTopLevelNavigationElement(parentQualifiedElement);
+    if (element instanceof JSClass) {
+      return navElement;
+    }
+    if (element instanceof JSFunction && JSResolveUtil.findParent(element) instanceof JSClass && navElement instanceof JSClass) {
+      return ((JSClass)navElement).findFunctionByNameAndKind(((JSFunction)element).getName(), ((JSFunction)element).getKind());
+    }
+    if (element instanceof JSVariable && JSResolveUtil.findParent(element) instanceof JSClass && navElement instanceof JSClass) {
+      return ((JSClass)navElement).findFieldByName(((JSVariable)element).getName());
+    }
+
+    JSAttribute attribute = null;
+    if (element instanceof JSAttributeNameValuePair) {
+      attribute = (JSAttribute)element.getParent();
+    }
+    if (element instanceof JSAttribute) {
+      attribute = (JSAttribute)element;
+    }
+
+    if (attribute != null && navElement instanceof JSClass) {
+      final String type = attribute.getName();
+      if (DOCUMENTED_ATTRIBUTES.containsKey(type)) {
+        JSAttributeNameValuePair namePair = attribute.getValueByName("name");
+        if (namePair != null) {
+          return findNamedAttribute((JSClass)navElement, type, namePair.getSimpleValue());
         }
       }
     }
-    if (module != null) {
-      String[] javadocPaths = JavaModuleExternalPaths.getInstance(module).getJavadocUrls();
-      List<String> httpRoots = PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(javadocPaths), relPath);
-      if (httpRoots != null) return httpRoots;
-    }
 
-    final List<OrderEntry> orderEntries = fileIndex.getOrderEntriesForFile(virtualFile);
-    for (OrderEntry orderEntry : orderEntries) {
-      final String[] files = JavadocOrderRootType.getUrls(orderEntry);
-      final List<String> httpRoot = PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(files), relPath);
-      if (httpRoot != null) return httpRoot;
+    if (element.getClass() == navElement.getClass()) {
+      return navElement;
     }
-    return Collections.emptyList();
+    return null;
   }
 
   private static String[] correctHttpRoots(String [] roots) {
@@ -691,8 +630,71 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     }
   }
 
-  @Nullable
-  private static JSQualifiedNamedElement findParentQualifiedElement(PsiElement element) {
+  public static @NotNull PsiElement findTopLevelNavigationElement(JSQualifiedNamedElement element) {
+    if (element.getName() == null) return element;
+
+    final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<>();
+    final PsiElement sourceElement =
+      JSPsiImplUtils.findTopLevelNavigatableElementWithSource(element, candidate -> {
+        if (withAsdoc.isNull()) {
+          ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(candidate.getProject()).getFileIndex();
+          String relPath = getAsDocRelativePath(candidate);
+          final PsiFile file = candidate.getContainingFile();
+          if (file == null) {
+            return;
+          }
+
+          VirtualFile containingFile = file.getVirtualFile();
+          if (containingFile == null || projectFileIndex.getClassRootForFile(containingFile) == null) {
+            return;
+          }
+
+          final List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(containingFile);
+          for (OrderEntry orderEntry : orderEntries) {
+            String[] roots = JavadocOrderRootType.getUrls(orderEntry);
+            if (PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(roots), relPath) != null) {
+              withAsdoc.set(candidate);
+            }
+          }
+        }
+      });
+    if (sourceElement != null) {
+      return sourceElement;
+    }
+    if (!withAsdoc.isNull()) {
+      return withAsdoc.get();
+    }
+    return element;
+  }
+
+  private static @NotNull List<String> findUrlForVirtualFile(final Project project, final VirtualFile virtualFile, final String relPath) {
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    Module module = fileIndex.getModuleForFile(virtualFile);
+    if (module == null) {
+      final VirtualFileSystem fs = virtualFile.getFileSystem();
+      if (fs instanceof JarFileSystem) {
+        final VirtualFile jar = ((JarFileSystem)fs).getVirtualFileForJar(virtualFile);
+        if (jar != null) {
+          module = fileIndex.getModuleForFile(jar);
+        }
+      }
+    }
+    if (module != null) {
+      String[] javadocPaths = JavaModuleExternalPaths.getInstance(module).getJavadocUrls();
+      List<String> httpRoots = PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(javadocPaths), relPath);
+      if (httpRoots != null) return httpRoots;
+    }
+
+    final List<OrderEntry> orderEntries = fileIndex.getOrderEntriesForFile(virtualFile);
+    for (OrderEntry orderEntry : orderEntries) {
+      final String[] files = JavadocOrderRootType.getUrls(orderEntry);
+      final List<String> httpRoot = PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(files), relPath);
+      if (httpRoot != null) return httpRoot;
+    }
+    return Collections.emptyList();
+  }
+
+  private static @Nullable JSQualifiedNamedElement findParentQualifiedElement(PsiElement element) {
     if (element instanceof JSClass) {
       return (JSClass)element;
     }
@@ -732,8 +734,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return null;
   }
 
-  @Nullable
-  private static String getSeeAlsoLinkResolved(PsiElement originElement, String link) {
+  private static @Nullable String getSeeAlsoLinkResolved(PsiElement originElement, String link) {
     JSQualifiedNamedElement qualifiedElement = findParentQualifiedElement(originElement);
     if (qualifiedElement == null) {
       return null;
@@ -746,14 +747,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return null;
   }
 
-  @Override
-  @Nullable
-  public PsiElement getDocumentationElementForLink(@NotNull PsiManager psiManager, @NotNull String link, @Nullable PsiElement context) {
-    return getDocumentationElementForLinkStatic(psiManager, link, context);
-  }
-
-  @Nullable
-  private static PsiElement getDocumentationElementForLinkStatic(final PsiManager psiManager, String link, final PsiElement context) {
+  private static @Nullable PsiElement getDocumentationElementForLinkStatic(final PsiManager psiManager, String link, final PsiElement context) {
     final int delimiterIndex = link.lastIndexOf(':');
     final JavaScriptIndex index = JavaScriptIndex.getInstance(psiManager.getProject());
 
@@ -831,30 +825,6 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     }
   }
 
-  @Nullable
-  private static JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
-    final Ref<JSAttributeNameValuePair> attribute = new Ref<>();
-    ActionScriptResolveUtil.processMetaAttributesForClass(clazz, new ActionScriptResolveUtil.MetaDataProcessor() {
-      @Override
-      public boolean process(@NotNull JSAttribute jsAttribute) {
-        if (type.equals(jsAttribute.getName())) {
-          final JSAttributeNameValuePair jsAttributeNameValuePair = jsAttribute.getValueByName("name");
-          if (jsAttributeNameValuePair != null && name.equals(jsAttributeNameValuePair.getSimpleValue())) {
-            attribute.set(jsAttributeNameValuePair);
-            return false;
-          }
-        }
-        return true;
-      }
-
-      @Override
-      public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
-        return true;
-      }
-    });
-    return attribute.get();
-  }
-
   private static PsiElement findProperty(JSClass jsClass, String name) {
     PsiElement result = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.GETTER);
     if (result == null) {
@@ -901,10 +871,27 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return getSeeAlsoLinkResolved(element, linkPart);
   }
 
-  @NotNull
-  @Override
-  protected JSDocumentationBuilder createDocumentationBuilder(@NotNull PsiElement element, PsiElement contextElement) {
-    return new FlexDocumentationBuilder(element, null, this);
+  private static @Nullable JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
+    final Ref<JSAttributeNameValuePair> attribute = new Ref<>();
+    ActionScriptResolveUtil.processMetaAttributesForClass(clazz, new ActionScriptResolveUtil.MetaDataProcessor() {
+      @Override
+      public boolean process(@NotNull JSAttribute jsAttribute) {
+        if (type.equals(jsAttribute.getName())) {
+          final JSAttributeNameValuePair jsAttributeNameValuePair = jsAttribute.getValueByName("name");
+          if (jsAttributeNameValuePair != null && name.equals(jsAttributeNameValuePair.getSimpleValue())) {
+            attribute.set(jsAttributeNameValuePair);
+            return false;
+          }
+        }
+        return true;
+      }
+
+      @Override
+      public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
+        return true;
+      }
+    });
+    return attribute.get();
   }
 
   @Override

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.ui.SimpleTextAttributes;
@@ -155,7 +156,7 @@ public class XmlObjectEvaluator {
 
     @Override
     public void setMessage(@NotNull String message,
-                           final Icon icon, @NotNull final SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
+                           final Icon icon, final @NotNull SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
     }
   }
 }

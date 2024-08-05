@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -28,12 +28,12 @@ import java.util.Collection;
 import java.util.List;
 
 public final class FlashPlayerTrustUtil {
-  private final static String WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH =
+  private static final String WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH =
     "\\AppData\\Roaming\\Macromedia\\Flash Player\\#Security\\FlashPlayerTrust";
-  private final static String MAC_TRUST_DIR_REL_PATH = "/Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-  private final static String UNIX_TRUST_DIR_REL_PATH = "/.macromedia/Flash_Player/#Security/FlashPlayerTrust";
+  private static final String MAC_TRUST_DIR_REL_PATH = "/Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
+  private static final String UNIX_TRUST_DIR_REL_PATH = "/.macromedia/Flash_Player/#Security/FlashPlayerTrust";
 
-  private final static String INTELLIJ_IDEA_CFG = "intellij_idea.cfg";
+  private static final String INTELLIJ_IDEA_CFG = "intellij_idea.cfg";
 
   private FlashPlayerTrustUtil() {
   }
@@ -142,8 +142,7 @@ public final class FlashPlayerTrustUtil {
     return ArrayUtilRt.toStringArray(result);
   }
 
-  @Nullable
-  private static File getIdeaUserTrustConfigFile(final Project project, final boolean isDebug, final boolean runTrusted) {
+  private static @Nullable File getIdeaUserTrustConfigFile(final Project project, final boolean isDebug, final boolean runTrusted) {
     final File flashPlayerTrustDir = getFlashPlayerTrustDir(project, isDebug, runTrusted);
     if (flashPlayerTrustDir == null) {
       return null;
@@ -174,8 +173,7 @@ public final class FlashPlayerTrustUtil {
     return ideaTrustedCfgFile;
   }
 
-  @Nullable
-  private static File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
+  private static @Nullable File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
     final String flashPlayerTrustDirRelPath =
       SystemInfo.isWindows ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH :
       SystemInfo.isMac ? MAC_TRUST_DIR_REL_PATH :

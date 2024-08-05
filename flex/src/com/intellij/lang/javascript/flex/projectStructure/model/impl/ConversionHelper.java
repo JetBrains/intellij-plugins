@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.application.options.PathMacrosImpl;
@@ -20,11 +20,9 @@ public final class ConversionHelper {
     implements BuildConfigurationEntry, ModifiableBuildConfigurationEntry, StatefulDependencyEntry {
     private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();
 
-    @NotNull
-    private final String myModuleName;
+    private final @NotNull String myModuleName;
 
-    @NotNull
-    private final String myBcName;
+    private final @NotNull String myBcName;
 
     private LightweightBuildConfigurationEntry(@NotNull String moduleName,
                                                @NotNull String bcName) {
@@ -32,15 +30,13 @@ public final class ConversionHelper {
       myBcName = bcName;
     }
 
-    @NotNull
     @Override
-    public String getBcName() {
+    public @NotNull String getBcName() {
       return myBcName;
     }
 
-    @NotNull
     @Override
-    public String getModuleName() {
+    public @NotNull String getModuleName() {
       return myModuleName;
     }
 
@@ -54,9 +50,8 @@ public final class ConversionHelper {
       throw new UnsupportedOperationException();
     }
 
-    @NotNull
     @Override
-    public ModifiableDependencyType getDependencyType() {
+    public @NotNull ModifiableDependencyType getDependencyType() {
       return myDependencyType;
     }
 

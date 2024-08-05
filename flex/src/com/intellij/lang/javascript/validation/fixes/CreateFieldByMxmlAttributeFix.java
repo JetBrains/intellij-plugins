@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
@@ -19,7 +20,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
   protected void buildTemplate(final Template template,
                                final JSReferenceExpression referenceExpression,
                                final boolean staticContext,
-                               @NotNull final PsiElement anchorParent) {
+                               final @NotNull PsiElement anchorParent) {
     template.addTextSegment("public ");
     template.addTextSegment("var ");
     template.addTextSegment(myReferencedName);
@@ -33,8 +34,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
     template.addVariable(new ConstantNode(guessMxmlAttributeType(attributeValue)), true);
   }
 
-  @NotNull
-  private static String guessMxmlAttributeType(final String attributeValue) {
+  private static @NotNull String guessMxmlAttributeType(final String attributeValue) {
     if (StringUtil.isEmpty(attributeValue)) {
       return "String";
     }

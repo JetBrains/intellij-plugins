@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
@@ -27,7 +28,7 @@ public final class SwfFileStubBuilder implements BinaryFileStubBuilder {
   private static final int VERSION = 3;
 
   @Override
-  public boolean acceptsFile(@NotNull final VirtualFile file) {
+  public boolean acceptsFile(final @NotNull VirtualFile file) {
     return FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) &&
            file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName());
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -38,7 +38,7 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
   private static final Icon ICON_EMPTY = IconManager.getInstance().createEmptyIcon(ICON_ACTIVE);
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
       e.getPresentation().setEnabledAndVisible(enabled);
@@ -61,7 +61,7 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     Module module = e.getData(PlatformCoreDataKeys.MODULE);
     if (module != null) {
       createPopup(module, e.getDataContext()).showInBestPositionFor(e.getDataContext());
@@ -159,7 +159,7 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
     }
 
     @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
+    public void actionPerformed(final @NotNull AnActionEvent e) {
       myManager.setActiveBuildConfiguration(myBc);
     }
 

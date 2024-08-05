@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.ui.newclass;
 
 import com.intellij.ide.wizard.AbstractWizardStepEx;
@@ -39,17 +39,15 @@ public class CustomVariablesStep extends AbstractWizardStepEx {
   private JLabel myTitleLabel;
 
   private static final ColumnInfo<Item, String> NAME = new ColumnInfo<>(JavaScriptBundle.message("varible.name.column.title")) {
-    @Nullable
     @Override
-    public String valueOf(final Item item) {
+    public @Nullable String valueOf(final Item item) {
       return item.name;
     }
   };
 
   private static final ColumnInfo<Item, String> VALUE = new ColumnInfo<>(JavaScriptBundle.message("varible.value.column.title")) {
-    @Nullable
     @Override
-    public String valueOf(final Item item) {
+    public @Nullable String valueOf(final Item item) {
       return item.value;
     }
 
@@ -71,21 +69,18 @@ public class CustomVariablesStep extends AbstractWizardStepEx {
     myTable.setVisibleRowCount(3);
   }
 
-  @NotNull
   @Override
-  public Object getStepId() {
+  public @NotNull Object getStepId() {
     return ID;
   }
 
-  @Nullable
   @Override
-  public Object getNextStepId() {
+  public @Nullable Object getNextStepId() {
     return null;
   }
 
-  @Nullable
   @Override
-  public Object getPreviousStepId() {
+  public @Nullable Object getPreviousStepId() {
     return MainStep.ID;
   }
 
@@ -124,9 +119,8 @@ public class CustomVariablesStep extends AbstractWizardStepEx {
     return myPanel;
   }
 
-  @Nullable
   @Override
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return null;
   }
 

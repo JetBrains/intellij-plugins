@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
@@ -25,7 +25,7 @@ final class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
   }
 
   @Override
-  public boolean acceptInput(@NotNull final VirtualFile file) {
+  public boolean acceptInput(final @NotNull VirtualFile file) {
     FileType type = file.getFileType();
     if (type == ActionScriptFileType.INSTANCE ||
         (type == FlexApplicationComponent.SWF_FILE_TYPE && file.getFileSystem() instanceof JarFileSystem)) {

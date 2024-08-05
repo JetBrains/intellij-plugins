@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -15,8 +16,7 @@ import org.jetbrains.annotations.Nullable;
 // duplicates JSDebuggerEditorsProvider
 class FlexDebuggerEditorsProvider extends XDebuggerEditorsProviderBase {
   @Override
-  @NotNull
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return JavaScriptSupportLoader.JAVASCRIPT;
   }
 

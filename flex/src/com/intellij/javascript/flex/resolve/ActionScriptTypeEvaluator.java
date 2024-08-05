@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -124,18 +125,8 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     }
   }
 
-  private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
-    PsiElement parent = xmlTag;
-    while ((parent = parent.getParent()) instanceof XmlTag) {
-      if (REPEATER_CLASS_FQN.equals(new JSTagContextBuilder(parent, "").typeName)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   @Override
-  public void addType(@Nullable final JSType _type) {
+  public void addType(final @Nullable JSType _type) {
     if (_type instanceof JSPsiBasedTypeOfType) {
       PsiElement element = ((JSPsiBasedTypeOfType)_type).getElement();
       if (element instanceof JSReferenceExpression && ((JSReferenceExpression)element).resolve() == element) {
@@ -145,16 +136,25 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     super.addType(_type);
   }
 
-  @NotNull
   @Override
-  protected JSType createTypeForThisExpression(@NotNull JSContext staticOrInstance,
-                                               @NotNull JSClass jsClass,
-                                               @NotNull JSTypeSource typeSource) {
+  protected @NotNull JSType createTypeForThisExpression(@NotNull JSContext staticOrInstance,
+                                                        @NotNull JSClass jsClass,
+                                                        @NotNull JSTypeSource typeSource) {
     String name = jsClass.getQualifiedName();
     if (name == null) {
       return JSAnyType.get(typeSource);
     }
     return JSNamedTypeFactory.createType(name, typeSource, staticOrInstance);
+  }
+
+  private static boolean isInsideRepeaterTag(final @NotNull XmlTag xmlTag) {
+    PsiElement parent = xmlTag;
+    while ((parent = parent.getParent()) instanceof XmlTag) {
+      if (REPEATER_CLASS_FQN.equals(new JSTagContextBuilder(parent, "").typeName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
@@ -95,14 +95,12 @@ public final class FlexPropertiesSupport {
     }
 
     @Override
-    @NotNull
-    public String getUnresolvedMessagePattern() {
+    public @NotNull String getUnresolvedMessagePattern() {
       return "Cannot resolve property bundle";
     }
 
     @Override
-    @Nullable
-    public String evaluateBundleName(final PsiFile psiFile) {
+    public @Nullable String evaluateBundleName(final PsiFile psiFile) {
       return MY_BUNDLE_NAME_EVALUATOR.evaluateBundleName(psiFile);
     }
   }

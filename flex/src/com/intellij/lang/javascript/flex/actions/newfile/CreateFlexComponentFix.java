@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -40,8 +40,8 @@ import java.util.List;
 public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFix {
   public static final Collection<String> FLEX_TEMPLATES_EXTENSIONS =
     List.of(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
-  @NonNls static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
-  @NonNls static final String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
+  static final @NonNls String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
+  static final @NonNls String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
 
   public CreateFlexComponentFix(final PsiDirectory dir) {
     super(dir);
@@ -52,7 +52,7 @@ public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFi
   }
 
   @Override
-  public boolean isAvailable(@NotNull final Project project, PsiElement element, final Editor editor, final PsiFile file) {
+  public boolean isAvailable(final @NotNull Project project, PsiElement element, final Editor editor, final PsiFile file) {
     if (!super.isAvailable(project, element, editor, file)) {
       return false;
     }
@@ -98,7 +98,7 @@ public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFi
   }
 
   @Override
-  protected void postProcess(@NotNull final JSClass jsClass, final String superClassFqn) {
+  protected void postProcess(final @NotNull JSClass jsClass, final String superClassFqn) {
     fixParentComponent(jsClass, superClassFqn);
     jsClass.navigate(true);
   }
@@ -112,8 +112,7 @@ public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFi
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return FlexBundle.message("create.flex.component.intention.name", myClassNameToCreate);
   }
 

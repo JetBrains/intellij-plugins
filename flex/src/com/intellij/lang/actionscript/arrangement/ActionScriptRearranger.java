@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.arrangement;
 
 import com.intellij.icons.AllIcons;
@@ -67,48 +67,41 @@ public final class ActionScriptRearranger extends JSRearrangerBase {
     SETTINGS_SERIALIZER = new DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS);
   }
 
-  @NotNull
   @Override
-  protected ArrangementSettingsToken detectFieldType(@NotNull ArrangementSettings settings, @NotNull JSVariable variable) {
+  protected @NotNull ArrangementSettingsToken detectFieldType(@NotNull ArrangementSettings settings, @NotNull JSVariable variable) {
     return variable.isConst() ? CONST : VAR;
   }
 
-  @NotNull
   @Override
-  protected ArrangementSettingsToken detectFunctionType(@NotNull JSFunction function) {
+  protected @NotNull ArrangementSettingsToken detectFunctionType(@NotNull JSFunction function) {
     if (isEventHandler(function)) {
       return EVENT_HANDLER;
     }
     return super.detectFunctionType(function);
   }
 
-  @NotNull
   @Override
-  protected Set<ArrangementSettingsToken> getSupportedTypes() {
+  protected @NotNull Set<ArrangementSettingsToken> getSupportedTypes() {
     return SUPPORTED_TYPES;
   }
 
-  @NotNull
   @Override
-  protected Set<ArrangementSettingsToken> getVisibilityModifiers() {
+  protected @NotNull Set<ArrangementSettingsToken> getVisibilityModifiers() {
     return VISIBILITY_MODIFIERS;
   }
 
-  @NotNull
   @Override
-  protected Set<ArrangementSettingsToken> getSupportedModifiers() {
+  protected @NotNull Set<ArrangementSettingsToken> getSupportedModifiers() {
     return SUPPORTED_MODIFIERS;
   }
 
-  @Nullable
   @Override
-  public StdArrangementSettings getDefaultSettings() {
+  public @Nullable StdArrangementSettings getDefaultSettings() {
     return DEFAULT_SETTINGS;
   }
 
-  @NotNull
   @Override
-  public ArrangementSettingsSerializer getSerializer() {
+  public @NotNull ArrangementSettingsSerializer getSerializer() {
     return SETTINGS_SERIALIZER;
   }
 
@@ -137,8 +130,7 @@ public final class ActionScriptRearranger extends JSRearrangerBase {
   }
 
   @Override
-  @NotNull
-  protected Set<ArrangementSettingsToken> detectModifiers(@NotNull final JSAttributeListOwner fieldOrMethod) {
+  protected @NotNull Set<ArrangementSettingsToken> detectModifiers(final @NotNull JSAttributeListOwner fieldOrMethod) {
     final Set<ArrangementSettingsToken> result = new HashSet<>();
 
     final JSAttributeList attributes = fieldOrMethod.getAttributeList();

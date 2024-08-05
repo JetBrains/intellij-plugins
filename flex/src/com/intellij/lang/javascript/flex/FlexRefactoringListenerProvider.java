@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.flex.model.bc.OutputType;
@@ -34,8 +35,7 @@ import java.util.Collection;
 public final class FlexRefactoringListenerProvider implements RefactoringElementListenerProvider {
 
   @Override
-  @Nullable
-  public RefactoringElementListener getListener(final PsiElement element) {
+  public @Nullable RefactoringElementListener getListener(final PsiElement element) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) {
       final String packageName = getPackageName(element);
@@ -62,8 +62,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     return null;
   }
 
-  @Nullable
-  public static JSClass getJSClass(final PsiElement element) {
+  public static @Nullable JSClass getJSClass(final PsiElement element) {
     if (element instanceof JSClass) {
       return (JSClass)element;
     }
@@ -76,8 +75,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     return null;
   }
 
-  @Nullable
-  public static String getPackageName(final PsiElement element) {
+  public static @Nullable String getPackageName(final PsiElement element) {
     assert element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement;
 
     if (element instanceof PsiDirectoryContainer) {
@@ -89,8 +87,8 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
   }
 
   private static class PackageRefactoringListener extends RefactoringElementAdapter {
-    private @NotNull final Project myProject;
-    private @Nullable final Module myModule;
+    private final @NotNull Project myProject;
+    private final @Nullable Module myModule;
     private final String myOldPackageName;
     private String myNewPackageName;
 
@@ -101,7 +99,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     }
 
     @Override
-    public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
+    public void elementRenamedOrMoved(final @NotNull PsiElement newElement) {
       final String newPackageName = getPackageName(newElement);
       if (newPackageName != null) {
         myNewPackageName = newPackageName;
@@ -179,7 +177,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     }
 
     @Override
-    public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
+    public void elementRenamedOrMoved(final @NotNull PsiElement newElement) {
       final JSClass newClass = getJSClass(newElement);
       if (newClass != null) {
         myNewClassName = newClass.getQualifiedName();
@@ -226,18 +224,18 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     }
   }
 
-  private static abstract class FileRefactoringListener extends RefactoringElementAdapter {
+  private abstract static class FileRefactoringListener extends RefactoringElementAdapter {
     protected final @NotNull Module myModule;
     protected final String myOldFilePath;
     protected String myNewFilePath;
 
-    FileRefactoringListener(@NotNull final Module module, final String oldFilePath) {
+    FileRefactoringListener(final @NotNull Module module, final String oldFilePath) {
       myModule = module;
       myOldFilePath = oldFilePath;
     }
 
     @Override
-    public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
+    public void elementRenamedOrMoved(final @NotNull PsiElement newElement) {
       final VirtualFile file = newElement instanceof PsiFile ? ((PsiFile)newElement).getVirtualFile() : null;
       if (file != null) {
         myNewFilePath = file.getPath();

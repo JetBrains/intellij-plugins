@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramDataModel;
@@ -36,11 +37,10 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
     return CreateFlexComponentFix.createAndShow(null, dirAndPackage.first, null, dirAndPackage.second);
   }
 
-  @Nullable
   @Override
-  public Object createElement(final DiagramDataModel<Object> model,
-                              final CreateClassParameters params,
-                              final AnActionEvent event) {
+  public @Nullable Object createElement(final DiagramDataModel<Object> model,
+                                        final CreateClassParameters params,
+                                        final AnActionEvent event) {
     final Ref<JSClass> clazz = new Ref<>();
     CommandProcessor.getInstance().executeCommand(params.getTargetDirectory().getProject(), () -> {
       try {

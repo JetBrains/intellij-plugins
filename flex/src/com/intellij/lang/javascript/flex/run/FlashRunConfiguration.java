@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionException;
@@ -62,9 +63,8 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
     return clone;
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new FlashRunConfigurationForm(getProject());
   }
 
@@ -82,7 +82,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
   }
 
   @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(final @NotNull Executor executor, final @NotNull ExecutionEnvironment env) throws ExecutionException {
     final FlexBuildConfiguration config;
     try {
       config = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
@@ -106,8 +106,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
     myRunnerParameters.reportWarnings(getProject());
   }
 
-  @NotNull
-  public FlashRunnerParameters getRunnerParameters() {
+  public @NotNull FlashRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
@@ -178,8 +177,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
     }
 
     @Override
-    @NotNull
-    protected OSProcessHandler startProcess() throws ExecutionException {
+    protected @NotNull OSProcessHandler startProcess() throws ExecutionException {
       final FlexBuildConfiguration bc;
       try {
         bc = myRunnerParameters.checkAndGetModuleAndBC(myProject).second;
@@ -217,7 +215,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
       if (needToRemoveAirRuntimeDir && airRuntimeDirForFlexmojosSdk != null) {
         processHandler.addProcessListener(new ProcessAdapter() {
           @Override
-          public void processTerminated(@NotNull final ProcessEvent event) {
+          public void processTerminated(final @NotNull ProcessEvent event) {
             FlexUtils.removeFileLater(airRuntimeDirForFlexmojosSdk);
           }
         });

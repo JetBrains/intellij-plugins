@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.completion.ActionScriptCompletionKeywordsContributor;
@@ -12,15 +13,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ActionScriptHandlersFactory extends JSHandlersFactory {
 
-  @NotNull
   @Override
-  public JSCompletionKeywordsContributor newCompletionKeywordsContributor() {
+  public @NotNull JSCompletionKeywordsContributor newCompletionKeywordsContributor() {
     return new ActionScriptCompletionKeywordsContributor();
   }
 
-  @NotNull
   @Override
-  public Class<? extends JSCodeStyleSettings> getCodeStyleSettingsClass() {
+  public @NotNull Class<? extends JSCodeStyleSettings> getCodeStyleSettingsClass() {
     return ECMA4CodeStyleSettings.class;
   }
 }

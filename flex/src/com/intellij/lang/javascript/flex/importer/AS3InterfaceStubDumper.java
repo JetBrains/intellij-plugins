@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
@@ -124,8 +124,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     parents.removeLast();
   }
 
-  @NotNull
-  private static JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
+  private static @NotNull JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
     final String nsName = memberInfo.name.getNsName(memberInfo);
     JSAttributeList.AccessType accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
     if ("public".equals(nsName)) accessType = JSAttributeList.AccessType.PUBLIC;

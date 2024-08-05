@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
@@ -69,15 +69,15 @@ import java.util.*;
 
 public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction implements CreateClassIntentionWithCallback {
 
-  @NonNls public static final String ACTION_SCRIPT_CLASS_TEMPLATE_NAME = "ActionScript Class";
-  @NonNls public static final String ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME = "ActionScript Class with Supers";
-  @NonNls public static final String ACTION_SCRIPT_INTERFACE_TEMPLATE_NAME = "ActionScript Interface";
+  public static final @NonNls String ACTION_SCRIPT_CLASS_TEMPLATE_NAME = "ActionScript Class";
+  public static final @NonNls String ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME = "ActionScript Class with Supers";
+  public static final @NonNls String ACTION_SCRIPT_INTERFACE_TEMPLATE_NAME = "ActionScript Interface";
 
   private static final Logger LOG = Logger.getInstance(ActionScriptCreateClassOrInterfaceFix.class.getName());
 
-  @NonNls public static final String ACCESS_MODIFIER_PROPERTY = "Access_modifier";
-  @NonNls public static final String SUPERCLASS = "Superclass";
-  @NonNls public static final String SUPER_INTERFACES = "SuperInterfaces";
+  public static final @NonNls String ACCESS_MODIFIER_PROPERTY = "Access_modifier";
+  public static final @NonNls String SUPERCLASS = "Superclass";
+  public static final @NonNls String SUPER_INTERFACES = "SuperInterfaces";
 
   public static final Collection<String> ACTIONSCRIPT_TEMPLATES_EXTENSIONS =
     List.of(JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
@@ -90,11 +90,11 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
   protected final PsiElement myContext;
   protected String myPackageName;
   private final boolean myIsInterface;
-  @Nullable private final JSClass myBaseClassifier;
+  private final @Nullable JSClass myBaseClassifier;
   private final boolean myAddImportForCreatedClass;
   private final boolean myIdentifierIsValid;
   private Consumer<? super String> myCreatedClassFqnConsumer;
-  @Nullable private final JSArgumentList myConstructorArguments;
+  private final @Nullable JSArgumentList myConstructorArguments;
   private final boolean myIsClassNameEditable;
 
   public ActionScriptCreateClassOrInterfaceFix(JSReferenceExpression context,
@@ -113,7 +113,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
       myClassNameToCreate != null && LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, myClassNameToCreate);
   }
 
-  public ActionScriptCreateClassOrInterfaceFix(final String fqn, @Nullable final String baseClassFqn, final PsiElement context) {
+  public ActionScriptCreateClassOrInterfaceFix(final String fqn, final @Nullable String baseClassFqn, final PsiElement context) {
     myClassNameToCreate = StringUtil.getShortName(fqn);
     myPackageName = StringUtil.getPackageName(fqn);
 
@@ -146,32 +146,23 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
     return false;
   }
 
-  @Nullable
-  private static JSClass getBaseClassifier(@Nullable JSType type) {
-    if (type == null) {
-      return null;
-    }
-    String typeString = type.getResolvedTypeText();
-    if (ArrayUtil.contains(typeString, JSCommonTypeNames.ALL)) {
-      return null;
-    }
-
-    return getBaseClassifier(typeString, type.getSource().getScope());
-  }
-
-  private static JSClass getBaseClassifier(@Nullable final String fqn, final PsiElement context) {
-    if (fqn == null || context == null) {
-      return null;
-    }
-    PsiElement clazz = JSDialectSpecificHandlersFactory.forElement(context).getClassResolver().findClassByQName(fqn, context);
-    return clazz instanceof JSClass ? (JSClass)clazz : null;
-  }
-
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     final String key = myIsInterface ? "javascript.create.interface.intention.name" : "javascript.create.class.intention.name";
     return JavaScriptBundle.message(key, myClassNameToCreate);
+  }
+
+  protected void postProcess(final @NotNull JSClass jsClass, final String superClassFqn) {
+    if (!fixConstructor(jsClass)) {
+      jsClass.navigate(true);
+    }
+  }
+
+  protected @Nullable CreateClassParameters createDialog(final String templateName) {
+    String title = JavaScriptBundle
+      .message(myIsInterface ? "new.actionscript.interface.dialog.title" : "new.actionscript.class.dialog.title");
+    return createAndShow(templateName, myContext, myClassNameToCreate, myIsClassNameEditable, myPackageName, myBaseClassifier, title,
+                         () -> computeApplicableTemplates());
   }
 
   @Override
@@ -260,80 +251,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
     }
   }
 
-  @Nullable
-  public static JSClass calcClass(@Nullable final String superClassFqn, PsiElement context) {
-    if (superClassFqn != null) {
-      Module module = ModuleUtilCore.findModuleForPsiElement(context);
-      GlobalSearchScope superClassScope = module != null
-                                          ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
-                                          : GlobalSearchScope.projectScope(context.getProject());
-      PsiElement byQName = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-        .findClassByQName(superClassFqn, superClassScope);
-      return byQName instanceof JSClass ? (JSClass)byQName : null;
-    }
-    else {
-      return null;
-    }
-  }
-
-  protected String getTemplateForTest(final boolean isInterface) {
-    return getTemplateName(myIsInterface, true, ourPreviousInterfaceTemplateName, ourPreviousClassTemplateName, myContext.getProject());
-  }
-
-  protected void postProcess(@NotNull final JSClass jsClass, final String superClassFqn) {
-    if (!fixConstructor(jsClass)) {
-      jsClass.navigate(true);
-    }
-  }
-
-  @Nullable
-  protected CreateClassParameters createDialog(final String templateName) {
-    String title = JavaScriptBundle
-      .message(myIsInterface ? "new.actionscript.interface.dialog.title" : "new.actionscript.class.dialog.title");
-    return createAndShow(templateName, myContext, myClassNameToCreate, myIsClassNameEditable, myPackageName, myBaseClassifier, title,
-                         () -> computeApplicableTemplates());
-  }
-
-  @Nullable
-  public static CreateClassParameters createAndShow(final String templateName,
-                                                    final PsiElement context,
-                                                    final String classNameToCreate,
-                                                    final boolean classNameEditable,
-                                                    final String packageName,
-                                                    final JSClass baseClassifier,
-                                                    @NlsContexts.DialogTitle String title,
-                                                    Computable<List<FileTemplate>> templatesProvider) {
-    final WizardModel model = new WizardModel(context, true);
-    MainStep mainStep = new MainStep(model, context.getProject(),
-                                     classNameToCreate,
-                                     classNameEditable,
-                                     packageName,
-                                     baseClassifier,
-                                     baseClassifier == null,
-                                     templateName,
-                                     context,
-                                     JavaScriptBundle.message("choose.super.class.title"),
-                                     templatesProvider);
-    CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
-    final CreateFlashClassWizard w =
-      new CreateFlashClassWizard(title, context.getProject(), model, "New_ActionScript_Class_dialog", mainStep, customVariablesStep);
-    w.show();
-    if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
-    return model;
-  }
-
-  protected List<FileTemplate> computeApplicableTemplates() {
-    return getApplicableTemplates(ACTIONSCRIPT_TEMPLATES_EXTENSIONS, myContext.getProject());
-  }
-
-  private PsiFile getTopLevelContextFile() {
-    PsiFile contextFile = myContext.getContainingFile();
-    PsiElement context = contextFile.getContext();
-    if (context != null) contextFile = context.getContainingFile();
-    return contextFile;
-  }
-
-  private boolean fixConstructor(@NotNull final JSClass jsClass) {
+  private boolean fixConstructor(final @NotNull JSClass jsClass) {
     if (myConstructorArguments == null) {
       return false;
     }
@@ -382,9 +300,8 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
         return false; // broken template
       }
       new CreateJSFunctionIntentionAction(jsClass.getName(), true, false) {
-        @NotNull
         @Override
-        protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(@NotNull PsiElement psiElement1) {
+        protected @NotNull Pair<JSReferenceExpression, PsiElement> calculateAnchors(@NotNull PsiElement psiElement1) {
           return Pair.create(((JSReferenceExpression)myContext), lbrace.getPsi());
         }
 
@@ -410,10 +327,87 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
     return true;
   }
 
+  protected String getTemplateForTest(final boolean isInterface) {
+    return getTemplateName(myIsInterface, true, ourPreviousInterfaceTemplateName, ourPreviousClassTemplateName, myContext.getProject());
+  }
+
+  private static @Nullable JSClass getBaseClassifier(@Nullable JSType type) {
+    if (type == null) {
+      return null;
+    }
+    String typeString = type.getResolvedTypeText();
+    if (ArrayUtil.contains(typeString, JSCommonTypeNames.ALL)) {
+      return null;
+    }
+
+    return getBaseClassifier(typeString, type.getSource().getScope());
+  }
+
+  private static JSClass getBaseClassifier(final @Nullable String fqn, final PsiElement context) {
+    if (fqn == null || context == null) {
+      return null;
+    }
+    PsiElement clazz = JSDialectSpecificHandlersFactory.forElement(context).getClassResolver().findClassByQName(fqn, context);
+    return clazz instanceof JSClass ? (JSClass)clazz : null;
+  }
+
+  public static @Nullable JSClass calcClass(final @Nullable String superClassFqn, PsiElement context) {
+    if (superClassFqn != null) {
+      Module module = ModuleUtilCore.findModuleForPsiElement(context);
+      GlobalSearchScope superClassScope = module != null
+                                          ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
+                                          : GlobalSearchScope.projectScope(context.getProject());
+      PsiElement byQName = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        .findClassByQName(superClassFqn, superClassScope);
+      return byQName instanceof JSClass ? (JSClass)byQName : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  protected List<FileTemplate> computeApplicableTemplates() {
+    return getApplicableTemplates(ACTIONSCRIPT_TEMPLATES_EXTENSIONS, myContext.getProject());
+  }
+
+  private PsiFile getTopLevelContextFile() {
+    PsiFile contextFile = myContext.getContainingFile();
+    PsiElement context = contextFile.getContext();
+    if (context != null) contextFile = context.getContainingFile();
+    return contextFile;
+  }
+
+  public static @Nullable CreateClassParameters createAndShow(final String templateName,
+                                                              final PsiElement context,
+                                                              final String classNameToCreate,
+                                                              final boolean classNameEditable,
+                                                              final String packageName,
+                                                              final JSClass baseClassifier,
+                                                              @NlsContexts.DialogTitle String title,
+                                                              Computable<List<FileTemplate>> templatesProvider) {
+    final WizardModel model = new WizardModel(context, true);
+    MainStep mainStep = new MainStep(model, context.getProject(),
+                                     classNameToCreate,
+                                     classNameEditable,
+                                     packageName,
+                                     baseClassifier,
+                                     baseClassifier == null,
+                                     templateName,
+                                     context,
+                                     JavaScriptBundle.message("choose.super.class.title"),
+                                     templatesProvider);
+    CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
+    final CreateFlashClassWizard w =
+      new CreateFlashClassWizard(title, context.getProject(), model, "New_ActionScript_Class_dialog", mainStep, customVariablesStep);
+    w.show();
+    if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
+    return model;
+  }
+
   public static JSClass createClass(final String templateName,
                                     final String className,
                                     final String packageName,
-                                    @Nullable final JSClass superClass,
+                                    final @Nullable JSClass superClass,
                                     Collection<String> superInterfaces,
                                     final PsiDirectory targetDirectory,
                                     @NlsContexts.DialogTitle @NotNull String errorTitle,
@@ -565,8 +559,8 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
 
   private static String getTemplateName(boolean isInterface,
                                         boolean hasSuperClassifier,
-                                        @Nullable final String interfaceDefault,
-                                        @Nullable final String classDefault, Project project) {
+                                        final @Nullable String interfaceDefault,
+                                        final @Nullable String classDefault, Project project) {
     if (isInterface) {
       if (interfaceDefault != null && FileTemplateManager.getInstance(project).getTemplate(interfaceDefault) != null) {
         return interfaceDefault;
@@ -604,7 +598,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
                                           final String packageName,
                                           final PsiDirectory directory,
                                           final String templateName,
-                                          @Nullable final Map<String, Object> additionalTemplateProperties)
+                                          final @Nullable Map<String, Object> additionalTemplateProperties)
     throws Exception {
     final Map<String, Object> props =
       createProperties(className, packageName, JSFormatUtil.formatVisibility(JSAttributeList.AccessType.PUBLIC));

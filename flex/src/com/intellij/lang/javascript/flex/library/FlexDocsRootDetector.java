@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -18,9 +19,8 @@ class FlexDocsRootDetector extends RootDetector {
     super(JavadocOrderRootType.getInstance(), false, FlexBundle.message("docs.root.detector.name"));
   }
 
-  @NotNull
   @Override
-  public Collection<VirtualFile> detectRoots(@NotNull final VirtualFile rootCandidate, @NotNull final ProgressIndicator progressIndicator) {
+  public @NotNull Collection<VirtualFile> detectRoots(final @NotNull VirtualFile rootCandidate, final @NotNull ProgressIndicator progressIndicator) {
     List<VirtualFile> result = new ArrayList<>();
     collectRoots(rootCandidate, result, progressIndicator);
     return result;

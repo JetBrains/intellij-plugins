@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.openapi.module.Module;
@@ -32,8 +32,7 @@ public class InfoFromConfigFile {
     myTargetPlayer = targetPlayer;
   }
 
-  @Nullable
-  public String getMainClass(final Module module) {
+  public @Nullable String getMainClass(final Module module) {
     if (!myMainClassInitialized && myConfigFile != null && myConfigFile.isValid()) {
       myMainClass = myMainClassPath == null ? null : getClassForOutputTagValue(module, myMainClassPath, myConfigFile.getParent());
     }
@@ -41,18 +40,15 @@ public class InfoFromConfigFile {
     return myMainClass;
   }
 
-  @Nullable
-  public String getOutputFileName() {
+  public @Nullable String getOutputFileName() {
     return myOutputFileName;
   }
 
-  @Nullable
-  public String getOutputFolderPath() {
+  public @Nullable String getOutputFolderPath() {
     return myOutputFolderPath;
   }
 
-  @Nullable
-  public String getTargetPlayer() {
+  public @Nullable String getTargetPlayer() {
     return myTargetPlayer;
   }
 

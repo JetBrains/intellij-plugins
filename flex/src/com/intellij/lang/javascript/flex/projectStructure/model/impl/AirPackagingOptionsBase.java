@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -12,10 +13,10 @@ import static com.intellij.lang.javascript.flex.projectStructure.model.AirPackag
 class AirPackagingOptionsBase {
   private boolean myEnabled = false;
   private boolean myUseGeneratedDescriptor = true;
-  @NotNull private String myCustomDescriptorPath = "";
-  @NotNull private String myPackageFileName = "";
-  @NotNull private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<>();
-  @NotNull private AirSigningOptions mySigningOptions = new AirSigningOptions();
+  private final @NotNull List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<>();
+  private @NotNull String myCustomDescriptorPath = "";
+  private @NotNull String myPackageFileName = "";
+  private @NotNull AirSigningOptions mySigningOptions = new AirSigningOptions();
 
   public boolean isEnabled() {
     return myEnabled;
@@ -33,42 +34,38 @@ class AirPackagingOptionsBase {
     myUseGeneratedDescriptor = useGeneratedDescriptor;
   }
 
-  @NotNull
-  public String getCustomDescriptorPath() {
+  public @NotNull String getCustomDescriptorPath() {
     return myCustomDescriptorPath;
   }
 
-  public void setCustomDescriptorPath(@NotNull final String customDescriptorPath) {
+  public void setCustomDescriptorPath(final @NotNull String customDescriptorPath) {
     myCustomDescriptorPath = customDescriptorPath;
   }
 
-  @NotNull
-  public String getPackageFileName() {
+  public @NotNull String getPackageFileName() {
     return myPackageFileName;
   }
 
-  public void setPackageFileName(@NotNull final String packageFileName) {
+  public void setPackageFileName(final @NotNull String packageFileName) {
     myPackageFileName = packageFileName;
   }
 
-  @NotNull
-  public List<FilePathAndPathInPackage> getFilesToPackage() {
+  public @NotNull List<FilePathAndPathInPackage> getFilesToPackage() {
     return cloneList(myFilesToPackage);
   }
 
-  public void setFilesToPackage(@NotNull final List<FilePathAndPathInPackage> filesToPackage) {
+  public void setFilesToPackage(final @NotNull List<FilePathAndPathInPackage> filesToPackage) {
     myFilesToPackage.clear();
     for (FilePathAndPathInPackage filePathAndPathInPackage : filesToPackage) {
       myFilesToPackage.add(filePathAndPathInPackage.clone());
     }
   }
 
-  @NotNull
-  public AirSigningOptions getSigningOptions() {
+  public @NotNull AirSigningOptions getSigningOptions() {
     return mySigningOptions;
   }
 
-  public void setSigningOptions(@NotNull final AirSigningOptions signingOptions) {
+  public void setSigningOptions(final @NotNull AirSigningOptions signingOptions) {
     mySigningOptions = signingOptions;
   }
 

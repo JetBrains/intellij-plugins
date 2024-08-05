@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.model.bc.OutputType;
@@ -109,8 +109,7 @@ public final class FlashBuilderProjectLoadUtil {
     return fbProject;
   }
 
-  @NotNull
-  static String readProjectName(final String dotProjectFilePath) {
+  static @NotNull String readProjectName(final String dotProjectFilePath) {
     try (FileInputStream fis = new FileInputStream(dotProjectFilePath)) {
       final String name = FlexUtils.findXMLElement(fis, PROJECT_NAME_TAG);
       if (!StringUtil.isEmptyOrSpaces(name)) {
@@ -349,8 +348,7 @@ public final class FlashBuilderProjectLoadUtil {
     return multiPlatformSettings != null && "true".equals(multiPlatformSettings.getAttributeValue(ENABLED_ATTR));
   }
 
-  @Nullable
-  private static String getMultiPlatformId(final Element buildTargetElement) {
+  private static @Nullable String getMultiPlatformId(final Element buildTargetElement) {
     final Element multiPlatformSettings = buildTargetElement.getChild(MULTI_PLATFORM_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
     return multiPlatformSettings == null ? null : multiPlatformSettings.getAttributeValue(PLATFORM_ID_2);
   }

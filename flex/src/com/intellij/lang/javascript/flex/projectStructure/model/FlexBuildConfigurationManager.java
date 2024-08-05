@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -17,8 +17,7 @@ public abstract class FlexBuildConfigurationManager {
   // TODO should be getModifiableModel()!
   public abstract ModuleOrProjectCompilerOptions getModuleLevelCompilerOptions();
 
-  @Nullable
-  public abstract FlexBuildConfiguration findConfigurationByName(String name);
+  public abstract @Nullable FlexBuildConfiguration findConfigurationByName(String name);
 
   public static FlexBuildConfigurationManager getInstance(@NotNull Module module) {
     assert ModuleType.get(module) == FlexModuleType.getInstance() : ModuleType.get(module).getName() + ", " + module;

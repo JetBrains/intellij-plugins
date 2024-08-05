@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -65,9 +65,8 @@ public final class ActionScriptTypeHelper extends JSTypeHelper {
     return true;
   }
 
-  @Nullable
   @Override
-  public JSType getTypeForIndexing(@Nullable JSExpression expression, @NotNull PsiElement context) {
+  public @Nullable JSType getTypeForIndexing(@Nullable JSExpression expression, @NotNull PsiElement context) {
     return null;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -133,7 +133,7 @@ public final class FlexUtils {
     }
   }
 
-  public static VirtualFile addFileWithContent(@NonNls final String fileName, byte[] fileContent, final VirtualFile dir)
+  public static VirtualFile addFileWithContent(final @NonNls String fileName, byte[] fileContent, final VirtualFile dir)
     throws IOException {
     VirtualFile file = dir.findChild(fileName);
     if (file == null) {
@@ -145,7 +145,7 @@ public final class FlexUtils {
     file.setBinaryContent(fileContent);
     return file;
   }
-  public static @NotNull VirtualFile addFileWithContent(@NonNls final String fileName, @NonNls final String fileContent, final VirtualFile dir)
+  public static @NotNull VirtualFile addFileWithContent(final @NonNls String fileName, final @NonNls String fileContent, final VirtualFile dir)
     throws IOException {
     VirtualFile data = dir.findChild(fileName);
     if (data == null) {
@@ -158,8 +158,7 @@ public final class FlexUtils {
     return data;
   }
 
-  @Nullable
-  public static Sdk getSdkForActiveBC(@NotNull final Module module) {
+  public static @Nullable Sdk getSdkForActiveBC(final @NotNull Module module) {
     return ModuleType.get(module) instanceof FlexModuleType
            ? FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getSdk()
            : null;
@@ -176,7 +175,7 @@ public final class FlexUtils {
    * @return map, keys are XML elements listed in {@code xmlElements},
    *         values are all entries of respective element (may be empty list)
    */
-  public static Map<String, List<String>> findXMLElements(@NotNull final InputStream xmlInputStream, final List<String> xmlElements) {
+  public static Map<String, List<String>> findXMLElements(final @NotNull InputStream xmlInputStream, final List<String> xmlElements) {
     final Map<String, List<String>> resultMap = new HashMap<>();
     for (final String element : xmlElements) {
       resultMap.put(element, new ArrayList<>());
@@ -227,8 +226,7 @@ public final class FlexUtils {
    * @return first found value of {@code xmlElement} tag, or {@code null} if non found or any exception occurs.
    */
 
-  @Nullable
-  public static String findXMLElement(@NotNull final InputStream xmlInputStream, final String xmlElement) {
+  public static @Nullable String findXMLElement(final @NotNull InputStream xmlInputStream, final String xmlElement) {
     final Ref<String> result = new Ref<>();
 
     NanoXmlUtil.parse(xmlInputStream, new NanoXmlBuilder() {
@@ -265,7 +263,7 @@ public final class FlexUtils {
     return result.get();
   }
 
-  public static String getFlexCompilerWorkDirPath(final Project project, @Nullable final Sdk flexSdk) {
+  public static String getFlexCompilerWorkDirPath(final Project project, final @Nullable Sdk flexSdk) {
     final VirtualFile baseDir = project.getBaseDir();
     return FlexSdkUtils.isFlex2Sdk(flexSdk) || FlexSdkUtils.isFlex3_0Sdk(flexSdk)
            ? FlexCommonUtils.getTempFlexConfigsDirPath() //avoid problems with spaces in temp dir path (fcsh from Flex SDK 2 is not patched)
@@ -290,7 +288,7 @@ public final class FlexUtils {
     return "";
   }
 
-  public static void removeFileLater(@NotNull final VirtualFile file) {
+  public static void removeFileLater(final @NotNull VirtualFile file) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -338,7 +336,7 @@ public final class FlexUtils {
     }
   }
 
-  public static void processMetaAttributesForClass(@NotNull PsiElement jsClass, @NotNull final ActionScriptResolveUtil.MetaDataProcessor processor) {
+  public static void processMetaAttributesForClass(@NotNull PsiElement jsClass, final @NotNull ActionScriptResolveUtil.MetaDataProcessor processor) {
     ActionScriptResolveUtil.processMetaAttributesForClass(jsClass, processor);
     if (jsClass instanceof XmlBackedJSClassImpl) {
       PsiElement parent = jsClass.getParent();
@@ -365,7 +363,7 @@ public final class FlexUtils {
     }
   }
 
-  public static String replacePathMacros(@NotNull final String text, @NotNull final Module module, final String sdkRootPath) {
+  public static String replacePathMacros(final @NotNull String text, final @NotNull Module module, final String sdkRootPath) {
     final StringBuilder builder = new StringBuilder(text);
     int startIndex;
     int endIndex = 0;
@@ -420,11 +418,10 @@ public final class FlexUtils {
     return contentRootUrls.length > 0 ? VfsUtilCore.urlToPath(contentRootUrls[0]) : PathUtil.getParentPath(module.getModuleFilePath());
   }
 
-  @Nullable
-  public static VirtualFile createDirIfMissing(final Project project,
-                                               final boolean interactive,
-                                               final String folderPath,
-                                               final String errorMessageTitle) {
+  public static @Nullable VirtualFile createDirIfMissing(final Project project,
+                                                         final boolean interactive,
+                                                         final String folderPath,
+                                                         final String errorMessageTitle) {
     VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(folderPath);
     if (folder == null) {
       try {

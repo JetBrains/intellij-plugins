@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
@@ -161,9 +161,8 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return true;
   }
 
-  @NotNull
   @Override
-  public CssValueValidator getValueValidator() {
+  public @NotNull CssValueValidator getValueValidator() {
     return FLEX_CSS_VALUE_VALIDATOR;
   }
 
@@ -172,29 +171,9 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return false;
   }
 
-  @Nullable
-  private static String findJsClassOrFile(@NotNull JSClass root, Set<JSClass> visited, Set<String> possibleQNames) {
-    if (!visited.add(root)) return null;
-    String qName = root.getQualifiedName();
-    if (qName != null && possibleQNames.contains(qName)) {
-      return qName;
-    }
-    Set<String> includes = new LinkedHashSet<>();
-    FlexCssUtil.collectAllIncludes(root, includes);
-    String fileName = null;
-    for (String include : includes) {
-      if (possibleQNames.contains(include)) {
-        fileName = include;
-      }
-    }
-    if (fileName != null) {
-      return fileName;
-    }
-    for (JSClass jsSuper : root.getSupers()) {
-      String result = findJsClassOrFile(jsSuper, visited, possibleQNames);
-      if (result != null) return result;
-    }
-    return null;
+  @Override
+  public @NotNull Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name, @Nullable PsiElement context) {
+    return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 
   private static List<FlexStyleIndexInfo> filter(Collection<? extends Collection<FlexStyleIndexInfo>> collections,
@@ -261,21 +240,13 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name, @Nullable PsiElement context) {
-    return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
-  }
-
-  @NotNull
-  @Override
-  public Collection<? extends CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
+  public @NotNull Collection<? extends CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
     return Collections.singletonList(new CssNullValue(parent));
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssPropertyDescriptor> findPropertyDescriptors(@NotNull String propertyName, PsiElement context) {
+  public @NotNull Collection<? extends CssPropertyDescriptor> findPropertyDescriptors(@NotNull String propertyName, PsiElement context) {
     if (context != null) {
       Module module = findModuleForPsiElement(context);
       GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -289,10 +260,35 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssFunctionDescriptor> findFunctionDescriptors(@NotNull String functionName, @Nullable PsiElement context) {
+  public @NotNull Collection<? extends CssFunctionDescriptor> findFunctionDescriptors(@NotNull String functionName, @Nullable PsiElement context) {
     return ContainerUtil.createMaybeSingletonList(myFunctionDescriptors.get(functionName));
+  }
+
+  @Override
+  public @NotNull Collection<? extends CssPropertyDescriptor> getAllPropertyDescriptors(@Nullable PsiElement context) {
+    if(context == null || DumbService.getInstance(context.getProject()).isDumb()) {
+      return Collections.emptyList();
+    }
+    Module module = findModuleForPsiElement(context);
+    List<CssSimpleSelector> simpleSelectors = findSimpleSelectorsAbove(context);
+    if (simpleSelectors.size() > 0 && !containsGlobalSelectors(simpleSelectors)) {
+      if (module != null) {
+        return getPropertyDescriptorsDynamically(simpleSelectors, module);
+      }
+    }
+    FileBasedIndex index = FileBasedIndex.getInstance();
+    Collection<String> keys = ContainerUtil.sorted(index.getAllKeys(FlexStyleIndex.INDEX_ID, context.getProject()));
+    List<FlexCssPropertyDescriptor> result = new ArrayList<>();
+    GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
+    for (String key : keys) {
+      if (!isInClassicForm(key)) {
+        for (Set<FlexStyleIndexInfo> infos : index.getValues(FlexStyleIndex.INDEX_ID, key, scope)) {
+          result.add(new FlexCssPropertyDescriptor(infos));
+        }
+      }
+    }
+    return result;
   }
 
   @Override
@@ -316,7 +312,46 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return propertyName.indexOf('-') >= 0;
   }
 
-  private static void fillPropertyDescriptorsDynamically(@NotNull final JSClass jsClass, Set<JSClass> visited, final Set<CssPropertyDescriptor> result) {
+  @Override
+  public @NotNull PsiReference getStyleReference(PsiElement element, int start, int end, boolean caseSensitive) {
+    return new HtmlCssClassOrIdReference(element, start, end, caseSensitive, false);
+  }
+
+  private static @Nullable String findJsClassOrFile(@NotNull JSClass root, Set<JSClass> visited, Set<String> possibleQNames) {
+    if (!visited.add(root)) return null;
+    String qName = root.getQualifiedName();
+    if (qName != null && possibleQNames.contains(qName)) {
+      return qName;
+    }
+    Set<String> includes = new LinkedHashSet<>();
+    FlexCssUtil.collectAllIncludes(root, includes);
+    String fileName = null;
+    for (String include : includes) {
+      if (possibleQNames.contains(include)) {
+        fileName = include;
+      }
+    }
+    if (fileName != null) {
+      return fileName;
+    }
+    for (JSClass jsSuper : root.getSupers()) {
+      String result = findJsClassOrFile(jsSuper, visited, possibleQNames);
+      if (result != null) return result;
+    }
+    return null;
+  }
+
+  private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
+    for (CssSimpleSelector selector : selectors) {
+      final String elementName = selector.getElementName();
+      if (elementName.isEmpty() || "global".equals(elementName) || "*".equals(elementName)) {
+        return  true;
+      }
+    }
+    return false;
+  }
+
+  private static void fillPropertyDescriptorsDynamically(final @NotNull JSClass jsClass, Set<JSClass> visited, final Set<CssPropertyDescriptor> result) {
     if (!visited.add(jsClass)) return;
     FlexUtils.processMetaAttributesForClass(jsClass, new ActionScriptResolveUtil.MetaDataProcessor() {
       @Override
@@ -345,9 +380,25 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     }
   }
 
-  @NotNull
-  private static Collection<? extends CssPropertyDescriptor> getPropertyDescriptorsDynamically(@NotNull List<CssSimpleSelector> selectors,
-                                                                                               @NotNull Module module) {
+  @Override
+  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
+    Module module = findModuleForPsiElement(context);
+    if (module == null) {
+      return ArrayUtilRt.EMPTY_STRING_ARRAY;
+    }
+    CodeContext codeContext = CodeContext.getContext(JavaScriptSupportLoader.MXML_URI, module);
+    XmlElementDescriptor[] descriptors = codeContext.getDescriptorsWithAllowedDeclaration();
+    String[] selectors = new String[descriptors.length + 1];
+    selectors[0] = "global";
+    int i = 1;
+    for (XmlElementDescriptor descriptor : descriptors) {
+      selectors[i++] = descriptor.getName();
+    }
+    return selectors;
+  }
+
+  private static @NotNull Collection<? extends CssPropertyDescriptor> getPropertyDescriptorsDynamically(@NotNull List<CssSimpleSelector> selectors,
+                                                                                                        @NotNull Module module) {
     FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
     Set<JSClass> visited = new LinkedHashSet<>();
@@ -380,70 +431,14 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return result;
   }
 
-  private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
-    for (CssSimpleSelector selector : selectors) {
-      final String elementName = selector.getElementName();
-      if (elementName.isEmpty() || "global".equals(elementName) || "*".equals(elementName)) {
-        return  true;
-      }
-    }
-    return false;
-  }
-
-  @Override
-  @NotNull
-  public Collection<? extends CssPropertyDescriptor> getAllPropertyDescriptors(@Nullable PsiElement context) {
-    if(context == null || DumbService.getInstance(context.getProject()).isDumb()) {
-      return Collections.emptyList();
-    }
-    Module module = findModuleForPsiElement(context);
-    List<CssSimpleSelector> simpleSelectors = findSimpleSelectorsAbove(context);
-    if (simpleSelectors.size() > 0 && !containsGlobalSelectors(simpleSelectors)) {
-      if (module != null) {
-        return getPropertyDescriptorsDynamically(simpleSelectors, module);
-      }
-    }
-    FileBasedIndex index = FileBasedIndex.getInstance();
-    Collection<String> keys = ContainerUtil.sorted(index.getAllKeys(FlexStyleIndex.INDEX_ID, context.getProject()));
-    List<FlexCssPropertyDescriptor> result = new ArrayList<>();
-    GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
-    for (String key : keys) {
-      if (!isInClassicForm(key)) {
-        for (Set<FlexStyleIndexInfo> infos : index.getValues(FlexStyleIndex.INDEX_ID, key, scope)) {
-          result.add(new FlexCssPropertyDescriptor(infos));
-        }
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
-    Module module = findModuleForPsiElement(context);
-    if (module == null) {
-      return ArrayUtilRt.EMPTY_STRING_ARRAY;
-    }
-    CodeContext codeContext = CodeContext.getContext(JavaScriptSupportLoader.MXML_URI, module);
-    XmlElementDescriptor[] descriptors = codeContext.getDescriptorsWithAllowedDeclaration();
-    String[] selectors = new String[descriptors.length + 1];
-    selectors[0] = "global";
-    int i = 1;
-    for (XmlElementDescriptor descriptor : descriptors) {
-      selectors[i++] = descriptor.getName();
-    }
-    return selectors;
-  }
-
-  @Nullable
-  private static Collection<JSQualifiedNamedElement> getClasses(String className, PsiElement context) {
+  private static @Nullable Collection<JSQualifiedNamedElement> getClasses(String className, PsiElement context) {
     if (context == null) return null;
     Module module = findModuleForPsiElement(context);
     GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : context.getResolveScope();
     return JSResolveUtil.findElementsByName(className, context.getProject(), scope);
   }
 
-  @Nullable
-  public static XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
+  public static @Nullable XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
     CssStylesheet stylesheet = ((StylesheetFile)selector.getContainingFile()).getStylesheet();
     CssNamespace namespace = stylesheet != null ? stylesheet.getNamespace(selector.getNamespaceName()) : null;
     if (namespace != null && namespace.getUri() != null) {
@@ -452,17 +447,6 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     else {
       return null;
     }
-  }
-
-  @Nullable
-  private static JSClass getClassFromMxmlDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
-    final XmlElementDescriptor xmlElementDescriptor = getTypeSelectorDescriptor(selector, module);
-    if (xmlElementDescriptor == null) {
-      return null;
-    }
-
-    final PsiElement declaration = xmlElementDescriptor.getDeclaration();
-    return declaration instanceof JSClass ? (JSClass)declaration : null;
   }
 
   @Override
@@ -481,21 +465,14 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return getDeclarationsForSimpleSelector(selector.getElementName(), selector);
   }
 
-  @NotNull
-  private static PsiElement getReferencedElement(@NotNull PsiElement element) {
-    if (element instanceof ActionScriptClassImpl) {
-      return element.getNavigationElement();
+  private static @Nullable JSClass getClassFromMxmlDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
+    final XmlElementDescriptor xmlElementDescriptor = getTypeSelectorDescriptor(selector, module);
+    if (xmlElementDescriptor == null) {
+      return null;
     }
-    else if (element instanceof XmlBackedJSClassImpl) {
-      PsiElement parent = element.getParent();
-      if (parent != null) {
-        PsiFile file = parent.getContainingFile();
-        if (file != null) {
-          return file;
-        }
-      }
-    }
-    return element;
+
+    final PsiElement declaration = xmlElementDescriptor.getDeclaration();
+    return declaration instanceof JSClass ? (JSClass)declaration : null;
   }
 
   private static PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
@@ -554,8 +531,23 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return builder.toString();
   }
 
-  @NotNull
-  private static List<CssSimpleSelector> findSimpleSelectorsAbove(@NotNull PsiElement context) {
+  private static @NotNull PsiElement getReferencedElement(@NotNull PsiElement element) {
+    if (element instanceof ActionScriptClassImpl) {
+      return element.getNavigationElement();
+    }
+    else if (element instanceof XmlBackedJSClassImpl) {
+      PsiElement parent = element.getParent();
+      if (parent != null) {
+        PsiFile file = parent.getContainingFile();
+        if (file != null) {
+          return file;
+        }
+      }
+    }
+    return element;
+  }
+
+  private static @NotNull List<CssSimpleSelector> findSimpleSelectorsAbove(@NotNull PsiElement context) {
     List<CssSimpleSelector> result = new ArrayList<>();
     CssRuleset ruleset = PsiTreeUtil.getParentOfType(context, CssRuleset.class);
     if (ruleset != null) {
@@ -572,12 +564,6 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
       }
     }
     return result;
-  }
-
-  @Override
-  @NotNull
-  public PsiReference getStyleReference(PsiElement element, int start, int end, boolean caseSensitive) {
-    return new HtmlCssClassOrIdReference(element, start, end, caseSensitive, false);
   }
 
   @Override
@@ -662,8 +648,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     return false;
   }
 
-  @Nullable
-  private static VirtualFile checkForQuickFixAndGetVFile(@NotNull PsiElement context) {
+  private static @Nullable VirtualFile checkForQuickFixAndGetVFile(@NotNull PsiElement context) {
     final PsiFile file = InjectedLanguageManager.getInstance(context.getProject()).getTopLevelFile(context);
     if (file == null) {
       return null;

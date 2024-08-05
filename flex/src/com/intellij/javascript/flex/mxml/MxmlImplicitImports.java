@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -25,24 +25,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class MxmlImplicitImports {
   // flex2.compiler.mxml.lang.StandardDefs
-  private static @NonNls final ScopedImportSet
+  private static final @NonNls ScopedImportSet
     standardMxmlImports = new PredefinedImportSet("mx.styles.*", "mx.binding.*", "mx.core.mx_internal",
     "mx.core.IDeferredInstance", "mx.core.IFactory", "mx.core.IPropertyChangeNotifier", "mx.core.ClassFactory",
     "mx.core.DeferredInstanceFromClass", "mx.core.DeferredInstanceFromFunction");
 
-  private static @NonNls final ScopedImportSet airOnlyImplicitImports =
+  private static final @NonNls ScopedImportSet airOnlyImplicitImports =
     new PredefinedImportSet("flash.data.*", "flash.desktop.*", "flash.filesystem.*", "flash.html.*", "flash.html.script.*");
 
   // common for Flex 3 and Flex 4
-  private static @NonNls final String[] commonImplicitImports =
+  private static final @NonNls String[] commonImplicitImports =
     new String[]{"flash.accessibility.*", "flash.debugger.*", "flash.display.*", "flash.errors.*", "flash.events.*", "flash.external.*",
       "flash.geom.*", "flash.media.*", "flash.net.*", "flash.printing.*", "flash.profiler.*", "flash.system.*", "flash.text.*",
       "flash.ui.*", "flash.utils.*", "flash.xml.*"};
 
-  private static @NonNls final ScopedImportSet flex3ImplicitImports =
+  private static final @NonNls ScopedImportSet flex3ImplicitImports =
     new PredefinedImportSet(ArrayUtil.append(commonImplicitImports, "flash.filters.*"));
 
-  private static @NonNls final ScopedImportSet flex4ImplicitImports = new PredefinedImportSet(
+  private static final @NonNls ScopedImportSet flex4ImplicitImports = new PredefinedImportSet(
     ArrayUtil.mergeArrays(commonImplicitImports, "mx.filters.*", "mx.core.IFlexModuleFactory"));
 
   public static boolean resolveTypeNameUsingImplicitImports(final ResolveProcessor resolveProcessor, @NotNull PsiNamedElement scope) {

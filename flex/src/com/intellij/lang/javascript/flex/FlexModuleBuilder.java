@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.execution.RunManager;
@@ -114,7 +114,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public void setupRootModel(@NotNull final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
+  public void setupRootModel(final @NotNull ModifiableRootModel modifiableRootModel) throws ConfigurationException {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     if (contentEntry == null) return;
 
@@ -254,8 +254,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     runManager.setSelectedConfiguration(settings);
   }
 
-  @Nullable
-  private VirtualFile createSourceRoot(final ContentEntry contentEntry) {
+  private @Nullable VirtualFile createSourceRoot(final ContentEntry contentEntry) {
     final VirtualFile contentRoot = contentEntry.getFile();
     if (contentRoot == null) return null;
 
@@ -283,9 +282,8 @@ public class FlexModuleBuilder extends ModuleBuilder {
     return null;
   }
 
-  @Nullable
   @Override
-  public ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
+  public @Nullable ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
     return new SetupFlexModuleWizardStep(this);
   }
 

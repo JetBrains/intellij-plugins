@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
@@ -20,34 +20,133 @@ import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.ge
 public final class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   public static final @NlsSafe String CONFIGURABLE_DISPLAY_NAME = "ActionScript";
 
-  @NotNull
-  @Override
-  public Language getLanguage() {
-    return JavaScriptSupportLoader.ECMA_SCRIPT_L4;
-  }
+  public static final String GENERAL_CODE_SAMPLE =
+    """
+      package {
+      class Foo {
+      public function foo(x:int, z) {
+      var arr = ["zero", "one"];
+      var x = {0:"zero", 1:"one"};
+      var y = (x ^ 0x123) << 2;
+      var k = x > 15 ? 1 : 2;
+      do {
+      try {
+      if (0 < x && x < 10) {
+      while (x != y) {
+      x = f(x * 3 + 5);
+      }
+      z += 2;
+      } else if (x > 20) {
+      z = x << 1;
+      } else {
+      z = x | 2;
+      }
+      switch (k) {
+      case 0:
+      var s1 = 'zero';
+      break;
+      case 2:
+      var s1 = 'two';
+      break;
+      default:
+      var s1 = 'other';
+      }
+      } catch (e:Exception) {
+      var message = arr[0];
+      }
+      } while (x < 0);
+      }
+
+          function sum(...args) {
+              for (var i:uint = 0; i < args.length; i++) {
+                  trace(args[i]);
+              }
+          }
+      }
+      }""";
 
   @Override
   public IndentOptionsEditor getIndentOptionsEditor() {
     return new ActionScriptIndentOptionsEditor();
   }
+  public static final String WRAPPING_CODE_SAMPLE =
+    """
+      function buzz() { return 0; }
 
-  @NotNull
-  @Override
-  public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings modelSettings) {
-    return new ActionScriptCodeStyleSettingsConfigurable(settings, modelSettings);
-  }
+      class Foo {
 
-  @Nullable
-  @Override
-  public CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
-    return new ECMA4CodeStyleSettings(settings);
-  }
+      numbers : ['one', 'two', 'three', 'four', 'five', 'six'];
 
-  @Nullable
-  @Override
-  public String getConfigurableDisplayName() {
-    return CONFIGURABLE_DISPLAY_NAME;
-  }
+      // function fBar (x,y);
+      function fOne(argA, argB, argC, argD, argE, argF, argG, argH) {
+      x = argA + argB + argC + argD + argE + argF + argG + argH;
+      this.fTwo(argA, argB, argC, this.fThree(argD, argE, argF, argG, argH));
+      var z = argA == 'Some string' ? 'yes' : 'no';
+      var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];
+      for (var colorIndex = 0; colorIndex < colors.length; colorIndex++)\s
+      var colorString = this.numbers[colorIndex];
+      }
+
+      function fTwo(strA, strB, strC, strD) {
+      if (true)
+      return strC;
+      if (strA == 'one' ||\s
+      strB == 'two' || strC == 'three') {
+      return strA + strB + strC;
+      } else return strD
+      return strD;
+      }
+
+      function fThree(strA, strB, strC, strD, strE) {
+      return strA + strB + strC + strD + strE;
+      }
+      /*
+       Multiline
+         C-style
+           Comment
+       */
+      function fFour() {
+          var myLinkText = "Button",
+                  local = true,
+                  initial = -1;
+          var cssClasses = ["bold", "red",]
+          var selector = "#id";
+
+          var color = "red";
+          var offset = 10;
+          }}""";
+  public static final String BLANK_LINE_CODE_SAMPLE =
+    """
+      package {
+      import com.jetbrains.flex.Demo;
+      import com.jetbrains.flex.Sample;
+      class Foo {
+          var demo : Demo;
+          var sample : Sample;
+          public function foo(x:int, z) {
+              var y = x * z;
+
+
+              return y;
+          }
+          public function getSample() {
+              return sample;
+          }
+      }
+
+      }""";
+  public static final String INDENT_CODE_SAMPLE =
+    """
+      package {
+      class Foo {
+          public function foo(x:int, z) {
+              var y = x * z;
+
+
+              return y;
+          }
+      }
+      }""";
 
   @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
@@ -203,135 +302,28 @@ public final class ActionScriptLanguageCodeStyleSettingsProvider extends Languag
     commonSettings.initIndentOptions();
   }
 
-  @NotNull
   @Override
-  public String getExternalLanguageId() {
-    return "actionscript";
+  public @NotNull Language getLanguage() {
+    return JavaScriptSupportLoader.ECMA_SCRIPT_L4;
   }
 
-  public final static String GENERAL_CODE_SAMPLE =
-    """
-      package {
-      class Foo {
-      public function foo(x:int, z) {
-      var arr = ["zero", "one"];
-      var x = {0:"zero", 1:"one"};
-      var y = (x ^ 0x123) << 2;
-      var k = x > 15 ? 1 : 2;
-      do {
-      try {
-      if (0 < x && x < 10) {
-      while (x != y) {
-      x = f(x * 3 + 5);
-      }
-      z += 2;
-      } else if (x > 20) {
-      z = x << 1;
-      } else {
-      z = x | 2;
-      }
-      switch (k) {
-      case 0:
-      var s1 = 'zero';
-      break;
-      case 2:
-      var s1 = 'two';
-      break;
-      default:
-      var s1 = 'other';
-      }
-      } catch (e:Exception) {
-      var message = arr[0];
-      }
-      } while (x < 0);
-      }
+  @Override
+  public @NotNull CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings modelSettings) {
+    return new ActionScriptCodeStyleSettingsConfigurable(settings, modelSettings);
+  }
 
-          function sum(...args) {
-              for (var i:uint = 0; i < args.length; i++) {
-                  trace(args[i]);
-              }
-          }
-      }
-      }""";
+  @Override
+  public @Nullable CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
+    return new ECMA4CodeStyleSettings(settings);
+  }
 
-  public final static String WRAPPING_CODE_SAMPLE =
-    """
-      function buzz() { return 0; }
+  @Override
+  public @Nullable String getConfigurableDisplayName() {
+    return CONFIGURABLE_DISPLAY_NAME;
+  }
 
-      class Foo {
-
-      numbers : ['one', 'two', 'three', 'four', 'five', 'six'];
-
-      // function fBar (x,y);
-      function fOne(argA, argB, argC, argD, argE, argF, argG, argH) {
-      x = argA + argB + argC + argD + argE + argF + argG + argH;
-      this.fTwo(argA, argB, argC, this.fThree(argD, argE, argF, argG, argH));
-      var z = argA == 'Some string' ? 'yes' : 'no';
-      var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];
-      for (var colorIndex = 0; colorIndex < colors.length; colorIndex++)\s
-      var colorString = this.numbers[colorIndex];
-      }
-
-      function fTwo(strA, strB, strC, strD) {
-      if (true)
-      return strC;
-      if (strA == 'one' ||\s
-      strB == 'two' || strC == 'three') {
-      return strA + strB + strC;
-      } else return strD
-      return strD;
-      }
-
-      function fThree(strA, strB, strC, strD, strE) {
-      return strA + strB + strC + strD + strE;
-      }
-      /*
-       Multiline
-         C-style
-           Comment
-       */
-      function fFour() {
-          var myLinkText = "Button",
-                  local = true,
-                  initial = -1;
-          var cssClasses = ["bold", "red",]
-          var selector = "#id";
-
-          var color = "red";
-          var offset = 10;
-          }}""";
-
-  public final static String BLANK_LINE_CODE_SAMPLE =
-    """
-      package {
-      import com.jetbrains.flex.Demo;
-      import com.jetbrains.flex.Sample;
-      class Foo {
-          var demo : Demo;
-          var sample : Sample;
-          public function foo(x:int, z) {
-              var y = x * z;
-
-
-              return y;
-          }
-          public function getSample() {
-              return sample;
-          }
-      }
-
-      }""";
-
-  public final static String INDENT_CODE_SAMPLE =
-    """
-      package {
-      class Foo {
-          public function foo(x:int, z) {
-              var y = x * z;
-
-
-              return y;
-          }
-      }
-      }""";
+  @Override
+  public @NotNull String getExternalLanguageId() {
+    return "actionscript";
+  }
 }

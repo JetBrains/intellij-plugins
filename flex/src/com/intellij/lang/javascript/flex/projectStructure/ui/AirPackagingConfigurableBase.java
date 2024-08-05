@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -240,7 +241,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   @Override
-  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+  public ActionCallback navigateTo(final @Nullable Place place, final boolean requestFocus) {
     if (place != null && place.getPath(FlexBCConfigurable.LOCATION_ON_TAB) instanceof Location loc) {
       return switch (loc) {
         case CustomDescriptor -> myAirDescriptorForm.navigateTo(loc);

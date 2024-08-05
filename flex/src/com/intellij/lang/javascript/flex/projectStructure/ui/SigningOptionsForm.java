@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -179,8 +179,7 @@ public class SigningOptionsForm {
     }
   }
 
-  @NotNull
-  private String getArch() {
+  private @NotNull String getArch() {
     if (myArchX86RadioButton.isSelected()) return AirSigningOptions.ARCH_X86;
     if (myArchArmv8RadioButton.isSelected()) return AirSigningOptions.ARCH_ARMV8;
     return AirSigningOptions.ARCH_ARMV7;

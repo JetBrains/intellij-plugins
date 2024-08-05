@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.colors.page;
 
 import com.intellij.lang.actionscript.highlighting.ECMAL4Highlighter;
@@ -51,7 +52,7 @@ public final class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(JavaScriptBundle.messagePointer("javascript.static.member.variable"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_VARIABLE)
     };
 
-  @NonNls private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
+  private static final @NonNls Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
   static {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("meta", ECMAL4Highlighter.ECMAL4_METADATA);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("keyword", ECMAL4Highlighter.ECMAL4_KEYWORD);
@@ -121,9 +122,8 @@ public final class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
       }
       }""";
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return "ActionScript";
   }
 
@@ -142,17 +142,15 @@ public final class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(JavaScriptSupportLoader.JAVASCRIPT, null, null);
     assert highlighter != null;
     return highlighter;
   }
 
-  @NotNull
   @Override
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return DEMO_TEXT.
       replace("[Meta(name=\"abc\", type=\"def\")]", "_META_").
       replaceAll("(public|class|function|package|return|var|static|import)", "<keyword>$1</keyword>").

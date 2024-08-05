@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.injected.editor.VirtualFileWindow;
@@ -22,44 +22,14 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ActionScriptResolveScopeProvider extends JSResolveScopeProvider implements JSElementResolveScopeProvider {
-
-  @Nullable
+final class ActionScriptResolveScopeProvider extends JSResolveScopeProvider implements JSElementResolveScopeProvider {
   @Override
-  public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, @NotNull Project project) {
+  public @Nullable GlobalSearchScope getResolveScope(@NotNull VirtualFile file, @NotNull Project project) {
     return getResolveScope(file, project, true);
   }
 
-  @Nullable
-  private static GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project, boolean checkApplicable) {
-    if (file instanceof VirtualFileWindow) {
-      file = ((VirtualFileWindow)file).getDelegate();
-    }
-    if (checkApplicable && !isApplicable(file)) return null;
-    final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    final Module module = projectFileIndex.getModuleForFile(file);
-    if (module != null) {
-      boolean includeTests = projectFileIndex.isInTestSourceContent(file) || !projectFileIndex.isInSourceContent(file);
-
-      final GlobalSearchScope moduleScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, includeTests);
-      // TODO [Konstantin.Ulitin] add package and swc file types
-      //final GlobalSearchScope fileTypesScope =
-      //  GlobalSearchScope.getScopeRestrictedByFileTypes(moduleScope, ActionScriptFileType.INSTANCE,
-      //                                                  FlexApplicationComponent.SWF_FILE_TYPE, FlexApplicationComponent.MXML);
-      final GlobalSearchScope fileTypesScope =
-        moduleScope.intersectWith(GlobalSearchScope.notScope(
-          GlobalSearchScope.getScopeRestrictedByFileTypes(
-            moduleScope, TypeScriptFileType.INSTANCE, JavaScriptFileType.INSTANCE
-          )
-        ));
-      return fileTypesScope.union(GlobalSearchScope.filesScope(project, ActionScriptLibraryProvider.getActionScriptPredefinedLibraryFiles()));
-    }
-    return null;
-  }
-
-  @Nullable
   @Override
-  public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
+  public @Nullable GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
     final GlobalSearchScope tempScope = JSInheritanceUtil.getEnforcedScope();
     if (tempScope != null) {
       return tempScope;
@@ -94,12 +64,38 @@ public final class ActionScriptResolveScopeProvider extends JSResolveScopeProvid
     return fileResolveScope != null ? fileResolveScope : getProjectScopeIncludingPredefines(project);
   }
 
+  private static @Nullable GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project, boolean checkApplicable) {
+    if (file instanceof VirtualFileWindow) {
+      file = ((VirtualFileWindow)file).getDelegate();
+    }
+    if (checkApplicable && !isApplicable(file)) return null;
+    final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    final Module module = projectFileIndex.getModuleForFile(file);
+    if (module != null) {
+      boolean includeTests = projectFileIndex.isInTestSourceContent(file) || !projectFileIndex.isInSourceContent(file);
+
+      final GlobalSearchScope moduleScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, includeTests);
+      // TODO [Konstantin.Ulitin] add package and swc file types
+      //final GlobalSearchScope fileTypesScope =
+      //  GlobalSearchScope.getScopeRestrictedByFileTypes(moduleScope, ActionScriptFileType.INSTANCE,
+      //                                                  FlexApplicationComponent.SWF_FILE_TYPE, FlexApplicationComponent.MXML);
+      final GlobalSearchScope fileTypesScope =
+        moduleScope.intersectWith(GlobalSearchScope.notScope(
+          GlobalSearchScope.getScopeRestrictedByFileTypes(
+            moduleScope, TypeScriptFileType.INSTANCE, JavaScriptFileType.INSTANCE
+          )
+        ));
+      return fileTypesScope.union(GlobalSearchScope.filesScope(project, ActionScriptLibraryProvider.getActionScriptPredefinedLibraryFiles()));
+    }
+    return null;
+  }
+
   @Override
   protected boolean isApplicablePredefinedLibraryFile(@NotNull VirtualFile predefinedLibraryFile) {
     return isApplicable(predefinedLibraryFile);
   }
 
-  private static boolean isApplicable(@NotNull final VirtualFile file) {
+  private static boolean isApplicable(final @NotNull VirtualFile file) {
     return FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE) || FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.MXML) ||
            FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) || JavaScriptSupportLoader.isFlexMxmFile(file);
   }

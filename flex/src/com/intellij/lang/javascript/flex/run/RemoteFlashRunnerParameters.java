@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
@@ -14,21 +15,19 @@ public class RemoteFlashRunnerParameters extends BCBasedRunnerParameters {
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
 
-  @NotNull
-  public RemoteDebugTarget getRemoteDebugTarget() {
+  public @NotNull RemoteDebugTarget getRemoteDebugTarget() {
     return myRemoteDebugTarget;
   }
 
-  public void setRemoteDebugTarget(@NotNull final RemoteDebugTarget remoteDebugTarget) {
+  public void setRemoteDebugTarget(final @NotNull RemoteDebugTarget remoteDebugTarget) {
     myRemoteDebugTarget = remoteDebugTarget;
   }
 
-  @NotNull
-  public AirMobileDebugTransport getDebugTransport() {
+  public @NotNull AirMobileDebugTransport getDebugTransport() {
     return myDebugTransport;
   }
 
-  public void setDebugTransport(@NotNull final AirMobileDebugTransport debugTransport) {
+  public void setDebugTransport(final @NotNull AirMobileDebugTransport debugTransport) {
     myDebugTransport = debugTransport;
   }
 

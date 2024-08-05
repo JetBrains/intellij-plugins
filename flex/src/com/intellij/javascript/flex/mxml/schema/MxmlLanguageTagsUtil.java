@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
@@ -173,8 +173,8 @@ public final class MxmlLanguageTagsUtil {
     }
   }
 
-  public static void checkFlex4Attributes(@NotNull final XmlTag tag,
-                                          @NotNull final Validator.ValidationHost host,
+  public static void checkFlex4Attributes(final @NotNull XmlTag tag,
+                                          final @NotNull Validator.ValidationHost host,
                                           final boolean checkStateSpecificAttrs) {
     XmlAttribute flex3NamespaceDeclaration = null;
     XmlAttribute flex4NamespaceDeclaration = null;
@@ -300,14 +300,12 @@ public final class MxmlLanguageTagsUtil {
     }
 
     @Override
-    @NotNull
-    public String getText() {
+    public @NotNull String getText() {
       return FlexBundle.message("remove.namespace.declaration");
     }
 
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return XmlAnalysisBundle.message("xml.quickfix.remove.attribute.family");
     }
 
@@ -345,8 +343,7 @@ public final class MxmlLanguageTagsUtil {
       return -1;
     }
 
-    @Nullable
-    private static XmlAttribute deleteWhiteSpaceTillNextAttribute(final XmlAttribute attribute) {
+    private static @Nullable XmlAttribute deleteWhiteSpaceTillNextAttribute(final XmlAttribute attribute) {
       PsiElement nextSibling = attribute.getNextSibling();
       while (nextSibling instanceof PsiWhiteSpace) {
         final PsiElement whiteSpace = nextSibling;
@@ -356,8 +353,7 @@ public final class MxmlLanguageTagsUtil {
       return nextSibling instanceof XmlAttribute ? (XmlAttribute)nextSibling : null;
     }
 
-    @Nullable
-    private static PsiElement deletePreviousWhiteSpaces(final XmlAttribute attribute) {
+    private static @Nullable PsiElement deletePreviousWhiteSpaces(final XmlAttribute attribute) {
       PsiElement prevSibling = attribute.getPrevSibling();
       while (prevSibling instanceof PsiWhiteSpace) {
         final PsiElement whiteSpace = prevSibling;
@@ -386,14 +382,12 @@ public final class MxmlLanguageTagsUtil {
     }
 
     @Override
-    @NotNull
-    public String getText() {
+    public @NotNull String getText() {
       return FlexBundle.message("declare.namespace", myNamespace);
     }
 
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return "Declare namespace";
     }
 

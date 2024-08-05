@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.BrowserFamily;
@@ -24,15 +24,14 @@ public class LauncherParameters implements Cloneable {
                                                                                      : "/usr/bin/flashplayerdebugger";
   private boolean myNewPlayerInstance = false;
 
-  @NotNull
-  private WebBrowser myBrowser = WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.FIREFOX);
+  private @NotNull WebBrowser myBrowser = WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.FIREFOX);
 
   public LauncherParameters() {
   }
 
-  public LauncherParameters(@NotNull final LauncherType launcherType,
-                            @NotNull final WebBrowser browser,
-                            @NotNull final String playerPath,
+  public LauncherParameters(final @NotNull LauncherType launcherType,
+                            final @NotNull WebBrowser browser,
+                            final @NotNull String playerPath,
                             final boolean isNewPlayerInstance) {
     myLauncherType = launcherType;
     myBrowser = browser;
@@ -58,19 +57,17 @@ public class LauncherParameters implements Cloneable {
     }
   }
 
-  @NotNull
-  public LauncherType getLauncherType() {
+  public @NotNull LauncherType getLauncherType() {
     return myLauncherType;
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  public void setLauncherType(@NotNull final LauncherType launcherType) {
+  public void setLauncherType(final @NotNull LauncherType launcherType) {
     myLauncherType = launcherType;
   }
 
-  @NotNull
   @OptionTag(converter = WebBrowserReferenceConverter.class)
-  public WebBrowser getBrowser() {
+  public @NotNull WebBrowser getBrowser() {
     return myBrowser;
   }
 
@@ -78,13 +75,12 @@ public class LauncherParameters implements Cloneable {
     myBrowser = browser == null ? WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.FIREFOX) : browser;
   }
 
-  @NotNull
-  public String getPlayerPath() {
+  public @NotNull String getPlayerPath() {
     return myPlayerPath;
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  public void setPlayerPath(@NotNull final String playerPath) {
+  public void setPlayerPath(final @NotNull String playerPath) {
     myPlayerPath = FileUtil.toSystemIndependentName(playerPath);
   }
 

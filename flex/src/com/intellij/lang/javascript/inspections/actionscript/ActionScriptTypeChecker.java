@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -125,16 +126,14 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
     return isAssignable;
   }
 
-  @NotNull
-  private static JSChangeSignatureFix getChangeSignatureFixForEventListener(@NotNull JSFunction fun,
-                                                                            @NotNull JSExpression expr) {
+  private static @NotNull JSChangeSignatureFix getChangeSignatureFixForEventListener(@NotNull JSFunction fun,
+                                                                                     @NotNull JSExpression expr) {
     JSClass jsClass = calcNontrivialExpectedEventType(expr);
     String typeText = jsClass != null ? jsClass.getQualifiedName() : FlexCommonTypeNames.FLASH_EVENT_FQN;
     
     return new JSChangeSignatureFix(fun){
-      @NotNull
       @Override
-      protected Pair<List<JSParameterInfo>, Boolean> buildParameterInfos(@NotNull JSFunction function) {
+      protected @NotNull Pair<List<JSParameterInfo>, Boolean> buildParameterInfos(@NotNull JSFunction function) {
         ASTNode treeFromText =
           JSChangeUtil.createStatementFromTextWithContext(
             "function f(event:" + typeText + ") {}",
@@ -161,8 +160,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
     return false;
   }
 
-  @Nullable
-  private static JSClass calcNontrivialExpectedEventType(JSExpression expr) {
+  private static @Nullable JSClass calcNontrivialExpectedEventType(JSExpression expr) {
     JSExpression prevExpr = PsiTreeUtil.findChildOfAnyType(expr.getParent(), JSExpression.class);
 
     String type = null;

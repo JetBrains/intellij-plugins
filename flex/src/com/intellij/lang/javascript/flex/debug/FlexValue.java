@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -46,7 +46,7 @@ class FlexValue extends XValue {
   private final String myName;
   private final String myExpression;
   private final String myResult;
-  private @Nullable final String myParentResult;
+  private final @Nullable String myParentResult;
   private final ValueType myValueType;
   private Icon myPreferredIcon;
 
@@ -102,19 +102,22 @@ class FlexValue extends XValue {
     return 1;
   };
 
-  enum ValueType {
-    This(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class)),
-    Parameter(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Parameter)),
-    Variable(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Variable)),
-    Field(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field)),
-    ScopeChainEntry(PlatformIcons.CLASS_INITIALIZER),
-    Other(null);
-
-    private @Nullable final Icon myIcon;
-
-    ValueType(final @Nullable Icon icon) {
-      myIcon = icon;
-    }
+  @Override
+  public XValueModifier getModifier() {
+    return new XValueModifier() {
+      @Override
+      public void setValue(@NotNull XExpression _expression, final @NotNull XModificationCallback callback) {
+        FlexStackFrame.EvaluateCommand command =
+          myFlexStackFrame.new EvaluateCommand(myExpression + "=" + _expression.getExpression(), null) {
+          @Override
+          protected void dispatchResult(String s) {
+            super.dispatchResult(s);
+            callback.valueModified();
+          }
+        };
+        myDebugProcess.sendCommand(command);
+      }
+    };
   }
 
   FlexValue(final FlexStackFrame flexStackFrame,
@@ -377,25 +380,7 @@ class FlexValue extends XValue {
   }
 
   @Override
-  public XValueModifier getModifier() {
-    return new XValueModifier() {
-      @Override
-      public void setValue(@NotNull XExpression _expression, @NotNull final XModificationCallback callback) {
-        FlexStackFrame.EvaluateCommand command =
-          myFlexStackFrame.new EvaluateCommand(myExpression + "=" + _expression.getExpression(), null) {
-          @Override
-          protected void dispatchResult(String s) {
-            super.dispatchResult(s);
-            callback.valueModified();
-          }
-        };
-        myDebugProcess.sendCommand(command);
-      }
-    };
-  }
-
-  @Override
-  public void computeChildren(@NotNull final XCompositeNode node) {
+  public void computeChildren(final @NotNull XCompositeNode node) {
     final int i = myResult.indexOf(OBJECT_MARKER);
     if (i == -1) super.computeChildren(node);
 
@@ -414,7 +399,7 @@ class FlexValue extends XValue {
     final FlexStackFrame.EvaluateCommand
       command = myFlexStackFrame.new EvaluateCommand(expression, null) {
       @Override
-      CommandOutputProcessingMode doOnTextAvailable(@NonNls final String resultS) {
+      CommandOutputProcessingMode doOnTextAvailable(final @NonNls String resultS) {
         StringTokenizer tokenizer = new StringTokenizer(resultS, "\r\n");
 
         // skip first token; it contains $-prefix followed by myResult: $6 = [Object 30860193, class='__AS3__.vec::Vector.<String>']
@@ -480,20 +465,7 @@ class FlexValue extends XValue {
   }
 
   @Override
-  public boolean canNavigateToTypeSource() {
-    final boolean isObject = myResult.contains(OBJECT_MARKER);
-
-    if (isObject && mySourcePosition != null) {
-      final Pair<String, String> typeAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
-      final String typeFromFlexValueResult = typeAndAdditionalInfo.first;
-      return typeFromFlexValueResult != null;
-    }
-
-    return false;
-  }
-
-  @Override
-  public void computeTypeSourcePosition(@NotNull final XNavigatable navigatable) {
+  public void computeTypeSourcePosition(final @NotNull XNavigatable navigatable) {
     if (mySourcePosition == null) {
       navigatable.setSourcePosition(null);
       return;
@@ -517,14 +489,20 @@ class FlexValue extends XValue {
   }
 
   @Override
-  public boolean canNavigateToSource() {
-    return mySourcePosition != null && (myValueType == ValueType.Variable ||
-                                        myValueType == ValueType.Parameter ||
-                                        myValueType == ValueType.Field && myParentResult != null);
+  public boolean canNavigateToTypeSource() {
+    final boolean isObject = myResult.contains(OBJECT_MARKER);
+
+    if (isObject && mySourcePosition != null) {
+      final Pair<String, String> typeAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
+      final String typeFromFlexValueResult = typeAndAdditionalInfo.first;
+      return typeFromFlexValueResult != null;
+    }
+
+    return false;
   }
 
   @Override
-  public void computeSourcePosition(@NotNull final XNavigatable navigatable) {
+  public void computeSourcePosition(final @NotNull XNavigatable navigatable) {
     if (mySourcePosition == null) {
       navigatable.setSourcePosition(null);
       return;
@@ -604,6 +582,29 @@ class FlexValue extends XValue {
       }
     }
     navigatable.setSourcePosition(result);
+  }
+
+  @Override
+  public boolean canNavigateToSource() {
+    return mySourcePosition != null && (myValueType == ValueType.Variable ||
+                                        myValueType == ValueType.Parameter ||
+                                        myValueType == ValueType.Field && myParentResult != null);
+  }
+
+  private static XValueChildrenList createWrappingGroupList(final String groupName, final XValueChildrenList... listsToWrap) {
+    final XValueGroup group = new XValueGroup(groupName) {
+      @Override
+      public void computeChildren(final @NotNull XCompositeNode node) {
+        for (final XValueChildrenList list : listsToWrap) {
+          node.addChildren(list, false);
+        }
+        node.addChildren(XValueChildrenList.EMPTY, true);
+      }
+    };
+
+    final XValueChildrenList inheritedSingleNodeList = new XValueChildrenList();
+    inheritedSingleNodeList.addTopGroup(group);
+    return inheritedSingleNodeList;
   }
 
   private static void addValueCheckingDuplicates(final FlexValue flexValue,
@@ -703,20 +704,15 @@ class FlexValue extends XValue {
     node.addChildren(elementsOfCollectionList, true);
   }
 
-  private static XValueChildrenList createWrappingGroupList(final String groupName, final XValueChildrenList... listsToWrap) {
-    final XValueGroup group = new XValueGroup(groupName) {
-      @Override
-      public void computeChildren(@NotNull final XCompositeNode node) {
-        for (final XValueChildrenList list : listsToWrap) {
-          node.addChildren(list, false);
-        }
-        node.addChildren(XValueChildrenList.EMPTY, true);
-      }
-    };
-
-    final XValueChildrenList inheritedSingleNodeList = new XValueChildrenList();
-    inheritedSingleNodeList.addTopGroup(group);
-    return inheritedSingleNodeList;
+  /**
+   * Returned result can contain extra <b>$</b> after real class FQN in case of static context. For example {@code pack.Main$}
+   * Also it may contain vector type, e.g. {@code Vector.<int>}
+   */
+  private static @Nullable String getType(final String typeFromFlexValueResult) {
+    if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
+      return typeFromFlexValueResult.replace("::", ".");
+    }
+    return null;
   }
 
   private static boolean updateIconAndAddToListIfMatches(final String name,
@@ -808,24 +804,7 @@ class FlexValue extends XValue {
     return Pair.create(type, additionalInfo);
   }
 
-  /**
-   * Returned result can contain extra <b>$</b> after real class FQN in case of static context. For example {@code pack.Main$}
-   * Also it may contain vector type, e.g. {@code Vector.<int>}
-   */
-  @Nullable
-  private static String getType(final String typeFromFlexValueResult) {
-    if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
-      return typeFromFlexValueResult.replace("::", ".");
-    }
-    return null;
-  }
-
-  private static boolean isGenericVector(final String type) {
-    return type.startsWith(GENERIC_VECTOR_PREFIX);
-  }
-
-  @Nullable
-  private static JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
+  private static @Nullable JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
     String type = getType(typeFromFlexValueResult);
     if (type != null) {
       if (isGenericVector(type)) {
@@ -853,6 +832,25 @@ class FlexValue extends XValue {
     }
 
     return null;
+  }
+
+  private static boolean isGenericVector(final String type) {
+    return type.startsWith(GENERIC_VECTOR_PREFIX);
+  }
+
+  enum ValueType {
+    This(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class)),
+    Parameter(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Parameter)),
+    Variable(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Variable)),
+    Field(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field)),
+    ScopeChainEntry(PlatformIcons.CLASS_INITIALIZER),
+    Other(null);
+
+    private final @Nullable Icon myIcon;
+
+    ValueType(final @Nullable Icon icon) {
+      myIcon = icon;
+    }
   }
 
   /**

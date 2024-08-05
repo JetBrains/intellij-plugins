@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
@@ -22,7 +23,7 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
   protected void buildTemplate(final Template template,
                                final JSReferenceExpression referenceExpression,
                                final boolean staticContext,
-                               @NotNull final PsiElement anchorParent) {
+                               final @NotNull PsiElement anchorParent) {
     template.addTextSegment("public ");
     writeFunctionAndName(template, myReferencedName, anchorParent, null, referenceExpression);
 

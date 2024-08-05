@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
@@ -182,7 +182,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myMainClassComponent.addDocumentListener(new DocumentListener() {
       @Override
-      public void documentChanged(@NotNull final DocumentEvent e) {
+      public void documentChanged(final @NotNull DocumentEvent e) {
         final String shortName = StringUtil.getShortName(myMainClassComponent.getText().trim());
         if (!shortName.isEmpty()) {
           myOutputFileNameTextField.setText(shortName + ".swf");
@@ -192,7 +192,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myOutputFileNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(@NotNull final javax.swing.event.DocumentEvent e) {
+      protected void textChanged(final @NotNull javax.swing.event.DocumentEvent e) {
         final FlexBuildConfiguration bc = myBCCombo.getBC();
         if (bc != null && bc.getTargetPlatform() == TargetPlatform.Web) {
           updateBCOutputLabel(bc);
@@ -472,13 +472,12 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   @Override
-  @NotNull
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final FlashRunConfiguration configuration) {
+  protected void resetEditorFrom(final @NotNull FlashRunConfiguration configuration) {
     myResetting = true;
     try {
       doResetEditorFrom(configuration);
@@ -570,7 +569,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final FlashRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(final @NotNull FlashRunConfiguration configuration) throws ConfigurationException {
     final FlashRunnerParameters params = configuration.getRunnerParameters();
 
     myBCCombo.applyTo(params);

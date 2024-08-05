@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -9,12 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 class DependencyTypeImpl implements ModifiableDependencyType {
 
-  @NotNull
-  private LinkageType myLinkageType = DEFAULT_LINKAGE;
+  private @NotNull LinkageType myLinkageType = DEFAULT_LINKAGE;
 
   @Override
-  @NotNull
-  public LinkageType getLinkageType() {
+  public @NotNull LinkageType getLinkageType() {
     return myLinkageType;
   }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.model.bc.CompilerOptionInfo;
@@ -84,8 +85,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
   }
 
   @Override
-  @Nullable
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return myTable;
   }
 
@@ -98,8 +98,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       }
 
       @Override
-      @Nullable
-      public String getColumnName(final int column) {
+      public @Nullable String getColumnName(final int column) {
         return myInfo.LIST_ELEMENTS.length == 1 ? null : myInfo.LIST_ELEMENTS[column].DISPLAY_NAME;
       }
 
@@ -182,8 +181,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
   }
 
   @Override
-  @Nullable
-  protected ValidationInfo doValidate() {
+  protected @Nullable ValidationInfo doValidate() {
     if ("compiler.define".equals(myInfo.ID)) {
       for (StringBuilder builder : getCurrentList()) {
         final List<String> strings = StringUtil.split(builder.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);

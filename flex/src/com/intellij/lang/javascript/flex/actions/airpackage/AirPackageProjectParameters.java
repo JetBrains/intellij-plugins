@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -115,7 +115,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
   }
 
   @Override
-  public void loadState(@NotNull final AirPackageProjectParameters state) {
+  public void loadState(final @NotNull AirPackageProjectParameters state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

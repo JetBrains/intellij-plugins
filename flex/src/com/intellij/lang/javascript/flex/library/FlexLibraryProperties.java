@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.openapi.roots.libraries.LibraryProperties;
@@ -9,8 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperties> {
-  @Nullable
-  private String myId;
+  private @Nullable String myId;
 
   public FlexLibraryProperties() {
     this(null);
@@ -41,8 +40,7 @@ public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperti
   }
 
   @Attribute("id")
-  @Nullable
-  public String getId() {
+  public @Nullable String getId() {
     return myId;
   }
 

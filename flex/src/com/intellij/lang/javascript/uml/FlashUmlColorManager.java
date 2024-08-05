@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.lang.javascript.uml;
 
@@ -11,9 +11,8 @@ import java.awt.*;
 import java.util.Objects;
 
 public class FlashUmlColorManager extends DiagramColorManagerBase {
-  @NotNull
   @Override
-  public Color getEdgeColor(@NotNull DiagramBuilder builder, @NotNull DiagramEdge edge) {
+  public @NotNull Color getEdgeColor(@NotNull DiagramBuilder builder, @NotNull DiagramEdge edge) {
     return !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getSource())) ||
            !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget())) ||
            edge.getRelationship().getTargetArrow() != DiagramRelationshipInfo.DELTA ||

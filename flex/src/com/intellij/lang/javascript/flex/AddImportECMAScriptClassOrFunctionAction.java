@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -62,7 +62,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
   }
 
   @Override
-  public boolean showHint(@NotNull final Editor editor) {
+  public boolean showHint(final @NotNull Editor editor) {
     myEditor = editor;
     final PsiElement element = myReference.getElement();
     TextRange range = InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextRange());
@@ -71,24 +71,22 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
   }
 
   @Override
-  @NotNull
-  public String getText() {
+  public @NotNull String getText() {
     return myText;
   }
 
   @Override
-  @NotNull
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return getText();
   }
 
   @Override
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(final @NotNull Project project, final @NotNull ProblemDescriptor descriptor) {
     invoke(project, myEditor, descriptor.getPsiElement().getContainingFile());
   }
 
   @Override
-  public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
+  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
     if (!myReference.getElement().isValid()) return false;
     final long modL = myReference.getElement().getManager().getModificationTracker().getModificationCount();
 
@@ -190,7 +188,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
   }
 
   @Override
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) {
+  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) {
     final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
 
     if (candidates.isEmpty() || myUnambiguousTheFlyMode && candidates.size() != 1) {
@@ -204,7 +202,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
         JavaScriptBundle.message("choose.class.to.import.title"),
         new PsiElementProcessor<>() {
           @Override
-          public boolean execute(@NotNull final JSQualifiedNamedElement element) {
+          public boolean execute(final @NotNull JSQualifiedNamedElement element) {
             CommandProcessor.getInstance().executeCommand(
               project,
               () -> doImport(element.getQualifiedName()),

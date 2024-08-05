@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.impl.BuildTargetScopeProvider;
@@ -29,16 +30,10 @@ public final class FlexResourceBuildTargetScopeProvider extends BuildTargetScope
     scope.putUserData(MODULES_AND_BCS_TO_COMPILE, bcs);
   }
 
-  @Nullable
-  public static Collection<Pair<Module, FlexBuildConfiguration>> getBCsToCompileForPackaging(final CompileScope scope) {
-    return scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
-  }
-
   @Override
-  @NotNull
-  public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
-                                                         @NotNull final Project project,
-                                                         boolean forceBuild) {
+  public @NotNull List<TargetTypeBuildScope> getBuildTargetScopes(final @NotNull CompileScope baseScope,
+                                                                  final @NotNull Project project,
+                                                                  boolean forceBuild) {
     List<String> moduleNames = new ArrayList<>();
     try {
       for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexBuildTargetScopeProvider.getModulesAndBCsToCompile(baseScope)) {
@@ -53,5 +48,9 @@ public final class FlexResourceBuildTargetScopeProvider extends BuildTargetScope
       CmdlineProtoUtil.createTargetsScope(FlexResourceBuildTargetType.PRODUCTION.getTypeId(), moduleNames, forceBuild),
       CmdlineProtoUtil.createTargetsScope(FlexResourceBuildTargetType.TEST.getTypeId(), moduleNames, forceBuild)
     );
+  }
+
+  public static @Nullable Collection<Pair<Module, FlexBuildConfiguration>> getBCsToCompileForPackaging(final CompileScope scope) {
+    return scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
   }
 }

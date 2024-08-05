@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -28,19 +28,17 @@ public class BCBasedRunnerParameters implements Cloneable {
   private @NotNull @NlsSafe String myModuleName = "";
   private @NotNull @NlsSafe String myBCName = "";
 
-  @Nullable private DeviceInfo myDeviceInfo;
+  private @Nullable DeviceInfo myDeviceInfo;
 
-  @NotNull
-  public @NlsSafe String getModuleName() {
+  public @NotNull @NlsSafe String getModuleName() {
     return myModuleName;
   }
 
-  public void setModuleName(@NotNull @NlsSafe final String moduleName) {
+  public void setModuleName(final @NotNull @NlsSafe String moduleName) {
     myModuleName = moduleName;
   }
 
-  @NotNull
-  public @NlsSafe String getBCName() {
+  public @NotNull @NlsSafe String getBCName() {
     return myBCName;
   }
 
@@ -49,12 +47,11 @@ public class BCBasedRunnerParameters implements Cloneable {
   }
 
   @Transient
-  @Nullable
-  public DeviceInfo getDeviceInfo() {
+  public @Nullable DeviceInfo getDeviceInfo() {
     return myDeviceInfo;
   }
 
-  public void setDeviceInfo(@Nullable final DeviceInfo deviceInfo) {
+  public void setDeviceInfo(final @Nullable DeviceInfo deviceInfo) {
     myDeviceInfo = deviceInfo;
   }
 

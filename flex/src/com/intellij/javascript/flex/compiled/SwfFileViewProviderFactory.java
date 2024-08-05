@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
@@ -16,8 +17,7 @@ import java.util.Objects;
 
 public final class SwfFileViewProviderFactory implements FileViewProviderFactory {
   @Override
-  @NotNull
-  public FileViewProvider createFileViewProvider(@NotNull final VirtualFile file, Language language, @NotNull final PsiManager manager, final boolean eventSystemEnabled) {
+  public @NotNull FileViewProvider createFileViewProvider(final @NotNull VirtualFile file, Language language, final @NotNull PsiManager manager, final boolean eventSystemEnabled) {
     return new SwfFileViewProvider(manager, file, eventSystemEnabled);
   }
 
@@ -31,15 +31,13 @@ public final class SwfFileViewProviderFactory implements FileViewProviderFactory
       return new CompiledJSFile(this);
     }
 
-    @NotNull
     @Override
-    public Language getBaseLanguage() {
+    public @NotNull Language getBaseLanguage() {
       return FlexApplicationComponent.DECOMPILED_SWF;
     }
 
-    @NotNull
     @Override
-    public SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
+    public @NotNull SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
       return new SwfFileViewProvider(getManager(), copy, false);
     }
   }
@@ -63,9 +61,8 @@ public final class SwfFileViewProviderFactory implements FileViewProviderFactory
       return this;
     }
 
-    @NotNull
     @Override
-    public JSFileCachedData getCachedData() {
+    public @NotNull JSFileCachedData getCachedData() {
       return EMPTY;
     }
   }

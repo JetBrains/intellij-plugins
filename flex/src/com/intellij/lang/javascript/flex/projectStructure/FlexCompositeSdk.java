@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -28,20 +28,41 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, CompositeRootCollection {
-
+public final class FlexCompositeSdk extends UserDataHolderBase implements Sdk, CompositeRootCollection {
   private static final String NAME_DELIM = "\t";
 
-  public static final class SdkFinderImpl extends SdkFinder {
+  public static final String TYPE_ID = "__CompositeFlexSdk__";
+
+  private static final SdkType TYPE = new SdkType(TYPE_ID) {
     @Override
-    public Sdk findSdk(@NotNull String name, @NotNull final String sdkType) {
-      if (TYPE.getName().equals(sdkType)) {
-        final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
-        return FlexCompositeSdkManager.getInstance().getOrCreateSdk(ArrayUtilRt.toStringArray(sdksNames));
-      }
+    public String suggestHomePath() {
       return null;
     }
-  }
+
+    @Override
+    public boolean isValidSdkHome(@NotNull String path) {
+      return false;
+    }
+
+    @Override
+    public @NotNull String suggestSdkName(@Nullable String currentSdkName, @NotNull String sdkHome) {
+      return Objects.requireNonNull(currentSdkName);
+    }
+
+    @Override
+    public @Nullable AdditionalDataConfigurable createAdditionalDataConfigurable(final @NotNull SdkModel sdkModel, final @NotNull SdkModificator sdkModificator) {
+      return null;
+    }
+
+    @Override
+    public void saveAdditionalData(final @NotNull SdkAdditionalData additionalData, final @NotNull Element additional) {
+    }
+
+    @Override
+    public @NotNull String getPresentableName() {
+      return getName();
+    }
+  };
 
   private final String[] myNames;
 
@@ -60,12 +81,12 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
     application.getMessageBus().connect(d).subscribe(ProjectJdkTable.JDK_TABLE_TOPIC, new ProjectJdkTable.Listener() {
       @Override
-      public void jdkAdded(@NotNull final Sdk jdk) {
+      public void jdkAdded(final @NotNull Sdk jdk) {
         resetSdks();
       }
 
       @Override
-      public void jdkRemoved(@NotNull final Sdk jdk) {
+      public void jdkRemoved(final @NotNull Sdk jdk) {
         if (jdk == FlexCompositeSdk.this) {
           Disposer.dispose(d);
         }
@@ -73,21 +94,19 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       }
 
       @Override
-      public void jdkNameChanged(@NotNull final Sdk jdk, @NotNull final String previousName) {
+      public void jdkNameChanged(final @NotNull Sdk jdk, final @NotNull String previousName) {
         resetSdks();
       }
     });
   }
 
   @Override
-  @NotNull
-  public SdkType getSdkType() {
+  public @NotNull SdkType getSdkType() {
     return TYPE;
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return getCompositeName(myNames);
   }
 
@@ -111,8 +130,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   }
 
   @Override
-  @NotNull
-  public RootProvider getRootProvider() {
+  public @NotNull RootProvider getRootProvider() {
     return new MyRootProvider();
   }
 
@@ -158,8 +176,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   }
 
   @Override
-  @NotNull
-  public SdkModificator getSdkModificator() {
+  public @NotNull SdkModificator getSdkModificator() {
     throw new UnsupportedOperationException();
   }
 
@@ -169,8 +186,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   }
 
   @Override
-  @NotNull
-  public Sdk clone() {
+  public @NotNull Sdk clone() {
     throw new UnsupportedOperationException();
   }
 
@@ -218,46 +234,20 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     return getName();
   }
 
-
-  public static final String TYPE_ID = "__CompositeFlexSdk__";
-
-  private static final SdkType TYPE = new SdkType(TYPE_ID) {
+  public static final class SdkFinderImpl extends SdkFinder {
     @Override
-    public String suggestHomePath() {
+    public Sdk findSdk(@NotNull String name, final @NotNull String sdkType) {
+      if (TYPE.getName().equals(sdkType)) {
+        final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
+        return FlexCompositeSdkManager.getInstance().getOrCreateSdk(ArrayUtilRt.toStringArray(sdksNames));
+      }
       return null;
     }
-
-    @Override
-    public boolean isValidSdkHome(final @NotNull String path) {
-      return false;
-    }
-
-    @NotNull
-    @Override
-    public String suggestSdkName(@Nullable String currentSdkName, @NotNull String sdkHome) {
-      return Objects.requireNonNull(currentSdkName);
-    }
-
-    @Override
-    @Nullable
-    public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
-      return null;
-    }
-
-    @Override
-    public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element additional) {
-    }
-
-    @Override
-    @NotNull
-    public String getPresentableName() {
-      return getName();
-    }
-  };
+  }
 
   private class MyRootProvider implements RootProvider, Supplier<Sdk> {
     @Override
-    public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
+    public String @NotNull [] getUrls(final @NotNull OrderRootType rootType) {
       final Collection<String> result = new HashSet<>();
       forAllSdks(sdk -> {
         result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
@@ -267,7 +257,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
 
     @Override
-    public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
+    public VirtualFile @NotNull [] getFiles(final @NotNull OrderRootType rootType) {
       final Collection<VirtualFile> result = new HashSet<>();
       forAllSdks(sdk -> {
         result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
@@ -277,7 +267,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
 
     @Override
-    public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
+    public void addRootSetChangedListener(final @NotNull RootSetChangedListener listener) {
       forAllSdks(sdk -> {
         final RootProvider rootProvider = sdk.getRootProvider();
         rootProvider.removeRootSetChangedListener(listener);
@@ -287,7 +277,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
 
     @Override
-    public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener, @NotNull final Disposable parentDisposable) {
+    public void addRootSetChangedListener(final @NotNull RootSetChangedListener listener, final @NotNull Disposable parentDisposable) {
       forAllSdks(sdk -> {
         sdk.getRootProvider().addRootSetChangedListener(listener, parentDisposable);
         return true;
@@ -295,7 +285,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
 
     @Override
-    public void removeRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
+    public void removeRootSetChangedListener(final @NotNull RootSetChangedListener listener) {
       forAllSdks(sdk -> {
         sdk.getRootProvider().removeRootSetChangedListener(listener);
         return true;

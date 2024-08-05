@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -35,9 +36,8 @@ public final class FlexProjectStructureValidator extends ProjectStructureValidat
     // all the other stuff will be checked at BC level
   }
 
-  @Nullable
   @Override
-  protected List<ProjectStructureElementUsage> getUsagesIn(final ProjectStructureElement element) {
+  protected @Nullable List<ProjectStructureElementUsage> getUsagesIn(final ProjectStructureElement element) {
     if (element instanceof ModuleProjectStructureElement) {
       Module module = ((ModuleProjectStructureElement)element).getModule();
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {

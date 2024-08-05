@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramBuilder;
@@ -10,7 +10,6 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.graph.base.Node;
@@ -63,8 +62,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   }
 
   @Override
-  @Nullable
-  public CreateClassParameters prepare(@NotNull AnActionEvent e) {
+  public @Nullable CreateClassParameters prepare(@NotNull AnActionEvent e) {
     DiagramBuilder diagramBuilder = getBuilder(e);
     if (diagramBuilder == null) return null;
 
@@ -88,8 +86,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
     return showDialog(project, dirAndPackage);
   }
 
-  @Nullable
-  protected abstract CreateClassParameters showDialog(Project project, Pair<PsiDirectory, String> dirAndPackage);
+  protected abstract @Nullable CreateClassParameters showDialog(Project project, Pair<PsiDirectory, String> dirAndPackage);
 
   private static Pair<PsiDirectory, String> getPackageToCreateIn(FlashUmlDataModel model) {
     final DiagramBuilder builder = model.getBuilder();

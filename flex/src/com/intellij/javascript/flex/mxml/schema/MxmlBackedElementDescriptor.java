@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.openapi.project.Project;
@@ -16,14 +17,12 @@ public final class MxmlBackedElementDescriptor extends ClassBackedElementDescrip
   }
 
   @Override
-  @Nullable
-  public PsiElement getDeclaration() {
+  public @Nullable PsiElement getDeclaration() {
     return file.isValid() ? PsiManager.getInstance(project).findFile(file) : null;
   }
 
   @Override
-  @NonNls
-  public String getName() {
+  public @NonNls String getName() {
     return file.getNameWithoutExtension();
   }
 }

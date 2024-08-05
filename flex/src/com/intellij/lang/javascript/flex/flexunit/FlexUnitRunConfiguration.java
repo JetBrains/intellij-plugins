@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -48,21 +49,20 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
     super(project, factory, name);
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new FlexUnitRunConfigurationForm(getProject());
   }
 
   @Override
-  public void readExternal(@NotNull final Element element) throws InvalidDataException {
+  public void readExternal(final @NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunnerParameters = new FlexUnitRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
   @Override
-  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
+  public void writeExternal(final @NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
@@ -74,8 +74,7 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
     return clone;
   }
 
-  @NotNull
-  public FlexUnitRunnerParameters getRunnerParameters() {
+  public @NotNull FlexUnitRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
@@ -102,7 +101,7 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
   }
 
   @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(final @NotNull Executor executor, final @NotNull ExecutionEnvironment env) throws ExecutionException {
     final FlexBuildConfiguration bc;
     try {
       bc = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
@@ -115,9 +114,8 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
     if (nature.isDesktopPlatform() || nature.isMobilePlatform()) {
 
       return new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
-        @NotNull
         @Override
-        public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
+        public @NotNull ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
           final ProcessHandler processHandler = startProcess();
           final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler);
           return new DefaultExecutionResult(console, processHandler);

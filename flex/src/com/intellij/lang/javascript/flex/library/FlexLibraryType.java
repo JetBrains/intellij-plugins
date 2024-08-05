@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -21,9 +22,8 @@ import javax.swing.*;
 
 public final class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
   public static final PersistentLibraryKind<FlexLibraryProperties> FLEX_LIBRARY = new PersistentLibraryKind<>("flex") {
-    @NotNull
     @Override
-    public FlexLibraryProperties createDefaultProperties() {
+    public @NotNull FlexLibraryProperties createDefaultProperties() {
       return new FlexLibraryProperties();
     }
   };
@@ -32,15 +32,14 @@ public final class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
     super(FLEX_LIBRARY);
   }
 
-  @NotNull
   @Override
-  public String getCreateActionName() {
+  public @NotNull String getCreateActionName() {
     return "ActionScript/Flex";
   }
 
   @Override
   public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent,
-                                                  @Nullable VirtualFile contextDirectory, @NotNull final Project project) {
+                                                  @Nullable VirtualFile contextDirectory, final @NotNull Project project) {
     return LibraryTypeService.getInstance().createLibraryFromFiles(createLibraryRootsComponentDescriptor(), parentComponent, contextDirectory, this,
                                                                    project);
   }
@@ -51,7 +50,7 @@ public final class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
   }
 
   @Override
-  public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<FlexLibraryProperties> properties) {
+  public LibraryPropertiesEditor createPropertiesEditor(final @NotNull LibraryEditorComponent<FlexLibraryProperties> properties) {
     return null;
   }
 
@@ -61,8 +60,7 @@ public final class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
   }
 
   @Override
-  @NotNull
-  public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
+  public @NotNull LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
     return new FlexLibraryRootsComponentDescriptor();
   }
 

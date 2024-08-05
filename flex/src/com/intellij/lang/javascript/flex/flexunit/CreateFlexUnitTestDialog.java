@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -208,8 +208,11 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     }
   }
 
-  @Nullable
-  private static PsiDirectory createTestSourceFolderAndPackage(final Module module, final String srcRootPath, final String packageName) {
+  public @Nullable JSClass getSuperClass() {
+    return mySuperClass;
+  }
+
+  private static @Nullable PsiDirectory createTestSourceFolderAndPackage(final Module module, final String srcRootPath, final String packageName) {
     final String path = FileUtil.toSystemIndependentName(srcRootPath);
 
     VirtualFile contentRoot = null;
@@ -255,19 +258,6 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     return null;
   }
 
-  @Nullable
-  private static PsiDirectory findExistingTestSourceRoot(final Module module) {
-    PsiDirectory testSourceRoot = null;
-    final ModuleRootManager manager = ModuleRootManager.getInstance(module);
-    for (VirtualFile srcRoot : manager.getSourceRoots(true)) {
-      if (manager.getFileIndex().isInTestSourceContent(srcRoot)) {
-        testSourceRoot = PsiManager.getInstance(module.getProject()).findDirectory(srcRoot);
-        break;
-      }
-    }
-    return testSourceRoot;
-  }
-
   private static GlobalSearchScope getSuperClassScope(final Module module) {
     return GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
   }
@@ -288,9 +278,16 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     return myTargetDirectory;
   }
 
-  @Nullable
-  public JSClass getSuperClass() {
-    return mySuperClass;
+  private static @Nullable PsiDirectory findExistingTestSourceRoot(final Module module) {
+    PsiDirectory testSourceRoot = null;
+    final ModuleRootManager manager = ModuleRootManager.getInstance(module);
+    for (VirtualFile srcRoot : manager.getSourceRoots(true)) {
+      if (manager.getFileIndex().isInTestSourceContent(srcRoot)) {
+        testSourceRoot = PsiManager.getInstance(module.getProject()).findDirectory(srcRoot);
+        break;
+      }
+    }
+    return testSourceRoot;
   }
 
   public boolean isGenerateSetUp() {

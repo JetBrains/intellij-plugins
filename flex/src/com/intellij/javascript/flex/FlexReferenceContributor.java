@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
@@ -34,39 +34,32 @@ public final class FlexReferenceContributor {
   public static class StateReference extends BasicAttributeValueReference implements EmptyResolveMessageProvider, PsiPolyVariantReference {
     private static final String DUMMY_STATE_GROUP_TAG = "DummyStateGroupTag";
 
-    @NotNull
-    private static Map<String, XmlTag> calcStates(PsiFile file) {
-      final Map<String, XmlTag> tags = new HashMap<>();
-
-      file.accept(new XmlRecursiveElementVisitor() {
+    @Override
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
+      final List<ResolveResult> result = new ArrayList<>(1);
+      process(new StateProcessor() {
         @Override
-        public void visitXmlTag(@NotNull XmlTag tag) {
-          super.visitXmlTag(tag);
-
-          if ("State".equals(tag.getLocalName())) {
-            String name = tag.getAttributeValue(FlexStateElementNames.NAME);
-            if (name != null) tags.put(name, tag);
-            String groups = tag.getAttributeValue(FlexStateElementNames.STATE_GROUPS);
-
-            if (groups != null) {
-              StringTokenizer tokenizer = new StringTokenizer(groups, DELIMS);
-              while (tokenizer.hasMoreElements()) {
-                String s = tokenizer.nextElement();
-
-                XmlTag cachedTag = tags.get(s);
-                if (cachedTag == null) {
-                  PsiFile fromText = PsiFileFactory.getInstance(tag.getProject())
-                    .createFileFromText("dummy.mxml", FlexApplicationComponent.MXML,
-                                        "<" + DUMMY_STATE_GROUP_TAG + " name=\"" + s + "\" />");
-                  cachedTag = ((XmlFile)fromText).getDocument().getRootTag();
-                  tags.put(s, cachedTag);
-                }
-              }
+        public boolean process(final @NotNull XmlTag t, @NotNull String name) {
+          result.add(new ResolveResult() {
+            @Override
+            public PsiElement getElement() {
+              return t.getAttribute(FlexStateElementNames.NAME).getValueElement();
             }
-          }
+
+            @Override
+            public boolean isValidResult() {
+              return true;
+            }
+          });
+          return true;
+        }
+
+        @Override
+        public String getHint() {
+          return getCanonicalText();
         }
       });
-      return tags;
+      return result.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
     private final boolean myStateGroupsOnly;
@@ -92,31 +85,8 @@ public final class FlexReferenceContributor {
     }
 
     @Override
-    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-      final List<ResolveResult> result = new ArrayList<>(1);
-      process(new StateProcessor() {
-        @Override
-        public boolean process(@NotNull final XmlTag t, @NotNull String name) {
-          result.add(new ResolveResult() {
-            @Override
-            public PsiElement getElement() {
-              return t.getAttribute(FlexStateElementNames.NAME).getValueElement();
-            }
-
-            @Override
-            public boolean isValidResult() {
-              return true;
-            }
-          });
-          return true;
-        }
-
-        @Override
-        public String getHint() {
-          return getCanonicalText();
-        }
-      });
-      return result.toArray(ResolveResult.EMPTY_ARRAY);
+    public @NotNull String getUnresolvedMessagePattern() {
+      return FlexBundle.message("cannot.resolve.state");
     }
 
     interface StateProcessor {
@@ -187,13 +157,7 @@ public final class FlexReferenceContributor {
     }
 
     @Override
-    @NotNull
-    public String getUnresolvedMessagePattern() {
-      return FlexBundle.message("cannot.resolve.state");
-    }
-
-    @Override
-    public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(final @NotNull String newElementName) throws IncorrectOperationException {
       if (myElement instanceof XmlTag) {
         final XmlToken startTagNameElement = XmlTagUtil.getStartTagNameElement((XmlTag)myElement);
         if (startTagNameElement != null) {
@@ -210,6 +174,40 @@ public final class FlexReferenceContributor {
       }
 
       return super.handleElementRename(newElementName);
+    }
+
+    private static @NotNull Map<String, XmlTag> calcStates(PsiFile file) {
+      final Map<String, XmlTag> tags = new HashMap<>();
+
+      file.accept(new XmlRecursiveElementVisitor() {
+        @Override
+        public void visitXmlTag(@NotNull XmlTag tag) {
+          super.visitXmlTag(tag);
+
+          if ("State".equals(tag.getLocalName())) {
+            String name = tag.getAttributeValue(FlexStateElementNames.NAME);
+            if (name != null) tags.put(name, tag);
+            String groups = tag.getAttributeValue(FlexStateElementNames.STATE_GROUPS);
+
+            if (groups != null) {
+              StringTokenizer tokenizer = new StringTokenizer(groups, DELIMS);
+              while (tokenizer.hasMoreElements()) {
+                String s = tokenizer.nextElement();
+
+                XmlTag cachedTag = tags.get(s);
+                if (cachedTag == null) {
+                  PsiFile fromText = PsiFileFactory.getInstance(tag.getProject())
+                    .createFileFromText("dummy.mxml", FlexApplicationComponent.MXML,
+                                        "<" + DUMMY_STATE_GROUP_TAG + " name=\"" + s + "\" />");
+                  cachedTag = ((XmlFile)fromText).getDocument().getRootTag();
+                  tags.put(s, cachedTag);
+                }
+              }
+            }
+          }
+        }
+      });
+      return tags;
     }
   }
 }

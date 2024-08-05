@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.openapi.projectRoots.Sdk;
@@ -138,8 +138,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     }
   }
 
-  @Nullable
-  private static Sdk findSimilarSdk(final String version) {
+  private static @Nullable Sdk findSimilarSdk(final String version) {
     final int firstDotIndex = version.indexOf('.');
     final int secondDotIndex = version.indexOf('.', firstDotIndex + 1);
     final int thirdDotIndex = version.indexOf('.', secondDotIndex + 1);

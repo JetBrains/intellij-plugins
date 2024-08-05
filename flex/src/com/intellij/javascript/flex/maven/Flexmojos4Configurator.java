@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -39,8 +39,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
   }
 
   @Override
-  @Nullable
-  protected String getCompilerConfigFilePath(final String rlmName) {
+  protected @Nullable String getCompilerConfigFilePath(final String rlmName) {
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     final String classifier =
       configurationElement == null ? null : configurationElement.getChildText("classifier", configurationElement.getNamespace());

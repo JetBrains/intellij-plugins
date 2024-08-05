@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.lang.Language;
@@ -92,8 +93,7 @@ public final class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
     return targetContainer == null || super.canMove(elements, targetContainer, reference);
   }
 
-  @Nullable
-  public static JSQualifiedNamedElement adjustForMove(PsiElement element) {
+  public static @Nullable JSQualifiedNamedElement adjustForMove(PsiElement element) {
     PsiFile file = element.getContainingFile();
     if (file == null || !file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4) && !JavaScriptSupportLoader.isFlexMxmFile(file)) {
       return null;

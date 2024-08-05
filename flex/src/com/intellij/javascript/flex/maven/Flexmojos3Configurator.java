@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.flex.model.bc.*;
@@ -219,20 +219,11 @@ public class Flexmojos3Configurator {
     }
   }
 
-  @Nullable
-  private static String getPathOption(final MavenProject mavenProject,
-                                      final @Nullable Element configurationElement,
-                                      final String optionName) {
-    final String path =
-      configurationElement == null ? null : configurationElement.getChildText(optionName, configurationElement.getNamespace());
-    if (path != null) {
-      VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(path);
-      if (descriptorFile == null) {
-        descriptorFile = LocalFileSystem.getInstance().findFileByPath(mavenProject.getDirectory() + "/" + path);
-      }
-      if (descriptorFile != null) return descriptorFile.getPath();
+  private @Nullable MavenProject findMavenProjectByModuleName(final String moduleName) {
+    for (Map.Entry<MavenProject, String> entry : myMavenProjectToModuleName.entrySet()) {
+      if (moduleName.equals(entry.getValue())) return entry.getKey();
     }
-    return path;
+    return null;
   }
 
   private TargetPlatform handleDependencies(final ModifiableFlexBuildConfiguration bc) {
@@ -354,12 +345,19 @@ public class Flexmojos3Configurator {
                                                                       : TargetPlatform.Web;
   }
 
-  @Nullable
-  private MavenProject findMavenProjectByModuleName(final String moduleName) {
-    for (Map.Entry<MavenProject, String> entry : myMavenProjectToModuleName.entrySet()) {
-      if (moduleName.equals(entry.getValue())) return entry.getKey();
+  private static @Nullable String getPathOption(final MavenProject mavenProject,
+                                                final @Nullable Element configurationElement,
+                                                final String optionName) {
+    final String path =
+      configurationElement == null ? null : configurationElement.getChildText(optionName, configurationElement.getNamespace());
+    if (path != null) {
+      VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(path);
+      if (descriptorFile == null) {
+        descriptorFile = LocalFileSystem.getInstance().findFileByPath(mavenProject.getDirectory() + "/" + path);
+      }
+      if (descriptorFile != null) return descriptorFile.getPath();
     }
-    return null;
+    return path;
   }
 
   /**

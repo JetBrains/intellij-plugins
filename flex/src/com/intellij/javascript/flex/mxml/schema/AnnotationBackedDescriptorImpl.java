@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
@@ -71,15 +71,15 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private boolean myEnumeratedValuesCaseSensitive = true;
   private String[] myEnumeratedValues;
   private final String arrayElementType;
-  @NonNls private static final String ENUMERATION_ATTR_NAME = "enumeration";
-  @NonNls private static final String FORMAT_ATTR_NAME = "format";
-  @NonNls private static final String TYPE_ATTR_NAME = "type";
+  private static final @NonNls String ENUMERATION_ATTR_NAME = "enumeration";
+  private static final @NonNls String FORMAT_ATTR_NAME = "format";
+  private static final @NonNls String TYPE_ATTR_NAME = "type";
 
   private String percentProxy;
   private boolean myScriptable;
   private boolean myProperty = false;
   private String myAnnotationName;
-  @NotNull private final OriginatingElementType myOriginatingElementType;
+  private final @NotNull OriginatingElementType myOriginatingElementType;
 
   private boolean myRichTextContent;
   private boolean myCollapseWhiteSpace;
@@ -222,8 +222,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   @Override
-  @NonNls
-  public String getName() {
+  public @NonNls String getName() {
     return name;
   }
 
@@ -251,8 +250,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   @Override
-  @Nullable
-  public PsiElement getDeclaration() {
+  public @Nullable PsiElement getDeclaration() {
     final PsiElement[] result = new PsiElement[1];
 
     final PsiElement parentDescriptorDeclaration = parentDescriptor.getDeclaration();
@@ -335,8 +333,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return null;
   }
 
-  @Nullable
-  private XmlAttributeValue findDeclarationByIdAttributeValue(final PsiElement descriptorDeclaration, final Set<JSClass> visited) {
+  private @Nullable XmlAttributeValue findDeclarationByIdAttributeValue(final PsiElement descriptorDeclaration, final Set<JSClass> visited) {
     final Ref<XmlAttributeValue> resultRef = new Ref<>(null);
 
     if (descriptorDeclaration instanceof XmlFile) {
@@ -367,8 +364,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return resultRef.get();
   }
 
-  @Nullable
-  private XmlAttributeValue findDeclarationByIdAttributeValueInSuperClass(@NotNull final JSClass jsClass, final Set<JSClass> visited) {
+  private @Nullable XmlAttributeValue findDeclarationByIdAttributeValueInSuperClass(final @NotNull JSClass jsClass, final Set<JSClass> visited) {
     if (!visited.add(jsClass)) {
       return null;
     }
@@ -439,8 +435,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   @Override
-  @Nullable
-  public String getDefaultValue() {
+  public @Nullable String getDefaultValue() {
     return null;
   }
 
@@ -450,7 +445,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   @Override
-  public String[] getEnumeratedValues(@Nullable final XmlElement context) {
+  public String[] getEnumeratedValues(final @Nullable XmlElement context) {
     if (context instanceof XmlAttribute && !myEnumerated && "id".equals(name)) {
       // id attribute value completion
       String value = ((XmlAttribute)context).getValue();
@@ -513,54 +508,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return enumerationValues;
   }
 
-  @Nullable
-  public static JSAttribute findInspectableAttr(final PsiElement element) {
-    return findAttr((JSAttributeListOwner)element, FlexAnnotationNames.INSPECTABLE);
-  }
-
-  @Nullable
-  private static JSAttribute findAttr(final JSAttributeListOwner attributeListOwner, @NotNull @NonNls final String name) {
-    final JSAttributeList attributeList = attributeListOwner != null ? attributeListOwner.getAttributeList() : null;
-    JSAttribute[] attrs = attributeList != null ? attributeList.getAttributesByName(name) : null;
-    final JSAttribute attribute = attrs != null && attrs.length > 0 ? attrs[0] : null;
-
-    if (attribute == null && attributeList != null) {
-      if (attributeListOwner instanceof JSFunction && ((JSFunction)attributeListOwner).isSetProperty()) {
-        final PsiElement grandParent = attributeListOwner.getParent();
-
-        String propName = attributeListOwner.getName();
-        if (grandParent instanceof JSClass && propName != null) {
-          final var processor = new SinkResolveProcessor<>(propName, new ResolveResultSink(null, propName));
-          processor.setToProcessHierarchy(false);
-          grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
-
-          final List<PsiElement> elementList = processor.getResults();
-          if (elementList != null && elementList.size() == 2) {
-            final PsiElement firstElement = elementList.get(0);
-            final PsiElement secondElement = elementList.get(1);
-
-            JSAttributeListOwner chosenElement = null;
-
-            if (firstElement instanceof JSFunction && ((JSFunction)firstElement).isGetProperty()) {
-              chosenElement = (JSAttributeListOwner)firstElement;
-            }
-            else if (secondElement instanceof JSFunction && ((JSFunction)secondElement).isGetProperty()) {
-              chosenElement = (JSAttributeListOwner)secondElement;
-            }
-
-            if (chosenElement != null) {
-              return findAttr(chosenElement, name);
-            }
-          }
-        }
-      }
-    }
-    return attribute;
-  }
-
   @Override
-  @Nullable
-  public String validateValue(final XmlElement context, String value) {
+  public @Nullable String validateValue(final XmlElement context, String value) {
     final PsiElement parent = context instanceof XmlAttributeValue ? context.getParent() : null;
     if (parent instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)parent).getName())) {
       return LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, value, context.getProject()) ? null // ok
@@ -631,40 +580,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return null;
   }
 
-  @Nullable
-  private static String checkColorAlias(final String s) {
-    if (!ArrayUtil.contains(StringUtil.toLowerCase(s), COLOR_ALIASES)) {
-      return FlexBundle.message("unknown.color.error", s);
-    }
-    return null;
-  }
-
-  @Nullable
-  private static String checkClearDirectiveContext(final XmlElement context) {
-    final PsiElement attributeOrTag = context instanceof XmlAttributeValue ? context.getParent() : context;
-    final String name = attributeOrTag instanceof XmlAttribute
-                        ? ((XmlAttribute)attributeOrTag).getName() : attributeOrTag instanceof XmlTag
-                                                                     ? ((XmlTag)attributeOrTag).getName() : null;
-    if (name != null && !name.contains(".")) {
-      return FlexBundle.message("clear.directive.state.specific.error");
-    }
-
-    final PsiElement parent = attributeOrTag.getParent();
-    final XmlElementDescriptor descriptor = parent instanceof XmlTag ? ((XmlTag)parent).getDescriptor() : null;
-    final PsiElement declaration = descriptor instanceof ClassBackedElementDescriptor ? descriptor.getDeclaration() : null;
-    final PsiElement iStyleClient = ActionScriptClassResolver.findClassByQNameStatic(I_STYLE_CLIENT_CLASS, attributeOrTag);
-
-    if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
-        || !JSInheritanceUtil.isParentClass((JSClass)declaration,
-                                            (JSClass)iStyleClient)) {
-      return FlexBundle.message("clear.directive.IStyleClient.error");
-    }
-    return null;
-  }
-
   @Override
-  @NonNls
-  public String getName(final PsiElement context) {
+  public @NonNls String getName(final PsiElement context) {
     XmlTag tag = (XmlTag)context;
     if (tag.getName().contains("Rulezz")) {
       // tag name completion
@@ -672,6 +589,72 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       if (namespaceByPrefix != null && !namespaceByPrefix.isEmpty()) return namespaceByPrefix + ":" + getName();
     }
     return getName();
+  }
+
+  @Override
+  public XmlAttributeDescriptor[] getAttributesDescriptors(final @Nullable XmlTag context) {
+    return XmlAttributeDescriptor.EMPTY;
+  }
+
+  @Override
+  public XmlAttributeDescriptor getAttributeDescriptor(final String attributeName, final @Nullable XmlTag context) {
+    return ClassBackedElementDescriptor.isPrivateAttribute(attributeName, context) ? new AnyXmlAttributeDescriptor(attributeName) : null;
+  }
+
+  @Override
+  public void validate(final @NotNull XmlElement context, final @NotNull ValidationHost host) {
+    if (context instanceof XmlTag &&
+        FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(parentDescriptor.context.module))) {
+      MxmlLanguageTagsUtil.checkFlex4Attributes((XmlTag)context, host, false);
+    }
+
+    if (predefined) return;
+    String value;
+    if (context instanceof XmlTag) {
+      value = ((XmlTag)context).getValue().getTrimmedText();
+    }
+    else {
+      value = ((XmlAttribute)context).getDisplayValue();
+    }
+
+    final String message = validateValue(context, value);
+    if (message != null) {
+      PsiElement errorElement = context;
+      if (context instanceof XmlTag) {
+        final XmlText[] textElements = ((XmlTag)context).getValue().getTextElements();
+        if (textElements.length == 1 && !StringUtil.isEmptyOrSpaces(textElements[0].getText())) {
+          errorElement = textElements[0];
+        }
+      }
+      host.addMessage(errorElement, message, ValidationHost.ErrorType.ERROR);
+    }
+
+    if (context instanceof XmlTag &&
+        FlexStateElementNames.STATES.equals(((XmlTag)context).getLocalName()) &&
+        FlexUtils.isMxmlNs(((XmlTag)context).getNamespace())) {
+      XmlTag[] tags = ((XmlTag)context).findSubTags("State", ((XmlTag)context).getNamespace());
+      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<>() {
+        @Override
+        public String getName(@NotNull XmlTag xmlTag) {
+          return xmlTag.getAttributeValue(FlexStateElementNames.NAME);
+        }
+
+        @Override
+        public @NotNull String getNameKey(@NotNull XmlTag xmlTag, @NotNull String name) {
+          return getName(xmlTag);
+        }
+
+        @Override
+        public @NotNull PsiElement getNodeForMessage(@NotNull XmlTag xmlTag) {
+          return xmlTag.getAttribute(FlexStateElementNames.NAME).getValueElement();
+        }
+      }, host);
+    }
+  }
+
+  @Override
+  public boolean requiresCdataBracesInContext(final @NotNull XmlTag context) {
+    return myScriptable;
   }
 
   @Override
@@ -771,14 +754,47 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
            JavaScriptSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
   }
 
-  @Override
-  public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable final XmlTag context) {
-    return XmlAttributeDescriptor.EMPTY;
+  public static @Nullable JSAttribute findInspectableAttr(final PsiElement element) {
+    return findAttr((JSAttributeListOwner)element, FlexAnnotationNames.INSPECTABLE);
   }
 
-  @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(final String attributeName, @Nullable final XmlTag context) {
-    return ClassBackedElementDescriptor.isPrivateAttribute(attributeName, context) ? new AnyXmlAttributeDescriptor(attributeName) : null;
+  private static @Nullable JSAttribute findAttr(final JSAttributeListOwner attributeListOwner, final @NotNull @NonNls String name) {
+    final JSAttributeList attributeList = attributeListOwner != null ? attributeListOwner.getAttributeList() : null;
+    JSAttribute[] attrs = attributeList != null ? attributeList.getAttributesByName(name) : null;
+    final JSAttribute attribute = attrs != null && attrs.length > 0 ? attrs[0] : null;
+
+    if (attribute == null && attributeList != null) {
+      if (attributeListOwner instanceof JSFunction && ((JSFunction)attributeListOwner).isSetProperty()) {
+        final PsiElement grandParent = attributeListOwner.getParent();
+
+        String propName = attributeListOwner.getName();
+        if (grandParent instanceof JSClass && propName != null) {
+          final var processor = new SinkResolveProcessor<>(propName, new ResolveResultSink(null, propName));
+          processor.setToProcessHierarchy(false);
+          grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
+
+          final List<PsiElement> elementList = processor.getResults();
+          if (elementList != null && elementList.size() == 2) {
+            final PsiElement firstElement = elementList.get(0);
+            final PsiElement secondElement = elementList.get(1);
+
+            JSAttributeListOwner chosenElement = null;
+
+            if (firstElement instanceof JSFunction && ((JSFunction)firstElement).isGetProperty()) {
+              chosenElement = (JSAttributeListOwner)firstElement;
+            }
+            else if (secondElement instanceof JSFunction && ((JSFunction)secondElement).isGetProperty()) {
+              chosenElement = (JSAttributeListOwner)secondElement;
+            }
+
+            if (chosenElement != null) {
+              return findAttr(chosenElement, name);
+            }
+          }
+        }
+      }
+    }
+    return attribute;
   }
 
   @Override
@@ -801,62 +817,33 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return CONTENT_TYPE_UNKNOWN;
   }
 
-  @Override
-  public void validate(@NotNull final XmlElement context, @NotNull final ValidationHost host) {
-    if (context instanceof XmlTag &&
-        FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(parentDescriptor.context.module))) {
-      MxmlLanguageTagsUtil.checkFlex4Attributes((XmlTag)context, host, false);
+  private static @Nullable String checkColorAlias(final String s) {
+    if (!ArrayUtil.contains(StringUtil.toLowerCase(s), COLOR_ALIASES)) {
+      return FlexBundle.message("unknown.color.error", s);
     }
-
-    if (predefined) return;
-    String value;
-    if (context instanceof XmlTag) {
-      value = ((XmlTag)context).getValue().getTrimmedText();
-    }
-    else {
-      value = ((XmlAttribute)context).getDisplayValue();
-    }
-
-    final String message = validateValue(context, value);
-    if (message != null) {
-      PsiElement errorElement = context;
-      if (context instanceof XmlTag) {
-        final XmlText[] textElements = ((XmlTag)context).getValue().getTextElements();
-        if (textElements.length == 1 && !StringUtil.isEmptyOrSpaces(textElements[0].getText())) {
-          errorElement = textElements[0];
-        }
-      }
-      host.addMessage(errorElement, message, ValidationHost.ErrorType.ERROR);
-    }
-
-    if (context instanceof XmlTag &&
-        FlexStateElementNames.STATES.equals(((XmlTag)context).getLocalName()) &&
-        FlexUtils.isMxmlNs(((XmlTag)context).getNamespace())) {
-      XmlTag[] tags = ((XmlTag)context).findSubTags("State", ((XmlTag)context).getNamespace());
-      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<>() {
-        @Override
-        public String getName(@NotNull XmlTag xmlTag) {
-          return xmlTag.getAttributeValue(FlexStateElementNames.NAME);
-        }
-
-        @Override
-        @NotNull
-        public String getNameKey(@NotNull XmlTag xmlTag, @NotNull String name) {
-          return getName(xmlTag);
-        }
-
-        @Override
-        @NotNull
-        public PsiElement getNodeForMessage(@NotNull XmlTag xmlTag) {
-          return xmlTag.getAttribute(FlexStateElementNames.NAME).getValueElement();
-        }
-      }, host);
-    }
+    return null;
   }
 
-  @Override
-  public boolean requiresCdataBracesInContext(@NotNull final XmlTag context) {
-    return myScriptable;
+  private static @Nullable String checkClearDirectiveContext(final XmlElement context) {
+    final PsiElement attributeOrTag = context instanceof XmlAttributeValue ? context.getParent() : context;
+    final String name = attributeOrTag instanceof XmlAttribute
+                        ? ((XmlAttribute)attributeOrTag).getName() : attributeOrTag instanceof XmlTag
+                                                                     ? ((XmlTag)attributeOrTag).getName() : null;
+    if (name != null && !name.contains(".")) {
+      return FlexBundle.message("clear.directive.state.specific.error");
+    }
+
+    final PsiElement parent = attributeOrTag.getParent();
+    final XmlElementDescriptor descriptor = parent instanceof XmlTag ? ((XmlTag)parent).getDescriptor() : null;
+    final PsiElement declaration = descriptor instanceof ClassBackedElementDescriptor ? descriptor.getDeclaration() : null;
+    final PsiElement iStyleClient = ActionScriptClassResolver.findClassByQNameStatic(I_STYLE_CLIENT_CLASS, attributeOrTag);
+
+    if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
+        || !JSInheritanceUtil.isParentClass((JSClass)declaration,
+                                            (JSClass)iStyleClient)) {
+      return FlexBundle.message("clear.directive.IStyleClient.error");
+    }
+    return null;
   }
 
   @Override
@@ -998,12 +985,12 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return StringUtil.toLowerCase(s.substring(0, i)) + s.substring(i);
   }
 
-  private static Set<String> getNamedElementsVisibleAt(@NotNull final PsiElement context) {
+  private static Set<String> getNamedElementsVisibleAt(final @NotNull PsiElement context) {
     final Set<String> names = new HashSet<>();
 
     ResolveProcessor processor = new ResolveProcessor(null) {
       @Override
-      public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
+      public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
         if (element instanceof JSNamedElementBase) {
           names.add(((JSNamedElementBase)element).getName());
         }

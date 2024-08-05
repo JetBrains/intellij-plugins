@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -28,13 +29,11 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   private static final int INDEX_VERSION = 4;
 
   @Override
-  @NotNull
-  public DataIndexer<String, Void, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, Void, FileContent> getIndexer() {
     return new DataIndexer<>() {
 
       @Override
-      @NotNull
-      public Map<String, Void> map(@NotNull FileContent inputData) {
+      public @NotNull Map<String, Void> map(@NotNull FileContent inputData) {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
 
         final Map<String, Void> result = new HashMap<>();
@@ -53,18 +52,15 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
     };
   }
 
-  @Nullable
-  protected abstract JSReferenceList getSupers(JSClass clazz);
+  protected abstract @Nullable JSReferenceList getSupers(JSClass clazz);
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(JavaScriptSupportLoader.getMxmlFileType()) {
       @Override
       public boolean acceptInput(@NotNull VirtualFile file) {

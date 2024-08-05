@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -43,33 +43,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private static final Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());
 
-  private static class Editor extends FlexBuildConfigurationImpl {
-    private final Module myModule;
-    private final FlexBuildConfigurationImpl myOrigin;
-    @Nullable
-    private final String myOriginalName;
-
-    Editor(Module module, @Nullable FlexBuildConfigurationImpl origin, boolean storeOriginalName) {
-      myOrigin = origin != null ? origin : new FlexBuildConfigurationImpl();
-      myOriginalName = storeOriginalName && origin != null ? origin.getName() : null;
-      myModule = module;
-      myOrigin.applyTo(this);
-    }
-
-    public FlexBuildConfigurationImpl commit() {
-      applyTo(myOrigin);
-      return myOrigin;
-    }
-
-    public boolean isModified() {
-      return !isEqual(myOrigin);
-    }
-
-    @Nullable
-    public String getOriginalName() {
-      return myOriginalName;
-    }
-  }
+  private final @Nullable Project myProject;
 
   public interface ProjectModifiableModelProvider {
     Module[] getModules();
@@ -94,8 +68,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
   private boolean myDisposed;
   private final ProjectModifiableModelProvider myProvider;
 
-  @Nullable
-  private final Project myProject;
+  public void configurationRemoved(final @NotNull ModifiableFlexBuildConfiguration configuration) {
+    assertAlive();
+    Editor editor = (Editor)configuration;
+    List<Editor> editors = myModule2Editors.get(editor.myModule);
+    boolean contained = editors.remove(editor);
+    LOG.assertTrue(contained);
+  }
 
   private final Map<Module, List<Editor>> myModule2Editors = new HashMap<>();
   //private final FlexSdksEditor mySdksEditor;
@@ -171,61 +150,22 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return new FlexProjectConfigurationEditor(project, provider);
   }
 
-  public static ProjectModifiableModelProvider createModelProvider(final Map<Module, ModifiableRootModel> moduleToModifiableModel,
-                                                                   final @Nullable LibraryTable.ModifiableModel projectLibrariesModel,
-                                                                   final @Nullable LibraryTable.ModifiableModel globalLibrariesModel) {
-    return new ProjectModifiableModelProvider() {
-      @Override
-      public Module[] getModules() {
-        final Set<Module> modules = moduleToModifiableModel.keySet();
-        return modules.toArray(Module.EMPTY_ARRAY);
-      }
-
-      @Override
-      public ModifiableRootModel getModuleModifiableModel(final Module module) {
-        final ModifiableRootModel model = moduleToModifiableModel.get(module);
-        LOG.assertTrue(model != null, "No model for module " + module.getName());
-        return model;
-      }
-
-      @Override
-      public void addListener(final FlexBCConfigurator.Listener listener,
-                              final Disposable parentDisposable) {
-        // modules and BCs must not be removed
-      }
-
-      @Override
-      public void commitModifiableModels() throws ConfigurationException {
-        // commit must be performed somewhere else
-      }
-
-      @Override
-      @Nullable
-      public Library findSourceLibrary(final String name, @NotNull final String level) {
-        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-          return globalLibrariesModel.getLibraryByName(name);
-        }
-        else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(level)) {
-          LOG.assertTrue(projectLibrariesModel != null);
-          return projectLibrariesModel.getLibraryByName(name);
-        }
-        LOG.error("Unexpected argument: " + level);
-        return null;
-      }
-
-      @Override
-      public Library findSourceLibraryForLiveName(final String name, @NotNull final String level) {
-        return findSourceLibrary(name, level);
-      }
-    };
+  public @Nullable Project getProject() {
+    return myProject;
   }
 
-  public void configurationRemoved(@NotNull final ModifiableFlexBuildConfiguration configuration) {
-    assertAlive();
-    Editor editor = (Editor)configuration;
-    List<Editor> editors = myModule2Editors.get(editor.myModule);
-    boolean contained = editors.remove(editor);
-    LOG.assertTrue(contained);
+  protected @Nullable Module findModuleWithBC(final BuildConfigurationEntry bcEntry) {
+    final Module dependencyModule = ContainerUtil.find(myModule2Editors.keySet(),
+                                                       module -> bcEntry.getModuleName().equals(module.getName()));
+
+    if (dependencyModule == null) {
+      return null;
+    }
+
+    final Editor dependencyBC = ContainerUtil.find(myModule2Editors.get(dependencyModule),
+                                                   editor -> editor.getName().equals(bcEntry.getBcName()));
+
+    return dependencyBC == null ? null : dependencyModule;
   }
 
   public void addModulesModelChangeListener(ModulesModelChangeListener listener, Disposable parentDisposable) {
@@ -375,9 +315,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return ((Editor)configuration).myModule;
   }
 
-  @Nullable
-  public Project getProject() {
-    return myProject;
+  public @Nullable LibraryOrderEntry findLibraryOrderEntry(ModifiableDependencies dependencies, ModuleLibraryEntry moduleLibraryEntry) {
+    assertAlive();
+    ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(getEditor(dependencies).myModule);
+    Library library = findLibrary(modifiableModel, moduleLibraryEntry.getLibraryId());
+    return library != null ? modifiableModel.findLibraryOrderEntry(library) : null;
   }
 
   public void checkCanCommit() throws ConfigurationException {
@@ -607,17 +549,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return new SharedLibraryEntryImpl(libraryName, libraryLevel);
   }
 
-
-  @Nullable
-  private static LibraryEx findLibrary(ModifiableRootModel modifiableModel, String libraryId) {
-    for (Library library : modifiableModel.getModuleLibraryTable().getLibraries()) {
-      if (((LibraryEx)library).getKind() == FlexLibraryType.FLEX_LIBRARY) { // allow subclasses
-        if (libraryId.equals(FlexProjectRootsUtil.getLibraryId(library))) {
-          return (LibraryEx)library;
-        }
-      }
-    }
-    return null;
+  public @Nullable FlexBuildConfiguration findCurrentConfiguration(final Module module, final String originalBCName) {
+    return ContainerUtil.find(myModule2Editors.get(module), editor -> editor.myOrigin.getName().equals(originalBCName));
   }
 
   public void setEntries(ModifiableDependencies dependant, List<? extends ModifiableDependencyEntry> newEntries) {
@@ -700,27 +633,63 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return false;
   }
 
-  @Nullable
-  protected Module findModuleWithBC(final BuildConfigurationEntry bcEntry) {
-    final Module dependencyModule = ContainerUtil.find(myModule2Editors.keySet(),
-                                                       module -> bcEntry.getModuleName().equals(module.getName()));
+  public static ProjectModifiableModelProvider createModelProvider(final Map<Module, ModifiableRootModel> moduleToModifiableModel,
+                                                                   final @Nullable LibraryTable.ModifiableModel projectLibrariesModel,
+                                                                   final @Nullable LibraryTable.ModifiableModel globalLibrariesModel) {
+    return new ProjectModifiableModelProvider() {
+      @Override
+      public Module[] getModules() {
+        final Set<Module> modules = moduleToModifiableModel.keySet();
+        return modules.toArray(Module.EMPTY_ARRAY);
+      }
 
-    if (dependencyModule == null) {
-      return null;
-    }
+      @Override
+      public ModifiableRootModel getModuleModifiableModel(final Module module) {
+        final ModifiableRootModel model = moduleToModifiableModel.get(module);
+        LOG.assertTrue(model != null, "No model for module " + module.getName());
+        return model;
+      }
 
-    final Editor dependencyBC = ContainerUtil.find(myModule2Editors.get(dependencyModule),
-                                                   editor -> editor.getName().equals(bcEntry.getBcName()));
+      @Override
+      public void addListener(final FlexBCConfigurator.Listener listener,
+                              final Disposable parentDisposable) {
+        // modules and BCs must not be removed
+      }
 
-    return dependencyBC == null ? null : dependencyModule;
+      @Override
+      public void commitModifiableModels() throws ConfigurationException {
+        // commit must be performed somewhere else
+      }
+
+      @Override
+      public @Nullable Library findSourceLibrary(final String name, final @NotNull String level) {
+        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+          return globalLibrariesModel.getLibraryByName(name);
+        }
+        else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(level)) {
+          LOG.assertTrue(projectLibrariesModel != null);
+          return projectLibrariesModel.getLibraryByName(name);
+        }
+        LOG.error("Unexpected argument: " + level);
+        return null;
+      }
+
+      @Override
+      public Library findSourceLibraryForLiveName(final String name, final @NotNull String level) {
+        return findSourceLibrary(name, level);
+      }
+    };
   }
 
-  @Nullable
-  public LibraryOrderEntry findLibraryOrderEntry(ModifiableDependencies dependencies, ModuleLibraryEntry moduleLibraryEntry) {
-    assertAlive();
-    ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(getEditor(dependencies).myModule);
-    Library library = findLibrary(modifiableModel, moduleLibraryEntry.getLibraryId());
-    return library != null ? modifiableModel.findLibraryOrderEntry(library) : null;
+  private static @Nullable LibraryEx findLibrary(ModifiableRootModel modifiableModel, String libraryId) {
+    for (Library library : modifiableModel.getModuleLibraryTable().getLibraries()) {
+      if (((LibraryEx)library).getKind() == FlexLibraryType.FLEX_LIBRARY) { // allow subclasses
+        if (libraryId.equals(FlexProjectRootsUtil.getLibraryId(library))) {
+          return (LibraryEx)library;
+        }
+      }
+    }
+    return null;
   }
 
   public LibraryOrderEntry findLibraryOrderEntry(ModifiableDependencies dependencies, Library library) {
@@ -762,9 +731,30 @@ public class FlexProjectConfigurationEditor implements Disposable {
     //mySdksEditor.addSdkListListener(changeListener, parentDisposable);
   }
 
-  @Nullable
-  public FlexBuildConfiguration findCurrentConfiguration(final Module module, final String originalBCName) {
-    return ContainerUtil.find(myModule2Editors.get(module), editor -> editor.myOrigin.getName().equals(originalBCName));
+  private static class Editor extends FlexBuildConfigurationImpl {
+    private final Module myModule;
+    private final FlexBuildConfigurationImpl myOrigin;
+    private final @Nullable String myOriginalName;
+
+    Editor(Module module, @Nullable FlexBuildConfigurationImpl origin, boolean storeOriginalName) {
+      myOrigin = origin != null ? origin : new FlexBuildConfigurationImpl();
+      myOriginalName = storeOriginalName && origin != null ? origin.getName() : null;
+      myModule = module;
+      myOrigin.applyTo(this);
+    }
+
+    public FlexBuildConfigurationImpl commit() {
+      applyTo(myOrigin);
+      return myOrigin;
+    }
+
+    public boolean isModified() {
+      return !isEqual(myOrigin);
+    }
+
+    public @Nullable String getOriginalName() {
+      return myOriginalName;
+    }
   }
 
   public static void makeNonStructuralModification(final FlexBuildConfiguration bc,

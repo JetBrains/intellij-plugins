@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
@@ -78,29 +78,9 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   private Map<String, Map<String, AnnotationBackedDescriptor>> myPackageToInternalDescriptors; // These descriptors are resolved only if MXML file is in the same package as descriptor originating element. Can be both XML attributes and elements.
   private Map<String, AnnotationBackedDescriptor> myPredefinedDescriptors; // can be XML attributes, but not elements
 
-  @NonNls private static final String ARRAY_TYPE_ANNOTATION_PARAMETER = "arrayType";
-
-  @NonNls private static final String RADIO_BUTTON_GROUP_CLASS = "mx.controls.RadioButtonGroup";
-
-  private final static XmlUtil.DuplicationInfoProvider<XmlElement> myDuplicationInfoProvider = new XmlUtil.DuplicationInfoProvider<>() {
-    @Override
-    public String getName(@NotNull final XmlElement xmlElement) {
-      if (xmlElement instanceof XmlTag) return ((XmlTag)xmlElement).getLocalName();
-      return ((XmlAttribute)xmlElement).getName();
-    }
-
-    @Override
-    @NotNull
-    public String getNameKey(@NotNull final XmlElement xmlElement, final @NotNull String name) {
-      return name;
-    }
-
-    @Override
-    @NotNull
-    public PsiElement getNodeForMessage(@NotNull final XmlElement xmlElement) {
-      return xmlElement;
-    }
-  };
+  static final @NonNls String IFACTORY_SHORT_CLASS_NAME = "IFactory";
+  private static final @NonNls String ARRAY_TYPE_ANNOTATION_PARAMETER = "arrayType";
+  private static final @NonNls String RADIO_BUTTON_GROUP_CLASS = "mx.controls.RadioButtonGroup";
 
   private static final String IMPLEMENTS_ATTR_NAME = "implements";
   private AnnotationBackedDescriptor defaultPropertyDescriptor;
@@ -108,8 +88,23 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   private boolean isContainerClass;
   private boolean isContainerClassInitialized;
   private static final String CONTAINER_CLASS_NAME_2 = "mx.core.IVisualElementContainer";
-  @NonNls
-  static final String IFACTORY_SHORT_CLASS_NAME = "IFactory";
+  private static final XmlUtil.DuplicationInfoProvider<XmlElement> myDuplicationInfoProvider = new XmlUtil.DuplicationInfoProvider<>() {
+    @Override
+    public String getName(final @NotNull XmlElement xmlElement) {
+      if (xmlElement instanceof XmlTag) return ((XmlTag)xmlElement).getLocalName();
+      return ((XmlAttribute)xmlElement).getName();
+    }
+
+    @Override
+    public @NotNull String getNameKey(final @NotNull XmlElement xmlElement, final @NotNull String name) {
+      return name;
+    }
+
+    @Override
+    public @NotNull PsiElement getNodeForMessage(final @NotNull XmlElement xmlElement) {
+      return xmlElement;
+    }
+  };
   private static final String PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS = "spark.primitives.supportClasses.GraphicElement";
 
   ClassBackedElementDescriptor(String name, String _classname, CodeContext _context, Project _project) {
@@ -255,8 +250,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   @Override
-  @Nullable
-  public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, final XmlTag contextTag) {
+  public @Nullable XmlElementDescriptor getElementDescriptor(final XmlTag childTag, final XmlTag contextTag) {
     if (MxmlJSClass.isTagThatAllowsAnyXmlContent(contextTag)) {
       return new AnyXmlElementWithAnyChildrenDescriptor();
     }
@@ -345,8 +339,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return isContainerClass(parentDescriptor);
   }
 
-  @Nullable
-  private XmlElementDescriptor _getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
+  private @Nullable XmlElementDescriptor _getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     final String childNs = childTag.getNamespace();
 
     if (!sameNs(childNs, context.namespace)) {
@@ -782,7 +775,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   @Override
-  public void validate(@NotNull final XmlTag tag, @NotNull final ValidationHost host) {
+  public void validate(final @NotNull XmlTag tag, final @NotNull ValidationHost host) {
     if (FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(context.module))) {
       MxmlLanguageTagsUtil.checkFlex4Attributes(tag, host, true);
     }
@@ -902,12 +895,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   @Override
-  public boolean requiresCdataBracesInContext(@NotNull final XmlTag context) {
+  public boolean requiresCdataBracesInContext(final @NotNull XmlTag context) {
     return predefined && XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(context.getLocalName());
   }
 
   @Override
-  public Icon getIcon(@NotNull final PsiElement element, final int flags) {
+  public Icon getIcon(final @NotNull PsiElement element, final int flags) {
     if (iconPath != null) {
       final PsiFile containingFile = element.getContainingFile();
       final VirtualFile file = containingFile.getVirtualFile();
@@ -963,32 +956,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return result.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }
 
-  @Nullable
-  static XmlElementDescriptor checkValidDescriptorAccordingToType(String arrayElementType, XmlElementDescriptor descriptor) {
-    // no need to check AnnotationBackedDescriptors
-    if (descriptor instanceof ClassBackedElementDescriptor) {
-      if (isAdequateType(arrayElementType)) {
-        PsiElement declaration = descriptor.getDeclaration();
-        if (declaration instanceof XmlFile) {
-          declaration = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)declaration);
-        }
-
-        if (declaration == null) {
-          return null;
-        }
-
-        if (declaration instanceof JSClass) {
-          if (!ActionScriptResolveUtil.isAssignableType(arrayElementType, ((JSClass)declaration).getQualifiedName(), declaration)) {
-            return null;
-          }
-        }
-      }
-    }
-    return descriptor;
-  }
-
-  @Nullable
-  public AnnotationBackedDescriptor getDefaultPropertyDescriptor() {
+  public @Nullable AnnotationBackedDescriptor getDefaultPropertyDescriptor() {
     if (!defaultPropertyDescriptorInitialized) {
       PsiElement element = predefined ? null : getDeclaration();
 
@@ -1015,8 +983,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return defaultPropertyDescriptor;
   }
 
-  @Nullable
-  private AnnotationBackedDescriptor getDefaultPropertyDescriptor(final JSClass jsClass) {
+  private @Nullable AnnotationBackedDescriptor getDefaultPropertyDescriptor(final JSClass jsClass) {
     final Ref<JSAttribute> dpAttributeRef = Ref.create();
 
     if (jsClass instanceof XmlBackedJSClassImpl) {
@@ -1070,6 +1037,17 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
     return null;
+  }
+
+  @Override
+  public @Nullable PsiElement getDeclaration() {
+    String className = predefined ? OBJECT_CLASS_NAME :this.className;
+    if (className.equals(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME)) className = VECTOR_CLASS_NAME;
+    GlobalSearchScope scope = ObjectUtils.notNull(JSInheritanceUtil.getEnforcedScope(), context.scope);
+    PsiElement jsClass = ActionScriptClassResolver.findClassByQNameStatic(className, scope);
+    final PsiFile file = jsClass == null ? null : jsClass.getContainingFile();
+    // can be MXML file listed as a component in the manifest file
+    return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
   }
 
   @Override
@@ -1301,20 +1279,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   @Override
-  @Nullable
-  public PsiElement getDeclaration() {
-    String className = predefined ? OBJECT_CLASS_NAME :this.className;
-    if (className.equals(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME)) className = VECTOR_CLASS_NAME;
-    GlobalSearchScope scope = ObjectUtils.notNull(JSInheritanceUtil.getEnforcedScope(), context.scope);
-    PsiElement jsClass = ActionScriptClassResolver.findClassByQNameStatic(className, scope);
-    final PsiFile file = jsClass == null ? null : jsClass.getContainingFile();
-    // can be MXML file listed as a component in the manifest file
-    return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
-  }
-
-  @Override
-  @NonNls
-  public String getName(final PsiElement context) {
+  public @NonNls String getName(final PsiElement context) {
     String prefix = null;
     XmlTag tag = (XmlTag)context;
     String name = getName();
@@ -1366,9 +1331,31 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   @Override
-  @NonNls
-  public String getName() {
+  public @NonNls String getName() {
     return name == null ? getNameFromQName():name;
+  }
+
+  static @Nullable XmlElementDescriptor checkValidDescriptorAccordingToType(String arrayElementType, XmlElementDescriptor descriptor) {
+    // no need to check AnnotationBackedDescriptors
+    if (descriptor instanceof ClassBackedElementDescriptor) {
+      if (isAdequateType(arrayElementType)) {
+        PsiElement declaration = descriptor.getDeclaration();
+        if (declaration instanceof XmlFile) {
+          declaration = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)declaration);
+        }
+
+        if (declaration == null) {
+          return null;
+        }
+
+        if (declaration instanceof JSClass) {
+          if (!ActionScriptResolveUtil.isAssignableType(arrayElementType, ((JSClass)declaration).getQualifiedName(), declaration)) {
+            return null;
+          }
+        }
+      }
+    }
+    return descriptor;
   }
 
   private String getNameFromQName() {

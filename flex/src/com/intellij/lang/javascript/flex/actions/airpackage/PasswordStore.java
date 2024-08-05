@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
@@ -51,13 +52,11 @@ public class PasswordStore {
     this.rememberPasswords = rememberPasswords;
   }
 
-  @Nullable
-  public String getKeystorePassword(final String keystorePath) {
+  public @Nullable String getKeystorePassword(final String keystorePath) {
     return myStoredPasswords.get(keystorePath);
   }
 
-  @Nullable
-  public String getKeyPassword(final String keystorePath, final String keyAlias) {
+  public @Nullable String getKeyPassword(final String keystorePath, final String keyAlias) {
     return myStoredPasswords.get(keystorePath + "*" + keyAlias);
   }
 

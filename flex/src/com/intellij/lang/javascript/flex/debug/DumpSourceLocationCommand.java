@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import org.jetbrains.annotations.NonNls;
@@ -11,7 +12,7 @@ class DumpSourceLocationCommand extends DebuggerCommand {
   }
 
   @Override
-  CommandOutputProcessingMode onTextAvailable(@NonNls final String text) {
+  CommandOutputProcessingMode onTextAvailable(final @NonNls String text) {
     if (!myFlexDebugProcess.getSession().isPaused()) {
       final String[] frames = FlexSuspendContext.splitStackFrames(text);
       if (frames.length > 0) {

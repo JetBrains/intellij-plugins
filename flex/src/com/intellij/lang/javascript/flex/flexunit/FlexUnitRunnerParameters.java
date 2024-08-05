@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -77,9 +77,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
   public FlexUnitRunnerParameters() {
   }
 
-  @NotNull
   @Attribute("scope")
-  public Scope getScope() {
+  public @NotNull Scope getScope() {
     return myScope;
   }
 
@@ -87,9 +86,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myScope = scope;
   }
 
-  @NotNull
   @Attribute("package_name")
-  public @NlsSafe String getPackageName() {
+  public @NotNull @NlsSafe String getPackageName() {
     return myPackageName;
   }
 
@@ -97,9 +95,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myPackageName = packageName;
   }
 
-  @NotNull
   @Attribute("class_name")
-  public String getClassName() {
+  public @NotNull String getClassName() {
     return myClassName;
   }
 
@@ -107,9 +104,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myClassName = className;
   }
 
-  @NotNull
   @Attribute("method_name")
-  public @NlsSafe String getMethodName() {
+  public @NotNull @NlsSafe String getMethodName() {
     return myMethodName;
   }
 
@@ -135,9 +131,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     mySocketPolicyPort = port;
   }
 
-  @Nullable
   @Attribute("output_log_level")
-  public OutputLogLevel getOutputLogLevel() {
+  public @Nullable OutputLogLevel getOutputLogLevel() {
     return myOutputLogLevel;
   }
 
@@ -145,12 +140,11 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myOutputLogLevel = outputLogLevel;
   }
 
-  @NotNull
-  public LauncherParameters getLauncherParameters() {
+  public @NotNull LauncherParameters getLauncherParameters() {
     return myLauncherParameters;
   }
 
-  public void setLauncherParameters(@NotNull final LauncherParameters launcherParameters) {
+  public void setLauncherParameters(final @NotNull LauncherParameters launcherParameters) {
     myLauncherParameters = launcherParameters;
   }
 
@@ -162,9 +156,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myTrusted = trusted;
   }
 
-  @NotNull
   @Attribute("emulatorAdlOptions")
-  public String getEmulatorAdlOptions() {
+  public @NotNull String getEmulatorAdlOptions() {
     return myEmulatorAdlOptions;
   }
 
@@ -172,13 +165,12 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myEmulatorAdlOptions = emulatorAdlOptions;
   }
 
-  @NotNull
   @Attribute("appDescriptorForEmulator")
-  public AppDescriptorForEmulator getAppDescriptorForEmulator() {
+  public @NotNull AppDescriptorForEmulator getAppDescriptorForEmulator() {
     return myAppDescriptorForEmulator;
   }
 
-  public void setAppDescriptorForEmulator(@NotNull final AppDescriptorForEmulator appDescriptorForEmulator) {
+  public void setAppDescriptorForEmulator(final @NotNull AppDescriptorForEmulator appDescriptorForEmulator) {
     myAppDescriptorForEmulator = appDescriptorForEmulator;
   }
 

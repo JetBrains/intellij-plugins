@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.icons.AllIcons;
@@ -114,8 +115,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     bcNode.add(new DefaultMutableTreeNode(problem));
   }
 
-  @NotNull
-  private static DefaultMutableTreeNode getOrCreateChildNode(final DefaultMutableTreeNode parentNode, final Object userObject) {
+  private static @NotNull DefaultMutableTreeNode getOrCreateChildNode(final DefaultMutableTreeNode parentNode, final Object userObject) {
     final Enumeration children = parentNode.children();
     while (children.hasMoreElements()) {
       final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)children.nextElement();

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -54,10 +54,9 @@ public final class ActionScriptClassResolver extends JSClassResolver {
     return findClassByQNameStatic(link, context);
   }
 
-  @Nullable
-  private PsiElement findClassByQName(@NotNull final String link,
-                                      final GlobalSearchScope searchScope,
-                                      @NotNull DialectOptionHolder dialect) {
+  private @Nullable PsiElement findClassByQName(final @NotNull String link,
+                                                final GlobalSearchScope searchScope,
+                                                @NotNull DialectOptionHolder dialect) {
     if (searchScope instanceof JSResolveUtil.AllowFileLocalSymbols) {
       return doFindClassByQName(link, searchScope, true);
     }
@@ -71,23 +70,24 @@ public final class ActionScriptClassResolver extends JSClassResolver {
                                           DialectOptionHolder.ECMA_4);
   }
 
-  public static PsiElement findClassByQName(@NotNull final String link, final JavaScriptIndex index, final Module module) {
+  @Override
+  public @Nullable PsiElement findClassByQName(@NotNull String link, @NotNull GlobalSearchScope scope) {
+    return findClassByQNameStatic(link, scope);
+  }
+
+  @Override
+  public @NotNull List<JSClass> findClassesByQName(@NotNull String qName, @NotNull GlobalSearchScope scope) {
+    final PsiElement clazz = findClassByQName(qName, scope);
+    return clazz instanceof JSClass ? Collections.singletonList((JSClass)clazz) : Collections.emptyList();
+  }
+
+  public static PsiElement findClassByQName(final @NotNull String link, final JavaScriptIndex index, final Module module) {
     GlobalSearchScope searchScope = JSInheritanceUtil.getEnforcedScope();
     if (searchScope == null) {
       searchScope =
         module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) : GlobalSearchScope.allScope(index.getProject());
     }
     return getInstance().findClassByQName(link, searchScope, DialectOptionHolder.ECMA_4);
-  }
-
-  @Nullable
-  @Override
-  public PsiElement findClassByQName(@NotNull String link, @NotNull GlobalSearchScope scope) {
-    return findClassByQNameStatic(link, scope);
-  }
-
-  public static PsiElement findClassByQNameStatic(@NotNull final String link, @NotNull GlobalSearchScope scope) {
-    return getInstance().findClassByQName(link, scope, DialectOptionHolder.ECMA_4);
   }
 
   public static boolean isParentClass(JSClass clazz, String className) {
@@ -185,23 +185,19 @@ public final class ActionScriptClassResolver extends JSClassResolver {
            STRING_CLASS_NAME.equals(className);
   }
 
-  @Nullable
-  private static PsiElement findClassByQNameViaHelper(final String link,
-                                                      final Project project,
-                                                      final String className,
-                                                      final GlobalSearchScope scope) {
+  public static PsiElement findClassByQNameStatic(final @NotNull String link, @NotNull GlobalSearchScope scope) {
+    return getInstance().findClassByQName(link, scope, DialectOptionHolder.ECMA_4);
+  }
+
+  private static @Nullable PsiElement findClassByQNameViaHelper(final String link,
+                                                                final Project project,
+                                                                final String className,
+                                                                final GlobalSearchScope scope) {
     for (JSResolveHelper helper : JSResolveHelper.EP_NAME.getExtensionList()) {
       PsiElement result = helper.findClassByQName(link, project, className, scope);
       if (result != null) return result;
     }
     return null;
-  }
-
-  @NotNull
-  @Override
-  public List<JSClass> findClassesByQName(@NotNull String qName, @NotNull GlobalSearchScope scope) {
-    final PsiElement clazz = findClassByQName(qName, scope);
-    return clazz instanceof JSClass ? Collections.singletonList((JSClass)clazz) : Collections.emptyList();
   }
 }
 

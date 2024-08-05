@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.module.ModuleType;
@@ -15,7 +15,7 @@ import javax.swing.*;
  * @author Maxim.Mossienko
  */
 public final class FlexModuleType extends ModuleType<FlexModuleBuilder> {
-  @NonNls public static final String MODULE_TYPE_ID = "Flex";
+  public static final @NonNls String MODULE_TYPE_ID = "Flex";
 
   public FlexModuleType() {
     super(MODULE_TYPE_ID);

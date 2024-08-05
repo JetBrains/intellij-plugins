@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
@@ -65,8 +65,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   private JSClass mySourceClass;
   private final JSMemberInfo[] myMembersToMove;
-  @NotNull
-  private final String myTargetName;
+  private final @NotNull String myTargetName;
   private final String myTargetPackage;
   private final int myDocCommentPolicy;
   private final JSExtractSuperMode myMode;
@@ -96,9 +95,8 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     myTagretDirectory = targetDirectory;
   }
 
-  @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
+  protected @NotNull UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new JSExtractInterfaceUsageViewDescriptor();
   }
 
@@ -160,9 +158,8 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     else {
       MultiMap<PsiElement, String> conflicts =
         new MultiMap<>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
-          @NotNull
           @Override
-          protected Collection<String> createCollection() {
+          protected @NotNull Collection<String> createCollection() {
             return Collections.synchronizedCollection(super.createCollection());
           }
         };
@@ -464,8 +461,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     }
   }
 
-  @NotNull
-  public JSClass createJSClass(@NotNull Project project, PsiFile file, @NonNls @NotNull String text) {
+  public @NotNull JSClass createJSClass(@NotNull Project project, PsiFile file, @NonNls @NotNull String text) {
     @NonNls String filename = file.getName() ;
     PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText(filename, file.getFileType(), text);
     return PsiTreeUtil.getParentOfType(psiFile.findElementAt(0), JSClass.class);
@@ -492,9 +488,8 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     myMembersAfterMove = new JSPullUpHelper(myTargetClass, mySourceClass, myMembersToMove, myDocCommentPolicy).moveMembersToBase(formatters);
   }
 
-  @NotNull
   @Override
-  protected String getCommandName() {
+  protected @NotNull String getCommandName() {
     if (myMode == JSExtractSuperMode.RenameImplementation) {
       return JavaScriptBundle.message("extract.subclass.command.name", StringUtil.getQualifiedName(myTargetPackage, myTargetName),
                                       new JSNamedElementPresenter(mySourceClass).describeWithShortName());

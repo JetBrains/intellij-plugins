@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -18,20 +19,19 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     myOriginal = original;
   }
 
-  @NotNull
   @Override
-  public Dependencies getDependencies() {
+  public @NotNull Dependencies getDependencies() {
     return myOriginal.getDependencies();
   }
 
-  @NotNull
   @Override
-  public NonStructuralModifiableCompilerOptions getCompilerOptions() {
+  public @NotNull NonStructuralModifiableCompilerOptions getCompilerOptions() {
     return new NonStructuralModifiableCompilerOptions(myOriginal.getCompilerOptions());
   }
 
-  public void setMainClass(@NotNull final String mainClass) {
-    myOriginal.setMainClass(mainClass);
+  @Override
+  public @NotNull String getName() {
+    return myOriginal.getName();
   }
 
   public void setCssFilesToCompile(final Collection<String> cssFilesToCompile) {
@@ -43,15 +43,13 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
   }
 
   @Override
-  @NotNull
-  public String getName() {
-    return myOriginal.getName();
+  public @NotNull TargetPlatform getTargetPlatform() {
+    return myOriginal.getTargetPlatform();
   }
 
-  @NotNull
   @Override
-  public TargetPlatform getTargetPlatform() {
-    return myOriginal.getTargetPlatform();
+  public @NotNull OutputType getOutputType() {
+    return myOriginal.getOutputType();
   }
 
   @Override
@@ -59,33 +57,27 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     return myOriginal.isPureAs();
   }
 
-  @NotNull
   @Override
-  public OutputType getOutputType() {
-    return myOriginal.getOutputType();
-  }
-
-  @NotNull
-  @Override
-  public String getOptimizeFor() {
+  public @NotNull String getOptimizeFor() {
     return myOriginal.getOptimizeFor();
   }
 
-  @NotNull
   @Override
-  public String getMainClass() {
+  public @NotNull String getMainClass() {
     return myOriginal.getMainClass();
   }
 
-  @NotNull
+  public void setMainClass(final @NotNull String mainClass) {
+    myOriginal.setMainClass(mainClass);
+  }
+
   @Override
-  public String getOutputFileName() {
+  public @NotNull String getOutputFileName() {
     return myOriginal.getOutputFileName();
   }
 
-  @NotNull
   @Override
-  public String getOutputFolder() {
+  public @NotNull String getOutputFolder() {
     return myOriginal.getOutputFolder();
   }
 
@@ -94,21 +86,18 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     return myOriginal.isUseHtmlWrapper();
   }
 
-  @NotNull
   @Override
-  public String getWrapperTemplatePath() {
+  public @NotNull String getWrapperTemplatePath() {
     return myOriginal.getWrapperTemplatePath();
   }
 
-  @NotNull
   @Override
-  public Collection<RLMInfo> getRLMs() {
+  public @NotNull Collection<RLMInfo> getRLMs() {
     return myOriginal.getRLMs();
   }
 
-  @NotNull
   @Override
-  public Collection<String> getCssFilesToCompile() {
+  public @NotNull Collection<String> getCssFilesToCompile() {
     return myOriginal.getCssFilesToCompile();
   }
 
@@ -117,9 +106,8 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     return myOriginal.isSkipCompile();
   }
 
-  @NotNull
   @Override
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     return myOriginal.getIcon();
   }
 
@@ -148,21 +136,18 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     return myOriginal.isEqual(other);
   }
 
-  @NotNull
   @Override
-  public IosPackagingOptions getIosPackagingOptions() {
+  public @NotNull IosPackagingOptions getIosPackagingOptions() {
     return myOriginal.getIosPackagingOptions();
   }
 
-  @NotNull
   @Override
-  public AirDesktopPackagingOptions getAirDesktopPackagingOptions() {
+  public @NotNull AirDesktopPackagingOptions getAirDesktopPackagingOptions() {
     return myOriginal.getAirDesktopPackagingOptions();
   }
 
-  @NotNull
   @Override
-  public AndroidPackagingOptions getAndroidPackagingOptions() {
+  public @NotNull AndroidPackagingOptions getAndroidPackagingOptions() {
     return myOriginal.getAndroidPackagingOptions();
   }
 

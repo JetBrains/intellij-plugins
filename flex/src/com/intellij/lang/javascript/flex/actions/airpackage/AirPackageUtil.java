@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -52,8 +52,7 @@ public final class AirPackageUtil {
     return FlexCommonUtils.getPathToBundledJar("temp_keystore.p12");
   }
 
-  @Nullable
-  public static String getAdtVersion(final Project project, final Sdk sdk) {
+  public static @Nullable String getAdtVersion(final Project project, final Sdk sdk) {
     final Ref<String> versionRef = new Ref<>();
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
@@ -920,8 +919,7 @@ public final class AirPackageUtil {
     }
   }
 
-  @Nullable
-  public static String getAppIdFromPackage(final String packagePath) {
+  public static @Nullable String getAppIdFromPackage(final String packagePath) {
     try (ZipFile zipFile = new ZipFile(packagePath)) {
       final ZipEntry entry = zipFile.getEntry("assets/META-INF/AIR/application.xml");
       if (entry != null) {

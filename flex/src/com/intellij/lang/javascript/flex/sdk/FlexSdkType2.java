@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -33,16 +33,14 @@ public final class FlexSdkType2 extends SdkType {
   }
 
   @Override
-  @Nullable
-  public String suggestHomePath() {
+  public @Nullable String suggestHomePath() {
     final String path = PropertiesComponent.getInstance().getValue(LAST_SELECTED_FLEX_SDK_HOME_KEY);
     if (path != null) return PathUtil.getParentPath(path);
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<String> suggestHomePaths() {
+  public @NotNull Collection<String> suggestHomePaths() {
     final String fbInstallation = FlashBuilderSdkFinder.findFBInstallationPath();
     return fbInstallation == null
            ? Collections.emptySet()
@@ -59,60 +57,55 @@ public final class FlexSdkType2 extends SdkType {
     return FlexSdkUtils.doReadFlexSdkVersion(sdkHome) != null || FlexSdkUtils.doReadAirSdkVersion(sdkHome) != null;
   }
 
-  @NotNull
   @Override
-  public String suggestSdkName(@Nullable final String currentSdkName, final @NotNull String sdkHome) {
+  public @NotNull String suggestSdkName(final @Nullable String currentSdkName, final @NotNull String sdkHome) {
     return PathUtil.getFileName(sdkHome);
   }
 
   @Override
-  public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
+  public AdditionalDataConfigurable createAdditionalDataConfigurable(final @NotNull SdkModel sdkModel, final @NotNull SdkModificator sdkModificator) {
     return null;
   }
 
   @Override
-  public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element additional) {
+  public void saveAdditionalData(final @NotNull SdkAdditionalData additionalData, final @NotNull Element additional) {
 
   }
 
   @Override
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return FlexBundle.message("flex.sdk.presentable.name");
   }
 
-  @NotNull
-  public static FlexSdkType2 getInstance() {
-    return SdkType.findInstance(FlexSdkType2.class);
-  }
-
   @Override
-  public void setupSdkPaths(@NotNull final Sdk sdk) {
+  public void setupSdkPaths(final @NotNull Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
     setupSdkPaths(sdk.getHomeDirectory(), modificator);
     ApplicationManager.getApplication().invokeAndWait(() -> WriteAction.run(() -> modificator.commitChanges()));
   }
 
   @Override
-  @NotNull
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     return FlexIcons.Flex.Sdk.Flex_sdk;
   }
 
-  @NotNull
   @Override
-  public String getHelpTopic() {
+  public @NotNull String getHelpTopic() {
     return "reference.project.structure.sdk.flex";
   }
 
   @Override
-  public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
+  public boolean isRootTypeApplicable(final @NotNull OrderRootType type) {
     return type == OrderRootType.CLASSES || type == OrderRootType.SOURCES || type == JavadocOrderRootType.getInstance();
   }
 
   @Override
-  public String getDefaultDocumentationUrl(@NotNull final Sdk sdk) {
+  public String getDefaultDocumentationUrl(final @NotNull Sdk sdk) {
     return "http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/";
+  }
+
+  public static @NotNull FlexSdkType2 getInstance() {
+    return SdkType.findInstance(FlexSdkType2.class);
   }
 
   @Override
@@ -198,7 +191,7 @@ public final class FlexSdkType2 extends SdkType {
     }
   }
 
-  private static void addSwcRoot(@NotNull final SdkModificator sdkModificator, @NotNull final VirtualFile swcFile) {
+  private static void addSwcRoot(final @NotNull SdkModificator sdkModificator, final @NotNull VirtualFile swcFile) {
     final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(swcFile);
     if (jarRoot != null) {
       sdkModificator.addRoot(jarRoot, OrderRootType.CLASSES);

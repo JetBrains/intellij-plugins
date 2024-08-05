@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -45,9 +45,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionAction {
 
-  @NotNull private final SmartPsiElementPointer<JSClass> myClass;
-  @NotNull private final SmartPsiElementPointer<JSCallExpression> myNode;
-  @NotNull private final String myName;
+  private final @NotNull SmartPsiElementPointer<JSClass> myClass;
+  private final @NotNull SmartPsiElementPointer<JSCallExpression> myNode;
+  private final @NotNull String myName;
 
   private ActionScriptCreateConstructorFix(@NotNull JSClass clazz,
                                            @NotNull JSCallExpression node) {
@@ -62,40 +62,8 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiElement anchorParent) {
   }
 
-  @Nullable
-  public static ActionScriptCreateConstructorFix createIfApplicable(@NotNull JSCallExpression node) {
-    final JSClass clazz;
-    JSExpression methodExpression = node.getMethodExpression();
-    if (node instanceof JSNewExpression) {
-      if (!(methodExpression instanceof JSReferenceExpression)) {
-        return null;
-      }
-      PsiElement resolved = ((JSReferenceExpression)methodExpression).resolve();
-      if (!(resolved instanceof JSClass) || resolved instanceof XmlBackedJSClass || ((JSClass)resolved).isInterface()) {
-        return null;
-      }
-      clazz = (JSClass)resolved;
-    }
-    else {
-      if (!(methodExpression instanceof JSSuperExpression)) {
-        return null;
-      }
-      JSClass containingClass = JSResolveUtil.getClassOfContext(node);
-      if (containingClass == null) {
-        return null;
-      }
-      clazz = containingClass.getSuperClasses()[0];
-      if (clazz.isInterface()) {
-        return null;
-      }
-    }
-
-    return new ActionScriptCreateConstructorFix(clazz, node);
-  }
-
-  @NotNull
   @Override
-  protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(@NotNull PsiElement psiElement) {
+  protected @NotNull Pair<JSReferenceExpression, PsiElement> calculateAnchors(@NotNull PsiElement psiElement) {
     JSClass element = myClass.getElement();
     if (element == null) return Pair.create(null, null);
 
@@ -103,6 +71,11 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
     JSCallExpression callExpression = myNode.getElement();
     JSExpression methodExpression = callExpression != null ? callExpression.getMethodExpression() : null;
     return Pair.create(ObjectUtils.tryCast(methodExpression, JSReferenceExpression.class), lbrace.getPsi());
+  }
+
+  @Override
+  public @NotNull String getName() {
+    return FlexBundle.message("actionscript.create.constructor.intention.name", myName);
   }
 
   @Override
@@ -210,10 +183,34 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
            JSPsiImplUtils.differentPackageName(JSResolveUtil.getPackageName(jsClass), JSResolveUtil.getPackageName(contextClass));
   }
 
-  @NotNull
-  @Override
-  public String getName() {
-    return FlexBundle.message("actionscript.create.constructor.intention.name", myName);
+  public static @Nullable ActionScriptCreateConstructorFix createIfApplicable(@NotNull JSCallExpression node) {
+    final JSClass clazz;
+    JSExpression methodExpression = node.getMethodExpression();
+    if (node instanceof JSNewExpression) {
+      if (!(methodExpression instanceof JSReferenceExpression)) {
+        return null;
+      }
+      PsiElement resolved = ((JSReferenceExpression)methodExpression).resolve();
+      if (!(resolved instanceof JSClass) || resolved instanceof XmlBackedJSClass || ((JSClass)resolved).isInterface()) {
+        return null;
+      }
+      clazz = (JSClass)resolved;
+    }
+    else {
+      if (!(methodExpression instanceof JSSuperExpression)) {
+        return null;
+      }
+      JSClass containingClass = JSResolveUtil.getClassOfContext(node);
+      if (containingClass == null) {
+        return null;
+      }
+      clazz = containingClass.getSuperClasses()[0];
+      if (clazz.isInterface()) {
+        return null;
+      }
+    }
+
+    return new ActionScriptCreateConstructorFix(clazz, node);
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
@@ -358,9 +355,8 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
       super.performRefactoring(usageInfos);
     }
 
-    @NotNull
     @Override
-    protected String getCommandName() {
+    protected @NotNull String getCommandName() {
       return getName();
     }
   }

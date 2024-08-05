@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.ide.util.PsiNavigationSupport;
@@ -48,12 +49,11 @@ import java.util.*;
 public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   private final JSQualifiedNamedElement myElement;
   private final PsiDirectory myTargetDirectory;
-  @NotNull
-  private final String myClassName;
+  private final @NotNull String myClassName;
   private final String myPackageName;
   private final boolean mySearchInComments;
   private final boolean mySearchTextOccurences;
-  @Nullable private final MoveCallback myMoveCallback;
+  private final @Nullable MoveCallback myMoveCallback;
   private NonCodeUsageInfo[] myNonCodeUsages;
 
   public FlexMoveInnerClassProcessor(JSQualifiedNamedElement element,
@@ -73,9 +73,8 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     myMoveCallback = moveCallback;
   }
 
-  @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
+  protected @NotNull UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new FlexMoveInnerClassUsageViewDescriptor();
   }
 
@@ -204,9 +203,8 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     descriptor.navigate(true);
   }
 
-  @NotNull
   @Override
-  protected String getCommandName() {
+  protected @NotNull String getCommandName() {
     return FlexBundle.message("move.to.upper.level.command.name",
                               new JSNamedElementPresenter(myElement).describeWithShortName(),
                               StringUtil.getQualifiedName(myPackageName, myClassName));
@@ -257,9 +255,8 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
                                 StringUtil.getQualifiedName(myPackageName, myClassName));
     }
 
-    @NotNull
     @Override
-    public String getCodeReferencesText(int usagesCount, int filesCount) {
+    public @NotNull String getCodeReferencesText(int usagesCount, int filesCount) {
       return FlexBundle.message("references.in.code.to.inner.0", UsageViewUtil.getLongName(getElements()[0])) +
              UsageViewBundle.getReferencesString(usagesCount, filesCount);
     }

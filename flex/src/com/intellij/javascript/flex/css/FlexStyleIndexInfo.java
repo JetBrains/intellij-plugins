@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -36,18 +37,15 @@ public class FlexStyleIndexInfo {
     myInClass = inClass;
   }
 
-  @NotNull
-  public String getInherit() {
+  public @NotNull String getInherit() {
     return myInherit;
   }
 
-  @Nullable
-  public String getType() {
+  public @Nullable String getType() {
     return myType;
   }
 
-  @Nullable
-  public String getArrayType() {
+  public @Nullable String getArrayType() {
     return myArrayType;
   }
 
@@ -55,10 +53,8 @@ public class FlexStyleIndexInfo {
     return myInClass;
   }
 
-  @Nullable
-  private static String getValue(JSAttribute attribute, String name) {
-    JSAttributeNameValuePair pair = attribute.getValueByName(name);
-    return pair != null ? pair.getSimpleValue() : null;
+  public @Nullable String getFormat() {
+    return myFormat;
   }
 
   public static @NotNull FlexStyleIndexInfo create(@NotNull String className, @NotNull String name, @NotNull JSAttribute attribute, boolean inClass) {
@@ -75,19 +71,17 @@ public class FlexStyleIndexInfo {
     return myEnumeration;
   }
 
-  @Nullable
-  public String getFormat() {
-    return myFormat;
-  }
-
-  @NotNull
-  public String getClassOrFileName() {
+  public @NotNull String getClassOrFileName() {
     return myClassOrFileName;
   }
 
-  @NotNull
-  public String getAttributeName() {
+  public @NotNull String getAttributeName() {
     return myAttributeName;
+  }
+
+  private static @Nullable String getValue(JSAttribute attribute, String name) {
+    JSAttributeNameValuePair pair = attribute.getValueByName(name);
+    return pair != null ? pair.getSimpleValue() : null;
   }
 
   @Override

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -11,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class FlexUnitClassInspectionBase extends LocalInspectionTool {
   @Override
-  @Nls
-  @NotNull
-  public String getGroupDisplayName() {
+  public @Nls @NotNull String getGroupDisplayName() {
     return FlexBundle.message("flexunit.inspections.group");
   }
 
@@ -22,9 +21,8 @@ public abstract class FlexUnitClassInspectionBase extends LocalInspectionTool {
     return true;
   }
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new FlexUnitInspectionVisitor() {
       @Override
       public void visitJSClass(@NotNull JSClass aClass) {
@@ -35,6 +33,6 @@ public abstract class FlexUnitClassInspectionBase extends LocalInspectionTool {
     };
   }
 
-  protected abstract void visitPotentialTestClass(JSClass aClass, @NotNull final ProblemsHolder holder, FlexUnitSupport support);
+  protected abstract void visitPotentialTestClass(JSClass aClass, final @NotNull ProblemsHolder holder, FlexUnitSupport support);
 
 }

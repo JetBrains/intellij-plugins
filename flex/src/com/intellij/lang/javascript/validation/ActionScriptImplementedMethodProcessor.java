@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation;
 
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -34,18 +35,16 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
     return alreadyUsedMethods.getFunctions();
   }
 
-  @NotNull
-  protected final JSClass myJsClass;
+  protected final @NotNull JSClass myJsClass;
 
-  public ActionScriptImplementedMethodProcessor(@NotNull final JSClass jsClass) {
+  public ActionScriptImplementedMethodProcessor(final @NotNull JSClass jsClass) {
     super(null, false);
     myJsClass = jsClass;
   }
 
 
-  @NotNull
   @Override
-  protected ResultSink createResultSink() {
+  protected @NotNull ResultSink createResultSink() {
     return new CompletionResultSink(place, null);
   }
 
@@ -81,8 +80,7 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
     }
   }
 
-  @NotNull
-  private JSFunctionCollector collectVisibleFunctions() {
+  private @NotNull JSFunctionCollector collectVisibleFunctions() {
     return JSFunctionCollector.collectAllVisibleClassFunctions(myJsClass, null, jsFunction -> {
       final JSAttributeList attributeList = jsFunction.getAttributeList();
       if (!JSInheritanceUtil.canHaveSuperMember(attributeList)) {

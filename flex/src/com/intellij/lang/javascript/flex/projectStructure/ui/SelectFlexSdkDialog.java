@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
@@ -32,8 +33,7 @@ public class SelectFlexSdkDialog extends DialogWrapper {
     return myMainPanel;
   }
 
-  @Nullable
-  public Sdk getSdk() {
+  public @Nullable Sdk getSdk() {
     return myFlexSdkComboWithBrowse.getSelectedSdk();
   }
 }

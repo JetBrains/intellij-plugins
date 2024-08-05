@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -135,9 +136,8 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
     }
   }
 
-  @NotNull
   @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+  public @NotNull List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlText.class, XmlAttributeValue.class, XmlComment.class);
   }
 

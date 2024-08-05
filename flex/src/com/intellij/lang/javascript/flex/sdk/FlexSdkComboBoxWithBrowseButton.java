@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.ide.DataManager;
@@ -147,7 +147,7 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     });
   }
 
-  private void rebuildSdkListAndSelectSdk(@Nullable final Sdk selectedSdk) {
+  private void rebuildSdkListAndSelectSdk(final @Nullable Sdk selectedSdk) {
     final String previousSelectedSdkName = getSelectedSdkRaw();
     final List<Object> sdkList = new ArrayList<>();
 
@@ -209,8 +209,7 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     });
   }
 
-  @Nullable
-  public Sdk getSelectedSdk() {
+  public @Nullable Sdk getSelectedSdk() {
     final Object selectedItem = getComboBox().getSelectedItem();
 
     if (selectedItem instanceof BCSdk) {
@@ -308,28 +307,27 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     }
 
     @Override
-    public void apply(@Nullable final MasterDetailsComponent configurable) throws ConfigurationException {
+    public void apply(final @Nullable MasterDetailsComponent configurable) throws ConfigurationException {
       myConfigurable.reset(); // just update the view
     }
 
     @Override
-    public void reset(@Nullable final Project project) {
+    public void reset(final @Nullable Project project) {
       // ignore
     }
 
     @Override
-    public void addListener(@NotNull final Listener listener) {
+    public void addListener(final @NotNull Listener listener) {
       myOriginal.addListener(listener);
     }
 
     @Override
-    public void removeListener(@NotNull final Listener listener) {
+    public void removeListener(final @NotNull Listener listener) {
       myOriginal.removeListener(listener);
     }
 
-    @NotNull
     @Override
-    public Listener getMulticaster() {
+    public @NotNull Listener getMulticaster() {
       return myOriginal.getMulticaster();
     }
 
@@ -339,7 +337,7 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     }
 
     @Override
-    public Sdk findSdk(@NotNull final String sdkName) {
+    public Sdk findSdk(final @NotNull String sdkName) {
       return myOriginal.findSdk(sdkName);
     }
 
@@ -348,9 +346,8 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
       // ignore
     }
 
-    @NotNull
     @Override
-    public HashMap<Sdk, Sdk> getProjectSdks() {
+    public @NotNull HashMap<Sdk, Sdk> getProjectSdks() {
       return myOriginal.getProjectSdks();
     }
 
@@ -360,7 +357,7 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     }
 
     @Override
-    public void removeSdk(@NotNull final Sdk editableObject) {
+    public void removeSdk(final @NotNull Sdk editableObject) {
       myOriginal.removeSdk(editableObject);
     }
 
@@ -373,22 +370,22 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     }
 
     @Override
-    public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> updateTree) {
+    public void doAdd(@NotNull JComponent parent, final @NotNull SdkType type, final @NotNull Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(parent, type, updateTree);
     }
 
     @Override
-    public void addSdk(@NotNull final Sdk sdk) {
+    public void addSdk(final @NotNull Sdk sdk) {
       myOriginal.addSdk(sdk);
     }
 
     @Override
-    public void doAdd(@NotNull final Sdk newSdk, @Nullable final java.util.function.Consumer<? super Sdk> updateTree) {
+    public void doAdd(final @NotNull Sdk newSdk, final @Nullable java.util.function.Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(newSdk, updateTree);
     }
 
     @Override
-    public Sdk findSdk(@Nullable final Sdk modelJdk) {
+    public Sdk findSdk(final @Nullable Sdk modelJdk) {
       return myOriginal.findSdk(modelJdk);
     }
 

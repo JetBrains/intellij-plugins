@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionException;
@@ -36,27 +36,26 @@ public final class RemoteFlashRunConfiguration extends LocatableConfigurationBas
     return clone;
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new RemoteFlashRunConfigurationForm(getProject());
   }
 
   @Override
-  public void readExternal(@NotNull final Element element) throws InvalidDataException {
+  public void readExternal(final @NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunnerParameters = new RemoteFlashRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
   @Override
-  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
+  public void writeExternal(final @NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
 
   @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(final @NotNull Executor executor, final @NotNull ExecutionEnvironment env) throws ExecutionException {
     try {
       myRunnerParameters.checkAndGetModuleAndBC(getProject());
     }
@@ -72,8 +71,7 @@ public final class RemoteFlashRunConfiguration extends LocatableConfigurationBas
     myRunnerParameters.checkAndGetModuleAndBC(getProject());
   }
 
-  @NotNull
-  public RemoteFlashRunnerParameters getRunnerParameters() {
+  public @NotNull RemoteFlashRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 

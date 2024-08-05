@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
@@ -541,7 +541,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
   }
 
   @Override
-  public boolean execute(@NotNull final CompileContext context) {
+  public boolean execute(final @NotNull CompileContext context) {
     return validateConfiguration(context);
   }
 
@@ -593,7 +593,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
 
     final NotificationListener listener = new NotificationListener() {
       @Override
-      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+      public void hyperlinkUpdate(final @NotNull Notification notification, final @NotNull HyperlinkEvent event) {
         notification.expire();
 
         if ("enable".equals(event.getDescription())) {
@@ -601,7 +601,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
 
           final NotificationListener listener1 = new NotificationListener() {
             @Override
-            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+            public void hyperlinkUpdate(final @NotNull Notification notification, final @NotNull HyperlinkEvent event) {
               notification.expire();
               ShowSettingsUtil.getInstance().showSettingsDialog(project, JavaCompilerBundle.message("compiler.configurable.display.name"));
             }
@@ -668,9 +668,9 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
   }
 
   private static final class BCProblemNavigatable implements Navigatable {
-    @NotNull private final Module myModule;
-    @NotNull private final String myBCNme;
-    @NotNull private final FlashProjectStructureProblem myProblem;
+    private final @NotNull Module myModule;
+    private final @NotNull String myBCNme;
+    private final @NotNull FlashProjectStructureProblem myProblem;
 
     private BCProblemNavigatable(final @NotNull Module module,
                                  final @NotNull String bcName,

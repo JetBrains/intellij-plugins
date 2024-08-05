@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
@@ -206,21 +206,19 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myOverrideMainClass = overrideMainClass;
   }
 
-  @NotNull
-  public String getOverriddenMainClass() {
+  public @NotNull String getOverriddenMainClass() {
     return myOverriddenMainClass;
   }
 
-  public void setOverriddenMainClass(@NotNull final String overriddenMainClass) {
+  public void setOverriddenMainClass(final @NotNull String overriddenMainClass) {
     myOverriddenMainClass = overriddenMainClass;
   }
 
-  @NotNull
-  public String getOverriddenOutputFileName() {
+  public @NotNull String getOverriddenOutputFileName() {
     return myOverriddenOutputFileName;
   }
 
-  public void setOverriddenOutputFileName(@NotNull final String overriddenOutputFileName) {
+  public void setOverriddenOutputFileName(final @NotNull String overriddenOutputFileName) {
     myOverriddenOutputFileName = overriddenOutputFileName;
   }
 
@@ -232,21 +230,19 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myLaunchUrl = launchUrl;
   }
 
-  @NotNull
-  public String getUrl() {
+  public @NotNull String getUrl() {
     return myUrl;
   }
 
-  public void setUrl(@NotNull final String url) {
+  public void setUrl(final @NotNull String url) {
     myUrl = url;
   }
 
-  @NotNull
-  public LauncherParameters getLauncherParameters() {
+  public @NotNull LauncherParameters getLauncherParameters() {
     return myLauncherParameters;
   }
 
-  public void setLauncherParameters(@NotNull final LauncherParameters launcherParameters) {
+  public void setLauncherParameters(final @NotNull LauncherParameters launcherParameters) {
     myLauncherParameters = launcherParameters;
   }
 
@@ -258,35 +254,31 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myRunTrusted = runTrusted;
   }
 
-  @NotNull
-  public String getAdlOptions() {
+  public @NotNull String getAdlOptions() {
     return myAdlOptions;
   }
 
-  public void setAdlOptions(@NotNull final String adlOptions) {
+  public void setAdlOptions(final @NotNull String adlOptions) {
     myAdlOptions = adlOptions;
   }
 
-  @NotNull
-  public String getAirProgramParameters() {
+  public @NotNull String getAirProgramParameters() {
     return myAirProgramParameters;
   }
 
-  public void setAirProgramParameters(@NotNull final String airProgramParameters) {
+  public void setAirProgramParameters(final @NotNull String airProgramParameters) {
     myAirProgramParameters = airProgramParameters;
   }
 
-  @NotNull
-  public AirMobileRunTarget getMobileRunTarget() {
+  public @NotNull AirMobileRunTarget getMobileRunTarget() {
     return myMobileRunTarget;
   }
 
-  public void setMobileRunTarget(@NotNull final AirMobileRunTarget mobileRunTarget) {
+  public void setMobileRunTarget(final @NotNull AirMobileRunTarget mobileRunTarget) {
     myMobileRunTarget = mobileRunTarget;
   }
 
-  @NotNull
-  public Emulator getEmulator() {
+  public @NotNull Emulator getEmulator() {
     return myEmulator;
   }
 
@@ -349,17 +341,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myClearAppDataOnEachLaunch = clear;
   }
 
-  @NotNull
-  public String getIOSSimulatorSdkPath() {
+  public @NotNull String getIOSSimulatorSdkPath() {
     return myIOSSimulatorSdkPath;
   }
 
-  public void setIOSSimulatorSdkPath(@NotNull final String IOSSimulatorSdkPath) {
+  public void setIOSSimulatorSdkPath(final @NotNull String IOSSimulatorSdkPath) {
     myIOSSimulatorSdkPath = IOSSimulatorSdkPath;
   }
 
-  @NotNull
-  public String getIOSSimulatorDevice() {
+  public @NotNull String getIOSSimulatorDevice() {
     return myIOSSimulatorDevice;
   }
 
@@ -375,12 +365,11 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myFastPackaging = fastPackaging;
   }
 
-  @NotNull
-  public AirMobileDebugTransport getDebugTransport() {
+  public @NotNull AirMobileDebugTransport getDebugTransport() {
     return myDebugTransport;
   }
 
-  public void setDebugTransport(@NotNull final AirMobileDebugTransport debugTransport) {
+  public void setDebugTransport(final @NotNull AirMobileDebugTransport debugTransport) {
     myDebugTransport = debugTransport;
   }
 
@@ -392,17 +381,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myUsbDebugPort = usbDebugPort;
   }
 
-  @NotNull
-  public String getEmulatorAdlOptions() {
+  public @NotNull String getEmulatorAdlOptions() {
     return myEmulatorAdlOptions;
   }
 
-  public void setEmulatorAdlOptions(@NotNull final String emulatorAdlOptions) {
+  public void setEmulatorAdlOptions(final @NotNull String emulatorAdlOptions) {
     myEmulatorAdlOptions = emulatorAdlOptions;
   }
 
-  @NotNull
-  public AppDescriptorForEmulator getAppDescriptorForEmulator() {
+  public @NotNull AppDescriptorForEmulator getAppDescriptorForEmulator() {
     return myAppDescriptorForEmulator;
   }
 
@@ -413,8 +400,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     }
   }
 
-  @NotNull
-  public String getDebuggerSdkRaw() {
+  public @NotNull String getDebuggerSdkRaw() {
     return myDebuggerSdkRaw;
   }
 

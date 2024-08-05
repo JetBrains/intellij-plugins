@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -148,12 +149,12 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
       }
 
       @Override
-      public void update(@NotNull final AnActionEvent e) {
+      public void update(final @NotNull AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
       }
 
       @Override
-      public void actionPerformed(@NotNull final AnActionEvent e) {
+      public void actionPerformed(final @NotNull AnActionEvent e) {
         final Module module = getFlexModuleForNode(selectedNodeRetriever.compute());
         myConfigurator.addConfiguration(module, treeNodeNameUpdater);
       }
@@ -161,23 +162,8 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
     return actions;
   }
 
-  @Nullable
-  private static Module getFlexModuleForNode(@Nullable MasterDetailsComponent.MyNode node) {
-    while (node != null) {
-      final NamedConfigurable configurable = node.getConfigurable();
-      final Object editableObject = configurable == null ? null : configurable.getEditableObject();
-      if (editableObject instanceof Module && ModuleType.get((Module)editableObject) instanceof FlexModuleType) {
-        return (Module)editableObject;
-      }
-      final TreeNode parent = node.getParent();
-      node = parent instanceof MasterDetailsComponent.MyNode ? (MasterDetailsComponent.MyNode)parent : null;
-    }
-    return null;
-  }
-
   @Override
-  @Nullable
-  public ActionCallback selectOrderEntry(@NotNull final Module module, @Nullable final OrderEntry entry) {
+  public @Nullable ActionCallback selectOrderEntry(final @NotNull Module module, final @Nullable OrderEntry entry) {
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return null;
     }
@@ -207,5 +193,18 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
       }
     }
     return ProjectStructureConfigurable.getInstance(module.getProject()).select(module.getName(), null, true);
+  }
+
+  private static @Nullable Module getFlexModuleForNode(@Nullable MasterDetailsComponent.MyNode node) {
+    while (node != null) {
+      final NamedConfigurable configurable = node.getConfigurable();
+      final Object editableObject = configurable == null ? null : configurable.getEditableObject();
+      if (editableObject instanceof Module && ModuleType.get((Module)editableObject) instanceof FlexModuleType) {
+        return (Module)editableObject;
+      }
+      final TreeNode parent = node.getParent();
+      node = parent instanceof MasterDetailsComponent.MyNode ? (MasterDetailsComponent.MyNode)parent : null;
+    }
+    return null;
   }
 }

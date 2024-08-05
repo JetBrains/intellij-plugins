@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -111,7 +111,7 @@ public final class FlexBreakpointsHandler {
     }
 
     @Override
-    public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+    public void registerBreakpoint(final @NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
       final XSourcePosition position = breakpoint.getSourcePosition();
       if (position != null) {
         ReadAction.nonBlocking(() -> isValidSourceBreakpoint(position))
@@ -179,7 +179,7 @@ public final class FlexBreakpointsHandler {
     }
 
     @Override
-    public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
+    public void unregisterBreakpoint(final @NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
       final XSourcePosition position = breakpoint.getSourcePosition();
       if (position != null) {
         ReadAction.nonBlocking(() -> isValidSourceBreakpoint(position))
@@ -195,7 +195,7 @@ public final class FlexBreakpointsHandler {
 
   private class InsertBreakpointCommand extends DebuggerCommand {
     private @Nullable XLineBreakpoint<XBreakpointProperties> myBreakpoint; // null if this is breakpoint for 'Run To Cursor' action
-    private @NotNull final XSourcePosition mySourcePosition;
+    private final @NotNull XSourcePosition mySourcePosition;
 
     InsertBreakpointCommand(@NotNull XSourcePosition sourcePosition) {
       super(buildInsertBreakpointCommandText(sourcePosition), CommandOutputProcessingType.SPECIAL_PROCESSING);

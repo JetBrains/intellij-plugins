@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -46,11 +46,10 @@ import java.util.Collections;
 import java.util.List;
 
 public final class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
-  @NotNull
   @Override
-  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
-                                             @NotNull Collection<AbstractTreeNode<?>> children,
-                                             ViewSettings settings) {
+  public @NotNull Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                                         @NotNull Collection<AbstractTreeNode<?>> children,
+                                                         ViewSettings settings) {
     List<AbstractTreeNode<?>> result = new ArrayList<>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
       JSQualifiedNamedElement psiParent = getElement(parent);
@@ -90,8 +89,7 @@ public final class FlexTreeStructureProvider implements TreeStructureProvider, D
     return result;
   }
 
-  @Nullable
-  private static JSQualifiedNamedElement getElement(AbstractTreeNode parent) {
+  private static @Nullable JSQualifiedNamedElement getElement(AbstractTreeNode parent) {
     if (parent instanceof SwfQualifiedNamedElementNode) {
       return (JSQualifiedNamedElement)parent.getValue();
     }
@@ -123,7 +121,7 @@ public final class FlexTreeStructureProvider implements TreeStructureProvider, D
     }
 
     @Override
-    protected void updateImpl(@NotNull final PresentationData data) {
+    protected void updateImpl(final @NotNull PresentationData data) {
       PsiFile value = getValue();
 
       String className = null;
@@ -201,18 +199,17 @@ public final class FlexTreeStructureProvider implements TreeStructureProvider, D
     }
 
     @Override
-    public boolean contains(@NotNull final VirtualFile file) {
+    public boolean contains(final @NotNull VirtualFile file) {
       return false;
     }
 
     @Override
-    @NotNull
-    public Collection<? extends AbstractTreeNode<?>> getChildren() {
+    public @NotNull Collection<? extends AbstractTreeNode<?>> getChildren() {
       return Collections.emptyList();
     }
 
     @Override
-    protected void update(@NotNull final PresentationData presentation) {
+    protected void update(final @NotNull PresentationData presentation) {
       final ItemPresentation p = myElement.getPresentation();
 
       presentation.setPresentableText(p.getPresentableText());

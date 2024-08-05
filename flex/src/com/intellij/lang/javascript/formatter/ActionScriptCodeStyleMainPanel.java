@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.codeStyle.arrangement.ArrangementSettingsPanel;
@@ -19,16 +19,14 @@ public class ActionScriptCodeStyleMainPanel extends JSDerivedLanguageCodeStyleMa
   protected void initTabs(CodeStyleSettings settings) {
     super.initTabs(settings);
     addTab(new JSCodeStylePunctuationPanel(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings, false) {
-      @NotNull
       @Override
-      protected FileType getFileType() {
+      protected @NotNull FileType getFileType() {
         return ActionScriptFileType.INSTANCE;
       }
     });
     addTab(new JSGeneratedCodeStylePanel(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings, true) {
-      @NotNull
       @Override
-      protected FileType getFileType() {
+      protected @NotNull FileType getFileType() {
         return ActionScriptFileType.INSTANCE;
       }
     });

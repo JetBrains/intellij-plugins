@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.index.ActionScriptCustomIndexer;
@@ -23,9 +24,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Konstantin.Ulitin
  */
 public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
-  @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context) {
+  public @NotNull JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context) {
     return new ActionScriptTypeEvaluator(context);
   }
 
@@ -34,23 +34,20 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
     return ActionScriptTypeGuardEvaluator.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl referenceExpression,
-                                                                                                       boolean ignorePerformanceLimits) {
+  public @NotNull ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl referenceExpression,
+                                                                                                                boolean ignorePerformanceLimits) {
     return new ActionScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
 
-  @NotNull
   @Override
-  protected ExpectedTypeEvaluator newExpectedTypeEvaluator(@NotNull PsiElement parent,
-                                                           @NotNull JSExpectedTypeKind expectedTypeKind) {
+  protected @NotNull ExpectedTypeEvaluator newExpectedTypeEvaluator(@NotNull PsiElement parent,
+                                                                    @NotNull JSExpectedTypeKind expectedTypeKind) {
     return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
   }
 
   @Override
-  @Nullable
-  public JSLookupPriority getSpecificCompletionVariantPriority(final @NotNull PsiElement element) {
+  public @Nullable JSLookupPriority getSpecificCompletionVariantPriority(final @NotNull PsiElement element) {
     if (element instanceof JSQualifiedNamedElement) {
       final String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
       if (qName != null && "avmplus".equals(StringUtil.getPackageName(qName))) {
@@ -61,33 +58,28 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
     return null;
   }
 
-  @NotNull
   @Override
-  public JSClassResolver getClassResolver() {
+  public @NotNull JSClassResolver getClassResolver() {
     return ActionScriptClassResolver.getInstance();
   }
 
-  @NotNull
   @Override
-  public JSImportHandler getImportHandler() {
+  public @NotNull JSImportHandler getImportHandler() {
     return ActionScriptImportHandler.getInstance();
   }
 
-  @NotNull
   @Override
-  public JSTypeHelper getTypeHelper() {
+  public @NotNull JSTypeHelper getTypeHelper() {
     return ActionScriptTypeHelper.getInstance();
   }
 
-  @NotNull
   @Override
-  public JSCustomIndexer createCustomIndexer(@NotNull PsiFile file, @NotNull JSIndexContentBuilder indexBuilder) {
+  public @NotNull JSCustomIndexer createCustomIndexer(@NotNull PsiFile file, @NotNull JSIndexContentBuilder indexBuilder) {
     return new ActionScriptCustomIndexer(file, indexBuilder);
   }
 
-  @NotNull
   @Override
-  public AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
+  public @NotNull AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
     return new ActionScriptAccessibilityProcessingHandler(place, skipNsResolving);
   }
 

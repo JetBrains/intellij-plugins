@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.artifacts;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -47,8 +48,7 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
   }
 
   @Override
-  @NotNull
-  public SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
+  public @NotNull SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
     return new SourceItemPresentation() {
       @Override
       public String getPresentableName() {
@@ -78,8 +78,7 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
   }
 
   @Override
-  @NotNull
-  public List<? extends PackagingElement<?>> createElements(@NotNull final ArtifactEditorContext context) {
+  public @NotNull List<? extends PackagingElement<?>> createElements(final @NotNull ArtifactEditorContext context) {
     final String outputFilePath = myBc.getActualOutputFilePath();
     final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
 

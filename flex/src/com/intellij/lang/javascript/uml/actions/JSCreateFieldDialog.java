@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.lang.javascript.DialectDetector;
@@ -117,8 +118,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
   /**
    * @return pair(message, isFatal)
    */
-  @Nullable
-  private Pair<String, Boolean> validateData() {
+  private @Nullable Pair<String, Boolean> validateData() {
     if (!JSRefactoringUtil.isValidIdentifier(getFieldName(), myTargetClass.getProject())) {
       return Pair.create(JavaScriptBundle.message("invalid.identifier.value.0", getFieldName()), true);
     }

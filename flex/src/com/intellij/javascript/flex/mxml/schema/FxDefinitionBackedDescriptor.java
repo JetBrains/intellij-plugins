@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -39,8 +40,7 @@ final class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
     return descriptor == null ? XmlAttributeDescriptor.EMPTY : descriptor.getAttributesDescriptors(_context);
   }
 
-  @Nullable
-  private ClassBackedElementDescriptor getClassBackedDescriptor() {
+  private @Nullable ClassBackedElementDescriptor getClassBackedDescriptor() {
     final XmlTag tag = PsiTreeUtil.getParentOfType(getDeclaration(), XmlTag.class);
     final XmlTag[] subTags = tag == null ? XmlTag.EMPTY : tag.getSubTags();
     if (subTags.length == 1) {
@@ -50,8 +50,7 @@ final class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
     return null;
   }
 
-  @Nullable
-  private static XmlAttributeValue getDeclarationByFxDefinitionTag(final @NotNull XmlTag xmlTag) {
+  private static @Nullable XmlAttributeValue getDeclarationByFxDefinitionTag(final @NotNull XmlTag xmlTag) {
     if (!xmlTag.isValid() || xmlTag.getParent() instanceof XmlDocument) {
       return null;
     }
@@ -82,8 +81,7 @@ final class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
     return null;
   }
 
-  @Nullable
-  static XmlElementDescriptor getFxDefinitionBackedDescriptor(final @NotNull Module module, final @NotNull XmlTag xmlTag) {
+  static @Nullable XmlElementDescriptor getFxDefinitionBackedDescriptor(final @NotNull Module module, final @NotNull XmlTag xmlTag) {
     final XmlAttributeValue declaration = getDeclarationByFxDefinitionTag(xmlTag);
     if (declaration != null) {
       return new FxDefinitionBackedDescriptor(module, xmlTag);

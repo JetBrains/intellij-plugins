@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -23,17 +24,9 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
     super(getRootDetectors());
   }
 
-  @NotNull
-  static List<RootDetector> getRootDetectors() {
-    return Arrays.asList(new FlexSwcLibrariesRootDetector(),
-                         new FlexDocsRootDetector(),
-                         new FlexSourcesRootDetector(),
-                         new FlexSwcFoldersRootDetector());
-  }
-
   @Override
-  public Collection<DetectedLibraryRoot> detectRoots(@NotNull final VirtualFile rootCandidate,
-                                                     @NotNull final ProgressIndicator progressIndicator) {
+  public Collection<DetectedLibraryRoot> detectRoots(final @NotNull VirtualFile rootCandidate,
+                                                     final @NotNull ProgressIndicator progressIndicator) {
     Collection<DetectedLibraryRoot> roots = super.detectRoots(rootCandidate, progressIndicator);
     boolean swcsFoldersFound = ContainerUtil.find(roots, root -> {
       LibraryRootType libraryRootType = root.getTypes().get(0);
@@ -55,7 +48,7 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
   }
 
   @Override
-  public String getRootTypeName(@NotNull final LibraryRootType rootType) {
+  public String getRootTypeName(final @NotNull LibraryRootType rootType) {
     if (rootType.getType() == OrderRootType.SOURCES) {
       return FlexBundle.message("sources.root.detector.name");
     }
@@ -71,5 +64,12 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
       return FlexBundle.message("docs.root.detector.name");
     }
     return null;
+  }
+
+  static @NotNull List<RootDetector> getRootDetectors() {
+    return Arrays.asList(new FlexSwcLibrariesRootDetector(),
+                         new FlexDocsRootDetector(),
+                         new FlexSourcesRootDetector(),
+                         new FlexSwcFoldersRootDetector());
   }
 }

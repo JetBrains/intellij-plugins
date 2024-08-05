@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -13,13 +14,13 @@ public class FilterSwfLoadUnloadMessagesAction extends ToggleAction implements D
   private static final String FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY = "flex.debug.filter.swf.load.unload";
 
   @Override
-  public boolean isSelected(@NotNull final AnActionEvent e) {
+  public boolean isSelected(final @NotNull AnActionEvent e) {
     final Project project = e.getProject();
     return project != null && isFilterEnabled(project);
   }
 
   @Override
-  public void setSelected(@NotNull final AnActionEvent e, final boolean state) {
+  public void setSelected(final @NotNull AnActionEvent e, final boolean state) {
     PropertiesComponent.getInstance(e.getProject()).setValue(FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY, state, true);
   }
 

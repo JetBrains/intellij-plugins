@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.execution.ExecutionException;
@@ -291,7 +291,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     }
   }
 
-  private final static class RefreshConfigFiles implements Runnable {
+  private static final class RefreshConfigFiles implements Runnable {
     private final List<String> filesForRefresh;
     private final Map<MavenProject, List<String>> sourceRoots;
     private final Project project;

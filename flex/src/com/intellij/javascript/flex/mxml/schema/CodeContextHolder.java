@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.openapi.components.Service;
@@ -23,8 +23,7 @@ public final class CodeContextHolder {
     myModulesWithSdkComponentsHandled.clear();
   }
 
-  @Nullable
-  public synchronized CodeContext getCodeContext(@NotNull String namespace, @NotNull Module module, @NotNull GlobalSearchScope scope) {
+  public synchronized @Nullable CodeContext getCodeContext(@NotNull String namespace, @NotNull Module module, @NotNull GlobalSearchScope scope) {
     Map<Pair<Module, GlobalSearchScope>, CodeContext> map = myNSToCodeContextMap.get(namespace);
     return map != null ? map.get(Pair.create(module, scope)) : null;
   }
@@ -49,8 +48,7 @@ public final class CodeContextHolder {
     return project.getService(CodeContextHolder.class);
   }
 
-  @Nullable
-  public synchronized CodeContext getStandardContext(final String namespace, final Module module) {
+  public synchronized @Nullable CodeContext getStandardContext(final String namespace, final Module module) {
     final Map<Module, CodeContext> map = myStandardContexts.get(namespace);
     return map == null ? null : map.get(module);
   }

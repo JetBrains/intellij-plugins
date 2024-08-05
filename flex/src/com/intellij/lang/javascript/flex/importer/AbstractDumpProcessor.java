@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator;
@@ -84,7 +85,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     processMultinameAsPackageName(name, parentName);
   }
 
-  protected void processMemberKindAndName(@NotNull final MemberInfo member) {
+  protected void processMemberKindAndName(final @NotNull MemberInfo member) {
     append(Abc.traitKinds[member.kind != null ? member.kind.ordinal():0]);
     append(" ");
 

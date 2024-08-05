@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -12,7 +13,7 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
 
   private final BuildConfigurationProjectStructureElement myStructureElement;
   private final String myTabName;
-  @Nullable private final Object myLocationOnTab;
+  private final @Nullable Object myLocationOnTab;
 
   public PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement structureElement,
                                    @NotNull String tabName,
@@ -22,9 +23,8 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
     myLocationOnTab = locationOnTab;
   }
 
-  @NotNull
   @Override
-  public ProjectStructureElement getContainingElement() {
+  public @NotNull ProjectStructureElement getContainingElement() {
     return myStructureElement;
   }
 
@@ -33,9 +33,8 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
     return myTabName;
   }
 
-  @NotNull
   @Override
-  public ActionCallback navigate() {
+  public @NotNull ActionCallback navigate() {
     if (myStructureElement.getModule().isDisposed()) {
       return ActionCallback.DONE;
     }

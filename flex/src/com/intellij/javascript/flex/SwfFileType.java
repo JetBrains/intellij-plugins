@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.icons.AllIcons;
@@ -15,26 +15,22 @@ public final class SwfFileType implements FileType {
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return "SWF";
   }
 
   @Override
-  @NotNull
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return "Adobe Flash animation";
   }
 
-  @Nls
   @Override
-  public @NotNull String getDisplayName() {
+  public @Nls @NotNull String getDisplayName() {
     return "Adobe Flash";
   }
 
   @Override
-  @NotNull
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return "swf";
   }
 

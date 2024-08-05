@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
@@ -33,11 +34,10 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     return super.getQuickNavigateInfoForNavigationElement(element, originalElement, jsDoc);
   }
 
-  @Nullable
   @Override
-  protected String getParentInfo(PsiElement parent,
-                                 @NotNull PsiNamedElement element,
-                                 @NotNull JSTypeSubstitutor substitutor) {
+  protected @Nullable String getParentInfo(PsiElement parent,
+                                           @NotNull PsiNamedElement element,
+                                           @NotNull JSTypeSubstitutor substitutor) {
     if (parent instanceof JSClass) {
       return ((JSClass)parent).getQualifiedName();
     }
@@ -65,24 +65,9 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     return null;
   }
 
-  @Nullable
-  private static String createQuickNavigateForNamespace(final JSNamespaceDeclaration ns) {
-    final String qName = ns.getQualifiedName();
-    if (qName == null) return null;
-    StringBuilder result = new StringBuilder();
-    String packageName = StringUtil.getPackageName(qName);
-    if (packageName.length() > 0) result.append(packageName).append("\n");
-
-    result.append("namespace");
-
-    final String name = ns.getName();
-    result.append(" ").append(name);
-
-    String s = ns.getInitialValueString();
-    if (s != null) {
-      result.append(" = ").append(s);
-    }
-    return result.toString();
+  @Override
+  protected @Nullable JSType getJSElementType(@NotNull JSElement element, @NotNull PsiElement originalElement) {
+    return null;
   }
 
   private String createQuickNavigateForAnnotationDerived(final PsiElement element, PsiElement originalElement) {
@@ -133,10 +118,23 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     return true;
   }
 
-  @Nullable
-  @Override
-  protected  JSType getJSElementType(@NotNull JSElement element, @NotNull PsiElement originalElement) {
-    return null;
+  private static @Nullable String createQuickNavigateForNamespace(final JSNamespaceDeclaration ns) {
+    final String qName = ns.getQualifiedName();
+    if (qName == null) return null;
+    StringBuilder result = new StringBuilder();
+    String packageName = StringUtil.getPackageName(qName);
+    if (packageName.length() > 0) result.append(packageName).append("\n");
+
+    result.append("namespace");
+
+    final String name = ns.getName();
+    result.append(" ").append(name);
+
+    String s = ns.getInitialValueString();
+    if (s != null) {
+      result.append(" = ").append(s);
+    }
+    return result.toString();
   }
 
   @Override

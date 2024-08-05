@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -67,9 +67,8 @@ public final class ReferenceSupport {
         return new JSFlexFileReference(this, range, index, text, relativeToWhat);
       }
 
-      @NotNull
       @Override
-      public Collection<PsiFileSystemItem> computeDefaultContexts() {
+      public @NotNull Collection<PsiFileSystemItem> computeDefaultContexts() {
         PsiFile psiFile = getContainingFile();
         if (psiFile == null) return Collections.emptyList();
 

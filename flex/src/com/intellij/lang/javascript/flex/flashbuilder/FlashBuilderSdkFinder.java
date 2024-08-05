@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -61,13 +61,11 @@ public class FlashBuilderSdkFinder {
     myAllProjects = allProjects;
   }
 
-  @Nullable
-  public String getWorkspacePath() {
+  public @Nullable String getWorkspacePath() {
     return myInitialized ? myWorkspacePath : findWorkspacePath();
   }
 
-  @Nullable
-  private String findWorkspacePath() {
+  private @Nullable String findWorkspacePath() {
     final Collection<VirtualFile> checked = new HashSet<>();
     String wsPath = guessWorkspacePath(myInitiallySelectedPath, checked);
     if (wsPath == null) {
@@ -79,23 +77,7 @@ public class FlashBuilderSdkFinder {
     return wsPath;
   }
 
-  @Nullable
-  private static String guessWorkspacePath(String path, final Collection<VirtualFile> checked) {
-    VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(path);
-    if (dir != null && !dir.isDirectory()) {
-      dir = dir.getParent();
-    }
-
-    while (dir != null) {
-      if (checked.contains(dir)) return null;
-      if (FlashBuilderProjectFinder.isFlashBuilderWorkspace(dir)) return dir.getPath();
-      dir = dir.getParent();
-    }
-    return null;
-  }
-
-  @Nullable
-  public Sdk findSdk(final FlashBuilderProject fbProject) {
+  public @Nullable Sdk findSdk(final FlashBuilderProject fbProject) {
     if (!myInitialized) {
       initialize();
       myInitialized = true;
@@ -122,6 +104,20 @@ public class FlashBuilderSdkFinder {
     myDialogWasShown = true;
     mySdk = dialog.isOK() ? dialog.getSdk() : null;
     return mySdk;
+  }
+
+  private static @Nullable String guessWorkspacePath(String path, final Collection<VirtualFile> checked) {
+    VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(path);
+    if (dir != null && !dir.isDirectory()) {
+      dir = dir.getParent();
+    }
+
+    while (dir != null) {
+      if (checked.contains(dir)) return null;
+      if (FlashBuilderProjectFinder.isFlashBuilderWorkspace(dir)) return dir.getPath();
+      dir = dir.getParent();
+    }
+    return null;
   }
 
   private void initialize() {
@@ -188,8 +184,7 @@ public class FlashBuilderSdkFinder {
     }
   }
 
-  @Nullable
-  public static String findFBInstallationPath() {
+  public static @Nullable String findFBInstallationPath() {
     final List<File> fbDirs = new ArrayList<>();
 
     final FileFilter filter = dir -> {
@@ -286,8 +281,7 @@ public class FlashBuilderSdkFinder {
     return true;
   }
 
-  @Nullable
-  private static Element loadSdkInfoDocument(final String flashBuilderWorkspacePath) {
+  private static @Nullable Element loadSdkInfoDocument(final String flashBuilderWorkspacePath) {
     try {
       final VirtualFile projectPrefsFile =
         LocalFileSystem.getInstance().findFileByPath(flashBuilderWorkspacePath + FlashBuilderProjectFinder.PROJECT_PREFS_RELATIVE_PATH);

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.ui.newclass;
 
 import com.intellij.ide.util.PlatformPackageUtil;
@@ -33,7 +33,7 @@ public class WizardModel implements CreateClassParameters {
   private Collection<String> myInterfacesFqns;
   private final Map<String, Map<String, String>> myCustomTemplateAttributes = new HashMap<>();
 
-  public WizardModel(@NotNull final PsiElement context, final boolean creatingDependencyNotDependent) {
+  public WizardModel(final @NotNull PsiElement context, final boolean creatingDependencyNotDependent) {
     myContext = context;
     myCreatingDependencyNotDependent = creatingDependencyNotDependent;
     myModule = ModuleUtilCore.findModuleForPsiElement(context);
@@ -71,9 +71,8 @@ public class WizardModel implements CreateClassParameters {
     return myTargetDirectory;
   }
 
-  @Nullable
   @Override
-  public String getSuperclassFqn() {
+  public @Nullable String getSuperclassFqn() {
     return mySuperclassFqn;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.lang.javascript.uml;
 
@@ -127,14 +127,12 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
 
   @Override
-  @NotNull
-  public Collection<DiagramNode<Object>> getNodes() {
+  public @NotNull Collection<DiagramNode<Object>> getNodes() {
     return new ArrayList<>(myNodes);
   }
 
   @Override
-  @NotNull
-  public Collection<DiagramEdge<Object>> getEdges() {
+  public @NotNull Collection<DiagramEdge<Object>> getEdges() {
     if (myDependencyEdges.isEmpty()) {
       return myEdges;
     }
@@ -146,9 +144,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  @NotNull
-  @NonNls
-  public String getNodeName(final @NotNull DiagramNode<Object> node) {
+  public @NotNull @NonNls String getNodeName(final @NotNull DiagramNode<Object> node) {
     Object element = getIdentifyingElement(node);
     if (element instanceof JSClass) {
       return "Class " + ((JSClass)element).getQualifiedName();
@@ -217,9 +213,8 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     updateDataModel();
   }
 
-  @NotNull
   @Override
-  public ModificationTracker getModificationTracker() {
+  public @NotNull ModificationTracker getModificationTracker() {
     return PsiManager.getInstance(getProject()).getModificationTracker();
   }
 
@@ -403,16 +398,18 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     return true;
   }
 
-  @Nullable
-  private static JSClass getSuperClass(JSClass psiClass, Collection<JSClass> processed) {
-    JSClass[] superClasses = psiClass.getSuperClasses();
-    if (superClasses.length > 0 &&
-        !superClasses[0].isEquivalentTo(psiClass) &&
-        !JSPsiImplUtils.containsEquivalent(processed, superClasses[0])) {
-      processed.add(superClasses[0]);
-      return superClasses[0];
+  public @Nullable DiagramNode<Object> findNode(Object object) {
+    String objectFqn = getFqn(object);
+    for (DiagramNode<Object> node : getNodes()) {
+      final String fqn = getFqn(getIdentifyingElement(node));
+      if (fqn != null && fqn.equals(objectFqn)) {
+        if (object instanceof JSClass && !(node instanceof FlashUmlClassNode)) continue;
+        if (object instanceof String && !(node instanceof FlashUmlPackageNode)) continue;
+        return node;
+      }
     }
-    return null;
+    //final SmartPsiElementPointer<JSPackage> ptr = packages.get(UmlUtils.getPackageName(psiElement));
+    return null; //ptr == null ? null : findNode(ptr.getElement());
   }
 
   private static <T> void clearAndBackup(Collection<T> target, Collection<T> backup) {
@@ -509,31 +506,37 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     return classes;
   }
 
-  @Nullable
-  public DiagramNode<Object> findNode(Object object) {
-    String objectFqn = getFqn(object);
-    for (DiagramNode<Object> node : getNodes()) {
-      final String fqn = getFqn(getIdentifyingElement(node));
-      if (fqn != null && fqn.equals(objectFqn)) {
-        if (object instanceof JSClass && !(node instanceof FlashUmlClassNode)) continue;
-        if (object instanceof String && !(node instanceof FlashUmlPackageNode)) continue;
-        return node;
-      }
-    }
-    //final SmartPsiElementPointer<JSPackage> ptr = packages.get(UmlUtils.getPackageName(psiElement));
-    return null; //ptr == null ? null : findNode(ptr.getElement());
-  }
+  @Override
+  public @Nullable DiagramNode<Object> addElement(@Nullable Object element) {
+    if (findNode(element) != null) return null;
 
-  @Nullable
-  private static String getFqn(Object element) {
-    if (element instanceof JSQualifiedNamedElement) {
-      String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
-      return qName != null ? FlashUmlVfsResolver.fixVectorTypeName(qName) : null;
+    if (element instanceof JSClass psiClass) {
+      if (!isAllowedToShow(psiClass)) {
+        return null;
+      }
+
+      if (psiClass.getQualifiedName() == null) return null;
+      final SmartPsiElementPointer<JSClass> pointer = spManager.createSmartPsiElementPointer(psiClass);
+      final String fqn = psiClass.getQualifiedName();
+      classesAddedByUser.put(fqn, pointer);
+      classesRemovedByUser.remove(fqn);
+
+      setupScopeManager(psiClass, true);
+
+      return new FlashUmlClassNode(psiClass, getProvider());
     }
-    if (element instanceof String) {
-      return (String)element;
+    else if (element instanceof String aPackage) {
+      packages.add(aPackage);
+      packagesRemovedByUser.remove(aPackage);
+      return new FlashUmlPackageNode(aPackage, getProvider());
     }
     return null;
+  }
+
+  public @Nullable PsiElement getInitialElement() {
+    if (myInitialElement == null) return null;
+    final PsiElement element = myInitialElement.getElement();
+    return element == null || !element.isValid() ? null : element;
   }
 
   public boolean contains(PsiElement psiElement) {
@@ -592,176 +595,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  @Nullable
-  public DiagramNode<Object> addElement(@Nullable Object element) {
-    if (findNode(element) != null) return null;
-
-    if (element instanceof JSClass psiClass) {
-      if (!isAllowedToShow(psiClass)) {
-        return null;
-      }
-
-      if (psiClass.getQualifiedName() == null) return null;
-      final SmartPsiElementPointer<JSClass> pointer = spManager.createSmartPsiElementPointer(psiClass);
-      final String fqn = psiClass.getQualifiedName();
-      classesAddedByUser.put(fqn, pointer);
-      classesRemovedByUser.remove(fqn);
-
-      setupScopeManager(psiClass, true);
-
-      return new FlashUmlClassNode(psiClass, getProvider());
-    }
-    else if (element instanceof String aPackage) {
-      packages.add(aPackage);
-      packagesRemovedByUser.remove(aPackage);
-      return new FlashUmlPackageNode(aPackage, getProvider());
-    }
-    return null;
-  }
-
-
-  @Override
-  public void expandNode(final @NotNull DiagramNode<Object> node) {
-    final Object element = node.getIdentifyingElement();
-    if (element instanceof String) {
-      expandPackage((String)element);
-    }
-  }
-
-  public void expandPackage(final String psiPackage) {
-    packages.remove(psiPackage);
-    packagesRemovedByUser.add(psiPackage);
-    final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
-    for (JSClass psiClass : getClasses(psiPackage, searchScope)) {
-      addElement(psiClass);
-    }
-    for (String aPackage : getSubPackages(psiPackage, searchScope)) {
-      addElement(aPackage);
-    }
-  }
-
-  @Override
-  public void collapseNode(final @NotNull DiagramNode<Object> node) {
-    Object element = node.getIdentifyingElement();
-    String fqn = getFqn(element);
-    if (fqn == null) {
-      return;
-    }
-
-    String parentPackage = StringUtil.getPackageName(fqn);
-    if (parentPackage.isEmpty()) {
-      return;
-    }
-
-    final String fqnStart = parentPackage + ".";
-    final ArrayList<String> toRemove = new ArrayList<>();
-    for (String p : packages) {
-      if (p.startsWith(fqnStart)) {
-        toRemove.add(p);
-      }
-    }
-    packages.removeAll(toRemove);
-    toRemove.clear();
-
-    for (String s : classesAddedByUser.keySet()) {
-      if (s.startsWith(fqnStart)) {
-        toRemove.add(s);
-      }
-    }
-    for (String s : toRemove) {
-      classesAddedByUser.remove(s);
-    }
-    packages.add(parentPackage);
-    packagesRemovedByUser.remove(parentPackage);
-  }
-
-  List<String> getAllClassesFQN() {
-    List<String> fqns = new ArrayList<>();
-    for (DiagramNode node : getNodes()) {
-      final Object identifyingElement = getIdentifyingElement(node);
-      if (identifyingElement instanceof JSClass) {
-        fqns.add(((JSClass)identifyingElement).getQualifiedName());
-      }
-    }
-    return fqns;
-  }
-
-  List<String> getAllPackagesFQN() {
-    List<String> fqns = new ArrayList<>();
-    for (DiagramNode node : getNodes()) {
-      final Object identifyingElement = getIdentifyingElement(node);
-      if (identifyingElement instanceof JSPackage) {
-        fqns.add(((JSPackage)identifyingElement).getQualifiedName());
-      }
-    }
-    return fqns;
-  }
-
-  @Nullable
-  public PsiElement getInitialElement() {
-    if (myInitialElement == null) return null;
-    final PsiElement element = myInitialElement.getElement();
-    return element == null || !element.isValid() ? null : element;
-  }
-
-  public String getInitialPackage() {
-    return initialPackage;
-  }
-
-  public boolean hasNotValid() {
-    for (DiagramNode<Object> node : getNodes()) {
-      if (!isValid(getIdentifyingElement(node))) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private static boolean isValid(Object element) {
-    if (element instanceof PsiElement) return ((PsiElement)element).isValid();
-    return false;
-  }
-
-  public static String getMessage(final JSClass source, final JSClass target, final DiagramRelationshipInfo relationship) {
-    if (relationship == FlashUmlRelationship.ANNOTATION) {
-      return FlexBundle.message("remove.annotation.from.class");
-    }
-    else {
-      return FlexBundle.message("this.will.remove.relationship.link.between.classes");
-    }
-  }
-
-  public VirtualFile getFile() {
-    return myEditorFile;
-  }
-
-  @Override
-  public boolean hasElement(@Nullable Object element) {
-    return findNode(element) != null;
-  }
-
-  @Override
-  public boolean isPsiListener() {
-    return true;
-  }
-
-  @Nullable
-  public static Object getIdentifyingElement(DiagramNode node) {
-    if (node instanceof FlashUmlClassNode || node instanceof FlashUmlPackageNode) {
-      return node.getIdentifyingElement();
-    }
-    if (node instanceof DiagramNoteNode) {
-      final DiagramNode delegate = ((DiagramNoteNode)node).getIdentifyingElement();
-      if (delegate != node) {
-        return getIdentifyingElement(delegate);
-      }
-    }
-    return null;
-  }
-
-  @Override
-  @Nullable
-  public DiagramEdge<Object> createEdge(@NotNull final DiagramNode<Object> from, @NotNull final DiagramNode<Object> to) {
+  public @Nullable DiagramEdge<Object> createEdge(final @NotNull DiagramNode<Object> from, final @NotNull DiagramNode<Object> to) {
     final JSClass fromClass = (JSClass)from.getIdentifyingElement();
     final JSClass toClass = (JSClass)to.getIdentifyingElement();
 
@@ -857,6 +691,160 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
         return DiagramAction.performCommand(getBuilder(), callable, commandName, null, fromClass.getContainingFile());
       }
     }
+  }
+
+
+  @Override
+  public void expandNode(final @NotNull DiagramNode<Object> node) {
+    final Object element = node.getIdentifyingElement();
+    if (element instanceof String) {
+      expandPackage((String)element);
+    }
+  }
+
+  public void expandPackage(final String psiPackage) {
+    packages.remove(psiPackage);
+    packagesRemovedByUser.add(psiPackage);
+    final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
+    for (JSClass psiClass : getClasses(psiPackage, searchScope)) {
+      addElement(psiClass);
+    }
+    for (String aPackage : getSubPackages(psiPackage, searchScope)) {
+      addElement(aPackage);
+    }
+  }
+
+  @Override
+  public void collapseNode(final @NotNull DiagramNode<Object> node) {
+    Object element = node.getIdentifyingElement();
+    String fqn = getFqn(element);
+    if (fqn == null) {
+      return;
+    }
+
+    String parentPackage = StringUtil.getPackageName(fqn);
+    if (parentPackage.isEmpty()) {
+      return;
+    }
+
+    final String fqnStart = parentPackage + ".";
+    final ArrayList<String> toRemove = new ArrayList<>();
+    for (String p : packages) {
+      if (p.startsWith(fqnStart)) {
+        toRemove.add(p);
+      }
+    }
+    packages.removeAll(toRemove);
+    toRemove.clear();
+
+    for (String s : classesAddedByUser.keySet()) {
+      if (s.startsWith(fqnStart)) {
+        toRemove.add(s);
+      }
+    }
+    for (String s : toRemove) {
+      classesAddedByUser.remove(s);
+    }
+    packages.add(parentPackage);
+    packagesRemovedByUser.remove(parentPackage);
+  }
+
+  List<String> getAllClassesFQN() {
+    List<String> fqns = new ArrayList<>();
+    for (DiagramNode node : getNodes()) {
+      final Object identifyingElement = getIdentifyingElement(node);
+      if (identifyingElement instanceof JSClass) {
+        fqns.add(((JSClass)identifyingElement).getQualifiedName());
+      }
+    }
+    return fqns;
+  }
+
+  List<String> getAllPackagesFQN() {
+    List<String> fqns = new ArrayList<>();
+    for (DiagramNode node : getNodes()) {
+      final Object identifyingElement = getIdentifyingElement(node);
+      if (identifyingElement instanceof JSPackage) {
+        fqns.add(((JSPackage)identifyingElement).getQualifiedName());
+      }
+    }
+    return fqns;
+  }
+
+  private static @Nullable JSClass getSuperClass(JSClass psiClass, Collection<JSClass> processed) {
+    JSClass[] superClasses = psiClass.getSuperClasses();
+    if (superClasses.length > 0 &&
+        !superClasses[0].isEquivalentTo(psiClass) &&
+        !JSPsiImplUtils.containsEquivalent(processed, superClasses[0])) {
+      processed.add(superClasses[0]);
+      return superClasses[0];
+    }
+    return null;
+  }
+
+  public String getInitialPackage() {
+    return initialPackage;
+  }
+
+  public boolean hasNotValid() {
+    for (DiagramNode<Object> node : getNodes()) {
+      if (!isValid(getIdentifyingElement(node))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isValid(Object element) {
+    if (element instanceof PsiElement) return ((PsiElement)element).isValid();
+    return false;
+  }
+
+  public static String getMessage(final JSClass source, final JSClass target, final DiagramRelationshipInfo relationship) {
+    if (relationship == FlashUmlRelationship.ANNOTATION) {
+      return FlexBundle.message("remove.annotation.from.class");
+    }
+    else {
+      return FlexBundle.message("this.will.remove.relationship.link.between.classes");
+    }
+  }
+
+  public VirtualFile getFile() {
+    return myEditorFile;
+  }
+
+  @Override
+  public boolean hasElement(@Nullable Object element) {
+    return findNode(element) != null;
+  }
+
+  @Override
+  public boolean isPsiListener() {
+    return true;
+  }
+
+  private static @Nullable String getFqn(Object element) {
+    if (element instanceof JSQualifiedNamedElement) {
+      String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
+      return qName != null ? FlashUmlVfsResolver.fixVectorTypeName(qName) : null;
+    }
+    if (element instanceof String) {
+      return (String)element;
+    }
+    return null;
+  }
+
+  public static @Nullable Object getIdentifyingElement(DiagramNode node) {
+    if (node instanceof FlashUmlClassNode || node instanceof FlashUmlPackageNode) {
+      return node.getIdentifyingElement();
+    }
+    if (node instanceof DiagramNoteNode) {
+      final DiagramNode delegate = ((DiagramNoteNode)node).getIdentifyingElement();
+      if (delegate != node) {
+        return getIdentifyingElement(delegate);
+      }
+    }
+    return null;
   }
 
   private DiagramEdge<Object> addEdgeAndRefresh(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo type) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
@@ -44,9 +44,8 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
     super(reporter);
   }
 
-  @Nullable
   @Override
-  protected LocalQuickFix getPreferredQuickFixForUnresolvedRef(final PsiElement nameIdentifier) {
+  protected @Nullable LocalQuickFix getPreferredQuickFixForUnresolvedRef(final PsiElement nameIdentifier) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(nameIdentifier);
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return null;
 
@@ -93,8 +92,53 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
     return null;
   }
 
-  @Nullable
-  private static String getPotentialConditionalCompilerDefinitionName(final PsiElement identifier) {
+  @Override
+  public @Nullable ProblemHighlightType getUnresolvedReferenceHighlightType(@NotNull JSReferenceExpression node) {
+    JSExpression qualifier = node.getQualifier();
+
+    if (qualifier != null) {
+      final PsiFile containingFile = node.getContainingFile();
+      JSType type = null;
+      boolean checkType = false;
+
+      if (qualifier instanceof JSReferenceExpression) {
+        ResolveResult[] results = ((JSReferenceExpression)qualifier).multiResolve(false);
+
+        if (results.length != 0) {
+          PsiElement resultElement = results[0].getElement();
+          if (resultElement instanceof JSPackage) return ProblemHighlightType.ERROR;
+          type = getResolveResultType(qualifier, resultElement);
+          checkType = true;
+        }
+      }
+      else {
+        type = JSResolveUtil.getExpressionJSType(qualifier);
+        checkType = true;
+      }
+      if (checkType && (type instanceof JSAnyType || type == null)) {
+        return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
+      }
+
+      JSClass jsClass = ActionScriptResolveUtil.findClassOfQualifier(qualifier, containingFile);
+      if (jsClass == null) {
+        return ProblemHighlightType.ERROR;
+      }
+
+      final JSAttributeList attributeList = jsClass.getAttributeList();
+      if (attributeList == null || !attributeList.hasModifier(JSAttributeList.ModifierType.DYNAMIC)) {
+        return ProblemHighlightType.ERROR;
+      }
+
+      final String qualifiedName = jsClass.getQualifiedName();
+      if ("Error".equals(qualifiedName) || "Date".equals(qualifiedName)) {
+        return ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
+      }
+    }
+
+    return super.getUnresolvedReferenceHighlightType(node);
+  }
+
+  private static @Nullable String getPotentialConditionalCompilerDefinitionName(final PsiElement identifier) {
     final PsiElement parent1 = identifier.getParent();
     final PsiElement parent2 = parent1 == null ? null : parent1.getParent();
     final PsiElement parent3 = parent2 == null ? null : parent2.getParent();
@@ -102,19 +146,6 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
         parent2 instanceof JSE4XNamespaceReference &&
         parent3 instanceof JSReferenceExpression && ((JSReferenceExpression)parent3).getQualifier() == null) {
       return getNormalizedConditionalCompilerDefinitionName(parent3.getText());
-    }
-    return null;
-  }
-
-  @Nullable
-  private static String getNormalizedConditionalCompilerDefinitionName(final String name) {
-    final int colonsIndex = name.indexOf("::");
-    if (colonsIndex > 0) {
-      final String first = name.substring(0, colonsIndex).trim();
-      final String second = name.substring(colonsIndex + "::".length()).trim();
-      if (StringUtil.isJavaIdentifier(first) && StringUtil.isJavaIdentifier(second)) {
-        return first + "::" + second;
-      }
     }
     return null;
   }
@@ -223,56 +254,19 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
     return false;
   }
 
-
-  @Nullable
-  @Override
-  public ProblemHighlightType getUnresolvedReferenceHighlightType(@NotNull JSReferenceExpression node) {
-    JSExpression qualifier = node.getQualifier();
-
-    if (qualifier != null) {
-      final PsiFile containingFile = node.getContainingFile();
-      JSType type = null;
-      boolean checkType = false;
-
-      if (qualifier instanceof JSReferenceExpression) {
-        ResolveResult[] results = ((JSReferenceExpression)qualifier).multiResolve(false);
-
-        if (results.length != 0) {
-          PsiElement resultElement = results[0].getElement();
-          if (resultElement instanceof JSPackage) return ProblemHighlightType.ERROR;
-          type = getResolveResultType(qualifier, resultElement);
-          checkType = true;
-        }
-      }
-      else {
-        type = JSResolveUtil.getExpressionJSType(qualifier);
-        checkType = true;
-      }
-      if (checkType && (type instanceof JSAnyType || type == null)) {
-        return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
-      }
-
-      JSClass jsClass = ActionScriptResolveUtil.findClassOfQualifier(qualifier, containingFile);
-      if (jsClass == null) {
-        return ProblemHighlightType.ERROR;
-      }
-
-      final JSAttributeList attributeList = jsClass.getAttributeList();
-      if (attributeList == null || !attributeList.hasModifier(JSAttributeList.ModifierType.DYNAMIC)) {
-        return ProblemHighlightType.ERROR;
-      }
-
-      final String qualifiedName = jsClass.getQualifiedName();
-      if ("Error".equals(qualifiedName) || "Date".equals(qualifiedName)) {
-        return ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
+  private static @Nullable String getNormalizedConditionalCompilerDefinitionName(final String name) {
+    final int colonsIndex = name.indexOf("::");
+    if (colonsIndex > 0) {
+      final String first = name.substring(0, colonsIndex).trim();
+      final String second = name.substring(colonsIndex + "::".length()).trim();
+      if (StringUtil.isJavaIdentifier(first) && StringUtil.isJavaIdentifier(second)) {
+        return first + "::" + second;
       }
     }
-
-    return super.getUnresolvedReferenceHighlightType(node);
+    return null;
   }
 
-  @Nullable
-  private static JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
+  private static @Nullable JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
     if (resultElement instanceof JSVariable) { // do not evaluate initializer
       return ((JSVariable)resultElement).getJSType();
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.RunManager;
@@ -29,16 +29,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public final class FlashRunConfigurationProducer extends LazyRunConfigurationProducer<FlashRunConfiguration> {
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return ConfigurationTypeUtil.findConfigurationType(FlashRunConfigurationType.class);
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(@NotNull final FlashRunConfiguration configuration,
-                                                  @NotNull final ConfigurationContext context,
-                                                  @NotNull final Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(final @NotNull FlashRunConfiguration configuration,
+                                                  final @NotNull ConfigurationContext context,
+                                                  final @NotNull Ref<PsiElement> sourceElement) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
 
@@ -84,8 +83,8 @@ public final class FlashRunConfigurationProducer extends LazyRunConfigurationPro
   }
 
   @Override
-  public boolean isConfigurationFromContext(@NotNull final FlashRunConfiguration configuration,
-                                            @NotNull final ConfigurationContext context) {
+  public boolean isConfigurationFromContext(final @NotNull FlashRunConfiguration configuration,
+                                            final @NotNull ConfigurationContext context) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
     if (!module.getName().equals(configuration.getRunnerParameters().getModuleName())) return false;
@@ -118,10 +117,9 @@ public final class FlashRunConfigurationProducer extends LazyRunConfigurationPro
     return appWithSuitableMainClass != null ? appWithSuitableMainClass : manager.getActiveConfiguration();
   }
 
-  @Nullable
-  private static RunConfiguration findSuitableRunConfig(final Module module,
-                                                        final String fqn,
-                                                        final List<RunConfiguration> existing) {
+  private static @Nullable RunConfiguration findSuitableRunConfig(final Module module,
+                                                                  final String fqn,
+                                                                  final List<RunConfiguration> existing) {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
 
     RunConfiguration basedOnBC = null;
@@ -159,8 +157,7 @@ public final class FlashRunConfigurationProducer extends LazyRunConfigurationPro
     return basedOnBC != null ? basedOnBC : basedOnMainClassAndActiveBC != null ? basedOnMainClassAndActiveBC : basedOnMainClass;
   }
 
-  @Nullable
-  private static JSClass getJSClass(final @Nullable PsiElement sourceElement) {
+  private static @Nullable JSClass getJSClass(final @Nullable PsiElement sourceElement) {
     PsiElement element = PsiTreeUtil.getNonStrictParentOfType(sourceElement, JSClass.class, JSFile.class, XmlFile.class);
     if (element instanceof JSFile) {
       element = JSPsiImplUtils.findClass((JSFile)element);
@@ -171,7 +168,7 @@ public final class FlashRunConfigurationProducer extends LazyRunConfigurationPro
     return element instanceof JSClass ? (JSClass)element : null;
   }
 
-  public static boolean isAcceptedMainClass(@Nullable final JSClass jsClass, @Nullable final Module module) {
+  public static boolean isAcceptedMainClass(final @Nullable JSClass jsClass, final @Nullable Module module) {
     return jsClass != null && module != null && BCUtils.isValidMainClass(module, null, jsClass, true);
   }
 }

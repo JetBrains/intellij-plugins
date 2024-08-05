@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -133,10 +133,9 @@ public class FlexRunner extends FlexBaseRunner {
     return null;
   }
 
-  @Nullable
-  private RunContentDescriptor standardLaunch(final Project project,
-                                              final RunProfileState state,
-                                              final RunContentDescriptor contentToReuse, final ExecutionEnvironment environment)
+  private @Nullable RunContentDescriptor standardLaunch(final Project project,
+                                                        final RunProfileState state,
+                                                        final RunContentDescriptor contentToReuse, final ExecutionEnvironment environment)
     throws ExecutionException {
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) return null;
@@ -184,12 +183,11 @@ public class FlexRunner extends FlexBaseRunner {
   }
 
   @Override
-  @Nullable
-  protected RunContentDescriptor launchAirFlexUnit(final Project project,
-                                                   final RunProfileState state,
-                                                   final RunContentDescriptor contentToReuse,
-                                                   final ExecutionEnvironment env,
-                                                   final FlexUnitRunnerParameters params) throws ExecutionException {
+  protected @Nullable RunContentDescriptor launchAirFlexUnit(final Project project,
+                                                             final RunProfileState state,
+                                                             final RunContentDescriptor contentToReuse,
+                                                             final ExecutionEnvironment env,
+                                                             final FlexUnitRunnerParameters params) throws ExecutionException {
     final ExecutionResult executionResult;
     final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
     policyFileConnection.open(params.getSocketPolicyPort());
@@ -222,14 +220,13 @@ public class FlexRunner extends FlexBaseRunner {
   }
 
   @Override
-  public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
+  public boolean canRun(final @NotNull String executorId, final @NotNull RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlashRunConfiguration || profile instanceof FlexUnitRunConfiguration);
   }
 
   @Override
-  @NotNull
-  public String getRunnerId() {
+  public @NotNull String getRunnerId() {
     return "FlexRunner";
   }
 

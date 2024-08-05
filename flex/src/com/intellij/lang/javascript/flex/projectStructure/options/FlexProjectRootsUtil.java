@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class FlexProjectRootsUtil {
 
-  public static boolean dependsOnLibrary(@NotNull FlexBuildConfiguration bc, @NotNull final Library library, final boolean transitive,
+  public static boolean dependsOnLibrary(@NotNull FlexBuildConfiguration bc, final @NotNull Library library, final boolean transitive,
                                          final boolean productionOnly) {
     final String libraryLevel = library.getTable() != null ? library.getTable().getTableLevel() : null;
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel) || LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
@@ -60,7 +60,7 @@ public final class FlexProjectRootsUtil {
   }
 
   public static boolean dependOnLibrary(Iterable<? extends FlexBuildConfiguration> bcs,
-                                        @NotNull final Library library,
+                                        final @NotNull Library library,
                                         final boolean transitive, final boolean productionOnly) {
     return !ContainerUtil.process(bcs, configuration -> !dependsOnLibrary(configuration, library, transitive, productionOnly));
   }
@@ -69,8 +69,7 @@ public final class FlexProjectRootsUtil {
     return ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
   }
 
-  @Nullable
-  public static LibraryOrderEntry findOrderEntry(ModuleLibraryEntry entry, ModuleRootModel rootModel) {
+  public static @Nullable LibraryOrderEntry findOrderEntry(ModuleLibraryEntry entry, ModuleRootModel rootModel) {
     for (OrderEntry orderEntry : rootModel.getOrderEntries()) {
       if (orderEntry instanceof LibraryOrderEntry) {
         if (!LibraryTableImplUtil.MODULE_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
@@ -88,8 +87,7 @@ public final class FlexProjectRootsUtil {
     return null;
   }
 
-  @Nullable
-  public static Library findOrderEntry(final Project project, final SharedLibraryEntry entry) {
+  public static @Nullable Library findOrderEntry(final Project project, final SharedLibraryEntry entry) {
     final LibraryTable libraryTable = LibraryTablesRegistrar.APPLICATION_LEVEL.equals(entry.getLibraryLevel())
                                       ? LibraryTablesRegistrar.getInstance().getLibraryTable()
                                       : LibraryTablesRegistrar.getInstance().getLibraryTable(project);

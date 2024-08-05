@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -12,23 +12,22 @@ public class AirSigningOptions {
   public static final String ARCH_ARMV8 = "armv8";
   public static final String ARCH_DEFAULT = ARCH_ARMV7;
 
-  @NotNull private String myArch = ARCH_DEFAULT;
+  private @NotNull String myArch = ARCH_DEFAULT;
   private boolean myUseTempCertificate = true;
-  @NotNull private String myProvisioningProfilePath = "";
-  @NotNull private String myKeystorePath = "";
-  @NotNull private String myIOSSdkPath = "";
-  @NotNull private String myADTOptions = "";
-  @NotNull private String myKeystoreType = "PKCS12";
-  @NotNull private String myKeyAlias = "";
-  @NotNull private String myProvider = "";
-  @NotNull private String myTsa = "";
+  private @NotNull String myProvisioningProfilePath = "";
+  private @NotNull String myKeystorePath = "";
+  private @NotNull String myIOSSdkPath = "";
+  private @NotNull String myADTOptions = "";
+  private @NotNull String myKeystoreType = "PKCS12";
+  private @NotNull String myKeyAlias = "";
+  private @NotNull String myProvider = "";
+  private @NotNull String myTsa = "";
 
   public AirSigningOptions() {
   }
 
-  @NotNull
   @Attribute("arch")
-  public String getArch() {
+  public @NotNull String getArch() {
     return myArch;
   }
 
@@ -45,83 +44,75 @@ public class AirSigningOptions {
     myUseTempCertificate = useTempCertificate;
   }
 
-  @NotNull
   @Attribute("provisioning-profile-path")
-  public String getProvisioningProfilePath() {
+  public @NotNull String getProvisioningProfilePath() {
     return myProvisioningProfilePath;
   }
 
-  public void setProvisioningProfilePath(@NotNull final String provisioningProfilePath) {
+  public void setProvisioningProfilePath(final @NotNull String provisioningProfilePath) {
     myProvisioningProfilePath = FileUtil.toSystemIndependentName(provisioningProfilePath);
   }
 
-  @NotNull
   @Attribute("keystore-path")
-  public String getKeystorePath() {
+  public @NotNull String getKeystorePath() {
     return myKeystorePath;
   }
 
-  public void setKeystorePath(@NotNull final String keystorePath) {
+  public void setKeystorePath(final @NotNull String keystorePath) {
     myKeystorePath = FileUtil.toSystemIndependentName(keystorePath);
   }
 
-  @NotNull
   @Attribute("sdk")
-  public String getIOSSdkPath() {
+  public @NotNull String getIOSSdkPath() {
     return myIOSSdkPath;
   }
 
-  public void setIOSSdkPath(@NotNull final String iOSSdkPath) {
+  public void setIOSSdkPath(final @NotNull String iOSSdkPath) {
     myIOSSdkPath = FileUtil.toSystemIndependentName(iOSSdkPath);
   }
 
-  @NotNull
   @Attribute("adt-options")
-  public String getADTOptions() {
+  public @NotNull String getADTOptions() {
     return myADTOptions;
   }
 
-  public void setADTOptions(@NotNull final String adtOptions) {
+  public void setADTOptions(final @NotNull String adtOptions) {
     myADTOptions = adtOptions;
   }
 
-  @NotNull
   @Attribute("keystore-type")
-  public String getKeystoreType() {
+  public @NotNull String getKeystoreType() {
     return myKeystoreType;
   }
 
-  public void setKeystoreType(@NotNull final String keystoreType) {
+  public void setKeystoreType(final @NotNull String keystoreType) {
     myKeystoreType = keystoreType;
   }
 
-  @NotNull
   @Attribute("key-alias")
-  public String getKeyAlias() {
+  public @NotNull String getKeyAlias() {
     return myKeyAlias;
   }
 
-  public void setKeyAlias(@NotNull final String keyAlias) {
+  public void setKeyAlias(final @NotNull String keyAlias) {
     myKeyAlias = keyAlias;
   }
 
-  @NotNull
   @Attribute("provider")
-  public String getProvider() {
+  public @NotNull String getProvider() {
     return myProvider;
   }
 
-  public void setProvider(@NotNull final String provider) {
+  public void setProvider(final @NotNull String provider) {
     myProvider = provider;
   }
 
-  @NotNull
   @Attribute("tsa")
-  public String getTsa() {
+  public @NotNull String getTsa() {
     return myTsa;
   }
 
-  public void setTsa(@NotNull final String tsa) {
+  public void setTsa(final @NotNull String tsa) {
     myTsa = tsa;
   }
 

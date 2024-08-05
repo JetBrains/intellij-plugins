@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -42,8 +42,7 @@ public final class FilesToPackageUtil {
 
     VfsUtilCore.visitChildrenRecursively(rootFolder, new VirtualFileVisitor<Void>() {
       @Override
-      @NotNull
-      public Result visitFileEx(@NotNull final VirtualFile file) {
+      public @NotNull Result visitFileEx(final @NotNull VirtualFile file) {
         if (file.equals(rootFolder)) return CONTINUE;
 
         final VirtualFile parentFile = file.getParent();
@@ -108,7 +107,7 @@ public final class FilesToPackageUtil {
     final String path;
     final String relativePath;
 
-    protected Node(@Nullable final FolderNode parentNode, final String path, final String relativePath) {
+    protected Node(final @Nullable FolderNode parentNode, final String path, final String relativePath) {
       this.parentNode = parentNode;
       this.path = path;
       this.relativePath = relativePath;
@@ -119,7 +118,7 @@ public final class FilesToPackageUtil {
     private final Collection<Node> childNodes = new ArrayList<>();
     private boolean hasExcludedChildren;
 
-    protected FolderNode(@Nullable final FolderNode parent, final String path, final String relativePath) {
+    protected FolderNode(final @Nullable FolderNode parent, final String path, final String relativePath) {
       super(parent, path, relativePath);
     }
 

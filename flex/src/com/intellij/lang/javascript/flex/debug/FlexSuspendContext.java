@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.application.ReadAction;
@@ -62,7 +62,7 @@ public class FlexSuspendContext extends XSuspendContext {
       else {
         myTopFrame.getDebugProcess().sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
           @Override
-          CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
+          CommandOutputProcessingMode onTextAvailable(final @NonNls String s) {
             if (container.isObsolete()) return CommandOutputProcessingMode.DONE;
 
             final List<XStackFrame> frames = getFrames(splitStackFrames(s));

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexAnnotationNames;
@@ -81,73 +81,16 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
     }
   };
 
-  @NotNull
   @Override
-  public ID<String, Set<FlexStyleIndexInfo>> getName() {
+  public @NotNull ID<String, Set<FlexStyleIndexInfo>> getName() {
     return INDEX_ID;
   }
 
-  @Nullable
-  private static String readUTF(@NotNull DataInput in) throws IOException {
-    String s = IOUtil.readUTF(in);
-    return s.length() == 0 ? null : s;
-  }
-
-  private static void writeUTF(@NotNull DataOutput out, @Nullable String s) throws IOException {
-    IOUtil.writeUTF(out, s != null ? s : "");
-  }
-
-  private static <TKey, TValue> void addElement(Map<TKey, Set<TValue>> map, TKey key, TValue value) {
-    Set<TValue> list = map.get(key);
-    if (list == null) {
-      list = new LinkedHashSet<>();
-      map.put(key, list);
-    }
-    list.add(value);
-  }
-
-  @NotNull
-  private static String getQualifiedNameByMxmlFile(@NotNull VirtualFile file, @NotNull Project project) {
-    String name = FileUtilRt.getNameWithoutExtension(file.getName());
-    final String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file, project);
-    if (packageName != null && packageName.length() > 0) {
-      return packageName + "." + name;
-    }
-    return name;
-  }
-
-  private static void indexMxmlFile(@NotNull final XmlFile file,
-                                    @NotNull final VirtualFile virtualFile,
-                                    @NotNull final Map<String, Set<FlexStyleIndexInfo>> map) {
-    XmlTag rootTag = getRootTag(file);
-    if (rootTag != null) {
-      final String classQName = getQualifiedNameByMxmlFile(virtualFile, file.getProject());
-      final JSResolveUtil.JSInjectedFilesVisitor jsFilesVisitor = new JSResolveUtil.JSInjectedFilesVisitor() {
-        @Override
-        protected void process(JSFile file) {
-          indexAttributes(file, classQName, true, map);
-        }
-      };
-      FlexUtils.processMxmlTags(rootTag, false, jsFilesVisitor);
-    }
-  }
-
-  @Nullable
-  private static XmlTag getRootTag(XmlFile file) {
-    XmlDocument document = file.getDocument();
-    if (document != null) {
-      return document.getRootTag();
-    }
-    return null;
-  }
-
-  @NotNull
   @Override
-  public DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent> getIndexer() {
     return new DataIndexer<>() {
       @Override
-      @NotNull
-      public Map<String, Set<FlexStyleIndexInfo>> map(@NotNull FileContent inputData) {
+      public @NotNull Map<String, Set<FlexStyleIndexInfo>> map(@NotNull FileContent inputData) {
         final Map<String, Set<FlexStyleIndexInfo>> map = new HashMap<>();
         if (JavaScriptSupportLoader.isFlexMxmFile(inputData.getFileName())) {
           PsiFile file = inputData.getPsiFile();
@@ -182,6 +125,39 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
     };
   }
 
+  private static void writeUTF(@NotNull DataOutput out, @Nullable String s) throws IOException {
+    IOUtil.writeUTF(out, s != null ? s : "");
+  }
+
+  private static <TKey, TValue> void addElement(Map<TKey, Set<TValue>> map, TKey key, TValue value) {
+    Set<TValue> list = map.get(key);
+    if (list == null) {
+      list = new LinkedHashSet<>();
+      map.put(key, list);
+    }
+    list.add(value);
+  }
+
+  @Override
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
+    return EnumeratorStringDescriptor.INSTANCE;
+  }
+
+  @Override
+  public @NotNull DataExternalizer<Set<FlexStyleIndexInfo>> getValueExternalizer() {
+    return myDataExternalizer;
+  }
+
+  @Override
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
+    return FlexInputFilter.getInstance();
+  }
+
+  private static @Nullable String readUTF(@NotNull DataInput in) throws IOException {
+    String s = IOUtil.readUTF(in);
+    return s.length() == 0 ? null : s;
+  }
+
   private static void indexAttributes(PsiElement element, final String classQName, final boolean inClass, final Map<String, Set<FlexStyleIndexInfo>> map) {
     ActionScriptResolveUtil.processMetaAttributesForClass(element, new ActionScriptResolveUtil.MetaDataProcessor() {
       @Override
@@ -211,22 +187,37 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
     }, false);
   }
 
-  @NotNull
-  @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
-    return EnumeratorStringDescriptor.INSTANCE;
+  private static @NotNull String getQualifiedNameByMxmlFile(@NotNull VirtualFile file, @NotNull Project project) {
+    String name = FileUtilRt.getNameWithoutExtension(file.getName());
+    final String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file, project);
+    if (packageName != null && packageName.length() > 0) {
+      return packageName + "." + name;
+    }
+    return name;
   }
 
-  @NotNull
-  @Override
-  public DataExternalizer<Set<FlexStyleIndexInfo>> getValueExternalizer() {
-    return myDataExternalizer;
+  private static void indexMxmlFile(final @NotNull XmlFile file,
+                                    final @NotNull VirtualFile virtualFile,
+                                    final @NotNull Map<String, Set<FlexStyleIndexInfo>> map) {
+    XmlTag rootTag = getRootTag(file);
+    if (rootTag != null) {
+      final String classQName = getQualifiedNameByMxmlFile(virtualFile, file.getProject());
+      final JSResolveUtil.JSInjectedFilesVisitor jsFilesVisitor = new JSResolveUtil.JSInjectedFilesVisitor() {
+        @Override
+        protected void process(JSFile file) {
+          indexAttributes(file, classQName, true, map);
+        }
+      };
+      FlexUtils.processMxmlTags(rootTag, false, jsFilesVisitor);
+    }
   }
 
-  @NotNull
-  @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
-    return FlexInputFilter.getInstance();
+  private static @Nullable XmlTag getRootTag(XmlFile file) {
+    XmlDocument document = file.getDocument();
+    if (document != null) {
+      return document.getRootTag();
+    }
+    return null;
   }
 
   @Override

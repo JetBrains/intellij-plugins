@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.artifacts;
 
 import com.intellij.flex.model.bc.OutputType;
@@ -24,10 +25,9 @@ import java.util.List;
 public final class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvider {
 
   @Override
-  @NotNull
-  public Collection<? extends PackagingSourceItem> getSourceItems(final @NotNull ArtifactEditorContext editorContext,
-                                                                  final @NotNull Artifact artifact,
-                                                                  final @Nullable PackagingSourceItem parent) {
+  public @NotNull Collection<? extends PackagingSourceItem> getSourceItems(final @NotNull ArtifactEditorContext editorContext,
+                                                                           final @NotNull Artifact artifact,
+                                                                           final @Nullable PackagingSourceItem parent) {
     if (parent == null) {
       return createFlashModuleSourceItems(editorContext);
     }

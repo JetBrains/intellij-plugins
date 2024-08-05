@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.projectView.TreeStructureProvider;
@@ -22,11 +22,10 @@ import java.util.*;
 
 public final class FlexCompositeSdkProjectViewStructureProvider implements TreeStructureProvider, DumbAware {
 
-  @NotNull
   @Override
-  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
-                                             @NotNull final Collection<AbstractTreeNode<?>> children,
-                                             final ViewSettings settings) {
+  public @NotNull Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                                         final @NotNull Collection<AbstractTreeNode<?>> children,
+                                                         final ViewSettings settings) {
     if (!(parent instanceof ExternalLibrariesNode)) {
       return children;
     }
@@ -67,55 +66,49 @@ public final class FlexCompositeSdkProjectViewStructureProvider implements TreeS
 
   private static final class IndividualSdkOrderEntry implements ModuleJdkOrderEntry {
 
-    @NotNull
-    private final Sdk mySdk;
+    private final @NotNull Sdk mySdk;
 
-    @NotNull
-    private final Module myModule;
+    private final @NotNull Module myModule;
 
-    private IndividualSdkOrderEntry(@NotNull final Sdk sdk, @NotNull final Module module) {
+    private IndividualSdkOrderEntry(final @NotNull Sdk sdk, final @NotNull Module module) {
       mySdk = sdk;
       myModule = module;
     }
 
     @Override
-    @NotNull
-    public Sdk getJdk() {
+    public @NotNull Sdk getJdk() {
       return mySdk;
     }
 
     @Override
-    @NotNull
-    public String getJdkName() {
+    public @NotNull String getJdkName() {
       return mySdk.getName();
     }
 
-    @Nullable
     @Override
-    public String getJdkTypeName() {
+    public @Nullable String getJdkTypeName() {
       return mySdk.getSdkType().getName();
     }
 
     @Override
-    public VirtualFile @NotNull [] getRootFiles(@NotNull final OrderRootType type) {
+    public VirtualFile @NotNull [] getRootFiles(final @NotNull OrderRootType type) {
       List<VirtualFile> directories =
         ContainerUtil.filter(mySdk.getRootProvider().getFiles(type), VirtualFile::isDirectory);
       return VfsUtilCore.toVirtualFileArray(directories);
     }
 
     @Override
-    public String @NotNull [] getRootUrls(@NotNull final OrderRootType type) {
+    public String @NotNull [] getRootUrls(final @NotNull OrderRootType type) {
       return mySdk.getRootProvider().getUrls(type);
     }
 
     @Override
-    public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType type) {
+    public VirtualFile @NotNull [] getFiles(final @NotNull OrderRootType type) {
       return mySdk.getRootProvider().getFiles(type);
     }
 
-    @NotNull
     @Override
-    public String getPresentableName() {
+    public @NotNull String getPresentableName() {
       return "<" + getJdkName() + ">";
     }
 
@@ -124,19 +117,18 @@ public final class FlexCompositeSdkProjectViewStructureProvider implements TreeS
       return true;
     }
 
-    @NotNull
     @Override
-    public Module getOwnerModule() {
+    public @NotNull Module getOwnerModule() {
       return myModule;
     }
 
     @Override
-    public <R> R accept(@NotNull final RootPolicy<R> policy, @Nullable final R initialValue) {
+    public <R> R accept(final @NotNull RootPolicy<R> policy, final @Nullable R initialValue) {
       return policy.visitModuleJdkOrderEntry(this, initialValue);
     }
 
     @Override
-    public int compareTo(@NotNull final OrderEntry o) {
+    public int compareTo(final @NotNull OrderEntry o) {
       return 0;
     }
 

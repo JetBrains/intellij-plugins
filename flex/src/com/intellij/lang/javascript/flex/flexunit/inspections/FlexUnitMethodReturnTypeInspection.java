@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -19,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public final class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspectionBase {
 
   @Override
-  @NotNull
-  public String getShortName() {
+  public @NotNull String getShortName() {
     return "FlexUnitMethodReturnTypeInspection";
   }
 

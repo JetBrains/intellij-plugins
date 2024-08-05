@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -42,12 +42,11 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     return valueRefs(nameValuePair, name);
   }
 
-  @NonNls private static final String BUNDLE_ATTR_NAME = "bundle";
+  private static final @NonNls String BUNDLE_ATTR_NAME = "bundle";
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl> ourPropertyInfoProvider =
     new FlexPropertiesSupport.PropertyReferenceInfoProvider<>() {
       @Override
-      @Nullable
-      public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
+      public @Nullable TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
       }
 
@@ -110,7 +109,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-  private static PsiReference[] getClassRefs(@NotNull final JSAttributeNameValuePairImpl element, final @NotNull String baseClassFqns) {
+  private static PsiReference[] getClassRefs(final @NotNull JSAttributeNameValuePairImpl element, final @NotNull String baseClassFqns) {
     final ASTNode valueNode = element.findValueNode();
 
     if (valueNode != null) {
@@ -194,8 +193,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     return PsiReference.EMPTY_ARRAY;
   }
 
-  @Nullable
-  private static TextRange getValueRange(JSAttributeNameValuePairImpl element) {
+  private static @Nullable TextRange getValueRange(JSAttributeNameValuePairImpl element) {
     ASTNode valueNode = element.findValueNode();
     if (valueNode == null) return null;
     int valueStart = valueNode.getPsi().getStartOffsetInParent();
@@ -286,14 +284,12 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public PsiElement getElement() {
+    public @NotNull PsiElement getElement() {
       return myElement;
     }
 
     @Override
-    @NotNull
-    public TextRange getRangeInElement() {
+    public @NotNull TextRange getRangeInElement() {
       return myRange;
     }
 
@@ -308,8 +304,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public String getCanonicalText() {
+    public @NotNull String getCanonicalText() {
       return myValue;
     }
 
@@ -339,8 +334,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public String getUnresolvedMessagePattern() {
+    public @NotNull String getUnresolvedMessagePattern() {
       return XmlPsiBundle.message("xml.inspections.wrong.value", "attribute");
     }
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -48,7 +48,7 @@ public final class FlexCssReferenceContributor extends PsiReferenceContributor {
       }
     })), new PsiReferenceProvider() {
       @Override
-      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, @NotNull ProcessingContext context) {
         CssFunction fun = PsiTreeUtil.getParentOfType(element, CssFunction.class);
         if (fun != null && "Embed".equals(fun.getName())) {
           // TODO: remove this stuff once css function will have proper psi

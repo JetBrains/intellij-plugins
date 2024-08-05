@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.execution.filters.Filter;
@@ -44,8 +44,7 @@ public class FlexStackTraceFilter implements Filter {
   }
 
   @Override
-  @Nullable
-  public Result applyFilter(@NotNull final String line, final int entireLength) {
+  public @Nullable Result applyFilter(final @NotNull String line, final int entireLength) {
     //    [trace]    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
     //    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
     //    at global/org.flexunit.asserts::fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\asserts\fail.as:39]
@@ -110,11 +109,10 @@ public class FlexStackTraceFilter implements Filter {
     return null;
   }
 
-  @Nullable
-  private Result applyFlexStackTraceFilter(final String filePath,
-                                           final String matchingRelativePath,
-                                           final int lineNumber,
-                                           final int highlightEndOffset) {
+  private @Nullable Result applyFlexStackTraceFilter(final String filePath,
+                                                     final String matchingRelativePath,
+                                                     final int lineNumber,
+                                                     final int highlightEndOffset) {
     final Collection<VirtualFile> result = new ArrayList<>();
 
     final Collection<VirtualFile> files =
@@ -146,7 +144,7 @@ public class FlexStackTraceFilter implements Filter {
     private final Collection<VirtualFile> myFiles;
     private final int myLine;
 
-    OpenOneOfSeveralFilesHyperlinkInfo(@NotNull final Collection<VirtualFile> files, final int line) {
+    OpenOneOfSeveralFilesHyperlinkInfo(final @NotNull Collection<VirtualFile> files, final int line) {
       myFiles = files;
       myLine = line;
     }
