@@ -18,10 +18,11 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getElementName
+import org.intellij.terraform.isTerraformPsiFile
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
-  override fun acceptsFile(file: PsiFile): Boolean = file.fileType is TerraformFileType
+  override fun acceptsFile(file: PsiFile): Boolean = isTerraformPsiFile(file)
 
   override fun acceptsElement(element: PsiElement): Boolean = when (element) {
     is HCLBlock -> TerraformPatterns.VariableRootBlock.accepts(element) || TerraformPatterns.DataSourceRootBlock.accepts(element)

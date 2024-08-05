@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nls
 import javax.swing.Icon
 
 
-internal object OpenTofuFileType: LanguageFileType(TerraformLanguage) {
+object OpenTofuFileType: LanguageFileType(TerraformLanguage) {
 
   const val DEFAULT_EXTENSION: String = "tofu"
 

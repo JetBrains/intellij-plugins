@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
@@ -18,14 +19,16 @@ import org.intellij.terraform.hil.HILTypes.ILBinaryBooleanOnlyOperations
 import org.intellij.terraform.hil.HILTypes.ILBinaryNumericOnlyOperations
 import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
+import org.intellij.terraform.isTerraformPsiFile
 
 class HILOperationTypesMismatchInspection : LocalInspectionTool() {
+
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    val topLevelFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
+    return isTerraformPsiFile(topLevelFile)
+  }
+
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    val file = InjectedLanguageManager.getInstance(holder.project).getTopLevelFile(holder.file)
-    val ft = file.fileType
-    if (ft != TerraformFileType) {
-      return PsiElementVisitor.EMPTY_VISITOR
-    }
     return MyEV(holder)
   }
 

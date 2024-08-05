@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
@@ -18,15 +19,15 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.isTerraformPsiFile
 
 class HCLDeprecatedElementInspection : LocalInspectionTool() {
 
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    val ft = holder.file.fileType
-    if (ft != TerraformFileType) {
-      return PsiElementVisitor.EMPTY_VISITOR
-    }
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file)
+  }
 
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 

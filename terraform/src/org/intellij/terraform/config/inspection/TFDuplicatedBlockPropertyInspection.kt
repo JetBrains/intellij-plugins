@@ -5,6 +5,8 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.NullableFunction
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyType
@@ -13,6 +15,7 @@ import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.isTerraformPsiFile
 
 // TODO: Support overrides in separate files
 class TFDuplicatedBlockPropertyInspection : TFDuplicatedInspectionBase() {
@@ -54,7 +57,7 @@ class TFDuplicatedBlockPropertyInspection : TFDuplicatedInspectionBase() {
     val fixes = ArrayList<LocalQuickFix>()
 
     val first = duplicates.firstOrNull { it != current }
-    first?.containingFile?.virtualFile?.let { createNavigateToDupeFix(first, duplicates.size <= 2).let { fixes.add(it) } }
+    first?.containingFile?.virtualFile?.let { createNavigateToDupeFix(first.createSmartPointer(), duplicates.size <= 2).let { fixes.add(it) } }
     current.containingFile?.virtualFile?.let { createShowOtherDupesFix(current, NullableFunction { param -> getDuplicates(param.parent as HCLProperty) }).let { fixes.add(it) } }
 
     return fixes.toTypedArray()

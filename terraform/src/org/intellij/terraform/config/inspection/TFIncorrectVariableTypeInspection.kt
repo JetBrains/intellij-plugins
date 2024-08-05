@@ -7,13 +7,20 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.isTerraformPsiFile
 import org.intellij.terraform.joinCommaOr
 
 class TFIncorrectVariableTypeInspection : LocalInspectionTool() {
+
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file)
+  }
+
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     val file = holder.file
     if (!TerraformPatterns.TerraformConfigFile.accepts(file)) {

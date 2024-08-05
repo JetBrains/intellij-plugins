@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.NullableFunction
 import org.intellij.terraform.config.model.getProviderFQName
 import org.intellij.terraform.config.model.getTerraformModule
@@ -56,7 +57,7 @@ class TFDuplicatedProviderInspection : TFDuplicatedInspectionBase() {
     val fixes = ArrayList<LocalQuickFix>()
 
     val first = duplicates.firstOrNull { it != block }
-    first?.containingFile?.virtualFile?.let { createNavigateToDupeFix(first, duplicates.size <= 2).let { fixes.add(it) } }
+    first?.containingFile?.virtualFile?.let { createNavigateToDupeFix(first.createSmartPointer(), duplicates.size <= 2).let { fixes.add(it) } }
     block.containingFile?.virtualFile?.let { createShowOtherDupesFix(block, NullableFunction { param -> getDuplicates(param as HCLBlock) }).let { fixes.add(it) } }
 
     if (false) {

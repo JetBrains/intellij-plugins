@@ -22,6 +22,7 @@ import org.intellij.terraform.hil.psi.ForCondition
 import org.intellij.terraform.hil.psi.ILSelectFromScopeReferenceProvider
 import org.intellij.terraform.hil.psi.ILTemplateForBlockExpression
 import org.intellij.terraform.hil.psi.ILVariable
+import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.template.psi.TftplFile
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -91,7 +92,7 @@ private fun computeSearchScope(project: Project): List<VirtualFile> {
     .getVirtualFilesWithWord(
       TEMPLATEFILE_FUNCTION_NAME,
       IN_CODE,
-      GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), TerraformFileType),
+      GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), TerraformFileType, OpenTofuFileType),
       true)
     .toList()
 }

@@ -2,15 +2,20 @@
 package org.intellij.terraform
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.opentofu.OpenTofuFileType
 
 fun String.nullize(nullizeSpaces: Boolean = false): String? {
   return StringUtil.nullize(this, nullizeSpaces)
 }
 
-fun <T> Iterator<T>.firstOrNull(): T? {
-  if (!hasNext())
-    return null
-  return next()
+fun String?.isTerraformFileExtension(): Boolean {
+  return this == TerraformFileType.DEFAULT_EXTENSION || this == TerraformFileType.TFVARS_EXTENSION
+}
+
+fun isTerraformPsiFile(file: PsiFile): Boolean {
+  return file.fileType is TerraformFileType || file.fileType is OpenTofuFileType
 }
 
 fun joinCommaOr(list: List<String>): String = when (list.size) {

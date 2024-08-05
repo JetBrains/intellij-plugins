@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.firstOrNull
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
@@ -54,7 +53,7 @@ sealed class TerraformResourceConfigurationProducer(private val type: Type) : La
 
     fun getResourceTarget(context: ConfigurationContext): String? {
       val location = context.location ?: return null
-      val element = location.getAncestors(HCLElement::class.java, false).firstOrNull()?.psiElement ?: return null
+      val element = location.getAncestors(HCLElement::class.java, false).asSequence().firstOrNull()?.psiElement ?: return null
       return getResourceTarget(element)
     }
 

@@ -10,13 +10,12 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceOwner
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.patterns.TerraformPatterns.FromPropertyInMovedBlock
 import org.intellij.terraform.hcl.HCLBundle
@@ -31,17 +30,20 @@ import org.intellij.terraform.hil.codeinsight.isResourcePropertyReference
 import org.intellij.terraform.hil.codeinsight.isScopeElementReference
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.hil.psi.resolve
+import org.intellij.terraform.isTerraformPsiFile
 import org.jetbrains.annotations.Nls
 
 class HILUnresolvedReferenceInspection : LocalInspectionTool() {
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    if (holder.file.language !in listOf(HCLLanguage, TerraformLanguage, HILLanguage)) return PsiElementVisitor.EMPTY_VISITOR
-    val file = InjectedLanguageManager.getInstance(holder.project).getTopLevelFile(holder.file)
-    val ft = file.fileType
-    if (ft != TerraformFileType) {
-      return PsiElementVisitor.EMPTY_VISITOR
-    }
 
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file)
+           || file.language == HCLLanguage
+           || file.language == HILLanguage
+           || isTerraformPsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
+  }
+
+
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 

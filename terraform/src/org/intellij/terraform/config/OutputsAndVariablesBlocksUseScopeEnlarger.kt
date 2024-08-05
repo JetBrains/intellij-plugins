@@ -9,11 +9,13 @@ import com.intellij.psi.search.UseScopeEnlarger
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.isTerraformPsiFile
 
 class OutputsAndVariablesBlocksUseScopeEnlarger : UseScopeEnlarger() {
+
   override fun getAdditionalUseScope(element: PsiElement): SearchScope? {
     if (element !is HCLElement) return null
-    if (element.containingFile.fileType != TerraformFileType) return null
+    if (!isTerraformPsiFile(element.containingFile)) return null
     val block: HCLBlock = element as? HCLBlock ?: return null
 
     if (!TerraformPatterns.VariableRootBlock.accepts(block) && !TerraformPatterns.OutputRootBlock.accepts(block)) return null

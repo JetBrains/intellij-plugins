@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
-import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -34,10 +33,10 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.isTerraformPsiFile
 
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
@@ -283,10 +282,9 @@ class TypeModel(
 
     @RequiresReadLock
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
-      val fileTypeManager = FileTypeManager.getInstance()
       val providerNamesService = LocalProviderNamesService.getInstance()
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
-        ?.filter { file -> fileTypeManager.isFileOfType(file.virtualFile, TerraformFileType) }
+        ?.filter { file -> isTerraformPsiFile(file) }
         ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
       return gists.flatMap { it.entries }.associate { it.key to it.value }
     }

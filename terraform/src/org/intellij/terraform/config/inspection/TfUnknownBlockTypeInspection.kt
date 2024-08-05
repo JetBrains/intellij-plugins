@@ -21,12 +21,15 @@ import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.isTerraformPsiFile
 
 class TfUnknownBlockTypeInspection : LocalInspectionTool() {
+
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file)
+  }
+
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    if (holder.file.fileType != TerraformFileType) {
-      return PsiElementVisitor.EMPTY_VISITOR
-    }
     return TfBlockVisitor(holder)
   }
 

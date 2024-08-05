@@ -8,10 +8,10 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.codeinsight.TfModelHelper
@@ -22,8 +22,13 @@ import org.intellij.terraform.config.patterns.TerraformPatterns.ModuleWithEmptyS
 import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.isTerraformPsiFile
 
 class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
+
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file)
+  }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MissingPropertyVisitor.create(holder, false)
@@ -155,8 +160,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
 
   companion object {
     fun create(holder: ProblemsHolder, recursive: Boolean): PsiElementVisitor {
-      val ft = holder.file.fileType
-      if (ft != TerraformFileType) {
+      if (!isTerraformPsiFile(holder.file)) {
         return EMPTY_VISITOR
       }
       return MissingPropertyVisitor(holder, recursive)

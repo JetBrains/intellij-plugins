@@ -19,13 +19,15 @@ import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLMethodCallExpression
+import org.intellij.terraform.isTerraformPsiFile
 
 class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    val file = holder.file
-    if (file.language !in listOf(HCLLanguage, TerraformLanguage)) return PsiElementVisitor.EMPTY_VISITOR
-    if (file.fileType != TerraformFileType) return PsiElementVisitor.EMPTY_VISITOR
 
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file) || file.language == HCLLanguage
+  }
+
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 
@@ -37,7 +39,7 @@ class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspe
       // 'element(list, index)' -> 'list[index]'
       if (args.size == 2 && method.id == "element") {
         if (holder.isOnTheFly) {
-          holder.registerProblem(o, HCLBundle.message("hcl.simplify.expression.inspection.could.be.replaced.with.list.indexing.message"), ProblemHighlightType.INFORMATION, ReplaceWithListIndexing(o))
+          holder.registerProblem(o, HCLBundle.message("hcl.simplify.expression.inspection.could.be.replaced.with.list.indexing.message"), ProblemHighlightType.WEAK_WARNING, ReplaceWithListIndexing(o))
         }
       }
     }
@@ -70,7 +72,9 @@ class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspe
     override fun applyFix(project: Project, descriptors: Array<out CommonProblemDescriptor>, psiElementsToIgnore: MutableList<PsiElement>, refreshViews: Runnable?) {
       val targets = ArrayList<HCLMethodCallExpression>()
       for (descriptor in descriptors) {
-        descriptor.fixes?.filterIsInstance(ReplaceWithListIndexing::class.java)?.map { it.startElement }?.filterIsInstanceTo(targets, HCLMethodCallExpression::class.java)
+        descriptor.fixes?.filterIsInstance<ReplaceWithListIndexing>()
+          ?.map { it.startElement }
+          ?.filterIsInstanceTo(targets, HCLMethodCallExpression::class.java)
       }
 
       if (!FileModificationService.getInstance().preparePsiElementsForWrite(targets)) return

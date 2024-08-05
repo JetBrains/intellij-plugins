@@ -13,10 +13,10 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.config.TerraformConstants.EXECUTION_NOTIFICATION_GROUP
 import org.intellij.terraform.config.actions.isTerraformExecutable
-import org.intellij.terraform.config.isTerraformFile
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.isTerraformFileExtension
 
 class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -35,7 +35,7 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
 
     val virtualFile = context.virtualFile ?: return null
-    if (!virtualFile.extension.isTerraformFile() && !virtualFile.name.endsWith(".tftest.hcl")) {
+    if (!virtualFile.extension.isTerraformFileExtension() && !virtualFile.name.endsWith(".tftest.hcl")) {
       EXECUTION_NOTIFICATION_GROUP.createNotification(
         HCLBundle.message("terraform.formatter.error.title"),
         HCLBundle.message("terraform.formatter.file.extension.error"),

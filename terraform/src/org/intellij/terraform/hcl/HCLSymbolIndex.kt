@@ -8,6 +8,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.opentofu.OpenTofuFileType
 
 class HCLSymbolIndex : ScalarIndexExtension<String>() {
 
@@ -18,7 +19,7 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
   override fun dependsOnFileContent(): Boolean = true
 
   override fun getInputFilter(): FileBasedIndex.InputFilter {
-    return object : DefaultFileTypeSpecificInputFilter(HCLFileType, TerraformFileType) {
+    return object : DefaultFileTypeSpecificInputFilter(HCLFileType, TerraformFileType, OpenTofuFileType) {
       override fun acceptInput(file: VirtualFile): Boolean {
         return file.isInLocalFileSystem
       }
@@ -32,7 +33,7 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
   override fun getIndexer(): DataIndexer<String, Void, FileContent> {
     return DataIndexer { inputData ->
       val map = HashMap<String, Void?>()
-      if (inputData.fileType === HCLFileType || inputData.fileType === TerraformFileType) {
+      if (inputData.fileType === HCLFileType || inputData.fileType === TerraformFileType || inputData.fileType === OpenTofuFileType) {
         val file = inputData.psiFile
         if (file is HCLFile) {
           file.acceptChildren(object : HCLElementVisitor() {

@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.InjectedLanguagePlaces
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TerraformPatterns.HeredocContentAnywhereInVariable
@@ -17,8 +18,14 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.MethodCallExpression
 import org.intellij.terraform.hil.ILLanguageInjector
+import org.intellij.terraform.isTerraformPsiFile
 
 class TFNoInterpolationsAllowedInspection : LocalInspectionTool() {
+
+  override fun isAvailableForFile(file: PsiFile): Boolean {
+    return isTerraformPsiFile(file)
+  }
+
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     val file = holder.file
     if (!TerraformPatterns.TerraformConfigFile.accepts(file)) {

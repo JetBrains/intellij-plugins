@@ -22,5 +22,3 @@ object TerraformFileType : LanguageFileType(TerraformLanguage) {
 
   override fun toString(): String = name
 }
-
-fun String?.isTerraformFile(): Boolean = this == DEFAULT_EXTENSION || this == TFVARS_EXTENSION

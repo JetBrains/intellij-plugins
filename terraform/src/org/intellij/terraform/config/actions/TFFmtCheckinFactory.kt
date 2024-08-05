@@ -13,9 +13,9 @@ import com.intellij.openapi.vcs.ui.RefreshableOnComponent
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.intellij.terraform.config.Constants.TF_FMT
-import org.intellij.terraform.config.isTerraformFile
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.isTerraformFileExtension
 import org.intellij.terraform.runtime.TerraformProjectSettings
 
 class TFFmtCheckinFactory : CheckinHandlerFactory() {
@@ -34,7 +34,7 @@ class TFFmtCheckinFactory : CheckinHandlerFactory() {
       val manager = PsiManager.getInstance(project)
       val commitedPsiFiles: List<PsiFile> = readAction {
         commitInfo.committedVirtualFiles
-          .filter { it.extension.isTerraformFile() }
+          .filter { it.extension.isTerraformFileExtension() }
           .mapNotNull { manager.findFile(it) }
           .filterIsInstance<HCLFile>()
       }
