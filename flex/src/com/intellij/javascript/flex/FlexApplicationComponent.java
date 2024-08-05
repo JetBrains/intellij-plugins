@@ -45,10 +45,9 @@ public final class FlexApplicationComponent implements MetaDataContributor, Stan
 
   @Override
   public void registerResources(ResourceRegistrar registrar) {
-    registrar.addStdResource(HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG, "/schemas/FlexCompilerSchema.xsd", FlexApplicationComponent.class);
-
-    registrar.addStdResource(JSAttributeImpl.URN_FLEX_META, "/schemas/KnownMetaData.dtd", FlexApplicationComponent.class);
-
+    ClassLoader classLoader = FlexApplicationComponent.class.getClassLoader();
+    registrar.addStdResource(HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG, "schemas/FlexCompilerSchema.xsd", classLoader);
+    registrar.addStdResource(JSAttributeImpl.URN_FLEX_META, "schemas/KnownMetaData.dtd", classLoader);
     for (String version : AIR_VERSIONS) {
       registerAirDescriptorSchema(registrar, version);
     }
@@ -56,7 +55,7 @@ public final class FlexApplicationComponent implements MetaDataContributor, Stan
 
   private static void registerAirDescriptorSchema(final ResourceRegistrar registrar, final String version) {
     registrar.addStdResource(FlexCommonUtils.AIR_NAMESPACE_BASE + version,
-                             "/schemas/AIR_Descriptor." + version + ".xsd",
-                             FlexApplicationComponent.class);
+                             "schemas/AIR_Descriptor." + version + ".xsd",
+                             FlexApplicationComponent.class.getClassLoader());
   }
 }
