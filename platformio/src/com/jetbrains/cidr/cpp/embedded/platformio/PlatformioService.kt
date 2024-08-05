@@ -64,17 +64,17 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
   val metadataJson: Map<String, String?>
     get() = state.metadataJson
 
-  var compileDbText: String?
-    get() = state.compileDbText
+  var compileDbDeflatedBase64: String?
+    get() = state.compileDbDeflatedBase64
     set(value) {
-      state.compileDbText = value
+      state.compileDbDeflatedBase64 = value
       stateModCounter.incrementAndGet()
     }
 
   fun cleanCache() {
     state.metadataJson.clear()
     state.configJson = null
-    state.compileDbText = null
+    state.compileDbDeflatedBase64 = null
     stateModCounter.incrementAndGet()
   }
 
@@ -181,7 +181,7 @@ class PlatformioState {
   val metadataJson: MutableMap<String, String?> = mutableMapOf()
 
   @Tag
-  var compileDbText: String? = null
+  var compileDbDeflatedBase64: String? = null
 
 }
 

@@ -44,10 +44,14 @@ import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
 import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerKind
 import com.jetbrains.cidr.lang.workspace.compiler.UnknownCompilerKind
 import org.jetbrains.annotations.Nls
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Path
 import java.io.FileNotFoundException
 import java.util.*
+import java.util.zip.DeflaterOutputStream
+import java.util.zip.InflaterInputStream
 
 open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioExecutionSettings> {
 
@@ -174,13 +178,14 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
         checkCancelled()
 
-        var compDbText = platformioService.compileDbText
+        var compDbText = platformioService.compileDbDeflatedBase64?.inflate()
         if (compDbText == null) {
           compDbText = gatherCompDB(id, "pio-run:${UUID.randomUUID()}", project, activeEnvName, listener, projectPath)
-          platformioService.compileDbText = compDbText
+          checkCancelled()
+          platformioService.compileDbDeflatedBase64 = compDbText.deflate()
         }
-
         checkCancelled()
+
         val compDbTokenType = object : TypeToken<List<Map<String, String>>>(){}.type
         val compDbJson: List<Map<String, String>> = Gson().fromJson(compDbText, compDbTokenType)
         checkCancelled()
@@ -299,6 +304,24 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         }
       }
     }
+  }
+
+  /** Interprets this string as a Base64 encoded ByteArray and decodes it to a String using an Inflater. */
+  private fun String.inflate(): String {
+    val byteArrayIS = ByteArrayInputStream(Base64.getDecoder().decode(this))
+    val inflaterIS = InflaterInputStream(byteArrayIS)
+    val bytes = inflaterIS.readBytes()
+    inflaterIS.close()
+    return String(bytes, Charsets.UTF_8)
+  }
+
+  /** Encodes this string using a Deflater and encodes the deflated ByteArray using Base64. */
+  private fun String.deflate(): String {
+    val byteArrayOS = ByteArrayOutputStream()
+    val deflaterOS = DeflaterOutputStream(byteArrayOS)
+    deflaterOS.write(this.toByteArray(Charsets.UTF_8))
+    deflaterOS.close()
+    return Base64.getEncoder().encodeToString(byteArrayOS.toByteArray())
   }
 
   protected open fun createRunConfigurationIfRequired(project: Project) {
