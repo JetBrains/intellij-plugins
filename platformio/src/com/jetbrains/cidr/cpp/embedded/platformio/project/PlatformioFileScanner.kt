@@ -119,7 +119,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
             File(file),
             file,
             fallback.compilerExecutable!!,
-            fallback.compilerSwitches?.toMutableList() ?: mutableListOf(),
+            fallback.compilerSwitches ?: listOf(),
           )
         }
       }
