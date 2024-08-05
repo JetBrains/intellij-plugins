@@ -180,16 +180,16 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
           platformioService.compileDbText = compDbText
         }
 
+        checkCancelled()
         val compDbTokenType = object : TypeToken<List<Map<String, String>>>(){}.type
         val compDbJson: List<Map<String, String>> = Gson().fromJson(compDbText, compDbTokenType)
+        checkCancelled()
         scanner.scanSources(compDbJson, project.service<PlatformioWorkspace>(), languageConfigurations, confBuilder)
-
         checkCancelled()
 
         platformioService.librariesPaths = scanner.scanLibraries(pioActiveMetadata)
 
         checkCancelled()
-
         val module = ExternalModuleImpl(mutableSetOf(confBuilder.invoke()))
         val cppModuleNode = DataNode(ExternalModule.OC_MODULE_KEY, module, null)
         projectNode = DataNode(ProjectKeys.PROJECT, projectData, null)
