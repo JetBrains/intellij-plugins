@@ -28,7 +28,7 @@ fun getConnections(project: Project, list: LocalChangeList): Map<ConnectionKey, 
   return result
 }
 
-fun selectConnection(map: Map<ConnectionKey, P4Connection>, consumer: Consumer<ConnectionKey>) {
+fun selectConnection(map: Map<ConnectionKey, P4Connection>, consumer: Consumer<ConnectionKey?>) {
   val popup = object : BaseListPopupStep<ConnectionKey>(PerforceBundle.message("connection.select.title"), *map.keys.toTypedArray()) {
     override fun onChosen(selectedValue: ConnectionKey?, finalChoice: Boolean): PopupStep<*>? {
       consumer.consume(selectedValue)
