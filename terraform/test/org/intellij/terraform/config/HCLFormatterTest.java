@@ -8,7 +8,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.terraform.hcl.HCLFileType;
-import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings;
+import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings;
+import org.intellij.terraform.hcl.formatter.PropertyAlignment;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -61,8 +62,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
 
   @Test
   public void testAlignPropertiesOnEquals() {
-    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT =
-      HCLCodeStyleSettings.ALIGN_PROPERTY_ON_EQUALS;
+    CodeStyle.getSettings(getProject()).getCustomSettings(HclCodeStyleSettings.class).PROPERTY_ALIGNMENT = PropertyAlignment.ON_EQUALS;
     doSimpleTest("a=true\nbaz=42", "a   = true\nbaz = 42");
     doSimpleTest("a = true\nbaz=42", "a   = true\nbaz = 42");
     doSimpleTest("a = true\nbaz = 42", "a   = true\nbaz = 42");
@@ -199,8 +199,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
 
   @Test
   public void testAlignPropertiesOnValue() {
-    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT =
-      HCLCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
+    CodeStyle.getSettings(getProject()).getCustomSettings(HclCodeStyleSettings.class).PROPERTY_ALIGNMENT = PropertyAlignment.ON_VALUE;
     doSimpleTest("a=true\nbaz=42", "a =   true\nbaz = 42");
     doSimpleTest("a = true\nbaz=42", "a =   true\nbaz = 42");
     doSimpleTest("a = true\nbaz = 42", "a =   true\nbaz = 42");
@@ -251,8 +250,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
 
   @Test
   public void testAlignPropertiesOnValueAndSplitByBlocks() {
-    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT =
-      HCLCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
+    CodeStyle.getSettings(getProject()).getCustomSettings(HclCodeStyleSettings.class).PROPERTY_ALIGNMENT = PropertyAlignment.ON_VALUE;
     doSimpleTest("a=true\n\n\nbaz=42", "a = true\n\n\nbaz = 42");
   }
 

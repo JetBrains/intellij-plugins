@@ -388,12 +388,6 @@
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.variables.deep.search"/>
 
-    <advancedSetting id="org.intellij.terraform.config.formatting"
-                     default="false"
-                     groupKey="advanced.setting.terraform"
-                     bundle="messages.HCLBundle"
-                     descriptionKey="terraform.formatting.description"/>
-
     <advancedSetting id="org.intellij.terraform.code.vision.usages.limit"
                      default="50"
                      groupKey="advanced.setting.terraform"

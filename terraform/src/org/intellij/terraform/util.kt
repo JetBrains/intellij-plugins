@@ -10,8 +10,8 @@ fun String.nullize(nullizeSpaces: Boolean = false): String? {
   return StringUtil.nullize(this, nullizeSpaces)
 }
 
-fun String?.isTerraformFileExtension(): Boolean {
-  return this == TerraformFileType.DEFAULT_EXTENSION || this == TerraformFileType.TFVARS_EXTENSION
+internal fun isTerraformFileExtension(extension: String?): Boolean {
+  return extension == TerraformFileType.DEFAULT_EXTENSION || extension == TerraformFileType.TFVARS_EXTENSION
 }
 
 fun isTerraformPsiFile(file: PsiFile): Boolean {

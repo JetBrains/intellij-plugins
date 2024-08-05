@@ -1,12 +1,12 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
@@ -25,7 +25,10 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 
   override fun getFeatures(): Set<FormattingService.Feature> = emptySet()
 
-  override fun canFormat(file: PsiFile): Boolean = file is HCLFile && isTerraformFmtEnabled
+  override fun canFormat(file: PsiFile): Boolean {
+    val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
+    return file is HCLFile && settings.RUN_TF_FMT_ON_REFORMAT
+  }
 
   override fun createFormattingTask(formattingRequest: AsyncFormattingRequest): FormattingTask? {
     val context = formattingRequest.context
@@ -35,7 +38,7 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
 
     val virtualFile = context.virtualFile ?: return null
-    if (!virtualFile.extension.isTerraformFileExtension() && !virtualFile.name.endsWith(".tftest.hcl")) {
+    if (!isTerraformFileExtension(virtualFile.extension) && !virtualFile.name.endsWith(".tftest.hcl")) {
       EXECUTION_NOTIFICATION_GROUP.createNotification(
         HCLBundle.message("terraform.formatter.error.title"),
         HCLBundle.message("terraform.formatter.file.extension.error"),
@@ -79,6 +82,3 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
       .withParameters("fmt", filePath)
       .createCommandLine()
 }
-
-internal val isTerraformFmtEnabled: Boolean
-  get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.formatting")

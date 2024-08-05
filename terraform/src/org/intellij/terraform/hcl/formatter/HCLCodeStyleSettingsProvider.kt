@@ -22,7 +22,7 @@ open class HCLCodeStyleSettingsProvider(private val language: Language = HCLLang
             addSpacesTab(settings)
             addBlankLinesTab(settings)
             addWrappingAndBracesTab(settings)
-            addTab(HCLCodeStylePanel(language, settings))
+            addTab(HclCodeStyleOtherPanel(settings))
           }
         }
       }
@@ -34,6 +34,6 @@ open class HCLCodeStyleSettingsProvider(private val language: Language = HCLLang
   }
 
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
-    return HCLCodeStyleSettings(settings, language)
+    return HclCodeStyleSettings(settings, language)
   }
 }

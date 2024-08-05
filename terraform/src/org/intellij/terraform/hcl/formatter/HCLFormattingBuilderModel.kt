@@ -15,7 +15,7 @@ open class HCLFormattingBuilderModel(val language: Language = HCLLanguage) : For
     val settings = formattingContext.codeStyleSettings
     val builder = createSpacingBuilder(settings)
     val block = HCLBlock(null, formattingContext.node, null, null, builder, Indent.getNoneIndent(),
-                         settings.getCustomSettings(HCLCodeStyleSettings::class.java))
+                         settings.getCustomSettings(HclCodeStyleSettings::class.java))
 
     return FormattingModelProvider.createFormattingModelForPsiFile(formattingContext.containingFile, block, settings)
   }

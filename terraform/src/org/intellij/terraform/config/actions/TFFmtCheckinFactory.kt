@@ -34,7 +34,7 @@ class TFFmtCheckinFactory : CheckinHandlerFactory() {
       val manager = PsiManager.getInstance(project)
       val commitedPsiFiles: List<PsiFile> = readAction {
         commitInfo.committedVirtualFiles
-          .filter { it.extension.isTerraformFileExtension() }
+          .filter { isTerraformFileExtension(it.extension) }
           .mapNotNull { manager.findFile(it) }
           .filterIsInstance<HCLFile>()
       }

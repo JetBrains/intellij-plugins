@@ -55,10 +55,10 @@ open class HCLLanguageCodeStyleSettingsProvider(private val language:Language = 
       }
       SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
         consumer.showStandardOptions("RIGHT_MARGIN", "KEEP_LINE_BREAKS", "WRAP_LONG_LINES")
-        consumer.showCustomOption(HCLCodeStyleSettings::class.java, "ARRAY_WRAPPING", HCLBundle.message("hcl.code.style.settings.arrays"), null,
+        consumer.showCustomOption(HclCodeStyleSettings::class.java, "ARRAY_WRAPPING", HCLBundle.message("hcl.code.style.settings.arrays"), null,
                                   CodeStyleSettingsCustomizableOptions.getInstance().WRAP_OPTIONS,
                                   CodeStyleSettingsCustomizable.WRAP_VALUES)
-        consumer.showCustomOption(HCLCodeStyleSettings::class.java, "OBJECT_WRAPPING", HCLBundle.message("hcl.code.style.settings.objects"), null,
+        consumer.showCustomOption(HclCodeStyleSettings::class.java, "OBJECT_WRAPPING", HCLBundle.message("hcl.code.style.settings.objects"), null,
                                   CodeStyleSettingsCustomizableOptions.getInstance().WRAP_OPTIONS,
                                   CodeStyleSettingsCustomizable.WRAP_VALUES)
       }

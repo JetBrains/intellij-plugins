@@ -28,9 +28,9 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
     HCLBundle.message("action.create.terraform.file", templateName)
 
   override fun createFileFromTemplate(name: String?, template: FileTemplate?, dir: PsiDirectory?): PsiFile =
-    super.createFileFromTemplate(handleFileName(name, template), template, dir)
+    super.createFileFromTemplate(getDefaultFileName(name, template), template, dir)
 
-  private fun handleFileName(name: String?, template: FileTemplate?): String? {
+  private fun getDefaultFileName(name: String?, template: FileTemplate?): String? {
     val isDefaultName = name.isNullOrEmpty() || name == DEFAULT_FILE_NAME
 
     val newName = when (template?.name) {
