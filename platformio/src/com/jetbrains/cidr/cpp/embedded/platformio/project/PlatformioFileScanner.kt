@@ -90,7 +90,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       }
       val command = it["command"]!!
       val file = it["file"]!!
-      val directory = it["directory"]!!
+      val directory = it["directory"]!!.intern()
 
       fileList.add(file)
       when (val parseResult = commandParser.parse(CPPCompilationCommand(directory, file, command, emptyList()))) {
