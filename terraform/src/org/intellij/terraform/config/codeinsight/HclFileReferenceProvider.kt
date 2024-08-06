@@ -68,14 +68,14 @@ internal class HclFileReference(psiElement: PsiElement) : PsiPolyVariantReferenc
 
   private fun computeTemplatePathWithRespectToModuleRoot(templateFile: TftplFile, module: Module): TemplateCompletionData {
     return when {
-      !module.item.isDirectory -> {
+      !module.moduleRoot.isDirectory -> {
         TemplateCompletionData("", templateFile.name)
       }
-      templateFile.parent == module.item -> {
+      templateFile.parent == module.moduleRoot -> {
         TemplateCompletionData(PATH_MODULE_LOCATOR, templateFile.name)
       }
       else -> {
-        val modulePath = module.item.virtualFile.path
+        val modulePath = module.moduleRoot.virtualFile.path
         val templatePath = templateFile.virtualFile.path
         val templateRelativePath = templatePath.removePrefix(modulePath).removePrefix("/")
         return TemplateCompletionData(PATH_MODULE_LOCATOR, templateRelativePath)

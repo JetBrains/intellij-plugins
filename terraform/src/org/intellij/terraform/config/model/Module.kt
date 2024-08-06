@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.lang.LanguageMatcher
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
@@ -27,7 +28,6 @@ import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -39,7 +39,7 @@ import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.intellij.terraform.template.psi.TftplFile
 import org.intellij.terraform.withGuaranteedProgressIndicator
 
-class Module private constructor(val item: PsiFileSystemItem) {
+class Module private constructor(val moduleRoot: PsiFileSystemItem) {
   companion object {
     private val LOG = Logger.getInstance(Module::class.java)
 
@@ -50,8 +50,20 @@ class Module private constructor(val item: PsiFileSystemItem) {
         return Module(file as HCLFile)
       }
       else {
-        return Module(directory)
+        return getModule(directory)
       }
+    }
+
+    fun getModule(directory: PsiDirectory): Module {
+      if (isFallbackVariableSearchEnabled) return Module(directory)
+
+      val moduleRoot = ModuleDetectionUtil.findModuleRoot(directory)
+      val dir = moduleRoot?.let { directory.manager.findDirectory(it) }
+      if (dir == null) {
+        LOG.error("No module root for $directory",
+                  Attachment("files.txt", directory.virtualFile.children.joinToString("\n") { it.name }))
+      }
+      return Module(dir ?: directory)
     }
 
     fun getAsModuleBlock(moduleBlock: HCLBlock): Module? {
@@ -118,22 +130,19 @@ class Module private constructor(val item: PsiFileSystemItem) {
           }.fold(VersionConstraint.parse(">=0.12")) { a, b -> VersionConstraint.intersect(a, b) }
           if (constraint.isEmpty()) {
             // Older than Terraform 0.12, should not suggest conversion
-            return CachedValueProvider.Result(false, module.item)
+            return CachedValueProvider.Result(false, module.moduleRoot)
           }
         }
-        return CachedValueProvider.Result(true, module.item)
+        return CachedValueProvider.Result(true, module.moduleRoot)
       }
 
     }
   }
 
-  constructor(file: HCLFile) : this(file as PsiFileSystemItem)
-
-  constructor(directory: PsiDirectory) : this(directory as PsiFileSystemItem)
 
   fun getAllTemplates(): List<TftplFile> {
     val visitor = TemplateFilesVisitor()
-    item.processChildren(visitor)
+    moduleRoot.processChildren(visitor)
     return visitor.getResults()
   }
 
@@ -162,18 +171,11 @@ class Module private constructor(val item: PsiFileSystemItem) {
     return collected.toList()
   }
 
-  private fun getModuleSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
-    if (isFallbackVariableSearchEnabled) return fallbackCalculateModuleAwareSearchScope(context)
+  private fun getModuleSearchScope(): GlobalSearchScope? {
+    if (isFallbackVariableSearchEnabled) return fallbackCalculateModuleAwareSearchScope(moduleRoot)
 
-    val moduleRoot = getVFSParents(context)
-                       .filter { it.isDirectory }
-                       .firstOrNull {
-                         it.children.any {
-                           it.extension == TerraformFileType.DEFAULT_EXTENSION ||
-                           it.extension == "tofu"
-                         }
-                       } ?: return null
-    return GlobalSearchScopes.directoryScope(context.project, moduleRoot, false)
+    val moduleRootVf = moduleRoot.virtualFile ?: return null
+    return GlobalSearchScopes.directoryScope(moduleRoot.project, moduleRootVf, false)
   }
 
 
@@ -215,10 +217,10 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   fun getTerraformModuleScope(): GlobalSearchScope {
-    val searchScope = getModuleSearchScope(item) ?: GlobalSearchScope.projectScope(item.project)
+    val searchScope = getModuleSearchScope() ?: GlobalSearchScope.projectScope(moduleRoot.project)
 
     return PsiSearchScopeUtil.restrictScopeToFileLanguage(
-      item.project,
+      moduleRoot.project,
       searchScope,
       LanguageMatcher.matchWithDialects(HCLLanguage)
     ) as GlobalSearchScope
@@ -228,11 +230,11 @@ class Module private constructor(val item: PsiFileSystemItem) {
     val terraformScope = getTerraformModuleScope()
 
     return withGuaranteedProgressIndicator {
-      if (!PsiSearchHelper.getInstance(item.project).processAllFilesWithWord("variable", terraformScope, processor, true))
+      if (!PsiSearchHelper.getInstance(moduleRoot.project).processAllFilesWithWord("variable", terraformScope, processor, true))
         return@withGuaranteedProgressIndicator false
 
       // also process all unindexed files in the same dir IJPL-148978
-      val indexableFilesIndex = IndexableFilesIndex.getInstance(item.project)
+      val indexableFilesIndex = IndexableFilesIndex.getInstance(moduleRoot.project)
       process(PsiElementProcessor { file ->
         if (!indexableFilesIndex.shouldBeIndexed(file.virtualFile))
           processor.process(file)
@@ -267,14 +269,14 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
   private fun process(processor: PsiElementProcessor<HCLFile>): Boolean {
     // TODO: Support json files (?)
-    if (item is HCLFile) {
-      if (item.language == TerraformLanguage) {
-        return processor.execute(item)
+    if (moduleRoot is HCLFile) {
+      if (moduleRoot.language == TerraformLanguage) {
+        return processor.execute(moduleRoot)
       }
       return false
     }
-    assert(item is PsiDirectory)
-    return item.processChildren(PsiElementProcessor { element ->
+    assert(moduleRoot is PsiDirectory)
+    return moduleRoot.processChildren(PsiElementProcessor { element ->
       if (element !is HCLFile || element.language != TerraformLanguage) return@PsiElementProcessor true
       processor.execute(element)
     })
@@ -423,7 +425,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   fun isHCL2Supported(): Boolean {
-    return CachedValuesManager.getCachedValue(this.item, IsHCL2SupportedCachedValueProvider(this))
+    return CachedValuesManager.getCachedValue(this.moduleRoot, IsHCL2SupportedCachedValueProvider(this))
   }
 
   val model: TypeModel
@@ -431,13 +433,13 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
   override fun equals(other: Any?): Boolean {
     if (other !is Module) return false
-    val file = item.virtualFile
-    return if (file != null) file == other.item.virtualFile
-    else item == other.item
+    val file = moduleRoot.virtualFile
+    return if (file != null) file == other.moduleRoot.virtualFile
+    else moduleRoot == other.moduleRoot
   }
 
   override fun hashCode(): Int {
-    return (item.virtualFile ?: item).hashCode()
+    return (moduleRoot.virtualFile ?: moduleRoot).hashCode()
   }
 
   fun getType(): Type {

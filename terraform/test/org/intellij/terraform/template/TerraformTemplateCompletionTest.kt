@@ -78,6 +78,7 @@ class TerraformTemplateCompletionTest : BasePlatformTestCase() {
   }
 
   fun `test completion available in injected HIL inside a data language segment`() {
+    myFixture.addFileToProject("main.tf", "")
     val injectedFile = myFixture.configureByText("test.tftpl", """
       %{ for variable in another_loop_variables ~}
         resource "aws_instance" "demo_vm" {

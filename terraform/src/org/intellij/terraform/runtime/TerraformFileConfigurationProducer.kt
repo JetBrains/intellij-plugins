@@ -63,11 +63,11 @@ sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRu
       if (!TerraformPatterns.TerraformConfigFile.accepts(file)) return null
 
       val module = element.getTerraformModule()
-      if (!module.item.isDirectory) {
+      if (!module.moduleRoot.isDirectory) {
         return null
       }
 
-      val virtualFile = module.item.virtualFile
+      val virtualFile = module.moduleRoot.virtualFile
       return virtualFile.path to "directory ${virtualFile.name}"
     }
   }

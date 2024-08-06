@@ -25,6 +25,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.applyIf
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.version.MalformedConstraintException
 import org.intellij.terraform.config.model.version.Version
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -259,7 +260,10 @@ object ModuleDetectionUtil {
       return directoryResult(directory, source, err, moduleBlock)
     }
     LOG.debug("Module search succeed, directory is $dir")
-    val mod = Module(dir)
+    val mod = Module.getModule(dir)
+    if (mod.moduleRoot != dir) {
+      LOG.error("Module not found for $dir, but found ${mod.moduleRoot} instead")
+    }
     return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifest.context, relative,
                                       getModuleFiles(mod))
   }
@@ -337,7 +341,7 @@ object ModuleDetectionUtil {
 
   private fun getModuleFiles(module: Module?): Array<out PsiElement> {
     if (module == null) return emptyArray()
-    return when (val item = module.item) {
+    return when (val item = module.moduleRoot) {
       is PsiDirectory -> arrayOf(item, *item.files)
       else -> arrayOf(item)
     }
@@ -419,7 +423,7 @@ object ModuleDetectionUtil {
 
     val relative = directory.virtualFile.findFileByRelativePath(source) ?: return null
     if (!relative.exists() || !relative.isDirectory) return null
-    return directory.manager.findDirectory(relative)?.let { Module(it) }
+    return directory.manager.findDirectory(relative)?.let { Module.getModule(it) }
   }
 
   private fun getKeyPrefix(directory: PsiDirectory,
@@ -475,6 +479,15 @@ object ModuleDetectionUtil {
       parent.findChild(".terraform")?.takeIf { it.isDirectory }
     }
   }
+
+  internal fun findModuleRoot(context: PsiFileSystemItem): VirtualFile? = getVFSParents(context)
+    .filter { it.isDirectory }
+    .firstOrNull {
+      it.children.any {
+        it.extension == TerraformFileType.DEFAULT_EXTENSION ||
+        it.extension == "tofu"
+      }
+    }
 
   private fun getRoots(project: Project): Array<out VirtualFile> {
     return ProjectRootManager.getInstance(project).contentRootsFromAllModules
