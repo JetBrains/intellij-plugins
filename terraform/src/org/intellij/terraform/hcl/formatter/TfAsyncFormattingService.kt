@@ -3,11 +3,11 @@ package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.config.TerraformConstants.EXECUTION_NOTIFICATION_GROUP
@@ -16,7 +16,7 @@ import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 
-class TfAsyncFormattingService : AsyncDocumentFormattingService() {
+internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
 
   override fun getNotificationGroupId(): String = EXECUTION_NOTIFICATION_GROUP.displayId
@@ -36,28 +36,31 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
 
     val virtualFile = context.virtualFile ?: return null
-    val filePath = virtualFile.canonicalPath ?: return null
-    val commandLine = createCommandLine(project, filePath)
+    val commandLine = createCommandLine(project)
+    val processHandler = CapturingProcessHandler(commandLine)
+
     return object : FormattingTask {
       override fun run() {
         try {
-          val process = commandLine.createProcess()
-          val exitCode = process.waitFor()
-          if (exitCode == 0) {
-            VfsUtil.markDirtyAndRefresh(true, false, false, virtualFile)
-            request.onTextReady(null)
-          } else {
-            request.onError(HCLBundle.message("terraform.formatter.error.title"),
-                                      HCLBundle.message("terraform.formatter.error.message", virtualFile.name))
+          processHandler.processInput.write(request.documentText.toByteArray())
+          processHandler.processInput.close()
+
+          val output = processHandler.runProcess()
+          if (output.exitCode == 0) {
+            request.onTextReady(output.stdout)
+          }
+          else {
+            request.onError(HCLBundle.message("terraform.formatter.error.title"), output.stderr)
           }
         }
         catch (e: Exception) {
           request.onError(HCLBundle.message("terraform.formatter.error.title"),
-                                    HCLBundle.message("terraform.formatter.error.message", virtualFile.name))
+                          HCLBundle.message("terraform.formatter.error.message", virtualFile.name))
         }
       }
 
       override fun cancel(): Boolean {
+        processHandler.destroyProcess()
         return true
       }
 
@@ -65,10 +68,10 @@ class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
   }
 
-  private fun createCommandLine(project: Project, filePath: String): GeneralCommandLine =
+  private fun createCommandLine(project: Project): GeneralCommandLine =
     TFExecutor.`in`(project)
       .withPresentableName(TF_FMT)
-      .withParameters("fmt", filePath)
+      .withParameters("fmt", "-")
       .createCommandLine()
 }
 
