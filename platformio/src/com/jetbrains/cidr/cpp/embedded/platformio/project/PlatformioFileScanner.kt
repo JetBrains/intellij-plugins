@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.intellij.build.events.BuildEventsNls
 import com.intellij.build.events.MessageEvent.Kind
 import com.intellij.build.events.impl.MessageEventImpl
-import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent
@@ -71,8 +70,10 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     return result
   }
 
+  internal data class CompDbEntry(val file: String, val command: String, val directory: String)
+
   internal fun scanSources(
-    compDbJson: List<Map<String, String>>,
+    compDbJson: List<CompDbEntry>,
     workspace: PlatformioWorkspace,
     languageConfigurations: List<ExternalLanguageConfiguration>,
     confBuilder: ExternalResolveConfigurationBuilder
@@ -85,12 +86,9 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     val commandConverter = CPPCompilationCommandConverter(environment, workspace.project)
 
     compDbJson.mapNotNull {
-      if (it["command"] == null || it["file"] == null || it["directory"] == null) {
-        throw ExternalSystemException("Unable to parse entry in compile_commands.json : $it")
-      }
-      val command = it["command"]!!
-      val file = it["file"]!!
-      val directory = it["directory"]!!.intern()
+      val command = it.command
+      val file = it.file
+      val directory = it.directory
 
       fileList.add(file)
       when (val parseResult = commandParser.parse(CPPCompilationCommand(directory, file, command, emptyList()))) {

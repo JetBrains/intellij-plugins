@@ -187,7 +187,13 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         checkCancelled()
 
         val compDbTokenType = object : TypeToken<List<Map<String, String>>>(){}.type
-        val compDbJson: List<Map<String, String>> = Gson().fromJson(compDbText, compDbTokenType)
+        val compDbJson = Gson().fromJson<List<Map<String, String>>>(compDbText, compDbTokenType)?.map {
+          if (it["file"] == null || it["command"] == null || it["directory"] == null) {
+            throw ExternalSystemException("Malformed Compilation Database entry! $it")
+          }
+          PlatformioFileScanner.CompDbEntry(it["file"]!!, it["command"]!!, it["directory"]!!.intern())
+        } ?: emptyList()
+
         checkCancelled()
         scanner.scanSources(compDbJson, project.service<PlatformioWorkspace>(), languageConfigurations, confBuilder)
         checkCancelled()
