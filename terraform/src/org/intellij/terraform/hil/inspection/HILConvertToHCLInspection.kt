@@ -17,7 +17,6 @@ import com.intellij.psi.impl.source.tree.CompositePsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.DocumentUtil
 import com.intellij.util.SmartList
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getTerraformModule

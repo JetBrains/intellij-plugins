@@ -8,7 +8,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.hcl.HCLBundle

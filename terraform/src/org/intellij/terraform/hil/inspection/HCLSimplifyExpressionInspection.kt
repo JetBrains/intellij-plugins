@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.DocumentUtil
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.HCLBundle

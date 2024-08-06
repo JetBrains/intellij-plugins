@@ -36,10 +36,8 @@ import org.jetbrains.annotations.Nls
 class HILUnresolvedReferenceInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
-           || file.language == HCLLanguage
-           || file.language == HILLanguage
-           || isTerraformPsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
+    if (!isTerraformPsiFile(file) && file.language !in setOf(HCLLanguage, HILLanguage)) return false
+    return isTerraformPsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
   }
 
 
@@ -68,13 +66,16 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
       }
       if (parent.from === element) {
         checkReferences(element)
-      } else if (isScopeElementReference(element, parent)) {
+      }
+      else if (isScopeElementReference(element, parent)) {
         // TODO: Check scope parameter reference
         checkReferences(element)
-      } else if (isResourceInstanceReference(element, parent)) {
+      }
+      else if (isResourceInstanceReference(element, parent)) {
         // TODO: Check and report "no such resource of type" error
         checkReferences(element)
-      } else if (isResourcePropertyReference(element, parent)) {
+      }
+      else if (isResourcePropertyReference(element, parent)) {
         // TODO: Check and report "no such resource property" error (only if there such resource)
         checkReferences(element)
       }
@@ -101,7 +102,7 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
         // logging for IDEADEV-29655
         if (referenceRange.startOffset > referenceRange.endOffset) {
           LOG.error("Reference range start offset > end offset:  " + reference +
-              ", start offset: " + referenceRange.startOffset + ", end offset: " + referenceRange.endOffset)
+                    ", start offset: " + referenceRange.startOffset + ", end offset: " + referenceRange.endOffset)
         }
 
         val fixes = buildList {
@@ -122,7 +123,7 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
   }
 
   fun isUrlReference(reference: PsiReference): Boolean {
-    return reference is FileReferenceOwner// || reference is com.intellij.xml.util.AnchorReference
+    return reference is FileReferenceOwner // || reference is com.intellij.xml.util.AnchorReference
   }
 
   @Nls
@@ -130,7 +131,8 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
     val messagePattern: String
     if (reference is EmptyResolveMessageProvider) {
       messagePattern = reference.unresolvedMessagePattern
-    } else {
+    }
+    else {
       // although the message has a parameter, it must be taken uninterpolated as it will be applied later
       @Suppress("InvalidBundleOrProperty")
       messagePattern = HCLBundle.message("hil.unresolved.reference.inspection.unresolved.reference.error.message")
@@ -139,7 +141,8 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
     @Nls var description: String
     try {
       description = BundleBase.format(messagePattern, reference.canonicalText) // avoid double formatting
-    } catch (ex: IllegalArgumentException) {
+    }
+    catch (ex: IllegalArgumentException) {
       // unresolvedMessage provided by third-party reference contains wrong format string (e.g. {}), tolerate it
       description = messagePattern
     }
