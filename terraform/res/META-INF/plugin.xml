@@ -388,6 +388,12 @@
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.variables.deep.search"/>
 
+    <advancedSetting id="org.intellij.terraform.variables.search.fallback"
+                     default="false"
+                     groupKey="advanced.setting.terraform"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.variables.search.fallback"/>
+
     <advancedSetting id="org.intellij.terraform.code.vision.usages.limit"
                      default="50"
                      groupKey="advanced.setting.terraform"

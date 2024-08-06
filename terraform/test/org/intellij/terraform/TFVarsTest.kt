@@ -1,16 +1,57 @@
 package org.intellij.terraform
 
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
+import org.intellij.terraform.config.model.isFallbackVariableSearchEnabled
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
+import org.junit.jupiter.api.Assumptions.assumeTrue
 
-class TFVarsTest : BasePlatformTestCase() {
+class TFVarsTest : AbstractTFVarsTest(false)
+
+class TFVarsFallbackTest : AbstractTFVarsTest(true) {
+  fun testDifferentDirsWithoutLock() {
+
+    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+
+    myFixture.configureByText("simple.tf", """
+      variable "foo" {
+        default = "42"
+        type = "string"
+      }
+      variable "baz" {
+        type = "map"
+      }
+    """.trimIndent())
+
+    val fileName = "dir/prod/prod.tfvars"
+    configureByTextInDir(fileName, """
+      <warning descr="Undefined variable 'foo'">foo</warning> = "9000"
+      <warning descr="Undefined variable 'baz'">baz</warning> = 1
+      <warning descr="Undefined variable 'bar'">bar</warning> = 0
+    """.trimIndent())
+    myFixture.testHighlighting(fileName)
+  }
+
+}
+
+abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnabled: Boolean) : BasePlatformTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    val prev = AdvancedSettings.getBoolean("org.intellij.terraform.variables.search.fallback")
+    AdvancedSettings.setBoolean("org.intellij.terraform.variables.search.fallback", enableFallbackVariableSearchEnabled)
+    Disposer.register(testRootDisposable) {
+      AdvancedSettings.setBoolean("org.intellij.terraform.variables.search.fallback", prev)
+    }
+  }
 
   fun testSameDir() {
     myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
@@ -62,29 +103,6 @@ class TFVarsTest : BasePlatformTestCase() {
         newFoo = "9000"
         baz = 1
     """.trimIndent(), true)
-  }
-
-  fun testDifferentDirsWithoutLock() {
-
-    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
-
-    myFixture.configureByText("simple.tf", """
-      variable "foo" {
-        default = "42"
-        type = "string"
-      }
-      variable "baz" {
-        type = "map"
-      }
-    """.trimIndent())
-
-    val fileName = "dir/prod/prod.tfvars"
-    configureByTextInDir(fileName, """
-      <warning descr="Undefined variable 'foo'">foo</warning> = "9000"
-      <warning descr="Undefined variable 'baz'">baz</warning> = 1
-      <warning descr="Undefined variable 'bar'">bar</warning> = 0
-    """.trimIndent())
-    myFixture.testHighlighting(fileName)
   }
 
   fun testDifferentDirsWithLock() {
@@ -172,7 +190,10 @@ class TFVarsTest : BasePlatformTestCase() {
       <caret>
     """.trimIndent())
     myFixture.testHighlighting(fileName)
-    myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo1", "foo2", "baz1", "baz2")
+    if (isFallbackVariableSearchEnabled)
+      myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo1", "foo2", "baz1", "baz2")
+    else
+      myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo2", "baz2") // not "foo1","baz1"
   }
 
   fun testUnresolvedVarsNoIndex() {
@@ -196,7 +217,7 @@ class TFVarsTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
-  private fun configureByTextInDir(fileName: String, text: String) {
+  protected fun configureByTextInDir(fileName: String, text: String) {
     WriteAction.compute<VirtualFile, Throwable> {
       val prodTfvarsFile: VirtualFile = myFixture.tempDirFixture.createFile(fileName)
       VfsUtil.saveText(prodTfvarsFile, text)

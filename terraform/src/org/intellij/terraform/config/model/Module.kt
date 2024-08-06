@@ -27,6 +27,7 @@ import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -161,7 +162,23 @@ class Module private constructor(val item: PsiFileSystemItem) {
     return collected.toList()
   }
 
-  private fun calculateModuleAwareSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
+  private fun getModuleSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
+    if (isFallbackVariableSearchEnabled) return fallbackCalculateModuleAwareSearchScope(context)
+
+    val moduleRoot = getVFSParents(context)
+                       .filter { it.isDirectory }
+                       .firstOrNull {
+                         it.children.any {
+                           it.extension == TerraformFileType.DEFAULT_EXTENSION ||
+                           it.extension == "tofu"
+                         }
+                       } ?: return null
+    return GlobalSearchScopes.directoryScope(context.project, moduleRoot, false)
+  }
+
+
+  @Deprecated("Remove after 2024.3 release if no usages of `isFallbackVariableSearchEnabled` detected")
+  private fun fallbackCalculateModuleAwareSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
     val currentFile = context.virtualFile ?: return null
     val currentFileDir = currentFile.takeIf { it.isDirectory } ?: currentFile.parent
     if (!isDeepVariableSearchEnabled) {
@@ -198,7 +215,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   fun getTerraformModuleScope(): GlobalSearchScope {
-    val searchScope = calculateModuleAwareSearchScope(item) ?: GlobalSearchScope.projectScope(item.project)
+    val searchScope = getModuleSearchScope(item) ?: GlobalSearchScope.projectScope(item.project)
 
     return PsiSearchScopeUtil.restrictScopeToFileLanguage(
       item.project,
@@ -445,7 +462,11 @@ class Module private constructor(val item: PsiFileSystemItem) {
 internal val isDeepVariableSearchEnabled: Boolean
   get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.variables.deep.search")
 
+internal val isFallbackVariableSearchEnabled: Boolean
+  get() = AdvancedSettings.getBoolean("org.intellij.terraform.variables.search.fallback")
+
 internal fun createDisableDeepVariableSearchQuickFix(): LocalQuickFix? {
+  if (!isFallbackVariableSearchEnabled) return null
   if (!isDeepVariableSearchEnabled) return null
 
   return object : LocalQuickFix {
