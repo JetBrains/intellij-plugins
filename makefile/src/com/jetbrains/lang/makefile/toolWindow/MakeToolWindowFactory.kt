@@ -18,7 +18,6 @@ import com.intellij.ui.content.impl.ContentImpl
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.lang.makefile.*
-import com.jetbrains.lang.makefile.psi.MakefileTarget
 import java.awt.GridLayout
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
@@ -53,29 +52,17 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
       val panel = SimpleToolWindowPanel(true)
 
-      val tree = object : Tree(model), DataProvider {
-        override fun getData(dataId: String): Any? {
-          if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.`is`(dataId)) {
-            val selectedNodes = getSelectedNodes(MakefileTargetNode::class.java) { true }
-            return DataProvider { slowData(it, selectedNodes) }
+      val tree = object : Tree(model), UiDataProvider {
+        override fun uiDataSnapshot(sink: DataSink) {
+          val selectedNodes = getSelectedNodes(MakefileTargetNode::class.java) { true }
+          val selected = selectedNodes.firstOrNull() ?: return
+          sink.lazy(PSI_ELEMENT) {
+            val psi = selected.parent.psiFile ?: return@lazy null
+            MakefileTargetIndex.getInstance().getTargets(
+              selected.name, project, GlobalSearchScope.fileScope(psi))
+              .firstOrNull()
           }
-          return null
         }
-
-        private fun slowData(dataId: String, selectedNodes: Array<MakefileTargetNode>): MakefileTarget? {
-          if (PSI_ELEMENT.`is`(dataId)) {
-            if (selectedNodes.any()) {
-              val selected = selectedNodes.first()
-              if (selected.parent.psiFile == null)
-                return null
-              return MakefileTargetIndex.getInstance().getTargets(selected.name, project,
-                                                                          GlobalSearchScope.fileScope(
-                                                                            selected.parent.psiFile!!)).firstOrNull()
-            }
-          }
-          return null
-        }
-
       }.apply {
         cellRenderer = MakefileCellRenderer(project)
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION

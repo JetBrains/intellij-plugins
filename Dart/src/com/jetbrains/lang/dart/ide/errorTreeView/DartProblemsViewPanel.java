@@ -51,7 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
+public class DartProblemsViewPanel extends SimpleToolWindowPanel implements CopyProvider {
   private static final LayeredIcon DART_ERRORS_ICON;
   private static final LayeredIcon DART_WARNINGS_ICON;
 
