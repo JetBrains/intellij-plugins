@@ -33,7 +33,7 @@ class PlatformioRefreshAction : AnAction(ExternalSystemIconProvider.getExtension
 
 }
 
-class PlatformioProjectResolvePolicy(val cleanCache: Boolean) : ProjectResolverPolicy {
+class PlatformioProjectResolvePolicy(val cleanCache: Boolean, val isInitial: Boolean) : ProjectResolverPolicy {
   override fun isPartialDataResolveAllowed(): Boolean = false
 }
 

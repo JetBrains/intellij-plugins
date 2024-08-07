@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
+import com.jetbrains.cidr.cpp.embedded.platformio.initializeProject
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceInitializationUtil.runAfterPlatformioInitialized
 import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
 import java.io.File
@@ -83,7 +84,7 @@ class PlatformioManager :
       // Check if initial project reload is needed
       if (PlatformioWorkspace.isPlatformioProject(project)) {
         runInEdt {
-          refreshProject(workspace.project, false)
+          initializeProject(workspace.project)
           project.messageBus.connect()
             .subscribe(ExecutionTargetManager.TOPIC, ExecutionTargetListener { runInEdt { refreshProject(project, false) } })
         }

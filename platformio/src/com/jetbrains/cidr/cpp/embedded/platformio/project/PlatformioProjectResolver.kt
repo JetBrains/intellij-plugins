@@ -94,7 +94,8 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         cliGenerateProject(project, listener, id, projectDir, boardInfo)
       }
       checkCancelled()
-      if (resolverPolicy.asSafely<PlatformioProjectResolvePolicy>()?.cleanCache != false) {
+      val pioResolvePolicy = resolverPolicy.asSafely<PlatformioProjectResolvePolicy>()
+      if (pioResolvePolicy?.cleanCache != false) {
         platformioService.cleanCache()
       }
       val projectName = project.name
@@ -178,7 +179,10 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
         checkCancelled()
 
-        var compDbText = platformioService.compileDbDeflatedBase64?.inflate()
+        var compDbText: String? = null
+        if (pioResolvePolicy?.isInitial == true) {
+          compDbText = platformioService.compileDbDeflatedBase64?.inflate()
+        }
         if (compDbText == null) {
           compDbText = gatherCompDB(id, "pio-run:${UUID.randomUUID()}", project, activeEnvName, listener, projectPath)
           checkCancelled()
@@ -373,8 +377,11 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     val compDbFile = Path.of(projectPath).resolve("compile_commands.json").toFile()
     val compDbPresent = compDbFile.isFile
 
+    val parameters = mutableListOf("run", "-t", "compiledb")
+    if (!activeEnvName.isBlank()) parameters.apply { add("-e"); add(activeEnvName) }
+
     try {
-      runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.sources"), listOf("run", "-t", "compiledb"))
+      runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.sources"), parameters)
       return compDbFile.readText()
     }
     finally {

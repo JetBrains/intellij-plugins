@@ -142,13 +142,23 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
   override fun getStateModificationCount(): Long = stateModCounter.get()
 }
 
-val PlatformioProjectResolvePolicyCleanCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(true)
-val PlatformioProjectResolvePolicyPreserveCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(false)
+val PlatformioProjectResolvePolicyCleanCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(true, false)
+val PlatformioProjectResolvePolicyPreserveCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(false, false)
+val PlatformioProjectResolvePolicyInitialize: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(false, true)
 
 fun refreshProject(project: Project, cleanCache: Boolean) {
   ApplicationManager.getApplication().invokeLater {
     WriteAction.run<Throwable> {
       val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
+      ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
+    }
+  }
+}
+
+fun initializeProject(project: Project) {
+  ApplicationManager.getApplication().invokeLater {
+    WriteAction.run<Throwable> {
+      val policy = PlatformioProjectResolvePolicyInitialize
       ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
     }
   }
