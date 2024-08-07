@@ -403,17 +403,15 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @Nullable Object getData(@NotNull String dataId,
-                                      @NotNull List<DiagramNode<DiagramObject>> list,
-                                      @NotNull DiagramBuilder builder) {
-        if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
-          final SmartPsiElementPointer<?> target = list.get(0).getIdentifyingElement().getNavigationTarget();
+      public void uiDataSnapshot(@NotNull DataSink sink, @NotNull List<DiagramNode<DiagramObject>> nodes, @NotNull DiagramBuilder builder) {
+        super.uiDataSnapshot(sink, nodes, builder);
+        sink.set(JSModulesDiagramUtils.DIAGRAM_BUILDER, builder);
+        DiagramNode<DiagramObject> single = ContainerUtil.getOnlyItem(nodes);
+        if (single == null) return;
+        sink.lazy(CommonDataKeys.PSI_ELEMENT, () -> {
+          SmartPsiElementPointer<?> target = single.getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
-        }
-        else if (JSModulesDiagramUtils.DIAGRAM_BUILDER.is(dataId)) {
-          return builder;
-        }
-        return null;
+        });
       }
 
       @Override

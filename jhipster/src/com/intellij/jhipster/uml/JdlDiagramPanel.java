@@ -95,7 +95,7 @@ final class JdlDiagramPanel implements Disposable {
     public void uiDataSnapshot(@NotNull DataSink sink) {
       if (builder == null) return;
 
-      DataSink.uiDataSnapshot(sink, dataId -> UmlFileEditorImpl.getData(dataId, builder));
+      UmlFileEditorImpl.uiDataSnapshot(sink, builder);
       if (builder instanceof GraphBuilder<?, ?> o) {
         sink.set(GraphDataKeys.GRAPH_BUILDER, o);
       }

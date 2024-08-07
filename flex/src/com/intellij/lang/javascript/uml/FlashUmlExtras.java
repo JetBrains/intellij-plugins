@@ -9,7 +9,10 @@ import com.intellij.diagram.settings.DiagramConfigGroup;
 import com.intellij.diagram.util.DiagramSelectionService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataSink;
+import com.intellij.pom.Navigatable;
 import com.intellij.uml.utils.DiagramBundle;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -56,22 +59,16 @@ public final class FlashUmlExtras extends DiagramExtras<Object> {
   }
 
   @Override
-  public Object getData(final @NotNull String dataId, final @NotNull List<DiagramNode<Object>> diagramNodes, final @NotNull DiagramBuilder builder) {
-    if (!CommonDataKeys.NAVIGATABLE.is(dataId)) {
-      return null;
-    }
-
-    final List<DiagramEdge<?>> edges = DiagramSelectionService.getInstance().getSelectedEdges(builder);
-    if (edges.size() != 1) {
-      return null;
-    }
-
-    final DiagramEdge<?> edge = edges.get(0);
-    if (edge instanceof FlashUmlEdge) {
-      DiagramRelationshipInfo relationship = edge.getRelationship();
-      return relationship instanceof FlashUmlRelationship ? ((FlashUmlRelationship)relationship).getElement() : null;
-    }
-    return null;
+  public void uiDataSnapshot(@NotNull DataSink sink, @NotNull List<DiagramNode<Object>> nodes, @NotNull DiagramBuilder builder) {
+    super.uiDataSnapshot(sink, nodes, builder);
+    List<DiagramEdge<?>> edges = DiagramSelectionService.getInstance().getSelectedEdges(builder);
+    DiagramEdge<?> edge = ContainerUtil.getOnlyItem(edges);
+    if (!(edge instanceof FlashUmlEdge umlEdge)) return;
+    sink.lazy(CommonDataKeys.NAVIGATABLE, () -> {
+      DiagramRelationshipInfo relationship = umlEdge.getRelationship();
+      return relationship instanceof FlashUmlRelationship o &&
+             o.getElement() instanceof Navigatable oo ? oo : null;
+    });
   }
 
   @Override
