@@ -98,9 +98,10 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
             conf.languageKind == OCFileTypeHelpers.getLanguageKind(file)
           }
           if (fallback == null) { return@mapNotNull null }
+          val dir = File(directory)
           CPPCommandObject(
-            File(directory),
-            File(file),
+            dir,
+            dir.resolve(File(file)),
             file,
             fallback.compilerExecutable!!,
             CidrSwitchBuilder().parseAndAdd(command, CPPCompilerSwitchesUtil.getFlagsFormat(environment)).args.drop(1).filter { f -> f != file },
@@ -111,10 +112,11 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
           val fallback = languageConfigurations.find { conf ->
             conf.languageKind == OCFileTypeHelpers.getLanguageKind(file)
           }
+          val dir = File(directory)
           if (fallback == null) { return@mapNotNull null }
           CPPCommandObject(
-            File(directory),
-            File(file),
+            dir,
+            dir.resolve(File(file)),
             file,
             fallback.compilerExecutable!!,
             fallback.compilerSwitches ?: emptyList(),
