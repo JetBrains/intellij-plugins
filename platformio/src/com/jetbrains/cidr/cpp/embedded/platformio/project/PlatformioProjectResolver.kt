@@ -38,6 +38,7 @@ import com.jetbrains.cidr.external.system.model.impl.ExternalModuleImpl
 import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
 import org.jetbrains.annotations.Nls
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.*
 
 open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioExecutionSettings> {
@@ -74,7 +75,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     val platformioService = project.service<PlatformioService>()
     platformioService.projectStatus = PARSING
     try {
-      val projectFile = LocalFileSystem.getInstance().findFileByPath(projectPath)!!
+      val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectPath) ?: throw ExternalSystemException(FileNotFoundException("Project directory not found at $projectPath"))
       val projectDir = if (projectFile.isDirectory) projectFile else projectFile.parent
       val boardInfo = project.getUserData(PROJECT_INIT_KEY)
       if (boardInfo != null) {
