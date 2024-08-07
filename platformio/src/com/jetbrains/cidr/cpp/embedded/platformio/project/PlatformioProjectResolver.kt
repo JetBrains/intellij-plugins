@@ -381,7 +381,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     if (!activeEnvName.isBlank()) parameters.apply { add("-e"); add(activeEnvName) }
 
     try {
-      runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.sources"), parameters)
+      runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.compdb"), parameters)
       return compDbFile.readText()
     }
     finally {
