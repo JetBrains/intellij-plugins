@@ -9,15 +9,12 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataSink;
 import com.intellij.openapi.actionSystem.UiDataProvider;
-import com.intellij.openapi.graph.GraphDataKeys;
-import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.services.GraphLayoutService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
-import com.intellij.uml.UmlFileEditorImpl;
 import com.intellij.uml.components.UmlGraphZoomableViewport;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -94,12 +91,6 @@ final class JdlDiagramPanel implements Disposable {
     @Override
     public void uiDataSnapshot(@NotNull DataSink sink) {
       if (builder == null) return;
-
-      UmlFileEditorImpl.uiDataSnapshot(sink, builder);
-      if (builder instanceof GraphBuilder<?, ?> o) {
-        sink.set(GraphDataKeys.GRAPH_BUILDER, o);
-      }
-      sink.set(GraphDataKeys.GRAPH, builder.getGraph());
       sink.lazy(CommonDataKeys.VIRTUAL_FILE, () -> {
         return fileEditor.getFile();
       });
