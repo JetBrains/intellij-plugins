@@ -9,6 +9,7 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
@@ -135,7 +136,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
 
   override val lspGoToDefinitionSupport = false
   override val lspHoverSupport = false
-  override val lspCompletionSupport = null
+  override val lspCompletionSupport = BaseLspTypeScriptServiceCompletionSupport()
   override val lspDiagnosticsSupport = null
   override val lspFindReferencesSupport = null
 
