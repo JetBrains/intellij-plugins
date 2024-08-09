@@ -6,7 +6,14 @@ var intellijUtil = require('./intellijUtil')
   , intellijParameters = require('./karma-intellij-parameters')
   , originalConfigPath = intellijParameters.getUserConfigFilePath()
   , IntellijReporter = require('./intellijReporter')
-  , IntellijCoverageReporter = require('./intellijCoverageReporter');
+  , IntellijCoverageReporter = require('./intellijCoverageReporter')
+  , originalProjectRootRequire = require('module').createRequire(process.cwd())
+  , TS_AVAILABLE = false;
+
+try {
+  originalProjectRootRequire('ts-node');
+  TS_AVAILABLE = true;
+} catch {}
 
 function setBasePath(config) {
   const path = require('path');
@@ -70,6 +77,11 @@ function disableSingleRun(config) {
 
 module.exports = function (config) {
   if (originalConfigPath) {
+    // support for karma.conf.ts when ts-node is available
+    // https://github.com/karma-runner/karma/blob/v6.4.4/lib/config.js#L431-L434
+    if (require('path').extname(originalConfigPath) === '.ts' && TS_AVAILABLE) {
+      originalProjectRootRequire('ts-node').register();
+    }
     var originalConfigModule = require(originalConfigPath);
     // https://github.com/karma-runner/karma/blob/v1.7.0/lib/config.js#L364
     if (typeof originalConfigModule === 'object' && typeof originalConfigModule.default !== 'undefined') {
