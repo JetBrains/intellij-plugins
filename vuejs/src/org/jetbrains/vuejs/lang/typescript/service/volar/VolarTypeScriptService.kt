@@ -40,8 +40,12 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     val hrMarker = "\n\n---\n\n"
     if (markupContent.value.startsWith(internalVolarLeakMarker)) {
       val index = markupContent.value.indexOf(hrMarker)
-      if (index > -1) {
-        markupContent.value = markupContent.value.substring(index + hrMarker.length)
+      if (index > -1 && index + hrMarker.length < markupContent.value.length) {
+        val mc = MarkupContent(
+          markupContent.kind,
+          markupContent.value.substring(index + hrMarker.length)
+        )
+        return super.createQuickInfoResponse(mc)
       }
     }
     return super.createQuickInfoResponse(markupContent)
