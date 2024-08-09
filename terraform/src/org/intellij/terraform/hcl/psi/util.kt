@@ -26,11 +26,12 @@ fun HCLBlock.getNameElementUnquoted(i: Int): String? {
 }
 
 internal fun HCLElement.getElementName(): String? = when (this) {
-  // For now, consider the name of 'Local' property, 'Variable' and 'Data source'
+  // For now, consider the name of 'Local' property, 'Variable', 'Data source' and 'Resource'
   is HCLProperty -> this.name
   is HCLBlock -> when {
     TerraformPatterns.VariableRootBlock.accepts(this) -> this.getNameElementUnquoted(1)
-    TerraformPatterns.DataSourceRootBlock.accepts(this) -> this.getNameElementUnquoted(2)
+    TerraformPatterns.DataSourceRootBlock.accepts(this) || TerraformPatterns.ResourceRootBlock.accepts(this) ->
+      this.getNameElementUnquoted(2)
     else -> null
   }
   else -> null

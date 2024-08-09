@@ -5,7 +5,7 @@ import org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider
 
 internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
 
-  fun testInheritors() = doTest("""
+  fun testBaseRootBlocks() = doTest("""
     provider "aws" {
       region = "us-west-2"
     }
@@ -43,7 +43,7 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
       tag_suffix     = "env"/*<# [1 usage] #>*/
     }
 
-    resource "aws_instance" "example" {
+    resource "aws_instance" "example" {/*<# [1 usage] #>*/
       for_each = var.instances
 
       ami           = each.value.ami
@@ -82,7 +82,7 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
       default = true
     }
 
-    resource "aws_instance" "test" {
+    resource "aws_instance" "test" {/*<# [no usages] #>*/
       ami           = data.aws_ami.latest_amazon_linux.id
       instance_type = "t2.micro"
       subnet_id     = data.aws_ami.latest_amazon_linux.tpm_support
