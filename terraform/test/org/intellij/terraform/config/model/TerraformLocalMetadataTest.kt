@@ -3,6 +3,7 @@ package org.intellij.terraform.config.model
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.options.advanced.withAdvancedSettingValue
@@ -209,7 +210,9 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
         myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
         myFixture.configureByText("main.tf", genInspectedMain("dummyProp1"))
         withContext(Dispatchers.EDT) {
-          myFixture.testAction(ActionUtil.getAction("TFGenerateLocalMetadataAction")!!)
+          writeIntentReadAction {
+            myFixture.testAction(ActionUtil.getAction("TFGenerateLocalMetadataAction")!!)
+          }
         }
         waitUntil { TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
         localSchemaService.awaitModelsReady()
