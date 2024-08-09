@@ -24,7 +24,10 @@ internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
   override fun acceptsFile(file: PsiFile): Boolean = file.fileType is TerraformFileType
 
   override fun acceptsElement(element: PsiElement): Boolean = when (element) {
-    is HCLBlock -> TerraformPatterns.VariableRootBlock.accepts(element) || TerraformPatterns.DataSourceRootBlock.accepts(element)
+    is HCLBlock ->
+      TerraformPatterns.VariableRootBlock.accepts(element) ||
+      TerraformPatterns.DataSourceRootBlock.accepts(element) ||
+      TerraformPatterns.ResourceRootBlock.accepts(element)
     is HCLProperty -> TerraformPatterns.LocalProperty.accepts(element)
     else -> false
   }
