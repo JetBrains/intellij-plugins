@@ -3,6 +3,7 @@ package com.intellij.deno.service
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.UseDeno
 import com.intellij.javascript.debugger.DenoAppRule
+import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
@@ -107,14 +108,20 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
 
   fun testDenoModulePathCompletion() {
     myFixture.configureByText("main.ts", """
-      import {join} from <error descr="Deno: Uncached or missing remote URL: https://deno.land/std/path/mod.ts">"https://deno.land/std/path<caret>/mod.ts"</error>;
+      import {join} from "https://deno.land/std@0.187.0/<caret>path/mod.ts";
       
       join("1", "2");
     """.trimIndent())
     myFixture.checkLspHighlighting()
 
     val lookupElements = myFixture.completeBasic()
-    assertTrue(lookupElements.isNotEmpty())
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(lookupElements, "https://deno.land/std@0.187.0/path/mod.ts")
+    myFixture.type("\t")
+    myFixture.checkResult("""
+      import {join} from "https://deno.land/std@0.187.0/path/mod.ts";
+      
+      join("1", "2");
+    """.trimIndent())
     TypeScriptServiceTestBase.assertHasServiceItems(lookupElements, true)
   }
 
