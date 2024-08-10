@@ -116,6 +116,7 @@
     <lang.findUsagesProvider language="HCL" implementationClass="org.intellij.terraform.hcl.findUsages.HCLFindUsagesProvider"/>
     <usageTypeProvider implementation="org.intellij.terraform.config.findUsages.HCLUsageTypeProvider"/>
     <breadcrumbsInfoProvider implementation="org.intellij.terraform.hcl.editor.HCLBreadcrumbsInfoProvider"/>
+    <navbar implementation="org.intellij.terraform.hcl.editor.HCLNavBarExtension"/>
     <qualifiedNameProvider implementation="org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider"/>
 
     <codeInsight.typeInfo language="HIL" implementationClass="org.intellij.terraform.hcl.codeinsight.hint.HCL2TypeProvider"/>

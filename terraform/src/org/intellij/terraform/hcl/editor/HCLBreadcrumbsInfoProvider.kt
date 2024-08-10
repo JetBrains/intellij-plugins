@@ -8,14 +8,16 @@ import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
 
-open class HCLBreadcrumbsInfoProvider : BreadcrumbsProvider {
-  override fun getLanguages(): Array<Language> {
-    return arrayOf(HCLLanguage)
-  }
+internal class HCLBreadcrumbsInfoProvider : BreadcrumbsProvider {
+  override fun isShownByDefault(): Boolean = false
+
+  override fun getLanguages(): Array<Language> = arrayOf(HCLLanguage)
 
   override fun acceptElement(e: PsiElement): Boolean {
     return e is HCLBlock || e is HCLProperty
   }
+
+  override fun getElementTooltip(e: PsiElement): String? = null
 
   override fun getElementInfo(e: PsiElement): String {
     if (e is HCLBlock) {
@@ -25,9 +27,5 @@ open class HCLBreadcrumbsInfoProvider : BreadcrumbsProvider {
       return e.name
     }
     throw AssertionError("Only HCLBlock and HCLProperty supported, actual is " + e.javaClass.name)
-  }
-
-  override fun getElementTooltip(e: PsiElement): String? {
-    return null
   }
 }
