@@ -109,7 +109,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   fun testDenoModulePathCompletion() {
-    runSimpleCommandLine("deno cache -r https://deno.land/std@0.187.0/path/mod.ts")
+    runSimpleCommandLine("${denoAppRule.exePath} cache -r https://deno.land/std@0.187.0/path/mod.ts")
     myFixture.configureByText("main.ts", """
       import {join} from "https://deno.land/std@0.187.0/<caret>path/mod.ts";
       
