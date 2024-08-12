@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import junit.framework.TestCase
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   private val denoAppRule: DenoAppRule = DenoAppRule.LATEST
@@ -118,7 +119,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.checkLspHighlighting()
 
     val lookupElements = myFixture.completeBasic()
-    BaseJSCompletionTestCase.checkWeHaveInCompletion(lookupElements, "https://deno.land/std@0.187.0/path/mod.ts")
+    TestCase.assertEquals(lookupElements.firstOrNull()?.lookupString, "https://deno.land/std@0.187.0/path/mod.ts")
     myFixture.type("\t")
     myFixture.checkResult("""
       import {join} from "https://deno.land/std@0.187.0/path/mod.ts";
