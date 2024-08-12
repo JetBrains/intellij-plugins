@@ -2,11 +2,13 @@ package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.UseDeno
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.debugger.DenoAppRule
 import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
-import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
+import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -107,6 +109,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   fun testDenoModulePathCompletion() {
+    runSimpleCommandLine("deno cache -r https://deno.land/std@0.187.0/path/mod.ts")
     myFixture.configureByText("main.ts", """
       import {join} from "https://deno.land/std@0.187.0/<caret>path/mod.ts";
       
@@ -193,5 +196,13 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
 
     // do not respect singleQuote and noSemicolons
     myFixture.checkResult("""console.log("Deno");""".trimIndent())
+  }
+
+  @Suppress("SameParameterValue")
+  private fun runSimpleCommandLine(command: String): Number {
+    val cmd = GeneralCommandLine(command.split(" "))
+    val processHandler = CapturingProcessHandler(cmd)
+    val output = processHandler.runProcess()
+    return output.getExitCode()
   }
 }
