@@ -60,7 +60,6 @@ public final class FlashUmlExtras extends DiagramExtras<Object> {
 
   @Override
   public void uiDataSnapshot(@NotNull DataSink sink, @NotNull List<DiagramNode<Object>> nodes, @NotNull DiagramBuilder builder) {
-    super.uiDataSnapshot(sink, nodes, builder);
     List<DiagramEdge<?>> edges = DiagramSelectionService.getInstance().getSelectedEdges(builder);
     DiagramEdge<?> edge = ContainerUtil.getOnlyItem(edges);
     if (!(edge instanceof FlashUmlEdge umlEdge)) return;

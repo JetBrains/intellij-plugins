@@ -404,7 +404,6 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
       @Override
       public void uiDataSnapshot(@NotNull DataSink sink, @NotNull List<DiagramNode<DiagramObject>> nodes, @NotNull DiagramBuilder builder) {
-        super.uiDataSnapshot(sink, nodes, builder);
         sink.set(JSModulesDiagramUtils.DIAGRAM_BUILDER, builder);
         DiagramNode<DiagramObject> single = ContainerUtil.getOnlyItem(nodes);
         if (single == null) return;
