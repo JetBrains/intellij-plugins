@@ -75,7 +75,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     val platformioService = project.service<PlatformioService>()
     platformioService.projectStatus = PARSING
     try {
-      val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectPath) ?: throw ExternalSystemException(FileNotFoundException("Project directory not found at $projectPath"))
+      val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectPath) ?: throw ExternalSystemException(FileNotFoundException(ClionEmbeddedPlatformioBundle.message("project.not.found", projectPath)))
       val projectDir = if (projectFile.isDirectory) projectFile else projectFile.parent
       val boardInfo = project.getUserData(PROJECT_INIT_KEY)
       if (boardInfo != null) {
