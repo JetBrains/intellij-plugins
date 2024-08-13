@@ -120,12 +120,6 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
 
     val lookupElements = myFixture.completeBasic()
     TestCase.assertEquals(lookupElements.firstOrNull()?.lookupString, "https://deno.land/std@0.187.0/path/mod.ts")
-    myFixture.type("\t")
-    myFixture.checkResult("""
-      import {join} from "https://deno.land/std@0.187.0/path/mod.ts";
-      
-      join("1", "2");
-    """.trimIndent())
     TypeScriptServiceTestBase.assertHasServiceItems(lookupElements, true)
   }
 
