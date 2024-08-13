@@ -94,7 +94,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
           configuration.terraformPath = it.text
           updateTestButton()
         }.trimmedTextValidation(
-          validationErrorIf<String>(HCLBundle.message("terraform.invalid.path")) { terraformFilePath ->
+          validationErrorIf(HCLBundle.message("terraform.invalid.path")) { terraformFilePath ->
             val wslDistribution = WslPath.getDistributionByWindowsUncPath(terraformFilePath)
             terraformFilePath.isNotBlank() && (!File(terraformFilePath).exists() || wslDistribution == null)
           }
