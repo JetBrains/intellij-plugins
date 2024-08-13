@@ -1,0 +1,1 @@
+export const Usage = <link href="/catchAll/declaration2/catchAllValue1/catchAll<caret>Value2/catchAllValue3"/>

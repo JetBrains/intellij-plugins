@@ -30,6 +30,7 @@ class NextJsDirectFileReferenceResolver(
   private val resolveContext: JSImportResolveContext,
 ) : JSDirectFileReferenceResolver {
   private val appRouterLeafFile = "page"
+  private var myCatchAllFolder: VirtualFile? = null
 
   override fun resolveDirectFile(moduleName: String, contextFile: VirtualFile): JSPathResolution {
     var result = JSPathResolution.EMPTY
@@ -73,9 +74,14 @@ class NextJsDirectFileReferenceResolver(
       if (name.startsWith("$"))
         return@forEachIndexed
 
-      val isLast = pathElements.lastIndex == i
+      myCatchAllFolder?.apply {
+        potentialResults.find { it.isCatchAll }?.add(this, false)
+      }
 
-      if (i == 0) {
+      val isLast = pathElements.lastIndex == i
+      val isFirst = i == 0
+
+      if (isFirst) {
         processElement(name, containingDirectory, containingDirectory.children, potentialResults)
       }
       else if (!isLast || !isLastPathDirectory) {
@@ -86,7 +92,6 @@ class NextJsDirectFileReferenceResolver(
           }
           potentialResults = this
         }
-
       }
 
       if (isLast && !isLastPathDirectory) {
@@ -94,10 +99,11 @@ class NextJsDirectFileReferenceResolver(
           val resultLast = result.lastMatched
           if (resultLast.isDirectory) {
             val children = resultLast.children
-            val leafPath = children.find { child -> child.isPathLeaf(routingType) }
-            if (leafPath != null) {
+            val leafPath = children.find { child -> child.isPathLeaf(routingType) } ?: return@forEach
+            if (result.isCatchAll) {
+              result.replaceAll(resultLast, leafPath)
+            } else {
               result.replaceLast(leafPath)
-              return@forEach
             }
           }
         }
@@ -105,6 +111,9 @@ class NextJsDirectFileReferenceResolver(
 
       if (potentialResults.isEmpty()) return JSPathResolution.EMPTY
     }
+
+    myCatchAllFolder = null
+
     val mostSizedResults = potentialResults
       .groupBy { it.resultSize }
       .maxByOrNull { it.key }?.value
@@ -126,24 +135,23 @@ class NextJsDirectFileReferenceResolver(
     children.forEach { child ->
       val childName = child.name
       val childNameWithoutExt = child.nameWithoutExtension
-      if (childName.startsWith("_")/* || !child.isDirectory*/) return@forEach
+      if (childName.startsWith("_")) return@forEach
       when {
         childName == name || childNameWithoutExt == name || childName.isInterceptingName(name) -> childByName = child
+        myCatchAllFolder == null && catchAllNamePattern.matches(childName) -> myCatchAllFolder = child
         childName.startsWith("[") -> slugChildren.add(child)
         groupOrSlotNamePattern.matches(childName) -> groupOrSlotChildren.add(child)
       }
     }
 
-    if (groupOrSlotChildren.isNotEmpty()) {
-      groupOrSlotChildren.forEach {
-        processElement(name, directory, it.children, results)
-      }
+    processCatchAll(results, directory)
+
+    groupOrSlotChildren.forEach {
+      processElement(name, directory, it.children, results)
     }
 
-    if (slugChildren.isNotEmpty()) {
-      slugChildren.forEach {
-        updateResult(directory, it, results, false)
-      }
+    slugChildren.forEach {
+      updateResult(directory, it, results, false)
     }
 
     childByName?.apply {
@@ -151,14 +159,25 @@ class NextJsDirectFileReferenceResolver(
     }
   }
 
+  private fun processCatchAll(results: MutableList<ResolutionResult>, directory: VirtualFile, ) {
+    val catchAllFolder = myCatchAllFolder
+    if (catchAllFolder != null && results.none { it.isCatchAll }) {
+      val containedResult = results.find { it.contains(directory) }?.files?.toMutableList() ?: mutableListOf()
+      ResolutionResult(containedResult, true).apply {
+        add(catchAllFolder, false)
+        results.add(this)
+      }
+    }
+  }
+
   private fun updateResult(prevChild: VirtualFile, child: VirtualFile, results: MutableList<ResolutionResult>, exactMatch: Boolean) {
-    val mappedResult = results.find { it.containsAsLast(prevChild) }
+    val mappedResult = results.find { !it.isCatchAll && it.containsAsLast(prevChild) }
     if (mappedResult != null) {
       mappedResult.add(child, exactMatch)
       return
     }
 
-    val containedResult = results.find { it.contains(prevChild) }
+    val containedResult = results.find { !it.isCatchAll && it.contains(prevChild) }
     if (containedResult != null) {
       results.add(containedResult.copyWithReplaceLast(child, exactMatch))
     }
@@ -186,7 +205,8 @@ class NextJsDirectFileReferenceResolver(
   }
 
   private class ResolutionResult(
-    private val files: MutableList<Pair<VirtualFile, Boolean>> = mutableListOf(),
+    val files: MutableList<Pair<VirtualFile, Boolean>> = mutableListOf(),
+    val isCatchAll: Boolean = false
   ) {
     val lastMatched: VirtualFile
       get() = files.map { it.first }.last()
@@ -205,14 +225,46 @@ class NextJsDirectFileReferenceResolver(
       return files.any { it.first == file }
     }
 
+    /**
+     * Determines if the given file is the last file in the result.
+     *
+     * @param file The file to check.
+     * @return `true` if the file is the last file in the list, `false` otherwise.
+     */
     fun containsAsLast(file: VirtualFile): Boolean {
       return files.indexOfLast { it.first == file } == files.lastIndex
     }
 
+    /**
+     * Replaces last file with another file. Need to process in case of a page file existing
+     *
+     * @param file The file to replace with.
+     */
     fun replaceLast(file: VirtualFile) {
       files[files.lastIndex] = Pair(file, true)
     }
 
+    /**
+     * Replaces all file occurrences with another file. Need to catch all processing in case of page file existing
+     *
+     * @param fileToReplace The file to be replaced.
+     * @param fileReplaceWith The file to replace with.
+     */
+    fun replaceAll(fileToReplace: VirtualFile, fileReplaceWith: VirtualFile) {
+      files.forEachIndexed { i, pair ->
+        if (pair.first == fileToReplace) {
+          files[i] = Pair(fileReplaceWith, pair.second)
+        }
+      }
+    }
+
+    /**
+     * Creates a new instance of [ResolutionResult] by replacing the last file with a new file.
+     *
+     * @param file The file to replace the last file with.
+     * @param isExactMatch Indicates if the new file is an exact name match.
+     * @return A new [ResolutionResult] instance with the last file replaced.
+     */
     fun copyWithReplaceLast(file: VirtualFile, isExactMatch: Boolean): ResolutionResult {
       val newFiles = files.toMutableList()
       newFiles[newFiles.lastIndex] = Pair(file, isExactMatch)
@@ -222,3 +274,4 @@ class NextJsDirectFileReferenceResolver(
 }
 
 private val groupOrSlotNamePattern = Regex("(\\(.*?\\))|(@\\w+)")
+private val catchAllNamePattern = Regex("""\[{1,2}\.\.\..*""")

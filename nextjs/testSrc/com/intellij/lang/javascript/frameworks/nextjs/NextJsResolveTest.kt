@@ -1,9 +1,7 @@
 package com.intellij.lang.javascript.frameworks.nextjs
 
 import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
-import com.intellij.psi.PsiNamedElement
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.util.asSafely
 
 class NextJsResolveTest : BasePlatformTestCase() {
   override fun getTestDataPath() = NextJsTestUtil.getTestDataPath() + "resolve/"
@@ -37,11 +35,27 @@ class NextJsResolveTest : BasePlatformTestCase() {
   }
 
   fun testInterceptResolving1() {
-    doTest("[...slug]")
+    doTest("[slug]")
   }
 
   fun testInterceptResolving2() {
     doTest("page.tsx")
+  }
+
+  fun testCatchAllResolving1() {
+    doTest("[...catchAll]")
+  }
+
+  fun testCatchAllResolving2() {
+    doTest("page.tsx")
+  }
+
+  fun testCatchAllResolving3() {
+    doTest("page.tsx")
+  }
+
+  fun testCatchAllResolving4() {
+    doTest("folderForExactMatching1")
   }
 
   private fun doTest(destination: String = "", testProjectName: String? = null) {

@@ -1,0 +1,1 @@
+export const Usage = <link href="/catchAll/declaration2/folderForExa<caret>ctMatching1/folderForExactMatching2"/>
