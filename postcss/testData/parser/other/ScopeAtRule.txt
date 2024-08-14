@@ -9,6 +9,11 @@ PostCSS File:ScopeAtRule.pcss
           PsiErrorElement:'(' expected
             <empty list>
           PsiWhiteSpace(' ')
+          PsiElement(CSS_SELECTOR_LIST)
+            PsiElement(CSS_SELECTOR)
+              PsiElement(CSS_SIMPLE_SELECTOR)
+                PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                  <empty list>
           PsiElement(CSS_DECLARATION_BLOCK)
             PsiElement(CSS_LBRACE)('{')
             PsiWhiteSpace('\n  ')
