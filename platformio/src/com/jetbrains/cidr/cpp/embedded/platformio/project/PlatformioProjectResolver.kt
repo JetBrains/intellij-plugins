@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.google.gson.Gson
 import com.intellij.execution.DefaultExecutionTarget
+import com.intellij.execution.ExecutionException
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.process.*
 import com.intellij.openapi.application.ApplicationManager
@@ -183,10 +184,10 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       platformioService.projectStatus = PARSE_FAILED
       throw e
     }
-    catch (e: ProcessNotCreatedException) {
+    catch (e: ExecutionException) {
       platformioService.projectStatus = PARSED
       platformioService.projectStatus = UTILITY_FAILED
-      LOG.error(e)
+      LOG.warn(e)
       throw ExternalSystemException(e)
     }
     catch (e: ExternalSystemException) {
