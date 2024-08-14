@@ -209,7 +209,12 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     Document document = psiFile.getViewProvider().getDocument();
     for (SourceEdit edit : sourceChange.getEdits().get(0).getEdits()) {
       String replacement = StringUtil.convertLineSeparators(edit.getReplacement());
-      document.replaceString(edit.getOffset(), edit.getOffset() + edit.getLength(), replacement);
+      int startOffset = edit.getOffset();
+      int endOffset = edit.getOffset() + edit.getLength();
+      if (endOffset > document.getTextLength()) {
+        return; // IDEA-345982
+      }
+      document.replaceString(startOffset, endOffset, replacement);
     }
   }
 }
