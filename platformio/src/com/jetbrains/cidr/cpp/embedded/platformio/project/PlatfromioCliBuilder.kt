@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.*
+import com.jetbrains.cidr.cpp.notifications.showUntrustedProjectLoadDialog
 import java.nio.file.Path
 
 private const val POSIX_HOME_ENV_VAR_NAME = "HOME"
@@ -28,6 +29,7 @@ class PlatfromioCliBuilder(
 
   init {
     if (project?.isTrusted() == false) {
+      showUntrustedProjectLoadDialog(project)
       throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
     }
     commandLine = if(usePty) PtyCommandLine() else GeneralCommandLine()

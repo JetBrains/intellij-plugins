@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.Icon
 import javax.swing.SwingConstants
+import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 
 private val NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin")
 
@@ -39,7 +40,12 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
                                 vararg arguments: String) {
     val project = e.project
     if (project != null) {
-      val commandLine = PlatfromioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
+      val commandLine = runCatching {
+        return@runCatching PlatfromioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
+      }.getOrElse {
+        LOG.warn(it)
+        return@actionPerformed
+      }
       val runContentManager = RunContentManager.getInstance(project)
       val alreadyRunningDescriptor = runContentManager.allDescriptors.firstOrNull {
         val processHandler = it.processHandler as? BaseOSProcessHandler
