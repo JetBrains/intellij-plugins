@@ -41,7 +41,7 @@ class TerraformRunConfiguration(
   private var passParentEnvs: Boolean = true
 
   override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration?> {
-    return TerraformRunConfigurationEditor()
+    return TfRunConfigurationEditor(this)
   }
 
   @Throws(ExecutionException::class)
