@@ -62,7 +62,7 @@ public class TerraformConfigurationType implements ConfigurationType, DumbAware 
 
   @Override
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{myBaseFactory, myPlanFactory, myApplyFactory};
+    return new ConfigurationFactory[]{myBaseFactory};
   }
 
   @NotNull
