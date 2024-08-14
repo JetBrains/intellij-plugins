@@ -179,6 +179,10 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).projectStateChanged()
       return projectNode
     }
+    catch (e: ProcessCanceledException) {
+      platformioService.projectStatus = PARSE_FAILED
+      throw e
+    }
     catch (e: ProcessNotCreatedException) {
       platformioService.projectStatus = PARSED
       platformioService.projectStatus = UTILITY_FAILED
