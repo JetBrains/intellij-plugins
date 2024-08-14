@@ -2,6 +2,7 @@
 package org.intellij.terraform.config.actions
 
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -18,7 +19,9 @@ class TFFmtFileAction : TFExternalToolsAction() {
   override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     withBackgroundProgress(project, title) {
       withContext(Dispatchers.EDT) {
-        FileDocumentManager.getInstance().saveAllDocuments()
+        writeIntentReadAction {
+          FileDocumentManager.getInstance().saveAllDocuments()
+        }
       }
 
       val filePaths = virtualFiles.map { it.canonicalPath!! }.toTypedArray()

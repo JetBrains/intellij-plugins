@@ -3,6 +3,7 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -96,7 +97,9 @@ internal class TerraformActionService(private val project: Project, private val 
 
   private suspend fun execTerraformInit(virtualFile: VirtualFile, project: Project, title: @Nls String): Boolean {
     withContext(Dispatchers.EDT) {
-      FileDocumentManager.getInstance().saveAllDocuments()
+      writeIntentReadAction {
+        FileDocumentManager.getInstance().saveAllDocuments()
+      }
     }
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
     val success = TFExecutor.`in`(project)

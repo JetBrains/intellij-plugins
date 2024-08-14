@@ -12,6 +12,7 @@ import com.intellij.execution.process.ProcessNotCreatedException
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.ide.impl.isTrusted
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -82,7 +83,9 @@ class PlatformioTaskRunner : CidrTaskRunner {
       return promise
     }
     withContext(Dispatchers.EDT) {
-      FileDocumentManager.getInstance().saveAllDocuments()
+      writeIntentReadAction {
+        FileDocumentManager.getInstance().saveAllDocuments()
+      }
     }
 
     try {
