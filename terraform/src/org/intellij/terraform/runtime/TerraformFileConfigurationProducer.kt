@@ -15,8 +15,10 @@ import org.intellij.terraform.hcl.psi.HCLElement
 
 sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRunConfigurationProducer<TerraformRunConfiguration>(), DumbAware {
   enum class Type(val title: String, val factory: () -> ConfigurationFactory) {
-    PLAN("Plan", { TerraformConfigurationType.getInstance().planFactory }),
-    APPLY("Apply", { TerraformConfigurationType.getInstance().applyFactory }),
+    PLAN("Plan", { tfRunConfigurationType().planFactory }),
+    APPLY("Apply", { tfRunConfigurationType().applyFactory });
+
+    override fun toString(): String = title.lowercase()
   }
 
   override fun getConfigurationFactory(): ConfigurationFactory {
@@ -68,7 +70,7 @@ sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRu
       }
 
       val virtualFile = module.moduleRoot.virtualFile
-      return virtualFile.path to "directory ${virtualFile.name}"
+      return virtualFile.path to virtualFile.name
     }
   }
 }

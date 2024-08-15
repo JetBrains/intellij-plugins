@@ -18,7 +18,6 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.model.ModuleDetectionUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -27,8 +26,8 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.isTerraformPsiFile
-import org.intellij.terraform.runtime.TerraformConfigurationType
 import org.intellij.terraform.runtime.TerraformRunConfiguration
+import org.intellij.terraform.runtime.tfRunConfigurationType
 import org.jetbrains.annotations.NonNls
 
 class TFMissingModuleInspection : LocalInspectionTool() {
@@ -92,8 +91,7 @@ class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
     val dir = block.containingFile?.containingDirectory ?: return
 
     val manager = RunManager.getInstance(project)
-    val configurationSettings = manager.createConfiguration("terraform get in ${dir.name}",
-                                                            TerraformConfigurationType.getInstance().baseFactory)
+    val configurationSettings = manager.createConfiguration("terraform get in ${dir.name}", tfRunConfigurationType().baseFactory)
     configurationSettings.isTemporary = true
     val configuration = configurationSettings.configuration as TerraformRunConfiguration
     val vf = dir.virtualFile

@@ -15,7 +15,7 @@ import javax.swing.JComponent
 internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfiguration) :
   RunConfigurationFragmentedEditor<TerraformRunConfiguration>(runConfiguration) {
 
-  private val commandComboBox = ComboBox(TfCommandType.entries.toTypedArray()).apply {
+  private val commandComboBox = ComboBox(TerraformFileConfigurationProducer.Type.entries.toTypedArray()).apply {
     isEditable = true
   }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
 
