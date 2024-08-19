@@ -79,7 +79,6 @@ public abstract class TerraformExpressionTypesTest extends ParsingTestCase {
     //registerExtensionPoint(PsiReferenceContributor.EP_NAME, PsiReferenceContributor.class);
     registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HCL", new ILReferenceContributor(), new TerraformReferenceContributor()));
     registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HIL", new ILReferenceContributor()));
-    getApplication().registerService(TypeModelProvider.class, new TypeModelProvider());
   }
 
   @Override
