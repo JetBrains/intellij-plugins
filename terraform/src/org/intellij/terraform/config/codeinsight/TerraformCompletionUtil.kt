@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.config.model.*
@@ -21,7 +22,6 @@ import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.codeinsight.FunctionInsertHandler
 import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
-import org.intellij.terraform.nullize
 import java.util.*
 
 object TerraformCompletionUtil {
@@ -85,7 +85,7 @@ object TerraformCompletionUtil {
     val position = parameters.position
     val text = getClearTextValue(position) ?: position.text
     if (text == CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED) return null
-    return text.replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "").nullize(true)
+    return StringUtil.nullize(text.replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, ""), true)
   }
 
   @NlsSafe

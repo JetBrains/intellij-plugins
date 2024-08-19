@@ -64,7 +64,7 @@ fun <T : BaseExpression, H : HCLElement, Self : PsiElementPattern<T, Self>> PsiE
 fun PsiElement.isInHCLFileWithInterpolations(): Boolean {
   var file = containingFile
   if (file == null) {
-    Logger.getInstance("#org.intellij.terraform.hcl.psi.UtilKt").warn("Cannot obtain 'containingFile' for element $this")
+    Logger.getInstance("#org.intellij.terraform.hcl.psi.util").warn("Cannot obtain 'containingFile' for element $this")
     return false
   }
   if (file.containingDirectory == null) {

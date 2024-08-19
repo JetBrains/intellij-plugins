@@ -30,14 +30,14 @@ import org.intellij.terraform.hil.codeinsight.isResourcePropertyReference
 import org.intellij.terraform.hil.codeinsight.isScopeElementReference
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.hil.psi.resolve
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.jetbrains.annotations.Nls
 
 class HILUnresolvedReferenceInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    if (!isTerraformPsiFile(file) && file.language !in setOf(HCLLanguage, HILLanguage)) return false
-    return isTerraformPsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
+    if (!isTerraformCompatiblePsiFile(file) && file.language !in setOf(HCLLanguage, HILLanguage)) return false
+    return isTerraformCompatiblePsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
   }
 
 

@@ -13,13 +13,13 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.impl.HCLStringLiteralMixin
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.jetbrains.annotations.Nls
 
 class TFVARSIncorrectElementInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
+    return isTerraformCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

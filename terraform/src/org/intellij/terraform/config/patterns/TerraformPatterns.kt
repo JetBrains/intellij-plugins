@@ -165,8 +165,8 @@ object TerraformPatterns {
       .and(ModuleRootBlock)
       .with(object : PatternCondition<HCLBlock?>("ModuleWithEmptySource") {
         override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
-          val source = t.`object`?.findProperty("source")?.value as? HCLStringLiteral ?: return true
-          return source.value.isBlank()
+          val source = t.`object`?.findProperty("source") ?: return true
+          return source.value?.text?.isEmpty() == true
         }
       })
 

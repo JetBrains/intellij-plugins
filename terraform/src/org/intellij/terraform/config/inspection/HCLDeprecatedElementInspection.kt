@@ -9,7 +9,6 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
@@ -19,12 +18,12 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 class HCLDeprecatedElementInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
+    return isTerraformCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

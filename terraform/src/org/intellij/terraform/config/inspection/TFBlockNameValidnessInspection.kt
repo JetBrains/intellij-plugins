@@ -13,7 +13,6 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThrowableRunnable
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -22,12 +21,12 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 class TFBlockNameValidnessInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
+    return isTerraformCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

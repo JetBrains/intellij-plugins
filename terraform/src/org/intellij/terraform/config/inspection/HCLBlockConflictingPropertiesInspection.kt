@@ -10,17 +10,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 class HCLBlockConflictingPropertiesInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
+    return isTerraformCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

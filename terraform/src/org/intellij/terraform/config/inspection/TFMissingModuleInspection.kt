@@ -25,7 +25,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.intellij.terraform.runtime.TerraformRunConfiguration
 import org.intellij.terraform.runtime.tfRunConfigurationType
 import org.jetbrains.annotations.NonNls
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NonNls
 class TFMissingModuleInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
+    return isTerraformCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

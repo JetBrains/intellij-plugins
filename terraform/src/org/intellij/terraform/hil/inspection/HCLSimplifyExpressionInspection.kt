@@ -18,12 +18,12 @@ import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLMethodCallExpression
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file) || file.language == HCLLanguage
+    return isTerraformCompatiblePsiFile(file) || file.language == HCLLanguage
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

@@ -36,7 +36,7 @@ import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
@@ -284,7 +284,7 @@ class TypeModel(
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val providerNamesService = LocalProviderNamesService.getInstance()
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
-        ?.filter { file -> isTerraformPsiFile(file) }
+        ?.filter { file -> isTerraformCompatiblePsiFile(file) }
         ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
       return gists.flatMap { it.entries }.associate { it.key to it.value }
     }

@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.diagnostic.fileLogger
+import java.util.Locale
 import java.util.regex.Pattern
 
 // Based on Terraform sources
@@ -10,7 +12,7 @@ object RegistryModuleUtil {
   fun parseRegistryModule(source: String): RegistryModule? {
     val (host, rest) = parseFriendlyHost(source)
     if (host != null) {
-      if (host.toLowerCase() in KnownGitHosts) return null
+      if (host.lowercase(Locale.getDefault()) in KnownGitHosts) return null
       if (!isValidHost(host)) return null
     }
 
@@ -37,6 +39,7 @@ object RegistryModuleUtil {
     try {
       java.net.IDN.toASCII(host)
     } catch (e: Exception) {
+      fileLogger().debug("Error converting IDN to ASCII", e)
       return false
     }
     return true
@@ -73,7 +76,7 @@ object RegistryModuleUtil {
     return parts.all { isValidUrlHostPart(it) }
   }
 
-  private inline fun isValidUrlHostPart(part: String): Boolean {
+  private fun isValidUrlHostPart(part: String): Boolean {
     val length = part.length
     if (length == 0 || length > 63) return false
     val matcher = HostLabelSubRe.matcher(part)
@@ -103,13 +106,12 @@ object RegistryModuleUtil {
   data class RegistryModule(val host: String?, val namespace: String, val name: String, val provider: String, val submodule: String?) {
     override fun toString(): String {
       val prefix = if (host != null) "$host/" else ""
-      return formatWithPrefix(prefix, true)
+      return formatWithPrefix(prefix)
     }
 
-    private fun formatWithPrefix(hostPrefix: String, preserveCase: Boolean): String {
+    private fun formatWithPrefix(hostPrefix: String): String {
       val suffix = if (submodule != null) "//$submodule" else ""
       val str = "$hostPrefix$namespace/$name/$provider$suffix"
-      if (!preserveCase) return str.toLowerCase()
       return str
     }
   }

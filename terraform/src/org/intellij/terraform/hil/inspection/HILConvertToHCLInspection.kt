@@ -32,13 +32,13 @@ import org.intellij.terraform.hcl.psi.HCLPsiUtil.isUnderPropertyUnderPropertyWit
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.psi.*
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 import java.util.function.BiConsumer
 
 class HILConvertToHCLInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file) || file.language == HCLLanguage
+    return isTerraformCompatiblePsiFile(file) || file.language == HCLLanguage
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

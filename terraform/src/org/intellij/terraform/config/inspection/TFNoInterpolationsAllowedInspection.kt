@@ -18,20 +18,15 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.MethodCallExpression
 import org.intellij.terraform.hil.ILLanguageInjector
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformFile
 
 class TFNoInterpolationsAllowedInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformPsiFile(file)
+    return isTerraformFile(file) && TerraformPatterns.TerraformConfigFile.accepts(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    val file = holder.file
-    if (!TerraformPatterns.TerraformConfigFile.accepts(file)) {
-      return PsiElementVisitor.EMPTY_VISITOR
-    }
-
     return MyEV(holder)
   }
 

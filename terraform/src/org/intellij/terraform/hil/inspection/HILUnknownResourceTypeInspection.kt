@@ -19,13 +19,13 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
-import org.intellij.terraform.isTerraformPsiFile
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 class HILUnknownResourceTypeInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
     val topLevelFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
-    return isTerraformPsiFile(topLevelFile)
+    return isTerraformCompatiblePsiFile(topLevelFile)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
