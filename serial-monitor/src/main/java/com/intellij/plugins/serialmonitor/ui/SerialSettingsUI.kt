@@ -214,14 +214,14 @@ fun profileSettings(connectableList: ConnectableList, disposable: Disposable): D
 
         comboBox(portNames).label(message("label.port"))
           .validationOnInput(portValidation)
-          .columns(30)
+          .resizableColumn()
           .applyToComponent {
             isEditable = true
             editor.item = profile.portName
             portCombobox = this
           }
 
-      }.layout(RowLayout.PARENT_GRID)
+      }.layout(RowLayout.LABEL_ALIGNED)
       serialSettings(disposable = disposable, profile = profile) {
         val service = service<SerialProfileService>()
         val profiles = service.getProfiles().toMutableMap()
