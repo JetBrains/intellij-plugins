@@ -6,7 +6,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
@@ -43,6 +45,7 @@ class Angular2FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
       Angular2TestUtil.renderLookupItems(myFixture, false, false, true)),
                                        "\$any", "fooField1", "fooField2")
     Disposer.dispose(disposable)
+    runInEdtAndWait { PsiManager.getInstance(project).dropPsiCaches() }
     UsefulTestCase.assertSize(0, findComponentClasses(myFixture.getFile()))
     myFixture.completeBasic()
     UsefulTestCase.assertOrderedEquals(ContainerUtil.sorted(
