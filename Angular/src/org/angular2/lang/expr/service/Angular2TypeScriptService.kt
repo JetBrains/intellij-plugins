@@ -126,6 +126,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     return errors.map { error ->
       if (error is TypeScriptLanguageServiceAnnotationResult) {
         val textRange = error.getTextRange(document)
+                        ?: return@map error
         val nameMap = file.nameMaps[templateFile]
           ?.subMap(textRange.startOffset, true, textRange.endOffset, false)
           ?.values
@@ -192,10 +193,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   }
 }
 
-private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange {
+private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange? {
   val startOffset = document.getLineStartOffset(this.line) + this.column
   val endOffset = document.getLineStartOffset(this.endLine) + this.endColumn
-  return TextRange(startOffset, endOffset)
+  return if (startOffset in 0..endOffset) TextRange(startOffset, endOffset) else null
 }
 
 private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, suffix: String): String {
