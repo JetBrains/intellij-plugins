@@ -4,9 +4,11 @@ package org.angular2.lang.expr.formatter
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
+import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSLanguageUtil
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSBlockContext
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.formatter.JSSpacingProcessor
@@ -14,6 +16,7 @@ import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder
 import com.intellij.lang.javascript.formatter.blocks.CompositeJSBlock
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lang.typescript.formatter.TypedJSSpacingProcessor
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.WrappingUtil
@@ -40,9 +43,18 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
       val wrapType = WrappingUtil.getWrapType(settings.getCustomSettings(Angular2HtmlCodeStyleSettings::class.java).INTERPOLATION_WRAP)
       rootBlock = jsBlockContext.createBlock(element.node, Wrap.createWrap(wrapType, true),
                                              alignment, Indent.getNormalIndent(), null, null)
+
+      // Try to get a correct file element type
+      val fileElementType = LanguageParserDefinitions.INSTANCE.forLanguage(dialect)?.fileNodeType as? JSFileElementType
+                            ?: JSFileElementType.getByLanguage(dialect)
+                            ?: run {
+                              thisLogger().error("No JSFileElementType registered for language $dialect of element $element, using plain JavaScript")
+                              JSFileElementType.getByLanguage(JavascriptLanguage.INSTANCE)
+                            }
+
       // Wrap with a composite block to add indentation
       rootBlock = CompositeJSBlock(listOf(rootBlock), { _, _ -> null }, null,
-                                   JSFileElementType.getByLanguage(dialect), jsBlockContext)
+                                   fileElementType, jsBlockContext)
     }
     else {
       rootBlock = jsBlockContext.createBlock(element.node, null, alignment, null, null, null)
@@ -57,12 +69,14 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     }
   }
 
-  private class Angular2SpacingProcessor(parent: ASTNode?,
-                                         child1: ASTNode?,
-                                         child2: ASTNode?,
-                                         settings: CodeStyleSettings?,
-                                         dialect: Language?,
-                                         dialectSettings: JSCodeStyleSettings?)
+  private class Angular2SpacingProcessor(
+    parent: ASTNode?,
+    child1: ASTNode?,
+    child2: ASTNode?,
+    settings: CodeStyleSettings?,
+    dialect: Language?,
+    dialectSettings: JSCodeStyleSettings?,
+  )
     : TypedJSSpacingProcessor(parent, child1, child2, settings, dialect, dialectSettings) {
 
     override fun visitElement(node: ASTNode) {
