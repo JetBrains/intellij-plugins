@@ -200,7 +200,7 @@ class SerialPortService : Disposable {
         status = PortStatus.UNAVAILABLE_DISCONNECTED
         portMessageTopic().portsStatusChanged()
         if (e is SerialPortException) {
-          throw SerialMonitorException(e.localizedMessage)
+          throw SerialMonitorException(SerialMonitorBundle.message("port.connect.error", e.port.portName, e.exceptionType))
         }
         else {
           throw SerialMonitorException(newPort.portName, e)
