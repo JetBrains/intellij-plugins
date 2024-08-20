@@ -241,6 +241,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
       checkHighlightingWithCrLfEnsured()
     }
 
+  fun testTsconfigPriority() =
+    checkHighlighting(ANGULAR_CORE_17_3_0, extension = "html", dir = true, configureFileName = "src/component.html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

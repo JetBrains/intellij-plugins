@@ -102,6 +102,7 @@ type TranspiledTemplateArguments = {
 
 type GetGeneratedElementTypeArguments = {
   file: string;
+  projectFileName?: string;
   startOffset: number,
   endOffset: number,
   forceReturnType: boolean,
@@ -115,14 +116,13 @@ const ngTranspiledTemplateHandler = (ts: typeof import('tsc-ide-plugin/tsserverl
   const requestArguments = request.arguments as TranspiledTemplateArguments
 
   let fileName = ts.server.toNormalizedPath(requestArguments.file)
-  let project = projectService.getDefaultProjectForFile(fileName, true)
-  if (project) {
-    const transpiledTemplate = buildAngularTranspiledTemplate(ts, requestArguments.transpiledContent, requestArguments.sourceCode, requestArguments.mappings)
-    if (transpiledTemplate)
-      ngTranspiledTemplates.set(fileName, transpiledTemplate);
-    else
-      ngTranspiledTemplates.delete(fileName);
+  const transpiledTemplate = buildAngularTranspiledTemplate(ts, requestArguments.transpiledContent, requestArguments.sourceCode, requestArguments.mappings)
+  if (transpiledTemplate)
+    ngTranspiledTemplates.set(fileName, transpiledTemplate);
+  else
+    ngTranspiledTemplates.delete(fileName);
 
+  if (projectService.getScriptInfo(fileName)) {
     // trigger reload
     (session as any).change(
       {
@@ -148,7 +148,11 @@ const ngGetGeneratedElementTypeHandler = (ts: typeof import('tsc-ide-plugin/tsse
   const requestArguments = request.arguments as GetGeneratedElementTypeArguments
 
   let fileName = ts.server.toNormalizedPath(requestArguments.file)
-  let project = projectService.getDefaultProjectForFile(fileName, true)
+  let projectFileName = requestArguments.projectFileName
+    ? ts.server.toNormalizedPath(requestArguments.projectFileName)
+    : undefined
+  let project = (projectFileName ? projectService.findProject(projectFileName) : undefined)
+    ?? projectService.getDefaultProjectForFile(fileName, true)
   return project?.getLanguageService()?.webStormNgGetGeneratedElementType(
       ts, fileName, requestArguments.startOffset, requestArguments.endOffset, requestArguments.forceReturnType)
     ?? {responseRequired: true, response: undefined}

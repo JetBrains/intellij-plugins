@@ -204,6 +204,11 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
   fun testKeyofAttribute() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, configurators = listOf(Angular2TsConfigFile()))
 
+  fun testTsconfigPriority() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", dir = true, configureFileName = "src/component.html") {
+      it.priority >= 100
+    }
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
