@@ -1,71 +1,71 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.flex.codeInsight
+package com.intellij.flex.codeInsight;
 
-import com.intellij.flex.FlexTestOption
-import com.intellij.flex.FlexTestOptions
-import com.intellij.flex.util.FlexTestUtils
-import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger
-import com.intellij.lang.javascript.ActionScriptFileType
-import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.JavaScriptSupportLoader
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest
-import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens
-import org.jetbrains.annotations.NonNls
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
+import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger;
+import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest;
+import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
+import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens;
+import org.jetbrains.annotations.NonNls;
 
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-class ActionScriptRearrangerTest extends AbstractRearrangerTest {
+public class ActionScriptRearrangerTest extends AbstractRearrangerTest {
+  @Override
+  protected void setUp() throws Exception {
+    fileType = ActionScriptFileType.INSTANCE;
+    language = JavaScriptSupportLoader.ECMA_SCRIPT_L4;
 
-  ActionScriptRearrangerTest() {
-    fileType = ActionScriptFileType.INSTANCE
-    language = JavaScriptSupportLoader.ECMA_SCRIPT_L4
-  }
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
+    super.setUp();
 
-  protected void setUp() {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "")
-    super.setUp()
+    var sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myFixture.getProjectDisposable());
 
-    def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myFixture.getProjectDisposable())
-
-    ApplicationManager.application.runWriteAction(new Runnable() {
-      void run() {
-        def model = ModuleRootManager.getInstance(module).getModifiableModel()
-        model.setSdk(sdk)
-        model.commit()
-      }
-    })
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      var model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
+      model.setSdk(sdk);
+      model.commit();
+    });
   }
 
   @Override
-  protected void tearDown() {
-    super.tearDown()
-    clearDeclaredFields(ActionScriptRearrangerTest.class)
+  protected void tearDown() throws Exception {
+    //noinspection SuperTearDownInFinally
+    super.tearDown();
+    clearDeclaredFields();
   }
 
-  static void clearDeclaredFields(Class aClass) throws IllegalAccessException {
-    for (final Field field : aClass.getDeclaredFields()) {
-      @NonNls final String name = field.getDeclaringClass().getName()
+  static void clearDeclaredFields() throws IllegalAccessException {
+    for (final Field field : ActionScriptRearrangerTest.class.getDeclaredFields()) {
+      @NonNls final String name = field.getDeclaringClass().getName();
       if (!name.startsWith("junit.framework.") && !name.startsWith("com.intellij.testFramework.")) {
-        final int modifiers = field.getModifiers()
+        final int modifiers = field.getModifiers();
         if ((modifiers & Modifier.FINAL) == 0 && (modifiers & Modifier.STATIC) != 0 && !field.getType().isPrimitive()) {
-          field.setAccessible(true)
-          field.set(null, null)
+          field.setAccessible(true);
+          field.set(null, null);
         }
       }
     }
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
-  void testComplex() {
+  public void testComplex() {
 
-    commonSettings.BLANK_LINES_AROUND_METHOD = 0
-    commonSettings.BLANK_LINES_AROUND_CLASS = 0
+    getCommonSettings().BLANK_LINES_AROUND_METHOD = 0;
+    getCommonSettings().BLANK_LINES_AROUND_CLASS = 0;
 
-    doTest(
-      initial: '''\
+    var args = new HashMap<String, Object>();
+    args.put("initial","""
 package {
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -165,8 +165,8 @@ public class Test {
     private var _publicProperty;
 }
 }
-''',
-      expected: '''\
+""");
+    args.put("expected", """
 package {
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -266,19 +266,19 @@ public class Test {
     private function privateEventHandler(e:Event):void {}
 }
 }
-''',
-      rules: ActionScriptRearranger.getDefaultMatchRules()
-    )
+""");
+    args.put("rules", ActionScriptRearranger.getDefaultMatchRules());
+    doTest(args);
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
-  void testGroupPropertyFieldWithGetterSetter() {
+  public void testGroupPropertyFieldWithGetterSetter() {
 
-    commonSettings.BLANK_LINES_AROUND_METHOD = 0
-    commonSettings.BLANK_LINES_AROUND_CLASS = 0
+    getCommonSettings().BLANK_LINES_AROUND_METHOD = 0;
+    getCommonSettings().BLANK_LINES_AROUND_CLASS = 0;
 
-    doTest(
-      initial: '''\
+    var args = new HashMap<String, Object>();
+    args.put("initial", """
 package {
 public class Test {
     public function set property(i:int):void{}
@@ -291,8 +291,8 @@ public class Test {
     private var _setterNoGetter;
 }
 }
-''',
-      expected: '''\
+""");
+    args.put("expected", """
 package {
 public class Test {
     private var _notAProperty;
@@ -305,9 +305,11 @@ public class Test {
     public function set setterNoGetter(i:int):void{}
 }
 }
-''',
-      groups: [group(StdArrangementTokens.Grouping.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER)],
-      rules: ActionScriptRearranger.getDefaultMatchRules()
-    )
+""");
+    var groups = new ArrayList<ArrangementGroupingRule>();
+    groups.add(group(StdArrangementTokens.Grouping.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
+    args.put("groups", groups);
+    args.put("rules", ActionScriptRearranger.getDefaultMatchRules());
+    doTest(args);
   }
 }
