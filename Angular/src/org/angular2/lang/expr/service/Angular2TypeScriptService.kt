@@ -3,6 +3,7 @@ package org.angular2.lang.expr.service
 
 import com.google.gson.JsonObject
 import com.intellij.ide.highlighter.HtmlFileType
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
@@ -18,6 +19,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWi
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
@@ -120,6 +122,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
   }
 
+  override fun isGeterrSupported(psiFile: PsiFile): Boolean {
+    return psiFile.language.let { it !is Angular2Language && it !is Angular2HtmlDialect }
+  }
+
   private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
     val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
                    ?: return emptyList()
@@ -155,8 +161,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, evaluationLocation: VirtualFile): JSType? =
-      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, evaluationLocation)
+    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFileName: String?): JSType? =
+      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFileName)
 
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)
@@ -178,7 +184,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
       val filePath = getFilePath(virtualFile) ?: return null
 
-      val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, generatedRange.startOffset, generatedRange.endOffset)
+      val projectFileName = TypeScriptConfigUtil.getNonStandardProjectFileName(
+        InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(transpiledFile.originalFile)
+      )
+      val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
       return sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
     }
 

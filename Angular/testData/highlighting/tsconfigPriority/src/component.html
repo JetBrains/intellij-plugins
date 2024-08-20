@@ -1,0 +1,12 @@
+{{ formErrorsStore.<error descr="TS2339: Property 'errs' does not exist on type '{ errors: Signal<string[]>; setErrors: (errors: Errors) => void; }'.">errs</error>() }}
+{{ formErrorsStore.errors().<error descr="TS2339: Property 'foo' does not exist on type 'string[]'.">foo</error> }}
+@if (formErrorsStore.errors().length > 0) {
+  <ul class="error-messages" <warning descr="Attribute fooAttr is not allowed here">fooAttr</warning>>
+    @for (error of formErrorsStore.errors(); track error) {
+      <li data-e2e-id="error">
+        {{ error }}
+        {{ <error descr="TS2339: Property 'badError' does not exist on type 'AppComponent'.">badError</error> }}
+      </li>
+    }
+  </ul>
+}

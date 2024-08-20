@@ -4,6 +4,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 
 data class Angular2GetGeneratedElementTypeRequestArgs(
   override val file: String,
+  val projectFileName: String?,
   val startOffset: Int,
   val endOffset: Int,
   override val forceReturnType: Boolean = false,
