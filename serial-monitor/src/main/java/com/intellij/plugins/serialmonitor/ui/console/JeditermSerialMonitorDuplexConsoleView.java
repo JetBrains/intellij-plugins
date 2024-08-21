@@ -22,6 +22,7 @@ import com.intellij.plugins.serialmonitor.ui.SerialMonitor;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.actions.ConnectDisconnectAction;
 import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction;
+import com.intellij.plugins.serialmonitor.ui.actions.SaveHistoryToFileAction;
 import com.intellij.ui.components.JBLoadingPanel;
 import icons.SerialMonitorIcons;
 import org.jetbrains.annotations.NotNull;
@@ -117,6 +118,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
       getPrimaryConsoleView().getScrollToTheEndToolbarAction(),
       new MyScrollToTheEndToolbarAction(getSecondaryConsoleView().getEditor()),
       new SerialPauseAction(),
+      new SaveHistoryToFileAction(getPrimaryConsoleView().getTerminalTextBuffer(), myPortProfile),
       new ClearAllAction(),
       new EditSettingsAction(myName, this)};
   }

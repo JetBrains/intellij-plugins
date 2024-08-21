@@ -20,6 +20,7 @@ import com.intellij.terminal.JBTerminalWidget
 import com.jediterm.terminal.*
 import com.jediterm.terminal.emulator.JediEmulator
 import com.jediterm.terminal.model.JediTerminal
+import com.jediterm.terminal.model.TerminalTextBuffer
 import org.apache.commons.io.input.buffer.CircularByteBuffer
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -195,6 +196,8 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
       }
     }
   }
+
+  fun getTerminalTextBuffer(): TerminalTextBuffer = widget.terminalTextBuffer
 
   val scrollToTheEndToolbarAction = object : ToggleAction(
     ActionsBundle.messagePointer("action.EditorConsoleScrollToTheEnd.text"),
