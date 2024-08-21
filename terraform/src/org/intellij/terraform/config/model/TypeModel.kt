@@ -84,12 +84,12 @@ class TypeModel(
 
     val loadedProviders = providersByFullName.values.toSet()
 
-    resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName }
-    datasourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName }
+    resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
+    datasourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
 
     providerDefaultPrefixes = providersByFullName.mapNotNull { (name, provider) ->
-      val prefix = getDefaultPrefix(resourcesByProvider[provider.fullName]) ?: getDefaultPrefix(datasourcesByProvider[provider.fullName])
-      prefix?.let { provider.fullName to it }
+      val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(datasourcesByProvider[name])
+      prefix?.let { name to it }
     }.toMap()
   }
 
@@ -329,7 +329,7 @@ class TypeModel(
     val providerFullName = localNames[providerShortName]
            ?: Constants.OFFICIAL_PROVIDERS_NAMESPACE.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
            ?: "hashicorp/$providerShortName" //The last resort
-    return providerFullName
+    return providerFullName.lowercase()
   }
 
   fun getResourceType(name: String, psiElement: PsiElement? = null): ResourceType? =
@@ -348,7 +348,7 @@ class TypeModel(
 
   fun getProviderType(name: String, psiElement: PsiElement? = null): ProviderType? {
     val providerName = getProviderNameForIdentifier(name, psiElement)
-    return providersByFullName[providerName.lowercase()]
+    return providersByFullName[providerName]
   }
 
   fun getProvisionerType(name: String): ProvisionerType? {
