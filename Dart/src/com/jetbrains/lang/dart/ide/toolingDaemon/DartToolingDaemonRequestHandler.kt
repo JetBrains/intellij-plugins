@@ -3,6 +3,8 @@ package com.jetbrains.lang.dart.ide.toolingDaemon
 
 import com.google.gson.JsonObject
 
+class DartToolingDaemonResponse(var result: JsonObject?, var error: JsonObject?)
+
 fun interface DartToolingDaemonRequestHandler {
-  fun handleRequest(request: JsonObject): JsonObject
+  fun handleRequest(request: JsonObject): DartToolingDaemonResponse
 }
