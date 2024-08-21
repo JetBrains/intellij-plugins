@@ -10,5 +10,5 @@
     reason: <- intellij.protoeditor
   contentModules:
   - name: intellij.protoeditor.go
-  - name: intellij.protoeditor.jvm
   - name: intellij.protoeditor.python
+  - name: intellij.protoeditor.jvm

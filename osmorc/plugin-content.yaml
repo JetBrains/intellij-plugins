@@ -16,6 +16,6 @@
     libraries:
       OSGi namespaces:
       - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.contract-1.jar
-      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.extender-1.jar
       - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.implementation-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.extender-1.jar
       - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.service-1.jar

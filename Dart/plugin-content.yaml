@@ -2,7 +2,7 @@
   modules:
   - name: intellij.dart
     libraries:
-      json.jar:
-      - name: $PROJECT_DIR$/contrib/Dart/lib/json.jar
       weberknecht-0.1.5.jar:
       - name: $PROJECT_DIR$/contrib/Dart/lib/weberknecht-0.jar
+      json.jar:
+      - name: $PROJECT_DIR$/contrib/Dart/lib/json.jar
