@@ -18,6 +18,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
+import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.blocks.*
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
@@ -298,7 +299,8 @@ internal class BoundTarget(component: Angular2Component) {
 
   private val referenceMap: Map<Any?, TmplAstExpressionSymbol>
 
-  val pipes: Map<String, Angular2Pipe> = component.declarationsInScope.filterIsInstance<Angular2Pipe>().associateBy { it.getName() }
+  val pipes: Map<String, Angular2Pipe> = Angular2DeclarationsScope(component).importsOwner
+    ?.declarationsInScope?.filterIsInstance<Angular2Pipe>()?.associateBy { it.getName() } ?: emptyMap()
 
   val templateFile: Angular2HtmlFile?
 

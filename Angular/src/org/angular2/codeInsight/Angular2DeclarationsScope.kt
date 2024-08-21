@@ -2,6 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
@@ -15,11 +16,21 @@ import org.angular2.entities.*
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
  */
-class Angular2DeclarationsScope(element: PsiElement) {
+class Angular2DeclarationsScope {
 
-  private val scope = createScope(element)
-  private val export2NgModuleMap = HashMap<Project, MultiMap<Angular2Declaration, Angular2Module>>()
-  private val fileIndex = NotNullLazyValue.createValue { ProjectRootManager.getInstance(element.project).fileIndex }
+  constructor(element: PsiElement) {
+    this.scope = createScope(element)
+    this.fileIndex = NotNullLazyValue.createValue { ProjectRootManager.getInstance(element.project).fileIndex }
+  }
+
+  constructor(component: Angular2Component) {
+    this.scope = createScope(component.templateFile)
+    this.fileIndex = NotNullLazyValue.createValue { ProjectRootManager.getInstance(component.sourceElement.project).fileIndex }
+  }
+
+  private val scope: NotNullLazyValue<ScopeResult>
+  private val export2NgModuleMap: HashMap<Project, MultiMap<Angular2Declaration, Angular2Module>> = HashMap()
+  private val fileIndex: NotNullLazyValue<ProjectFileIndex>
 
   val importsOwner: Angular2ImportsOwner?
     get() = scope.value.owner
@@ -101,8 +112,8 @@ class Angular2DeclarationsScope(element: PsiElement) {
 
   companion object {
 
-    private fun createScope(element: PsiElement) = NotNullLazyValue.createValue {
-      val file = element.containingFile
+    private fun createScope(element: PsiElement?) = NotNullLazyValue.createValue {
+      val file = element?.containingFile
                  ?: return@createValue ScopeResult(null, null, false)
       CachedValuesManager.getCachedValue(file) {
         val importsOwner = Angular2EntitiesProvider.findTemplateComponent(file)
