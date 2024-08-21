@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
@@ -138,12 +139,15 @@ class SerialMonitor(private val project: Project,
   }
 
   companion object {
-    private val SERIAL_NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Serial Monitor Notification")
+    private const val SERIAL_NOTIFICATION_GROUP_NAME = "Serial Monitor Notification"
 
     private const val SIZE_POLICY_RESIZEABLE = SIZEPOLICY_CAN_GROW + SIZEPOLICY_CAN_SHRINK + SIZEPOLICY_WANT_GROW
 
     fun errorNotification(content: @NlsContexts.NotificationContent String, project: Project?) {
-      return SERIAL_NOTIFICATION_GROUP.createNotification(content, NotificationType.ERROR).notify(project)
+      return service<NotificationGroupManager>()
+        .getNotificationGroup(SERIAL_NOTIFICATION_GROUP_NAME)
+        .createNotification(content, NotificationType.ERROR)
+        .notify(project)
     }
 
     fun errorNotification(content: @NlsContexts.NotificationContent String, component: Component) {
