@@ -61,7 +61,13 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
     override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
       synchronized(lock) {
         while (!Thread.interrupted() && !bytesBuffer.hasBytes()) {
-          lock.wait()
+          try {
+            lock.wait()
+          }
+          catch(_ : InterruptedException) {
+            Thread.currentThread().interrupt()
+            break
+          }
         }
         val toRead = min(length, bytesBuffer.currentNumberOfBytes)
         bytesBuffer.read(buffer, offset, toRead)
