@@ -33,6 +33,7 @@
 
     <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector"/>
     <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.ui.actions.SerialMonitorSaveToFileCollector"/>
   </extensions>
   <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
 </idea-plugin>

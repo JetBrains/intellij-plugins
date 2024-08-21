@@ -1,6 +1,9 @@
 package com.intellij.plugins.serialmonitor.ui.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.internal.statistic.eventLog.EventLogGroup
+import com.intellij.internal.statistic.eventLog.events.EventFields
+import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -30,8 +33,6 @@ class SaveHistoryToFileAction(val terminalTextBuffer: TerminalTextBuffer, val se
 
     service<SaveHistoryToFileService>().saveTerminalLogToFile(terminalTextBuffer, file)
   }
-
-  // TODO: FUS
 }
 
 @Service
@@ -52,6 +53,19 @@ class SaveHistoryToFileService(val cs: CoroutineScope) {
       with(Dispatchers.IO) {
         file.writeText(text)
       }
+      SerialMonitorSaveToFileCollector.logSaved(lines.size)
     }
+  }
+}
+
+internal object SerialMonitorSaveToFileCollector : CounterUsagesCollector() {
+
+  val GROUP = EventLogGroup("serial.monitor.saves", 1)
+  val CONNECT_EVENT = GROUP.registerEvent("serial.monitor.saved", EventFields.Int("lines"))
+
+  override fun getGroup(): EventLogGroup = GROUP
+
+  fun logSaved(lines: Int) {
+    CONNECT_EVENT.log(lines)
   }
 }
