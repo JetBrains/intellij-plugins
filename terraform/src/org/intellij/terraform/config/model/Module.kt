@@ -200,11 +200,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
   fun getTerraformModuleScope(): GlobalSearchScope {
     val searchScope = calculateModuleAwareSearchScope(item) ?: GlobalSearchScope.projectScope(item.project)
 
-    return PsiSearchScopeUtil.restrictScopeToFileLanguage(
-      item.project,
-      searchScope,
-      LanguageMatcher.matchWithDialects(HCLLanguage)
-    ) as GlobalSearchScope
+    return searchScope.restrictToTerraformFiles(this@Module.item.project)
   }
 
   private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
@@ -441,6 +437,12 @@ class Module private constructor(val item: PsiFileSystemItem) {
     return ObjectType(result)
   }
 }
+
+internal fun GlobalSearchScope.restrictToTerraformFiles(project: Project): GlobalSearchScope = PsiSearchScopeUtil.restrictScopeToFileLanguage(
+  project,
+  this,
+  LanguageMatcher.matchWithDialects(HCLLanguage)
+) as GlobalSearchScope
 
 internal val isDeepVariableSearchEnabled: Boolean
   get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.variables.deep.search")

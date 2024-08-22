@@ -1,13 +1,20 @@
 package org.intellij.terraform
 
+import com.intellij.codeInsight.codeVision.CodeVisionHost
+import com.intellij.codeInsight.codeVision.ui.model.CodeVisionListData
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.blockingContextToIndicator
+import com.intellij.testFramework.TestModeFlags
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
@@ -30,6 +37,7 @@ class TerraformModuleVariablesTest() : TerraformModuleVariablesTestBase("terrafo
     }
 
     assertEquals(1, findUsages.size)
+    assertContainsElements(myFixture.getCodeVisionsForCaret(), "1 usage")
     writeAction { myFixture.renameElementAtCaret("new_fake_var_1") }
     myFixture.checkResult("main.tf", """
       module "main" {
@@ -52,7 +60,27 @@ class TerraformModuleVariablesTest() : TerraformModuleVariablesTestBase("terrafo
       
     """.trimIndent(), true)
   }
+
 }
+
+internal suspend fun CodeInsightTestFixture.getCodeVisionsForCaret(): List<String> {
+  TestModeFlags.set(CodeVisionHost.isCodeVisionTestKey, true, testRootDisposable)
+  val visionHost = project.service<CodeVisionHost>()
+  doHighlighting()
+  withContext(Dispatchers.EDT) {
+    visionHost.calculateCodeVisionSync(editor, testRootDisposable)
+  }
+
+  return readAction {
+    val doc = this.editor.document
+    val lineNumber = doc.getLineNumber(this.editor.caretModel.offset)
+    val inlays = this.editor.inlayModel.getAfterLineEndElementsForLogicalLine(lineNumber)
+    inlays.flatMap {
+      it.getUserData(CodeVisionListData.KEY)?.visibleLens?.map { it.longPresentation } ?: emptyList()
+    }
+  }
+}
+
 
 class TerraformModuleVariablesUninitialisedTest() : TerraformModuleVariablesTestBase("terraform/variables/tf-modules-subdirs-uninitialised")
 
