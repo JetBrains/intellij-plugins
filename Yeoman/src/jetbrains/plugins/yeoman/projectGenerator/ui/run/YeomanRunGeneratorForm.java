@@ -303,7 +303,7 @@ public class YeomanRunGeneratorForm implements Disposable {
   public void dispose() {
     if (myProcessHandler != null) {
       if (!myProcessHandler.isProcessTerminated() && !myProcessHandler.isProcessTerminating()) {
-        LOGGER.debug("Dispose process " + myProcessHandler.getCommandLine());
+        LOGGER.debug("Dispose process " + myProcessHandler.getCommandLineForLog());
 
         myProcessHandler.destroyProcess();
         //process doesn't completed -> should remove folder
