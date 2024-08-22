@@ -285,7 +285,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
       //}
 
       // Example request to test registering a service method
-      ///*
+      /*
       registerServiceMethod("Test", "testMethod", JsonObject()) { requestParams ->
         println(requestParams)
         val params = JsonObject()
@@ -314,7 +314,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
       sendRequest("Test.testErrorMethod", methodParams2, false) { response ->
         println(response)
       }
-      //*/
+      */
     }
 
     override fun onMessage(message: WebSocketMessage) {
