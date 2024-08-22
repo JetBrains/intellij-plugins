@@ -40,7 +40,7 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
   @Override
   public void update(final @NotNull AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
-    if (ActionPlaces.isPopupPlace(e.getPlace())) {
+    if (e.isFromContextMenu()) {
       e.getPresentation().setEnabledAndVisible(enabled);
     }
     else {
