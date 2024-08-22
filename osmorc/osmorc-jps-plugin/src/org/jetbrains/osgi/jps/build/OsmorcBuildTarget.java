@@ -1,6 +1,7 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.build;
 
+import com.dynatrace.hash4j.hashing.HashSink;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -23,7 +24,6 @@ import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author michael.golubev
  */
-public final class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
+public final class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> implements BuildTargetHashSupplier {
   private final JpsOsmorcModuleExtension myExtension;
   private List<File> myOutputRoots = null;
 
@@ -51,14 +51,16 @@ public final class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescript
   }
 
   @Override
-  public void writeConfiguration(@NotNull ProjectDescriptor pd, @NotNull PrintWriter out) {
-    int configHash = 0;
+  public void computeConfigurationDigest(@NotNull ProjectDescriptor projectDescriptor, @NotNull HashSink hash) {
     JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(getModule());
-    if (extension != null) {
-      OsmorcModuleExtensionProperties p = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties();
-      configHash = JDOMUtil.write(XmlSerializer.serialize(p)).hashCode();
+    if (extension == null) {
+      hash.putBoolean(false);
     }
-    out.write(Integer.toHexString(configHash));
+    else {
+      OsmorcModuleExtensionProperties p = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties();
+      hash.putBoolean(true);
+      hash.putString(JDOMUtil.write(XmlSerializer.serialize(p)));
+    }
   }
 
   @Override

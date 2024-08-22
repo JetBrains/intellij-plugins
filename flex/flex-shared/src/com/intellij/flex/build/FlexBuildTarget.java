@@ -1,6 +1,7 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.build;
 
+import com.dynatrace.hash4j.hashing.HashSink;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
@@ -33,14 +34,11 @@ import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
-
+public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> implements BuildTargetHashSupplier {
   private final @NotNull JpsFlexBuildConfiguration myBC;
   private final @NotNull String myId;
 
@@ -54,8 +52,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
    * @param forcedDebugStatus {@code true} or {@code false} means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
    *                          {@code null} means that bc is compiled as is (i.e. as configured) without any modifications
    */
-  @NotNull
-  public static FlexBuildTarget create(final @NotNull JpsFlexBuildConfiguration bc, final @Nullable Boolean forcedDebugStatus) {
+  public static @NotNull FlexBuildTarget create(final @NotNull JpsFlexBuildConfiguration bc, final @Nullable Boolean forcedDebugStatus) {
     final String id = FlexCommonUtils.getBuildTargetId(bc.getModule().getName(), bc.getName(), forcedDebugStatus);
 
     if (forcedDebugStatus == null) {
@@ -71,10 +68,9 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     }
   }
 
-  @Nullable
-  public static FlexBuildTarget create(final JpsProject project,
-                                       final @NotNull JpsRunConfigurationType<? extends JpsBCBasedRunnerParameters<?>> runConfigType,
-                                       final @NotNull String runConfigName) {
+  public static @Nullable FlexBuildTarget create(final JpsProject project,
+                                                 final @NotNull JpsRunConfigurationType<? extends JpsBCBasedRunnerParameters<?>> runConfigType,
+                                                 final @NotNull String runConfigName) {
     assert runConfigType instanceof JpsFlashRunConfigurationType ||
            runConfigType instanceof JpsFlexUnitRunConfigurationType : runConfigType;
 
@@ -93,8 +89,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return myId;
   }
 
-  @NotNull
-  public JpsFlexBuildConfiguration getBC() {
+  public @NotNull JpsFlexBuildConfiguration getBC() {
     return myBC;
   }
 
@@ -119,11 +114,10 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @Override
-  @NotNull
-  public List<BuildRootDescriptor> computeRootDescriptors(final @NotNull JpsModel model,
-                                                          final @NotNull ModuleExcludeIndex index,
-                                                          final @NotNull IgnoredFileIndex ignoredFileIndex,
-                                                          final @NotNull BuildDataPaths dataPaths) {
+  public @NotNull List<BuildRootDescriptor> computeRootDescriptors(final @NotNull JpsModel model,
+                                                                   final @NotNull ModuleExcludeIndex index,
+                                                                   final @NotNull IgnoredFileIndex ignoredFileIndex,
+                                                                   final @NotNull BuildDataPaths dataPaths) {
     final List<BuildRootDescriptor> result = new ArrayList<>();
 
     final Collection<File> srcRoots = new ArrayList<>();
@@ -213,8 +207,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @Override
-  @Nullable
-  public BuildRootDescriptor findRootDescriptor(final @NotNull String rootId, final @NotNull BuildRootIndex rootIndex) {
+  public @Nullable BuildRootDescriptor findRootDescriptor(final @NotNull String rootId, final @NotNull BuildRootIndex rootIndex) {
     for (BuildRootDescriptor descriptor : rootIndex.getTargetRoots(this, null)) {
       if (descriptor.getRootId().equals(rootId)) {
         return descriptor;
@@ -225,29 +218,26 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @Override
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return FlexCommonBundle.message("bc.0.module.1", myBC.getName(), myBC.getModule().getName());
   }
 
   @Override
-  @NotNull
-  public Collection<File> getOutputRoots(@NotNull CompileContext context) {
-    return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
+  public @NotNull Collection<File> getOutputRoots(@NotNull CompileContext context) {
+    return List.of(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
   @Override
-  public void writeConfiguration(@NotNull ProjectDescriptor pd, final @NotNull PrintWriter out) {
-    out.println("id: " + myId);
+  public void computeConfigurationDigest(@NotNull ProjectDescriptor projectDescriptor, @NotNull HashSink hash) {
+    hash.putString(myId);
+    hash.putString(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC))));
 
-    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC))));
+    JpsFlexModuleOrProjectCompilerOptions moduleOptions = myBC.getModule().getProperties().getModuleLevelCompilerOptions();
+    hash.putString(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)moduleOptions).getState())));
 
-    final JpsFlexModuleOrProjectCompilerOptions moduleOptions = myBC.getModule().getProperties().getModuleLevelCompilerOptions();
-    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)moduleOptions).getState())));
-
-    final JpsFlexModuleOrProjectCompilerOptions projectOptions =
+    JpsFlexModuleOrProjectCompilerOptions projectOptions =
       JpsFlexProjectLevelCompilerOptionsExtension.getProjectLevelCompilerOptions(myBC.getModule().getProject());
-    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)projectOptions).getState())));
+    hash.putString(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)projectOptions).getState())));
   }
 
   public String toString() {

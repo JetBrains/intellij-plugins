@@ -1,11 +1,12 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.build;
 
+import com.dynatrace.hash4j.hashing.HashFunnel;
+import com.dynatrace.hash4j.hashing.HashSink;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FileCollectionFactory;
@@ -27,10 +28,9 @@ import org.jetbrains.jps.model.module.JpsTypedModule;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.*;
 
-public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
+public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> implements BuildTargetHashSupplier {
   FlexResourceBuildTarget(@NotNull FlexResourceBuildTargetType type, @NotNull JpsTypedModule<JpsFlexBuildConfigurationManager> module) {
     super(type, module);
   }
@@ -41,8 +41,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
-  @NotNull
-  public JpsTypedModule<JpsFlexBuildConfigurationManager> getModule() {
+  public @NotNull JpsTypedModule<JpsFlexBuildConfigurationManager> getModule() {
     //noinspection unchecked
     return (JpsTypedModule<JpsFlexBuildConfigurationManager>)super.getModule();
   }
@@ -52,12 +51,11 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<BuildRootDescriptor> computeRootDescriptors(final @NotNull JpsModel model,
-                                                          final @NotNull ModuleExcludeIndex index,
-                                                          final @NotNull IgnoredFileIndex ignoredFileIndex,
-                                                          final @NotNull BuildDataPaths dataPaths) {
+  public @NotNull List<BuildRootDescriptor> computeRootDescriptors(final @NotNull JpsModel model,
+                                                                   final @NotNull ModuleExcludeIndex index,
+                                                                   final @NotNull IgnoredFileIndex ignoredFileIndex,
+                                                                   final @NotNull BuildDataPaths dataPaths) {
     final List<BuildRootDescriptor> result = new ArrayList<>();
 
     final JavaSourceRootType rootType = getTargetType() == FlexResourceBuildTargetType.PRODUCTION ? JavaSourceRootType.SOURCE
@@ -76,9 +74,8 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
     return ((FlexResourceBuildTargetType)getTargetType()).isTests();
   }
 
-  @Nullable
   @Override
-  public BuildRootDescriptor findRootDescriptor(final @NotNull String rootId, final @NotNull BuildRootIndex rootIndex) {
+  public @Nullable BuildRootDescriptor findRootDescriptor(final @NotNull String rootId, final @NotNull BuildRootIndex rootIndex) {
     for (BuildRootDescriptor descriptor : rootIndex.getTargetRoots(this, null)) {
       if (descriptor.getRootId().equals(rootId)) {
         return descriptor;
@@ -87,15 +84,13 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
     return null;
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return getTargetType().getTypeId() + ":" + getModule().getName();
   }
 
-  @NotNull
   @Override
-  public Collection<File> getOutputRoots(@NotNull CompileContext context) {
+  public @NotNull Collection<File> getOutputRoots(@NotNull CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
       final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
       return ContainerUtil.createMaybeSingletonList(outputDir);
@@ -112,24 +107,27 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
-  public void writeConfiguration(@NotNull ProjectDescriptor pd, final @NotNull PrintWriter out) {
-    out.println("Module: " + getModule().getName());
-    for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
+  public void computeConfigurationDigest(@NotNull ProjectDescriptor projectDescriptor, @NotNull HashSink hash) {
+    hash.putString(getModule().getName());
+    List<JpsFlexBuildConfiguration> configurations = getModule().getProperties().getBuildConfigurations();
+    for (JpsFlexBuildConfiguration bc : configurations) {
       if (!bc.isSkipCompile() &&
           FlexCommonUtils.canHaveResourceFiles(bc.getNature()) &&
           bc.getCompilerOptions().getResourceFilesMode() != JpsFlexCompilerOptions.ResourceFilesMode.None) {
-
-        out.print("BC: " + bc.getName());
-        out.print(", output folder: " + PathUtilRt.getParentPath(bc.getActualOutputFilePath()));
-        out.print(", mode: " + bc.getCompilerOptions().getResourceFilesMode());
+        hash.putString(bc.getName());
+        hash.putString(PathUtilRt.getParentPath(bc.getActualOutputFilePath()));
+        hash.putString(bc.getCompilerOptions().getResourceFilesMode().toString());
 
         if (bc.getCompilerOptions().getResourceFilesMode() == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns) {
-          final JpsJavaCompilerConfiguration c = JpsJavaExtensionService.getInstance().getCompilerConfiguration(getModule().getProject());
-          out.print(", patterns: " + StringUtil.join(c.getResourcePatterns(), " "));
+          JpsJavaCompilerConfiguration c = JpsJavaExtensionService.getInstance().getCompilerConfiguration(getModule().getProject());
+          hash.putBoolean(true);
+          hash.putOrderedIterable(c.getResourcePatterns(), HashFunnel.forString());
         }
-
-        out.println();
+        else {
+          hash.putBoolean(false);
+        }
       }
     }
+    hash.putInt(configurations.size());
   }
 }
