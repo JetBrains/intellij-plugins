@@ -391,9 +391,9 @@ class TypeModel(
     return null
   }
 
-  fun allResources(): Iterable<ResourceType> = resourcesByProvider.values.flatten()
-  fun allDatasources(): Iterable<DataSourceType> = datasourcesByProvider.values.flatten()
-  fun allProviders(): Iterable<ProviderType> = providersByFullName.values
+  fun allResources(): Sequence<ResourceType> = resourcesByProvider.values.asSequence().flatten()
+  fun allDatasources(): Sequence<DataSourceType> = datasourcesByProvider.values.asSequence().flatten()
+  fun allProviders(): Sequence<ProviderType> = providersByFullName.values.asSequence().asSequence()
 }
 
 fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {

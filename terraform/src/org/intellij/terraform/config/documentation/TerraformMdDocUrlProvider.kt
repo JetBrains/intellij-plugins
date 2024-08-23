@@ -44,7 +44,7 @@ internal class TerraformMdDocUrlProvider(private val coroutineScope: CoroutineSc
     return when (context) {
       PROVIDER -> providerData.docs.firstOrNull { it.category == "overview" }
       RESOURCES, DATASOURCES -> providerData.docs.firstOrNull {
-        it.category == context && (it.title == blockData.identifier?.let { TypeModel.getResourceName (it) } || it.title == blockData.identifier)
+        it.category == context && (it.title == blockData.identifier?.let { TypeModel.getResourceName(it) } || it.title == blockData.identifier)
       }
       else -> null
     }?.let { docMetadata ->

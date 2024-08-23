@@ -39,6 +39,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
 import org.intellij.terraform.LatestInvocationRunner
+import org.intellij.terraform.config.Constants.PROVIDER_VERSION
 import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
@@ -191,7 +192,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private fun buildProviderMeta(providers: Collection<LockFileObject.ProviderInfo>): String? {
+  private fun buildProviderMeta(providers: Collection<ProviderInfo>): String? {
     val mapper = ObjectMapper()
     val metadataNode = mapper.createObjectNode()
     providers.forEach { providerInfo ->
@@ -202,7 +203,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       attributes.put("namespace", providerInfo.namespace)
       attributes.put("full-name", providerInfo.fullName)
       attributes.put("tier", ProviderTier.TIER_LOCAL.label)
-      attributes.put(LockFileObject.VERSION, providerInfo.version)
+      attributes.put(PROVIDER_VERSION, providerInfo.version)
       info.set<ObjectNode>("attributes", attributes)
       metadataNode.set<ObjectNode>(providerInfo.fullName.lowercase(), info)
     }
@@ -291,7 +292,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   private suspend fun generateNewJsonFile(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): @NlsSafe String {
     if (!explicitlyAllowRunningProcess && !buildLocalMetadataAutomatically) throw IllegalStateException("generateNewJsonFile is not enabled")
     val jsonFromProcess = buildJsonFromTerraformProcess(project, lock)
-    val lockFileProviders = readAction { getLockFilePsi(lock)?.let { LockFileObject.create(it).providers.values } }
+    val lockFileProviders = readAction { getLockFilePsi(lock)?.let { collectProviders(it).values } }
     val lockFileDataString = lockFileProviders?.let { buildProviderMeta(lockFileProviders) }
     val modelJson = addLockFileDataString(lockFileDataString, jsonFromProcess)
     return withContext(Dispatchers.IO) {
