@@ -116,6 +116,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
       new ConnectDisconnectAction(this),
       mySwitchConsoleAction,
       getPrimaryConsoleView().getScrollToTheEndToolbarAction(),
+      getPrimaryConsoleView().getPrintTimestampsToggleAction(),
       new MyScrollToTheEndToolbarAction(getSecondaryConsoleView().getEditor()),
       new SerialPauseAction(),
       new SaveHistoryToFileAction(getPrimaryConsoleView().getTerminalTextBuffer(), myPortProfile),

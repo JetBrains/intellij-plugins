@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.plugins.serialmonitor.SerialProfileService.NewLine
 import com.intellij.plugins.serialmonitor.service.SerialPortService
+import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.JBTerminalWidget
 import com.jediterm.terminal.*
@@ -220,5 +221,16 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
     }
   }
 
-
+  val printTimestampsToggleAction = object : ToggleAction(
+    SerialMonitorBundle.message("action.print.timestamps.text"),
+    SerialMonitorBundle.message("action.print.timestamps.description"),
+    AllIcons.Scope.Scratches) {
+    override fun isSelected(e: AnActionEvent): Boolean {
+      return emulator?.isTimestamped == true
+    }
+    override fun setSelected(e: AnActionEvent, isSelected: Boolean) {
+      emulator?.isTimestamped = isSelected
+    }
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  }
 }
