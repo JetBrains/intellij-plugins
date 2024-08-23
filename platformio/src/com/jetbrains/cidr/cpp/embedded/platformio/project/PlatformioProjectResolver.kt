@@ -179,24 +179,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
         checkCancelled()
 
-        var compDbText: String? = null
-        if (pioResolvePolicy?.isInitial == true) {
-          compDbText = platformioService.compileDbDeflatedBase64?.inflate()
-        }
-        if (compDbText == null) {
-          compDbText = gatherCompDB(id, "pio-run:${UUID.randomUUID()}", project, activeEnvName, listener, projectPath)
-          checkCancelled()
-          platformioService.compileDbDeflatedBase64 = compDbText.deflate()
-        }
-        checkCancelled()
-
-        val compDbTokenType = object : TypeToken<List<Map<String, String>>>(){}.type
-        val compDbJson = Gson().fromJson<List<Map<String, String>>>(compDbText, compDbTokenType)?.map {
-          if (it["file"] == null || it["command"] == null || it["directory"] == null) {
-            throw ExternalSystemException("Malformed Compilation Database entry! $it")
-          }
-          PlatformioFileScanner.CompDbEntry(it["file"]!!, it["command"]!!, it["directory"]!!.intern())
-        } ?: emptyList()
+        val compDbJson = getCompDbJson(pioResolvePolicy, platformioService, id, project, activeEnvName, listener, projectPath)
 
         checkCancelled()
         scanner.scanSources(compDbJson, project.service<PlatformioWorkspace>(), languageConfigurations, confBuilder)
@@ -237,6 +220,39 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       LOG.error(e)
       throw ExternalSystemException(e)
     }
+  }
+
+  private fun getCompDbJson(
+    pioResolvePolicy: PlatformioProjectResolvePolicy?,
+    platformioService: PlatformioService,
+    id: ExternalSystemTaskId,
+    project: Project,
+    activeEnvName: String,
+    listener: ExternalSystemTaskNotificationListener,
+    projectPath: String,
+  ): List<PlatformioFileScanner.CompDbEntry> {
+
+    val isInitial = pioResolvePolicy?.isInitial == true
+    val compDbInitialText = if (isInitial) platformioService.compileDbDeflatedBase64?.inflate() else null
+    checkCancelled()
+    val compDbText: String = compDbInitialText ?: gatherCompDB(id, "pio-run:${UUID.randomUUID()}", project, activeEnvName, listener, projectPath)
+    checkCancelled()
+
+    val compDbTokenType = object : TypeToken<List<Map<String, String>>>() {}.type
+    val compDbJson = Gson().fromJson<List<Map<String, String>>>(compDbText, compDbTokenType)?.map {
+      if (it["file"] == null || it["command"] == null || it["directory"] == null) {
+        throw ExternalSystemException("Malformed Compilation Database entry! $it")
+      }
+      PlatformioFileScanner.CompDbEntry(it["file"]!!, it["command"]!!, it["directory"]!!.intern())
+    } ?: emptyList()
+
+    checkCancelled()
+
+    if (!isInitial) {
+      platformioService.compileDbDeflatedBase64 = Gson().toJson(compDbJson).deflate()
+    }
+
+    return compDbJson
   }
 
   private fun configureLanguages(
