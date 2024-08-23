@@ -5,7 +5,7 @@ public class <lineMarker descr="Has subclasses"><error descr="Class 'ClassB' sho
 }
 
 <error descr="Package should be first statement in file">package</error> <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
-import <info descr="classes//class name">bar.ClassB</info>;
+import bar.<info descr="classes//class name">ClassB</info>;
 
 public class <error descr="Class 'ClassA' should be defined in file 'ClassA.js2'"><info descr="classes//class name">ClassA</info></error> extends <info descr="classes//class name">ClassB</info> {
     function <info descr="instance method">foo</info>() {}
