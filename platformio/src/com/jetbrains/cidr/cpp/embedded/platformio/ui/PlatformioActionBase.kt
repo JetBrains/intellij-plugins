@@ -1,6 +1,8 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
+import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.BaseOSProcessHandler
+import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
@@ -47,10 +49,7 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
         return@actionPerformed
       }
       val runContentManager = RunContentManager.getInstance(project)
-      val alreadyRunningDescriptor = runContentManager.allDescriptors.firstOrNull {
-        val processHandler = it.processHandler as? BaseOSProcessHandler
-        processHandler?.isProcessTerminated != true && processHandler?.commandLine == commandLine.commandLineString
-      }
+      val alreadyRunningDescriptor = getAlreadyRunningDescriptor(runContentManager, commandLine)
       if (alreadyRunningDescriptor == null) {
         val service = project.service<PlatformioService>()
         doRun(service, @Suppress("HardCodedStringLiteral") text.invoke(), commandLine, reloadProject)
@@ -61,6 +60,34 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
       }
     }
   }
+
+  protected fun actionPerformedKillAlreadyRunning(e: AnActionEvent,
+                                                  reloadProject: Boolean,
+                                                  appendEnvKey: Boolean,
+                                                  verboseAllowed: Boolean,
+                                                  vararg arguments: String) {
+    val project = e.project
+    if (project == null) return
+
+    val commandLine = PlatfromioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
+    val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
+
+    if (alreadyRunningDescriptor != null) {
+      alreadyRunningDescriptor.processHandler?.destroyProcess()
+    }
+
+    val service = project.service<PlatformioService>()
+    doRun(service, text.invoke(), commandLine, reloadProject)
+  }
+
+  private fun getAlreadyRunningDescriptor(
+    runContentManager: RunContentManager,
+    commandLine: GeneralCommandLine,
+  ): RunContentDescriptor? =
+    runContentManager.allDescriptors.firstOrNull {
+      val processHandler = it.processHandler as? BaseOSProcessHandler
+      processHandler?.isProcessTerminated != true && processHandler?.commandLine == commandLine.commandLineString
+    }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 

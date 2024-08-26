@@ -24,7 +24,7 @@ abstract class PlatformioAction(text: () -> @Nls String,
 class PlatformioMonitorAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("task.monitor") }, { "pio device monitor" },
                                                  pioIcon(AllIcons.Nodes.Console)) {
   override fun actionPerformed(e: AnActionEvent) =
-    actionPerformed(e, false, true, false, "device", "monitor")
+    actionPerformedKillAlreadyRunning(e, false, true, false, "device", "monitor")
 }
 
 class PlatformioPkgUpdateAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("platformio.update") }, { "pio pkg update" },
@@ -65,7 +65,7 @@ object PlatformioUploadMonitorAction : PlatformioTargetAction(target = "upload-m
                                                               icon = ClionEmbeddedPlatformioIcons.LogoPlatformIO) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    super.actionPerformed(e, false, true, true, "run", "-t", "upload", "-t", "monitor")
+    super.actionPerformedKillAlreadyRunning(e, false, true, true, "run", "-t", "upload", "-t", "monitor")
   }
 
 }
