@@ -7,6 +7,7 @@ import org.angular2.codeInsight.blocks.BLOCK_DEFER
 import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angular2.Angular2TestUtil
+import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.jetbrains.annotations.NonNls
 
 class Angular2LexerTest : LexerTestCase() {
@@ -58,6 +59,10 @@ class Angular2LexerTest : LexerTestCase() {
 
   fun testDeferBlockParameter3() {
     doBlockTest(BLOCK_DEFER, 1)
+  }
+
+  fun testLetBlock() {
+    doBlockTest(BLOCK_LET, 0)
   }
 
   override fun createLexer(): Lexer = lexerFactory()

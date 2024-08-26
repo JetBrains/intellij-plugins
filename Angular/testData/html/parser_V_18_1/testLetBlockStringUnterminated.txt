@@ -1,0 +1,29 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiWhiteSpace(' ')
+      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+        Angular2BlockParameter
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('foo')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"foo + test(12); ')
+              PsiErrorElement:Unclosed string literal
+                <empty list>
+              PsiWhiteSpace('\n')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('the')
+              PsiErrorElement:Unexpected token 'end'
+                <empty list>
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('end')
+      PsiErrorElement:Incomplete @let block - missing ;
+        <empty list>

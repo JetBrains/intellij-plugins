@@ -27,8 +27,9 @@ const val BLOCK_DEFER = "defer"
 const val BLOCK_ERROR = "error"
 const val BLOCK_PLACEHOLDER = "placeholder"
 const val BLOCK_LOADING = "loading"
+const val BLOCK_LET = "let"
 
-val BLOCKS_WITH_PRIMARY_EXPRESSION = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR)
+val BLOCKS_WITH_PRIMARY_EXPRESSION = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR, BLOCK_LET)
 
 const val PARAMETER_AS = "as"
 const val PARAMETER_LET = "let"

@@ -1,0 +1,8 @@
+JS:IDENTIFIER ('$foo_12')
+WHITE_SPACE (' ')
+JS:EQ ('=')
+WHITE_SPACE (' ')
+JS:IDENTIFIER ('test')
+JS:LPAR ('(')
+JS:NUMERIC_LITERAL ('12')
+JS:RPAR (')')

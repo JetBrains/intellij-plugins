@@ -336,6 +336,12 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  fun testLetBlockValid() {
+    doTest("""
+      @let foo = test(12); the end
+    """.trimIndent())
+  }
+
   override fun doTest(text: @NonNls String) {
     super.doTest(text)
     checkCorrectRestart(text)
@@ -352,16 +358,15 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
   override fun getPathToTestDataFile(extension: String): String {
     val basePath = IdeaTestExecutionPolicy.getHomePathWithPolicy() + "/" + dirPath
     val fileName = getTestName(true) + extension
-    return when {
-      File("${basePath}_$templateSyntax/$fileName").exists() -> {
-        "${basePath}_$templateSyntax/$fileName"
+    // Iterate over syntax versions starting from the `templateSyntax` down to V_2
+    return Angular2TemplateSyntax.entries.toList().asReversed().asSequence()
+      .dropWhile { it != templateSyntax }
+      .filter { it != Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS }
+      .firstNotNullOfOrNull { syntax ->
+        "${basePath}${syntax.dirSuffix}/$fileName".takeIf { File(it).exists() }
       }
-      File("$basePath/$fileName").exists() || templateSyntax == Angular2TemplateSyntax.V_2 -> {
-        "$basePath/$fileName"
-      }
-      else -> {
-        "${basePath}_$templateSyntax/$fileName"
-      }
-    }
+    ?: "${basePath}${templateSyntax.dirSuffix}/$fileName"
   }
+
+  private val Angular2TemplateSyntax.dirSuffix: String get() = if (this == Angular2TemplateSyntax.V_2) "" else "_$this"
 }

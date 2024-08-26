@@ -1,0 +1,296 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiWhiteSpace(' ')
+      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+        Angular2BlockParameter
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('topLevel')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('value')
+      PsiElement(NG:BLOCK_SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      Angular2HtmlBlock (@let)
+        PsiElement(NG:BLOCK_NAME)('@let')
+        PsiWhiteSpace(' ')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              JSVariable
+                PsiElement(JS:IDENTIFIER)('insideDiv')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('value')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      Angular2Interpolation
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('topLevel')
+    PsiElement(NG:INTERPOLATION_END)('}}')
+    PsiWhiteSpace(' ')
+    XmlText
+      PsiElement(XML_COMMENT)
+        XmlToken:XML_COMMENT_START('<!--')
+        XmlToken:XML_COMMENT_CHARACTERS(' Valid ')
+        XmlToken:XML_COMMENT_END('-->')
+    PsiWhiteSpace('\n')
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      Angular2Interpolation
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('insideDiv')
+    PsiElement(NG:INTERPOLATION_END)('}}')
+    PsiWhiteSpace(' ')
+    XmlText
+      PsiElement(XML_COMMENT)
+        XmlToken:XML_COMMENT_START('<!--')
+        XmlToken:XML_COMMENT_CHARACTERS(' Valid ')
+        XmlToken:XML_COMMENT_END('-->')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@if)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('condition')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          Angular2Interpolation
+            JSBinaryExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('topLevel')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('insideDiv')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        XmlText
+          PsiWhiteSpace(' ')
+          PsiElement(XML_COMMENT)
+            XmlToken:XML_COMMENT_START('<!--')
+            XmlToken:XML_COMMENT_CHARACTERS(' Valid ')
+            XmlToken:XML_COMMENT_END('-->')
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@let)
+          PsiElement(NG:BLOCK_NAME)('@let')
+          PsiWhiteSpace(' ')
+          ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+            Angular2BlockParameter
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('nested')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:EQ)('=')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('value')
+          PsiElement(NG:BLOCK_SEMICOLON)(';')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@if)
+          PsiElement(NG:BLOCK_NAME)('@if')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockParameters
+            PsiElement(JS:LPAR)('(')
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+              Angular2BlockParameter
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('condition')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockContents
+            PsiElement(NG:BLOCK_START)('{')
+            XmlText
+              PsiWhiteSpace('\n    ')
+            PsiElement(NG:INTERPOLATION_START)('{{')
+            ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+              Angular2Interpolation
+                JSBinaryExpression
+                  JSBinaryExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('topLevel')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('insideDiv')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('nested')
+            PsiElement(NG:INTERPOLATION_END)('}}')
+            XmlText
+              PsiWhiteSpace(' ')
+              PsiElement(XML_COMMENT)
+                XmlToken:XML_COMMENT_START('<!--')
+                XmlToken:XML_COMMENT_CHARACTERS(' Valid ')
+                XmlToken:XML_COMMENT_END('-->')
+              PsiWhiteSpace('\n  ')
+            PsiElement(NG:BLOCK_END)('}')
+        XmlText
+          PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace('\n')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlTemplateBindings <ngIf>
+        XmlToken:XML_NAME('*ngIf')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
+            Angular2TemplateBindings
+              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('condition')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      PsiElement(NG:INTERPOLATION_START)('{{')
+      ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+        Angular2Interpolation
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('topLevel')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:PLUS)('+')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('insideDiv')
+      PsiElement(NG:INTERPOLATION_END)('}}')
+      XmlText
+        PsiWhiteSpace(' ')
+        PsiElement(XML_COMMENT)
+          XmlToken:XML_COMMENT_START('<!--')
+          XmlToken:XML_COMMENT_CHARACTERS(' Valid ')
+          XmlToken:XML_COMMENT_END('-->')
+        PsiWhiteSpace('\n  ')
+      Angular2HtmlBlock (@let)
+        PsiElement(NG:BLOCK_NAME)('@let')
+        PsiWhiteSpace(' ')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              JSVariable
+                PsiElement(JS:IDENTIFIER)('nestedNgIf')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('value')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        PsiWhiteSpace(' ')
+        Angular2HtmlTemplateBindings <ngIf>
+          XmlToken:XML_NAME('*ngIf')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
+              Angular2TemplateBindings
+                Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('condition')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n     ')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          Angular2Interpolation
+            JSBinaryExpression
+              JSBinaryExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('topLevel')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('insideDiv')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('nestedNgIf')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        XmlText
+          PsiWhiteSpace(' ')
+          PsiElement(XML_COMMENT)
+            XmlToken:XML_COMMENT_START('<!--')
+            XmlToken:XML_COMMENT_CHARACTERS(' Valid ')
+            XmlToken:XML_COMMENT_END('-->')
+          PsiWhiteSpace('\n  ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      Angular2Interpolation
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('nested')
+    PsiElement(NG:INTERPOLATION_END)('}}')
+    PsiWhiteSpace(' ')
+    XmlText
+      PsiElement(XML_COMMENT)
+        XmlToken:XML_COMMENT_START('<!--')
+        XmlToken:XML_COMMENT_CHARACTERS(' Error, not hoisted from @if ')
+        XmlToken:XML_COMMENT_END('-->')
+    PsiWhiteSpace('\n')
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      Angular2Interpolation
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('nestedNgIf')
+    PsiElement(NG:INTERPOLATION_END)('}}')
+    PsiWhiteSpace(' ')
+    XmlText
+      PsiElement(XML_COMMENT)
+        XmlToken:XML_COMMENT_START('<!--')
+        XmlToken:XML_COMMENT_CHARACTERS(' Error, not hoisted from *ngIf ')
+        XmlToken:XML_COMMENT_END('-->')

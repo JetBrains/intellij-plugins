@@ -1,0 +1,3 @@
+NG:BLOCK_NAME ('@let')
+WHITE_SPACE (' ')
+NG:BLOCK_PARAMETER (let:0) ('foo = test(12) the end')
