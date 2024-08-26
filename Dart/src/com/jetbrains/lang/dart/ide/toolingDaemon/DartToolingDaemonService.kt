@@ -108,10 +108,11 @@ class DartToolingDaemonService private constructor(private val project: Project)
   }
 
   @Suppress("unused") // for the Flutter plugin
-  fun registerServiceMethod(service: String, method: String, consumer: DartToolingDaemonRequestHandler) {
+  fun registerServiceMethod(service: String, method: String, capabilities: JsonObject, consumer: DartToolingDaemonRequestHandler) {
     val params = JsonObject()
     params.addProperty("service", service)
     params.addProperty("method", method)
+    params.add("capabilities", capabilities)
     sendRequest("registerService", params, false) { response ->
       val result = response.getAsJsonObject("result")
       if (result == null) {
@@ -152,7 +153,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     webSocket.send(requestString)
   }
 
-  private fun sendResponse(id: String, result: JsonObject) {
+  private fun sendResponse(id: String, result: JsonObject?, error: JsonObject? = null) {
     if (!webSocketReady) {
       logger.warn("sendResponse(\"$id\", $result) called when the socket is not ready")
       return
@@ -161,7 +162,11 @@ class DartToolingDaemonService private constructor(private val project: Project)
     val response = JsonObject()
     response.addProperty("jsonrpc", "2.0")
     response.addProperty("id", id)
-    response.add("result", result)
+    if (error == null) {
+      response.add("result", result)
+    } else {
+      response.add("error", error)
+    }
 
     val responseString = response.toString()
     logger.debug("--> $responseString")
@@ -281,17 +286,32 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
       // Example request to test registering a service method
       /*
-      registerServiceMethod("Test", "testMethod") { requestParams ->
+      registerServiceMethod("Test", "testMethod", JsonObject()) { requestParams ->
         println(requestParams)
         val params = JsonObject()
         params.addProperty("success", true)
-        params
+        DartToolingDaemonResponse(params, null)
       }
 
       // Try using the service method
       val methodParams = JsonObject()
       methodParams.addProperty("param1", "1")
       sendRequest("Test.testMethod", methodParams, false) { response ->
+        println(response)
+      }
+
+      registerServiceMethod("Test", "testErrorMethod", JsonObject()) { requestParams ->
+        println(requestParams)
+        val params = JsonObject()
+        params.addProperty("code", 144)
+        params.addProperty("message", "This is an error")
+        DartToolingDaemonResponse(null, params)
+      }
+
+      // Try using the service method
+      val methodParams2 = JsonObject()
+      methodParams2.addProperty("param1", "1")
+      sendRequest("Test.testErrorMethod", methodParams2, false) { response ->
         println(response)
       }
       */
@@ -320,8 +340,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
         val params = json["params"].asJsonObject
         val id = json["id"].asString
         ApplicationManager.getApplication().executeOnPooledThread {
-          val result = serviceConsumer.handleRequest(params)
-          sendResponse(id, result)
+          val response = serviceConsumer.handleRequest(params)
+          sendResponse(id, response.result, response.error)
         }
       }
       else {
