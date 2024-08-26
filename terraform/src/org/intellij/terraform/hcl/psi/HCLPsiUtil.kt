@@ -2,6 +2,7 @@
 package org.intellij.terraform.hcl.psi
 
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
@@ -145,6 +146,7 @@ object HCLPsiUtil {
   }
 
   fun getReferencesSelectAware(e: PsiElement?): Array<out PsiReference> {
+    ProgressManager.checkCanceled()
     if (e == null) return PsiReference.EMPTY_ARRAY
     if (e is SelectExpression<*>) {
       if (e is IndexSelectExpression<*>) {
