@@ -57,6 +57,35 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     assertResolvedNames(ref, "ip_address", "ip_address")
   }
 
+  @Test
+  fun forEachOnObjectNonRecursive() {
+    myFixture.configureByText("main.tf", """
+      locals {
+        vm = [
+          {
+            ip_address = "10.0.0.1"
+            name       = "vm-1"
+          },
+          {
+            ip_address = "10.0.0.1"
+            name       = "vm-2"
+          }
+        ]
+      }
+
+      resource "example" "example" {
+        for_each = {
+        for index, vm in local.vm :
+        vm.name => vm
+        }
+        name       = each.value.name
+        ip_address = each.value.ip_<caret>address
+      }
+    """.trimIndent())
+    val ref = myFixture.getReferenceAtCaretPosition()!!
+    assertResolvedNames(ref, "ip_address", "ip_address")
+  }
+
   private fun assertResolvedNames(ref: PsiReference, vararg names: String?) {
 
     fun asAssertString(elt: PsiElement?): String? = elt.asSafely<HCLProperty>()?.name ?: elt?.toString()
