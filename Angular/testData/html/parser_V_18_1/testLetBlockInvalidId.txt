@@ -1,0 +1,18 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiErrorElement:Identifier expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('12foo')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('=')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('test(12);')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('the')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('end')

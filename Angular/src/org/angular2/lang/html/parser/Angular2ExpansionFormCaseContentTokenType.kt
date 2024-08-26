@@ -29,12 +29,14 @@ internal class Angular2ExpansionFormCaseContentTokenType private constructor(pri
     private val INSTANCE_V_2 = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_2)
     private val INSTANCE_V_2_NO_EXPANSION_FORMS = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS)
     private val INSTANCE_V_17 = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_17)
+    private val INSTANCE_V_18_1 = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_18_1)
 
     fun get(templateSyntaxVersion: Angular2TemplateSyntax): Angular2ExpansionFormCaseContentTokenType =
       when (templateSyntaxVersion) {
         Angular2TemplateSyntax.V_2 -> INSTANCE_V_2
         Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> INSTANCE_V_2_NO_EXPANSION_FORMS
         Angular2TemplateSyntax.V_17 -> INSTANCE_V_17
+        Angular2TemplateSyntax.V_18_1 -> INSTANCE_V_18_1
       }
   }
 }

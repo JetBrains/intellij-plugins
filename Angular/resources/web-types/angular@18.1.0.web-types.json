@@ -1,0 +1,1035 @@
+{
+  "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
+  "name": "@angular/core",
+  "framework": "angular",
+  "version": "18.1.0",
+  "description-markup": "markdown",
+  "default-icon": "icons/angular2.svg",
+  "framework-config": {
+    "enable-when": {
+      "node-packages": [
+        "@angular/core"
+      ]
+    }
+  },
+  "contexts-config": {
+    "angular-template-syntax": {
+      "V_18_1": {
+        "enable-when": {
+          "node-packages": [
+            "@angular/core"
+          ]
+        }
+      }
+    }
+  },
+  "contributions": {
+    "html": {
+      "elements": [
+        {
+          "name": "ng-container",
+          "description": "The `<ng-container>` can be used to hold directives without creating an HTML element.",
+          "doc-url": "https://angular.io/api/core/ng-container"
+        },
+        {
+          "name": "ng-content",
+          "description": "The `<ng-content>` element specifies where to project content inside a component template.",
+          "doc-url": "https://angular.io/api/core/ng-content",
+          "exclusive-contributions": [
+            "/html/attributes"
+          ],
+          "attributes": [
+            {
+              "description": "Only select elements from the projected content that match the given through attribute value CSS selector",
+              "name": "select"
+            }
+          ]
+        },
+        {
+          "name": "ng-template",
+          "doc-url": "https://angular.io/api/core/ng-template",
+          "description": "With `<ng-template>`, you can define template content that is only being rendered by Angular when you, whether directly or indirectly, specifically instruct it to do so, allowing you to have full control over how and when the content is displayed."
+        },
+        {
+          "name": "Template tag extensions",
+          "extension": true,
+          "pattern": {
+            "or": [
+              "template",
+              "ng-template"
+            ]
+          },
+          "attributes": [
+            {
+              "name": "Template binding",
+              "virtual": true,
+              "pattern": {
+                "template": [
+                  "let-",
+                  "#...",
+                  {
+                    "regex": ".*"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Angular directive element selector",
+          "ng-binding-pattern": true,
+          "priority": "lowest",
+          "pattern": {
+            "items": "/js/ng-directive-element-selectors"
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "i18n",
+          "description": "Use the `i18n` attribute to mark element text for translation.",
+          "doc-url": "https://angular.io/guide/i18n-common-prepare",
+          "priority": "high",
+          "value": {
+            "required": false
+          }
+        },
+        {
+          "name": "ngNonBindable",
+          "description": "`ngNonBindable` deactivates interpolation, directives, and bindings within the HTML text and children of the host element. Host element bindings and directives are not affected.",
+          "doc-url": "https://angular.io/guide/attribute-directives#deactivating-angular-processing-with-ngnonbindable",
+          "priority": "high",
+          "value": {
+            "kind": "no-value"
+          }
+        },
+        {
+          "name": "ngProjectAs",
+          "description": "Project content as a different element. Attribute value is a selector, which is going to be used instead of actual element contents for slot selection.",
+          "doc-url": "https://angular.io/guide/content-projection#projecting-content-in-more-complex-environments",
+          "priority": "high",
+          "value": {
+            "required": true,
+            "type": "string"
+          }
+        },
+        {
+          "name": "ngCspNonce",
+          "doc-url": "https://angular.io/guide/security#content-security-policy",
+          "description": "Use the ngCspNonce attribute on the root application element as `<app ngCspNonce=\"randomNonceGoesHere\"></app>`. The attribute should be used if you have access to server-side templating that can add the nonce both to the header and the index.html when constructing the response.",
+          "attribute-value": {
+            "kind": "plain"
+          }
+        },
+        {
+          "name": "Angular directive attribute selector",
+          "ng-binding-pattern": true,
+          "priority": "lowest",
+          "value": {
+            "required": false
+          },
+          "pattern": {
+            "items": "/js/ng-directive-attribute-selectors"
+          }
+        },
+        {
+          "name": "Event binding",
+          "virtual": true,
+          "value": {
+            "kind": "expression",
+            "type": "void"
+          },
+          "ng-binding-pattern": true,
+          "pattern": {
+            "delegate": "ng-event-binding-items",
+            "or": [
+              [
+                "(",
+                "#item",
+                ")"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "on-"
+                  ]
+                },
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "on-",
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "(",
+                "#item",
+                ")"
+              ]
+            ]
+          },
+          "ng-event-binding-items": {
+            "ng-binding-pattern": true,
+            "pattern": {
+              "or": [
+                {
+                  "items": [
+                    "/js/events",
+                    "/js/ng-directive-outputs"
+                  ],
+                  "priority": "high",
+                  "template": [
+                    "#item:event"
+                  ]
+                },
+                {
+                  "items": "/js/ng-custom-events",
+                  "priority": "normal",
+                  "template": [
+                    "#item:event"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Property binding",
+          "virtual": true,
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/html/ng-property-bindings",
+            "or": [
+              [
+                "[",
+                "#item",
+                "]"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "bind-"
+                  ]
+                },
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "bind-",
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "[",
+                "#item",
+                "]"
+              ]
+            ]
+          }
+        },
+        {
+          "name": "Banana box binding",
+          "virtual": true,
+          "value": {
+            "required": true,
+            "type": "of-match",
+            "kind": "expression"
+          },
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/js/ng-directive-in-outs",
+            "or": [
+              [
+                "[(",
+                "#item",
+                ")]"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "bindon-"
+                  ]
+                },
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "bindon-",
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "[(",
+                "#item",
+                ")]"
+              ]
+            ]
+          },
+          "js": {
+            "ng-directive-in-outs": [
+              {
+                "name": "Unknown input/output",
+                "priority": "lowest",
+                "pattern": ".+",
+                "doc-hide-pattern": true,
+                "ng-error-symbol": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "Template binding",
+          "virtual": true,
+          "value": {
+            "required": true,
+            "kind": "expression"
+          },
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/js/ng-structural-directives",
+            "or": [
+              [
+                "*",
+                "#item:Structural Directive"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "*",
+                "#item:Structural Directive"
+              ]
+            ]
+          },
+          "js": {
+            "ng-structural-directives": [
+              {
+                "name": "Unknown structural directive",
+                "attribute-value": {
+                  "required": false
+                },
+                "priority": "lowest",
+                "pattern": ".+",
+                "doc-hide-pattern": true,
+                "ng-error-symbol": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "One-time binding",
+          "virtual": true,
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/js/ng-one-time-bindings"
+          },
+          "value": {
+            "kind": "plain",
+            "type": "of-match"
+          }
+        },
+        {
+          "name": "Attribute bindings",
+          "virtual": true,
+          "pattern": {
+            "items": "/js/ng-directive-attributes"
+          },
+          "value": {
+            "kind": "plain",
+            "type": "of-match"
+          }
+        },
+        {
+          "name": "Reference variable declaration",
+          "virtual": true,
+          "pattern": {
+            "items": "ng-reference-declaration",
+            "priority": "lowest",
+            "or": [
+              [
+                "#",
+                "#...",
+                "#item"
+              ],
+              [
+                "ref-",
+                "#...",
+                "#item"
+              ]
+            ]
+          },
+          "ng-reference-declaration": {
+            "name": "Reference variable",
+            "pattern": ".*",
+            "doc-hide-pattern": true,
+            "ij-no-psi-refs": true,
+            "hide-from-completion": true
+          },
+          "value": {
+            "required": false,
+            "kind": "plain",
+            "type": "symbol"
+          },
+          "values": {
+            "pattern": {
+              "items": "/js/ng-directive-exports-as"
+            }
+          },
+          "js": {
+            "ng-directive-exports-as": [
+              {
+                "name": "Unknown directive exportAs identifier",
+                "priority": "lowest",
+                "pattern": ".+",
+                "doc-hide-pattern": true,
+                "ng-error-symbol": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "Animation trigger assignment",
+          "virtual": true,
+          "pattern": {
+            "template": [
+              "@",
+              {
+                "regex": ".+"
+              }
+            ]
+          },
+          "value": {
+            "required": false
+          },
+          "hide-from-completion": true
+        },
+        {
+          "name": "i18n attribute translation",
+          "description": "Use the `i18n-*` attribute to mark attribute text strings for translation.",
+          "doc-url": "https://angular.io/guide/i18n-common-prepare",
+          "virtual": true,
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/html/ng-i18n-attributes",
+            "template": [
+              "i18n-",
+              "#...",
+              "#item:name of the attribute to translate"
+            ]
+          },
+          "value": {
+            "kind": "plain",
+            "type": "string",
+            "required": false
+          },
+          "ng-i18n-attributes": [
+            {
+              "name": "Absent attribute name",
+              "priority": "lowest",
+              "proximity": 0,
+              "pattern": ".+",
+              "doc-hide-pattern": true,
+              "ng-error-symbol": true,
+              "hide-from-completion": true
+            }
+          ]
+        }
+      ],
+      "ng-property-bindings": [
+        {
+          "name": "Class binding",
+          "attribute-value": {
+            "required": true,
+            "type": "boolean",
+            "kind": "expression"
+          },
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/css/classes",
+            "template": [
+              {
+                "priority": "lowest",
+                "template": [
+                  "class."
+                ]
+              },
+              "#...",
+              "#item:CSS Class"
+            ]
+          },
+          "css": {
+            "classes": [
+              {
+                "name": "Unknown CSS class",
+                "priority": "low",
+                "pattern": ".+",
+                "doc-hide-pattern": true,
+                "ng-error-symbol": true,
+                "hide-from-completion": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "Style binding",
+          "attribute-value": {
+            "required": true,
+            "type": "string",
+            "kind": "expression"
+          },
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": "/css/properties",
+            "template": [
+              {
+                "priority": "lowest",
+                "template": [
+                  "style."
+                ]
+              },
+              "#...",
+              "#item:CSS Property",
+              {
+                "items": "/css/length-units",
+                "priority": "lowest",
+                "required": false,
+                "template": [
+                  ".",
+                  "#...",
+                  "#item:length unit"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Attribute binding",
+          "attribute-value": {
+            "required": true,
+            "type": "of-match",
+            "kind": "expression"
+          },
+          "ng-binding-pattern": true,
+          "pattern": {
+            "items": {
+              "path": "/html/attributes",
+              "includeVirtual": false
+            },
+            "template": [
+              {
+                "priority": "lowest",
+                "template": [
+                  "attr."
+                ]
+              },
+              "#...",
+              "#item:HTML Attribute"
+            ]
+          },
+          "attributes": [
+            {
+              "name": "Namespaced attribute",
+              "pattern": ".+:.+",
+              "doc-hide-pattern": true
+            },
+            {
+              "name": "Custom data attribute",
+              "pattern": "data-.+",
+              "doc-hide-pattern": true,
+              "hide-from-completion": true
+            }
+          ]
+        },
+        {
+          "name": "Property binding",
+          "attribute-value": {
+            "required": true,
+            "type": "of-match",
+            "kind": "expression"
+          },
+          "pattern": {
+            "or": [
+              {
+                "items": "/js/properties",
+                "priority": "high"
+              },
+              {
+                "items": "/js/ng-directive-inputs",
+                "priority": "high"
+              },
+              {
+                "delegate": "/js/ng-unknown-property",
+                "priority": "lowest"
+              }
+            ]
+          },
+          "js": {
+            "ng-unknown-property": [
+              {
+                "name": "Unknown property",
+                "priority": "low",
+                "pattern": ".+",
+                "doc-hide-pattern": true,
+                "ng-error-symbol": true,
+                "hide-from-completion": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "Animation trigger assignment",
+          "attribute-value": {
+            "required": false
+          },
+          "pattern": {
+            "template": [
+              "@",
+              {
+                "regex": ".+"
+              }
+            ]
+          },
+          "hide-from-completion": true
+        }
+      ],
+      "ng-blocks": [
+        {
+          "name": "defer",
+          "doc-url": "https://angular.dev/guide/defer#defer",
+          "description": "The content of the main `@defer` block is the section of content that is lazily loaded. It will not be rendered initially, and all of the content will appear once the specified trigger or `when` condition is met and the dependencies have been fetched. By default, a `@defer` block is triggered when the browser state becomes idle.",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "when",
+              "doc-url": "https://angular.dev/guide/defer#triggers",
+              "description": "`when` specifies an imperative condition as an expression that returns a `boolean`. When this expression becomes truthy, the placeholder is swapped with the lazily loaded content (which may be an asynchronous operation if the dependencies need to be fetched)."
+            },
+            {
+              "name": "on",
+              "doc-url": "https://angular.dev/guide/defer#triggers",
+              "description": "`on` specifies a trigger condition using one of available triggers. An example would be `on interaction` or `on viewport`. Multiple event triggers can be defined at once.",
+              "exclusive-contributions": [
+                "/js/symbols"
+              ],
+              "js": {
+                "symbols": [
+                  {
+                    "name": "Angular @defer on trigger",
+                    "pattern": {
+                      "items": "ng-defer-on-triggers"
+                    }
+                  }
+                ],
+                "ng-defer-on-triggers": [
+                  {
+                    "name": "idle",
+                    "doc-url": "https://angular.dev/guide/defer#on-idle",
+                    "description": "`idle` will trigger the deferred loading once the browser has reached an idle state (detected using the `requestIdleCallback` API under the hood). This is the default behavior with a defer block.",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "viewport",
+                    "doc-url": "https://angular.dev/guide/defer#on-viewport",
+                    "description": "`viewport` would trigger the deferred block when the specified content enters the viewport using the `IntersectionObserver` API. This could be the placeholder content or an element reference.\n\nBy default, the placeholder will act as the element watched for entering viewport as long as it is a single root element node. Alternatively, you can specify a template reference variable in the same template as the `@defer` block as the element that is watched to enter the viewport.",
+                    "parameter": "template-reference-variable",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "interaction",
+                    "doc-url": "https://angular.dev/guide/defer#on-interaction",
+                    "description": "`interaction` will trigger the deferred block when the user interacts with the specified element through click or keydown events.\n\nBy default, the placeholder will act as the interaction element as long as it is a single root element node. Alternatively, you can specify a template reference variable as the element that triggers interaction.",
+                    "parameter": "template-reference-variable",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "hover",
+                    "doc-url": "https://angular.dev/guide/defer#on-hover",
+                    "description": "`hover` triggers deferred loading when the mouse has hovered over the trigger area. Events used for this are `mouseenter` and `focusin`.\n\nBy default, the placeholder will act as the hover element as long as it is a single root element node. Alternatively, you can specify a template reference variable as the hover element.",
+                    "parameter": "template-reference-variable",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "immediate",
+                    "doc-url": "https://angular.dev/guide/defer#on-immediate",
+                    "description": "`immediate` triggers the deferred load immediately, meaning once the client has finished rendering, the defer chunk would then start fetching right away.",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "timer",
+                    "doc-url": "https://angular.dev/guide/defer#on-timer",
+                    "description": "`timer(x)` would trigger after a specified duration. The duration is required and can be specified in `ms` or `s`.",
+                    "parameter-required": true,
+                    "parameter": "time-duration",
+                    "js-symbol-kind": "Function"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "prefetch",
+              "doc-url": "https://angular.dev/guide/defer#prefetching",
+              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
+            }
+          ]
+        },
+        {
+          "name": "placeholder",
+          "doc-url": "https://angular.dev/guide/defer#placeholder",
+          "description": "By default, defer blocks do not render any content before they are triggered. The `@placeholder` is an optional block that declares content to show before the defer block is triggered. This placeholder content is replaced with the main content once the loading is complete. You can use any content in the placeholder section including plain HTML, components, directives, and pipes; however keep in mind the dependencies of the placeholder block are eagerly loaded.\n\n**Note:** For the best user experience, you should always specify a `@placeholder` block.",
+          "primary-block": "defer",
+          "unique": true,
+          "ng-block-parameters": [
+            {
+              "name": "minimum",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The minimum amount of time that the `@placeholder` content should be shown in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@placeholder` content in the case that the deferred dependencies are fetched quickly.",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "loading",
+          "doc-url": "https://angular.dev/guide/defer#loading",
+          "description": "The `@loading` block is an optional block that allows you to declare content that will be shown during the loading of any deferred dependencies. For example, you could show a loading spinner. Similar to `@placeholder`, the dependencies of the `@loading` block are eagerly loaded.",
+          "primary-block": "defer",
+          "unique": true,
+          "ng-block-parameters": [
+            {
+              "name": "minimum",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The minimum amount of time that `@loading` content should be shown in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@loading` content in the case that the deferred dependencies are fetched quickly.",
+              "unique": true
+            },
+            {
+              "name": "after",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The amount of time to wait after loading begins before showing the `@loading` content in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@loading` content in the case that the deferred dependencies are fetched quickly.",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "error",
+          "doc-url": "https://angular.dev/guide/defer#error",
+          "description": "The `@error` block allows you to declare content that will be shown if deferred loading fails. Similar to `@placeholder` and `@loading`, the dependencies of the `@error` block are eagerly loaded. The `@error` block is optional.",
+          "primary-block": "defer",
+          "unique": true
+        },
+        {
+          "name": "for",
+          "is-primary": true,
+          "doc-url": "https://angular.dev/guide/templates/control-flow#for-block---repeaters",
+          "description": "The `@for` repeatedly renders content of a block for each item in a collection. The collection can be represented as any JavaScript iterable but there are performance advantages of using a regular `Array`. A basic `@for` loop looks like:\n```Angular17Html\n@for (item of items; track item.id) {\n  {{ item.name }}\n}\n```",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            },
+            {
+              "name": "let",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Allows to alias one of the implicit variables: `$count`, `$index`, `$first`, `$last`, `$even` or `$odd`:\n```Angular17Html\n      \n@for (item of items; track item.id; let idx = $index, e = $even) {\n  Item #{{ idx }}: {{ item.name }}\n}\n```"
+            },
+            {
+              "name": "track",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#track-for-calculating-difference-of-two-collections",
+              "description": "The value of the `track` expression determines a key used to associate array items with the views in the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM operations as items are added, removed or moved in a collection.\n\nLoops over immutable data without `trackBy` as one of the most common causes for performance issues across Angular applications. Because of the potential for poor performance, the `track` expression is required for the `@for` loops. When in doubt, using `track $index` is a good default.",
+              "priority": "highest",
+              "required": true,
+              "unique": true
+            }
+          ],
+          "exclusive-contributions": [
+            "/js/symbols"
+          ],
+          "js": {
+            "symbols": [
+              {
+                "name": "$count",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Number of items in a collection iterated over",
+                "type": "number"
+              },
+              {
+                "name": "$index",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Index of the current row",
+                "type": "number"
+              },
+              {
+                "name": "$first",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row is the first row",
+                "type": "boolean"
+              },
+              {
+                "name": "$last",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row is the last row",
+                "type": "boolean"
+              },
+              {
+                "name": "$even",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row index is even",
+                "type": "boolean"
+              },
+              {
+                "name": "$odd",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row index is odd",
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        {
+          "name": "empty",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#empty-block",
+          "description": "You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:\n```Angular17Html\n@for (item of items; track item.name) {\n  <li> {{ item.name }} </li>\n} @empty {\n  <li> There are no items. </li>\n}\n```",
+          "primary-block": "for",
+          "unique": true
+        },
+        {
+          "name": "if",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@if` block conditionally displays its content when its condition expression is truthy:\n```Angular17Html\n@if (a > b) {\n   {{a}} is greater than {{b}}\n}\n```\nThe `@if` block might have one or more associated `@else` blocks. Immediately after an `@if` block, you can optionally specify any number of `@else if` blocks and one `@else` block.",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            },
+            {
+              "name": "as",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#referencing-the-conditional-expressions-result",
+              "description": "Use `as` parameter to reference conditional expression results:\n```Angular17Html\n@if (users$ | async; as users) {\n  {{ users.length }}\n}\n```",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "else if",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@else if` block conditionally displays its content when its condition expression is truthy and all previous `@if` and `@if else` conditions were falsy.",
+          "primary-block": "if",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "else",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@else` block conditionally displays its content when all of previous `@if` and `@if else` conditions were falsy.",
+          "primary-block": "if",
+          "order": "last",
+          "unique": true
+        },
+        {
+          "name": "switch",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The syntax for `@switch` is very similar to `@if`, and is inspired by the JavaScript `switch` statement:\n```Angular17Html\n@switch (condition) {\n  @case (caseA) {\n    Case A.\n  }\n  @case (caseB) {\n    Case B.\n  }\n  @default {\n    Default case.\n  }\n}\n```\nThe value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.\n\nThe `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
+          "is-primary": true,
+          "nested-secondary-blocks": true,
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true,
+              "prefix": ""
+            }
+          ]
+        },
+        {
+          "name": "case",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.",
+          "primary-block": "switch",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "default",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
+          "primary-block": "switch",
+          "order": "preferred-last",
+          "unique": true
+        },
+        {
+          "name": "let",
+          "doc-url": "https://angular.dev/guide/templates/let-template-variables",
+          "description": "Angular's `@let` syntax allows you to define a local variable and re-use it across the template.\n\n`@let` declarations are similar to JavaScript's let and their values can be any valid Angular expression. The expressions will be re-evaluated any time the template is executed.",
+          "is-primary": true
+        }
+      ]
+    },
+    "js": {
+      "ng-custom-events": [
+        {
+          "name": "Extended key events",
+          "priority": "normal",
+          "pattern": {
+            "template": [
+              {
+                "or": [
+                  "keyup",
+                  "keydown"
+                ]
+              },
+              {
+                "items": "key-event-modifiers",
+                "template": [
+                  ".",
+                  "#...",
+                  "#item:key event modifier"
+                ],
+                "priority": "high",
+                "repeat": true,
+                "unique": true,
+                "required": false
+              },
+              {
+                "items": "key-names",
+                "template": [
+                  ".",
+                  "#...",
+                  "#item:key name"
+                ],
+                "repeat": false,
+                "required": true
+              }
+            ]
+          },
+          "key-event-modifiers": [
+            {
+              "name": "alt"
+            },
+            {
+              "name": "control"
+            },
+            {
+              "name": "meta"
+            },
+            {
+              "name": "shift"
+            }
+          ],
+          "key-names": [
+            {
+              "name": "Extended event special key",
+              "pattern": {
+                "or": [
+                  "space",
+                  "dot",
+                  "escape",
+                  "enter",
+                  "tab",
+                  "arrowDown",
+                  "arrowLeft",
+                  "arrowRight",
+                  "arrowUp",
+                  "end",
+                  "home",
+                  "pageDown",
+                  "pageUp",
+                  "backspace",
+                  "delete",
+                  "insert",
+                  "contextMenu",
+                  "help",
+                  "printScreen"
+                ]
+              }
+            },
+            {
+              "name": "Extended event standard key",
+              "description": "Key name: `f1`-`f20`, `a`-`z`, `0`-`9`, `` ` ``, `~`, `@`, `#`, `$`, `%`, `^`, `&`, `*`, `(`, `)`, `_`, `+`, `-`, `[`, `]`, `{`, `}`, `|`, `;`, `:`, `,` or `?`.",
+              "priority": "low",
+              "pattern": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]",
+              "doc-hide-pattern": true,
+              "hide-from-completion": true
+            }
+          ]
+        },
+        {
+          "name": "Namespaced event",
+          "pattern": ".+:.+",
+          "doc-hide-pattern": true,
+          "hide-from-completion": true
+        },
+        {
+          "name": "Animation callback",
+          "pattern": "@.+",
+          "doc-hide-pattern": true
+        }
+      ]
+    },
+    "css": {
+      "pseudo-elements": [
+        {
+          "name": "ng-deep",
+          "doc-url": "https://angular.io/guide/component-styles#deprecated-deep--and-ng-deep",
+          "deprecated": true,
+          "description": "Applying the `::ng-deep` pseudo-class to any CSS rule completely disables view-encapsulation for that rule. Any style with `::ng-deep` applied becomes a global style. In order to scope the specified style to the current component and all its descendants, be sure to include the `:host` selector before `::ng-deep`. If the `::ng-deep` combinator is used without the `:host` pseudo-class selector, the style can bleed into other components."
+        }
+      ]
+    }
+  }
+}

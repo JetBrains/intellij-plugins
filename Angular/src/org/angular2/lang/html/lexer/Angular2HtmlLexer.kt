@@ -13,9 +13,11 @@ import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 
-open class Angular2HtmlLexer(highlightMode: Boolean,
-                             templateSyntax: Angular2TemplateSyntax,
-                             interpolationConfig: Pair<String, String>?)
+open class Angular2HtmlLexer(
+  highlightMode: Boolean,
+  templateSyntax: Angular2TemplateSyntax,
+  interpolationConfig: Pair<String, String>?,
+)
   : HtmlLexer(Angular2HtmlMergingLexer(Angular2HtmlFlexAdapter(templateSyntax, interpolationConfig), highlightMode),
               true, highlightMode) {
 
@@ -160,7 +162,7 @@ open class Angular2HtmlLexer(highlightMode: Boolean,
   }
 
   private class Angular2HtmlFlexAdapter(templateSyntax: Angular2TemplateSyntax, interpolationConfig: Pair<String, String>?)
-    : FlexAdapter(_Angular2HtmlLexer(templateSyntax.tokenizeExpansionForms, templateSyntax.enableBlockSyntax, interpolationConfig)) {
+    : FlexAdapter(_Angular2HtmlLexer(templateSyntax, interpolationConfig)) {
 
     private val flex get() = (super.getFlex() as _Angular2HtmlLexer)
 
@@ -182,14 +184,16 @@ open class Angular2HtmlLexer(highlightMode: Boolean,
       super.start(bufferSequence, position.offset, bufferEnd, position.state)
     }
 
-    private class Angular2HtmlFlexAdapterPosition(private val offset: Int,
-                                                  private val state: Int,
-                                                  val blockName: String?,
-                                                  val parameterIndex: Int,
-                                                  val parameterStart: Int,
-                                                  val blockParenLevel: Int,
-                                                  val expansionFormNestingLevel: Int,
-                                                  val interpolationStartPos: Int) : LexerPosition {
+    private class Angular2HtmlFlexAdapterPosition(
+      private val offset: Int,
+      private val state: Int,
+      val blockName: String?,
+      val parameterIndex: Int,
+      val parameterStart: Int,
+      val blockParenLevel: Int,
+      val expansionFormNestingLevel: Int,
+      val interpolationStartPos: Int,
+    ) : LexerPosition {
       override fun getOffset(): Int = offset
 
       override fun getState(): Int = state

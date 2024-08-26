@@ -1,0 +1,16 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@let foo)
+      PsiElement(NG:BLOCK_NAME)('@let foo')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('=')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('test(12);')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('the')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('end')
