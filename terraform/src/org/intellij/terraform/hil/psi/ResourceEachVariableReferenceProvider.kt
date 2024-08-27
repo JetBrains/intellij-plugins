@@ -97,7 +97,7 @@ object ResourceEachVariableReferenceProvider : PsiReferenceProvider() {
         if (value == null) {
           if (fake) found.add(FakeHCLProperty(name, block))
         } else {
-          ILSelectFromSomethingReferenceProvider.resolveForEachValueInner(value, name, found, fake, block)
+          ILSelectFromSomethingReferenceProvider.resolveForEachValueInner(value, name, found, fake, block, mutableSetOf())
         }
         found
       })
