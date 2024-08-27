@@ -45,6 +45,9 @@ class Angular2MetadataDirectiveProperty internal constructor(
   override val virtualProperty: Boolean
     get() = mySignature.value == null
 
+  override val isSignalProperty: Boolean
+    get() = false
+
   override val apiStatus: WebSymbolApiStatus
     get() = coalesceApiStatus(mySignature.value?.memberSource?.allSourceElements) { (it as? JSElementBase)?.apiStatus }
       .coalesceWith(myOwner.sourceElement.asSafely<JSElementBase>()?.apiStatus)

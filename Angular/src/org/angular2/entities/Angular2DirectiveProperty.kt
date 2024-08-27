@@ -31,6 +31,9 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 
   val virtualProperty: Boolean
 
+  val isSignalProperty: Boolean
+    get() = false
+
   override val searchTarget: WebSymbolSearchTarget?
     get() = WebSymbolSearchTarget.create(this)
 

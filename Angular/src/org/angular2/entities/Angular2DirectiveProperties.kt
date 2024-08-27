@@ -149,6 +149,9 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     override val attributeValue: WebSymbolHtmlAttributeValue?
       get() = delegate.attributeValue
 
+    override val isSignalProperty: Boolean
+      get() = delegate.isSignalProperty
+
     override val virtualProperty: Boolean
       get() = false
 

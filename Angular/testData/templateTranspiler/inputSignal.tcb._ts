@@ -1,0 +1,16 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/core";
+/* Directives */
+const _ctor1: <T = any>(init: Pick<MyComp2<T>, "bar"> & _i1.ɵUnwrapDirectiveSignalInputs<MyComp2<T>, "boo">) => MyComp2<T> = null!;
+
+/* TCB for inputSignal.ts */
+
+function _tcb1<T>(this: MyComp2<T>) {
+var _t1 = document.createElement("foo");
+var _t2 = _ctor1({"bar": 2, "boo": 3});
+_t2.bar = 2;
+_t2.boo[_i1.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = 3;
+var _t3 = _t2;
+"" + _t3;
+}

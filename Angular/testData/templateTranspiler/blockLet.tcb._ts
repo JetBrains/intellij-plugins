@@ -2,7 +2,7 @@
 /* Imports */
 import * as _i1 from "@angular/common";
 /* Directives */
-const _ctor1 = null! as <T = unknown>(init: Pick<_i1.NgIf<T>, "ngIf" | "ngIfThen" | "ngIfElse">) => _i1.NgIf<T>;
+const _ctor1: <T = unknown>(init: Pick<_i1.NgIf<T>, "ngIf" | "ngIfThen" | "ngIfElse">) => _i1.NgIf<T> = null!;
 
 /* TCB for blockLet.ts */
 

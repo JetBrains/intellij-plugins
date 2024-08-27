@@ -26,6 +26,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
+import org.angular2.lang.html.tcb.R3Identifiers
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import java.util.*
@@ -71,6 +72,11 @@ abstract class Angular2SourceDirectiveProperty(
 
   override val isCoerced: Boolean
     get() = super.isCoerced || objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP) != null
+
+  override val isSignalProperty: Boolean
+    get() = signature.jsType
+      ?.asRecordType()
+      ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name) != null
 
   override val type: JSType?
     get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
@@ -132,12 +138,11 @@ abstract class Angular2SourceDirectiveProperty(
               ?.context?.asSafely<JSProperty>()
               ?.context?.asSafely<JSObjectLiteralExpression>()
 
-  @Suppress("NonAsciiCharacters")
   val typeFromSignal: JSType?
     get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(owner, Supplier {
       signature.jsType
         ?.asRecordType()
-        ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
+        ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name)
         ?.jsTypeWithOptionality
     })
 

@@ -4,18 +4,18 @@ import * as _i1 from "@angular/material/input";
 import * as _i2 from "@angular/forms";
 import * as _i3 from "@angular/material/datepicker";
 /* Directives */
-const _ctor1 = null! as <D = any>(init: Pick<_i3.MatDatepicker<D>, "calendarHeaderComponent" | "startAt" | "startView" | "color" | "xPosition" | "yPosition" | "dateClass" | "panelClass"> & {
+const _ctor1: <D = any>(init: Pick<_i3.MatDatepicker<D>, "calendarHeaderComponent" | "startAt" | "startView" | "color" | "xPosition" | "yPosition" | "dateClass" | "panelClass"> & {
 touchUi: typeof _i3.MatDatepicker.ngAcceptInputType_touchUi;
 disabled: typeof _i3.MatDatepicker.ngAcceptInputType_disabled;
 restoreFocus: typeof _i3.MatDatepicker.ngAcceptInputType_restoreFocus;
 opened: typeof _i3.MatDatepicker.ngAcceptInputType_opened;
-}) => _i3.MatDatepicker<D>;
-const _ctor2 = null! as <D = any>(init: Pick<_i3.MatDatepickerInput<D>, "matDatepicker" | "min" | "max" | "dateFilter" | "value"> & {
+}) => _i3.MatDatepicker<D> = null!;
+const _ctor2: <D = any>(init: Pick<_i3.MatDatepickerInput<D>, "matDatepicker" | "min" | "max" | "dateFilter" | "value"> & {
 disabled: typeof _i3.MatDatepickerInput.ngAcceptInputType_disabled;
-}) => _i3.MatDatepickerInput<D>;
-const _ctor3 = null! as <D = any>(init: Pick<_i3.MatDatepickerToggle<D>, "datepicker" | "tabIndex" | "ariaLabel" | "disableRipple"> & {
+}) => _i3.MatDatepickerInput<D> = null!;
+const _ctor3: <D = any>(init: Pick<_i3.MatDatepickerToggle<D>, "datepicker" | "tabIndex" | "ariaLabel" | "disableRipple"> & {
 disabled: typeof _i3.MatDatepickerToggle.ngAcceptInputType_disabled;
-}) => _i3.MatDatepickerToggle<D>;
+}) => _i3.MatDatepickerToggle<D> = null!;
 
 /* TCB for directiveReferences.ts */
 

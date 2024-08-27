@@ -18,11 +18,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
-import org.angular2.entities.Angular2ClassBasedDirective
-import org.angular2.entities.Angular2ClassBasedEntity
-import org.angular2.entities.Angular2Directive
+import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
-import org.angular2.entities.Angular2Pipe
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.DiagnosticKind
@@ -57,6 +54,9 @@ internal class Environment(
 
   fun referenceExternalSymbol(moduleName: String, name: String): Expression =
     Expression(getModuleImportName(moduleName, false, ImportExportSpecifierKind.IMPORT) + "." + name)
+
+  private fun referenceExternalType(extRef: R3Identifiers.ExternalReference): Expression =
+    referenceExternalType(extRef.moduleName, extRef.name)
 
   fun referenceType(dirTypeRef: JSType): Expression =
     // TODO detect stuff to import
@@ -170,14 +170,15 @@ internal class Environment(
     }.toList()
 
 
+  // Sync with packages/compiler-cli/src/ngtsc/typecheck/src/type_constructor.ts
   private fun getDirectiveStatements(): List<Statement> =
     dir2ctor.entries.asSequence().sortedBy { it.value }.map { (directive, name) ->
       val cls = (directive as? Angular2ClassBasedDirective)?.typeScriptClass?.takeIf { it.typeParameters.isNotEmpty() }
                 ?: return@map Statement { append("const ${name} = null! as () => any;") }
       val typeName = reference(cls)
       return@map Statement {
-        // const _ctor1 = null! as <T = any>(init: Pick<TestIf<T>, "ngIf" | "ngIfThen">) => TestIf<T>;
-        append("const ${name} = null! as <")
+        // const _ctor1: <T = any>(init: Pick<TestIf<T>, "ngIf" | "ngIfThen">) => TestIf<T> = null!;
+        append("const ${name}: <")
         cls.typeParameters.forEachIndexed { index, typeScriptTypeParameter ->
           if (index > 0) {
             append(", ")
@@ -191,14 +192,18 @@ internal class Environment(
               append(" = ").append(it.toExpression())
           }
         }
-        append(">(init: Pick<$typeName<")
-        cls.typeParameters.forEachIndexed { index, typeScriptTypeParameter ->
-          if (index > 0) {
-            append(", ")
+        append(">(init: ")
+
+        val directiveType = Expression {
+          append("$typeName<")
+          cls.typeParameters.forEachIndexed { index, typeScriptTypeParameter ->
+            if (index > 0) {
+              append(", ")
+            }
+            append(typeScriptTypeParameter.name ?: "?")
           }
-          append(typeScriptTypeParameter.name ?: "?")
+          append(">")
         }
-        append(">, ")
 
         val coercedInputs = cls.staticJSType.asRecordType(cls)
           .properties
@@ -207,23 +212,61 @@ internal class Environment(
               ?.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length)
           }
 
+        val plainInputs = mutableListOf<String>()
+        val signalInputs = mutableListOf<String>()
+
         directive.bindings.inputs
           .asSequence()
-          .mapNotNull { input -> input.fieldName?.takeIf { !coercedInputs.contains(it) } }
-          .distinct()
-          .forEachIndexed { index, fieldName ->
-            if (index > 0) {
-              append(" | ")
+          .mapNotNull { Pair(it.fieldName ?: return@mapNotNull null, it) }
+          .filter { (name, _) -> !coercedInputs.contains(name) }
+          .distinctBy { (name, _) -> name }
+          .forEach { (name, property) ->
+            if (property.isSignalProperty) {
+              signalInputs.add(name)
+            } else {
+              plainInputs.add(name)
             }
-            append("\"$fieldName\"")
           }
-        append(">")
+
+        var hasType = false
+        if (plainInputs.isNotEmpty()) {
+          hasType = true
+          append("Pick<").append(directiveType).append(", ")
+          plainInputs
+            .forEachIndexed { index, fieldName ->
+              if (index > 0) {
+                append(" | ")
+              }
+              append("\"$fieldName\"")
+            }
+          append(">")
+        }
         if (coercedInputs.isNotEmpty()) {
-          append(" & {").newLine()
+          if (hasType) {
+            append(" & ")
+          }
+          hasType = true
+          append("{").newLine()
           for (input in coercedInputs) {
             append(input).append(": typeof $typeName.$NG_ACCEPT_INPUT_TYPE_PREFIX$input;").newLine()
           }
           append("}")
+        }
+        if (signalInputs.isNotEmpty()) {
+          if (hasType) {
+            append(" & ")
+          }
+          append(referenceExternalType(R3Identifiers.UnwrapDirectiveSignalInputs))
+            .append("<").append(directiveType).append(", ")
+          signalInputs
+            .forEachIndexed { index, fieldName ->
+              if (index > 0) {
+                append(" | ")
+              }
+              append("\"$fieldName\"")
+            }
+          append(">")
+
         }
         append(") => $typeName<")
         cls.typeParameters.forEachIndexed { index, typeScriptTypeParameter ->
@@ -232,7 +275,7 @@ internal class Environment(
           }
           append(typeScriptTypeParameter.name ?: "?")
         }
-        append(">;")
+        append("> = null!;")
       }
     }.toList()
 

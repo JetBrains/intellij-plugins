@@ -46,6 +46,9 @@ class Angular2AliasedDirectiveProperty(
   override val virtualProperty: Boolean
     get() = delegate.virtualProperty
 
+  override val isSignalProperty: Boolean
+    get() = delegate.isSignalProperty
+
   override val apiStatus: WebSymbolApiStatus
     get() = delegate.apiStatus
 

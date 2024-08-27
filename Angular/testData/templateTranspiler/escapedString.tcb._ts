@@ -1,6 +1,6 @@
 /* Angular type checking code */
 /* Directives */
-const _ctor1 = null! as <C = any, F = any>(init: Pick<MyDirective<C, F>, "myInput">) => MyDirective<C, F>;
+const _ctor1: <C = any, F = any>(init: Pick<MyDirective<C, F>, "myInput">) => MyDirective<C, F> = null!;
 
 /* TCB for escapedString.ts */
 
