@@ -59,6 +59,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
 
   @Test
   fun forEachOnObjectNonRecursive() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
     myFixture.configureByText("main.tf", """
       locals {
         vm = [
@@ -84,6 +85,29 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     """.trimIndent())
     val ref = myFixture.getReferenceAtCaretPosition()!!
     assertResolvedNames(ref, "ip_address", "ip_address")
+    myFixture.checkHighlighting()
+  }
+
+  @Test
+  fun checkSoeInResolve() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
+    myFixture.configureByText("main.tf", """
+        locals {
+          myprop = toset(
+           [for elem in var.my_var.elem : elem.field]
+          )
+          another = var.<error descr="Unresolved reference unresolved">unresolved</error>
+        }
+        
+        variable "my_var" {
+          type = object({
+            elem = list(object({
+              field = string
+            }))
+          })
+        }
+    """.trimIndent())
+    myFixture.checkHighlighting()
   }
 
   private fun assertResolvedNames(ref: PsiReference, vararg names: String?) {
