@@ -243,7 +243,9 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
       startMarker.done(Angular2HtmlElementTypes.BLOCK)
       return
     }
+    val parameters = builder.mark()
     builder.advanceLexer()
+    parameters.done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
     if (builder.tokenType != Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
       builder.error(Angular2Bundle.message("angular.parse.template.missing-let-block-closing-semicolon"))
     }
@@ -493,16 +495,14 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     originalName: String,
     marker: Marker,
     var hasNgNonBindable: Boolean = false,
-  )
-    : HtmlTagInfoImpl(normalizedName, originalName, marker)
+  ) : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   private class AngularBlock(
     private val startMarker: Marker,
     private val contentsMarker: Marker,
     private val errorStartMarker: Marker,
     private val errorEndMarker: Marker,
-  )
-    : HtmlParserStackItem {
+  ) : HtmlParserStackItem {
 
     override fun done(
       builder: PsiBuilder,

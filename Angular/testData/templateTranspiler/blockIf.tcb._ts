@@ -4,7 +4,7 @@
 
 function _tcb1(this: RobotProfileComponent) {
 var _t1 = this.user.isRobot;
-if (_t1) {
+if ((this.user.isRobot) && _t1) {
 "" + _t1;
 "" + this.user.name;
 }

@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
   "name": "@angular/core",
   "framework": "angular",
-  "version": "18.1.0",
+  "version": "18.1.0-rc.0",
   "description-markup": "markdown",
   "default-icon": "icons/angular2.svg",
   "framework-config": {
@@ -916,7 +916,13 @@
           "name": "let",
           "doc-url": "https://angular.dev/guide/templates/let-template-variables",
           "description": "Angular's `@let` syntax allows you to define a local variable and re-use it across the template.\n\n`@let` declarations are similar to JavaScript's let and their values can be any valid Angular expression. The expressions will be re-evaluated any time the template is executed.",
-          "is-primary": true
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": false
+            }
+          ]
         }
       ]
     },

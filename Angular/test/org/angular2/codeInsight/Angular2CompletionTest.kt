@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.webSymbols.LookupElementInfo
 import com.intellij.webSymbols.enableIdempotenceChecksOnEveryCache
@@ -89,7 +90,7 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   fun testTemplatesCompletion16() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html",
-                 configurators = listOf(Angular2TsConfigFile(strict = false )))
+                 configurators = listOf(Angular2TsConfigFile(strict = false)))
 
   fun testTemplatesCompletion16Strict() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
@@ -206,6 +207,16 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   fun testTsconfigPriority() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", dir = true, configureFileName = "src/component.html") {
+      it.priority >= 100
+    }
+
+  fun testLetBlockTemplate() {
+    TemplateManagerImpl.setTemplateTesting(testRootDisposable)
+    doTypingTest("le\nfoo\t12\n", Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html")
+  }
+
+  fun testLetBlockExpression() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html") {
       it.priority >= 100
     }
 

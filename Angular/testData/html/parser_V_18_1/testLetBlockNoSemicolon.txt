@@ -5,31 +5,32 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('foo')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSCallExpression
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('test')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('12')
+                    PsiElement(JS:RPAR)(')')
+                PsiErrorElement:Unexpected token 'the'
+                  <empty list>
+                PsiWhiteSpace(' ')
                 JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('test')
-                JSArgumentList
-                  PsiElement(JS:LPAR)('(')
-                  JSLiteralExpression
-                    PsiElement(JS:NUMERIC_LITERAL)('12')
-                  PsiElement(JS:RPAR)(')')
-              PsiErrorElement:Unexpected token 'the'
-                <empty list>
-              PsiWhiteSpace(' ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('the')
-              PsiErrorElement:Unexpected token 'end'
-                <empty list>
-              PsiWhiteSpace(' ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('end')
+                  PsiElement(JS:IDENTIFIER)('the')
+                PsiErrorElement:Unexpected token 'end'
+                  <empty list>
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('end')
       PsiErrorElement:Incomplete @let block - missing ;
         <empty list>

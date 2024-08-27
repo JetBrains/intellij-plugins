@@ -29,6 +29,7 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
@@ -38,6 +39,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.blocks.Angular2BlockParameterNameCompletionProvider
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
+import org.angular2.codeInsight.blocks.isLetReferenceBeforeDeclaration
 import org.angular2.codeInsight.imports.Angular2GlobalImportCandidate
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
@@ -85,17 +87,21 @@ class Angular2CompletionContributor : CompletionContributor() {
   }
 
   private class EmptyCompletionProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters,
-                                context: ProcessingContext,
-                                result: CompletionResultSet) {
+    override fun addCompletions(
+      parameters: CompletionParameters,
+      context: ProcessingContext,
+      result: CompletionResultSet,
+    ) {
       result.stopHere()
     }
   }
 
   private class DeferredTimeUnitsCompletionProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters,
-                                context: ProcessingContext,
-                                result: CompletionResultSet) {
+    override fun addCompletions(
+      parameters: CompletionParameters,
+      context: ProcessingContext,
+      result: CompletionResultSet,
+    ) {
       result.addElement(LookupElementBuilder.create("ms")
                           .withIcon(AngularIcons.Angular2))
       result.addElement(LookupElementBuilder.create("s")
@@ -194,12 +200,17 @@ class Angular2CompletionContributor : CompletionContributor() {
           return
         }
 
+        val enclosingVarDeclaration = PsiTreeUtil.getParentOfType(ref, JSVariable::class.java, true, JSStatement::class.java)
+          ?.let { CompletionUtil.getOriginalOrSelf(it) }
+
         // Angular template scope
         Angular2TemplateScopesResolver.resolve(parameters.position) { resolveResult ->
           val element = resolveResult.element as? JSPsiElementBase
                         ?: return@resolve true
           val name = element.name
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
+              && enclosingVarDeclaration != element
+              && !isLetReferenceBeforeDeclaration(ref, element)
               && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, JSLookupContext(parameters.originalFile)).tailAndType)) {
             localNames.add(name)
             result.consume(JSCompletionUtil.withJSLookupPriority(

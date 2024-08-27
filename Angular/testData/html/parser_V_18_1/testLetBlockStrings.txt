@@ -5,38 +5,39 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('foo')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSBinaryExpression
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
                 JSBinaryExpression
-                  JSLiteralExpression
-                    PsiElement(JS:STRING_LITERAL_PART)('"foo')
-                    PsiElement(NG:ESCAPE_SEQUENCE)('\"')
-                    PsiElement(JS:STRING_LITERAL_PART)(';bar"')
+                  JSBinaryExpression
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL_PART)('"foo')
+                      PsiElement(NG:ESCAPE_SEQUENCE)('\"')
+                      PsiElement(JS:STRING_LITERAL_PART)(';bar"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL_PART)(''foo')
+                      PsiElement(NG:ESCAPE_SEQUENCE)('\'')
+                      PsiElement(JS:STRING_LITERAL_PART)(';bar'')
                   PsiWhiteSpace(' ')
                   PsiElement(JS:PLUS)('+')
                   PsiWhiteSpace(' ')
-                  JSLiteralExpression
-                    PsiElement(JS:STRING_LITERAL_PART)(''foo')
-                    PsiElement(NG:ESCAPE_SEQUENCE)('\'')
-                    PsiElement(JS:STRING_LITERAL_PART)(';bar'')
-                PsiWhiteSpace(' ')
-                PsiElement(JS:PLUS)('+')
-                PsiWhiteSpace(' ')
-                JSCallExpression
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('test')
-                  JSArgumentList
-                    PsiElement(JS:LPAR)('(')
-                    JSLiteralExpression
-                      PsiElement(JS:NUMERIC_LITERAL)('12')
-                    PsiElement(JS:RPAR)(')')
+                  JSCallExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('test')
+                    JSArgumentList
+                      PsiElement(JS:LPAR)('(')
+                      JSLiteralExpression
+                        PsiElement(JS:NUMERIC_LITERAL)('12')
+                      PsiElement(JS:RPAR)(')')
       PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')

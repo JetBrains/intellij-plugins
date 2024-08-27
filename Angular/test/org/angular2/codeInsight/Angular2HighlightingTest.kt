@@ -182,9 +182,11 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_3_0, configureFileName = "test.html",
                                              strictTemplates = true, dir = true)
 
-  fun testSvgNoBlocksSyntax() = checkHighlighting(extension = "svg")
+  fun testSvgNoBlocksSyntax() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "svg")
 
   fun testSvgWithBlocksSyntax() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "svg")
+
+  fun testSvgWithLetSyntax() = checkHighlighting(ANGULAR_CORE_18_2_1, extension = "svg")
 
   fun testAnimationTriggerNoAttributeValue() = checkHighlighting()
 
@@ -235,6 +237,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testPipeOverloadWithUndefined() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
                                                           dir = true, configureFileName = "apps/app.component.html",
                                                           configurators = listOf(Angular2TsConfigFile()))
+
+  fun testLetDeclaration() = checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
   fun testCrLfComponentFile() =
     doConfiguredTest(ANGULAR_CORE_17_3_0, ANGULAR_COMMON_17_3_0, extension = "ts", configurators = listOf(Angular2TsConfigFile())) {

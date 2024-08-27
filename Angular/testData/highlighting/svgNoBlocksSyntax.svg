@@ -10,3 +10,5 @@
 } @else <error descr="Unterminated expansion form">{</error>
   <span>Condition is false</span>
 }
+
+@let foo;

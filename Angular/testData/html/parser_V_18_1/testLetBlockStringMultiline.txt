@@ -5,32 +5,33 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('foo')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSLiteralExpression
-                PsiElement(JS:STRING_LITERAL)('"foo ')
-              PsiErrorElement:Unclosed string literal
-                <empty list>
-              PsiWhiteSpace('\n  ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('bar')
-              PsiErrorElement:Unexpected token 'check'
-                <empty list>
-              PsiWhiteSpace('\n  ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('check')
-              PsiErrorElement:Unexpected token '" + test(12)'
-                <empty list>
-              JSLiteralExpression
-                PsiElement(JS:STRING_LITERAL)('" + test(12)')
-              PsiErrorElement:Unclosed string literal
-                <empty list>
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"foo ')
+                PsiErrorElement:Unclosed string literal
+                  <empty list>
+                PsiWhiteSpace('\n  ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('bar')
+                PsiErrorElement:Unexpected token 'check'
+                  <empty list>
+                PsiWhiteSpace('\n  ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('check')
+                PsiErrorElement:Unexpected token '" + test(12)'
+                  <empty list>
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('" + test(12)')
+                PsiErrorElement:Unclosed string literal
+                  <empty list>
       PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')

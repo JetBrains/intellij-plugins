@@ -19,6 +19,7 @@ import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.withNavigationTarget
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.blocks.BLOCK_FOR
+import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.codeInsight.blocks.PARAMETER_LET
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
@@ -98,7 +99,8 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       if (PsiTreeUtil.getParentOfType(element, Angular2HtmlTemplateBindings::class.java) != null && curScope != this) {
         curScope = curScope?.parent as Angular2TemplateElementScope?
       }
-      else if (element.parentOfType<Angular2BlockParameter>(true)?.isPrimaryExpression == true) {
+      else if (element.parentOfType<Angular2BlockParameter>(true)
+          ?.let { it.isPrimaryExpression && it.block?.name != BLOCK_LET } == true) {
         curScope = curScope?.parent as Angular2TemplateElementScope?
       }
       return curScope
@@ -194,9 +196,16 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     }
 
     override fun visitBlock(block: Angular2HtmlBlock) {
+      val blockName = block.getName()
+      if (blockName == BLOCK_LET) {
+        // Do not create scope or visit children for @let
+        block.parameters.getOrNull(0)?.variables?.firstOrNull()
+          ?.let { addElement(it) }
+        return
+      }
       pushScope(block)
       super.visitBlock(block)
-      if (block.getName() == BLOCK_FOR) {
+      if (blockName == BLOCK_FOR) {
         val usedVariables = block.parameters
           .filter { it.name == PARAMETER_LET }
           .flatMap { it.variables }
@@ -248,9 +257,11 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       }
     }
 
-    fun addReference(attribute: XmlAttribute,
-                     info: Angular2AttributeNameParser.AttributeInfo,
-                     isTemplateTag: Boolean) {
+    fun addReference(
+      attribute: XmlAttribute,
+      info: Angular2AttributeNameParser.AttributeInfo,
+      isTemplateTag: Boolean,
+    ) {
       val `var` = createVariable(info.name, attribute)
       if (isTemplateTag) {
         // References on ng-template are visible within parent scope
@@ -275,8 +286,10 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       }
     }
 
-    private fun createVariable(name: String,
-                               contributor: PsiElement): JSImplicitElement {
+    private fun createVariable(
+      name: String,
+      contributor: PsiElement,
+    ): JSImplicitElement {
       return JSImplicitElementImpl.Builder(name, contributor)
         .setType(JSImplicitElement.Type.Variable)
         .setProperties(JSImplicitElement.Property.Constant)
@@ -295,3 +308,8 @@ fun isTemplateTag(tag: XmlTag?): Boolean {
 fun isTemplateTag(tagName: String?): Boolean {
   return ELEMENT_NG_TEMPLATE.equals(tagName!!, ignoreCase = true) || LEGACY_TEMPLATE_TAG.equals(tagName, ignoreCase = true)
 }
+
+fun getTemplateElementsScopeFor(element: PsiElement): Angular2TemplateScope? =
+  Angular2TemplateScopesResolver
+    .getScopes(element, listOf(Angular2TemplateElementsScopeProvider()))
+    .firstOrNull()

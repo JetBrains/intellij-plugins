@@ -22,10 +22,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.blocks.*
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider
-import org.angular2.codeInsight.template.Angular2TemplateScope
-import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
-import org.angular2.codeInsight.template.isTemplateTag
+import org.angular2.codeInsight.template.*
 import org.angular2.entities.*
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
@@ -44,7 +41,9 @@ internal sealed interface TmplAstNodeWithChildren : TmplAstNode {
   val children: List<TmplAstNode>
 }
 
-internal sealed interface TmplAstExpressionSymbol : TmplAstNode {
+internal sealed interface TemplateEntity : TmplAstNode
+
+internal sealed interface TmplAstExpressionSymbol : TemplateEntity {
   val name: String
   val keySpan: TextRange?
   val value: String?
@@ -74,6 +73,13 @@ internal class TmplAstVariable(
   override val keySpan: TextRange?,
   override val valueSpan: TextRange?,
 ) : TmplAstExpressionSymbol
+
+internal class TmplAstLetDeclaration(
+  val name: String,
+  val nameSpan: TextRange?,
+  val value: JSExpression?,
+  val sourceSpan: TextRange,
+) : TemplateEntity
 
 internal class TmplAstElement(
   val name: String,
@@ -234,6 +240,11 @@ internal class TmplAstSwitchBlockCase(
   override val children: List<TmplAstNode>,
 ) : TmplAstBlockNodeWithChildren
 
+internal class TmplAstLetBlock(
+  override val nameSpan: TextRange?,
+  val declaration: TmplAstLetDeclaration?,
+) : TmplAstBlockNode
+
 internal class TmplDirectiveMetadata(
   val directive: Angular2Directive,
   val isHostDirective: Boolean,
@@ -297,27 +308,28 @@ internal enum class ParsedEventType {
 
 internal class BoundTarget(component: Angular2Component) {
 
-  private val referenceMap: Map<Any?, TmplAstExpressionSymbol>
+  private val referenceMap: Map<Any?, TemplateEntity>
 
   val pipes: Map<String, Angular2Pipe> = Angular2DeclarationsScope(component).importsOwner
-    ?.declarationsInScope?.filterIsInstance<Angular2Pipe>()?.associateBy { it.getName() } ?: emptyMap()
+                                           ?.declarationsInScope?.filterIsInstance<Angular2Pipe>()?.associateBy { it.getName() }
+                                         ?: emptyMap()
 
   val templateFile: Angular2HtmlFile?
 
   val templateRoots: List<TmplAstNode>
 
   init {
-    val referenceMap = mutableMapOf<Any, TmplAstExpressionSymbol>()
+    val referenceMap = mutableMapOf<Any, TemplateEntity>()
     templateFile = component.templateFile as? Angular2HtmlFile
     templateRoots = templateFile?.let {
       buildTmplAst(it, object : ReferenceResolver {
-        override fun set(element: PsiElement, exprSymbol: TmplAstExpressionSymbol) {
-          referenceMap[element] = exprSymbol
+        override fun set(element: PsiElement, localSymbol: TemplateEntity) {
+          referenceMap[element] = localSymbol
         }
 
 
-        override fun set(implicitSymbol: WebSymbol, source: PsiElement, exprSymbol: TmplAstExpressionSymbol) {
-          referenceMap[ImplicitSymbolWithSource(implicitSymbol, source)] = exprSymbol
+        override fun set(implicitSymbol: WebSymbol, source: PsiElement, localSymbol: TemplateEntity) {
+          referenceMap[ImplicitSymbolWithSource(implicitSymbol, source)] = localSymbol
         }
 
       })
@@ -342,7 +354,8 @@ internal class BoundTarget(component: Angular2Component) {
     val exportAs = ref.value.takeIf { it.isNotBlank() }
     return if (exportAs != null) {
       ref.parent?.directives?.find { it.exportAs.contains(exportAs) }
-    } else {
+    }
+    else {
       ref.parent?.directives?.find { it.directive.isComponent }
       ?: ref.parent
     }
@@ -369,32 +382,29 @@ internal class BoundTarget(component: Angular2Component) {
    * This is only defined for `AST` expressions that read or write to a property of an
    * `ImplicitReceiver`.
    */
-  fun getExpressionTarget(expr: JSReferenceExpression): TmplAstExpressionSymbol? {
+  fun getExpressionTarget(expr: JSReferenceExpression): TemplateEntity? {
     if (expr.qualifier != null && expr.qualifier !is JSThisExpression) {
       return null
     }
     val referencedName = expr.referenceName ?: return null
     var result: Any? = null
-    for (curScope in Angular2TemplateScopesResolver.getScopes(expr, listOf(Angular2TemplateElementsScopeProvider()))) {
-      var scope: Angular2TemplateScope? = curScope
-      while (scope != null && result == null) {
-        scope.resolve { resolveResult ->
-          val element = resolveResult.element as? JSPsiElementBase
-          if (result == null
-              && resolveResult.isValidResult
-              && element != null
-              && referencedName == element.name) {
-            result = resolveResult
-          }
+    var scope: Angular2TemplateScope? = getTemplateElementsScopeFor(expr)
+    while (scope != null && result == null) {
+      scope.resolve { resolveResult ->
+        val element = resolveResult.element as? JSPsiElementBase
+        if (result == null
+            && resolveResult.isValidResult
+            && element != null
+            && referencedName == element.name) {
+          result = resolveResult
         }
-        for (symbol in scope.symbols) {
-          if (result == null && symbol.name == referencedName) {
-            result = ImplicitSymbolWithSource((symbol as? WebSymbolDelegate<*>)?.delegate ?: symbol, scope.source)
-          }
-        }
-        scope = scope.parent
       }
-      if (result != null) break
+      for (symbol in scope.symbols) {
+        if (result == null && symbol.name == referencedName) {
+          result = ImplicitSymbolWithSource((symbol as? WebSymbolDelegate<*>)?.delegate ?: symbol, scope.source)
+        }
+      }
+      scope = scope.parent
     }
 
     return when (result) {
@@ -499,8 +509,8 @@ private data class ImplicitSymbolWithSource(
 )
 
 private interface ReferenceResolver {
-  operator fun set(element: PsiElement, exprSymbol: TmplAstExpressionSymbol)
-  operator fun set(implicitSymbol: WebSymbol, source: PsiElement, exprSymbol: TmplAstExpressionSymbol)
+  operator fun set(element: PsiElement, localSymbol: TemplateEntity)
+  operator fun set(implicitSymbol: WebSymbol, source: PsiElement, localSymbol: TemplateEntity)
 }
 
 private fun buildTmplAst(
@@ -606,7 +616,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
         value = attr.value ?: "",
         valueSpan = attr.valueElement?.textRange,
       ).apply {
-        referenceResolver[attr] = this
+        referenceResolver.set(attr, this)
       }
     })
 
@@ -618,7 +628,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
         value = attr.value ?: "",
         valueSpan = attr.valueTextRange.takeIf { it.length > 0 },
       ).apply {
-        referenceResolver[attr] = this
+        referenceResolver.set(attr, this)
       }
     })
 
@@ -761,7 +771,7 @@ private fun buildInfo(
       .filter { it.keyIsVar() }
       .map {
         Pair(it.key, TmplAstVariable(it.key, it.name, it.variableDefinition?.textRange, null).apply {
-          referenceResolver[it] = this
+          referenceResolver.set(it, this)
         })
       }
       .toMap(),
@@ -895,6 +905,11 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
       nameSpan = nameElement.textRange,
       children = contents.mapChildren(referenceResolver),
     )
+    BLOCK_LET -> TmplAstLetBlock(
+      nameSpan = nameElement.textRange,
+      declaration = parameters.getOrNull(0)
+        ?.variables?.firstOrNull()?.toTmplAstLetDeclaration(referenceResolver)
+    )
     else -> null
   }
 
@@ -918,7 +933,7 @@ private fun JSVariable.toTmplAstVariable(referenceResolver: ReferenceResolver): 
     valueSpan = null,
     value = null
   ).apply {
-    referenceResolver[this@toTmplAstVariable] = this
+    referenceResolver.set(this@toTmplAstVariable, this)
   }
 
 private fun WebSymbol.toTmplAstVariable(block: Angular2HtmlBlock, referenceResolver: ReferenceResolver): TmplAstVariable =
@@ -928,7 +943,17 @@ private fun WebSymbol.toTmplAstVariable(block: Angular2HtmlBlock, referenceResol
     valueSpan = null,
     value = null
   ).apply {
-    referenceResolver[this@toTmplAstVariable, block] = this
+    referenceResolver.set(this@toTmplAstVariable, block, this)
+  }
+
+private fun JSVariable.toTmplAstLetDeclaration(referenceResolver: ReferenceResolver): TmplAstLetDeclaration =
+  TmplAstLetDeclaration(
+    name = name!!,
+    nameSpan = nameIdentifier?.textRange,
+    value = initializer,
+    sourceSpan = textRange
+  ).apply {
+    referenceResolver.set(this@toTmplAstLetDeclaration, this)
   }
 
 private fun buildContextVariables(forOfBlock: Angular2HtmlBlock, referenceResolver: ReferenceResolver): Map<String, TmplAstVariable> {

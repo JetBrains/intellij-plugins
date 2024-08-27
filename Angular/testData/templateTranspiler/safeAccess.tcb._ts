@@ -5,7 +5,7 @@
 function _tcb1(this: AppComponent) {
 var _t1 = document.createElement("div");
 var _t2 = document.createElement("i");
-"" + (null as any ? ((null as any ? ((null as any ? (this.data)!.icon : undefined))!.toString : undefined))!() : undefined);
+"" + (0 as any ? ((0 as any ? ((0 as any ? (this.data)!.icon : undefined))!.toString : undefined))!() : undefined);
 var _t3 = document.createElement("i");
-"" + (null as any ? ((null as any ? (this.data)!.check : undefined))!() : undefined);
+"" + (0 as any ? ((0 as any ? (this.data)!.check : undefined))!() : undefined);
 }

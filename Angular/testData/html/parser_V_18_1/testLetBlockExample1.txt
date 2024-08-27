@@ -5,132 +5,138 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('name')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSReferenceExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('user')
-                PsiElement(JS:DOT)('.')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
                 PsiElement(JS:IDENTIFIER)('name')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    Angular2HtmlBlock (@let)
-      PsiElement(NG:BLOCK_NAME)('@let')
-      PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('greeting')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSBinaryExpression
-                JSLiteralExpression
-                  PsiElement(JS:STRING_LITERAL)(''Hello, '')
                 PsiWhiteSpace(' ')
-                PsiElement(JS:PLUS)('+')
+                PsiElement(JS:EQ)('=')
                 PsiWhiteSpace(' ')
                 JSReferenceExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('user')
+                  PsiElement(JS:DOT)('.')
                   PsiElement(JS:IDENTIFIER)('name')
       PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('data')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              Angular2PipeExpression
-                Angular2PipeLeftSideArgument
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('data$')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('greeting')
                 PsiWhiteSpace(' ')
-                PsiElement(JS:OR)('|')
+                PsiElement(JS:EQ)('=')
                 PsiWhiteSpace(' ')
-                Angular2PipeReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('async')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    Angular2HtmlBlock (@let)
-      PsiElement(NG:BLOCK_NAME)('@let')
-      PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('pi')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSLiteralExpression
-                PsiElement(JS:NUMERIC_LITERAL)('3.1459')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    Angular2HtmlBlock (@let)
-      PsiElement(NG:BLOCK_NAME)('@let')
-      PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('coordinates')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSObjectLiteralExpression
-                PsiElement(JS:LBRACE)('{')
-                JSProperty
-                  PsiElement(JS:IDENTIFIER)('x')
-                  PsiElement(JS:COLON)(':')
-                  PsiWhiteSpace(' ')
-                  JSLiteralExpression
-                    PsiElement(JS:NUMERIC_LITERAL)('50')
-                PsiElement(JS:COMMA)(',')
-                PsiWhiteSpace(' ')
-                JSProperty
-                  PsiElement(JS:IDENTIFIER)('y')
-                  PsiElement(JS:COLON)(':')
-                  PsiWhiteSpace(' ')
-                  JSLiteralExpression
-                    PsiElement(JS:NUMERIC_LITERAL)('100')
-                PsiElement(JS:RBRACE)('}')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    Angular2HtmlBlock (@let)
-      PsiElement(NG:BLOCK_NAME)('@let')
-      PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('longExpression')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSBinaryExpression
                 JSBinaryExpression
                   JSLiteralExpression
-                    PsiElement(JS:STRING_LITERAL)(''Lorem ipsum dolor sit amet, consectetur adipiscing elit '')
+                    PsiElement(JS:STRING_LITERAL)(''Hello, '')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('name')
+      PsiElement(NG:BLOCK_SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('data')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                Angular2PipeExpression
+                  Angular2PipeLeftSideArgument
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('data$')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:OR)('|')
+                  PsiWhiteSpace(' ')
+                  Angular2PipeReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('async')
+      PsiElement(NG:BLOCK_SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('pi')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('3.1459')
+      PsiElement(NG:BLOCK_SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('coordinates')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSObjectLiteralExpression
+                  PsiElement(JS:LBRACE)('{')
+                  JSProperty
+                    PsiElement(JS:IDENTIFIER)('x')
+                    PsiElement(JS:COLON)(':')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('50')
+                  PsiElement(JS:COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  JSProperty
+                    PsiElement(JS:IDENTIFIER)('y')
+                    PsiElement(JS:COLON)(':')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('100')
+                  PsiElement(JS:RBRACE)('}')
+      PsiElement(NG:BLOCK_SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@let)
+      PsiElement(NG:BLOCK_NAME)('@let')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('longExpression')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSBinaryExpression
+                  JSBinaryExpression
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''Lorem ipsum dolor sit amet, consectetur adipiscing elit '')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:PLUS)('+')
+                    PsiWhiteSpace('\n                      ')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''sed do eiusmod tempor incididunt ut labore et dolore magna '')
                   PsiWhiteSpace(' ')
                   PsiElement(JS:PLUS)('+')
                   PsiWhiteSpace('\n                      ')
                   JSLiteralExpression
-                    PsiElement(JS:STRING_LITERAL)(''sed do eiusmod tempor incididunt ut labore et dolore magna '')
-                PsiWhiteSpace(' ')
-                PsiElement(JS:PLUS)('+')
-                PsiWhiteSpace('\n                      ')
-                JSLiteralExpression
-                  PsiElement(JS:STRING_LITERAL)(''Ut enim ad minim veniam...'')
+                    PsiElement(JS:STRING_LITERAL)(''Ut enim ad minim veniam...'')
       PsiElement(NG:BLOCK_SEMICOLON)(';')

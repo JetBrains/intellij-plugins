@@ -9,8 +9,11 @@ import com.intellij.psi.util.*
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import org.angular2.codeInsight.template.getTemplateElementsScopeFor
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
+import org.angular2.lang.expr.psi.Angular2Action
 import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.web.NG_BLOCKS
@@ -92,6 +95,17 @@ fun getDeferOnTriggerDefinition(parameter: Angular2BlockParameter): WebSymbol? {
     ?.referenceName
   return parameter.definition?.triggers?.find { it.name == triggerName }
 }
+
+fun isLetDeclarationVariable(node: PsiElement): Boolean =
+  node is Angular2BlockParameterVariableImpl
+  && node.parentOfType<Angular2HtmlBlock>()?.definition?.name == BLOCK_LET
+
+fun isLetReferenceBeforeDeclaration(ref: JSReferenceExpression, declaration: PsiElement): Boolean =
+  isLetDeclarationVariable(declaration)
+  && declaration is Angular2BlockParameterVariableImpl
+  && declaration.endOffset >= ref.startOffset
+  && ref.parentOfType<Angular2EmbeddedExpression>() !is Angular2Action
+  && getTemplateElementsScopeFor(ref) == getTemplateElementsScopeFor(declaration)
 
 class Angular2HtmlBlocksConfig(private val definitions: Map<String, Angular2HtmlBlockSymbol>) {
 

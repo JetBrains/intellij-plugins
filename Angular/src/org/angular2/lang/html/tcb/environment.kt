@@ -330,6 +330,18 @@ internal class OutOfBandDiagnosticRecorder {
 
   }
 
+  fun conflictingDeclaration(id: TemplateId, second: TmplAstLetDeclaration) {
+
+  }
+
+  fun illegalWriteToLetDeclaration(id: TemplateId, node: JSReferenceExpression, target: TmplAstLetDeclaration) {
+
+  }
+
+  fun letUsedBeforeDefinition(id: TemplateId, node: JSReferenceExpression, target: TmplAstLetDeclaration) {
+
+  }
+
   private fun registerDiagnostics(
     kind: DiagnosticKind,
     range: TextRange,

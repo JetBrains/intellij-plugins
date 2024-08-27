@@ -5,16 +5,17 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('topLevel')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('value')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('topLevel')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('value')
       PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     HtmlTag:div
@@ -26,16 +27,17 @@ HtmlFile:test.html
       Angular2HtmlBlock (@let)
         PsiElement(NG:BLOCK_NAME)('@let')
         PsiWhiteSpace(' ')
-        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-          Angular2BlockParameter
-            JSVarStatement
-              JSVariable
-                PsiElement(JS:IDENTIFIER)('insideDiv')
-                PsiWhiteSpace(' ')
-                PsiElement(JS:EQ)('=')
-                PsiWhiteSpace(' ')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('value')
+        Angular2HtmlBlockParameters
+          ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+            Angular2BlockParameter
+              JSVarStatement
+                Angular2BlockParameterVariable
+                  PsiElement(JS:IDENTIFIER)('insideDiv')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:EQ)('=')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('value')
         PsiElement(NG:BLOCK_SEMICOLON)(';')
       XmlText
         PsiWhiteSpace('\n')
@@ -106,16 +108,17 @@ HtmlFile:test.html
         Angular2HtmlBlock (@let)
           PsiElement(NG:BLOCK_NAME)('@let')
           PsiWhiteSpace(' ')
-          ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-            Angular2BlockParameter
-              JSVarStatement
-                JSVariable
-                  PsiElement(JS:IDENTIFIER)('nested')
-                  PsiWhiteSpace(' ')
-                  PsiElement(JS:EQ)('=')
-                  PsiWhiteSpace(' ')
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('value')
+          Angular2HtmlBlockParameters
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+              Angular2BlockParameter
+                JSVarStatement
+                  Angular2BlockParameterVariable
+                    PsiElement(JS:IDENTIFIER)('nested')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:EQ)('=')
+                    PsiWhiteSpace(' ')
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('value')
           PsiElement(NG:BLOCK_SEMICOLON)(';')
         XmlText
           PsiWhiteSpace('\n  ')
@@ -204,16 +207,17 @@ HtmlFile:test.html
       Angular2HtmlBlock (@let)
         PsiElement(NG:BLOCK_NAME)('@let')
         PsiWhiteSpace(' ')
-        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-          Angular2BlockParameter
-            JSVarStatement
-              JSVariable
-                PsiElement(JS:IDENTIFIER)('nestedNgIf')
-                PsiWhiteSpace(' ')
-                PsiElement(JS:EQ)('=')
-                PsiWhiteSpace(' ')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('value')
+        Angular2HtmlBlockParameters
+          ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+            Angular2BlockParameter
+              JSVarStatement
+                Angular2BlockParameterVariable
+                  PsiElement(JS:IDENTIFIER)('nestedNgIf')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:EQ)('=')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('value')
         PsiElement(NG:BLOCK_SEMICOLON)(';')
       XmlText
         PsiWhiteSpace('\n  ')
