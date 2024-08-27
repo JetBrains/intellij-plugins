@@ -4,8 +4,8 @@ import * as _i1 from "@angular/router";
 /* Pipes */
 var _pipe1 = null! as MyPipe;
 /* Directives */
-const _ctor1 = null! as <T = any>(init: Pick<TestIf<T>, "ngIf" | "ngIfThen">) => TestIf<T>;
-const _ctor2 = null! as <T extends number = any>(init: Pick<TestFoo<T>, "foo" | "foo2">) => TestFoo<T>;
+const _ctor1: <T = any>(init: Pick<TestIf<T>, "ngIf" | "ngIfThen">) => TestIf<T> = null!;
+const _ctor2: <T extends number = any>(init: Pick<TestFoo<T>, "foo" | "foo2">) => TestFoo<T> = null!;
 
 /* TCB for template.html */
 

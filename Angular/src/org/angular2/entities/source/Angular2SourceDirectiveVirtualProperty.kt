@@ -42,6 +42,9 @@ class Angular2SourceDirectiveVirtualProperty(
   override val virtualProperty: Boolean
     get() = true
 
+  override val isSignalProperty: Boolean
+    get() = false
+
   override val apiStatus: WebSymbolApiStatus
     get() = owner?.apiStatus ?: WebSymbolApiStatus.Stable
 
