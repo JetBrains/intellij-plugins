@@ -70,6 +70,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_FORMS_16_2_8,
   )
 
+  fun testBlockLet() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_18_2_1,
+    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

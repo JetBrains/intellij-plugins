@@ -10,3 +10,5 @@
 } @else {
   <span>Condition is false</span>
 }
+
+<error descr="Unknown block @let foo">@let foo</error><error descr="Incomplete block - missing {">;</error>

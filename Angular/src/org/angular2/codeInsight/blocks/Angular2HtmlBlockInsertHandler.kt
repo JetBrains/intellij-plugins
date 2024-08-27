@@ -5,13 +5,21 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.daemon.impl.quickfix.EmptyExpression
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.codeInsight.template.impl.MacroCallNode
+import com.intellij.codeInsight.template.macro.CompleteMacro
 import com.intellij.psi.codeStyle.CodeStyleManager
 
 object Angular2HtmlBlockInsertHandler : InsertHandler<LookupElement> {
 
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
     val name = item.lookupString.removePrefix("@")
+    if (name == BLOCK_LET) {
+      handleLetDeclaration(context)
+      return
+    }
     val config = getAngular2HtmlBlocksConfig(context.file)
     val definition = config[name]
     val insertOffset = context.editor.caretModel.offset
@@ -33,6 +41,17 @@ object Angular2HtmlBlockInsertHandler : InsertHandler<LookupElement> {
     if (!hasParameters) {
       CodeStyleManager.getInstance(context.project).adjustLineIndent(context.file, context.editor.caretModel.offset)
     }
+  }
+
+  private fun handleLetDeclaration(context: InsertionContext) {
+    val templateManager = TemplateManager.getInstance(context.project)
+    val template = templateManager.createTemplate("", "")
+    template.addTextSegment(" ")
+    template.addVariable(EmptyExpression(), true)
+    template.addTextSegment(" = ")
+    template.addVariable(MacroCallNode(CompleteMacro()), true)
+    template.addTextSegment(";")
+    templateManager.startTemplate(context.editor, template)
   }
 
 }

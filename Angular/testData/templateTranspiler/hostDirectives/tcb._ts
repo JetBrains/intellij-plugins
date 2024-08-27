@@ -27,7 +27,7 @@ $event;
 var _t6 = _t5;
 var _t7 = _t2;
 var _t8 = _t3;
-var _t9 = null as any;
+var _t9 = 0 as any;
 var _t10 = document.createElement("unresolved");
 var _t11 = null! as UnResolvedComponent;
 var _t12 = null! as MouseenterDirective;
@@ -42,7 +42,7 @@ _t10.addEventListener("hovr", ($event): any => {
 $event;
 });
 var _t15 = _t14;
-var _t16 = null as any;
+var _t16 = 0 as any;
 var _t17 = document.createElement("app-test");
 var _t18 = null! as BoldDirective;
 var _t19 = null! as UnderlineDirective;
@@ -52,7 +52,7 @@ _t18["hover"].subscribe(($event): any => {
 $event;
 });
 var _t21 = _t18;
-var _t22 = null as any;
+var _t22 = 0 as any;
 "" + _t6.title;
 "" + _t7.title;
 "" + _t8.title;

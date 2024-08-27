@@ -22,6 +22,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBlock
 object Angular2HighlightingUtils {
 
   enum class TextAttributesKind(val key: TextAttributesKey) {
+    TS_LOCAL_VARIABLE(TypeScriptHighlighter.TS_LOCAL_VARIABLE),
     TS_PROPERTY(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE),
     TS_FUNCTION(TypeScriptHighlighter.TS_EXPORTED_FUNCTION),
     TS_KEYWORD(TypeScriptHighlighter.TS_KEYWORD),

@@ -3,16 +3,15 @@
 /* TCB for blockSwitch.ts */
 
 function _tcb1(this: RobotProfileComponent) {
-(this.user.name);
-if ((this.user.name) === "foo") {
+switch(this.user.name){
+case "foo":
 "" + this.user.name;
-}
-else if ((this.user.name) === "bar") {
+break;
+case "bar":
 "" + this.user.name;
-}
-else {
+break;
+default:
 "" + this.user.name;
+break;
 }
-
-
 }

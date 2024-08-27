@@ -18,6 +18,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.startOffset
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
@@ -46,7 +47,7 @@ internal typealias `TmplDirectiveMetadata|TmplAstElement|TmplAstTemplate` = Any
 internal typealias `TmplDirectiveMetadata|TmplAstElement` = Any
 internal typealias `TmplAstElement|TmplAstTemplate` = TmplAstDirectiveContainer
 private typealias `TmplAstTemplate|TmplAstIfBlockBranch|TmplAstForLoopBlock` = TmplAstNode
-private typealias `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference` = TmplAstNode
+private typealias LocalSymbol = TmplAstNode //TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstLetDeclaration|TmplAstReference
 private typealias `TmplAstBoundAttribute|TmplAstTextAttribute` = TmplAstAttribute
 internal typealias `TmplAstBoundAttribute|TmplAstBoundEvent|TmplAstTextAttribute` = TmplAstAttribute
 private typealias `EventParamType|JSType` = Any
@@ -192,6 +193,33 @@ private class TcbTemplateContextOp(private val tcb: Context, private val scope: 
     return ctx
   }
 }
+
+/**
+ * A `TcbOp` which generates a constant for a `TmplAstLetDeclaration`.
+ *
+ * Executing this operation returns a reference to the `@let` declaration.
+ */
+private class TcbLetDeclarationOp(
+  private val tcb: Context,
+  private val scope: Scope,
+  private val node: TmplAstLetDeclaration,
+) : TcbOp() {
+
+  /**
+   * `@let` declarations are mandatory, because their expressions
+   * should be checked even if they aren't referenced anywhere.
+   */
+  override val optional get() = false;
+
+  override fun execute(): Identifier {
+    val id = this.tcb.allocateId(node)
+    val value = tcbExpression(this.node.value, this.tcb, this.scope)
+    val varStatement = tsCreateVariable(id, value, isConst = true)
+    this.scope.addStatement(varStatement)
+    return id
+  }
+}
+
 
 /**
  * A `TcbOp` which descends into a `TmplAstTemplate`'s children and generates type-checking code for
@@ -525,7 +553,7 @@ private class TcbInvalidReferenceOp(private val tcb: Context, private val scope:
 
   override fun execute(): Identifier {
     val id = this.tcb.allocateId()
-    this.scope.addStatement(tsCreateVariable(id, Expression("null as any")))
+    this.scope.addStatement(tsCreateVariable(id, Expression(ANY_EXPRESSION)))
     return id
   }
 }
@@ -635,7 +663,7 @@ private class TcbDirectiveInputsOp(
       // For bound inputs, the property is assigned the binding expression.
       val expr = widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
         .applyIf(!tcb.markAttributeExpressionAsTranspiled(attr.attribute)) {
-          Expression{
+          Expression {
             withIgnoreMappings { append(this@applyIf) }
           }
         }
@@ -900,7 +928,7 @@ private class TcbControlFlowContentProjectionOp(
       // `preserveWhitespaces` to preserve the accuracy of source maps diagnostics. This means
       // that we have to account for it here since the presence of text nodes affects the
       // content projection behavior.
-      // TODO handle text nodes
+      // TODO WebStorm - handle text nodes
       if (true /*!(child is TmplAstText) || this.tcb.hostPreserveWhitespaces ||
           child.value.trim().size > 0*/) {
         // Content projection will be affected if there's more than one root node.
@@ -1205,20 +1233,28 @@ private class TcbIfOp(
       }
     }
 
-    // We need to process the expression first so it gets its own scope that the body of the
-    // conditional will inherit from. We do this, because we need to declare a separate variable
+    // We process the expression first in the parent scope, but create a scope around the block
+    // that the body will inherit from. We do this, because we need to declare a separate variable
     // for the case where the expression has an alias _and_ because we need the processed
     // expression when generating the guard for the body.
-    val expressionScope = Scope.forNodes(this.tcb, this.scope, branch, emptyList(), null)
-    expressionScope.render().forEach { this.scope.addStatement(it) }
-    this.expressionScopes[branch] = expressionScope
+    val outerScope = Scope.forNodes(this.tcb, this.scope, branch, emptyList(), null)
+    outerScope.render().forEach { this.scope.addStatement(it) }
+    this.expressionScopes[branch] = outerScope
 
-    val expression = if (branch.expressionAlias == null)
-      tcbExpression(branch.expression, this.tcb, expressionScope)
-    else
-      Expression(expressionScope.resolve(branch.expressionAlias))
+    var expression = tcbExpression(branch.expression, this.tcb, this.scope)
 
-    val bodyScope = this.getBranchScope(expressionScope, branch, index)
+    if (branch.expressionAlias !== null) {
+      expression = Expression {
+        append("(")
+        withIgnoreMappings {
+          append(expression)
+        }
+        append(") && ")
+        append(outerScope.resolve(branch.expressionAlias))
+      }
+    }
+
+    val bodyScope = this.getBranchScope(outerScope, branch, index)
 
     return Statement {
       append("if (").append(expression).append(") ")
@@ -1266,18 +1302,23 @@ private class TcbIfOp(
                             ?: throw IllegalStateException("Could not determine expression scope in branch at index ${i}")
       var expression: Expression
 
-      if (branch.expressionAlias == null) {
-        // We need to recreate the expression and mark it to be ignored for diagnostics,
-        // because it was already checked as a part of the block's condition and we don't
-        // want it to produce a duplicate diagnostic.
-        expression = Expression {
-          withIgnoreMappings {
-            tcbExpression(branch.expression, tcb, expressionScope)
-          }
+      // We need to recreate the expression and mark it to be ignored for diagnostics,
+      // because it was already checked as a part of the block's condition and we don't
+      // want it to produce a duplicate diagnostic.
+      expression = Expression {
+        withIgnoreMappings {
+          tcbExpression(branch.expression, tcb, expressionScope)
         }
       }
-      else {
-        expression = Expression(expressionScope.resolve(branch.expressionAlias))
+      if (branch.expressionAlias !== null) {
+        expression = Expression {
+          withIgnoreMappings {
+            append("(")
+            append(expression)
+            append(") && ")
+            append(expressionScope.resolve(branch.expressionAlias))
+          }
+        }
       }
 
       // The expressions of the preceding branches have to be negated
@@ -1313,78 +1354,35 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
   override val optional get() = false
 
   override fun execute(): Identifier? {
-    // Since we'll use the expression in multiple comparisons, we don't want to
-    // log the same diagnostic more than once. Ignore this expression since we already
-    // produced a `TcbExpressionOp`.
-    val expression = Expression {
-      // Wrap the comparisson expression in parentheses so we don't ignore
-      // diagnostics when comparing incompatible types (see #52315).
-      append("(")
-      withIgnoreMappings {
-        append(tcbExpression(block.expression, tcb, scope))
-      }
-      append(")")
-    };
+    this.scope.addStatement(Statement {
+      val switchExpression = tcbExpression(block.expression, tcb, scope)
+      append("switch(").append(switchExpression).append(")")
+      this.codeBlock {
+        block.cases.forEach { current ->
+          val checkBody = tcb.env.config.checkControlFlowBodies;
+          val clauseScope = Scope.forNodes(
+            tcb,
+            scope,
+            null,
+            if (checkBody) current.children else emptyList(),
+            if (checkBody) generateGuard(current, switchExpression) else null,
+          )
+          val statements = clauseScope.render() //, ts.factory.createBreakStatement()]
 
-    val root = this.generateCase(0, expression, null);
-
-    if (root !== null) {
-      this.scope.addStatement(root);
-    }
-
-    return null;
-  }
-
-  private fun generateCase(index: Int, switchValue: Expression, defaultCase: TmplAstSwitchBlockCase?): Statement? {
-    val checkBodies = this.tcb.env.config.checkControlFlowBodies;
-
-    // If we've reached the end, output the default case as the final `else`.
-    if (index >= this.block.cases.size) {
-      if (defaultCase !== null) {
-        val defaultScope = Scope.forNodes(
-          this.tcb, this.scope, null, if (checkBodies) defaultCase.children else emptyList(),
-          if (checkBodies) this.generateGuard(defaultCase, switchValue) else null);
-        return Statement {
-          codeBlock {
-            defaultScope.render().forEach(::appendStatement)
-          }
+          if (current.expression === null)
+            appendStatement { append("default:") }
+          else
+            appendStatement {
+              append("case ")
+                .append(tcbExpression(current.expression, tcb, clauseScope))
+                .append(":")
+            }
+          statements.forEach(::appendStatement)
+          appendStatement { append("break;") }
         }
       }
-      return null;
-    }
-
-    // If the current case is the default (could be placed arbitrarily),
-    // skip it since it needs to be generated as the final `else` at the end.
-    val current = this.block.cases[index];
-    if (current.expression === null) {
-      return this.generateCase(index + 1, switchValue, current);
-    }
-
-    val caseScope = Scope.forNodes(
-      this.tcb, this.scope, null,
-      if (checkBodies) current.children else emptyList(),
-      if (checkBodies) this.generateGuard(current, switchValue) else null);
-    val caseValue = tcbExpression(current.expression, this.tcb, caseScope);
-
-    // TODO(crisbeto): change back to a switch statement when the TS bug is resolved.
-    // Note that it would be simpler to generate a `switch` statement to represent the user's
-    // code, but the current TypeScript version (at the time of writing 5.2.2) has a bug where
-    // parenthesized `switch` expressions aren't narrowed correctly:
-    // https://github.com/microsoft/TypeScript/issues/56030. We work around it by generating
-    // `if`/`else if`/`else` statements to represent the switch block instead.
-    return Statement {
-      append("if (").append(switchValue).append(" === ").append(caseValue).append(") ")
-      codeBlock {
-        caseScope.render().forEach(::appendStatement)
-      }
-      generateCase(index + 1, switchValue, defaultCase)?.let {
-        newLine()
-        append("else ")
-        statements {
-          appendStatement(it)
-        }
-      }
-    }
+    })
+    return null
   }
 
   private fun generateGuard(node: TmplAstSwitchBlockCase, switchValue: Expression): Expression? {
@@ -1517,6 +1515,9 @@ internal class Context(
   fun allocateId(symbol: TmplAstExpressionSymbol): Identifier =
     allocateId(symbol.name, symbol.keySpan)
 
+  fun allocateId(symbol: TmplAstLetDeclaration): Identifier =
+    allocateId(symbol.name, symbol.nameSpan)
+
   fun allocateId(): Identifier =
     allocateId(null, null)
 
@@ -1585,6 +1586,13 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
    * pre-resolved variable identifiers.
    */
   private val varMap = mutableMapOf<TmplAstVariable, `Int|Identifier`>()
+
+  /**
+   * A map of the names of `TmplAstLetDeclaration`s to the index of their op in the `opQueue`.
+   *
+   * Assumes that there won't be duplicated `@let` declarations within the same scope.
+   */
+  private val letDeclOpMap = mutableMapOf<String, LetDeclOpMapRecord>();
 
   /**
    * Statements for this template.
@@ -1671,6 +1679,14 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
       for (node in children) {
         scope.appendNode(node)
       }
+      // Once everything is registered, we need to check if there are `@let`
+      // declarations that conflict with other local symbols defined after them.
+      for (variable in scope.varMap.keys) {
+        scope.checkConflictingLet(variable);
+      }
+      for (ref in scope.referenceOpMap.keys) {
+        scope.checkConflictingLet(ref);
+      }
       return scope
     }
   }
@@ -1701,7 +1717,7 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
    * look up instead of the default for an element or template node.
    */
   fun resolve(
-    node: `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference`,
+    node: LocalSymbol,
     directive: TmplDirectiveMetadata? = null,
   ): Identifier {
     // Attempt to resolve the operation locally.
@@ -1778,12 +1794,26 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
     }
   }
 
+  /** Returns whether a template symbol is defined locally within the current scope. */
+  fun isLocal(node: TemplateEntity): Boolean {
+    if (node is TmplAstVariable) {
+      return this.varMap.containsKey(node)
+    }
+    if (node is TmplAstLetDeclaration) {
+      return this.letDeclOpMap.containsKey(node.name);
+    }
+    return this.referenceOpMap.containsKey(node);
+  }
+
   private fun resolveLocal(
-    ref: `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference`,
+    ref: LocalSymbol,
     directive: TmplDirectiveMetadata? = null,
   ): Identifier? {
     if (ref is TmplAstReference && this.referenceOpMap.contains(ref)) {
       return this.resolveOp(this.referenceOpMap[ref]!!)
+    }
+    else if (ref is TmplAstLetDeclaration && this.letDeclOpMap.containsKey(ref.name)) {
+      return this.resolveOp(this.letDeclOpMap[ref.name]!!.opIndex)
     }
     else if (ref is TmplAstVariable && this.varMap.contains(ref)) {
       // Resolving a context variable for this template.
@@ -1891,7 +1921,6 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
       this.opQueue.add(TcbIfOp(this.tcb, this, node))
     }
     else if (node is TmplAstSwitchBlock) {
-      this.opQueue.add(TcbExpressionOp(this.tcb, this, node.expression))
       this.opQueue.add(TcbSwitchOp(this.tcb, this, node))
     }
     else if (node is TmplAstForLoopBlock) {
@@ -1905,6 +1934,18 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
     }
     else if (node is TmplAstContent) {
       this.appendChildren(node)
+    }
+    else if (node is TmplAstLetBlock) {
+      val declaration = node.declaration
+      if (declaration != null) {
+        this.opQueue.add(TcbLetDeclarationOp(this.tcb, this, declaration))
+        if (this.isLocal(declaration)) {
+          this.tcb.oobRecorder.conflictingDeclaration(this.tcb.id, declaration)
+        }
+        else {
+          this.letDeclOpMap[declaration.name] = LetDeclOpMapRecord(opQueue.lastIndex, declaration)
+        }
+      }
     }
     else {
       throw IllegalStateException("Unsupported node: $node")
@@ -2105,6 +2146,17 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
   //    this.tcb.oobRecorder.inaccessibleDeferredTriggerElement(this.tcb.id, trigger)
   //  }
   //}
+
+
+  /** Reports a diagnostic if there are any `@let` declarations that conflict with a node. */
+  private fun checkConflictingLet(node: TmplAstExpressionSymbol) {
+    if (letDeclOpMap.containsKey(node.name)) {
+      tcb.oobRecorder.conflictingDeclaration(
+        tcb.id,
+        letDeclOpMap[node.name]!!.node,
+      );
+    }
+  }
 }
 
 private data class TcbBoundAttribute(
@@ -2133,7 +2185,7 @@ private fun tcbExpression(ast: JSExpression?, tcb: Context, scope: Scope): Expre
 private open class TcbExpressionTranslator(
   protected val tcb: Context,
   protected val scope: Scope,
-  private val result: Expression.ExpressionBuilder,
+  protected val result: Expression.ExpressionBuilder,
 ) : Angular2RecursiveVisitor() {
 
   open fun translate(ast: JSElement?) {
@@ -2210,8 +2262,32 @@ private open class TcbExpressionTranslator(
       // the expression is referencing the top-level component context. In that case, `null` is
       // returned here to let it fall through resolution so it will be caught when the
       // `ImplicitReceiver` is resolved in the branch below.
-      val templateTarget = resolveTarget(node)
-      if (templateTarget == null) {
+      val target = this.tcb.boundTarget.getExpressionTarget(node);
+      var targetExpression = target?.let { this.getTargetNodeExpression(it, node) }
+      if (target is TmplAstLetDeclaration) {
+        if (node.parent.let { it is JSAssignmentExpression && it.lOperand == node }) {
+          // Ignore diagnostics from TS produced for writes to `@let` and re-report them using
+          // our own infrastructure. We can't rely on the TS reporting, because it includes
+          // the name of the auto-generated TCB variable name.
+          targetExpression = Expression {
+            withIgnoreMappings {
+              append(targetExpression!!)
+            }
+          }
+          this.tcb.oobRecorder.illegalWriteToLetDeclaration(this.tcb.id, node, target);
+        }
+        else if (!this.isValidLetDeclarationAccess(target, node)) {
+          this.tcb.oobRecorder.letUsedBeforeDefinition(this.tcb.id, node, target);
+          // Cast the expression to `any` so we don't produce additional diagnostics.
+          // We don't use `markIgnoreForDiagnostics` here, because it won't prevent duplicate
+          // diagnostics for nested accesses in cases like `@let value = value.foo.bar.baz`.
+          targetExpression = Expression {
+            append(targetExpression!!)
+            append(" as any")
+          }
+        }
+      }
+      if (targetExpression == null) {
         // AST instances representing variables and references look very similar to property reads
         // or method calls from the component context: both have the shape
         // PropertyRead(ImplicitReceiver, 'propName') or Call(ImplicitReceiver, 'methodName').
@@ -2236,7 +2312,7 @@ private open class TcbExpressionTranslator(
         }
       }
       else {
-        result.append(templateTarget)
+        result.append(targetExpression)
       }
     }
     else {
@@ -2255,9 +2331,9 @@ private open class TcbExpressionTranslator(
       if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
         // property read, or `undefined`. So a ternary is used to create an "or" type:
-        // "a?.b" becomes (null as any ? a!.b : undefined)
+        // "a?.b" becomes (0 as any ? a!.b : undefined)
         // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
-        append("(null as any ? (")
+        append("($ANY_EXPRESSION ? (")
         qualifier.accept(this@TcbExpressionTranslator)
         append(")!.")
         referenceName?.accept(this@TcbExpressionTranslator)
@@ -2295,9 +2371,9 @@ private open class TcbExpressionTranslator(
       if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
         // property read, or `undefined`. So a ternary is used to create an "or" type:
-        // "a?.b" becomes (null as any ? a!.b : undefined)
+        // "a?.b" becomes (0 as any ? a!.b : undefined)
         // The type of this expression is (typeof a!.b) | undefined, which is exactly as desired.
-        append("(null as any ? ")
+        append("($ANY_EXPRESSION ? ")
         withSourceSpan(methodExpression.textRange, types = true) {
           append("(")
           methodExpression.accept(this@TcbExpressionTranslator)
@@ -2346,7 +2422,7 @@ private open class TcbExpressionTranslator(
       tcb.oobRecorder.missingPipe(pipeName, pipe)
 
       // Use an 'any' value to at least allow the rest in the expression to be checked.
-      pipeCall = Expression("(null as any)")
+      pipeCall = Expression("($ANY_EXPRESSION)")
     }
     else if (pipeInfo.isExplicitlyDeferred &&
              tcb.boundTarget.getEagerlyUsedPipes().contains(pipeName)) {
@@ -2355,7 +2431,7 @@ private open class TcbExpressionTranslator(
       tcb.oobRecorder.deferredPipeUsedEagerly(this.tcb.id, pipe)
 
       // Use an 'any' value to at least allow the rest of the expression to be checked.
-      pipeCall = Expression("(null as any)")
+      pipeCall = Expression("($ANY_EXPRESSION)")
     }
     else {
       // Use a variable declared as the pipe's type.
@@ -2421,22 +2497,22 @@ private open class TcbExpressionTranslator(
     else super.visitJSLiteralExpression(node)
   }
 
-
-  /**
-   * Attempts to resolve a bound target for a given expression, and translates it into the
-   * appropriate `Expression` that represents the bound target. If no target is available,
-   * `null` is returned.
-   */
-  protected open fun resolveTarget(ast: JSReferenceExpression): Expression? {
-    val binding = this.tcb.boundTarget.getExpressionTarget(ast)
-    if (binding == null) {
-      return null
-    }
-
-    val identifier = this.scope.resolve(binding)
+  private fun getTargetNodeExpression(targetNode: TemplateEntity, expressionNode: JSReferenceExpression): Expression {
+    val identifier = this.scope.resolve(targetNode)
     return Expression {
-      append(identifier, ast.textRange, types = true)
+      append(identifier, expressionNode.textRange, types = true)
     }
+  }
+
+  protected open fun isValidLetDeclarationAccess(target: TmplAstLetDeclaration, ast: PsiElement): Boolean {
+    val targetStart = target.sourceSpan.startOffset
+    val targetEnd = target.sourceSpan.endOffset
+    val astStart = ast.startOffset
+
+    // We only flag local references that occur before the declaration, because embedded views
+    // are updated before the child views. In practice this means that something like
+    // `<ng-template [ngIf]="true">{{value}}</ng-template> @let value = 1;` is valid.
+    return (targetStart < astStart && astStart > targetEnd) || !this.scope.isLocal(target);
   }
 }
 
@@ -2465,7 +2541,7 @@ private fun tcbCallTypeCtor(dir: TmplDirectiveMetadata, tcb: Context, inputs: Co
     else {
       // A type constructor is required to be called with all input properties, so any unset
       // inputs are simply assigned a value of type `any` to ignore them.
-      Expression("\"${input.field}\": null as any")
+      Expression("\"${input.field}\": $ANY_EXPRESSION")
     }
   }
 
@@ -2739,31 +2815,51 @@ private fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, i
 
 private class TcbEventHandlerTranslator(tcb: Context, scope: Scope, result: Expression.ExpressionBuilder)
   : TcbExpressionTranslator(tcb, scope, result) {
-  override fun resolveTarget(ast: JSReferenceExpression): Expression? {
+
+
+  override fun visitJSReferenceExpression(node: JSReferenceExpression) {
     // Recognize a property read on the implicit receiver corresponding with the event parameter
     // that is available in event bindings. Since this variable is a parameter of the handler
     // function that the converted expression becomes a child of, just create a reference to the
     // parameter by its name.
-    if (ast.qualifier == null && ast.referenceName == EVENT_PARAMETER) {
-      return Expression(EVENT_PARAMETER, ast.textRange, types = true)
+    if (node.qualifier == null && node.referenceName == EVENT_PARAMETER) {
+      result.append(Expression(EVENT_PARAMETER, node.textRange, types = true))
     }
-    return super.resolveTarget(ast)
+    else {
+      super.visitJSReferenceExpression(node)
+    }
   }
+
+  override fun isValidLetDeclarationAccess(target: TmplAstLetDeclaration, ast: PsiElement): Boolean {
+    // Event listeners are allowed to read `@let` declarations before
+    // they're declared since the callback won't be executed immediately.
+    return true
+  }
+
 }
 
-private class TcbForLoopTrackTranslator(tcb: Context, scope: Scope, private val block: TmplAstForLoopBlock, private val result: Expression.ExpressionBuilder)
-  : TcbExpressionTranslator(tcb, scope, result) {
+private class TcbForLoopTrackTranslator(
+  tcb: Context,
+  scope: Scope,
+  private val block: TmplAstForLoopBlock,
+  result: Expression.ExpressionBuilder,
+) : TcbExpressionTranslator(tcb, scope, result) {
 
-  override fun resolveTarget(ast: JSReferenceExpression): Expression? {
-    val target = this.tcb.boundTarget.getExpressionTarget(ast)
-    // Tracking expressions are only allowed to read the `$index`,
-    // the item and properties off the component instance.
-    if (target != null
-        && target != block.item
-        && target != block.contextVariables["\$index"]) {
-      this.tcb.oobRecorder.illegalForLoopTrackAccess(this.tcb.id, this.block, ast)
+  private val allowedVariables: Set<TmplAstVariable> =
+    setOfNotNull(block.item, block.contextVariables["\$index"])
+
+  override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+    if (node.qualifier == null) {
+      val target = this.tcb.boundTarget.getExpressionTarget(node)
+      // Tracking expressions are only allowed to read the `$index`,
+      // the item and properties off the component instance.
+      if (target != null &&
+          (target !is TmplAstVariable || !this.allowedVariables.contains(target))
+      ) {
+        this.tcb.oobRecorder.illegalForLoopTrackAccess(this.tcb.id, this.block, node)
+      }
     }
-    return super.resolveTarget(ast)
+    super.visitJSReferenceExpression(node)
   }
 
 }
@@ -2833,11 +2929,13 @@ private fun tsCreateTypeQueryForCoercedInput(typeName: Expression, coercedInputN
  */
 private fun tsCreateVariable(
   id: Identifier, initializer: Expression,
-  types: Boolean = true, ofDir: Angular2Directive? = null,
+  types: Boolean = true,
+  ofDir: Angular2Directive? = null,
   ignoreDiagnostics: Boolean = false,
+  isConst: Boolean = false,
 ): Statement {
   return Statement {
-    append("var ")
+    append(if (isConst) "const " else "var ")
     append(
       id, id.sourceSpan, types = types, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
       varOfDirective = ofDir,
@@ -2847,3 +2945,8 @@ private fun tsCreateVariable(
     append(";")
   }
 }
+
+private data class LetDeclOpMapRecord(
+  val opIndex: Int,
+  val node: TmplAstLetDeclaration,
+)

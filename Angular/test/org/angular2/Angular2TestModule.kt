@@ -24,6 +24,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   ANGULAR_COMMON_15_1_5("@angular/common", "15.1.5"),
   ANGULAR_COMMON_16_2_8("@angular/common", "16.2.8"),
   ANGULAR_COMMON_17_3_0("@angular/common", "17.3.0"),
+  ANGULAR_COMMON_18_2_1("@angular/common", "18.2.1"),
 
   ANGULAR_CORE_4_0_0("@angular/core", "4.0.0"),
   ANGULAR_CORE_8_2_14("@angular/core", "8.2.14"),
@@ -32,6 +33,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   ANGULAR_CORE_15_1_5("@angular/core", "15.1.5"),
   ANGULAR_CORE_16_2_8("@angular/core", "16.2.8"),
   ANGULAR_CORE_17_3_0("@angular/core", "17.3.0"),
+  ANGULAR_CORE_18_2_1("@angular/core", "18.2.1"),
 
   ANGULAR_FLEX_LAYOUT_13_0_0("@angular/flex-layout", "13.0.0-beta.36"),
 
@@ -85,9 +87,11 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
     }
 
     @JvmStatic
-    fun configure(fixture: CodeInsightTestFixture,
-                  linkSourceRoot: Boolean,
-                  vararg modules: Angular2TestModule) {
+    fun configure(
+      fixture: CodeInsightTestFixture,
+      linkSourceRoot: Boolean,
+      vararg modules: Angular2TestModule,
+    ) {
       if (modules.isNotEmpty()) {
         if (linkSourceRoot) {
           WriteAction.runAndWait<RuntimeException> {

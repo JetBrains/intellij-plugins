@@ -6,6 +6,8 @@ import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 
+const val ANY_EXPRESSION = "0 as any"
+
 /**
  * Checks whether View Engine will infer a type of 'any' for the left-hand side of a safe navigation
  * operation.

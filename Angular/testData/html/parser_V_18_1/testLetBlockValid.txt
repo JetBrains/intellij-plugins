@@ -5,22 +5,23 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('foo')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSCallExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('test')
-                JSArgumentList
-                  PsiElement(JS:LPAR)('(')
-                  JSLiteralExpression
-                    PsiElement(JS:NUMERIC_LITERAL)('12')
-                  PsiElement(JS:RPAR)(')')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('test')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('12')
+                    PsiElement(JS:RPAR)(')')
       PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')

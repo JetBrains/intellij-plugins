@@ -5,18 +5,19 @@ HtmlFile:test.html
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
       PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
-        Angular2BlockParameter
-          JSVarStatement
-            JSVariable
-              PsiElement(JS:IDENTIFIER)('foo')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:EQ)('=')
-              PsiWhiteSpace(' ')
-              JSLiteralExpression
-                PsiElement(JS:STRING_LITERAL)('"foo')
-              PsiErrorElement:Unclosed string literal
-                <empty list>
-              PsiElement(BAD_CHARACTER)('\')
+      Angular2HtmlBlockParameters
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (let:0))
+          Angular2BlockParameter
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"foo')
+                PsiErrorElement:Unclosed string literal
+                  <empty list>
+                PsiElement(BAD_CHARACTER)('\')
       PsiErrorElement:Incomplete @let block - missing ;
         <empty list>

@@ -27,8 +27,7 @@ class Angular2Parser private constructor(
   private val myIsAction: Boolean,
   private val myIsSimpleBinding: Boolean,
   private val myIsJavaScript: Boolean,
-)
-  : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(JavascriptLanguage.INSTANCE,
+) : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(JavascriptLanguage.INSTANCE,
                                                                                                                builder) {
   constructor(builder: PsiBuilder) : this(builder, false, false, true)
 
@@ -605,7 +604,7 @@ class Angular2Parser private constructor(
           parser.parseChain()
         }
       }
-      definition.done(JSStubElementTypes.VARIABLE)
+      definition.done(Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE)
       definition.precede().done(JSStubElementTypes.VAR_STATEMENT)
     }
 
