@@ -225,6 +225,11 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
     SerialMonitorBundle.message("action.print.timestamps.text"),
     SerialMonitorBundle.message("action.print.timestamps.description"),
     AllIcons.Scope.Scratches) {
+
+    override fun update(e: AnActionEvent) {
+      e.presentation.isEnabledAndVisible = widget.isShowing
+    }
+
     override fun isSelected(e: AnActionEvent): Boolean {
       return emulator?.isTimestamped == true
     }
