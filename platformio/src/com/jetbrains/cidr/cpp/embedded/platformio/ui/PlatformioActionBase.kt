@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.BaseOSProcessHandler
+import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
@@ -11,6 +12,7 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
@@ -23,6 +25,9 @@ import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder
 import icons.ClionEmbeddedPlatformioIcons
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.Icon
@@ -73,7 +78,10 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
     val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
 
     if (alreadyRunningDescriptor != null) {
-      alreadyRunningDescriptor.processHandler?.destroyProcess()
+      alreadyRunningDescriptor.processHandler?.let {
+        val actionService = e.project?.service<PlatformioActionService>()
+        actionService?.destroyProcess(it)
+      }
     }
 
     val service = project.service<PlatformioService>()
@@ -134,4 +142,13 @@ fun notifyUploadUnavailable(project: Project?) {
   NOTIFICATION_GROUP
     .createNotification(ClionEmbeddedPlatformioBundle.message("notification.content.upload.unavailable"), NotificationType.WARNING)
     .notify(project)
+}
+
+@Service(Service.Level.PROJECT)
+internal class PlatformioActionService(val project: Project, private val cs: CoroutineScope) {
+  fun destroyProcess(processHandler: ProcessHandler) {
+    cs.launch(Dispatchers.IO) {
+      processHandler.destroyProcess()
+    }
+  }
 }

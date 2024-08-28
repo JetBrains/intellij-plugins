@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.Disposer
@@ -71,7 +72,9 @@ fun doRun(service: PlatformioService,
       Presentation.NULL_STRING, AllIcons.Actions.Suspend) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
-      override fun actionPerformed(e: AnActionEvent) = processHandler.destroyProcess()
+      override fun actionPerformed(e: AnActionEvent) {
+        project.service<PlatformioActionService>().destroyProcess(processHandler)
+      }
 
       override fun update(e: AnActionEvent) {
         if (processHandler.isProcessTerminated) {
