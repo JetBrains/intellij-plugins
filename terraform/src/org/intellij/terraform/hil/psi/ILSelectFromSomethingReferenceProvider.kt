@@ -2,8 +2,6 @@
 package org.intellij.terraform.hil.psi
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Attachment
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -11,7 +9,6 @@ import com.intellij.psi.util.parents
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
-import com.intellij.util.containers.FList
 import com.intellij.util.containers.addIfNotNull
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
@@ -433,38 +430,16 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     }
   }
 
-  private fun getValueContainer(r: PsiElement, fake: Boolean, handled: FList<PsiElement> = FList.emptyList()): HCLElement? {
-    if (handled.size > 30) {
-      val message = "too deep getValueContainer(${
-        handled.map { e ->
-          when (e) {
-            is HCLIdentifier -> "HCLIdentifier:" + e.name
-            else -> e.javaClass.name
-          }
-        }
-      })"
-      logger<ILSelectFromSomethingReferenceProvider>()
-        .error(message, runCatching {
-          Attachment(r.containingFile.name, r.containingFile.text).apply {
-            isIncluded = false
-          }
-        }.getOrElse {
-          Attachment("error", it.message ?: it.javaClass.name).apply {
-            isIncluded = true
-          }
-        })
-      return null
-    }
+  private fun getValueContainer(r: PsiElement, fake: Boolean, handled: MutableSet<PsiElement> = mutableSetOf()): HCLElement? {
+    if (!handled.add(r)) return null
     when (r) {
       is HCLIdentifier -> {
         val p = r.parent
         if (p is HCLForIntro) {
-          val alreadyProcessed = handled.prepend(r)
           // Resolve container we're iterating on
           return HCLPsiUtil.getReferencesSelectAware(p.container).flatMap { ref ->
             resolve(ref, false, fake)
-              .filter { !alreadyProcessed.contains(it) }
-              .mapNotNull { resolved -> getValueContainer(resolved, fake, alreadyProcessed) }
+              .mapNotNull { resolved -> getValueContainer(resolved, fake, handled) }
           }.firstOrNull()
         }
       }
