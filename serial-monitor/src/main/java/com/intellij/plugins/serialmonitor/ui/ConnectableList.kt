@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nls
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
-import kotlin.math.abs
 
 class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
@@ -201,22 +200,18 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
       }
 
       override fun setSelectionInterval(index0: Int, index1: Int) {
-        val selectedIndex = index1 // according to documentation, index1 is used for the single selection mode
-        if (selectedIndex < 0 || selectedIndex >= model.size) {
-          return
-        }
-        when (model.getElementAt(selectedIndex)) {
-          is Connectable -> super.setSelectionInterval(selectedIndex, selectedIndex)
-          is String -> {
-            val currentIndex = minSelectionIndex
-            if (currentIndex <= 0) return
-            val delta = selectedIndex - currentIndex
-            if (abs(delta) == 1) {
-              // Skip over String elements (i.e. the fake labels)
-              val newIndex = currentIndex + 2 * delta
-              super.setSelectionInterval(newIndex, newIndex)
-            }
+        var newIndex = index1 // according to documentation, index1 is used for the single selection mode
+        val currentIndex = minSelectionIndex
+        val delta = if (selectedIndex < currentIndex) -1 else 1
+
+        // Skips over fake string labels and selects the first Connectable in the selected direction from the current element
+        while (newIndex >= 0 && newIndex < model.size) {
+          val element = model.getElementAt(newIndex)
+          if (element is Connectable) {
+            super.setSelectionInterval(newIndex, newIndex)
+            break
           }
+          newIndex += delta
         }
       }
     }
