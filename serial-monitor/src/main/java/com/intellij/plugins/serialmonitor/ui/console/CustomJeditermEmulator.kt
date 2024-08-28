@@ -12,10 +12,11 @@ class CustomJeditermEmulator(dataStream: TerminalDataStream?, terminal: Terminal
 
   var isTimestamped = false
   private var onNewLineStart = true
+  private val myFormatter = SimpleDateFormat(TIMESTAMP_FORMAT)
+  private fun getTimestamp(): String = myFormatter.format(Date())
 
   companion object {
     const val TIMESTAMP_FORMAT = "[HH:mm:ss.SSS] "
-    fun getTimestamp(): String = SimpleDateFormat(TIMESTAMP_FORMAT).format(Date())
   }
 
   private fun maybeInsertTimestamp(terminal: Terminal) {
