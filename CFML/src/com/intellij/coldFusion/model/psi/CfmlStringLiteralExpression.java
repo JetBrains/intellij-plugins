@@ -94,7 +94,7 @@ public class CfmlStringLiteralExpression extends CfmlCompositeElement implements
           String possibleJavaClassName = stringTextElement.getText();
           final JavaClassReferenceProvider provider = new JavaClassReferenceProvider() {
             @Override
-            public GlobalSearchScope getScope(Project project) {
+            public GlobalSearchScope getScope(@NotNull Project project) {
               return ss;
             }
           };
