@@ -129,7 +129,7 @@ class SerialPortService : Disposable {
         port?.closePort()
       }
       catch (e: SerialPortException) {
-        throw SerialMonitorException(e.localizedMessage)
+        throw SerialMonitorException(SerialMonitorBundle.message("port.close.error", e.port.portName, e.exceptionType))
       }
       catch (e: Throwable) {
         throw SerialMonitorException(portName, e)
