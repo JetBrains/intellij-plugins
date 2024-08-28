@@ -293,7 +293,7 @@ class AngularCliSchematicsRegistryServiceImpl : AngularCliSchematicsRegistryServ
     private fun checkForNgAddSupport(packageName: String, versionOrRange: String): Boolean {
       try {
         val indicator = ProgressManager.getInstance().progressIndicator
-        val pkgJson = NpmRegistryService.getInstance().fetchPackageJson(packageName, versionOrRange, indicator)
+        val pkgJson = NpmRegistryService.instance.fetchPackageJson(packageName, versionOrRange, indicator)
         return pkgJson?.get(SCHEMATICS_PROP) != null
       }
       catch (e: Exception) {

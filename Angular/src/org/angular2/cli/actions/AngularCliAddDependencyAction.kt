@@ -226,7 +226,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       }
       val result = ArrayList<NodePackageBasicInfo>()
       try {
-        NpmRegistryService.getInstance().findPackages(
+        NpmRegistryService.instance.findPackages(
           ProgressManager.getInstance().progressIndicator,
           NpmRegistryService.namePrefixSearch(prefix), 20, { true },
           { pkg ->
