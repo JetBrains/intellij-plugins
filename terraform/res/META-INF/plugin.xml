@@ -425,6 +425,11 @@
     <!--OpenTofu support-->
     <fileType name="OpenTofu" language="HCL-Terraform" extensions="tofu" implementationClass="org.intellij.terraform.opentofu.OpenTofuFileType" fieldName="INSTANCE"/>
 
+    <fileTypeUsageSchemaDescriptor schema="OpenTofu Json"
+                                   implementationClass="org.intellij.terraform.config.editor.OpenTofuJsonFileTypeUsageSchemaDescriptor"/>
+    <fileTypeUsageSchemaDescriptor schema="Terraform Json"
+                                   implementationClass="org.intellij.terraform.config.editor.TerraformJsonFileTypeUsageSchemaDescriptor"/>
+
   </extensions>
 
   <actions>
