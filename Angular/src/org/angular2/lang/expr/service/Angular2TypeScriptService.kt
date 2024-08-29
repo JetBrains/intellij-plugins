@@ -172,21 +172,23 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
     override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? {
-      val virtualFile = transpiledFile.originalFile.originalFile.virtualFile
-                        ?: return null
-      val evaluationLocation = templateFile.originalFile.virtualFile
+      val componentVirtualFile = transpiledFile.originalFile.originalFile.virtualFile
+                                 ?: return null
+      val evaluationLocation = InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(templateFile.originalFile).virtualFile
                                ?: return null
-      commitDocumentsWithNBRA(virtualFile)
-      if (virtualFile != evaluationLocation) {
+      commitDocumentsWithNBRA(componentVirtualFile)
+      if (componentVirtualFile != evaluationLocation) {
+        // If template is not inlined, we need to ensure that both component and template files are up-to-date
         commitDocumentsWithNBRA(evaluationLocation)
       }
-      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+      // Ensure that transpiled template is up-to-date
+      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(componentVirtualFile), null, null)
 
-      val filePath = getFilePath(virtualFile) ?: return null
+      val filePath = getFilePath(componentVirtualFile) ?: return null
 
-      val projectFileName = TypeScriptConfigUtil.getNonStandardProjectFileName(
-        InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(transpiledFile.originalFile)
-      )
+      // The evaluation location is in the template, so the config will be searched for the containing component file,
+      // which is the transpiledFile.originalFile
+      val projectFileName = TypeScriptConfigUtil.getNonStandardProjectFileName(transpiledFile.originalFile.originalFile)
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
       return sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
     }
