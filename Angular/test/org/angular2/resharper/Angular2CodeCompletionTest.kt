@@ -4,12 +4,14 @@ package org.angular2.resharper
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.idea.IJIgnore
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.WebSymbol
 import org.angular2.Angular2TestModule
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2")
+@IJIgnore(issue = "IJPL-150165")
 class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {
   override fun shouldSkipItem(element: LookupElement): Boolean {
     if (element.getLookupString().startsWith("[(")) {

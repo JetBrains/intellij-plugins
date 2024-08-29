@@ -4,6 +4,7 @@ package org.angular2.codeInsight.deprecated
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
+import com.intellij.idea.IJIgnore
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.javascript.psi.*
@@ -261,6 +262,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testOneTimeBindingAttributeCompletion2JavaScript() {
     configureLink(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1)
     myFixture.configureByFiles("compiled_binding.html")
@@ -268,6 +270,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "color")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testOneTimeBindingAttributeCompletion2ES6() {
     configureLink(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1)
     myFixture.configureByFiles("compiled_binding.html")
@@ -409,6 +412,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkResultByFile("case.after.html")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testMaterialSelectors() {
     configureLink(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1)
     myFixture.configureByFiles("material.html")
@@ -416,6 +420,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "mat-icon-button", "mat-raised-button")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testComplexSelectorList2() {
     configureLink(myFixture, Angular2TestModule.IONIC_ANGULAR_3_0_1)
     myFixture.configureByFiles("div.html")

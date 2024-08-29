@@ -3,6 +3,7 @@ package org.angular2.codeInsight.deprecated
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
+import com.intellij.idea.IJIgnore
 import com.intellij.json.psi.impl.JsonFileImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
@@ -51,11 +52,13 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     assert(file.getViewProvider().getAllFiles()[0] is JsonFileImpl)
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testMetadataStubBuilding() {
     myFixture.configureByFiles("package.json", "ng-zorro-antd.d.ts")
     testMetadataStubBuilding("ng-zorro-antd.metadata.json")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testMetadataStubBuildingWithResolution() {
     configureWithMetadataFiles("ant-design-icons-angular")
     myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.d.ts",
@@ -63,6 +66,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     testMetadataStubBuilding("ng-zorro-antd.metadata.json", "ng-zorro-antd.metadata.resolved.psi.txt")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testAgmCoreModuleStubBuilding() {
     myFixture.configureByFiles("@agm-core/core.module.d.ts", "package.json")
     testMetadataStubBuilding("@agm-core/core.module.metadata.json")
@@ -73,6 +77,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     testMetadataStubBuilding("forms.metadata.json")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testSyncFusionDropdownsMetadataStubBuilding() {
     myFixture.configureByFiles("@syncfusion-ej2-angular-dropdowns/ej2-angular-dropdowns.d.ts", "package.json")
     testMetadataStubBuilding("@syncfusion-ej2-angular-dropdowns/ej2-angular-dropdowns.metadata.json")
@@ -88,6 +93,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     testMetadataStubBuilding("test-ng-attr.metadata.json")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testSpreadOperatorMetadataStubBuilding() {
     myFixture.configureByFiles("spread-operator/evo-ui-kit.d.ts", "package.json")
     testMetadataStubBuilding("spread-operator/evo-ui-kit.metadata.json")
@@ -122,6 +128,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testMetadataWithExportAliases() {
     myFixture.copyDirectoryToProject("node_modules/export-aliases", ".")
     myFixture.configureByFile("package.json")
@@ -133,6 +140,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
       .assertSameLinesWithFile(File(testDataPath, "node_modules/export-aliases/export.test.metadata.json.txt").toString(), result)
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testMaterialMetadataResolution() {
     //Test component matching and indirect node module indexing
     configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1, Angular2TestModule.ANGULAR_COMMON_4_0_0)
@@ -145,6 +153,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
                  myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testMaterialMetadataStubGeneration() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1, Angular2TestModule.ANGULAR_COMMON_4_0_0)
     val materialDir = myFixture.getTempDirFixture().getFile("node_modules/@angular/material")

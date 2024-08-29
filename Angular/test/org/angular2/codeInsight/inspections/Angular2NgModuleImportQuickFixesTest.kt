@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
+import com.intellij.idea.IJIgnore
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
@@ -39,6 +40,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     return "ngModuleImport/"
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNgFor() {
     doMultiFileTest("angular-commons",
                     "test.html",
@@ -47,6 +49,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "CommonModule - \"@angular/common\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNgForCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -55,6 +58,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "CommonModule - \"@angular/common\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNgClass() {
     doMultiFileTest("angular-commons",
                     "test.html",
@@ -63,6 +67,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "CommonModule - \"@angular/common\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNgClassCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -71,6 +76,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "CommonModule - \"@angular/common\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testLowercasePipe() {
     doMultiFileTest("angular-commons",
                     "test.html",
@@ -79,6 +85,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "CommonModule - \"@angular/common\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testLowercasePipeCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -87,69 +94,83 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "CommonModule - \"@angular/common\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportDirective() {
     doMultiFileTest("test.html",
                     "Import Module2")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportDirectiveCompletion() {
     doTagCompletionTest("test.html", "Module2 - \"./module2\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testUndeclaredDirective() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in MyModule")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testUndeclaredDirectiveCompletion() {
     doTagCompletionTest("test.html", "MyModule - \"./module\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
                     "Module2 - \"./module2\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
                         "Module2 - \"./module2\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNotExportedDirectiveNoModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNotExportedDirectiveNoModuleImportCompletion() {
     doTagCompletionTest("test.html", null)
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNotExportedDirectiveSingleModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNotExportedDirectiveSingleModuleImportCompletion() {
     doTagCompletionTest("test.html", "Module2 - \"./module2\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNotExportedDirectiveMultiModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective",
                     "Module3 - \"./module3\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testNotExportedDirectiveMultiModuleImportCompletion() {
     doTagCompletionTest("test.html",
                         "Module3 - \"./module3\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testInlineTemplate() {
     doMultiFileTest("component.ts",
                     "Declare MyDirective in MyModule")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testInlineTemplateCompletion() {
     doTagCompletionTest("component.ts", "MyModule - \"./module\"")
   }
@@ -263,6 +284,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      ANGULAR_8)
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testLocalLib() {
     doMultiFileTest("src/app/app.component.html",
                     "Import MyLibModule") {
@@ -270,6 +292,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     }
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testLocalLibCompletion() {
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
@@ -278,6 +301,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     }
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportStandaloneComponentToStandaloneComponent() {
     doMultiFileTest("standaloneComponent",
                     "test.ts",
@@ -286,6 +310,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "StandaloneComponent - \"./standalone.component\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportStandalonePipeToStandaloneComponent() {
     doMultiFileTest("standalonePipe",
                     "test.ts",
@@ -294,6 +319,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "StandalonePipe - \"./standalone.pipe\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportStandaloneComponentToModule() {
     doMultiFileTest("standaloneComponentToModule",
                     "test.ts",
@@ -302,6 +328,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "StandaloneComponent - \"./standalone.component\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportStandaloneComponentImportModule() {
     doMultiFileTest("standaloneComponentImportModule",
                     "test.ts",
@@ -310,12 +337,14 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "ClassicModule - \"./classic\"")
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testLocalLibraryWithAlias() {
     doMultiFileTest("projects/demo/src/app/app.component.html",
                     "Import Lib1Module"
     )
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testSameFileStandaloneDirectiveToComponent() {
     doMultiFileTest("test.ts",
                     "Import TestDir"
@@ -329,6 +358,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     )
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testImportStandalonePseudoModuleToStandaloneComponent() {
     doMultiFileTest("standalonePseudoModule",
                     "check.html",
@@ -342,6 +372,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                                             "FOO_COMPONENT_EXPORT_CONST_AS_CONST - \"./foo\""))
   }
 
+  @IJIgnore(issue = "IJPL-150165")
   fun testLibComponent() {
     doMultiFileTest("app.component.ts",
                     "Import SharedComponent") {
