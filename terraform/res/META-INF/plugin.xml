@@ -422,6 +422,12 @@
     <internalFileTemplate name="Template File"/>
     <internalFileTemplate name="Outputs File"/>
     <internalFileTemplate name="Variables File"/>
+
+    <fileTypeUsageSchemaDescriptor schema="OpenTofu Json"
+                                   implementationClass="org.intellij.terraform.config.editor.OpenTofuJsonFileTypeUsageSchemaDescriptor"/>
+    <fileTypeUsageSchemaDescriptor schema="Terraform Json"
+                                   implementationClass="org.intellij.terraform.config.editor.TerraformJsonFileTypeUsageSchemaDescriptor"/>
+
   </extensions>
 
   <actions>
