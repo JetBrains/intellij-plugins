@@ -23,6 +23,7 @@ import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationImpl;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -78,7 +79,7 @@ public final class GenerateNgAddCompatibleList {
     f.setBoolean(app, false);
 
     Map<String, NodePackageBasicInfo> angularPkgs = new ConcurrentHashMap<>();
-    NpmRegistryService service = new NpmRegistryServiceImpl();
+    NpmRegistryService service = new NpmRegistryServiceImpl(app.getCoroutineScope());
 
     Consumer<NodePackageBasicInfo> addPkg = pkg -> angularPkgs.merge(pkg.getName(), pkg, (p1, p2) -> {
       if (!StringUtil.equals(p1.getDescription(), p2.getDescription())) {
@@ -123,7 +124,7 @@ public final class GenerateNgAddCompatibleList {
 
     List<Pair<NodePackageBasicInfo, JsonObject>> schematicsPkgs = angularPkgs.values().stream().parallel().map(info -> {
       try {
-        JsonObject obj = service.fetchPackageJson(info.getName(), "latest", null);
+        JsonObject obj = service.fetchPackageJson(info.getName(), "latest", (ProgressIndicator)null);
         if (obj != null && obj.has("schematics")) {
           return Pair.create(info, obj);
         }
