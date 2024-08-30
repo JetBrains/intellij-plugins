@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSExecutionScope
@@ -17,7 +17,7 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
   : JSLocalImplicitElementImpl(name, jsType, provider, kind) {
 
   override fun getTextRange(): TextRange? {
-    return myProvider!!.textRange
+    return myProvider.textRange
   }
 
   override fun setName(name: String): PsiElement {
@@ -33,7 +33,7 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
         ElementManipulators.handleContentChange(provider, name)
       }
     }
-    var parent = myProvider
+    var parent: PsiElement? = myProvider
     while (parent != null && parent !is JSExecutionScope) {
       if (parent is PsiNamedElement && StringUtil.equals(getName(), parent.name)) {
         parent.setName(name)
@@ -41,14 +41,14 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
       }
       parent = parent.parent
     }
-    return VueImplicitElement(name, jsType, myProvider!!, myKind!!, equivalentToProvider)
+    return VueImplicitElement(name, jsType, myProvider, myKind!!, equivalentToProvider)
   }
 
   override fun isEquivalentTo(another: PsiElement?): Boolean =
     when (another) {
       is VueImplicitElement -> equals(another)
       is JSImplicitElement -> equals(another.parent)
-      else -> equivalentToProvider && this.myProvider!! == another
+      else -> equivalentToProvider && this.myProvider == another
     }
 
   fun copyWithProvider(provider: PsiElement): VueImplicitElement =
