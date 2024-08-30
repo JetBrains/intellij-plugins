@@ -97,6 +97,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       translateNamesInErrors(list, transpiledComponentFile, templateFile)
     }
 
+  override fun supportsInlayHints(file: PsiFile): Boolean =
+    file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
+
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
