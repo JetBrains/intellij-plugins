@@ -31,9 +31,8 @@
     <notificationGroup id="Serial Monitor Notification" toolWindowId="Serial Monitor" displayType="TOOL_WINDOW"
                        bundle="messages.SerialMonitorBundle" key="notification.group.serial.monitor.notification"/>
 
-    <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorCollector"/>
     <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
-    <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.ui.actions.SerialMonitorSaveToFileCollector"/>
   </extensions>
   <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
 </idea-plugin>

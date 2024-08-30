@@ -6,7 +6,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.Parity
-import com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector
+import com.intellij.plugins.serialmonitor.SerialMonitorCollector
 import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.StopBits
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
@@ -180,18 +180,18 @@ class SerialPortService : Disposable {
         newPort.addEventListener(listener, MASK_RXCHAR or MASK_ERR)
 
         if (!newPort.setParams(baudRate, bits, portStopBits, portParity)) {
-          SerialMonitorConnectCollector.logConnect(baudRate, false)
+          SerialMonitorCollector.logConnect(baudRate, false)
           throw SerialMonitorException(SerialMonitorBundle.message("serial.port.parameters.wrong"))
         }
         newPort.setFlowControlMode(FLOWCONTROL_NONE)
         newPort.setRTS(false)
         port = newPort
-        SerialMonitorConnectCollector.logConnect(baudRate, true)
+        SerialMonitorCollector.logConnect(baudRate, true)
         status = PortStatus.CONNECTED
         portMessageTopic().portsStatusChanged()
       }
       catch (e: Throwable) {
-        SerialMonitorConnectCollector.logConnect(baudRate, false)
+        SerialMonitorCollector.logConnect(baudRate, false)
         try {
           newPort.closePort()
         }

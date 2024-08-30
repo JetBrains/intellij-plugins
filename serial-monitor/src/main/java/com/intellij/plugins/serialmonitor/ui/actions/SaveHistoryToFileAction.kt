@@ -1,15 +1,13 @@
 package com.intellij.plugins.serialmonitor.ui.actions
 
 import com.intellij.icons.AllIcons
-import com.intellij.internal.statistic.eventLog.EventLogGroup
-import com.intellij.internal.statistic.eventLog.events.EventFields
-import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.fileChooser.FileSaverDescriptor
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.plugins.serialmonitor.SerialMonitorCollector
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.jediterm.terminal.model.TerminalTextBuffer
@@ -53,19 +51,7 @@ class SaveHistoryToFileService(val cs: CoroutineScope) {
       with(Dispatchers.IO) {
         file.writeText(text)
       }
-      SerialMonitorSaveToFileCollector.logSaved(lines.size)
+      SerialMonitorCollector.logSave(lines.size)
     }
-  }
-}
-
-internal object SerialMonitorSaveToFileCollector : CounterUsagesCollector() {
-
-  val GROUP = EventLogGroup("serial.monitor.saves", 1)
-  val CONNECT_EVENT = GROUP.registerEvent("serial.monitor.saved", EventFields.Int("lines"))
-
-  override fun getGroup(): EventLogGroup = GROUP
-
-  fun logSaved(lines: Int) {
-    CONNECT_EVENT.log(lines)
   }
 }
