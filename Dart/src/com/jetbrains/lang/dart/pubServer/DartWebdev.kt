@@ -46,7 +46,7 @@ object DartWebdev {
       command.isRedirectErrorStream = true
       DartPubActionBase.setupPubExePath(command, sdk)
       command.addParameters("global", "activate", "webdev")
-      command.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev.activate")
+      command.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.pubEnvValue + ".webdev.activate")
 
       CapturingProcessHandler(command).runProcessWithProgressIndicator(indicator, 60 * 1000, false)
     }
