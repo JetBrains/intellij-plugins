@@ -80,6 +80,7 @@ import org.junit.runners.Suite
   Angular2FindUsagesTest::class,
   Angular2UsageHighlightingTest::class,
   Angular2IntentionsAndQuickFixesTest::class,
+  Angular2ServiceInlayHintsTest::class,
   Angular2MoveTest::class,
   Angular2RenameTest::class,
   Angular2ConfigTest::class,
