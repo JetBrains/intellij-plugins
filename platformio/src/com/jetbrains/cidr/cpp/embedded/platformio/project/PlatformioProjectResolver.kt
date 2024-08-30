@@ -240,10 +240,17 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
     val compDbTokenType = object : TypeToken<List<Map<String, String>>>() {}.type
     val compDbJson = Gson().fromJson<List<Map<String, String>>>(compDbText, compDbTokenType)?.map {
-      if (it["file"] == null || it["command"] == null || it["directory"] == null) {
+      val command: String
+      val file: String
+      val directory: String
+      try {
+        command = it["command"]!!
+        file = it["file"]!!
+        directory = it["directory"]!!
+      } catch(_: NullPointerException) {
         throw ExternalSystemException("Malformed Compilation Database entry! $it")
       }
-      PlatformioFileScanner.CompDbEntry(it["file"]!!, it["command"]!!, it["directory"]!!.intern())
+      PlatformioFileScanner.CompDbEntry(file, command, directory.intern())
     } ?: emptyList()
 
     checkCancelled()
