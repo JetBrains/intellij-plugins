@@ -23,10 +23,10 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
+import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
 import java.util.*
 import java.util.function.Supplier
-import kotlin.Comparator
 
 object Angular2TranspiledComponentFileBuilder {
 
@@ -184,7 +184,7 @@ object Angular2TranspiledComponentFileBuilder {
         sourceLength,
         diagnosticsOffset = lastRangeEnd,
         diagnosticsLength = sourceLength,
-        types = true,
+        flags = EnumSet.allOf(SourceMappingFlag::class.java),
       ))
       lastRangeEnd = inlineTemplateRange.endOffset
     }

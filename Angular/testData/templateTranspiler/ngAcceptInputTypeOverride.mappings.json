@@ -2,7 +2,7 @@
   {
     "file-name": "ngAcceptInputTypeOverride.ts",
     "mappings": [
-      "«foo» [219] => «_t1» [114]} (no diagnostics)",
+      "«foo» [219] => «_t1» [114]} (no diagnostics) (no semantic)",
       "«foo» [219] => «_t2» [155]} (ignored)",
       "«[bar]» [230] => «_t3» [236]} (no types)",
       "«2» [237] => «2» [242]}",

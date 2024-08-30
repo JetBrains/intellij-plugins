@@ -2,7 +2,7 @@
   {
     "file-name": "escapedString.ts",
     "mappings": [
-      "«div» [391] => «_t1» [228]} (no diagnostics)",
+      "«div» [391] => «_t1» [228]} (no diagnostics) (no semantic)",
       "«div» [391] => «_t2» [269]} (ignored)",
       "«red» [406] => «red» [295]} (ignored)",
       "«\\\"red\\\"» [404] => «\"red\"» [294]} (ignored)",

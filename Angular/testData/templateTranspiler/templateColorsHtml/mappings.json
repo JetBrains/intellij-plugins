@@ -2,7 +2,7 @@
   {
     "file-name": "colors.html",
     "mappings": [
-      "«li» [1] => «_t5» [794]} (no diagnostics)",
+      "«li» [1] => «_t5» [794]} (no diagnostics) (no semantic)",
       "«*ngFor» [21] => «_t1» [541]} (ignored)",
       "«*ngFor» [21] => «_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)» [689]} (no types)",
       "«*ngFor» [21] => «_t2» [737]} (no types)",
@@ -49,7 +49,7 @@
       "«(» [269] => «(» [1080]}",
       "«()» [269] => «()» [1080]}",
       "«)» [270] => «)» [1081]}",
-      "«input» [276] => «_t6» [1088]} (no diagnostics)",
+      "«input» [276] => «_t6» [1088]} (no diagnostics) (no semantic)",
       "«input» [276] => «_t7» [1131]} (ignored)",
       "«[(ngModel)]» [282] => «model» [1163]} (no types)",
       "«[(ngModel)]» [282] => «_t7.model» [1159]} (no types)",
@@ -67,7 +67,7 @@
       "«#model» [306] => «_t8» [1254]}",
       "«\"ngModel\"» [313] => «_t7» [1260]}",
       "«model» [328] => «_t8» [1270]}",
-      "«span» [338] => «_t13» [1555]} (no diagnostics)",
+      "«span» [338] => «_t13» [1555]} (no diagnostics) (no semantic)",
       "«*ngIf» [343] => «_t9» [1354]} (ignored)",
       "«*ngIf» [343] => «ngIf» [1428]} (no types)",
       "«*ngIf» [343] => «_t9.ngIf» [1424]} (no types)",

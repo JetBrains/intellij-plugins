@@ -2,7 +2,7 @@
   {
     "file-name": "inputSignal.ts",
     "mappings": [
-      "«foo» [251] => «_t1» [307]} (no diagnostics)",
+      "«foo» [251] => «_t1» [307]} (no diagnostics) (no semantic)",
       "«foo» [251] => «_t2» [348]} (ignored)",
       "«2» [268] => «2» [369]} (ignored)",
       "«3» [284] => «3» [379]} (ignored)",

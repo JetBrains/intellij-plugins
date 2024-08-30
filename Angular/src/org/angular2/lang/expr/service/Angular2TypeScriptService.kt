@@ -18,6 +18,9 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintItem
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
@@ -31,6 +34,7 @@ import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
@@ -53,6 +57,7 @@ import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
@@ -99,6 +104,30 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
+
+  override fun getInlayHints(file: PsiFile, textRange: TextRange): CompletableFuture<TypeScriptInlayHintsResponse?>? {
+    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile ?: return null) != null
+    return super.getInlayHints(file, textRange)?.let { future ->
+      if (hasTranspiledTemplate) {
+        future.thenApply { hints ->
+          if (hints != null) {
+            computeCancellable<Array<InlayHintItem>, Throwable> {
+              repositionInlayHints(file, hints)
+            }
+          }
+          else null
+        }
+      }
+      else future
+    }
+  }
+
+  private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> {
+    val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return hints
+    return hints.map {
+      repositionInlayHint(file, document, it)
+    }.toTypedArray()
+  }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
@@ -160,14 +189,37 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
-  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile) {
-    JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
+  private fun repositionInlayHint(file: PsiFile, document: Document, hint: InlayHintItem): InlayHintItem {
+    if (hint.kind != InlayHintKind.Type) return hint
+    val line = hint.position?.line ?: return hint
+    val column = hint.position?.offset ?: return hint
+    val offset = document.getLineStartOffset(line - 1) + column - 1
+    val injectedLanguageManager = InjectedLanguageManager.getInstance(file.project)
+    val injectedElement = injectedLanguageManager.findInjectedElementAt(file, offset)
+    val textRange = if (injectedElement != null)
+      injectedElement.takeIf(::acceptElementToRepositionHint)?.textRange?.let {
+        injectedLanguageManager.injectedToHost(injectedElement, it)
+      }
+    else
+      file.findElementAt(offset)?.takeIf(::acceptElementToRepositionHint)?.textRange
+    if (textRange == null || textRange.endOffset == offset || textRange.startOffset == offset) return hint
+    hint.position!!.offset += textRange.endOffset - offset
+    return hint
+  }
+
+  private fun acceptElementToRepositionHint(element: PsiElement): Boolean =
+    element is LeafPsiElement
+    && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language }
+
+  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? {
+    return JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
       // on server cache locking leading to tests instability.
-      Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+      val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
       process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+      result
     }
   }
 

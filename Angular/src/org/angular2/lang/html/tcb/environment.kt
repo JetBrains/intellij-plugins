@@ -302,10 +302,10 @@ internal class Environment(
               resolveResult
           }
           if (templateTarget !is JSQualifiedNamedElement) {
-            append(node.text, node.textRange, types = true)
+            append(node.text, node.textRange, supportTypes = true)
           }
           else {
-            append(reference(templateTarget, importSpecifierKind), node.textRange, types = true)
+            append(reference(templateTarget, importSpecifierKind), node.textRange, supportTypes = true)
           }
         }
       }

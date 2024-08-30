@@ -9,6 +9,7 @@ import org.angular2.entities.Angular2ClassBasedComponent
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
+import java.util.*
 
 object Angular2TemplateTranspiler {
 
@@ -87,6 +88,16 @@ object Angular2TemplateTranspiler {
     val nameMappings: List<Pair<Int, Map<String, String>>>
   }
 
+  @Suppress("unused")
+  enum class SourceMappingFlag {
+    FORMAT,
+    COMPLETION,
+    NAVIGATION,
+    SEMANTIC,
+    STRUCTURE,
+    TYPES,
+  }
+
   interface SourceMapping {
     val sourceOffset: Int
     val sourceLength: Int
@@ -94,11 +105,11 @@ object Angular2TemplateTranspiler {
     val generatedLength: Int
     val diagnosticsOffset: Int?
     val diagnosticsLength: Int?
-    val types: Boolean
+    val flags: EnumSet<SourceMappingFlag>
 
     fun offsetBy(generatedOffset: Int = 0, sourceOffset: Int = 0): SourceMapping
 
-    val ignored get() = !types && diagnosticsOffset == null
+    val ignored get() = flags.isEmpty() && diagnosticsOffset == null
   }
 
   interface ContextVarMapping {

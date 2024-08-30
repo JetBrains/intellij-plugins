@@ -5,6 +5,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
+import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
+import java.util.*
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
@@ -65,8 +67,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     fun append(
       code: String,
       originalRange: TextRange?,
-      types: Boolean = false,
+      supportTypes: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
+      supportSemanticHighlighting: Boolean = diagnosticsRange != null,
       contextVar: Boolean = false,
       varOfDirective: Angular2Directive? = null,
       nameMap: Map<String, String>? = null,
@@ -75,8 +78,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     fun append(
       id: Identifier,
       originalRange: TextRange?,
-      types: Boolean = false,
+      supportTypes: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
+      supportSemanticHighlighting: Boolean = diagnosticsRange != null,
       contextVar: Boolean = false,
       varOfDirective: Angular2Directive? = null,
     ): ExpressionBuilder
@@ -87,8 +91,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     fun withSourceSpan(
       originalRange: TextRange?,
-      types: Boolean = false,
+      supportTypes: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
+      supportSemanticHighlighting: Boolean = diagnosticsRange != null,
       builder: ExpressionBuilder.() -> Unit,
     )
 
@@ -144,8 +149,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     override fun append(
       code: String,
       originalRange: TextRange?,
-      types: Boolean,
+      supportTypes: Boolean,
       diagnosticsRange: TextRange?,
+      supportSemanticHighlighting: Boolean,
       contextVar: Boolean,
       varOfDirective: Angular2Directive?,
       nameMap: Map<String, String>?,
@@ -162,7 +168,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedLength = generatedLength,
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
-          types = types && !ignoreMappings,
+          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting)
         ))
         if (!ignoreMappings) {
           if (contextVar) {
@@ -194,12 +200,13 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     override fun append(
       id: Identifier,
       originalRange: TextRange?,
-      types: Boolean,
+      supportTypes: Boolean,
       diagnosticsRange: TextRange?,
+      supportSemanticHighlighting: Boolean,
       contextVar: Boolean,
       varOfDirective: Angular2Directive?,
     ): ExpressionBuilder =
-      append(id.toString(), originalRange, types, diagnosticsRange, contextVar, varOfDirective,
+      append(id.toString(), originalRange, supportTypes, diagnosticsRange, supportSemanticHighlighting, contextVar, varOfDirective,
              nameMap = id.sourceName?.let { mapOf(Pair(id.name, it)) })
 
     override fun append(expression: Expression): ExpressionBuilder {
@@ -209,7 +216,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedOffset = sourceMapping.generatedOffset + offset,
           diagnosticsOffset = sourceMapping.diagnosticsOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = sourceMapping.diagnosticsLength?.takeIf { !ignoreMappings },
-          types = sourceMapping.types && !ignoreMappings,
+          flags = sourceMapping.flags.takeIf { !ignoreMappings } ?: EnumSet.noneOf(SourceMappingFlag::class.java),
         )
       }
       if (!ignoreMappings) {
@@ -235,8 +242,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     }
 
     override fun withSourceSpan(
-      originalRange: TextRange?, types: Boolean,
-      diagnosticsRange: TextRange?, builder: ExpressionBuilder.() -> Unit,
+      originalRange: TextRange?,
+      supportTypes: Boolean,
+      diagnosticsRange: TextRange?,
+      supportSemanticHighlighting: Boolean,
+      builder: ExpressionBuilder.() -> Unit,
     ) {
       if (originalRange != null) {
         val offset = this.code.length
@@ -248,11 +258,20 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedLength = this.code.length - offset,
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
-          types = types && !ignoreMappings
+          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting),
         ))
       }
       else {
         this.builder()
+      }
+    }
+
+    private fun buildMappingFlags(ignoreMappings: Boolean, supportTypes: Boolean, supportSemanticHighlighting: Boolean): EnumSet<SourceMappingFlag> {
+      if (ignoreMappings || (!supportTypes && !supportSemanticHighlighting))
+        return EnumSet.noneOf(SourceMappingFlag::class.java)
+      return EnumSet.allOf(SourceMappingFlag::class.java).apply {
+        if (!supportTypes) remove(SourceMappingFlag.TYPES)
+        if (!supportSemanticHighlighting) remove(SourceMappingFlag.SEMANTIC)
       }
     }
 
@@ -314,7 +333,7 @@ internal data class SourceMappingData(
   override val generatedLength: Int,
   override val diagnosticsOffset: Int?,
   override val diagnosticsLength: Int?,
-  override val types: Boolean,
+  override val flags: EnumSet<SourceMappingFlag>,
 ) : Angular2TemplateTranspiler.SourceMapping {
   override fun offsetBy(generatedOffset: Int, sourceOffset: Int): Angular2TemplateTranspiler.SourceMapping =
     copy(sourceOffset = this.sourceOffset + sourceOffset,
@@ -347,7 +366,7 @@ fun Angular2TranspiledComponentFileBuilder.TranspiledComponentFile.verifyMapping
 
   fileMappings.forEach { (_, fileMappings) ->
     fileMappings.sourceMappings.forEach { mapping ->
-      if (mapping.types) {
+      if (mapping.flags.contains(SourceMappingFlag.TYPES)) {
         val key = Pair(fileMappings.sourceFile, TextRange.create(mapping.sourceOffset, mapping.sourceOffset + mapping.sourceLength))
         typeMappings.putValue(key, TextRange.create(mapping.generatedOffset, mapping.generatedOffset + mapping.generatedLength))
       }

@@ -7,6 +7,7 @@ import com.intellij.webSymbols.checkTextByFile
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", true) {
@@ -124,10 +125,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
                       mapping.ignored -> " (ignored)"
                       mapping.diagnosticsOffset == null -> " (no diagnostics)"
                       else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) + ")"
-                    } + when {
-                      !mapping.types && !mapping.ignored -> " (no types)"
-                      else -> ""
-                    }
+                    } +
+                    (if (!mapping.flags.contains(SourceMappingFlag.TYPES) && !mapping.ignored) " (no types)" else "") +
+                    (if (!mapping.flags.contains(SourceMappingFlag.SEMANTIC) && !mapping.ignored) " (no semantic)" else "")
+
                   })
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"

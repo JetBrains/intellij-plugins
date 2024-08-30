@@ -2,7 +2,15 @@ import {CodeMapping, VirtualCode} from "@volar/language-core"
 import type * as ts from "typescript";
 import {IScriptSnapshot} from "typescript";
 import {CodegenContext} from "@volar/language-core/lib/types"
-import {Angular2TcbMappingInfo} from "./mappings"
+import {
+  Angular2TcbMappingInfo,
+  MAPPING_FLAG_COMPLETION,
+  MAPPING_FLAG_FORMAT,
+  MAPPING_FLAG_NAVIGATION,
+  MAPPING_FLAG_SEMANTIC,
+  MAPPING_FLAG_STRUCTURE,
+  MAPPING_FLAG_TYPES
+} from "./mappings"
 
 export class AngularVirtualCode implements VirtualCode {
 
@@ -62,19 +70,20 @@ export class AngularVirtualCode implements VirtualCode {
           const generatedOffset = mappingSet.generatedOffsets[i];
           const generatedLength = mappingSet.generatedLengths[i];
 
+          const flags = mappingSet.flags[i]
           mappingsWithData.push({
             sourceOffsets: [sourceOffset],
             lengths: [sourceLength],
             generatedOffsets: [generatedOffset],
             generatedLengths: [generatedLength],
             data: {
-              format: true,
-              completion: true,
-              navigation: true,
-              semantic: true,
-              structure: true,
+              format: (flags & MAPPING_FLAG_FORMAT) !== 0,
+              completion: (flags & MAPPING_FLAG_COMPLETION) !== 0,
+              navigation: (flags & MAPPING_FLAG_NAVIGATION) !== 0,
+              semantic: (flags & MAPPING_FLAG_SEMANTIC) !== 0,
+              structure: (flags & MAPPING_FLAG_STRUCTURE) !== 0,
               verification: diagnosticsOffset == sourceOffset && diagnosticsLength == sourceLength,
-              types: mappingSet.types[i] === 1
+              types: (flags & MAPPING_FLAG_TYPES) !== 0
             }
           })
           if (diagnosticsOffset >= 0 && (diagnosticsOffset != sourceOffset || diagnosticsLength != sourceLength)) {
