@@ -15,7 +15,7 @@ internal object SerialMonitorCollector : CounterUsagesCollector() {
       EventFields.Boolean("success")
     )
 
-  val SAVE_EVENT = GROUP.registerEvent("serial.monitor.saved", EventFields.Int("lines"))
+  val SAVE_EVENT = GROUP.registerEvent("serial.monitor.log.saved", EventFields.Int("lines"))
 
   override fun getGroup() = GROUP
 
