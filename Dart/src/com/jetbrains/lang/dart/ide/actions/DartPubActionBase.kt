@@ -20,6 +20,10 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbAware
@@ -51,6 +55,10 @@ import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
 import com.jetbrains.lang.dart.util.PubspecYamlUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
@@ -259,7 +267,9 @@ abstract class DartPubActionBase : AnAction(), DumbAware {
             }
           })
 
-          showPubOutputConsole(module, command, processHandler, pubspecYamlFile, actionTitle)
+          module.project.service<DartPubActionsService>().cs.launch {
+            showPubOutputConsole(module, command, processHandler, pubspecYamlFile, actionTitle)
+          }
         }
       }
       catch (e: ExecutionException) {
@@ -275,15 +285,19 @@ abstract class DartPubActionBase : AnAction(), DumbAware {
       }
     }
 
-    private fun showPubOutputConsole(
+    private suspend fun showPubOutputConsole(
       module: Module,
       command: GeneralCommandLine,
       processHandler: OSProcessHandler,
       pubspecYamlFile: VirtualFile,
       actionTitle: @Nls String,
     ) {
+      val project = module.project
+      val messageView = MessageView.getInstance(project)
+      messageView.awaitInitialized()
+
       val console: ConsoleView
-      var info = findExistingInfoForCommand(module.project, command)
+      var info = findExistingInfoForCommand(messageView, command)
 
       if (info != null) {
         // rerunning the same pub command in the same tool window tab (corresponding tool window action invoked)
@@ -291,25 +305,27 @@ abstract class DartPubActionBase : AnAction(), DumbAware {
         console.clear()
       }
       else {
-        console = createConsole(module.project, pubspecYamlFile)
+        console = readAction { createConsole(project, pubspecYamlFile) }
         info = PubToolWindowContentInfo(module, pubspecYamlFile, command, actionTitle, console)
 
-        val actionToolbar = createToolWindowActionsBar(info)
+        withContext(Dispatchers.EDT) {
+          val actionToolbar = createToolWindowActionsBar(info)
 
-        val toolWindowPanel = SimpleToolWindowPanel(false, true)
-        toolWindowPanel.setContent(console.component)
-        toolWindowPanel.toolbar = actionToolbar.component
+          val toolWindowPanel = SimpleToolWindowPanel(false, true)
+          toolWindowPanel.setContent(console.component)
+          toolWindowPanel.toolbar = actionToolbar.component
 
-        val content = ContentFactory.getInstance().createContent(toolWindowPanel.component, actionTitle, true)
-        content.putUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY, info)
-        Disposer.register(content, console)
+          val content = ContentFactory.getInstance().createContent(toolWindowPanel.component, actionTitle, true)
+          content.putUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY, info)
+          Disposer.register(content, console)
 
-        val contentManager = MessageView.getInstance(module.project).contentManager
-        removeOldTabs(contentManager)
-        contentManager.addContent(content)
-        contentManager.setSelectedContent(content)
+          val contentManager = messageView.contentManager
+          removeOldTabs(contentManager)
+          contentManager.addContent(content)
+          contentManager.setSelectedContent(content)
 
-        ToolWindowManager.getInstance(module.project).getToolWindow(ToolWindowId.MESSAGES_WINDOW)?.activate(null, true)
+          ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.MESSAGES_WINDOW)?.activate(null, true)
+        }
       }
 
       info.rerunPubCommandAction!!.setProcessHandler(processHandler)
@@ -327,12 +343,10 @@ abstract class DartPubActionBase : AnAction(), DumbAware {
       processHandler.startNotify()
     }
 
-    private fun findExistingInfoForCommand(project: Project, command: GeneralCommandLine): PubToolWindowContentInfo? {
-      for (content in MessageView.getInstance(project).contentManager.contents) {
+    private fun findExistingInfoForCommand(messageView: MessageView, command: GeneralCommandLine): PubToolWindowContentInfo? {
+      for (content in messageView.contentManager.contents) {
         val info = content.getUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY)
-        if (info != null && info.command === command) {
-          return info
-        }
+        if (info?.command === command) return info
       }
       return null
     }
@@ -379,3 +393,6 @@ abstract class DartPubActionBase : AnAction(), DumbAware {
     }
   }
 }
+
+@Service(Service.Level.PROJECT)
+private class DartPubActionsService(val cs: CoroutineScope)
