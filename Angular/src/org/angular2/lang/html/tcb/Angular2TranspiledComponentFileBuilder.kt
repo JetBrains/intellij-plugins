@@ -7,9 +7,12 @@ import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -48,6 +51,14 @@ object Angular2TranspiledComponentFileBuilder {
       ?: return null
     else
       templateFile
+  }
+
+  fun getTranspiledComponentFileForTemplateFile(project: Project, templateFile: VirtualFile): TranspiledComponentFile? {
+    val templatePsiFile = PsiManager.getInstance(project).findFile(templateFile)
+                          ?: return null
+    val componentFile = findComponentFile(templatePsiFile)
+                        ?: return null
+    return getTranspiledComponentFile(componentFile)
   }
 
   fun getTranspiledComponentFile(componentFile: PsiFile): TranspiledComponentFile? =

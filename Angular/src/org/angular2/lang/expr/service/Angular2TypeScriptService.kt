@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSEvaluationStatisticsCollector
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerServiceRequest
@@ -45,6 +46,7 @@ import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElem
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
 import org.angular2.options.AngularConfigurable
@@ -119,7 +121,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     Angular2LanguageServiceCache(myProject)
 
   override fun beforeGetErrors(file: VirtualFile) {
-    process?.executeNoBlocking(Angular2TranspiledTemplateCommand(file), null, null)
+    refreshTranspiledTemplateIfNeeded(file)
   }
 
   override fun isGeterrSupported(psiFile: PsiFile): Boolean {
@@ -155,6 +157,17 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
+  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile) {
+    JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
+      // Updating the cache can cause the transpiled template to be (re)built,
+      // so let's build the template first and ensure that it doesn't change
+      // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
+      // on server cache locking leading to tests instability.
+      Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+    }
+  }
+
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project),
                                                                                    Angular2TypeScriptServiceEvaluationSupport {
 
@@ -167,7 +180,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)
       if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
-        process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+        refreshTranspiledTemplateIfNeeded(virtualFile)
       }
     }
 
@@ -182,7 +195,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
         commitDocumentsWithNBRA(evaluationLocation)
       }
       // Ensure that transpiled template is up-to-date
-      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(componentVirtualFile), null, null)
+      refreshTranspiledTemplateIfNeeded(componentVirtualFile)
 
       val filePath = getFilePath(componentVirtualFile) ?: return null
 
