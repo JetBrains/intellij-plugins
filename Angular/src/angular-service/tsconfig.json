@@ -11,6 +11,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "strict": true,
+    "skipLibCheck": true,
     "sourceMap": true
   },
   "include": [

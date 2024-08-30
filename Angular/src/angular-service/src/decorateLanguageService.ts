@@ -1,10 +1,10 @@
-import {type CodeInformation, Language, type SourceScript, type TypeScriptServiceScript} from "@volar/language-core"
+import {type CodeInformation, Language, type SourceScript} from "@volar/language-core"
 import type * as TS from "./tsserverlibrary.shim"
 import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
+import {type TypeScriptServiceScript} from "@volar/typescript"
 import {toGeneratedRanges, toSourceRanges} from "@volar/typescript/lib/node/transform"
-import {AngularVirtualCode} from "./code"
 import * as console from "node:console"
 
 // Patch Volar searchExternalFiles method to search for all HTML files in the project

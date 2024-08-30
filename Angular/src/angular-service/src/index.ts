@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 import type * as ts from "./tsserverlibrary.shim";
+import {type TypeScriptServiceScript} from "@volar/typescript"
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
 import {Language, LanguagePlugin} from "@volar/language-core"
 import {AngularTranspiledTemplate, AngularVirtualCode, buildAngularTranspiledTemplate} from "./code"
@@ -9,7 +10,7 @@ import {
   decorateIdeLanguageServiceExtensions,
   decorateNgLanguageServiceExtensions,
 } from "./decorateLanguageService"
-import {CodegenContext, TypeScriptServiceScript} from "@volar/language-core/lib/types"
+import {CodegenContext} from "@volar/language-core/lib/types"
 import {AngularSourceMap} from "./ngSourceMap"
 import {Angular2TcbMappingInfo} from "./mappings"
 
