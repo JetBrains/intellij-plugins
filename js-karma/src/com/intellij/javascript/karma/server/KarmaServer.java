@@ -220,6 +220,29 @@ public final class KarmaServer {
         commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
     }
+    else if (KarmaUtil.isNxPkg(pkg)) {
+      if (pkg instanceof YarnPnpNodePackage) {
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
+      }
+      else {
+        File nxMainFile = pkg.findBinFile("nx", "./bin/nx.js");
+        if (nxMainFile == null) {
+          throw new ExecutionException("Cannot find nx binary for " + pkg.getSystemDependentPath()); //NON-NLS
+        }
+        commandLine.addParameter(targetRun.path(nxMainFile.toPath()));
+      }
+      commandLine.addParameter("test");
+      commandLineFolder.addPlaceholderTexts("nx", "test");
+
+      String projectName = serverSettings.getNxProjectName();
+      if (projectName != null) {
+        commandLine.addParameter(projectName);
+        commandLineFolder.addPlaceholderText(projectName);
+      }
+      commandLine.addParameter("--karmaConfig");
+      File configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
+      commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
+    }
     else {
       if (pkg instanceof YarnPnpNodePackage) {
         ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
