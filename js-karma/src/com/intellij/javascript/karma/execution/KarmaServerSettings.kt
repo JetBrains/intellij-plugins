@@ -10,6 +10,7 @@ import com.intellij.javascript.nodejs.execution.runConfiguration.NodeRunConfigur
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.testing.AngularCliConfig
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
@@ -32,7 +33,10 @@ class KarmaServerSettings(private val executor: Executor,
   val envData: EnvironmentVariablesData = settings.envData
   // Restart Karma server on extensions change, e.g. on adding a new Docker publish port
   private val myRunConfigurationExtensionsXml: String = runConfigurationExtensionsToXml(runConfiguration)
+  // Restart Karma server when running tests from different Angular projects
   val angularProjectName: String? = detectAngularProjectName(settings)
+  // Restart Karma server when running tests from different NX projects
+  val nxProjectName: String? = detectNxProjectName(runConfiguration.project, settings)
 
   val isWithCoverage: Boolean
     get() = executor is CoverageExecutor
@@ -53,7 +57,9 @@ class KarmaServerSettings(private val executor: Executor,
            workingDirectorySystemDependent == that.workingDirectorySystemDependent &&
            envData == that.envData &&
            myRunConfigurationExtensionsXml == that.myRunConfigurationExtensionsXml &&
-           angularProjectName == that.angularProjectName
+           angularProjectName == that.angularProjectName &&
+           nxProjectName == that.nxProjectName
+
   }
 
   override fun hashCode(): Int {
@@ -67,6 +73,7 @@ class KarmaServerSettings(private val executor: Executor,
     result = 31 * result + envData.hashCode()
     result = 31 * result + myRunConfigurationExtensionsXml.hashCode()
     result = 31 * result + angularProjectName.hashCode()
+    result = 31 * result + nxProjectName.hashCode()
     return result
   }
 
@@ -83,6 +90,13 @@ class KarmaServerSettings(private val executor: Executor,
       val config = AngularCliConfig.findProjectConfig(File(workingDir)) ?: return null
       val contextFile = getContextFile(settings)
       return config.getProjectContainingFileOrDefault(contextFile)
+    }
+
+    private fun detectNxProjectName(project: Project, settings: KarmaRunSettings): String? {
+      if (ParametersListUtil.parse(settings.karmaOptions).contains("--project")) return null
+      val contextFile = getContextFile(settings) ?: return null
+      val config = NxConfig.findNxConfig(project, contextFile) ?: return null
+      return config.getProjectName()
     }
 
     private fun getContextFile(s: KarmaRunSettings) : VirtualFile? {

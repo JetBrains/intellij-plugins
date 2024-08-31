@@ -9,12 +9,15 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunContentDescriptorReusePolicy;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.lang.javascript.JSLanguageUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
+import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
@@ -34,7 +37,8 @@ public final class KarmaUtil {
 
   public static final String KARMA_PACKAGE_NAME = "karma";
   public static final String ANGULAR_CLI__PACKAGE_NAME = "@angular/cli";
-  public static final NodePackageDescriptor PKG_DESCRIPTOR = new NodePackageDescriptor(ANGULAR_CLI__PACKAGE_NAME, KARMA_PACKAGE_NAME);
+  private static final String NX = "nx";
+  public static final NodePackageDescriptor PKG_DESCRIPTOR = createPackageDescriptor();
   private static final String[] STARTING_PARTS = new String[] {"karma"};
   private static final String NAME_PART_DELIMITERS = ".-";
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
@@ -139,5 +143,33 @@ public final class KarmaUtil {
 
   public static boolean isAngularCliPkg(@NotNull NodePackage pkg) {
     return pkg.getSystemIndependentPath().endsWith("/" + ANGULAR_CLI__PACKAGE_NAME);
+  }
+
+  public static boolean isNxPkg(@NotNull NodePackage pkg) {
+    return pkg.getName().equals(NX);
+  }
+
+  private static @NotNull NodePackageDescriptor createPackageDescriptor() {
+    return new NodePackageDescriptor(ANGULAR_CLI__PACKAGE_NAME, KARMA_PACKAGE_NAME) {
+      @Override
+      public @NotNull List<NodePackage> listAvailable(@NotNull Project project,
+                                                      @Nullable NodeJsInterpreter interpreter,
+                                                      @Nullable VirtualFile contextFileOrDirectory,
+                                                      boolean directDependenciesInsideProject,
+                                                      boolean dependenciesShouldBeVisibleFromContext) {
+        List<NodePackage> nxPackages = List.of();
+        VirtualFile improvedContext = contextFileOrDirectory != null ? contextFileOrDirectory : ProjectUtil.guessProjectDir(project);
+        if (improvedContext != null && JSProjectUtil.findFileUpToContentRoot(project, improvedContext, "nx.json") != null) {
+          nxPackages = new NodePackageDescriptor(NX).listAvailable(
+            project, interpreter, improvedContext, directDependenciesInsideProject, true
+          );
+        }
+        List<NodePackage> result = new ArrayList<>();
+        result.addAll(nxPackages);
+        result.addAll(super.listAvailable(project, interpreter, contextFileOrDirectory,
+                                          directDependenciesInsideProject, dependenciesShouldBeVisibleFromContext));
+        return result;
+      }
+    };
   }
 }
