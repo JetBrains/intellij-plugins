@@ -1,7 +1,6 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSSourceElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler
@@ -29,10 +28,6 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
 
   override fun createAccessibilityProcessingHandler(place: PsiElement?, skipNsResolving: Boolean): AccessibilityProcessingHandler {
     return AstroAccessibilityProcessingHandler(place)
-  }
-
-  override fun getExportScope(element: PsiElement): JSElement? {
-    return super.getExportScope(element).let { if (it is AstroFrontmatterScript) it.context as? JSElement else it }
   }
 
   override fun adjustStatementAnchor(currentAnchor: JSSourceElement?, referenceExpression: PsiElement): PsiElement? {
