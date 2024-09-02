@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.asSafely
+import com.intellij.util.system.OS
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import java.nio.file.Paths
@@ -48,10 +49,6 @@ class TestProjectLibScan : LightPlatformTestCase() {
       .data.asSafely<ExternalModule>()!!
       .resolveConfigurations.first()
       .fileConfigurations
-      .filter {
-        // Ignore framework sources
-        it.file.path.startsWith(projectPath)
-      }
       .associate {
         it.file.path.replace(projectPath, "").replace('\\', '/') to it
       }
@@ -91,11 +88,17 @@ class TestProjectLibScan : LightPlatformTestCase() {
     override fun createRunConfigurationIfRequired(project: Project) {}
 
     /**
-     * Mock data is loaded from compile_commands.json
-     * The file is created by invoking `pio run -t compiledb`
+     * Mock data is loaded from compile_commands.json or compile_commands_win.json on Windows
+     * The file is created by invoking `pio run -t compiledb`,
+     * dropping information about framework sources,
+     * and clearing the `directory` entries to make the data not rely on absolute paths.
+     * We inject the actual project directory here.
      */
     override fun gatherCompDB(id: ExternalSystemTaskId, pioRunEventId: String, project: Project, activeEnvName: String, listener: ExternalSystemTaskNotificationListener, projectPath: String): String {
-      return projectDir.findChild("compile_commands.json")!!.readText()
+      val compDbFileName = if (OS.CURRENT == OS.Windows) "compile_commands_win.json" else "compile_commands.json"
+      return projectDir.findChild(compDbFileName)!!.readText().injectProjectPath()
     }
+
+    private fun String.injectProjectPath() = this.replace("\"directory\": \"\"", "\"directory\": \"${projectPath.replace("\\", "\\\\")}\"")
   }
 }
