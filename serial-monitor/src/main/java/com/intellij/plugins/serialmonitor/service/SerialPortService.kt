@@ -19,12 +19,16 @@ import jssc.SerialPort.*
 import jssc.SerialPortEventListener
 import jssc.SerialPortException
 import jssc.SerialPortList
+import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
+import java.util.regex.Pattern
 import kotlin.Comparator
+import kotlin.io.path.Path
+import kotlin.io.path.pathString
 
 @Service
 class SerialPortService : Disposable {
@@ -58,8 +62,26 @@ class SerialPortService : Disposable {
     }
   }
 
+  private val MATCH_ALL_PATTERN = Pattern.compile(".*")
+
+  private fun scanPorts(): Set<String> =
+    TreeSet(NAME_COMPARATOR).apply {
+      // Get devices which SerialPortList recognizes as serial ports
+      addAll(SerialPortList.getPortNames())
+      // Include symlinks to known ports
+      addAll(SerialPortList.getPortNames(MATCH_ALL_PATTERN)
+        .filter {
+          runCatching {
+            val path = Path(it)
+            if (!Files.isSymbolicLink(path)) return@filter false
+            this.contains(path.toRealPath().pathString)
+          }.getOrDefault(false)
+        }
+      )
+    }
+
   private fun rescanPorts() {
-    val portList = TreeSet(NAME_COMPARATOR).apply { addAll(SerialPortList.getPortNames()) }
+    val portList = scanPorts()
     var changeDetected = portList != portNames
     if (changeDetected) {
       for (name in portNames) {
