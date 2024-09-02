@@ -4,7 +4,6 @@ package org.angular2.entities.metadata.psi
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
-import com.intellij.util.NullableConsumer
 import com.intellij.util.containers.Stack
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntityUtils
@@ -26,9 +25,11 @@ abstract class Angular2MetadataEntity<Stub : Angular2MetadataEntityStub<*>>(elem
   companion object {
 
     @JvmStatic
-    protected fun collectReferencedElements(root: PsiElement,
-                                            consumer: NullableConsumer<in PsiElement>,
-                                            cacheDependencies: MutableSet<PsiElement>?) {
+    protected fun collectReferencedElements(
+      root: PsiElement,
+      consumer: (PsiElement?) -> Unit,
+      cacheDependencies: MutableSet<PsiElement>?,
+    ) {
       val resolveQueue = Stack(root)
       val visited = HashSet<PsiElement>()
       while (!resolveQueue.empty()) {
@@ -46,7 +47,7 @@ abstract class Angular2MetadataEntity<Stub : Angular2MetadataEntityStub<*>>(elem
           is Angular2MetadataReference -> resolveQueue.push(element.resolve())
           is Angular2MetadataCall -> resolveQueue.push(element.value)
           is Angular2MetadataSpread -> resolveQueue.push(element.expression)
-          else -> consumer.consume(element)
+          else -> consumer(element)
         }
       }
     }

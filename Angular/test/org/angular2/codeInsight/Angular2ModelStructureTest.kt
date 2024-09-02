@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight
 
-import com.intellij.idea.IJIgnore
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
@@ -69,7 +68,6 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
                      "check.txt")
   }
 
-  @IJIgnore(issue = "IJPL-150165")
   fun testIonicResolutionMetadata() {
     doResolutionTest("ionic-metadata",
                      "myIonicModule.ts",
@@ -134,7 +132,6 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
                      "check.txt")
   }
 
-  @IJIgnore(issue = "IJPL-150165")
   fun testEvoUiKit() {
     doResolutionTest("evo-ui-kit",
                      "module.ts",
