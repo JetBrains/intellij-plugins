@@ -16,9 +16,9 @@
 package com.intellij.protobuf.lang.resolve.directive;
 
 import com.intellij.codeInsight.daemon.ChangeLocalityDetector;
+import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.protobuf.lang.PbTextLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +34,10 @@ public class SchemaDirectiveChangeLocalityDetector implements ChangeLocalityDete
   @Nullable
   @Override
   public PsiElement getChangeHighlightingDirtyScopeFor(@NotNull PsiElement changedElement) {
-    if (!PbTextLanguage.INSTANCE.is(changedElement.getLanguage())) {
-      return null;
-    }
-
-    if (changedElement instanceof PsiComment) {
+    if (changedElement instanceof PsiComment && PbTextLanguage.INSTANCE.is(changedElement.getLanguage())) {
       return changedElement.getContainingFile();
     }
+
     return null;
   }
 }
