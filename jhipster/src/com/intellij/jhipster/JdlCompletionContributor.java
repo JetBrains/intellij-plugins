@@ -69,7 +69,7 @@ final class JdlCompletionContributor extends CompletionContributor {
         for (JdlEnum enumBlock : allEnums) {
           String enumId = enumBlock.getName();
 
-          if (enumId != null && !enumId.isEmpty() && !enumId.isBlank()) {
+          if (enumId != null && !enumId.isBlank()) {
             result.addElement(LookupElementBuilder.create(enumBlock)
                                 .withIcon(JdlIconsMapping.getEnumIcon()));
           }
