@@ -73,6 +73,10 @@ class NuxtResolveTest : BasePlatformTestCase() {
     doPathResolveTest("component.vue")
   }
 
+  fun testPureVueProject() {
+    checkResolveToDestination(null, getTestName(true), myFixture, getTestName(false), "vue")
+  }
+
   private fun doPathResolveTest(destination: String? = null) {
     checkResolveToDestination(destination, myFixture, getTestName(false), "vue")
   }

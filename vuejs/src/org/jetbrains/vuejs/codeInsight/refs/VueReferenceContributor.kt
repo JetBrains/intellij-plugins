@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
+import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor
+import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor.createPathReferenceProvider
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.paths.StaticPathReferenceProvider
 import com.intellij.patterns.XmlAttributeValuePattern
@@ -8,6 +10,7 @@ import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
 import com.intellij.psi.css.resolve.CssReferenceProviderUtil.getFileReferenceData
 import com.intellij.psi.css.resolve.StylesheetFileReferenceSet
+import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
@@ -26,6 +29,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
       XmlPatterns.xmlAttributeValue().withParent(VueRefAttribute::class.java),
       REF_ATTRIBUTE_REF_PROVIDER
     )
+    registrar.registerReferenceProvider(PATH_VALUE_PATTERN, PATH_REFERENCE_PROVIDER)
   }
 }
 
@@ -82,6 +86,10 @@ private val REF_ATTRIBUTE_REF_PROVIDER = object : PsiReferenceProvider() {
     ?: PsiReference.EMPTY_ARRAY
 }
 
+private val PATH_VALUE_PATTERN = creatPathAttributeValuePattern()
+
+private val PATH_REFERENCE_PROVIDER = createPathReferenceProvider()
+
 private class VueRefReference(element: PsiElement, private val target: PsiElement)
   : PsiReferenceBase<PsiElement>(element, ElementManipulators.getValueTextRange(element), false) {
 
@@ -91,3 +99,6 @@ private class VueRefReference(element: PsiElement, private val target: PsiElemen
 
 private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
   XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))
+
+private fun creatPathAttributeValuePattern(): XmlAttributeValuePattern = XmlPatterns.xmlAttributeValue("href", "to")
+  .withSuperParent(2, XmlPatterns.xmlTag().and(FilterPattern(JSXReferenceContributor.createPathContainedTagFilter(false))))
