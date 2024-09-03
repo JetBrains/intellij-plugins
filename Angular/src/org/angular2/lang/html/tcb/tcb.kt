@@ -2282,8 +2282,9 @@ private open class TcbExpressionTranslator(
           // We don't use `markIgnoreForDiagnostics` here, because it won't prevent duplicate
           // diagnostics for nested accesses in cases like `@let value = value.foo.bar.baz`.
           targetExpression = Expression {
+            append("(")
             append(targetExpression!!)
-            append(" as any")
+            append(" as any)")
           }
         }
       }
