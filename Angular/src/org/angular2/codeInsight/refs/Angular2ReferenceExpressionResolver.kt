@@ -1,23 +1,25 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs
 
-import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.javascript.webSymbols.resolveWebSymbolsInJSReferenceExpression
 import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
 import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.blocks.isLetDeclarationVariable
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
@@ -68,13 +70,10 @@ class Angular2ReferenceExpressionResolver(
     val access = JSReadWriteAccessDetector.ourInstance
       .getExpressionAccess(expression)
 
-    val enclosingVarDeclaration = PsiTreeUtil.getParentOfType(expression, JSVariable::class.java, true, JSStatement::class.java)
-      ?.let { CompletionUtil.getOriginalOrSelf(it) }
-
     val results = SmartList<ResolveResult>()
     Angular2TemplateScopesResolver.resolve(myRef) { resolveResult ->
       val element = resolveResult.element as? JSPsiElementBase
-      if (element != null && myReferencedName == element.name && enclosingVarDeclaration != element) {
+      if (element != null && myReferencedName == element.name && (myRef.qualifier == null || !isLetDeclarationVariable(element))) {
         remapSetterGetterIfNeeded(results, resolveResult, access)
         return@resolve false
       }

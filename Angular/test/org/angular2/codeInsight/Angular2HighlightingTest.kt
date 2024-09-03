@@ -240,6 +240,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testLetDeclaration() = checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
+  fun testLetDeclaration2() = checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
   fun testCrLfComponentFile() =
     doConfiguredTest(ANGULAR_CORE_17_3_0, ANGULAR_COMMON_17_3_0, extension = "ts", configurators = listOf(Angular2TsConfigFile())) {
       checkHighlightingWithCrLfEnsured()

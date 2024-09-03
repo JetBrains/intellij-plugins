@@ -395,7 +395,8 @@ internal class BoundTarget(component: Angular2Component) {
         if (result == null
             && resolveResult.isValidResult
             && element != null
-            && referencedName == element.name) {
+            && referencedName == element.name
+            && (expr.qualifier == null || !isLetDeclarationVariable(element))) {
           result = resolveResult
         }
       }
