@@ -1,6 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
+import com.intellij.javascript.debugger.NodeJsAppRule
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.TypeScriptService
@@ -8,6 +11,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.angular2.lang.expr.service.Angular2TypeScriptService
@@ -41,6 +45,7 @@ abstract class Angular2TestCase(
 
   override fun beforeConfiguredTest() {
     if (useTsc) {
+      configureNodeInterpreter()
       configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
       runInEdtAndWait {
         UIUtil.dispatchAllInvocationEvents()
@@ -52,6 +57,14 @@ abstract class Angular2TestCase(
         FileDocumentManager.getInstance().saveAllDocuments()
       }
     }
+  }
+
+  private fun configureNodeInterpreter() {
+    val nodeJsAppRule = NodeJsAppRule.LATEST_20
+    nodeJsAppRule.executeBefore()
+    val nodeInterpreter = NodeJsLocalInterpreter(nodeJsAppRule.exePath)
+    NodeJsInterpreterManager.getInstance(myFixture.project).setInterpreterRef(nodeInterpreter.toRef())
+    VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, nodeInterpreter.interpreterSystemDependentPath)
   }
 
   override fun afterConfiguredTest() {
