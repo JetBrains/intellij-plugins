@@ -74,6 +74,7 @@
     <copyPastePostProcessor implementation="org.jetbrains.astro.codeInsight.imports.AstroComponentCopyPasteProcessor"/>
 
     <referencesSearch implementation="org.jetbrains.astro.lang.psi.AstroReferencesSearch" order="first" />
+    <psi.referenceContributor language="Astro" implementation="org.jetbrains.astro.codeInsight.refs.AstroPathReferenceContributor"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
