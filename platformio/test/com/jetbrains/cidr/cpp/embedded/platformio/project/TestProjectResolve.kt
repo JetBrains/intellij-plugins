@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.common.initTestApplication
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.cpp.CPPTestCase
@@ -26,6 +25,7 @@ import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
 import org.jetbrains.annotations.NonNls
+import org.junit.Assume
 import org.junit.runner.RunWith
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -60,13 +60,6 @@ class TestProjectResolve : LightPlatformTestCase() {
   private lateinit var projectPath: String
   private lateinit var projectDir: VirtualFile
 
-  override fun shouldRunTest(): Boolean {
-    initTestApplication()
-    val toolset = CPPTestCase.getTestToolSet()
-    if (toolset.isSsh || toolset.isWSL) return false
-    return super.shouldRunTest()
-  }
-
   override fun setUp() {
     super.setUp()
     projectPath = BASE_TEST_DATA_PATH.resolve("project1").toString()
@@ -81,6 +74,10 @@ class TestProjectResolve : LightPlatformTestCase() {
   fun testScanFiles2023() = doTestScanFiles("-2023")
 
   private fun doTestScanFiles(suffix: String = "") {
+    val toolset = CPPTestCase.getTestToolSet()
+    Assume.assumeFalse(toolset.isWSL)
+    Assume.assumeFalse(toolset.isSsh)
+
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = TaskNotificationListerForTest()
     val projectNode = PlatformioProjectResolverForTest(suffix).resolveProjectInfo(
