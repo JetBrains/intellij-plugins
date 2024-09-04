@@ -198,7 +198,7 @@ object ModuleDetectionUtil {
     val directory = file.containingDirectory
                     ?: return CachedValueProvider.Result(Result.Failure("File ${file.name} does not have containing directory"), moduleBlock, file)
 
-     val source = getModuleSourceString(file, sourceVal)
+    val source = getModuleSourceString(file, sourceVal)
                  ?: return CachedValueProvider.Result(Result.Failure("Cannot get module source value"), moduleBlock)
     val project = moduleBlock.project
 
@@ -291,7 +291,8 @@ object ModuleDetectionUtil {
 
     val sourcePsi = if (injectedHil != null) {
       getHilReferenceValue(injectedHil)
-    } else {
+    }
+    else {
       getReferencesSelectAware(sourceVal).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
     }
     val sourceString = when (sourcePsi) {
@@ -472,11 +473,13 @@ object ModuleDetectionUtil {
     return directory.manager.findDirectory(relative)?.let { Module.getModule(it) }
   }
 
-  private fun getKeyPrefix(directory: PsiDirectory,
-                           dotTerraform: VirtualFile,
-                           manifest: ModulesManifest,
-                           name: String,
-                           source: String): Pair<String?, String?> {
+  private fun getKeyPrefix(
+    directory: PsiDirectory,
+    dotTerraform: VirtualFile,
+    manifest: ModulesManifest,
+    name: String,
+    source: String,
+  ): Pair<String?, String?> {
     // Check whether current dir is a module itself
     val relativeToDotTerraform = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform)
     val relativeToRoot = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform.parent)
@@ -529,10 +532,13 @@ object ModuleDetectionUtil {
   internal fun findModuleRoot(context: PsiFileSystemItem): VirtualFile? = getVFSParents(context)
     .filter { it.isDirectory }
     .firstOrNull {
-      it.children.any {
-        it.extension == TerraformFileType.DEFAULT_EXTENSION ||
-        it.extension == "tofu"
-      }
+      it.children.asSequence()
+        .mapNotNull { it.extension?.lowercase() }
+        .any {
+          it == TerraformFileType.DEFAULT_EXTENSION ||
+          it == "tofu" ||
+          it == "hcl"
+        }
     }
 
   private fun getRoots(project: Project): Array<out VirtualFile> {

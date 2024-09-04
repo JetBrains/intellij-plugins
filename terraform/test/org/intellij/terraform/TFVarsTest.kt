@@ -9,10 +9,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
+import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.isFallbackVariableSearchEnabled
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
-import org.junit.jupiter.api.Assumptions.assumeTrue
 
 class TFVarsTest : AbstractTFVarsTest(false)
 
@@ -70,6 +70,20 @@ abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnable
       <warning descr="Undefined variable 'bar'">bar</warning> = 0
     """.trimIndent())
     myFixture.testHighlighting("local.tfvars")
+  }
+
+  fun testHCLModule() {
+    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+    val file = myFixture.configureByText("simple.HCL", """
+      variable "foo" {
+        default = "42"
+        type = "string"
+      }
+      variable "baz" {
+        type = "map"
+      }
+    """.trimIndent())
+    assertEquals(Module.getModule(file).moduleRoot, file.containingDirectory)
   }
 
 
