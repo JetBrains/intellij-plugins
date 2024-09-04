@@ -6,13 +6,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
+import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.common.initTestApplication
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
+import com.jetbrains.cidr.CidrTestCaseBase.assumeLocalSystem
+import com.jetbrains.cidr.cpp.CPPTestCase
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
+import org.junit.runner.RunWith
 import java.nio.file.Paths
 
+@RunWith(JUnit38AssumeSupportRunner::class)
 class TestProjectLibScan : LightPlatformTestCase() {
 
   private lateinit var projectPath: String
@@ -25,6 +31,13 @@ class TestProjectLibScan : LightPlatformTestCase() {
     "/lib/confusing-name-nested-src/main/src/confusing-name-nested-src.cpp",
   )
 
+  override fun shouldRunTest(): Boolean {
+    initTestApplication()
+    val toolset = CPPTestCase.getTestToolSet()
+    if (toolset.isSsh || toolset.isWSL) return false
+    return super.shouldRunTest()
+  }
+
   override fun setUp() {
     super.setUp()
     projectPath = BASE_TEST_DATA_PATH.resolve("project-scan-libraries").toString()
@@ -35,6 +48,8 @@ class TestProjectLibScan : LightPlatformTestCase() {
   }
 
   fun testScanLibraries() {
+    assumeLocalSystem()
+
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = ExternalSystemTaskNotificationListener.NULL_OBJECT
     val projectNode = PlatformioProjectResolverForTest().resolveProjectInfo(

@@ -13,9 +13,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
+import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.common.initTestApplication
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
+import com.jetbrains.cidr.cpp.CPPTestCase
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
@@ -23,11 +26,13 @@ import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
 import org.jetbrains.annotations.NonNls
+import org.junit.runner.RunWith
 import java.nio.file.Path
 import java.nio.file.Paths
 
 val BASE_TEST_DATA_PATH: Path = Paths.get(PathManager.getHomePath(), "contrib", "platformio", "testData")
 
+@RunWith(JUnit38AssumeSupportRunner::class)
 class TestProjectResolve : LightPlatformTestCase() {
   private val EXPECTED_ACTIVE_INI_FILES = listOf(
     "platformio.ini",
@@ -54,6 +59,13 @@ class TestProjectResolve : LightPlatformTestCase() {
 
   private lateinit var projectPath: String
   private lateinit var projectDir: VirtualFile
+
+  override fun shouldRunTest(): Boolean {
+    initTestApplication()
+    val toolset = CPPTestCase.getTestToolSet()
+    if (toolset.isSsh || toolset.isWSL) return false
+    return super.shouldRunTest()
+  }
 
   override fun setUp() {
     super.setUp()

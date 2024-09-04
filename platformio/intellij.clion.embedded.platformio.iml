@@ -30,5 +30,6 @@
     <orderEntry type="library" name="jediterm-core" level="project" />
     <orderEntry type="library" name="jediterm-ui" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ui.jcef" />
+    <orderEntry type="module" module-name="intellij.clion.testFramework" scope="TEST" />
   </component>
 </module>
