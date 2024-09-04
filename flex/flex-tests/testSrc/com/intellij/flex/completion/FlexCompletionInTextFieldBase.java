@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -30,11 +30,6 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
 
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
-  }
-
-  @Override
-  protected String getExtension() {
-    return "js2";
   }
 
   @Override

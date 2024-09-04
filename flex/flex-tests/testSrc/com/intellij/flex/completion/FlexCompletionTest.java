@@ -10,7 +10,6 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
-import com.intellij.lang.javascript.JSCompletionTestHelperSimple;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -32,8 +31,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.performancePlugin.yourkit.YourKitProfilerHandler;
@@ -1342,7 +1341,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     if (PROFILING) YourKitProfilerHandler.startCPUProfiling();
     try {
       Benchmark.newBenchmark("ActionScript class completion", () -> complete())
-        .setup(() -> getPsiManager().dropPsiCaches())
+        .setup(() -> myFixture.getPsiManager().dropPsiCaches())
         .start();
     }
     finally {
