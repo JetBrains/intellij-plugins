@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -39,7 +39,6 @@ import java.util.Collection;
 import java.util.List;
 
 public final class PhoneGapUtil {
-
   public static final String IONIC_CONFIG = "ionic.config.json";
 
   public static final String FOLDER_PLATFORMS = "platforms";
@@ -48,44 +47,32 @@ public final class PhoneGapUtil {
   public static final String FOLDER_PLUGINS = "plugins";
   public static final String[] POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT = {FOLDER_PLATFORMS, FOLDER_PLUGINS, FOLDER_WWW};
 
-  @NotNull
-  public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
-    TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-      project, PhoneGapBundle.message("phonegap.conf.executable.title"),
-      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), () -> getDefaultExecutablePaths());
-    String executablePath = PhoneGapSettings.getInstance().getExecutablePath();
-    setDefaultValue(field, executablePath);
-
+  public static @NotNull TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
+    var descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor().withTitle(PhoneGapBundle.message("phonegap.conf.executable.title"));
+    var field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(project, descriptor, () -> getDefaultExecutablePaths());
+    setDefaultValue(field, PhoneGapSettings.getInstance().getExecutablePath());
     return field;
   }
 
-  @NotNull
-  public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@NotNull final Project project) {
-    TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-      project, PhoneGapBundle.message("phonegap.conf.work.dir.title"),
-      FileChooserDescriptorFactory.createSingleFolderDescriptor(), null);
+  public static @NotNull TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(final @NotNull Project project) {
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(PhoneGapBundle.message("phonegap.conf.work.dir.title"));
+    var field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(project, descriptor, null);
     setDefaultValue(field, PhoneGapSettings.getInstance().getWorkingDirectory(project));
     ReadAction
-      .nonBlocking(() -> {
-        return getDefaultWorkingDirectory(project);
-      })
+      .nonBlocking(() -> getDefaultWorkingDirectory(project))
       .expireWith(field)
       .finishOnUiThread(ModalityState.any(), it -> {
         SwingHelper.setHistory(field.getChildComponent(), ContainerUtil.notNullize(it), true);
       })
       .submit(AppExecutorUtil.getAppExecutorService());
-
     return field;
   }
 
-  public static void setFieldWithHistoryWithBrowseButtonPath(@NotNull TextFieldWithHistoryWithBrowseButton field,
-                                                             @Nullable String executablePath) {
+  public static void setFieldWithHistoryWithBrowseButtonPath(@NotNull TextFieldWithHistoryWithBrowseButton field, @Nullable String executablePath) {
     setDefaultValue(field, executablePath);
   }
 
-
-  @NotNull
-  public static List<String> getDefaultExecutablePaths() {
+  public static @NotNull List<String> getDefaultExecutablePaths() {
     List<String> paths = new ArrayList<>();
     ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_PHONEGAP));
     ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_IONIC));
@@ -93,10 +80,9 @@ public final class PhoneGapUtil {
     return paths;
   }
 
-  @NotNull
   @RequiresBackgroundThread(generateAssertion = false)
   @RequiresReadLock(generateAssertion = false)
-  private static List<String> getDefaultWorkingDirectory(@NotNull Project project) {
+  private static @NotNull List<String> getDefaultWorkingDirectory(@NotNull Project project) {
     List<String> paths = new ArrayList<>();
     VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
     if (baseDir == null) return paths;
@@ -153,13 +139,12 @@ public final class PhoneGapUtil {
     }
   }
 
-  @Nullable
-  private static String getPath(@NotNull String name) {
+  private static @Nullable String getPath(@NotNull String name) {
     File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name + ".cmd" : name);
     return (path != null && path.exists()) ? path.getAbsolutePath() : null;
   }
 
-  public static boolean isPhoneGapProject(@NotNull final Project project) {
+  public static boolean isPhoneGapProject(final @NotNull Project project) {
     if (DumbService.isDumb(project)) return false;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {

@@ -46,9 +46,8 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
   public DartTestConfigurationEditorForm(@NotNull final Project project) {
     DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
-    myDirField.addBrowseFolderListener(DartBundle.message("choose.dart.directory"), null, project,
-                                       // Unfortunately, withFileFilter() only works for files, not directories.
-                                       FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    // Unfortunately, withFileFilter() only works for files, not directories.
+    myDirField.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DartBundle.message("choose.dart.directory")));
     myDirField.addActionListener(e -> onTestDirChanged(project));
 
     myScopeCombo.setModel(

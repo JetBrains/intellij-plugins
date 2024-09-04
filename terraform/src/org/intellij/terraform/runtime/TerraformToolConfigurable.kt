@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.process.CapturingProcessAdapter
@@ -78,13 +78,11 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   override fun getId(): String = CONFIGURABLE_ID
 
   override fun createPanel(): DialogPanel {
-    val fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false)
     updateTestButton()
     return panel {
       row(HCLBundle.message("terraform.settings.executable.path.label")) {
         executorPathField = textFieldWithBrowseButton(
-          browseDialogTitle = "",
-          fileChooserDescriptor = fileChooserDescriptor,
+          fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false),
           fileChosen = { chosenFile ->
             return@textFieldWithBrowseButton chosenFile.path
           }

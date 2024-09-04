@@ -4,7 +4,6 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
@@ -18,8 +17,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class YeomanConfigurable implements Configurable, Configurable.NoScroll {
-
-  public static final String ID = "settings.javascript.yeoman";
   private final YeomanGlobalSettings myYeomanGlobalSettings;
   private NodeJsInterpreterField myNodeTextField;
   private TextFieldWithHistoryWithBrowseButton myYeomanPackageField;
@@ -28,33 +25,27 @@ public class YeomanConfigurable implements Configurable, Configurable.NoScroll {
     myYeomanGlobalSettings = YeomanGlobalSettings.getInstance();
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return YeomanBundle.message("settings.yeoman.name");
   }
 
-  @Nullable
   @Override
-  public String getHelpTopic() {
+  public @Nullable String getHelpTopic() {
     return "reference.settings.yeoman";
   }
 
-  @Nullable
   @Override
-  public JComponent createComponent() {
-    Project project = ProjectManager.getInstance().getDefaultProject();
+  public @Nullable JComponent createComponent() {
+    var project = ProjectManager.getInstance().getDefaultProject();
     myNodeTextField = new NodeJsInterpreterField(project, false);
-
-
-    myYeomanPackageField = SwingHelper.createTextFieldWithHistoryWithBrowseButton(null, YeomanBundle.message("yeoman.configurable.package.dialog.title"),
-                                                                                  FileChooserDescriptorFactory
-                                                                                    .createSingleFolderDescriptor(), null);
-    FormBuilder builder = FormBuilder.createFormBuilder();
-    builder.addLabeledComponent(NodeJsInterpreterField.getLabelTextForComponent(), myNodeTextField);
-    builder.addLabeledComponent(YeomanBundle.message("yeoman.configurable.package.dialog.label"), myYeomanPackageField);
-    JPanel panel = builder.getPanel();
-    JPanel wrapper = new JPanel(new BorderLayout());
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(YeomanBundle.message("yeoman.configurable.package.dialog.title"));
+    myYeomanPackageField = SwingHelper.createTextFieldWithHistoryWithBrowseButton(null, descriptor, null);
+    var builder = FormBuilder.createFormBuilder()
+      .addLabeledComponent(NodeJsInterpreterField.getLabelTextForComponent(), myNodeTextField)
+      .addLabeledComponent(YeomanBundle.message("yeoman.configurable.package.dialog.label"), myYeomanPackageField);
+    var panel = builder.getPanel();
+    var wrapper = new JPanel(new BorderLayout());
     wrapper.add(panel, BorderLayout.NORTH);
     wrapper.setPreferredSize(new Dimension(400, 200));
     return wrapper;
@@ -74,8 +65,7 @@ public class YeomanConfigurable implements Configurable, Configurable.NoScroll {
     myYeomanGlobalSettings.setYoPackage(myYeomanPackageField.getText());
   }
 
-  @Nullable
-  private String getNodeInterpreterRefName() {
+  private @Nullable String getNodeInterpreterRefName() {
     NodeJsInterpreterRef interpreterRef = myNodeTextField.getInterpreterRef();
     return interpreterRef.isProjectRef() ? null : interpreterRef.getReferenceName();
   }

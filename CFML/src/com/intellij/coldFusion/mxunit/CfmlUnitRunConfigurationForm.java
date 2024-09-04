@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -41,18 +41,11 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
 
   public CfmlUnitRunConfigurationForm(Project project) {
     myProject = project;
-
     myMethodPanel.setVisible(false);
-
-    myFileChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<>(null, null, myDirectoryOrFileField, project,
-                                                                               FileChooserDescriptorFactory
-                                                                                 .createSingleFileOrFolderDescriptor(),
-                                                                               TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
-
-    myDirectoryChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<>(null, null, myDirectoryOrFileField, project,
-                                                                                    FileChooserDescriptorFactory
-                                                                                      .createSingleFolderDescriptor(),
-                                                                                    TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+    myFileChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<>(
+      myDirectoryOrFileField, project, FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+    myDirectoryChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<>(
+      myDirectoryOrFileField, project, FileChooserDescriptorFactory.createSingleFolderDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
     myMethodRadioButton.addChangeListener(myScopeChangeListener);
     myDirectoryRadioButton.addChangeListener(myScopeChangeListener);
     myComponentRadioButton.addChangeListener(myScopeChangeListener);

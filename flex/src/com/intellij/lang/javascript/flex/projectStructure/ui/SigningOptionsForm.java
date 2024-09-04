@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -70,15 +69,12 @@ public class SigningOptionsForm {
       }
     });
 
-    myProvisioningProfileTextWithBrowse
-      .addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("mobileprovision"));
+    myProvisioningProfileTextWithBrowse.addBrowseFolderListener(project, FlexUtils.createFileChooserDescriptor("mobileprovision"));
 
-    myIosSdkTextWithBrowse
-      .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myIosSdkTextWithBrowse.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    final FileChooserDescriptor d = mode == Mode.iOS ? FlexUtils.createFileChooserDescriptor("p12")
-                                                     : FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
-    myKeystoreFileTextWithBrowse.addBrowseFolderListener(null, null, project, d);
+    var d = mode == Mode.iOS ? FlexUtils.createFileChooserDescriptor("p12") : FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
+    myKeystoreFileTextWithBrowse.addBrowseFolderListener(project, d);
 
     myAdtOptionsComponent.setDialogCaption("Additional ADT Options");
 

@@ -26,7 +26,6 @@ package org.osmorc.run.ui;
 
 import com.intellij.execution.ui.DefaultJreSelector;
 import com.intellij.execution.ui.JrePathEditor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -141,10 +140,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       myWorkingDirField.setEnabled(isUserDefined);
     });
 
-    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    String title = message("run.configuration.working.dir.title");
-    String description = message("run.configuration.working.dir.description");
-    myWorkingDirField.addBrowseFolderListener(title, description, null, descriptor);
+    myWorkingDirField.addBrowseFolderListener(null, FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(message("run.configuration.working.dir.title"))
+      .withDescription(message("run.configuration.working.dir.description")));
     myWorkingDirField.getTextField().setColumns(30);
 
     // avoid text fields growing the dialog when much text is entered.

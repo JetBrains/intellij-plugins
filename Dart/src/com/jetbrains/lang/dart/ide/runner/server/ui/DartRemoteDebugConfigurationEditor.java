@@ -61,19 +61,21 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
 
     myDartProjectCombo.getComboBox().setModel(new DefaultComboBoxModel<>(myComboItems.toArray()));
 
-    myDartProjectCombo.addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                               new TextComponentAccessor<>() {
-                                                 @Override
-                                                 public String getText(final JComboBox combo) {
-                                                   final Object item = combo.getSelectedItem();
-                                                   return item instanceof NameAndPath ? ((NameAndPath)item).myPath : "";
-                                                 }
+    myDartProjectCombo.addBrowseFolderListener(
+      project,
+      FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+      new TextComponentAccessor<>() {
+        @Override
+        public String getText(final JComboBox combo) {
+          final Object item = combo.getSelectedItem();
+          return item instanceof NameAndPath ? ((NameAndPath)item).myPath : "";
+        }
 
-                                                 @Override
-                                                 public void setText(final JComboBox combo, @NotNull final String path) {
-                                                   setSelectedProjectPath(FileUtil.toSystemIndependentName(path));
-                                                 }
-                                               });
+        @Override
+        public void setText(final JComboBox combo, @NotNull final String path) {
+          setSelectedProjectPath(FileUtil.toSystemIndependentName(path));
+        }
+      });
   }
 
   @NotNull

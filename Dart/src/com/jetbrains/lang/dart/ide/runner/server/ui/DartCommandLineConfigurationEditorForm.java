@@ -38,8 +38,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   public DartCommandLineConfigurationEditorForm(final Project project) {
     initDartFileTextWithBrowse(project, myFileField);
 
-    myWorkingDirectory.addBrowseFolderListener(DartBundle.message("dialog.title.select.working.directory"), null, project,
-                                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myWorkingDirectory.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DartBundle.message("dialog.title.select.working.directory")));
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {

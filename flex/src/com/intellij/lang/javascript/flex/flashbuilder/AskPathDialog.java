@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -20,7 +21,7 @@ public class AskPathDialog extends DialogWrapper {
     setTitle(title);
     myPathComponent.setText(label);
     myPathComponent.getComponent().setText(FileUtil.toSystemDependentName(initialPath));
-    myPathComponent.getComponent().addBrowseFolderListener(null, null, null, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myPathComponent.getComponent().addBrowseFolderListener(null, FileChooserDescriptorFactory.createSingleFolderDescriptor());
     init();
   }
 

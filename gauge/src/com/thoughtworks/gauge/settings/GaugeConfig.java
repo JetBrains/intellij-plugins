@@ -30,21 +30,11 @@ public final class GaugeConfig {
   private JCheckBox useIntelliJTestRunner;
 
   JComponent createEditor() {
-    FileChooserDescriptor homeFileDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-    homePath.addBrowseFolderListener(
-      "",
-      GaugeBundle.message("form.gauge.home"),
-      null,
-      homeFileDescriptor,
-      TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+    var homeFileDescriptor = new FileChooserDescriptor(false, true, false, false, false, false).withTitle("").withDescription(GaugeBundle.message("form.gauge.home"));
+    homePath.addBrowseFolderListener(null, homeFileDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
-    FileChooserDescriptor gaugePathFileDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-    gaugePath.addBrowseFolderListener(
-      "",
-      GaugeBundle.message("form.gauge.binary.path"),
-      null,
-      gaugePathFileDescriptor,
-      TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+    var gaugePathFileDescriptor = new FileChooserDescriptor(true, false, false, false, false, false).withTitle("").withDescription(GaugeBundle.message("form.gauge.binary.path"));
+    gaugePath.addBrowseFolderListener(null, gaugePathFileDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
     return configWindow;
   }

@@ -6,11 +6,14 @@ import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.*
+import com.intellij.openapi.ui.FixedSizeButton
+import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
-import com.intellij.ui.*
+import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.TextFieldWithAutoCompletion
 import com.intellij.ui.components.fields.ExpandableTextField
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
@@ -41,19 +44,17 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   }
 
   init {
-    filenameField.addBrowseFolderListener(MakefileLangBundle.message("file.chooser.title"),
-                                          MakefileLangBundle.message("file.chooser.description"),
-                                          project,
-                                          MakefileFileChooserDescriptor())
+    filenameField.addBrowseFolderListener(project, MakefileFileChooserDescriptor()
+      .withTitle(MakefileLangBundle.message("file.chooser.title"))
+      .withDescription(MakefileLangBundle.message("file.chooser.description")))
     filenameField.textField.document.addDocumentListener(object : DocumentAdapter() {
       override fun textChanged(event: DocumentEvent) {
         updateTargetCompletion(filenameField.text)
       }
     })
-    workingDirectoryField.addBrowseFolderListener(MakefileLangBundle.message("working.directory.file.chooser"),
-                                                  MakefileLangBundle.message("working.directory.file.chooser.description"),
-                                                  project,
-                                                  FileChooserDescriptorFactory.createSingleFolderDescriptor())
+    workingDirectoryField.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(MakefileLangBundle.message("working.directory.file.chooser"))
+      .withDescription(MakefileLangBundle.message("working.directory.file.chooser.description")))
   }
 
   fun updateTargetCompletion(filename: String) {

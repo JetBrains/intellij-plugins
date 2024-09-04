@@ -85,10 +85,10 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
         private static boolean isExecutableExtension(final String extension) {
           return SystemInfo.isWindows ? "exe".equalsIgnoreCase(extension) : extension == null || "uexe".equalsIgnoreCase(extension);
         }
-      };
+      }.withTitle("Select ADL executable file");
 
       myAdlComponent.getComponent()
-        .addBrowseFolderListener("Select ADL executable file", null, null, descriptor, new TextComponentAccessor<>() {
+        .addBrowseFolderListener(null, descriptor, new TextComponentAccessor<>() {
           @Override
           public void setText(final JTextField component, final @NotNull String text) {
             component.setText(text);
@@ -108,15 +108,16 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     }
 
     private void initAirRuntimeChooser() {
-      final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, false, false) {
+      var descriptor = new FileChooserDescriptor(true, true, true, false, false, false) {
         @Override
         public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
           return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || ("zip".equalsIgnoreCase(file.getExtension())));
         }
-      };
-      myAirRuntimeComponent.getComponent().addBrowseFolderListener("Select AIR Runtime",
-                                                                   "Select AIR Runtime as a directory like <Flex SDK>/runtimes/AIR/win/ or as a .zip file",
-                                                                   null, descriptor);
+      }
+        .withTitle("Select AIR Runtime")
+        .withDescription("Select AIR Runtime as a directory like <Flex SDK>/runtimes/AIR/win/ or as a .zip file");
+      TextFieldWithBrowseButton button = myAirRuntimeComponent.getComponent();
+      button.addBrowseFolderListener(null, descriptor);
     }
 
     JComponent getMainPanel() {

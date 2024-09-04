@@ -18,11 +18,14 @@ import com.intellij.util.FontUtil
 import com.intellij.util.SystemProperties
 import com.intellij.util.ui.EDT
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenInstallGuide
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.JComponent
@@ -47,10 +50,10 @@ class PlatformioConfigurable : SearchableConfigurable {
   override fun createComponent(): JComponent {
     val newSettingsPanel = panel {
       row {
-        textFieldWithBrowseButton(
-          project = null,
-          browseDialogTitle = ClionEmbeddedPlatformioBundle.message("dialog.title.home.location"),
-          fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor().withShowHiddenFiles(true))
+        val descriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor()
+          .withShowHiddenFiles(true)
+          .withTitle(ClionEmbeddedPlatformioBundle.message("dialog.title.home.location"))
+        textFieldWithBrowseButton(descriptor)
           .align(Align.FILL)
           .label(ClionEmbeddedPlatformioBundle.message("home.location"), LabelPosition.TOP)
           .bindText(::manualPioLocation.toMutableProperty())

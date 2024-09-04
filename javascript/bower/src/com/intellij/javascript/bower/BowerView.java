@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BowerView {
-
   private final Project myProject;
   private final JPanel myComponent;
   private final NodePackageField myBowerPackageField;
@@ -109,8 +108,7 @@ public class BowerView {
     myPackagesView.onSettingsChanged(builder.build(), validationInfos);
   }
 
-  @NotNull
-  private List<BowerValidationInfo> validate() {
+  private @NotNull List<BowerValidationInfo> validate() {
     List<BowerValidationInfo> infos = new ArrayList<>();
     processValidationInfo(infos, null, validateBowerPackage());
     JTextField bowerJsonTextField = myBowerJsonField.getTextField();
@@ -132,8 +130,7 @@ public class BowerView {
     }
   }
 
-  @Nullable
-  private BowerValidationInfo validateBowerPackage() {
+  private @Nullable BowerValidationInfo validateBowerPackage() {
     NodePackage selected = myBowerPackageField.getSelected();
     String errorMessage = selected.getErrorMessage(BowerSettingsManager.BOWER_PACKAGE_NAME);
     if (errorMessage != null) {
@@ -145,10 +142,7 @@ public class BowerView {
   }
 
   @SuppressWarnings("SameParameterValue")
-  @Nullable
-  private static BowerValidationInfo validateFilePathField(@NotNull Component component,
-                                                           @NotNull String path,
-                                                           @NlsSafe @NotNull String fieldName) {
+  private static @Nullable BowerValidationInfo validateFilePathField(Component component, String path, @NlsSafe String fieldName) {
     File file = new File(path);
     if (file.isFile()) {
       return null;
@@ -156,26 +150,19 @@ public class BowerView {
     return new BowerValidationInfo(component, BowerBundle.message("bower.correct.path", BowerValidationInfo.LINK_TEMPLATE), fieldName);
   }
 
-  @NotNull
-  private static TextFieldWithBrowseButton createBowerJsonField(@NotNull Project project) {
+  private static @NotNull TextFieldWithBrowseButton createBowerJsonField(@NotNull Project project) {
     TextFieldWithBrowseButton textFieldWithBrowseButton = new TextFieldWithBrowseButton();
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      textFieldWithBrowseButton,
-      IdeBundle.message("dialog.title.select.0", "bower.json"),
-      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
-    );
+    var descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor().withTitle(IdeBundle.message("dialog.title.select.0", "bower.json"));
+    SwingHelper.installFileCompletionAndBrowseDialog(project, textFieldWithBrowseButton, descriptor);
     PathShortener.enablePathShortening(textFieldWithBrowseButton.getTextField(), null);
     return textFieldWithBrowseButton;
   }
 
-  @NotNull
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return myComponent;
   }
 
-  @NotNull
-  public BowerSettings getSettings() {
+  public @NotNull BowerSettings getSettings() {
     return new BowerSettings.Builder(myProject)
       .setBowerPackage(myBowerPackageField.getSelected())
       .setBowerJsonPath(PathShortener.getAbsolutePath(myBowerJsonField.getTextField()))

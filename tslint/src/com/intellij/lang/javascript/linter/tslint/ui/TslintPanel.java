@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.util.NodePackageField;
@@ -45,14 +45,12 @@ public final class TslintPanel {
       AutodetectLinterPackage.createNodePackageField(project, Collections.singletonList(TslintUtil.PACKAGE_NAME), myConfigFileView);
   }
 
-  @NotNull
-  public JComponent createComponent() {
+  public @NotNull JComponent createComponent() {
     myRules = new TextFieldWithBrowseButton();
     myAllowJs = new JBCheckBox();
-    SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules,
-                                                     TsLintBundle.message("additional.rules.directory.title"),
-                                                     FileChooserDescriptorFactory.createSingleFolderDescriptor());
-    final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(TsLintBundle.message("additional.rules.directory.title"));
+    SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules, descriptor);
+    FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
       .setVerticalGap(UIUtil.DEFAULT_VGAP);
     if (myAddLeftIndent) {
@@ -86,8 +84,7 @@ public final class TslintPanel {
     myConfigFileView.onEnabledStateChanged(enabled);
   }
 
-  @NotNull
-  public TsLintState getState() {
+  public @NotNull TsLintState getState() {
     final TsLintState.Builder builder = new TsLintState.Builder()
       .setNodePackageRef(myNodePackageField.getSelectedRef())
       .setCustomConfigFileUsed(myConfigFileView.isCustomConfigFileUsed())

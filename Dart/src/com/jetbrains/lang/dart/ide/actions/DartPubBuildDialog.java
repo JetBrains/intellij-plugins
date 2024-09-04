@@ -71,31 +71,30 @@ public class DartPubBuildDialog extends DialogWrapper {
       }
     });
 
-    final String packagePathSlash = FileUtil.toSystemDependentName(packageDir.getPath() + "/");
-    myOutputFolderField.addBrowseFolderListener(DartBundle.message("button.browse.dialog.title.output.folder"), null, myProject,
-                                                FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                new TextComponentAccessor<>() {
-                                                  @Override
-                                                  public String getText(JTextField component) {
-                                                    final String path = component.getText();
-                                                    if (SystemInfo.isWindows && FileUtil.isWindowsAbsolutePath(path) ||
-                                                        !SystemInfo.isWindows && FileUtil.isUnixAbsolutePath(path)) {
-                                                      return path;
-                                                    }
+    var packagePathSlash = FileUtil.toSystemDependentName(packageDir.getPath() + "/");
+    myOutputFolderField.addBrowseFolderListener(
+      myProject,
+      FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DartBundle.message("button.browse.dialog.title.output.folder")),
+      new TextComponentAccessor<>() {
+        @Override
+        public String getText(JTextField component) {
+          final String path = component.getText();
+          if (SystemInfo.isWindows && FileUtil.isWindowsAbsolutePath(path) || !SystemInfo.isWindows && FileUtil.isUnixAbsolutePath(path)) {
+            return path;
+          }
+          return packagePathSlash + path;
+        }
 
-                                                    return packagePathSlash + path;
-                                                  }
-
-                                                  @Override
-                                                  public void setText(JTextField component, @NotNull String text) {
-                                                    if (text.startsWith(packagePathSlash) && !text.equals(packagePathSlash)) {
-                                                      component.setText(text.substring(packagePathSlash.length()));
-                                                    }
-                                                    else {
-                                                      component.setText(text);
-                                                    }
-                                                  }
-                                                });
+        @Override
+        public void setText(JTextField component, @NotNull String text) {
+          if (text.startsWith(packagePathSlash) && !text.equals(packagePathSlash)) {
+            component.setText(text.substring(packagePathSlash.length()));
+          }
+          else {
+            component.setText(text);
+          }
+        }
+      });
 
     reset();
     init();

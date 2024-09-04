@@ -52,7 +52,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       public ExtensionAwareFileChooserDescriptor myFileChooserDescriptor = new ExtensionAwareFileChooserDescriptor();
 
       {
-        myTextWithBrowse.addBrowseFolderListener(null, null, myProject, myFileChooserDescriptor);
+        myTextWithBrowse.addBrowseFolderListener(myProject, myFileChooserDescriptor);
       }
 
       @Override

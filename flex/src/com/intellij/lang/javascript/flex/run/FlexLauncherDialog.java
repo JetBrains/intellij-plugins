@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.BrowserFamily;
@@ -83,16 +83,12 @@ public class FlexLauncherDialog extends DialogWrapper {
     myBrowserSelector.setSelected(launcherParameters.getBrowser());
 
     myPlayerTextWithBrowse.setText(FileUtil.toSystemDependentName(launcherParameters.getPlayerPath()));
-    myPlayerTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject,
-                               new FileChooserDescriptor(true, true, false, false, false, false) {
-                                 @Override
-                                 public boolean isFileSelectable(final @Nullable VirtualFile file) {
-                                   if (file == null) return false;
-                                   return SystemInfo.isMac && file.isDirectory() && "app".equalsIgnoreCase(file.getExtension())
-                                          || !file.isDirectory();
-                                 }
-                               });
+    myPlayerTextWithBrowse.addBrowseFolderListener(myProject, new FileChooserDescriptor(true, true, false, false, false, false) {
+      @Override
+      public boolean isFileSelectable(final @Nullable VirtualFile file) {
+        return file != null && (SystemInfo.isMac && file.isDirectory() && "app".equalsIgnoreCase(file.getExtension()) || !file.isDirectory());
+      }
+    });
     myNewPlayerInstanceCheckBox.setVisible(SystemInfo.isMac);
   }
 

@@ -54,22 +54,11 @@ class DenoConfigurable(private val project: Project) : Configurable {
     myDenoPath.text = service.getDenoPath()
     myDenoCache.text = FileUtil.toSystemDependentName(service.getDenoCache())
     myDenoFormattingEnabled.isSelected = service.isDenoFormattingEnabled()
-    val fakeFile = PsiFileFactory.getInstance(project).createFileFromText("dummy", JsonLanguage.INSTANCE, service.getDenoInit(), true,
-      false)
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      myDenoPath,
-      DenoBundle.message("deno.name"),
-      FileChooserDescriptorFactory.createSingleFileDescriptor()
-    )
-    
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      myDenoCache,
-      DenoBundle.message("deno.cache.title"),
-      FileChooserDescriptorFactory.createSingleFolderDescriptor()
-    )
-    
+    val fakeFile = PsiFileFactory.getInstance(project).createFileFromText("dummy", JsonLanguage.INSTANCE, service.getDenoInit(), true, false)
+    val denoDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor().withTitle(DenoBundle.message("deno.name"))
+    SwingHelper.installFileCompletionAndBrowseDialog(project, myDenoPath, denoDescriptor)
+    val denoCacheDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DenoBundle.message("deno.cache.title"))
+    SwingHelper.installFileCompletionAndBrowseDialog(project, myDenoCache, denoCacheDescriptor)
     val document = PsiDocumentManager.getInstance(project).getDocument(fakeFile)
     mySettingsEditor = TemplateEditorUtil.createEditor(false, document, project)
     val editorSettings: EditorSettings = mySettingsEditor.settings

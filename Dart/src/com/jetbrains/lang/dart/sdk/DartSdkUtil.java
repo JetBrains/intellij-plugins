@@ -112,11 +112,8 @@ public final class DartSdkUtil {
       }
     };
 
-    final ComponentWithBrowseButton.BrowseFolderActionListener<JComboBox> browseFolderListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<>(DartBundle.message("button.browse.dialog.title.select.dart.sdk.path"),
-                                                                 null, dartSdkPathComponent, project,
-                                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                 textComponentAccessor);
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DartBundle.message("button.browse.dialog.title.select.dart.sdk.path"));
+    var browseFolderListener = new ComponentWithBrowseButton.BrowseFolderActionListener<>(dartSdkPathComponent, project, descriptor, textComponentAccessor);
     dartSdkPathComponent.addActionListener(browseFolderListener);
 
     final JTextComponent editorComponent = (JTextComponent)dartSdkPathComponent.getComboBox().getEditor().getEditorComponent();

@@ -25,9 +25,7 @@ abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
       override fun createEditorComponent(): JTextField {
         val listener = BrowseFilesListener(
           textField,
-          browserTitle,
-          null,
-          FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+          FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(browserTitle),
         )
 
         textField.addBrowseExtension({

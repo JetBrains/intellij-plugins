@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -34,7 +35,7 @@ public class AirDescriptorForm {
     myGeneratedDescriptorRadioButton.addActionListener(listener);
     myCustomDescriptorRadioButton.addActionListener(listener);
 
-    myCustomDescriptorTextWithBrowse.addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("xml"));
+    myCustomDescriptorTextWithBrowse.addBrowseFolderListener(project, FlexUtils.createFileChooserDescriptor("xml"));
 
     myCreateDescriptorButton.addActionListener(new ActionListener() {
       @Override

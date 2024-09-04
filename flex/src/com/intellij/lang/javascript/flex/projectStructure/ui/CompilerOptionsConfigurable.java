@@ -302,7 +302,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
       }
     };
 
-    myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, myProject, FlexUtils.createFileChooserDescriptor("xml"));
+    myConfigFileTextWithBrowse.addBrowseFolderListener(myProject, FlexUtils.createFileChooserDescriptor("xml"));
     myConfigFileTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(final @NotNull DocumentEvent e) {
@@ -602,7 +602,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
       private final JCheckBox myCheckBox = new JCheckBox();
 
       {
-        myTextWithBrowse.addBrowseFolderListener(null, null, myProject, myFileChooserDescriptor);
+        myTextWithBrowse.addBrowseFolderListener(myProject, myFileChooserDescriptor);
 
         myCheckBox.addActionListener(new ActionListener() {
           @Override
@@ -1057,4 +1057,3 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     return FlexBundle.message("bc.tab.compiler.options.display.name");
   }
 }
-

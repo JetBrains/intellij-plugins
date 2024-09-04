@@ -220,8 +220,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
     });
 
-    myUrlOrFileTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
+    myUrlOrFileTextWithBrowse.addBrowseFolderListener(myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
   }
 
   private void initLaunchWithTextWithBrowse() {
@@ -250,8 +249,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myIOSSimulatorDeviceTextField.setVisible(false);
     }
 
-    myIOSSimulatorSdkTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myIOSSimulatorSdkTextWithBrowse.addBrowseFolderListener(myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final ActionListener debugTransportListener = new ActionListener() {
       @Override

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.scope;
 
 import com.intellij.javascript.karma.KarmaBundle;
@@ -13,28 +14,22 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class KarmaTestFileScopeView extends KarmaScopeView {
-
   private final TextFieldWithBrowseButton myTestFileTextFieldWithBrowseButton;
   private final JPanel myPanel;
 
   public KarmaTestFileScopeView(@NotNull Project project) {
     myTestFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     PathShortener.enablePathShortening(myTestFileTextFieldWithBrowseButton.getTextField(), null);
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      myTestFileTextFieldWithBrowseButton,
-      KarmaBundle.message("run_configuration.select_test_file.browseTitle"),
-      FileChooserDescriptorFactory.createSingleFileDescriptor()
-    );
+    var descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor().withTitle(KarmaBundle.message("run_configuration.select_test_file.browseTitle"));
+    SwingHelper.installFileCompletionAndBrowseDialog(project, myTestFileTextFieldWithBrowseButton, descriptor);
     myPanel = new FormBuilder()
       .setAlignLabelOnRight(false)
       .addLabeledComponent(KarmaBundle.message("run_configuration.test_file.label"), myTestFileTextFieldWithBrowseButton)
       .getPanel();
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return myPanel;
   }
 

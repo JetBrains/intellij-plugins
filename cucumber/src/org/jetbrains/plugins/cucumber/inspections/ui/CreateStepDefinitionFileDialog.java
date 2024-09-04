@@ -1,6 +1,6 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections.ui;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -19,7 +19,10 @@ import org.jetbrains.plugins.cucumber.inspections.model.FileTypeComboboxItem;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 public class CreateStepDefinitionFileDialog extends DialogWrapper {
@@ -34,8 +37,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
 
   private final CreateStepDefinitionFileModel myModel;
 
-  public CreateStepDefinitionFileDialog(@NotNull final Project project, @NotNull final CreateStepDefinitionFileModel model,
-                                        @NotNull final InputValidator validator) {
+  public CreateStepDefinitionFileDialog(@NotNull Project project, @NotNull CreateStepDefinitionFileModel model, @NotNull InputValidator validator) {
     super(project);
     myModel = model;
     myValidator = validator;
@@ -70,23 +72,19 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     };
     myFileNameTextField.addKeyListener(keyListener);
 
-    String folderChooserTitle = CucumberBundle.message("cucumber.quick.fix.create.step.folder.chooser.title");
-    final FileChooserDescriptor folderChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    folderChooserDescriptor.setTitle(folderChooserTitle);
-
-
     VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(model.getStepDefinitionFolderPath()));
     if (virtualFile == null) {
       virtualFile = model.getContext().getContainingFile().getContainingDirectory().getVirtualFile();
     }
-    folderChooserDescriptor.setRoots(virtualFile);
-    folderChooserDescriptor.withTreeRootVisible(true);
-    folderChooserDescriptor.setShowFileSystemRoots(false);
-    folderChooserDescriptor.setHideIgnored(true);
-
-    myDirectoryTextField.addBrowseFolderListener(folderChooserTitle, null, project, folderChooserDescriptor);
+    myDirectoryTextField.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(CucumberBundle.message("cucumber.quick.fix.create.step.folder.chooser.title"))
+      .withRoots(virtualFile)
+      .withTreeRootVisible(true)
+      .withShowFileSystemRoots(false)
+      .withHideIgnored(true));
     myDirectoryTextField.getTextField().addKeyListener(keyListener);
     myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory()));
+
     validateAll();
   }
 

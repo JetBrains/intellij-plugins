@@ -25,11 +25,11 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.builder.Cell
-import com.intellij.ui.dsl.builder.Row
-import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
-import com.intellij.ui.layout.*
+import com.intellij.ui.layout.ComponentPredicate
+import com.intellij.ui.layout.not
+import com.intellij.ui.layout.or
+import com.intellij.ui.layout.selected
 import kotlinx.coroutines.*
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.*
@@ -40,6 +40,7 @@ import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
 import java.io.File
 import javax.swing.JEditorPane
 import javax.swing.JTextField
+import kotlin.Throws
 
 private const val CHARSET_NONE: @NlsSafe String = "none"
 private const val CHARSET_ISO8859_1: @NlsSafe String = "iso8859-1"
@@ -75,27 +76,23 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
   private val myIgnorePanelLabel = JBLabel(PerforceBundle.message("border.configure.ignore.settings"))
 
   private val myPathToIgnore = TextFieldWithBrowseButton().apply {
-    addBrowseFolderListener(PerforceBundle.message("dialog.title.path.to.p4.ignore"),
-                            PerforceBundle.message("dialog.description.path.to.p4.ignore"),
-                            myProject,
-                            FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
+    addBrowseFolderListener(myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+      .withTitle(PerforceBundle.message("dialog.title.path.to.p4.ignore"))
+      .withDescription(PerforceBundle.message("dialog.description.path.to.p4.ignore")))
 
   }
 
   private val myPathToP4 = TextFieldWithBrowseButton().apply {
-    addBrowseFolderListener(PerforceBundle.message("dialog.title.path.to.p4.exe"),
-                            PerforceBundle.message("dialog.description.path.to.p4.exe"),
-                            myProject,
-                            FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
+    addBrowseFolderListener(myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+      .withTitle(PerforceBundle.message("dialog.title.path.to.p4.exe"))
+      .withDescription(PerforceBundle.message("dialog.description.path.to.p4.exe")))
   }
 
   private val myPathToP4V = TextFieldWithBrowseButton().apply {
-    addActionListener(object : BrowseFolderActionListener<JTextField?>(
-      PerforceBundle.message("dialog.title.path.to.p4.exe"),
-      PerforceBundle.message("dialog.description.path.to.p4vc.exe"),
-      this, myProject,
-      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(),
-      TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
+    val descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+      .withTitle(PerforceBundle.message("dialog.title.path.to.p4.exe"))
+      .withDescription(PerforceBundle.message("dialog.description.path.to.p4vc.exe"))
+    addActionListener(object : BrowseFolderActionListener<JTextField?>(this, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
       override fun getInitialFile(): VirtualFile? {
         val file = super.getInitialFile()
         return if (file == null && SystemInfo.isMac) {

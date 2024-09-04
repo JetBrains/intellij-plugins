@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
@@ -100,12 +100,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @NotNull
   private static TextFieldWithBrowseButton createWorkingDirComponent(@NotNull Project project) {
     TextFieldWithBrowseButton textFieldWithBrowseButton = new TextFieldWithBrowseButton();
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      textFieldWithBrowseButton,
-      JavaScriptBundle.message("rc.workingDirectory.browseDialogTitle"),
-      FileChooserDescriptorFactory.createSingleFolderDescriptor()
-    );
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(JavaScriptBundle.message("rc.workingDirectory.browseDialogTitle"));
+    SwingHelper.installFileCompletionAndBrowseDialog(project, textFieldWithBrowseButton, descriptor);
     PathShortener.enablePathShortening(textFieldWithBrowseButton.getTextField(), null);
     return textFieldWithBrowseButton;
   }
@@ -194,19 +190,13 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
       textFieldWithHistory.setHistory(Collections.emptyList());
       List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
-      List<String> newFilePaths = ContainerUtil.sorted(ContainerUtil.map(newFiles, file -> {
+      return ContainerUtil.sorted(ContainerUtil.map(newFiles, file -> {
         String path = FileUtil.toSystemDependentName(file.getPath());
         return FileUtil.getLocationRelativeToUserHome(path, false);
       }));
-      return newFilePaths;
     });
-
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      textFieldWithHistoryWithBrowseButton,
-      KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"),
-      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
-    );
+    var descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor().withTitle(KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"));
+    SwingHelper.installFileCompletionAndBrowseDialog(project, textFieldWithHistoryWithBrowseButton, descriptor);
     return textFieldWithHistoryWithBrowseButton;
   }
 

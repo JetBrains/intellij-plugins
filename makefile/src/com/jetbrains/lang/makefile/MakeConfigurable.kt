@@ -1,14 +1,15 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.openapi.fileChooser.*
-import com.intellij.openapi.options.*
-import com.intellij.openapi.project.*
-import com.intellij.openapi.ui.*
-import com.intellij.openapi.util.*
-import com.intellij.ui.components.*
-import com.intellij.uiDesigner.core.*
-import com.intellij.util.ui.*
-import javax.swing.*
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.ui.components.JBCheckBox
+import com.intellij.uiDesigner.core.Spacer
+import com.intellij.util.ui.FormBuilder
+import com.intellij.util.ui.UIUtil
+import javax.swing.JComponent
 
 class MakeConfigurable(project: Project?) : Configurable {
   private val settings = project?.getService(MakefileProjectSettings::class.java)
@@ -17,10 +18,9 @@ class MakeConfigurable(project: Project?) : Configurable {
   private val cygwinField = JBCheckBox(MakefileLangBundle.message("configurable.use.cygwin.checkbox", if (!SystemInfo.isWindows) 0 else 1))
 
   init {
-    pathField.addBrowseFolderListener(MakefileLangBundle.message("make.file.chooser.title"),
-                                      MakefileLangBundle.message("make.file.chooser.description"),
-                                      project,
-                                      FileChooserDescriptor(true, false, false, false, false, false))
+    pathField.addBrowseFolderListener(project, FileChooserDescriptor(true, false, false, false, false, false)
+      .withTitle(MakefileLangBundle.message("make.file.chooser.title"))
+      .withDescription(MakefileLangBundle.message("make.file.chooser.description")))
   }
 
   override fun isModified(): Boolean {

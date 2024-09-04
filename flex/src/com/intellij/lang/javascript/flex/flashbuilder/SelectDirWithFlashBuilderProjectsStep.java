@@ -43,13 +43,13 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
     myExtractPathComponent.setVisible(false);
     myExtractPathComponent.getComponent()
-      .addBrowseFolderListener(null, null, context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
+      .addBrowseFolderListener(context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final boolean creatingNewProject = context.isCreatingNewProject();
     myProjectNameComponent.setVisible(creatingNewProject);
     myProjectLocationComponent.setVisible(creatingNewProject);
     myProjectLocationComponent.getComponent()
-      .addBrowseFolderListener(null, null, context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
+      .addBrowseFolderListener(context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
     myProjectFormatPanel.getPanel().setVisible(creatingNewProject);
 
     myMultiProjectNote.setVisible(false);
@@ -64,7 +64,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
       }
     });
 
-    final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, true, false, false) {
+    var descriptor = new FileChooserDescriptor(true, true, true, true, false, false) {
       @Override
       public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
         return (super.isFileVisible(file, showHiddenFiles) &&
@@ -80,10 +80,10 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
                ? dressIcon(file, getBuilder().getIcon())
                : super.getIcon(file);
       }
-    };
+    }.withTitle(FlexBundle.message("select.flash.builder.workspace.or.project"));
 
-    myInitialPathComponent.getComponent().addBrowseFolderListener(FlexBundle.message("select.flash.builder.workspace.or.project"),
-                                                                  null, getWizardContext().getProject(), descriptor);
+    var button = myInitialPathComponent.getComponent();
+    button.addBrowseFolderListener(getWizardContext().getProject(), descriptor);
   }
 
   private void onInitialPathChanged() {

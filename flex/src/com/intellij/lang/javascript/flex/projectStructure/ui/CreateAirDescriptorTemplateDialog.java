@@ -112,8 +112,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
   }
 
   private void initControls() {
-    myDescriptorFolderTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myDescriptorFolderTextWithBrowse.addBrowseFolderListener(myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final String[] items = Arrays.copyOf(ArrayUtil.reverseArray(FlexApplicationComponent.AIR_VERSIONS), 8);
     myAirVersionCombo.setModel(new DefaultComboBoxModel(items));
