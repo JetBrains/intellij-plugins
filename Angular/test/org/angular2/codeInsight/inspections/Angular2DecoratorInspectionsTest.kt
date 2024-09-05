@@ -4,8 +4,10 @@ package org.angular2.codeInsight.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.*
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
+import org.angular2.inspections.*
 
 /**
  * @see Angular2TsInspectionsTest
@@ -133,6 +135,20 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "non-standalone-component-imports-inspections.ts")
   }
 
+  fun testUnusedImportsInStandaloneComponent1() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
+    doTest(1, "imports: [\n    Async<caret>Pipe,\n",
+           "Remove 'AsyncPipe' import", AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
+  }
+
+  fun testUnusedImportsInStandaloneComponent2() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
+    doTest(2, "//used in block expression\n    Ng<caret>If,\n",
+           "Remove 'NgIf' import", AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
+  }
+
   fun testInspectionsNonAngular() {
     myFixture.enableInspections(AngularIncorrectTemplateDefinitionInspection::class.java,
                                 AngularInvalidSelectorInspection::class.java,
@@ -147,18 +163,23 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  private fun doTest(inspection: Class<out LocalInspectionTool>,
-                     vararg files: String) {
+  private fun doTest(
+    inspection: Class<out LocalInspectionTool>,
+    vararg files: String,
+  ) {
     doTest(1, null, null, inspection, *files)
   }
 
-  private fun doTest(testNr: Int,
-                     location: String?,
-                     quickFixName: String?,
-                     inspection: Class<out LocalInspectionTool>,
-                     vararg files: String) {
+  private fun doTest(
+    testNr: Int,
+    location: String?,
+    quickFixName: String?,
+    inspection: Class<out LocalInspectionTool>,
+    vararg files: String,
+  ) {
     myFixture.enableInspections(inspection)
-    myFixture.configureByFiles("package.json")
+    if (myFixture.tempDirFixture.getFile("package.json") == null)
+      myFixture.configureByFiles("package.json")
     myFixture.configureByFiles(*files)
     myFixture.checkHighlighting()
     if (location == null || quickFixName == null) {

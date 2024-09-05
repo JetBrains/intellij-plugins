@@ -24,7 +24,7 @@ export function fromFunction<T extends (value: any, ...args: any[]) => any>(
 
 @Component({
    standalone: true,
-   imports: [FormatDate],
+   imports: [<error descr="Pipe FormatDate is never used in a component template">FormatDate</error>],
    selector: 'my-app',
    template: `
      <p>{{ date | <error descr="Unresolved pipe formatDte">formatDte</error> }}</p>

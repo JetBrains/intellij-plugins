@@ -85,6 +85,16 @@ object Angular2FixesPsiUtil {
       ?.let { ES6ImportPsiUtil.insertJSImport(scope, name, it, null) }
   }
 
+  fun removeReferenceFromImportsList(reference: JSReferenceExpression) {
+    val array = reference.parent.asSafely<JSArrayLiteralExpression>()
+    if (array != null) {
+      JSChangeUtil.removeRangeWithRemovalOfCommas(reference, array.expressions)
+    }
+    else {
+      reference.delete()
+    }
+  }
+
   private fun reformatJSObjectLiteralProperty(property: JSProperty): JSProperty {
     val propertyPointer = SmartPointerManager.createPointer(property)
     FormatFixer.create(property.parent, FormatFixer.Mode.Reformat).fixFormat()

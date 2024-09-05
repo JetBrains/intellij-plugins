@@ -2,7 +2,9 @@
 package org.angular2.entities
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterfaceClass
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
@@ -13,6 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.contextOfType
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
@@ -53,12 +56,14 @@ object Angular2EntitiesProvider {
 
   @JvmStatic
   fun getPipe(element: PsiElement?): Angular2Pipe? {
-    val pipeClass = if (element is TypeScriptFunction
-                        && TRANSFORM_METHOD == element.name
-                        && element.context is TypeScriptClass) {
-      element.context
+    val pipeClass = if (element is TypeScriptFunction && TRANSFORM_METHOD == element.name) {
+      element.context as? TypeScriptClass
     }
-    else element
+    else if (element is TypeScriptField && TRANSFORM_METHOD == element.name) {
+      element.contextOfType(TypeScriptInterfaceClass::class)
+    }
+    else
+      element
     return getEntity(pipeClass) as? Angular2Pipe
   }
 
@@ -71,8 +76,10 @@ object Angular2EntitiesProvider {
     findDirectivesCandidates(project, getElementDirectiveIndexName(elementName))
 
   @JvmStatic
-  fun findAttributeDirectivesCandidates(project: Project,
-                                        attributeName: String): List<Angular2Directive> =
+  fun findAttributeDirectivesCandidates(
+    project: Project,
+    attributeName: String,
+  ): List<Angular2Directive> =
     findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName))
 
   @JvmStatic

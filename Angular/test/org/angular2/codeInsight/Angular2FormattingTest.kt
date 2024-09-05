@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.PsiDocumentManager
@@ -106,6 +107,17 @@ class Angular2FormattingTest : Angular2TestCase("formatting", false) {
       codeStyleManager.reformat(injectedFile)
     }
   }
+
+  fun testUnusedComponentImports() =
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0,
+                     checkResult = true,
+                     additionalFiles = listOf("unusedComponentImports.html")) {
+      val codeStyleManager = CodeStyleManager.getInstance(project)
+      WriteCommandAction.runWriteCommandAction(project) {
+        codeStyleManager.reformat(file)
+        OptimizeImportsProcessor(project, file).runWithoutProgress()
+      }
+    }
 
   private fun testInterpolation(newLineAfterStart: Boolean, newLineBeforeEnd: Boolean, wrap: Int) =
     doFormattingTest(configureFileName = "interpolation.html") {

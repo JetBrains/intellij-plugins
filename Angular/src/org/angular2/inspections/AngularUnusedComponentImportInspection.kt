@@ -1,0 +1,3 @@
+package org.angular2.inspections
+
+class AngularUnusedComponentImportInspection : AngularImportsExportsOwnerConfigurationInspection(ProblemType.UNUSED_IMPORT)

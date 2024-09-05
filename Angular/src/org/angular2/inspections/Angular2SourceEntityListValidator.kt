@@ -90,6 +90,8 @@ protected constructor(private val decorator: ES6Decorator,
       }
     }
 
+    fun getProblems(problemType: T): Collection<ValidationProblem> = results.get(problemType)
+
     internal fun registerProblem(element: PsiElement,
                                  type: T,
                                  @Nls message: String,

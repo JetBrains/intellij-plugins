@@ -5,12 +5,18 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
@@ -20,14 +26,21 @@ import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlLabel
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.entities.*
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
 import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
 import org.angular2.inspections.quickfixes.MoveDeclarationOfStandaloneToImportsQuickFix
+import org.angular2.inspections.quickfixes.RemoveEntityImportQuickFix
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
+import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 
 abstract class AngularImportsExportsOwnerConfigurationInspection protected constructor(private val myProblemType: ProblemType) : LocalInspectionTool() {
 
@@ -42,12 +55,14 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
   protected enum class ProblemType {
     ENTITY_WITH_MISMATCHED_TYPE,
     RECURSIVE_IMPORT_EXPORT,
-    UNDECLARED_EXPORT
+    UNDECLARED_EXPORT,
+    UNUSED_IMPORT,
   }
 
-  private class DeclarationsValidator(decorator: ES6Decorator,
-                                      results: ValidationResults<ProblemType>)
-    : Angular2SourceEntityListValidator<Angular2Declaration, ProblemType>(
+  private class DeclarationsValidator(
+    decorator: ES6Decorator,
+    results: ValidationResults<ProblemType>,
+  ) : Angular2SourceEntityListValidator<Angular2Declaration, ProblemType>(
     decorator, results, Angular2Declaration::class.java, DECLARATIONS_PROP) {
 
     override fun processAcceptableEntity(entity: Angular2Declaration) {
@@ -63,7 +78,27 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-declarable", aClass.htmlName))
+                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-declarable", aClass.htmlName),
+                      RemoveEntityImportQuickFix(aClass.name))
+    }
+  }
+
+  private class UnusedComponentImportsValidator(
+    decorator: ES6Decorator,
+    results: ValidationResults<ProblemType>,
+    component: Angular2Component,
+  ) : Angular2SourceEntityListValidator<Angular2Declaration, ProblemType>(
+    decorator, results, Angular2Declaration::class.java, IMPORTS_PROP) {
+
+    private val usedEntities = collectUsedDeclarations(component)
+
+    override fun processAcceptableEntity(entity: Angular2Declaration) {
+      if (entity.isStandalone && !usedEntities.contains(entity)) {
+        registerProblem(ProblemType.UNUSED_IMPORT,
+                        Angular2Bundle.htmlMessage("angular.inspection.unused-component-import.message", entity.htmlLabel),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        RemoveEntityImportQuickFix(entity.entitySourceName))
+      }
     }
   }
 
@@ -72,7 +107,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
     results: ValidationResults<ProblemType>,
     entityClass: Class<T>,
     propertyName: String,
-    protected val importsOwner: Angular2ImportsOwner
+    protected val importsOwner: Angular2ImportsOwner,
   ) : Angular2SourceEntityListValidator<T, ProblemType>(decorator, results, entityClass, propertyName) {
 
     protected fun checkCyclicDependencies(owner: Angular2ImportsOwner) {
@@ -113,14 +148,16 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
     }
   }
 
-  private class ImportsValidator(decorator: ES6Decorator,
-                                 results: ValidationResults<ProblemType>,
-                                 importsOwner: Angular2ImportsOwner)
-    : ImportExportValidator<Angular2Entity>(decorator, results, Angular2Entity::class.java, IMPORTS_PROP, importsOwner) {
+  private class ImportsValidator(
+    decorator: ES6Decorator,
+    results: ValidationResults<ProblemType>,
+    importsOwner: Angular2ImportsOwner,
+  ) : ImportExportValidator<Angular2Entity>(decorator, results, Angular2Entity::class.java, IMPORTS_PROP, importsOwner) {
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-importable", aClass.htmlName))
+                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-importable", aClass.htmlName),
+                      RemoveEntityImportQuickFix(aClass.name))
     }
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
@@ -142,10 +179,11 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
     }
   }
 
-  private class ExportsValidator(decorator: ES6Decorator,
-                                 results: ValidationResults<ProblemType>,
-                                 module: Angular2Module)
-    : ImportExportValidator<Angular2Entity>(decorator, results, Angular2Entity::class.java, EXPORTS_PROP, module) {
+  private class ExportsValidator(
+    decorator: ES6Decorator,
+    results: ValidationResults<ProblemType>,
+    module: Angular2Module,
+  ) : ImportExportValidator<Angular2Entity>(decorator, results, Angular2Entity::class.java, EXPORTS_PROP, module) {
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
@@ -153,7 +191,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
                       if (importsOwner.isScopeFullyResolved)
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                       else
-                        ProblemHighlightType.WEAK_WARNING)
+                        ProblemHighlightType.WEAK_WARNING,
+                      RemoveEntityImportQuickFix(aClass.name))
     }
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
@@ -186,6 +225,9 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
   companion object {
 
+    fun getUnusedImports(decorator: ES6Decorator): List<PsiElement> =
+      getValidationResults(decorator).getProblems(ProblemType.UNUSED_IMPORT).map { it.location }
+
     private fun getValidationResults(decorator: ES6Decorator): ValidationResults<ProblemType> {
       return if (isAngularEntityDecorator(decorator, MODULE_DEC, COMPONENT_DEC))
         CachedValuesManager.getCachedValue(decorator) {
@@ -202,12 +244,55 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
                          ?: return ValidationResults.empty()
       val results = ValidationResults<ProblemType>()
 
-      for (validator in listOfNotNull(ImportsValidator(decorator, results, importsOwner),
-                                      DeclarationsValidator(decorator, results),
-                                      importsOwner.asSafely<Angular2Module>()?.let { ExportsValidator(decorator, results, it) })) {
+      for (validator in listOfNotNull(
+        ImportsValidator(decorator, results, importsOwner),
+        DeclarationsValidator(decorator, results),
+        importsOwner.asSafely<Angular2Module>()?.let { ExportsValidator(decorator, results, it) },
+        importsOwner.asSafely<Angular2Component>()?.let { UnusedComponentImportsValidator(decorator, results, it) }
+      )) {
         validator.validate()
       }
       return results
+    }
+
+    private fun collectUsedDeclarations(component: Angular2Component): Set<Angular2Declaration> {
+      val result = mutableSetOf<Angular2Declaration>()
+      val expressionVisitor = object : JSRecursiveWalkingElementVisitor() {
+        override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+          if (node is Angular2PipeReferenceExpression) {
+            val pipeMethodOrClass = node.resolve()
+            Angular2EntitiesProvider.getPipe(pipeMethodOrClass)
+              ?.let { result.add(it) }
+          }
+          super.visitJSReferenceExpression(node)
+        }
+      }
+
+      component.templateFile?.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
+        override fun visitXmlTag(tag: XmlTag) {
+          (tag.descriptor as? Angular2ElementDescriptor)?.sourceDirectives?.forEach(result::add)
+          super.visitXmlTag(tag)
+        }
+
+        override fun visitXmlAttribute(attribute: XmlAttribute) {
+          (attribute.descriptor as? Angular2AttributeDescriptor)?.sourceDirectives?.forEach(result::add)
+          if (attribute !is Angular2HtmlBoundAttribute) {
+            Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2EmbeddedExpression::class.java)
+              ?.accept(expressionVisitor)
+          }
+          super.visitXmlAttribute(attribute)
+        }
+
+        override fun visitElement(element: PsiElement) {
+          if (element is Angular2EmbeddedExpression) {
+            element.acceptChildren(expressionVisitor)
+          }
+          else {
+            super.visitElement(element)
+          }
+        }
+      })
+      return result
     }
   }
 }
