@@ -74,9 +74,7 @@ class TestProjectResolve : LightPlatformTestCase() {
   fun testScanFiles2023() = doTestScanFiles("-2023")
 
   private fun doTestScanFiles(suffix: String = "") {
-    val toolset = CPPTestCase.getTestToolSet()
-    Assume.assumeFalse(toolset.isWSL)
-    Assume.assumeFalse(toolset.isSsh)
+    Assume.assumeFalse(CPPTestCase.getTestToolSet().kind.isRemoteLike)
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = TaskNotificationListerForTest()

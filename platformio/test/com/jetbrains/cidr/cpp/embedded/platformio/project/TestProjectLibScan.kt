@@ -40,9 +40,7 @@ class TestProjectLibScan : LightPlatformTestCase() {
   }
 
   fun testScanLibraries() {
-    val toolset = CPPTestCase.getTestToolSet()
-    Assume.assumeFalse(toolset.isWSL)
-    Assume.assumeFalse(toolset.isSsh)
+    Assume.assumeFalse(CPPTestCase.getTestToolSet().kind.isRemoteLike)
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = ExternalSystemTaskNotificationListener.NULL_OBJECT
