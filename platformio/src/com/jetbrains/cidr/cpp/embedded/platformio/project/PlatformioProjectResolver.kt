@@ -222,6 +222,14 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     }
   }
 
+  private fun isPathFromPackage(path: Path): Boolean {
+    // Package paths are absolute and contain ".platformio/packages" somewhere in them
+    if (!path.isAbsolute) return false
+    val pioDirIndex = path.indexOf(Path.of(".platformio"))
+    if (pioDirIndex < 0 || pioDirIndex >= path.count() - 1) return false
+    return path.getName(pioDirIndex + 1) == Path.of("packages")
+  }
+
   private fun getCompDbJson(
     pioResolvePolicy: PlatformioProjectResolvePolicy?,
     platformioService: PlatformioService,
@@ -239,7 +247,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     checkCancelled()
 
     val compDbTokenType = object : TypeToken<List<Map<String, String>>>() {}.type
-    val compDbJson = Gson().fromJson<List<Map<String, String>>>(compDbText, compDbTokenType)?.map {
+    val compDbJson = Gson().fromJson<List<Map<String, String>>>(compDbText, compDbTokenType)?.mapNotNull {
       val command: String
       val file: String
       val directory: String
@@ -249,6 +257,13 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         directory = it["directory"]!!
       } catch(_: NullPointerException) {
         throw ExternalSystemException("Malformed Compilation Database entry! $it")
+      }
+
+      if (isPathFromPackage(Path.of(file))) {
+        // Skip platformio package files
+        // We don't want to include them in the ProjectView.
+        // Do it here so we don't save data we won't use into platformioService.
+        return@mapNotNull null
       }
       PlatformioFileScanner.CompDbEntry(file, command, directory.intern())
     } ?: emptyList()
