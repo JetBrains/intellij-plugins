@@ -16,7 +16,8 @@ enum class PrismaPreviewFeature {
   Views,
   RelationJoins,
   OmitApi,
-  PrismaSchemaFolder;
+  PrismaSchemaFolder,
+  TypedSql;
 
   val presentation: String = StringUtil.decapitalize(name)
 }
