@@ -6,6 +6,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.blockingContextToIndicator
 import com.intellij.testFramework.TestModeFlags
@@ -68,7 +69,9 @@ internal suspend fun CodeInsightTestFixture.getCodeVisionsForCaret(): List<Strin
   val visionHost = project.service<CodeVisionHost>()
   doHighlighting()
   withContext(Dispatchers.EDT) {
-    visionHost.calculateCodeVisionSync(editor, testRootDisposable)
+    writeIntentReadAction {
+      visionHost.calculateCodeVisionSync(editor, testRootDisposable)
+    }
   }
 
   return readAction {
