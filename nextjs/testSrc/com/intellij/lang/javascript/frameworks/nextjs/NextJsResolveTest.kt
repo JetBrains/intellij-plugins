@@ -58,6 +58,10 @@ class NextJsResolveTest : BasePlatformTestCase() {
     doTest("folderForExactMatching1")
   }
 
+  fun testPureReactProject() {
+    checkResolveToDestination(null, getTestName(true), myFixture, getTestName(false), "tsx")
+  }
+
   private fun doTest(destination: String = "", testProjectName: String? = null) {
     checkResolveToDestination(destination, testProjectName ?: "pathAttributeResolve", myFixture, getTestName(false), "tsx")
   }

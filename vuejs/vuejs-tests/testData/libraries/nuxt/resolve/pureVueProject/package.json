@@ -1,0 +1,6 @@
+{
+  "name": "nuxt-test",
+  "dependencies": {
+    "vue": "*"
+  }
+}

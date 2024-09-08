@@ -1,0 +1,1 @@
+export const Usage = <link href="/decla<caret>ration/declaration"/>
