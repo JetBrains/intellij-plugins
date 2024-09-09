@@ -5,27 +5,24 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.javascript.web.configure
+import com.intellij.javascript.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.webSymbols.moveToOffsetBySignature
-import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.*
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.*
-import org.angular2.Angular2TestUtil
 
 /**
  * @see Angular2TsInspectionsTest
  *
  * @see Angular2DecoratorInspectionsTest
  */
-class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return Angular2TestUtil.getBaseTestDataPath() + "inspections/template"
-  }
+class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template", false) {
 
   fun testEmptyEventBinding1() {
     doTest(1, "onc<caret>lick", "Add attribute value", AngularMissingEventHandlerInspection::class.java,
@@ -93,45 +90,37 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testBindings() {
-    myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java)
-    doTest(AngularUndefinedBindingInspection::class.java,
-           "bindings.html", "component.ts")
+    doTest(inspections = listOf(AngularUndefinedBindingInspection::class.java, HtmlUnknownAttributeInspection::class.java),
+           files = listOf("bindings.html", "component.ts"))
   }
 
   fun testBindingsWithModule() {
-    myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java)
-    doTest(AngularUndefinedBindingInspection::class.java,
-           "bindings-with-module.html", "component.ts", "bindings-module.ts")
+    doTest(inspections = listOf(AngularUndefinedBindingInspection::class.java, HtmlUnknownAttributeInspection::class.java),
+           files = listOf("bindings-with-module.html", "component.ts", "bindings-module.ts"))
   }
 
   fun testTags() {
-    myFixture.enableInspections(HtmlUnknownTagInspection::class.java)
-    doTest(AngularUndefinedTagInspection::class.java,
-           "tags.html", "component.ts")
+    doTest(inspections = listOf(AngularUndefinedTagInspection::class.java, HtmlUnknownTagInspection::class.java),
+           files = listOf("tags.html", "component.ts"))
   }
 
   fun testTagsWithModule() {
-    myFixture.enableInspections(HtmlUnknownTagInspection::class.java)
-    doTest(AngularUndefinedTagInspection::class.java,
-           "tags-with-module.html", "component.ts", "tags-module.ts")
+    doTest(inspections = listOf(AngularUndefinedTagInspection::class.java, HtmlUnknownTagInspection::class.java),
+           files = listOf("tags-with-module.html", "component.ts", "tags-module.ts"))
   }
 
   fun testStandaloneDeclarables() {
-    myFixture.enableInspections(HtmlUnknownTagInspection::class.java)
-    myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java)
-    myFixture.enableInspections(AngularUndefinedTagInspection::class.java)
-    myFixture.enableInspections(AngularUndefinedBindingInspection::class.java)
-    doTest(TypeScriptUnresolvedReferenceInspection::class.java,
-           "standalone-declarables.html", "standalone-declarables.ts", "component.ts")
+    doTest(inspections = listOf(TypeScriptUnresolvedReferenceInspection::class.java, HtmlUnknownTagInspection::class.java,
+                                HtmlUnknownAttributeInspection::class.java, AngularUndefinedTagInspection::class.java,
+                                AngularUndefinedBindingInspection::class.java),
+           files = listOf("standalone-declarables.html", "standalone-declarables.ts", "component.ts"))
   }
 
   fun testStandaloneDeclarablesInClassic() {
-    myFixture.enableInspections(HtmlUnknownTagInspection::class.java)
-    myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java)
-    myFixture.enableInspections(AngularUndefinedTagInspection::class.java)
-    myFixture.enableInspections(AngularUndefinedBindingInspection::class.java)
-    doTest(TypeScriptUnresolvedReferenceInspection::class.java,
-           "standalone-declarables-in-classic.html", "standalone-declarables-in-classic.ts", "component.ts")
+    doTest(inspections = listOf(TypeScriptUnresolvedReferenceInspection::class.java, HtmlUnknownTagInspection::class.java,
+                                HtmlUnknownAttributeInspection::class.java, AngularUndefinedTagInspection::class.java,
+                                AngularUndefinedBindingInspection::class.java),
+           files = listOf("standalone-declarables-in-classic.html", "standalone-declarables-in-classic.ts", "component.ts"))
   }
 
   fun testNgContentSelector() {
@@ -155,35 +144,30 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testHammerJS() {
-    myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java)
-    doTest(AngularUndefinedBindingInspection::class.java, "hammerJs.html")
+    doTest(inspections = listOf(AngularUndefinedBindingInspection::class.java, HtmlUnknownAttributeInspection::class.java),
+           files = listOf("hammerJs.html"))
   }
 
   fun testMissingRequiredInputBinding1() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                  Angular2TestModule.ANGULAR_COMMON_16_2_8)
-    myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(1, "<ng-<caret>template", "Create '[ngForOf]' attribute",
-           AngularMissingRequiredDirectiveInputBindingInspection::class.java,
-           "missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts")
+           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java, HtmlUnknownBooleanAttributeInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
+           files = listOf("missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts"))
   }
 
   fun testMissingRequiredInputBinding2() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                  Angular2TestModule.ANGULAR_COMMON_16_2_8)
-    myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(2, "<d<caret>iv appFooBar>", "Create '[appFooBar2]' attribute",
-           AngularMissingRequiredDirectiveInputBindingInspection::class.java,
-           "missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts")
+           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java, HtmlUnknownBooleanAttributeInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
+           files = listOf("missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts"))
   }
 
   fun testMissingRequiredInputBinding3() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                  Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(3, "<d<caret>iv appFooBar=\"foo\"", "Create 'appFooBar2' attribute",
-           AngularMissingRequiredDirectiveInputBindingInspection::class.java,
-           "missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts")
+           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java, HtmlUnknownBooleanAttributeInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
+           files = listOf("missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts"))
   }
 
   fun testTypeScriptSpecifyTypeNoFix() {
@@ -215,123 +199,145 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testInaccessibleSymbolStrict() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
-    myFixture.configure(Angular2TsConfigFile())
-    doTest(AngularInaccessibleSymbolInspection::class.java,
-           "inaccessibleSymbolStrict.ts")
+    doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           configurators = listOf(Angular2TsConfigFile()),
+           files = listOf("inaccessibleSymbolStrict.ts"))
   }
 
   fun testUnknownBlock1() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(1,
            "foo@b<caret>ar.com",
            "Escape '@' with '&#",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "unknownBlock.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("unknownBlock.html"))
   }
 
   fun testUnknownBlock2() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(2,
            "something@f<caret>or.change.com",
            "Escape '@' with '&commat;'",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "unknownBlock.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("unknownBlock.html"))
   }
 
   fun testUnknownBlock3() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(3,
            "to @foo o<caret>n",
            "Escape '@' with '&#",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "unknownBlock.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("unknownBlock.html"))
   }
 
   fun testUnknownBlock4() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(4,
            "no @<caret> block name",
            "Escape '@' with '&#",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "unknownBlock.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("unknownBlock.html"))
   }
 
   fun testUnknownBlockInjected() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(1,
            "the @<caret>unknown block",
            "Escape '@' with '&#",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "unknownBlockInjected.ts")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("unknownBlockInjected.ts"))
   }
 
   fun testBraceEscape() {
     doTest(1,
            "e {<caret> a",
            "Escape '{' with '&#123;'",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "braceEscape.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_16_2_8),
+           files = listOf("braceEscape.html"))
   }
 
   fun testBraceEscapeNg17_1() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(1,
            "e {<caret> a",
            "Escape '{' with '&#123;'",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "braceEscapeNg17.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("braceEscapeNg17.html"))
   }
 
   fun testBraceEscapeNg17_2() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
     doTest(2,
            "closing }<caret>",
            "Escape '",
-           AngularIncorrectBlockUsageInspection::class.java,
-           "braceEscapeNg17.html")
+           inspections = listOf(AngularIncorrectBlockUsageInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("braceEscapeNg17.html"))
   }
 
   fun testDeferBlockOnParameter() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_3_0)
-    doTest(AngularDeferBlockOnTriggerInspection::class.java,
-           "defer-block-on-trigger.html")
+    doTest(inspections = listOf(AngularDeferBlockOnTriggerInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("defer-block-on-trigger.html"))
   }
 
-  private fun doTestNoFix(location: String,
-                          inspection: Class<out LocalInspectionTool?>?,
-                          quickFixName: String) {
+  private fun doTestNoFix(
+    location: String,
+    inspection: Class<out LocalInspectionTool?>?,
+    quickFixName: String,
+  ) {
     if (inspection != null) {
       myFixture.enableInspections(inspection)
     }
-    myFixture.configureByFiles("package.json")
+    myFixture.configureDependencies()
     myFixture.configureByFiles(location)
     myFixture.checkHighlighting()
     assertNull(myFixture.getAvailableIntention(quickFixName))
   }
 
-  private fun doTest(inspection: Class<out LocalInspectionTool?>,
-                     vararg files: String) {
+  private fun doTest(
+    inspection: Class<out LocalInspectionTool?>,
+    vararg files: String,
+  ) {
     doTest(1, null, null, inspection, *files)
   }
 
-  private fun doTest(testNr: Int,
-                     location: String?,
-                     quickFixName: String?,
-                     inspection: Class<out LocalInspectionTool?>,
-                     vararg files: String) {
-    myFixture.enableInspections(inspection)
-    if (myFixture.getTempDirFixture().getFile("package.json") == null) {
-      myFixture.configureByFiles("package.json")
+  private fun doTest(
+    testNr: Int = 1,
+    location: String? = null,
+    quickFixName: String? = null,
+    inspection: Class<out LocalInspectionTool?>,
+    vararg files: String,
+  ) {
+    doTest(testNr, location, quickFixName, listOf(inspection), files = files.toList())
+  }
+
+  private fun doTest(
+    testNr: Int = 1,
+    location: String? = null,
+    quickFixName: String? = null,
+    inspections: List<Class<out LocalInspectionTool?>>,
+    dependencies: List<Angular2TestModule> = listOf(ANGULAR_CORE_8_2_14),
+    configurators: List<WebFrameworkTestConfigurator> = emptyList(),
+    files: List<String>,
+  ) {
+    myFixture.enableInspections(inspections)
+    doConfiguredTest(
+      *dependencies.toTypedArray(),
+      additionalFiles = files.drop(1),
+      configureFileName = files[0],
+      configurators = configurators,
+    ) {
+      myFixture.checkHighlighting()
+      if (location == null || quickFixName == null) {
+        return@doConfiguredTest
+      }
+      myFixture.moveToOffsetBySignature(location)
+      myFixture.launchAction(myFixture.findSingleIntention(quickFixName))
+      val lastDot = files[0].lastIndexOf('.')
+      myFixture.checkResultByFile(files[0].substring(0, lastDot) + ".after" + testNr + files[0].substring(lastDot))
     }
-    myFixture.configureByFiles(*files)
-    myFixture.checkHighlighting()
-    if (location == null || quickFixName == null) {
-      return
-    }
-    myFixture.moveToOffsetBySignature(location)
-    myFixture.launchAction(myFixture.findSingleIntention(quickFixName))
-    val lastDot = files[0].lastIndexOf('.')
-    myFixture.checkResultByFile(files[0].substring(0, lastDot) + ".after" + testNr + files[0].substring(lastDot))
   }
 }

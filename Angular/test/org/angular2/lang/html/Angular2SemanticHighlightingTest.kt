@@ -5,7 +5,7 @@ import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
 
 class Angular2SemanticHighlightingTest : Angular2CodeInsightFixtureTestCase() {
@@ -21,8 +21,7 @@ class Angular2SemanticHighlightingTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testCustomComponent() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                  Angular2TestModule.ANGULAR_FORMS_8_2_14)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.ANGULAR_FORMS_8_2_14)
     myFixture.configureByFiles("customComponent.html", "customComponent.ts", "customComponent2.ts")
     checkSymbolNames()
   }

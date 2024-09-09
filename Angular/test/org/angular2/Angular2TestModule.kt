@@ -2,17 +2,10 @@
 package org.angular2
 
 import com.intellij.javascript.web.WebFrameworkTestModule
-import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
-import com.intellij.lang.resharper.ReSharperTestUtil
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.testFramework.PsiTestUtil
+import com.intellij.javascript.web.configureDependencies
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import one.util.streamex.StreamEx
 
-enum class Angular2TestModule(private val myPackageName: String, private val myVersion: String) : WebFrameworkTestModule {
+enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFrameworkTestModule {
   AGM_CORE_1_0_0_BETA_5("@agm/core", "1.0.0-beta.5"),
 
   ANGULAR_CDK_14_2_0("@angular/cdk", "14.2.0"),
@@ -69,51 +62,15 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   override val packageNames: List<String> = listOf(myPackageName)
   override val folder: String = myPackageName.replace('/', '#') + "/" + myVersion + "/node_modules"
 
-  val location: String
-    get() = DATA_DIR + myPackageName.replace('/', '#') + "/" + myVersion + "/"
-
   companion object {
-    private val DATA_DIR = FileUtilRt.toCanonicalPath(
-      Angular2TestUtil.getBaseTestDataPath() + "node_modules/", '/', false)
+    private val testDataRoot = Angular2TestUtil.getBaseTestDataPath()
+    private val defaultDependencies = mapOf("@angular/core" to "*")
 
     @JvmStatic
-    fun configureCopy(fixture: CodeInsightTestFixture, vararg modules: Angular2TestModule) {
-      configure(fixture, false, modules = modules)
-    }
-
-    @JvmStatic
-    fun configureLink(fixture: CodeInsightTestFixture, vararg modules: Angular2TestModule) {
-      configure(fixture, true, modules = modules)
-    }
-
-    @JvmStatic
-    fun configure(
-      fixture: CodeInsightTestFixture,
-      linkSourceRoot: Boolean,
+    fun CodeInsightTestFixture.configureDependencies(
       vararg modules: Angular2TestModule,
     ) {
-      if (modules.isNotEmpty()) {
-        if (linkSourceRoot) {
-          WriteAction.runAndWait<RuntimeException> {
-            for (module in modules) {
-              val nodeModules = ReSharperTestUtil.fetchVirtualFile("", module.location + "node_modules",
-                                                                   fixture.testRootDisposable)
-              PsiTestUtil.addSourceContentToRoots(fixture.getModule(), nodeModules)
-              Disposer.register(fixture.testRootDisposable
-              ) { PsiTestUtil.removeContentEntry(fixture.getModule(), nodeModules) }
-            }
-          }
-        }
-        else {
-          for (module in modules) {
-            fixture.getTempDirFixture().copyAll(module.location, ".")
-          }
-        }
-      }
-      if (fixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON) == null) {
-        JSTestUtils.addPackageJson(fixture, *StreamEx.of(*modules).map { module: Angular2TestModule -> module.myPackageName }
-          .append("@angular/core").distinct().toArray(String::class.java))
-      }
+      configureDependencies(testDataRoot, defaultDependencies, *modules)
     }
   }
 }

@@ -33,12 +33,12 @@ import com.intellij.webSymbols.resolveReference
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureDependencies
+import org.angular2.Angular2TestUtil
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
-import org.angular2.Angular2TestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
@@ -147,7 +147,8 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testUserSpecifiedInjection() {
-    myFixture.configureByFiles("userSpecifiedLang.ts", "package.json")
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_16_2_8)
+    myFixture.configureByFiles("userSpecifiedLang.ts")
     for (signature in listOf(Pair("<div><caret></div>", Angular2HtmlLanguage.id),
                              Pair("\$text<caret>-color", "SCSS"),  //fails if correct order of injectors is not ensured
                              Pair("color: <caret>#00aa00", CSSLanguage.INSTANCE.id))) {
@@ -203,7 +204,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testAngularCliLibrary() {
     myFixture.copyDirectoryToProject("angular-cli-lib", ".")
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_L10N_4_2_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_L10N_4_2_0)
 
     // Add "dist" folder to excludes
     ModuleRootModificationUtil.updateModel(module) { model: ModifiableRootModel ->
@@ -256,9 +257,9 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
   fun testAngularCliProjectWithReact() {
     myFixture.configureByText("package.json", """{ "dependencies": {"react": "*"} }""")
     myFixture.configureByText("angular.json", """{"projects":{"test":{"sourceRoot":"src","root":""}}}""")
-    TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.configureByText ("root.html", "").language)
+    TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.configureByText("root.html", "").language)
     myFixture.tempDirFixture.createFile("src/src.html")
-    TestCase.assertEquals(Angular2HtmlLanguage, myFixture.configureFromTempProjectFile ("src/src.html").language)
+    TestCase.assertEquals(Angular2HtmlLanguage, myFixture.configureFromTempProjectFile("src/src.html").language)
   }
 
   fun testTemplateReferencedThroughImportStatement() {
@@ -281,7 +282,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testCompletionOnTemplateReferenceVariable() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_4_0_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_4_0_0)
     myFixture.configureByFiles("ref-var.html", "ref-var.ts")
     val defaultProps: List<String> = mutableListOf("constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable",
                                                    "toLocaleString", "toString", "valueOf")

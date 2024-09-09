@@ -4,9 +4,7 @@ package org.angular2.codeInsight.inspections
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.modules.imports.JSImportAction
-import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
@@ -16,10 +14,8 @@ import com.intellij.testFramework.IndexingTestUtil.Companion.waitUntilIndexesAre
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.webSymbols.checkListByFile
 import com.intellij.webSymbols.moveToOffsetBySignature
-import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureLink
-import org.angular2.Angular2TestUtil
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
@@ -30,14 +26,7 @@ import java.util.*
 /**
  * Also tests completion InsertHandlers.
  */
-class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return Angular2TestUtil.getBaseTestDataPath() + "inspections/"
-  }
-
-  override fun getTestRoot(): String {
-    return "ngModuleImport/"
-  }
+class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport", false) {
 
   fun testNgFor() {
     doMultiFileTest("angular-commons",
@@ -349,75 +338,76 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     }
   }
 
-  private fun doMultiFileTest(mainFile: String,
-                              intention: String,
-                              importName: String? = null,
-                              modules: Array<out Angular2TestModule> = ANGULAR_4,
-                              configure: () -> Unit = {}) {
+  private fun doMultiFileTest(
+    mainFile: String,
+    intention: String,
+    importName: String? = null,
+    modules: Array<out Angular2TestModule> = ANGULAR_4,
+    configure: () -> Unit = {},
+  ) {
     doMultiFileTest(getTestName(true), mainFile, null,
                     intention, importName, modules, configure = configure)
   }
 
-  private fun doMultiFileTest(testName: String,
-                              mainFile: String,
-                              signature: String?,
-                              intention: String,
-                              importName: String?,
-                              modules: Array<out Angular2TestModule> = ANGULAR_4,
-                              checkQuickFixList: Boolean = false,
-                              expectedImports: Set<String> = emptySet(),
-                              configure: () -> Unit = {}) {
+  private fun doMultiFileTest(
+    testName: String,
+    mainFile: String,
+    signature: String?,
+    intention: String,
+    importName: String?,
+    modules: Array<out Angular2TestModule> = ANGULAR_4,
+    checkQuickFixList: Boolean = false,
+    expectedImports: Set<String> = emptySet(),
+    configure: () -> Unit = {},
+  ) {
     initInspections()
-    doTest(
-      { _, _ ->
-        configure()
-        configureTestAndRun(mainFile, signature, importName, expectedImports, modules, Runnable {
-          if (checkQuickFixList) {
-            myFixture.availableIntentions // load intentions
-            val intentions = ShowIntentionActionsHandler.calcCachedIntentions(myFixture.getProject(), getHostEditor(), getHostFileAtCaret())
-            myFixture.checkListByFile((intentions.allActions.apply { retainAll(intentions.errorFixes + intentions.inspectionFixes) })
-                                        .map { it.text },
-                                      "$testName.quickFixes.txt", false)
-          }
-          myFixture.launchAction(myFixture.findSingleIntention(intention))
-        })
-      }, testName)
+    doConfiguredTest(*modules, dir = true, dirName = testName, configureFileName = mainFile, checkResult = true) {
+      configure()
+      setUpEditor(signature, importName, expectedImports)
+      if (checkQuickFixList) {
+        myFixture.availableIntentions // load intentions
+        val intentions = ShowIntentionActionsHandler.calcCachedIntentions(myFixture.getProject(), getHostEditor(), getHostFileAtCaret())
+        myFixture.checkListByFile((intentions.allActions.apply { retainAll(intentions.errorFixes + intentions.inspectionFixes) })
+                                    .map { it.text },
+                                  "$testName.quickFixes.txt", false)
+      }
+      myFixture.launchAction(myFixture.findSingleIntention(intention))
+    }
   }
 
-  private fun doTagCompletionTest(mainFile: String,
-                                  importToSelect: String?) {
+  private fun doTagCompletionTest(
+    mainFile: String,
+    importToSelect: String?,
+  ) {
     doCompletionTest(getTestName(true).removeSuffix("Completion"),
                      mainFile, "foo", "foo\n", importToSelect)
   }
 
-  private fun doCompletionTest(testName: String,
-                               mainFile: String,
-                               toRemove: String,
-                               toType: String,
-                               importToSelect: String?,
-                               modules: Array<out Angular2TestModule> = ANGULAR_4,
-                               configure: () -> Unit = {}) {
-    doTest(
-      { _, _ ->
-        configure()
-        configureTestAndRun(mainFile, "<caret>$toRemove", importToSelect, emptySet(), modules, Runnable {
-          myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective")
-          myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
-                                                                 myFixture.getCaretOffset() + toRemove.length)
-          myFixture.type("\b")
-          myFixture.completeBasic()
-          myFixture.type(toType)
-        })
-      }, testName)
+  private fun doCompletionTest(
+    testName: String,
+    mainFile: String,
+    toRemove: String,
+    toType: String,
+    importToSelect: String?,
+    modules: Array<out Angular2TestModule> = ANGULAR_4,
+    configure: () -> Unit = {},
+  ) {
+    doConfiguredTest(*modules, dir = true, dirName = testName, configureFileName = mainFile, checkResult = true) {
+      configure()
+      setUpEditor("<caret>$toRemove", importToSelect, emptySet())
+      myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective")
+      myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
+                                                             myFixture.getCaretOffset() + toRemove.length)
+      myFixture.type("\b")
+      myFixture.completeBasic()
+      myFixture.type(toType)
+    }
   }
 
   @Throws(IOException::class)
-  private fun configureTestAndRun(mainFile: String, signature: String?, importName: String?,
-                                  expectedImports: Set<String>, modules: Array<out Angular2TestModule>,
-                                  runnable: Runnable) {
-    val hasPkgJson = myFixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON) != null
-    configureLink(myFixture, *modules)
-    myFixture.configureFromTempProjectFile(mainFile)
+  private fun setUpEditor(
+    signature: String?, importName: String?, expectedImports: Set<String>,
+  ) {
     if (signature != null) {
       myFixture.moveToOffsetBySignature(signature)
     }
@@ -426,10 +416,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     }
     if (expectedImports.isNotEmpty()) {
       myFixture.getEditor().putUserData(JSImportAction.EXPECTED_NAMES_TO_IMPORT, expectedImports)
-    }
-    runnable.run()
-    if (!hasPkgJson) {
-      WriteAction.runAndWait<IOException> { myFixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON)!!.delete(null) }
     }
   }
 

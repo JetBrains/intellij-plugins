@@ -12,8 +12,7 @@ import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
-import org.angular2.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
@@ -23,8 +22,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   private fun doTestAsyncPipeResolution() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                  Angular2TestModule.RXJS_6_4_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts")
     var transformMethod = myFixture.resolveReference("makeObservable() | as<caret>ync")
     assertEquals("common.d.ts", transformMethod.getContainingFile().getName())
@@ -55,7 +53,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testStandardPipesCompletion() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14)
     myFixture.configureByFiles("pipe.html")
     myFixture.completeBasic()
     val variants = myFixture.getLookupElementStrings()!!
@@ -64,7 +62,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testNormalPipeResultCompletion() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14)
     myFixture.configureByFiles("pipeResultCompletion.html")
     myFixture.completeBasic()
     val variants = myFixture.getLookupElementStrings()!!
@@ -73,7 +71,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testGenericClassPipeResultCompletion() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14)
     myFixture.configureByFiles("genericClassPipe.ts")
     myFixture.completeBasic()
     val variants = myFixture.getLookupElementStrings()!!
@@ -81,7 +79,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testAsyncPipeResultCompletion() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts")
     myFixture.completeBasic()
     val variants = myFixture.getLookupElementStrings()!!
@@ -100,7 +98,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testAsyncNgIfAsContentAssist() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.RXJS_7_8_1)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.RXJS_7_8_1)
     myFixture.configureByFiles("ngIfAs.ts")
     myFixture.completeBasic()
     myFixture.checkResultByFile("ngIfAs.after.ts")
@@ -108,13 +106,13 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testAsyncNgIfAsObjType() {
     TypeScriptTestUtil.forceConfig(project, null, testRootDisposable)
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
     myFixture.configureByFiles("ngIfAsObj.ts")
     assertEquals("{foo: Person}", (myFixture.getElementAtCaret() as JSTypeOwner).getJSType()!!.resolvedTypeText)
   }
 
   fun testAsyncNgIfAsObjTypeStrictCheck() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFiles("ngIfAsObj.ts")
     assertEquals("{foo: Person|null}", (myFixture.getElementAtCaret() as JSTypeOwner).getJSType()!!.resolvedTypeText)
@@ -122,13 +120,13 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testMixinPipes() {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.configureByFiles("mixinPipes.ts")
     myFixture.checkHighlighting()
   }
 
   fun testContextAware() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
     myFixture.configureByFiles("context-aware.html", "context-aware.ts")
     for (check in listOf(
       Pair("{{ 12 | }}", mutableListOf(
@@ -160,7 +158,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testTypedPipe() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8)
     myFixture.configureByFile("typedPipe.ts")
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.checkHighlighting()

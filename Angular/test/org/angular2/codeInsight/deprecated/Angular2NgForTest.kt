@@ -8,7 +8,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configure
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
@@ -53,7 +53,7 @@ class Angular2NgForTest : Angular2CodeInsightFixtureTestCase() {
   fun testNgForWithPipe() { // WEB-51209
     myFixture.enableInspections(*JSDaemonAnalyzerLightTestCase.configureDefaultLocalInspectionTools().toTypedArray())
     myFixture.configureByFiles("NgForWithPipeHTML.html", "NgForWithPipe.ts", "package.json")
-    configure(myFixture, false, Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5)
     myFixture.checkHighlighting()
     myFixture.type('.')
     myFixture.complete(CompletionType.BASIC)
