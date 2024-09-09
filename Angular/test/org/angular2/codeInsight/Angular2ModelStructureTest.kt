@@ -3,21 +3,15 @@ package org.angular2.codeInsight
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.DebugOutputPrinter
-import one.util.streamex.StreamEx
-import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestUtil
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntitiesProvider.getEntity
 import org.angular2.web.Angular2Symbol
-import org.angular2.Angular2TestUtil
-import java.util.*
 
-class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return Angular2TestUtil.getBaseTestDataPath() + "modelStructure"
-  }
+class Angular2ModelStructureTest : Angular2TestCase("modelStructure", false) {
 
   fun testCommonModuleResolution() {
     doResolutionTest("common",
@@ -226,51 +220,54 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
     )
   }
 
-  private fun doResolutionTest(directory: String,
-                               moduleFile: String,
-                               signature: String,
-                               checkFile: String,
-                               vararg modules: Angular2TestModule) {
+  private fun doResolutionTest(
+    directory: String,
+    moduleFile: String,
+    signature: String,
+    checkFile: String,
+    vararg modules: Angular2TestModule,
+  ) {
     doResolutionTest(directory, moduleFile, signature, checkFile, false, *modules)
   }
 
-  private fun doResolutionTest(directory: String,
-                               moduleFile: String,
-                               signature: String,
-                               checkFile: String,
-                               printDirectives: Boolean,
-                               vararg modules: Angular2TestModule) {
-    val testDir = myFixture.copyDirectoryToProject(directory, "/")
-    Angular2TestModule.configureCopy(myFixture, *modules)
-    myFixture.openFileInEditor(testDir.findFileByRelativePath(moduleFile)!!)
-    val moduleOffset = Angular2TestUtil.findOffsetBySignature(signature, myFixture.getFile())
-    val el = myFixture.getFile().findElementAt(moduleOffset)!!
-    val moduleClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
-    val module = getEntity(moduleClass) as Angular2ImportsOwner
-    val result = Angular2EntitiesDebugOutputPrinter(printDirectives).printValue(module)
-    myFixture.configureByText("__my-check.txt", result)
-    myFixture.checkResultByFile("$directory/$checkFile", true)
+  private fun doResolutionTest(
+    directory: String,
+    moduleFile: String,
+    signature: String,
+    checkFile: String,
+    printDirectives: Boolean,
+    vararg modules: Angular2TestModule,
+  ) {
+    doConfiguredTest(*modules, dir = true, dirName = directory, configureFileName = moduleFile) {
+      val moduleOffset = Angular2TestUtil.findOffsetBySignature(signature, myFixture.getFile())
+      val el = myFixture.getFile().findElementAt(moduleOffset)!!
+      val moduleClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
+      val module = getEntity(moduleClass) as Angular2ImportsOwner
+      val result = Angular2EntitiesDebugOutputPrinter(printDirectives).printValue(module)
+      myFixture.configureByText("__my-check.txt", result)
+      myFixture.checkResultByFile("$directory/$checkFile", true)
+    }
   }
 
-  private fun doDeclarationModulesCheckText(directory: String,
-                                            declarationFile: String,
-                                            signature: String,
-                                            vararg modules: String) {
-    val testDir = myFixture.copyDirectoryToProject(directory, "/")
-    Angular2TestModule.configureLink(myFixture)
-    myFixture.openFileInEditor(testDir.findFileByRelativePath(declarationFile)!!)
-    val moduleOffset = Angular2TestUtil.findOffsetBySignature(signature, myFixture.getFile())
-    val el = myFixture.getFile().findElementAt(moduleOffset)!!
-    val declarationClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
-    val declaration = (getEntity(declarationClass) as Angular2Declaration?)!!
-    assertEquals(ContainerUtil.sorted(Arrays.asList(*modules)) { obj: String, str: String? ->
-      obj.compareTo(
-        str!!, ignoreCase = true)
-    },
-                 StreamEx.of(declaration.allDeclaringModules)
-                   .map { m: Angular2Module -> m.getName() }
-                   .sorted { obj: String, str: String? -> obj.compareTo(str!!, ignoreCase = true) }
-                   .toList())
+  private fun doDeclarationModulesCheckText(
+    directory: String,
+    declarationFile: String,
+    signature: String,
+    vararg modules: String,
+  ) {
+    doConfiguredTest(dir = true, dirName = directory, configureFileName = declarationFile) {
+      val moduleOffset = Angular2TestUtil.findOffsetBySignature(signature, myFixture.getFile())
+      val el = myFixture.getFile().findElementAt(moduleOffset)!!
+      val declarationClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
+      val declaration = (getEntity(declarationClass) as Angular2Declaration?)!!
+      assertEquals(
+        modules.sortedWith { obj, str -> obj.compareTo(str, ignoreCase = true) },
+        declaration.allDeclaringModules
+          .map { it.getName() }
+          .sortedWith { obj, str -> obj.compareTo(str, ignoreCase = true) }
+      )
+    }
+
   }
 
   private class Angular2EntitiesDebugOutputPrinter(val printDirectives: Boolean) : DebugOutputPrinter() {
@@ -350,7 +347,8 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
 
       if (!printedElements.add(directive)) {
         indent(level + 1).append("<printed above>\n")
-      } else {
+      }
+      else {
         printProperty(level + 1, "inputs", directive.inputs)
         printProperty(level + 1, "outputs", directive.outputs)
         indent(level + 1)
@@ -359,9 +357,11 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
       return this
     }
 
-    private fun StringBuilder.printEntity(level: Int,
-                                          entity: Angular2Entity,
-                                          printer: (level: Int) -> Unit): StringBuilder {
+    private fun StringBuilder.printEntity(
+      level: Int,
+      entity: Angular2Entity,
+      printer: (level: Int) -> Unit,
+    ): StringBuilder {
       append(entity.getName())
         .append(": ")
         .append(entity.javaClass.getSimpleName())

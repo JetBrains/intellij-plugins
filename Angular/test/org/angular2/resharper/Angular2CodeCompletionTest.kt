@@ -8,6 +8,7 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.WebSymbol
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2")
 class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {
@@ -38,13 +39,13 @@ class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {
 
   override fun doSingleTest(testFile: String, path: String) {
     if (name.startsWith("external")) {
-      Angular2TestModule.configureLink(
-        myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0, Angular2TestModule.ANGULAR_CORE_4_0_0,
+      myFixture.configureDependencies(
+        Angular2TestModule.ANGULAR_COMMON_4_0_0, Angular2TestModule.ANGULAR_CORE_4_0_0,
         Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0, Angular2TestModule.ANGULAR_ROUTER_4_0_0, Angular2TestModule.ANGULAR_FORMS_4_0_0,
         Angular2TestModule.IONIC_ANGULAR_3_0_1)
     }
     else {
-      Angular2TestModule.configureLink(myFixture)
+      myFixture.configureDependencies()
     }
     super.doSingleTest(testFile, path)
   }

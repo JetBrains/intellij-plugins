@@ -8,7 +8,7 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
 
 class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
@@ -131,7 +131,7 @@ class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testBoundClassCodeCompletion() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_4_0_0)
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json")
@@ -153,7 +153,7 @@ class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testBoundClassCodeCompletionCanonical() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_4_0_0)
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json")
@@ -177,7 +177,7 @@ class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testClassCodeCompletionRun() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_15_1_5)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_15_1_5)
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json")

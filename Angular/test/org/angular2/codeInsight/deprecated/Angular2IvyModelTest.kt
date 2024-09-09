@@ -10,12 +10,11 @@ import com.intellij.webSymbols.webSymbolAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
-import org.angular2.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TestModule.Companion.configureDependencies
+import org.angular2.Angular2TestUtil
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
-import org.angular2.Angular2TestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
@@ -24,7 +23,7 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testInterModuleExtends() {
-    configureCopy(myFixture, Angular2TestModule.NG_ZORRO_ANTD_8_5_0_IVY)
+    myFixture.configureDependencies(Angular2TestModule.NG_ZORRO_ANTD_8_5_0_IVY)
     myFixture.copyDirectoryToProject("ng-zorro", ".")
     myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java,
                                 AngularUndefinedBindingInspection::class.java)
@@ -36,7 +35,7 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     //Test component matching, abstract class in hierarchy and indirect node module indexing
     myFixture.copyDirectoryToProject("material", ".")
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_9_1_1_MIXED, Angular2TestModule.ANGULAR_MATERIAL_8_2_3_MIXED)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_9_1_1_MIXED, Angular2TestModule.ANGULAR_MATERIAL_8_2_3_MIXED)
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.configureFromTempProjectFile("module.ts")
     myFixture.checkHighlighting()
@@ -50,7 +49,7 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testIonicMetadataResolution() {
     myFixture.copyDirectoryToProject("@ionic", ".")
-    configureCopy(myFixture, Angular2TestModule.IONIC_ANGULAR_4_11_4_IVY)
+    myFixture.configureDependencies(Angular2TestModule.IONIC_ANGULAR_4_11_4_IVY)
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection::class.java,
                                 AngularUndefinedTagInspection::class.java,
                                 AngularUndefinedBindingInspection::class.java,
@@ -83,7 +82,7 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
   fun testTransloco() {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.copyDirectoryToProject("transloco", ".")
-    configureLink(myFixture, Angular2TestModule.NGNEAT_TRANSLOCO_2_6_0_IVY)
+    myFixture.configureDependencies(Angular2TestModule.NGNEAT_TRANSLOCO_2_6_0_IVY)
     myFixture.configureFromTempProjectFile("transloco.html")
     myFixture.checkHighlighting()
   }

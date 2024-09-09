@@ -5,7 +5,7 @@ import com.intellij.testFramework.UsefulTestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
@@ -15,7 +15,7 @@ class Angular2NgTemplateLetTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testNgFor() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
     val variants = myFixture.getCompletionVariants("NgFor.ts")
     assertNotNull(variants)
     UsefulTestCase.assertSameElements(variants!!, "isPrototypeOf", "propertyIsEnumerable", "valueOf", "is_hidden", "constructor",
@@ -24,7 +24,7 @@ class Angular2NgTemplateLetTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testNgForInspections() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.configureByFiles("NgForInspections.ts")
     myFixture.checkHighlighting()

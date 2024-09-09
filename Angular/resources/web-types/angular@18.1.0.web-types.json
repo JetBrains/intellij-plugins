@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
   "name": "@angular/core",
   "framework": "angular",
-  "version": "18.1.0-rc.0",
+  "version": "18.1.0",
   "description-markup": "markdown",
   "default-icon": "icons/angular2.svg",
   "framework-config": {

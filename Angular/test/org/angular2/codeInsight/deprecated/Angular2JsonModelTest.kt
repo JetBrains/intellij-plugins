@@ -8,13 +8,15 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveWebSymbolReference
 import com.intellij.webSymbols.webSymbolAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureDependencies
+import org.angular2.Angular2TestUtil
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule
 import org.angular2.entities.metadata.psi.Angular2MetadataReference
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
@@ -22,7 +24,6 @@ import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory.MetadataFileViewProvider
 import org.angular2.lang.metadata.psi.MetadataFileImpl
-import org.angular2.Angular2TestUtil
 import java.io.File
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
@@ -135,7 +136,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testMaterialMetadataResolution() {
     //Test component matching and indirect node module indexing
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1, Angular2TestModule.ANGULAR_COMMON_4_0_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_MATERIAL_7_2_1, Angular2TestModule.ANGULAR_COMMON_4_0_0)
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection::class.java,
                                 AngularUndefinedTagInspection::class.java)
     myFixture.configureByFile("material/module.ts")
@@ -146,10 +147,12 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testMaterialMetadataStubGeneration() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1, Angular2TestModule.ANGULAR_COMMON_4_0_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_MATERIAL_7_2_1, Angular2TestModule.ANGULAR_COMMON_4_0_0)
     val materialDir = myFixture.getTempDirFixture().getFile("node_modules/@angular/material")
     val pathPrefix = materialDir!!.getPath()
     val material = myFixture.getPsiManager().findDirectory(materialDir)
+    // to load AST for changed files before it's prohibited by "fileTreeAccessFilter"
+    CodeInsightTestFixtureImpl.ensureIndexesUpToDate(project)
     material!!.acceptChildren(object : PsiElementVisitor() {
       override fun visitFile(file: PsiFile) {
         if (file.getName().endsWith(".metadata.json")) {
@@ -171,7 +174,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testIonicMetadataResolution() {
-    configureCopy(myFixture, Angular2TestModule.IONIC_ANGULAR_4_1_1)
+    myFixture.configureDependencies(Angular2TestModule.IONIC_ANGULAR_4_1_1)
     myFixture.copyDirectoryToProject("ionic", ".")
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection::class.java,
                                 AngularUndefinedTagInspection::class.java,

@@ -77,7 +77,7 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
   }
 
   protected fun checkLookupElementsInSplitSchema(fileDir: String? = null, includePrimitive: Boolean = false) {
-    doConfiguredTest(dir = true, configureFileName = "$fileDir/$testName.$defaultExtension") {
+    doConfiguredTest(dir = true, configureFileName = "${if (fileDir != null) "$fileDir/" else ""}$testName.$defaultExtension") {
       checkLookupItems(
         renderPriority = true,
         renderTypeText = true,
