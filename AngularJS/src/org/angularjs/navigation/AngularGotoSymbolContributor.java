@@ -1,7 +1,7 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.navigation;
 
-import com.intellij.navigation.ChooseByNameContributorEx;
+import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -19,17 +19,17 @@ import java.util.Objects;
 /**
  * @author Dennis.Ushakov
  */
-public final class AngularGotoSymbolContributor implements ChooseByNameContributorEx {
+public final class AngularGotoSymbolContributor extends DumbAwareChooseByNameContributor {
   @Override
-  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void doProcessNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     Project project = Objects.requireNonNull(scope.getProject());
     ContainerUtil.process(AngularIndexUtil.getAllKeys(AngularSymbolIndex.KEY, project), processor);
   }
 
   @Override
-  public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<? super NavigationItem> processor,
-                                      @NotNull FindSymbolParameters parameters) {
+  public void doProcessElementsWithName(@NotNull String name,
+                                        @NotNull Processor<? super NavigationItem> processor,
+                                        @NotNull FindSymbolParameters parameters) {
     AngularIndexUtil.multiResolve(parameters.getProject(), parameters.getSearchScope(),
                                   AngularSymbolIndex.KEY, name, processor);
   }

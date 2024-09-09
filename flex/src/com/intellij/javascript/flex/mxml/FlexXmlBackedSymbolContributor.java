@@ -1,13 +1,13 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor;
 import com.intellij.lang.javascript.navigation.JavaScriptClassContributor;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
-import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.navigation.PsiElementNavigationItem;
@@ -38,9 +38,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collections;
 
-public final class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx {
+public final class FlexXmlBackedSymbolContributor extends DumbAwareChooseByNameContributor {
   @Override
-  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void doProcessNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     if (!FileBasedIndex.getInstance().processAllKeys(FlexXmlBackedMembersIndex.NAME, processor, scope, filter)) return;
     FileType type = JavaScriptSupportLoader.getMxmlFileType();
     if (type != null) {
@@ -49,9 +49,9 @@ public final class FlexXmlBackedSymbolContributor implements ChooseByNameContrib
   }
 
   @Override
-  public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<? super NavigationItem> processor,
-                                      @NotNull FindSymbolParameters parameters) {
+  public void doProcessElementsWithName(@NotNull String name,
+                                        @NotNull Processor<? super NavigationItem> processor,
+                                        @NotNull FindSymbolParameters parameters) {
     boolean[] result = {true};
     PsiManager psiManager = PsiManager.getInstance(parameters.getProject());
     FileBasedIndex.getInstance().getFilesWithKey(FlexXmlBackedMembersIndex.NAME, Collections.singleton(name), file -> {

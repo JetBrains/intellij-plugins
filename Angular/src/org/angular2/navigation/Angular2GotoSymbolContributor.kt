@@ -1,8 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.navigation
 
+import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.navigation.ChooseByNameContributorEx
 import com.intellij.navigation.NavigationItem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
@@ -23,10 +23,8 @@ import org.angular2.index.Angular2IndexUtil
 import org.angular2.index.Angular2SourceDirectiveIndexKey
 import org.angular2.index.Angular2SymbolIndex
 
-class Angular2GotoSymbolContributor : ChooseByNameContributorEx {
-  override fun processNames(processor: Processor<in String>,
-                            scope: GlobalSearchScope,
-                            filter: IdFilter?) {
+class Angular2GotoSymbolContributor : DumbAwareChooseByNameContributor() {
+  override fun doProcessNames(processor: Processor<in String>, scope: GlobalSearchScope, filter: IdFilter?) {
     StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndexKey, { key: String ->
       val name = when {
         isElementDirectiveIndexName(key) -> {
@@ -47,9 +45,7 @@ class Angular2GotoSymbolContributor : ChooseByNameContributorEx {
     ContainerUtil.process(Angular2IndexUtil.getAllKeys(Angular2SymbolIndex.KEY, scope.project!!), processor)
   }
 
-  override fun processElementsWithName(name: String,
-                                       processor: Processor<in NavigationItem>,
-                                       parameters: FindSymbolParameters) {
+  override fun doProcessElementsWithName(name: String, processor: Processor<in NavigationItem>, parameters: FindSymbolParameters) {
     for (indexName in sequenceOf(getAttributeDirectiveIndexName(name), getElementDirectiveIndexName(name))) {
       StubIndex.getInstance().processElements(
         Angular2SourceDirectiveIndexKey, indexName, parameters.project, parameters.searchScope,
