@@ -29,8 +29,8 @@ export class TableRowDirective<T extends object> {
 
   static ngTemplateContextGuard<TContext extends object>(
     <weak_warning descr="TS6133: 'directive' is declared but its value is never read.">directive</weak_warning>: TableRowDirective<TContext>,
-    <weak_warning descr="TS6133: 'context' is declared but its value is never read.">context</weak_warning>: unknown
-  ): context is Row<TContext> {
+    _context: unknown
+  ): _context is Row<TContext> {
     return true;
   }
 
