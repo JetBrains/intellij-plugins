@@ -180,7 +180,7 @@ internal class BindingsTypeResolver private constructor(
         JSTypeUtils.applyGenericArguments(it, mergedSubstitutor)
       }
     }
-    return merge(source, notNullTypes, false)
+    return JSCompositeTypeFactory.optimizeTypeForSubstitute(merge(source, notNullTypes, false), element)
   }
 
   companion object {
