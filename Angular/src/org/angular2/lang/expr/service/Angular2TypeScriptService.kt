@@ -22,8 +22,11 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
+import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -90,11 +93,12 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.getQuickInfoAt(usageElement, originalFile)
 
   override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
-    computeCancellable<List<JSAnnotationError>, Throwable> {
-      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
-                                                    ?: return@computeCancellable list
-
-      translateNamesInErrors(list, transpiledComponentFile, templateFile)
+    runBlockingMaybeCancellable {
+      smartReadAction(file.project) {
+        val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
+                                                      ?: return@smartReadAction list
+        translateNamesInErrors(list, transpiledComponentFile, templateFile)
+      }
     }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
