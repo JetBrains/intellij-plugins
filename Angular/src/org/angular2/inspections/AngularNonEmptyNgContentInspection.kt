@@ -8,13 +8,14 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import org.angular2.inspections.quickfixes.RemoveTagContentQuickFix
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.web.ELEMENT_NG_CONTENT
 
 class AngularNonEmptyNgContentInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
   override fun visitXmlTag(holder: ProblemsHolder, tag: XmlTag) {
-    if (ELEMENT_NG_CONTENT == tag.name) {
+    if (ELEMENT_NG_CONTENT == tag.name && !Angular2LangUtil.isAtLeastAngularVersion(tag, Angular2LangUtil.AngularVersion.V_18)) {
       val content = tag.value.children
       if (content.any { el -> el !is XmlText || !el.getText().trim { it <= ' ' }.isEmpty() }) {
         holder.registerProblem(tag, TextRange(content[0].textRangeInParent.startOffset,

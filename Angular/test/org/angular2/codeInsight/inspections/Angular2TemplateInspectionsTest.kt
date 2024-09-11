@@ -50,8 +50,16 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
   }
 
   fun testNonEmptyNgContent() {
-    doTest(1, "ff<caret>f", "Remove content", AngularNonEmptyNgContentInspection::class.java,
-           "non-empty-ng-content.html")
+    doTest(1, "ff<caret>f", "Remove content",
+           inspections = listOf(AngularNonEmptyNgContentInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_17_3_0),
+           files = listOf("non-empty-ng-content.html"))
+  }
+
+  fun testNonEmptyNgContentNg18() {
+    doTest(inspections = listOf(AngularNonEmptyNgContentInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_18_2_1),
+           files = listOf("non-empty-ng-content-ng18.html"))
   }
 
   fun testMultipleTemplateBindings() {
