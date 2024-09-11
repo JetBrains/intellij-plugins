@@ -47,9 +47,9 @@ public final class ResourceCollector {
         // if there is no maven resource path, we do a special treatment and replace
         // every occurrence of MAVEN_RESOURCES and a following comma with an empty string
         String mavenResourcePaths = getMavenResourcePaths(mavenProject);
-        if (mavenResourcePaths.length() == 0) {
+        if (mavenResourcePaths.isEmpty()) {
           String cleanedResource = ImporterUtil.removeTagFromInstruction(includeResource, MAVEN_RESOURCES);
-          if (cleanedResource.length() > 0) {
+          if (!cleanedResource.isEmpty()) {
             analyzer.setProperty(Constants.INCLUDE_RESOURCE, cleanedResource);
           }
           else {
@@ -64,7 +64,7 @@ public final class ResourceCollector {
     }
     else {
       String mavenResourcePaths = getMavenResourcePaths(mavenProject);
-      if (mavenResourcePaths.length() > 0) {
+      if (!mavenResourcePaths.isEmpty()) {
         analyzer.setProperty(Constants.INCLUDE_RESOURCE, mavenResourcePaths);
       }
     }
@@ -153,8 +153,6 @@ public final class ResourceCollector {
     List<String> packageInfoIncludes = Collections.singletonList("**/packageinfo");
 
     for (String sourceRoot : currentProject.getSources()) {
-      if (null == sourceRoot) continue;
-
       MavenResource packageInfoResource = new MavenResource(sourceRoot, false, null, packageInfoIncludes, null);
       resources.add(packageInfoResource);
     }
