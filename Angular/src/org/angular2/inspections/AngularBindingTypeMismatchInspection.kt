@@ -33,9 +33,11 @@ import java.util.function.Supplier
 
 class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
-  override fun visitAngularAttribute(holder: ProblemsHolder,
-                                     attribute: XmlAttribute,
-                                     descriptor: Angular2AttributeDescriptor) {
+  override fun visitAngularAttribute(
+    holder: ProblemsHolder,
+    attribute: XmlAttribute,
+    descriptor: Angular2AttributeDescriptor,
+  ) {
     val kind = descriptor.info.type
     when (kind) {
       Angular2AttributeType.REGULAR -> checkOneTimeBindingType(holder, attribute, descriptor)
@@ -66,9 +68,12 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
              && (descriptor.info as Angular2AttributeNameParser.PropertyBindingInfo).bindingType == PropertyBindingType.PROPERTY
              && expression != null && expression !is JSEmptyExpression
              // Maybe a fake structural directive input
-             && descriptor.sourceDirectives.asSequence().filter { it.directiveKind.isStructural }
-               .flatMap { it.inputs }
-               .none { it.name == descriptor.info.name }) {
+             && descriptor.sourceDirectives.filter { it.directiveKind.isStructural }
+               .let { directives ->
+                 directives.isNotEmpty() && directives.flatMap { it.inputs }
+                   .none { it.name == descriptor.info.name }
+               }
+    ) {
       holder.registerProblem(attribute.nameElement ?: attribute,
                              Angular2Bundle.htmlMessage(
                                "angular.inspection.undefined-binding.message.embedded.property-not-provided",
