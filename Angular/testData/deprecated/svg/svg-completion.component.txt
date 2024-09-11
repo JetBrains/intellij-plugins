@@ -1,5 +1,5 @@
-ng-container (typeText='@angular/core'; priority=10.0; typeGreyed)
-ng-template (typeText='@angular/core'; priority=10.0; typeGreyed)
+ng-container (typeText='@angular'; priority=10.0; typeGreyed)
+ng-template (typeText='@angular'; priority=10.0; typeGreyed)
 a (typeText=null; priority=1.0)
 altGlyphDef (typeText=null; priority=1.0)
 animate (typeText=null; priority=1.0)

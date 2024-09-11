@@ -21,6 +21,18 @@ object Angular2LangUtil {
   const val EVENT_EMITTER: String = "EventEmitter"
   const val OUTPUT_CHANGE_SUFFIX: String = "Change"
 
+  enum class AngularVersion {
+    V_2, V_10, V_16, V_17, V_18, V_19,
+  }
+
+  @JvmStatic
+  fun isAtLeastAngularVersion(context: PsiElement, version: AngularVersion): Boolean {
+    WebSymbolsContext.get("angular-version", context )
+      ?.let { AngularVersion.valueOf(it) }
+      ?.let { return it.ordinal >= version.ordinal }
+    return version == AngularVersion.V_2
+  }
+
   @JvmStatic
   fun isAngular2Context(context: PsiElement): Boolean {
     return angular2Framework.isInContext(context)
