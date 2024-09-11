@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Directive, Input, NgModule, Pipe} from "@angular/core";
 
-@Component({standalone: true})
+@Component({standalone:false})
 class Component1 {
 }
 
@@ -46,7 +46,7 @@ class MyClass2 {
 
 }
 
-@Directive({standalone: true})
+@Directive({})
 class DirectiveStandalone {
 }
 

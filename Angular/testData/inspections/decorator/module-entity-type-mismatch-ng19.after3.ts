@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Directive, Input, NgModule, Pipe} from "@angular/core";
 
-@Component({standalone: true})
+@Component({standalone: false})
 class Component1 {
 }
 
@@ -46,27 +46,27 @@ class MyClass2 {
 
 }
 
-@Directive({standalone: true})
-class DirectiveStandalone {
+@Directive({standalone: false})
+class DirectiveNonStandalone {
 }
 
-@Pipe({ standalone: true })
-class PipeStandalone {
+@Pipe({ standalone: false })
+class PipeNonStandalonePipe {
 }
 
-@Component({ standalone: true })
-class ComponentStandalone {
+@Component({ standalone: false })
+class ComponentNonStandalone {
 }
 
 @NgModule({
     imports: [
-        Component1, //import a
-        Directive1, //import a
-        Pipe1, //import a
+        Component1,
+        Directive1,
+        Pipe1,
         Module2,
-        ComponentStandalone,
-        DirectiveStandalone,
-        PipeStandalone,
+        ComponentNonStandalone, //import a
+        DirectiveNonStandalone, //import a
+        PipeNonStandalonePipe, //import a
         MyClass,
         MyClass2,
     ],
@@ -74,9 +74,9 @@ class ComponentStandalone {
         Component1,
         Directive1,
         Pipe1,
-        ComponentStandalone,
-        DirectiveStandalone,
-        PipeStandalone,
+        ComponentNonStandalone,
+        DirectiveNonStandalone,
+        PipeNonStandalonePipe,
         Module2,
         MyClass,
         MyClass2,
@@ -98,12 +98,12 @@ class Module1 {
         Module1
     ],
     declarations: [
-        Component1,
-        Directive1,
-        Pipe1,
-        ComponentStandalone, // move
-        DirectiveStandalone, // move
-        PipeStandalone, // move
+        Component1, // move
+        Directive1, // move
+        Pipe1, // move
+        ComponentNonStandalone,
+        DirectiveNonStandalone,
+        PipeNonStandalonePipe,
     ],
     exports: [
         Component2,
@@ -115,17 +115,16 @@ class Module2 {
 }
 
 @Component({
-    standalone: true,
     imports: [
-        Pipe1, //import b
-        Component1, //import b
-        Directive1, //import b
+        Pipe1,
+        Component1,
+        Directive1,
         MyClass,
         MyClass2,
 
-        DirectiveStandalone,
-        PipeStandalone,
-        ComponentStandalone,
+        DirectiveNonStandalone, //import b
+        PipeNonStandalonePipe, //import b
+        ComponentNonStandalone, //import b
         Module1
     ]
 })

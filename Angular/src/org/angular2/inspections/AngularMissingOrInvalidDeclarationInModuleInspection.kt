@@ -21,7 +21,7 @@ import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.entities.source.Angular2SourceModule
-import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
+import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
 import org.angular2.lang.Angular2Bundle
 
 class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool() {
@@ -52,7 +52,7 @@ class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool
                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                      else
                                        ProblemHighlightType.WEAK_WARNING,
-                                     ConvertToStandaloneQuickFix(entity.className)
+                                     ConvertToStandaloneNonStandaloneQuickFix(entity.className, true)
               )
             }
             else if (modules.size > 1) {

@@ -9,7 +9,8 @@ import com.intellij.psi.PsiElementVisitor
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
+import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
+import org.angular2.inspections.quickfixes.RemoveJSProperty
 import org.angular2.lang.Angular2Bundle
 
 class AngularNonStandaloneComponentImportsInspection : LocalInspectionTool() {
@@ -24,7 +25,8 @@ class AngularNonStandaloneComponentImportsInspection : LocalInspectionTool() {
           if (!component.isStandalone) {
             holder.registerProblem(importsProperty.nameIdentifier ?: importsProperty,
                                    Angular2Bundle.message("angular.inspection.non-standalone-component-imports.message"),
-                                   ConvertToStandaloneQuickFix((component as Angular2ClassBasedEntity).className))
+                                   ConvertToStandaloneNonStandaloneQuickFix((component as Angular2ClassBasedEntity).className, true),
+                                   RemoveJSProperty(Angular2DecoratorUtil.IMPORTS_PROP))
           }
         }
       }
