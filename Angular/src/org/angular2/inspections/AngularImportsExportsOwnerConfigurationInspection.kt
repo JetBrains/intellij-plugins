@@ -34,7 +34,7 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.entities.*
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
-import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
+import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
 import org.angular2.inspections.quickfixes.MoveDeclarationOfStandaloneToImportsQuickFix
 import org.angular2.inspections.quickfixes.RemoveEntityImportQuickFix
 import org.angular2.lang.Angular2Bundle
@@ -70,8 +70,10 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         registerProblem(
           ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
           Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.htmlLabel),
-          *listOfNotNull(entity.asSafely<Angular2ClassBasedEntity>()?.let { MoveDeclarationOfStandaloneToImportsQuickFix(it.className) })
-            .toTypedArray()
+          *listOfNotNull(
+            entity.asSafely<Angular2ClassBasedEntity>()?.let { MoveDeclarationOfStandaloneToImportsQuickFix(it.className) },
+            entity.asSafely<Angular2ClassBasedEntity>()?.let { ConvertToStandaloneNonStandaloneQuickFix(it.className, false) },
+          ).toTypedArray()
         )
       }
     }
@@ -172,7 +174,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         registerProblem(
           ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
           Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-standalone", entity.htmlLabel),
-          *listOfNotNull(entity.asSafely<Angular2ClassBasedEntity>()?.let { ConvertToStandaloneQuickFix(it.className) })
+          *listOfNotNull(entity.asSafely<Angular2ClassBasedEntity>()?.let { ConvertToStandaloneNonStandaloneQuickFix(it.className, true) })
             .toTypedArray()
         )
       }
