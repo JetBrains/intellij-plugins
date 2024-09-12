@@ -34,7 +34,6 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.SuspendingLazy
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
@@ -72,7 +71,6 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   private val modelComputationCache = VirtualFileMap<Deferred<TypeModel>>(project)
 
   @OptIn(ExperimentalCoroutinesApi::class)
-  @RequiresBlockingContext
   fun getModel(virtualFile: VirtualFile): TypeModel? {
     val lock = findLockFile(virtualFile) ?: return null
     val myDeferred = modelComputationCache[lock]
