@@ -9,8 +9,14 @@ import {
   JsonPipe,
   NgForOf,
   NgIf,
+  NgPlural,
+  NgPluralCase,
+  NgStyle,
   PercentPipe,
 } from '@angular/common';
+
+export const UNUSED_PSEUDO_MODULE = [NgPlural, NgPluralCase]
+export const PARTIALLY_USED_PSEUDO_MODULE = [NgStyle, NgIf]
 
 @Component({
   standalone: true,
@@ -24,6 +30,8 @@ import {
     PercentPipe, // used in template binding expr
     NgForOf, // template directive
     DecimalPipe, //used in block expression
+    PARTIALLY_USED_PSEUDO_MODULE,
+    <error descr="None of the declarations provided by UNUSED_PSEUDO_MODULE are used in a component template">UNUSED_PSEUDO_MODULE</error>, //no-spread
     <error descr="Directive NgIf is never used in a component template">NgIf</error>,
     <error descr="Pipe I18nPluralPipe is never used in a component template">I18nPluralPipe</error>,
     CommonModule, // should not be optimized
@@ -43,6 +51,7 @@ export class SettingsComponent {}
     <div *ngFor="let item of [12 | percent, 13]">
       {{ item }}
     </div>
+    <div [ngStyle]="{'foo': true}"></div>
     @if (12 | number) {
 
     }
@@ -54,6 +63,8 @@ export class SettingsComponent {}
    JsonPipe, // used in property binding expression
    PercentPipe, // used in template binding expr
    NgForOf, // template directive
+   ...PARTIALLY_USED_PSEUDO_MODULE,
+   ...<error descr="None of the declarations provided by UNUSED_PSEUDO_MODULE are used in a component template">UNUSED_PSEUDO_MODULE</error>, //spread
    DecimalPipe, //used in block expression
    <error descr="Directive NgIf is never used in a component template">NgIf</error>,
    <error descr="Pipe I18nPluralPipe is never used in a component template">I18nPluralPipe</error>,

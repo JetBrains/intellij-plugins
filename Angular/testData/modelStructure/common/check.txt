@@ -26,30 +26,72 @@ CommonModule: Angular2SourceModule
     titlecase: Angular2SourcePipe
     uppercase: Angular2SourcePipe
   exports:
-    NgClass: Angular2SourceDirective
-    NgComponentOutlet: Angular2SourceDirective
-    NgForOf: Angular2SourceDirective
-    NgIf: Angular2SourceDirective
-    NgPlural: Angular2SourceDirective
-    NgPluralCase: Angular2SourceDirective
-    NgStyle: Angular2SourceDirective
-    NgSwitch: Angular2SourceDirective
-    NgSwitchCase: Angular2SourceDirective
-    NgSwitchDefault: Angular2SourceDirective
-    NgTemplateOutlet: Angular2SourceDirective
-    async: Angular2SourcePipe
-    currency: Angular2SourcePipe
-    date: Angular2SourcePipe
-    i18nPlural: Angular2SourcePipe
-    i18nSelect: Angular2SourcePipe
-    json: Angular2SourcePipe
-    keyvalue: Angular2SourcePipe
-    lowercase: Angular2SourcePipe
-    number: Angular2SourcePipe
-    percent: Angular2SourcePipe
-    slice: Angular2SourcePipe
-    titlecase: Angular2SourcePipe
-    uppercase: Angular2SourcePipe
+    COMMON_DIRECTIVES: Angular2SourceStandalonePseudoModule
+      imports:
+      declarations:
+      exports:
+        NgClass: Angular2SourceDirective
+        NgComponentOutlet: Angular2SourceDirective
+        NgForOf: Angular2SourceDirective
+        NgIf: Angular2SourceDirective
+        NgPlural: Angular2SourceDirective
+        NgPluralCase: Angular2SourceDirective
+        NgStyle: Angular2SourceDirective
+        NgSwitch: Angular2SourceDirective
+        NgSwitchCase: Angular2SourceDirective
+        NgSwitchDefault: Angular2SourceDirective
+        NgTemplateOutlet: Angular2SourceDirective
+      all-exported-declarations:
+        NgClass: Angular2SourceDirective
+        NgComponentOutlet: Angular2SourceDirective
+        NgForOf: Angular2SourceDirective
+        NgIf: Angular2SourceDirective
+        NgPlural: Angular2SourceDirective
+        NgPluralCase: Angular2SourceDirective
+        NgStyle: Angular2SourceDirective
+        NgSwitch: Angular2SourceDirective
+        NgSwitchCase: Angular2SourceDirective
+        NgSwitchDefault: Angular2SourceDirective
+        NgTemplateOutlet: Angular2SourceDirective
+      scope:
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+    COMMON_PIPES: Angular2SourceStandalonePseudoModule
+      imports:
+      declarations:
+      exports:
+        async: Angular2SourcePipe
+        currency: Angular2SourcePipe
+        date: Angular2SourcePipe
+        i18nPlural: Angular2SourcePipe
+        i18nSelect: Angular2SourcePipe
+        json: Angular2SourcePipe
+        keyvalue: Angular2SourcePipe
+        lowercase: Angular2SourcePipe
+        number: Angular2SourcePipe
+        percent: Angular2SourcePipe
+        slice: Angular2SourcePipe
+        titlecase: Angular2SourcePipe
+        uppercase: Angular2SourcePipe
+      all-exported-declarations:
+        async: Angular2SourcePipe
+        currency: Angular2SourcePipe
+        date: Angular2SourcePipe
+        i18nPlural: Angular2SourcePipe
+        i18nSelect: Angular2SourcePipe
+        json: Angular2SourcePipe
+        keyvalue: Angular2SourcePipe
+        lowercase: Angular2SourcePipe
+        number: Angular2SourcePipe
+        percent: Angular2SourcePipe
+        slice: Angular2SourcePipe
+        titlecase: Angular2SourcePipe
+        uppercase: Angular2SourcePipe
+      scope:
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
   all-exported-declarations:
     NgClass: Angular2SourceDirective
     NgComponentOutlet: Angular2SourceDirective

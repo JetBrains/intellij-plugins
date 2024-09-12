@@ -89,15 +89,23 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
     decorator: ES6Decorator,
     results: ValidationResults<ProblemType>,
     component: Angular2Component,
-  ) : Angular2SourceEntityListValidator<Angular2Declaration, ProblemType>(
-    decorator, results, Angular2Declaration::class.java, IMPORTS_PROP) {
+  ) : Angular2SourceEntityListValidator<Angular2Entity, ProblemType>(
+    decorator, results, Angular2Entity::class.java, IMPORTS_PROP) {
 
     private val usedEntities = collectUsedDeclarations(component)
 
-    override fun processAcceptableEntity(entity: Angular2Declaration) {
-      if (entity.isStandalone && !usedEntities.contains(entity)) {
+    override fun processAcceptableEntity(entity: Angular2Entity) {
+      if (entity is Angular2Declaration && entity.isStandalone && !usedEntities.contains(entity)) {
         registerProblem(ProblemType.UNUSED_IMPORT,
-                        Angular2Bundle.htmlMessage("angular.inspection.unused-component-import.message", entity.htmlLabel),
+                        Angular2Bundle.htmlMessage("angular.inspection.unused-component-import.declaration.message", entity.htmlLabel),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        RemoveEntityImportQuickFix(entity.entitySourceName))
+      }
+      else if (entity is Angular2Module && entity.isStandalonePseudoModule
+               && entity.allExportedDeclarations.none { usedEntities.contains(it) }
+      ) {
+        registerProblem(ProblemType.UNUSED_IMPORT,
+                        Angular2Bundle.htmlMessage("angular.inspection.unused-component-import.pseudo-module.message", entity.htmlLabel),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         RemoveEntityImportQuickFix(entity.entitySourceName))
       }

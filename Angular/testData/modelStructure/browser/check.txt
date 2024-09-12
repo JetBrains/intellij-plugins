@@ -9,7 +9,17 @@ BrowserModuleTest: Angular2SourceModule
           declarations:
             async: Angular2SourcePipe
           exports:
-            async: Angular2SourcePipe
+            COMMON_PIPES: Angular2SourceStandalonePseudoModule
+              imports:
+              declarations:
+              exports:
+                async: Angular2SourcePipe
+              all-exported-declarations:
+                async: Angular2SourcePipe
+              scope:
+              scope fully resolved: false
+              exports fully resolved: false
+              declarations fully resolved: true
           all-exported-declarations:
             async: Angular2SourcePipe
           scope:

@@ -4,6 +4,7 @@
 <div *ngFor="let item of [12 | percent, 13]">
   {{ item }}
 </div>
+<div [ngStyle]="{'foo': true}"></div>
 @if (12 | number) {
 
 }

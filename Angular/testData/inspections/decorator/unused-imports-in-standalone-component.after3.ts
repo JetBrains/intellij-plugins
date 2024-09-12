@@ -21,7 +21,7 @@ export const PARTIALLY_USED_PSEUDO_MODULE = [NgStyle, NgIf]
 @Component({
   standalone: true,
   selector: 'cdt-settings',
-  templateUrl: './unusedComponentImports.html',
+  templateUrl: './unused-imports-in-standalone-component.html',
   imports: [
     AsyncPipe,
     CurrencyPipe, // incorrectly used in event binding
@@ -31,7 +31,7 @@ export const PARTIALLY_USED_PSEUDO_MODULE = [NgStyle, NgIf]
     NgForOf, // template directive
     DecimalPipe, //used in block expression
     PARTIALLY_USED_PSEUDO_MODULE,
-    UNUSED_PSEUDO_MODULE,
+    //no-spread
     NgIf,
     I18nPluralPipe,
     CommonModule, // should not be optimized
@@ -40,10 +40,11 @@ export const PARTIALLY_USED_PSEUDO_MODULE = [NgStyle, NgIf]
 })
 export class SettingsComponent {}
 
+
 @Component({
-   standalone: true,
-   selector: 'cdt-settings',
-   template: `
+ standalone: true,
+ selector: 'cdt-settings',
+ template: `
     <div (click)="check(12 | async)" [title]="12 | json">
       {{ 12 | date}}
     </div>
@@ -63,7 +64,7 @@ export class SettingsComponent {}
    PercentPipe, // used in template binding expr
    NgForOf, // template directive
    ...PARTIALLY_USED_PSEUDO_MODULE,
-   ...UNUSED_PSEUDO_MODULE,
+   ...UNUSED_PSEUDO_MODULE, //spread
    DecimalPipe, //used in block expression
    NgIf,
    I18nPluralPipe,

@@ -66,6 +66,13 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       resolveFunctionReturnType(node)
     }
 
+    override fun visitJSVariable(node: JSVariable) {
+      val entity = getAcceptableEntity(node)
+      if (entity != null) {
+        processAcceptableEntity(entity)
+      }
+    }
+
     override fun visitElement(node: PsiElement) {
       val entity = getAcceptableEntity(node)
       if (entity != null) {
@@ -106,6 +113,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       }
 
       override fun visitJSVariable(node: JSVariable) {
+        if (getAcceptableEntity(node) != null) return
         AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) { addIfNotNull(result, node.initializer) }
       }
 

@@ -86,12 +86,13 @@ object Angular2FixesPsiUtil {
   }
 
   fun removeReferenceFromImportsList(reference: JSReferenceExpression) {
-    val array = reference.parent.asSafely<JSArrayLiteralExpression>()
+    val toRemove = reference.parent.asSafely<JSSpreadExpression>() ?: reference
+    val array = toRemove.parent.asSafely<JSArrayLiteralExpression>()
     if (array != null) {
-      JSChangeUtil.removeRangeWithRemovalOfCommas(reference, array.expressions)
+      JSChangeUtil.removeRangeWithRemovalOfCommas(toRemove, array.expressions)
     }
     else {
-      reference.delete()
+      toRemove.delete()
     }
   }
 

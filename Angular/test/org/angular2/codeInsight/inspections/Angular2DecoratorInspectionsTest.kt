@@ -200,8 +200,21 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testUnusedImportsInStandaloneComponent2() {
     myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
-    doTest(2, "//used in block expression\n    Ng<caret>If,\n",
+    doTest(2, "UNUSED_PSEUDO_MODULE, //no-spread\n    Ng<caret>If,",
            "Remove 'NgIf' import", AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
+  }
+
+  fun testUnusedImportsInStandaloneComponent3() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
+    doTest(3, "UNUSED_<caret>PSEUDO_MODULE, //no-spread",
+           "Remove 'UNUSED_PSEUDO_MODULE' import", AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
+  }
+  fun testUnusedImportsInStandaloneComponent4() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
+    doTest(4, "...UNUSED_<caret>PSEUDO_MODULE, //spread\n",
+           "Remove 'UNUSED_PSEUDO_MODULE' import", AngularUnusedComponentImportInspection::class.java,
            "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
   }
 

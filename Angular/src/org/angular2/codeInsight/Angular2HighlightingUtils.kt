@@ -44,7 +44,9 @@ object Angular2HighlightingUtils {
 
   val Angular2Entity.htmlLabel: String
     get() =
-      Angular2Bundle.message(
+      if (this is Angular2Module && this.isStandalonePseudoModule)
+        htmlClassName
+      else Angular2Bundle.message(
         when (this) {
           is Angular2Module -> "angular.entity.module"
           is Angular2Component -> "angular.entity.component"
