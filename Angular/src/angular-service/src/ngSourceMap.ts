@@ -49,7 +49,7 @@ export class AngularSourceMap implements Mapper {
     }
     if (length == 0) {
       for (const match of this.findMatchingOffsets(start, fromRange, filter)) {
-        yield [match[0], 0, match[1], match[1]]
+        yield [match[0], match[0], match[1], match[1]]
       }
       return
     }
