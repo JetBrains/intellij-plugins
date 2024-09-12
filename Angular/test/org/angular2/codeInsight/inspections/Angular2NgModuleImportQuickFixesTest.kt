@@ -338,6 +338,21 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     }
   }
 
+  fun testIonicStandaloneComponent() {
+    doMultiFileTest("ionicStandaloneComponent",
+                    "folder.page.html",
+                    "<ion-<caret>content [f",
+                    "Import Angular entity...",
+                    "IonContent - \"@ionic/angular/standalone\"",
+                    modules = arrayOf(
+                      Angular2TestModule.ANGULAR_CORE_17_3_0,
+                      Angular2TestModule.IONIC_ANGULAR_7_7_3
+                    ),
+                    expectedImports = setOf("IonContent - \"@ionic/angular/standalone\"",
+                                            "IonicModule - \"@ionic/angular\"")
+    )
+  }
+
   private fun doMultiFileTest(
     mainFile: String,
     intention: String,
