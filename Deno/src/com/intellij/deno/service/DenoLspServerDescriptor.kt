@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
@@ -46,7 +47,14 @@ class DenoLspSupportProvider : LspServerSupportProvider {
   }
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    LspServerWidgetItem(lspServer, currentFile, settingsPageClass = DenoConfigurable::class.java)
+    object : LspServerWidgetItem(lspServer, currentFile, DenoUtil.getDefaultDenoIcon(), DenoConfigurable::class.java) {
+      override val versionPostfix: @NlsSafe String
+        get() {
+          val postfix = super.versionPostfix
+          val indexOf = postfix.indexOf("(")
+          return if (indexOf > 1) postfix.substring(0, indexOf) else postfix
+        }
+    }
 }
 
 
