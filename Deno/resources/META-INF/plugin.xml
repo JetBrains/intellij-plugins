@@ -43,6 +43,8 @@
     <!-- https://jetbrains.team/im/review/PVGJ115BwTp?message=9NaUW0SkJLM&channel=4DbgBf4gBMiD -->
     <registryKey key="deno.use.workspace.model.roots" defaultValue="false" restartRequired="true"
                  description="Enable workspace model integration for deno plugin"/>
+
+    <directoryProjectGenerator implementation="com.intellij.deno.generator.DenoProjectTemplateGenerator"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
