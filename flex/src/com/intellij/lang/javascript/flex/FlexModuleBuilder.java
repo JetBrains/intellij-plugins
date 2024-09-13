@@ -61,7 +61,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   private boolean myExpressInstall;
 
   @Override
-  public ModuleType getModuleType() {
+  public ModuleType<?> getModuleType() {
     return FlexModuleType.getInstance();
   }
 
