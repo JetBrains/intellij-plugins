@@ -5,19 +5,31 @@ import com.intellij.deno.UseDeno
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.debugger.DenoAppRule
-import com.intellij.lang.javascript.BaseJSCompletionTestCase
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
+import com.intellij.lang.javascript.modules.JSImportTestUtil
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
+import com.intellij.lang.typescript.compiler.preventTypeScriptServiceRestartOnContextChange
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServer
+import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspServerManagerListener
+import com.intellij.platform.lsp.api.LspServerState
 import com.intellij.platform.lsp.tests.checkLspHighlighting
+import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   private val denoAppRule: DenoAppRule = DenoAppRule.LATEST
@@ -83,6 +95,9 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   fun testDenoFileRename() {
+    DenoSettings.getService(project).setUseDenoAndReload(UseDeno.CONFIGURE_AUTOMATICALLY)
+    myFixture.addFileToProject("deno.json", "{}")
+
     val errorWithMarkup = "<error descr=\"Deno: Cannot find name 'UnknownName'.\">UnknownName</error>"
 
     myFixture.configureByText("foo.ts",
@@ -95,6 +110,8 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.renameElement(file, "foo1.ts")
     myFixture.renameElement(bar, "bar1.ts")
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
+    UIUtil.dispatchAllInvocationEvents()
+
     myFixture.checkLspHighlighting()
     myFixture.checkResult("import { Hello<caret>1 } from './subdir/bar1.ts'\nconst _hi = new Hello1()\nconsole.log(_hi)\nUnknownName")
 
@@ -103,8 +120,10 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.moveFile("subdir/bar1.ts", "")
     FileDocumentManager.getInstance().saveAllDocuments()
     myFixture.moveFile("foo1.ts", "subdir")
-    myFixture.renameElement(bar.containingDirectory, "subdir1")
+    preventTypeScriptServiceRestartOnContextChange {myFixture.renameElement(bar.containingDirectory, "subdir1")}
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
+    UIUtil.dispatchAllInvocationEvents()
+
     myFixture.checkLspHighlighting()
     myFixture.checkResult("import { Hello<caret>2 } from '../bar1.ts'\nconst _hi = new Hello2()\nconsole.log(_hi)\nUnknownName")
   }
@@ -193,7 +212,65 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.checkResult("""console.log("Deno");""".trimIndent())
   }
 
-  @Suppress("SameParameterValue")
+  fun testDenoCacheCommand() {
+    val service = DenoSettings.getService(project)
+    val denoLandCacheDir = File(service.getDenoCache() + "/deps/https/deno.land")
+    if (denoLandCacheDir.exists()) {
+      denoLandCacheDir.deleteRecursively()
+    }
+
+    service.setUseDenoAndReload(UseDeno.CONFIGURE_AUTOMATICALLY)
+    service.setDenoFormattingEnabled(false)
+
+    myFixture.addFileToProject("deno/deno.json", "{}")
+    val path = "./deno/src/main.ts"
+    val url = """https://deno.land/std@0.188.0/testing/asserts.ts"""
+    myFixture.addFileToProject(path, """import { assertEquals } from <error><caret>"$url"</error>;
+      |assertEquals(1, 1);
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+    val tmpFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+    val manager = FileDocumentManager.getInstance()
+    val document = manager.getDocument(tmpFile.virtualFile)
+    WriteAction.run<RuntimeException> { manager.saveDocument(document!!) }
+
+    val semaphore = AtomicInteger(0)
+    LspServerManager.getInstance(project).addLspServerManagerListener(object : LspServerManagerListener {
+      override fun serverStateChanged(lspServer: LspServer) {
+        if (lspServer.descriptor !is DenoLspServerDescriptor) return
+
+        if (lspServer.state == LspServerState.ShutdownNormally) {
+          semaphore.compareAndSet(0, 1)
+        }
+        if (lspServer.state == LspServerState.Running) {
+          semaphore.compareAndSet(1, 2)
+        }
+      }
+
+      override fun fileOpened(lspServer: LspServer, file: VirtualFile) {}
+      override fun diagnosticsReceived(lspServer: LspServer, file: VirtualFile) {}
+
+    }, testRootDisposable, false)
+
+    JSImportTestUtil.findAndInvokeIntentionAction(myFixture, "Cache \"$url\" and its dependencies.", false)
+    val start = System.currentTimeMillis()
+    while (semaphore.get() != 2 && (System.currentTimeMillis() - start) < 30_000) {
+      ProgressManager.checkCanceled()
+      UIUtil.dispatchAllInvocationEvents()
+    }
+
+    waitForDiagnosticsFromLspServer(project, file.virtualFile)
+
+    //see {@link LspTestUtilKt#doCheckExpectedHighlightingData} comment
+    waitForDiagnosticsFromLspServer(project, file.virtualFile, 5)
+
+    JSDaemonAnalyzerLightTestCase.checkHighlightingByText(myFixture, """import { assertEquals } from "$url";
+      |assertEquals(1, 1);
+      |<error>assertEqualsError123</error>();
+    """.trimMargin(), true)
+  }
+
   private fun runSimpleCommandLine(command: String): Number {
     val cmd = GeneralCommandLine(command.split(" "))
     val processHandler = CapturingProcessHandler(cmd)
