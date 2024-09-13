@@ -1,0 +1,245 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 20,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "\n    "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 171,
+                  "snippet": {
+                    "text": "public class Main {\n\n    public static void main(String[] args) {\n                System.out.println(\"Hello, World!\");\n                  System.out.println(\"Bye, World!\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingSimple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c34e869c9b88f0cd",
+            "equalIndicator/v1": "95e970611b7626f5def86f2e04c8a416e6f4938f112b36699f38e2778b816dc3"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 66,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "                "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 20,
+                  "charLength": 157,
+                  "snippet": {
+                    "text": "\n    public static void main(String[] args) {\n                System.out.println(\"Hello, World!\");\n                  System.out.println(\"Bye, World!\");\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingSimple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3e5a3040b31ba7d1",
+            "equalIndicator/v1": "e119e8ec899d82f56a79857b95845c144d8454da9f2d11e5472d52dd094af559"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 119,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "                  "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 21,
+                  "charLength": 158,
+                  "snippet": {
+                    "text": "    public static void main(String[] args) {\n                System.out.println(\"Hello, World!\");\n                  System.out.println(\"Bye, World!\");\n    }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingSimple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "1f17ff9703a189dd",
+            "equalIndicator/v1": "174c023be95d34bedb994a654494d13fbdf3b6a124d4d6d1967448c6e8f587d7"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "charOffset": 172,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "    "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 66,
+                  "charLength": 114,
+                  "snippet": {
+                    "text": "                System.out.println(\"Hello, World!\");\n                  System.out.println(\"Bye, World!\");\n    }\n}\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingSimple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b3f8c5e4d857e17d",
+            "equalIndicator/v1": "7e9a294d13d7b89b10f3bf49cb5e9853178f20f5ea51afd5da33d4e6ed15ef3a"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
