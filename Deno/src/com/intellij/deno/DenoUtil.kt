@@ -1,5 +1,6 @@
 package com.intellij.deno
 
+import com.intellij.deno.icons.DenoIcons
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
@@ -14,9 +15,11 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.util.IconUtil
 import com.intellij.util.SystemProperties
 import java.nio.file.Files
 import java.nio.file.Path
+import javax.swing.Icon
 
 object DenoUtil {
   private val urlKey = Key.create<String?>("deno.file.url")
@@ -104,5 +107,9 @@ object DenoUtil {
     if (ext.isNotEmpty() || sequence.length != 64) return false
     val path = file.path
     return path.contains("/deps/")
+  }
+
+  fun getDefaultDenoIcon(): Icon {
+    return IconUtil.resizeSquared(DenoIcons.Deno, 16)
   }
 }
