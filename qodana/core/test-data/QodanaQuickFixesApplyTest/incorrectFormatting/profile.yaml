@@ -1,0 +1,9 @@
+name: "My custom profile"
+
+baseProfile: qodana.recommended
+
+inspections:
+  - inspection: IncorrectFormatting
+    enabled: true
+  - inspection: ConstantValue
+    enabled: false

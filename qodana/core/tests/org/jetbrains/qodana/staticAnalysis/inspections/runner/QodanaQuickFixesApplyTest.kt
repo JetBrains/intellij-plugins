@@ -10,7 +10,6 @@ import com.intellij.psi.*
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.junit.Test
 import kotlin.io.path.absolutePathString
 
@@ -23,6 +22,21 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
   }
 
   @Test
+  fun testIncorrectFormattingSimple() {
+    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+  }
+
+  @Test
+  fun testIncorrectFormatting() {
+    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+  }
+
+  @Test
+  fun testIncorrectFormattingWithAnotherInspections() {
+    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+  }
+
+  @Test
   fun testUnusedImports() {
     runTest("qodana.single:UNUSED_IMPORT")
   }
@@ -32,12 +46,7 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
     val tool = TestGlobalSimpleInspectionTool()
     registerGlobalTool(tool)
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
-    updateQodanaConfig {
-      it.copy(
-        profile = QodanaProfileConfig(path = getTestDataPath("profile.yaml").absolutePathString()),
-      )
-    }
-    analyzeAndValidateResults()
+    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
   }
 }
 

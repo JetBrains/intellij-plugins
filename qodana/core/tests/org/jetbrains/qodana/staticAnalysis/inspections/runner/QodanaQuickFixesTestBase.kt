@@ -39,12 +39,6 @@ abstract class QodanaQuickFixesTestBase(private val strategy: FixesStrategy) : Q
     }
   }
 
-  fun analyzeAndValidateResults() {
-    runAnalysis()
-    assertSarifResults()
-    assertFixes()
-  }
-
   fun runTest(profileName: String) {
     updateQodanaConfig {
       it.copy(
@@ -52,6 +46,21 @@ abstract class QodanaQuickFixesTestBase(private val strategy: FixesStrategy) : Q
       )
     }
     analyzeAndValidateResults()
+  }
+
+  fun runTestWithProfilePath(profilePath: String) {
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig(path = profilePath),
+      )
+    }
+    analyzeAndValidateResults()
+  }
+
+  private fun analyzeAndValidateResults() {
+    runAnalysis()
+    assertSarifResults()
+    assertFixes()
   }
 
   private fun assertFixes() {
