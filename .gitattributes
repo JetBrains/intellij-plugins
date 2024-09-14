@@ -1,2 +1,4 @@
 # keep this the first line in the file
 *	text=auto
+
+web-assembly-plugin/src/test/resources/parser/common/BadCrlf.wat -text
