@@ -6,7 +6,7 @@ import com.intellij.framework.detection.DetectedFrameworkDescription
 import com.intellij.framework.detection.FileContentPattern
 import com.intellij.framework.detection.FrameworkDetectionContext
 import com.intellij.framework.detection.FrameworkDetector
-import com.intellij.ide.projectView.actions.MarkRootActionBase
+import com.intellij.ide.projectView.actions.MarkRootsManager
 import com.intellij.json.JsonFileType
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.fileTypes.FileType
@@ -96,7 +96,7 @@ class Angular2CliFrameworkDetector : FrameworkDetector(Angular2CliFramework.ID) 
       for (module in modulesProvider.modules) {
         val model = modifiableModelsProvider.getModuleModifiableModel(module)
         val item = myNewFiles.firstOrNull()
-        val entry = if (item != null) MarkRootActionBase.findContentEntry(model, item) else null
+        val entry = if (item != null) MarkRootsManager.findContentEntry(model, item) else null
         if (entry == null) {
           modifiableModelsProvider.disposeModuleModifiableModel(model)
           continue

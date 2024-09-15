@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.cli
 
-import com.intellij.ide.projectView.actions.MarkRootActionBase
+import com.intellij.ide.projectView.actions.MarkRootsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -20,7 +20,7 @@ class Angular2ProjectConfigurator : DirectoryProjectConfigurator {
 
     val cliJson = AngularCliUtil.findCliJson(baseDir)
     val model = ModuleRootManager.getInstance(module).modifiableModel
-    val entry = MarkRootActionBase.findContentEntry(model, baseDir)
+    val entry = MarkRootsManager.findContentEntry(model, baseDir)
     if (entry != null && cliJson != null) {
       entry.addDefaultAngularExcludes(baseDir)
       ApplicationManager.getApplication().runWriteAction { model.commit() }
