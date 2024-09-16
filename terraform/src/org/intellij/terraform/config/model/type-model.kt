@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
@@ -488,6 +489,8 @@ interface PropertyOrBlockType {
 
   val configurable: Boolean
     get() = optional || required
+
+  fun canBeUsedIn(fileType: FileType): Boolean = true
 }
 
 object Types {
@@ -537,7 +540,7 @@ class ResourceType(
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, TypeModel.AbstractResource)), ResourceOrDataSourceType {
+              properties = withDefaults(properties, TypeModel.AbstractResource.properties)), ResourceOrDataSourceType {
   override fun toString(): String {
     return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -562,7 +565,7 @@ class DataSourceType(
             deprecated = blockType?.deprecated,
             conflictsWith = blockType?.conflictsWith,
             nesting = blockType?.nesting,
-            properties = withDefaults(properties, TypeModel.AbstractDataSource)), ResourceOrDataSourceType {
+            properties = withDefaults(properties, TypeModel.AbstractDataSource.properties)), ResourceOrDataSourceType {
   override fun toString(): String {
     return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -588,7 +591,7 @@ class ProviderType(
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, TypeModel.AbstractProvider)), NamedType {
+              properties = withDefaults(properties, TypeModel.AbstractProvider.properties)), NamedType {
   val fullName: String = "$namespace/$type"
   val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OFFICIAL_PROVIDERS_NAMESPACE.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
 
@@ -614,7 +617,7 @@ class ProviderType(
   internal data class ProviderCoordinates(val registryUrl: String, val namespace: String, val name: String)
 }
 
-class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner)) {
+class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner.properties)) {
   override fun toString(): String {
     return "ProvisionerType (type='$type')"
   }
@@ -623,7 +626,7 @@ class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) :
     get() = "$literal ($type)"
 }
 
-class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractBackend)) {
+class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractBackend.properties)) {
   override fun toString(): String {
     return "BackendType (type='$type')"
   }
@@ -632,7 +635,7 @@ class BackendType(val type: String, properties: List<PropertyOrBlockType>) : Blo
     get() = "$literal ($type)"
 }
 
-class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.Module)) {
+class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.Module.properties)) {
   override fun toString(): String {
     return "ModuleType (name='$name')"
   }
@@ -641,10 +644,10 @@ class ModuleType(override val name: String, properties: List<PropertyOrBlockType
     get() = "$literal ($name)"
 }
 
-private fun withDefaults(properties: List<PropertyOrBlockType>, default: BlockType): Map<String, PropertyOrBlockType> {
-  if (properties.isEmpty()) return default.properties
-  val result = HashMap<String, PropertyOrBlockType>(default.properties.size + properties.size)
-  result.putAll(default.properties)
+internal fun withDefaults(properties: List<PropertyOrBlockType>, default: Map<String, PropertyOrBlockType>): Map<String, PropertyOrBlockType> {
+  if (properties.isEmpty()) return default
+  val result = HashMap<String, PropertyOrBlockType>(default.size + properties.size)
+  result.putAll(default)
   result.putAll(properties.toMap())
   return result
 }

@@ -19,12 +19,20 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.opentofu.OpenTofuPatterns
+import org.intellij.terraform.opentofu.getEncryptionKeyProviderProperties
+import org.intellij.terraform.opentofu.getEncryptionMethodProperties
 import java.util.*
 
 internal object TfModelHelper {
   private val LOG = Logger.getInstance(TfModelHelper::class.java)
 
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
+    val fileType = block.containingFile.originalFile.fileType
+    return getBlockPropertiesInternal(block).filter { it.value.canBeUsedIn(fileType) }
+  }
+
+  private fun getBlockPropertiesInternal(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(0) ?: return emptyMap()
     // Special case for 'backend' blocks, since it's located not in root
 
@@ -42,6 +50,8 @@ internal object TfModelHelper {
       TerraformPatterns.ProvisionerBlock.accepts(block) -> return getProvisionerProperties(block)
       TerraformPatterns.ResourceLifecycleBlock.accepts(block) -> return TypeModel.ResourceLifecycle.properties
       TerraformPatterns.ResourceConnectionBlock.accepts(block) -> return getConnectionProperties(block)
+      OpenTofuPatterns.KeyProviderBlock.accepts(block) -> return getEncryptionKeyProviderProperties(block)
+      OpenTofuPatterns.EncryptionMethodBlock.accepts(block) -> return getEncryptionMethodProperties(block)
       block.parent !is PsiFile -> return getModelBlockProperties(block, type)
     }
 

@@ -37,6 +37,7 @@ import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.opentofu.EncryptionBlockType
 
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
@@ -246,6 +247,7 @@ class TypeModel(
       TerraformRequiredVersion,
       PropertyType("experiments", Types.Array),
       BlockType(HCL_TERRAFORM_REQUIRED_PROVIDERS),
+      EncryptionBlockType(),
       Cloud,
       AbstractBackend
     ).toMap())

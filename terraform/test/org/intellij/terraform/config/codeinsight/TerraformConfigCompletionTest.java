@@ -838,4 +838,25 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     }).collect(Collectors.toSet());
     assertEquals(lookupStrings, Set.of("aws_ec2_host hashicorp/aws", "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"));
   }
+
+  public void testTerraformBlockCompletion() {
+    myFixture.configureByText("main.tf", """ 
+      terraform {
+        <caret>
+      }
+      """);
+    myFixture.testCompletionVariants("main.tf", "backend", "cloud", "experiments", "required_providers", "required_version");
+  }
+
+  public void testTerraformBlockCompletionBackend() {
+    myFixture.configureByText("main.tf", """ 
+      terraform {
+        backend "<caret>" {}
+      }
+      """);
+    TypeModel model = TypeModelProvider.getGlobalModel();
+    String[] backends = model.getBackends().stream().map(e -> e.getType()).toArray(String[]::new);
+    myFixture.testCompletionVariants("main.tf", backends);
+  }
 }
+

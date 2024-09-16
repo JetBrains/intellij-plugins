@@ -2,12 +2,8 @@
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
-import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.LookupElementRenderer
-import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.components.service
@@ -67,6 +63,10 @@ import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
 import org.intellij.terraform.hil.psi.ILExpression
+import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
+import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
+import org.intellij.terraform.opentofu.encryptionKeyProviders
+import org.intellij.terraform.opentofu.encryptionMethods
 
 class TerraformConfigCompletionContributor : HCLCompletionContributor() {
   init {
@@ -107,12 +107,12 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(TerraformConfigFile)
+      .and(psiElement().insideStarting(Block))
       .withParent(IdentifierOrStringLiteral)
       .withSuperParent(2, Block)
       .withSuperParent(3, Object)
       .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
-
-    // Leftmost identifier of block could be start of new property in case of eol betwen it ant next identifier
+    // Leftmost identifier of block could be start of new property in case of eol between it and the next identifier
     //```
     //resource "X" "Y" {
     //  count<caret>
@@ -307,6 +307,14 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             .processWith(consumer)
         HCL_BACKEND_IDENTIFIER ->
           typeModel.backends.toPlow()
+            .map { buildLookupElement(it, it.type, it.description, position) }
+            .processWith(consumer)
+        TOFU_KEY_PROVIDER ->
+          encryptionKeyProviders.values.toPlow()
+            .map { buildLookupElement(it, it.type, it.description, position) }
+            .processWith(consumer)
+        TOFU_ENCRYPTION_METHOD_BLOCK ->
+          encryptionMethods.values.toPlow()
             .map { buildLookupElement(it, it.type, it.description, position) }
             .processWith(consumer)
         else -> true

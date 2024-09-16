@@ -71,6 +71,7 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
   }
 
 
-  private fun getBlockTypeString(block: HCLBlock, allowedIdentifiers: List<String>): String? = block.getNameElementUnquoted(0)?.lowercase()?.takeIf { it in allowedIdentifiers }
+  private fun getBlockTypeString(block: HCLBlock, allowedIdentifiers: List<String>): String? =
+    block.getNameElementUnquoted(0)?.lowercase()?.takeIf { it in allowedIdentifiers }
 
 }
