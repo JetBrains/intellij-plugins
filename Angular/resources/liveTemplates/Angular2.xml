@@ -231,9 +231,7 @@
       <option name="ANGULAR_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
-  <template name="a-component" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	templateUrl: &apos;$name$.component.html&apos;&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }$END$&#10;}"
-            resource-bundle="messages.Angular2Bundle" key="livetemplate.description.angular2.a-component"
-            toReformat="true" toShortenFQNames="true">
+  <template name="a-component" value="import { Component } from '@angular/core';&#10;&#10;@Component({&#10; selector: '$selector_name$',&#10; templateUrl: '$name$.component.html'&#10;})&#10;export class $Name$Component {&#10;$END$&#10;}" description="Angular component" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
@@ -241,12 +239,9 @@
       <option name="ANGULAR_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
-  <template name="a-component-inline" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	template: `$END$`&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }&#10;}"
-            resource-bundle="messages.Angular2Bundle" key="livetemplate.description.angular2.a-component-inline"
-            toReformat="true" toShortenFQNames="true">
+  <template name="a-component-inline" value="import { Component } from '@angular/core';&#10;&#10;@Component({&#10; selector: '$selector_name$',&#10; template: `$END$`&#10;})&#10;export class $Name$Component {&#10;}" description="Angular component with an inline template" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
-
     <context>
       <option name="ANGULAR_TOP_LEVEL_STATEMENT" value="true" />
     </context>
@@ -514,6 +509,50 @@
     <variable name="property" expression="" defaultValue="&quot;property&quot;" alwaysStopAt="true" />
     <context>
       <option name="ANGULAR_STATEMENT" value="true" />
+    </context>
+  </template>
+  <template name="@if" value="@if ($condition$) {&#10;  $SELECTION$&#10;}" description="Surround with @if block" toReformat="true" toShortenFQNames="false">
+    <variable name="condition" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ANGULAR_TEMPLATE" value="true" />
+    </context>
+  </template>
+  <template name="@if + @else" value="@if ($condition$) {&#10;  $SELECTION$&#10;} @else {&#10;  $else$&#10;}" description="Surround with @if and @else block" toReformat="true" toShortenFQNames="false">
+    <variable name="condition" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="else" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ANGULAR_TEMPLATE" value="true" />
+    </context>
+  </template>
+  <template name="@else if" value="@else if ($condition$) {&#10;  $SELECTION$&#10;}" description="Surround with @else if block" toReformat="true" toShortenFQNames="false">
+    <variable name="condition" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ANGULAR_TEMPLATE" value="true" />
+    </context>
+  </template>
+  <template name="@else" value="@else {&#10;  $SELECTION$&#10;}" description="Surround with @else block" toReformat="true" toShortenFQNames="false">
+    <variable name="condition" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ANGULAR_TEMPLATE" value="true" />
+    </context>
+  </template>
+  <template name="@for" value="@for ($item$ of $items$; track $item$.id) {&#10;  $SELECTION$&#10;}" description="Surround with @for block" toReformat="true" toShortenFQNames="false">
+    <variable name="item" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="items" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ANGULAR_TEMPLATE" value="true" />
+    </context>
+  </template>
+  <template name="@defer" value="@defer {&#10;  $SELECTION$&#10;}" description="Surround with @defer block" toReformat="true" toShortenFQNames="false">
+  <context>
+    <option name="ANGULAR_TEMPLATE" value="true" />
+  </context>
+  </template>
+  <template name="@switch" value="@switch ($variable$) {&#10;    @case($case$){&#10;       $SELECTION$&#10;     }&#10;}" description="surround with @switch" toReformat="true" toShortenFQNames="false">
+    <variable name="variable" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="case" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ANGULAR_TEMPLATE" value="true" />
     </context>
   </template>
 </templateSet>
