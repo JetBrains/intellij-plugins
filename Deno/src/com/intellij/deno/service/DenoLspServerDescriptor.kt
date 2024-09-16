@@ -145,6 +145,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     return if (Files.exists(Paths.get(anotherPath))) anotherPath else null
   }
 
+  override val lspSemanticTokensSupport = null
   override val lspGoToDefinitionSupport = false
   override val lspHoverSupport = false
   override val lspCompletionSupport = BaseLspTypeScriptServiceCompletionSupport()

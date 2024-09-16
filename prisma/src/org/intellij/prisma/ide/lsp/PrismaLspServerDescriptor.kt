@@ -12,11 +12,11 @@ import org.intellij.prisma.lang.PrismaFileType
 class PrismaLspServerDescriptor(project: Project)
   : JSLspServerDescriptor(project, PrismaLspServerActivationRule, PrismaBundle.message("prisma.framework.name")) {
 
-  // references resolution is implemented without using the LSP server
+  // code highlighting, references resolution, code completion, and hover info are implemented without using the LSP server
+  override val lspSemanticTokensSupport = null
   override val lspGoToDefinitionSupport = false
-
-  // code completion is implemented without using the LSP server
   override val lspCompletionSupport = null
+  override val lspHoverSupport = false
 
   override val lspFormattingSupport = object : LspFormattingSupport() {
     override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
@@ -24,6 +24,4 @@ class PrismaLspServerDescriptor(project: Project)
              CodeStyle.getSettings(project).getCustomSettings(PrismaCodeStyleSettings::class.java).RUN_PRISMA_FMT_ON_REFORMAT
     }
   }
-
-  override val lspHoverSupport = false
 }
