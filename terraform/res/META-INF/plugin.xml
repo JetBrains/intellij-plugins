@@ -430,11 +430,7 @@
     <fileTypeUsageSchemaDescriptor schema="Terraform"
                                    implementationClass="org.intellij.terraform.config.editor.TerraformJsonFileTypeUsageSchemaDescriptor"/>
 
-    <psi.referenceContributor language="HCL"
-                              implementation="org.intellij.terraform.opentofu.OpenTofuReferenceContributor"
-                              order="first"
-    />
-
+    <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.opentofu.OpenTofuReferenceContributor"/>
 
   </extensions>
 

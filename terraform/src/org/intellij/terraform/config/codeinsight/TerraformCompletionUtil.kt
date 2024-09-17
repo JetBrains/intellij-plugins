@@ -25,9 +25,9 @@ import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import java.util.*
 
 object TerraformCompletionUtil {
-  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module")
-  val GlobalScopes: SortedSet<String> = sortedSetOf("var", "path", "data", "module", "local")
-  val RootBlockKeywords: Set<String> = TypeModel.RootBlocks.map(BlockType::literal).toHashSet()
+  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module") + setOf("key_provider", "method")
+  val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local") + setOf("key_provider", "method")).toSortedSet()
+  val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 
   fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null, psiElement: PsiElement? = null): LookupElementBuilder {

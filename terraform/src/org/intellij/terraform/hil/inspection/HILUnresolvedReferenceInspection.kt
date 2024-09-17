@@ -14,12 +14,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceOwner
 import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentsOfType
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.patterns.TerraformPatterns.FromPropertyInMovedBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.common.Identifier
@@ -31,6 +33,7 @@ import org.intellij.terraform.hil.codeinsight.isScopeElementReference
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.hil.psi.resolve
 import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.opentofu.OpenTofuPatterns.EncryptionBlock
 import org.jetbrains.annotations.Nls
 
 class HILUnresolvedReferenceInspection : LocalInspectionTool() {
@@ -52,6 +55,7 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
 
   inner class MyEV(val holder: ProblemsHolder) : PsiElementVisitor() {
     override fun visitElement(element: PsiElement) {
+      if (element.parentsOfType<HCLBlock>(true).any { EncryptionBlock.accepts(it)}) return
       if (element is Identifier) return visitIdentifier(element)
       ProgressIndicatorProvider.checkCanceled()
     }
@@ -89,30 +93,22 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
       for (reference in references) {
         ProgressManager.checkCanceled()
         // In case of 'a.*.b' '*' bypasses references from 'a'
-        if (reference.element !== value) continue
-        if (isUrlReference(reference)) continue
-        if (!hasBadResolve(reference, false)) {
+        if (reference.element !== value || isUrlReference(reference) || !hasBadResolve(reference, false)) {
           continue
         }
-        val description = getErrorDescription(reference)
-
-        //        val startOffset = reference.element.textRange.startOffset
         val referenceRange = reference.rangeInElement
 
-        // logging for IDEADEV-29655
+        val description = getErrorDescription(reference)
         if (referenceRange.startOffset > referenceRange.endOffset) {
-          LOG.error("Reference range start offset > end offset:  " + reference +
-                    ", start offset: " + referenceRange.startOffset + ", end offset: " + referenceRange.endOffset)
+          LOG.error("Reference range start offset > end offset:  $reference, start offset: ${referenceRange.startOffset}, end offset: ${referenceRange.endOffset}")
         }
-
         val fixes = buildList {
           if (reference is LocalQuickFixProvider) {
             addAll(reference.quickFixes.orEmpty())
           }
           addIfNotNull(TFInitAction.createQuickFixNotInitialized(reference.element))
         }
-
-        holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange/*.shiftRight(startOffset)*/, *fixes.toArray(LocalQuickFix.EMPTY_ARRAY))
+        holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange, *fixes.toArray(LocalQuickFix.EMPTY_ARRAY))
       }
     }
   }
