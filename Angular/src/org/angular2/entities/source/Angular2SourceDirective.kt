@@ -30,6 +30,7 @@ import org.angular2.Angular2DecoratorUtil.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUT_FROM_OBSERVABLE_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
+import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
 import org.angular2.entities.Angular2DirectiveKind.Companion.plus
@@ -239,15 +240,18 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     @JvmStatic
     fun getDirectiveKindNoCache(clazz: TypeScriptClass, selector: Angular2DirectiveSelector): Angular2DirectiveKind {
-      val anyNgTemplateSelector = selector.simpleSelectors.any { it.elementName == ELEMENT_NG_TEMPLATE }
       val allNgTemplateSelectors = selector.simpleSelectors.all { it.elementName == ELEMENT_NG_TEMPLATE }
       if (allNgTemplateSelectors) {
         return Angular2DirectiveKind.STRUCTURAL
       }
 
+      val anyNgTemplateSelector = selector.simpleSelectors.any { it.elementName == ELEMENT_NG_TEMPLATE }
+      var anyNgTemplateContextGuard = false
       var result: Angular2DirectiveKind? = null
       JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
         if (aClass is TypeScriptClass) {
+          anyNgTemplateContextGuard = anyNgTemplateContextGuard
+                                      || aClass.members.any { it.name == Angular2ControlFlowBuilder.NG_TEMPLATE_CONTEXT_GUARD }
           result = aClass.constructors
             .mapNotNull { it.parameterList }
             .mapNotNull { paramList ->
@@ -268,14 +272,14 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
                   }
                 }
               }
-              Angular2DirectiveKind.get(hasElementRef, hasTemplateRef, hasViewContainerRef, isTemplateRefOptional)
+              Angular2DirectiveKind.get(hasElementRef, hasTemplateRef, hasViewContainerRef, isTemplateRefOptional, anyNgTemplateContextGuard)
             }
             .reduceOrNull { acc, kind -> acc + kind }
         }
         result == null
       }
       return (result ?: Angular2DirectiveKind.REGULAR)
-        .applyIf(anyNgTemplateSelector) { this + Angular2DirectiveKind.STRUCTURAL }
+        .applyIf(anyNgTemplateSelector || anyNgTemplateContextGuard) { this + Angular2DirectiveKind.STRUCTURAL }
     }
 
     @JvmStatic
