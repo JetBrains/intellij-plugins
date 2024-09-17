@@ -253,6 +253,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testDirectiveInputInNgTemplate() =
     checkHighlighting(extension = "ts")
 
+  fun testTuiLet() =
+    checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

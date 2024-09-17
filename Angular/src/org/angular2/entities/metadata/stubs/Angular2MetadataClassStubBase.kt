@@ -119,7 +119,7 @@ open class Angular2MetadataClassStubBase<Psi : PsiElement> : Angular2MetadataEle
     val kind = Angular2DirectiveKind.get(constructorText.contains(Angular2EntityUtils.ELEMENT_REF),
                                          constructorText.contains(Angular2EntityUtils.TEMPLATE_REF),
                                          constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF),
-                                         false)
+                                         false, false)
     writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, kind != null && kind.isStructural)
     writeFlag(IS_REGULAR_DIRECTIVE_FLAG, kind != null && kind.isRegular)
   }
