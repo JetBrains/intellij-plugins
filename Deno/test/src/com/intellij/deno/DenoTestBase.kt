@@ -6,6 +6,7 @@ import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 abstract class DenoTestBase : BasePlatformTestCase() {
 
@@ -16,6 +17,7 @@ abstract class DenoTestBase : BasePlatformTestCase() {
     val before = service.getUseDeno()
     service.setUseDenoAndReload(UseDeno.ENABLE)
     disposeOnTearDown(Disposable { service.setUseDeno(before) })
+    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 
   override fun tearDown() {

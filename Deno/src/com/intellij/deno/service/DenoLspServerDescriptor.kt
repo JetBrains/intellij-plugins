@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -173,7 +174,10 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
       }
 
       ApplicationManager.getApplication().executeOnPooledThread {
+        val workingDirectory = findDenoConfig(project, contextFile)?.parent ?: project.guessProjectDir()
+
         val commandLine = GeneralCommandLine(DenoSettings.getService(server.project).getDenoPath(), "cache", contextFile.path)
+          .withWorkingDirectory(workingDirectory?.toNioPath())
         val processHandler = withBackgroundProgress(project, DenoBundle.message("deno.cache.name")) {
           KillableColoredProcessHandler(commandLine)
         }
