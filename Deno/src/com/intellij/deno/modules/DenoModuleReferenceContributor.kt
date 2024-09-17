@@ -153,16 +153,26 @@ class DenoModuleReferenceContributor : JSImportMapContributorBase() {
   override fun findImportMapFile(host: PsiElement): VirtualFile? {
     return extractImportMapPathFromDenoConfig(host) ?: extractImportMapPathFromInitObject(host)
   }
+
+  override fun resolveAsImportMapExactText(importMapFile: VirtualFile, exactPath: String, range: TextRange, host: PsiElement): Array<PsiReference> {
+    if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(exactPath)) return resolveAsUrl(exactPath, host, range)
+    if (exactPath.startsWith(npmPrefix)) return resolveAsNpmPackage(exactPath, host, range)
+
+    return super.resolveAsImportMapExactText(importMapFile, exactPath, range, host)
+  }
 }
 
 private fun extractImportMapPathFromDenoConfig(host: PsiElement): VirtualFile? {
   val config = findDenoConfig(host.project, PsiUtilCore.getVirtualFile(host)) ?: return null
   val findFile = host.manager.findFile(config) as? JsonFile ?: return null
 
-  val literal = (findFile.topLevelValue as? JsonObject)?.findProperty("import_map") as? JsonStringLiteral ?: return null
+  val topLevelObject = findFile.topLevelValue as? JsonObject ?: return null
+  if (topLevelObject.findProperty("imports") != null) return config
+
+  val literal = topLevelObject.findProperty("import_map") as? JsonStringLiteral ?: return null
+
   return JSPathMappingsUtil.getPathRelativeBaseUrlOrSelfIfAbsolute(config.parent, literal.value)
 }
-
 private fun extractImportMapPathFromInitObject(host: PsiElement): VirtualFile? {
   val pathMacroManager = PathMacroManager.getInstance(host.project)
   val initString = pathMacroManager.expandPath(DenoSettings.getService(host.project).getDenoInit())
