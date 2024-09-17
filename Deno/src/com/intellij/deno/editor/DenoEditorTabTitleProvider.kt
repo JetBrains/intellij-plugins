@@ -1,6 +1,7 @@
 package com.intellij.deno.editor
 
 import com.intellij.deno.DenoUtil
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -11,7 +12,7 @@ class DenoEditorTabTitleProvider : EditorTabTitleProvider, DumbAware {
   override fun getEditorTabTitle(project: Project, file: VirtualFile): String? {
     if (DenoUtil.isDenoCacheFile(file)) {
       val psiManager = PsiManager.getInstance(project)
-      return DenoUtil.getOwnUrlForFile(psiManager, file)
+      return ReadAction.compute<String, RuntimeException> { DenoUtil.getOwnUrlForFile (psiManager, file) }
     }
 
     return null
