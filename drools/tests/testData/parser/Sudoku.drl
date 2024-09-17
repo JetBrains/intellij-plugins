@@ -92,7 +92,7 @@ then
 //  System.out.println( "done setting cell " + $c.toString() );
     // Discard the Setter fact.
     delete( $s );
-//////    Sudoku.sudoku.consistencyCheck();
+//    Sudoku.sudoku.consistencyCheck();
 end
 
 // Detect a set of candidate values with cardinality 1 for some Cell.

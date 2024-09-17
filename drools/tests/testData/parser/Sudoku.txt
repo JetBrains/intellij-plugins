@@ -947,7 +947,7 @@ Drools File
                 PsiJavaToken:RPARENTH(')')
             PsiJavaToken:SEMICOLON(';')
           PsiWhiteSpace('\n')
-          PsiComment(END_OF_LINE_COMMENT)('//////    Sudoku.sudoku.consistencyCheck();')
+          PsiComment(END_OF_LINE_COMMENT)('//    Sudoku.sudoku.consistencyCheck();')
           PsiWhiteSpace('\n')
     PsiElement(end)('end')
   PsiWhiteSpace('\n\n')
