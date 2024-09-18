@@ -42,7 +42,10 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceManager;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
-import org.jetbrains.idea.perforce.perforce.*;
+import org.jetbrains.idea.perforce.perforce.ExecResult;
+import org.jetbrains.idea.perforce.perforce.P4Command;
+import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
+import org.jetbrains.idea.perforce.perforce.PerforceTimeoutException;
 
 import javax.swing.*;
 import java.io.File;
@@ -71,7 +74,7 @@ public abstract class AbstractP4Connection implements P4Connection {
   private static Consumer<? super String> ourCommandCallback = EmptyConsumer.getInstance();
 
   @Override
-  public ExecResult runP4CommandLine(final PerforceSettings settings,
+  public ExecResult runP4CommandLine(@NotNull PerforcePhysicalConnectionParametersI settings,
                                      final String[] strings,
                                      final StringBuffer stringBuffer) throws VcsException {
     final ExecResult result = new ExecResult();
@@ -85,7 +88,7 @@ public abstract class AbstractP4Connection implements P4Connection {
   }
 
   @Override
-  public ExecResult runP4CommandLine(final PerforceSettings settings,
+  public ExecResult runP4CommandLine(@NotNull PerforcePhysicalConnectionParametersI settings,
                                      final String[] conArgs,
                                      final String[] p4args,
                                      final StringBuffer stringBuffer) throws VcsException {
@@ -98,7 +101,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     return result;
   }
 
-  protected void runP4CommandImpl(PerforcePhysicalConnectionParametersI parameters,
+  protected void runP4CommandImpl(@NotNull PerforcePhysicalConnectionParametersI parameters,
                                   String[] connArgs,
                                   String[] p4args,
                                   ExecResult retVal,
