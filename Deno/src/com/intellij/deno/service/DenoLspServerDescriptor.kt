@@ -196,7 +196,9 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
           override fun processTerminated(event: ProcessEvent) {
             processHandler.notifyTextAvailable(DenoBundle.message("deno.cache.done"), ProcessOutputTypes.SYSTEM)
             ApplicationManager.getApplication().invokeLater(Runnable {
-              VirtualFileManager.getInstance().refreshAndFindFileByNioPath(Path.of(DenoSettings.getService(project).getDenoCache()))
+              val cachePath = DenoSettings.getService(project).getDenoCache()
+              val cache = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(Path.of(cachePath))
+              cache?.refresh(false, true)
 
               val newRoots = libraryProvider.getRootsToWatch(project)
               runWriteAction {
