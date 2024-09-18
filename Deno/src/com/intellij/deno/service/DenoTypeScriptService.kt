@@ -33,6 +33,8 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }
 
+  override fun isServiceNavigationEnabled(): Boolean = true
+
   override val name: String
     get() = "Deno LSP"
   override val prefix: String
