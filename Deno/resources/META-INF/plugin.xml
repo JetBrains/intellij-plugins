@@ -53,5 +53,6 @@
     <importModulePathStrategy order="after TypeScript"
                               implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
     <tsImportResolver implementation="com.intellij.deno.modules.DenoTypeScriptImportResolverProvider"/>
+    <itemPresentation language="TypeScript" implementationClass="com.intellij.deno.lang.DenoItemPresentationProvider"/>
   </extensions>
 </idea-plugin>
