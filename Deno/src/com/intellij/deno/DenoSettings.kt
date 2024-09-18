@@ -253,9 +253,10 @@ fun useDenoLibrary(project: Project): Boolean {
          PropertiesComponent.getInstance(project).getBoolean(useLibraryKey, false)
 }
 
-fun setUseDenoLibrary(project: Project) {
-  PropertiesComponent.getInstance(project).setValue(useLibraryKey, true)
-  ApplicationManager.getApplication().invokeLater { DenoSettings.getService(project).updateLibraries() }
+fun setUseDenoLibrary(project: Project, value: Boolean = true, updateLib: Boolean = true) {
+  PropertiesComponent.getInstance(project).setValue(useLibraryKey, value, false)
+  val runnable = Runnable { DenoSettings.getService(project).updateLibraries() }
+  if (updateLib) ApplicationManager.getApplication().invokeLater(runnable, project.disposed)
 }
 
 fun isDenoFileTypeAcceptable(file: VirtualFile) =

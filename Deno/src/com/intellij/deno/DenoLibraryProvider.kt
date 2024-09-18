@@ -1,5 +1,6 @@
 package com.intellij.deno
 
+import com.intellij.deno.lang.isJsonMetadataHashName
 import com.intellij.deno.roots.useWorkspaceModel
 import com.intellij.deno.service.DenoTypings
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
@@ -10,13 +11,16 @@ import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.roots.SyntheticLibrary
 import com.intellij.openapi.roots.SyntheticLibrary.ExcludeFileCondition
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import java.nio.file.Path
 import javax.swing.Icon
 
 internal val excludeCondition = ExcludeFileCondition { isDir, filename, _, _, _ ->
-  !isDir && !TypeScriptUtil.isDefinitionFile(
-    filename) && FileUtilRt.getExtension(filename).isNotEmpty()
+  !isDir &&
+  !TypeScriptUtil.isDefinitionFile(filename) &&
+  FileUtilRt.getExtension(filename).isNotEmpty() &&
+  !isJsonMetadataHashName(filename)
 }
 
 class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary("DenoLib", excludeCondition), ItemPresentation {
@@ -51,7 +55,7 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
   private fun getLibs(project: Project, settings: DenoSettings): List<VirtualFile> {
     val denoPackages = settings.getDenoCacheDeps()
     val typings = DenoTypings.getInstance(project)
-    val depsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoPackages)
+    val depsVirtualFile = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(Path.of(denoPackages))
     val denoTypingsVirtualFile = typings.getDenoTypingsVirtualFile()
     return listOfNotNull(depsVirtualFile, denoTypingsVirtualFile)
   }

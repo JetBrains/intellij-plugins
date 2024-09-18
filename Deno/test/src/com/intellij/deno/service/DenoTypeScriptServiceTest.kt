@@ -139,7 +139,7 @@ class DenoTypeScriptServiceTest : DenoServiceTestBase() {
 
     myFixture.checkResult("""
       console.log(
-        'Deno',
+          'Deno',
       );
       
       """.trimIndent())

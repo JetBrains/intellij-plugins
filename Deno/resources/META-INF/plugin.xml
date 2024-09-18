@@ -45,6 +45,7 @@
                  description="Enable workspace model integration for deno plugin"/>
 
     <directoryProjectGenerator implementation="com.intellij.deno.generator.DenoProjectTemplateGenerator"/>
+    <fileBasedIndex implementation="com.intellij.deno.lang.DenoCacheContentIndexExtension"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>

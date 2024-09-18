@@ -12,7 +12,7 @@ private const val stdPathUrl = "https://deno.land/$stdVersion/path/mod.ts"
 
 class DenoCacheServiceTest : DenoServiceTestBase() {
 
-  fun testDenoModulePathCompletion() {
+  fun testModulePathCompletion() {
     deleteDenoCache()
 
     val denoPath = DenoSettings.getService(project).getDenoPath()
@@ -31,8 +31,7 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
     TypeScriptServiceTestBase.assertHasServiceItems(lookupElements, true)
   }
 
-
-  fun testDenoCacheCommand() {
+  fun testCacheSimple() {
     deleteDenoCache()
 
     myFixture.addFileToProject("deno/deno.json", "{}")
@@ -58,10 +57,11 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
     myFixture.checkLspHighlightingForData(data)
 
     val ref = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(ref?.resolve())
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
   }
 
-  fun testConfigUrlCache() {
+  fun testCacheConfigUrl() {
     deleteDenoCache()
 
     myFixture.addFileToProject("./deno/deno.json", """
@@ -75,7 +75,7 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
     val path = "./deno/src/main.ts"
 
     myFixture.addFileToProject(path, """
-      |import {join} from <error>"<caret>#hello"</error>;
+      |import {join} from <error>"#hello<caret>"</error>;
       |join("1", "2");
       |<error>assertEqualsError123</error>();
     """.trimMargin())
@@ -93,7 +93,144 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
     myFixture.checkLspHighlightingForData(data)
 
     val ref = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(ref?.resolve())
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
+  }
+
+  fun testCacheJsr() {
+    deleteDenoCache()
+
+    myFixture.addFileToProject("deno/deno.json", "{}")
+    val path = "./deno/src/main.ts"
+    val url = "jsr:@luca/cases@^1.0.0"
+
+    myFixture.addFileToProject(path, """
+      |import { camelCase } from <error>"$url<caret>"</error>;
+      |camelCase("hello");
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    val tmpFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+    invokeCacheCommand(tmpFile.virtualFile, url)
+
+    val data = createExpectedDataFromText("""
+      |import { camelCase } from "$url";
+      |camelCase("hello");
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    myFixture.checkLspHighlightingForData(data)
+
+    val ref = myFixture.getReferenceAtCaretPosition()
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
+  }
+
+  fun testCacheConfigJsr() {
+    deleteDenoCache()
+
+    val url = "jsr:@luca/cases@^1.0.0"
+    myFixture.addFileToProject("./deno/deno.json", """
+      {
+        "imports": {
+            "#hello": "$url"
+         }
+      }
+    """.trimIndent())
+
+
+    val path = "./deno/src/main.ts"
+
+    myFixture.addFileToProject(path, """
+      |import {camelCase} from <error>"#hello<caret>"</error>;
+      |camelCase("hello");
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    val tmpFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+    invokeCacheCommand(tmpFile.virtualFile, url)
+
+    val data = createExpectedDataFromText("""
+      |import {camelCase} from "#hello";
+      |camelCase("hello");
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    myFixture.checkLspHighlightingForData(data)
+
+    val ref = myFixture.getReferenceAtCaretPosition()
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
+  }
+
+  fun testCacheConfigNpm() {
+    deleteDenoCache()
+
+    val url = "npm:chalk@5"
+    myFixture.addFileToProject("./deno/deno.json", """
+      {
+        "imports": {
+            "#hello": "$url"
+         }
+      }
+    """.trimIndent())
+
+
+    val path = "./deno/src/main.ts"
+
+    myFixture.addFileToProject(path, """
+      |import {supportsColor} from <error>"#hello<caret>"</error>;
+      |console.log(supportsColor)
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    val tmpFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+    invokeCacheCommand(tmpFile.virtualFile, url)
+
+    val data = createExpectedDataFromText("""
+      |import {supportsColor} from "#hello";
+      |console.log(supportsColor)
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    myFixture.checkLspHighlightingForData(data)
+
+    val ref = myFixture.getReferenceAtCaretPosition()
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
+  }
+
+  fun testCacheNpm() {
+    deleteDenoCache()
+
+    myFixture.addFileToProject("deno/deno.json", "{}")
+    val path = "./deno/src/main.ts"
+    val url = "npm:chalk@5"
+
+    myFixture.addFileToProject(path, """
+      |import { supportsColor } from <error>"$url<caret>"</error>;
+      |console.log(supportsColor)
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    val tmpFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+    invokeCacheCommand(tmpFile.virtualFile, url)
+
+    val data = createExpectedDataFromText("""
+      |import { supportsColor } from "$url";
+      |console.log(supportsColor)
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    myFixture.checkLspHighlightingForData(data)
+
+    val ref = myFixture.getReferenceAtCaretPosition()
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
   }
 
   fun testCleanCache() { //for debugging purposes
