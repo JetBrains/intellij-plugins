@@ -22,11 +22,12 @@ import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.codeinsight.FunctionInsertHandler
 import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
+import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
 import java.util.*
 
 object TerraformCompletionUtil {
-  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module") + setOf("key_provider", "method")
-  val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local") + setOf("key_provider", "method")).toSortedSet()
+  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module") + OpenTofuScopes
+  val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local") + OpenTofuScopes).toSortedSet()
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 

@@ -7,6 +7,7 @@ import com.intellij.patterns.PsiElementPattern.Capture
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.Scopes
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
@@ -54,7 +55,7 @@ object HILPatterns {
   val IlseNotFromKnownScope: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
     .without(getScopeSelectPatternCondition(Scopes))
   val IlseFromDataScope: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .with(getScopeSelectPatternCondition(setOf("data")))
+    .with(getScopeSelectPatternCondition(setOf(HCL_DATASOURCE_IDENTIFIER)))
   val IlseDataSource: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
     .with(object : PatternCondition<SelectExpression<*>?>(" SE_Data_Source()") {
       override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
@@ -73,7 +74,7 @@ object HILPatterns {
     }
   }
 
-  private fun getScopeSelectPatternCondition(scopes: Set<String>): PatternCondition<SelectExpression<*>?> {
+  internal fun getScopeSelectPatternCondition(scopes: Set<String>): PatternCondition<SelectExpression<*>?> {
     return object : PatternCondition<SelectExpression<*>?>("ScopeSelect($scopes)") {
       override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
         val from = t.from

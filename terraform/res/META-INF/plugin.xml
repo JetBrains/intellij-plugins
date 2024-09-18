@@ -430,7 +430,15 @@
     <fileTypeUsageSchemaDescriptor schema="Terraform"
                                    implementationClass="org.intellij.terraform.config.editor.TerraformJsonFileTypeUsageSchemaDescriptor"/>
 
-    <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.opentofu.OpenTofuReferenceContributor"/>
+    <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.opentofu.codeinsight.OpenTofuReferenceContributor"/>
+
+    <localInspection bundle="messages.HCLBundle" language="HCL"
+                     applyToDialects="true"
+                     implementationClass="org.intellij.terraform.opentofu.inspection.OpenTofuUnknownKeyProviderInspection"
+                     key="opentofu.unknown.key.provider.inspection.display.name"
+                     groupKey="opentofu.files.inspection.group.display.name"
+                     enabledByDefault="true" level="ERROR"
+    />
 
   </extensions>
 

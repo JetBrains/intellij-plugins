@@ -171,4 +171,46 @@ internal class OpenTofuConfigCompletionTest: TFBaseCompletionTestCase() {
     myFixture.testCompletionVariants(file.virtualFile.name, "method")
   }
 
+  fun testKeyProviderTypesCompletionTest() {
+    val file = myFixture.configureByText("main.tofu", """ 
+      terraform {
+        encryption {
+          key_provider "some_key_provider" "some_name" {
+            # Key provider options here
+          }
+          
+          key_provider "another_key_provider" "another_name" {
+            # Key provider options here
+          }
+      
+          method "some_method" "some_method_name" {
+            # Method options here
+            keys = key_provider.<caret>
+          }
+      }
+      """.trimIndent())
+    myFixture.testCompletionVariants(file.virtualFile.name, "some_key_provider", "another_key_provider")
+  }
+
+  fun testKeyProviderNamesCompletionTest() {
+    val file = myFixture.configureByText("main.tofu", """ 
+      terraform {
+        encryption {
+          key_provider "some_key_provider" "some_name" {
+            # Key provider options here
+          }
+          
+          key_provider "another_key_provider" "another_name" {
+            # Key provider options here
+          }
+      
+          method "some_method" "some_method_name" {
+            # Method options here
+            keys = key_provider.some_key_provider.<caret>
+          }
+      }
+      """.trimIndent())
+    myFixture.testCompletionVariants(file.virtualFile.name, "some_name")
+  }
+
 }

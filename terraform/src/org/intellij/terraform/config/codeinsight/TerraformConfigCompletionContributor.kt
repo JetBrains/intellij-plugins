@@ -65,8 +65,8 @@ import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQ
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
-import org.intellij.terraform.opentofu.encryptionKeyProviders
-import org.intellij.terraform.opentofu.encryptionMethods
+import org.intellij.terraform.opentofu.model.encryptionKeyProviders
+import org.intellij.terraform.opentofu.model.encryptionMethods
 
 class TerraformConfigCompletionContributor : HCLCompletionContributor() {
   init {

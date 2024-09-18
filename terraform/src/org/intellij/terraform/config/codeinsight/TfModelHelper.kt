@@ -19,9 +19,9 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.opentofu.OpenTofuPatterns
-import org.intellij.terraform.opentofu.getEncryptionKeyProviderProperties
-import org.intellij.terraform.opentofu.getEncryptionMethodProperties
+import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns
+import org.intellij.terraform.opentofu.model.getEncryptionKeyProviderProperties
+import org.intellij.terraform.opentofu.model.getEncryptionMethodProperties
 import java.util.*
 
 internal object TfModelHelper {

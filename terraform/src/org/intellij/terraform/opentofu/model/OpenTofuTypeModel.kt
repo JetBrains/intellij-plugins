@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.opentofu
+package org.intellij.terraform.opentofu.model
 
 import com.intellij.openapi.fileTypes.FileType
 import org.intellij.terraform.config.model.*
@@ -9,6 +9,7 @@ import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
+import org.intellij.terraform.opentofu.OpenTofuFileType
 
 
 //<editor-fold desc="Encryption providers">

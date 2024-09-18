@@ -33,7 +33,7 @@ import org.intellij.terraform.hil.codeinsight.isScopeElementReference
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.hil.psi.resolve
 import org.intellij.terraform.isTerraformCompatiblePsiFile
-import org.intellij.terraform.opentofu.OpenTofuPatterns.EncryptionBlock
+import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionBlock
 import org.jetbrains.annotations.Nls
 
 class HILUnresolvedReferenceInspection : LocalInspectionTool() {

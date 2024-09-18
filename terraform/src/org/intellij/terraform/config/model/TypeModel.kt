@@ -37,7 +37,7 @@ import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.isTerraformCompatiblePsiFile
-import org.intellij.terraform.opentofu.EncryptionBlockType
+import org.intellij.terraform.opentofu.model.EncryptionBlockType
 
 enum class ProviderTier(val label: String) {
   TIER_BUILTIN("builtin"),
