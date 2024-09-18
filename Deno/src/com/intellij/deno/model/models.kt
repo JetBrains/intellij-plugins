@@ -1,6 +1,7 @@
 package com.intellij.deno.model
 
 import com.intellij.deno.DenoSettings
+import com.intellij.deno.lang.DenoPackageInfo
 import com.intellij.deno.lang.getDenoCacheElementsByKey
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
@@ -113,7 +114,6 @@ fun parseDenoUrl(url: String): UrlModel? {
 
 @Service(Level.PROJECT)
 class DenoModel(private val project: Project) {
-
   fun findFilePathByUrlImport(importPath: String): String? {
     if (!JSUrlImportsUtil.startsWithRemoteUrlPrefix(importPath)) return null
 
@@ -121,7 +121,7 @@ class DenoModel(private val project: Project) {
     val key = url.fullPath()
     val elements = getDenoCacheElementsByKey(project, key)
 
-    val el = elements.firstOrNull() ?: return null
+    val el = matchByVersion(url.version, elements) ?: return null
 
     val deps = DenoSettings.getService(project).getDenoCacheDeps()
     return "$deps/${url.schema}/${url.namespace}/${el.hash}"
@@ -137,7 +137,7 @@ class DenoModel(private val project: Project) {
 
     val elements = getDenoCacheElementsByKey(project, key)
 
-    val el = elements.firstOrNull() ?: return null
+    val el = matchByVersion(url.version, elements) ?: return null
 
     val deps = DenoSettings.getService(project).getDenoCacheDeps()
     return "$deps/${url.schema}/${url.namespace}/${el.hash}"
@@ -192,6 +192,17 @@ class DenoModel(private val project: Project) {
     }
 
     return null
+  }
+
+  fun matchByVersion(version: String?, packages: List<DenoPackageInfo>): DenoPackageInfo? {
+    if (packages.size <= 1 || version == null) return packages.firstOrNull()
+
+    packages.forEach { packageInfo ->
+      val urlModel = parseDenoUrl(packageInfo.url)
+      if (version == urlModel?.version) return packageInfo
+    }
+
+    return packages.firstOrNull()
   }
 }
 

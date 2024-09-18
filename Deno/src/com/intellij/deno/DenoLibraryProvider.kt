@@ -55,7 +55,7 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
   private fun getLibs(project: Project, settings: DenoSettings): List<VirtualFile> {
     val denoPackages = settings.getDenoCacheDeps()
     val typings = DenoTypings.getInstance(project)
-    val depsVirtualFile = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(Path.of(denoPackages))
+    val depsVirtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(denoPackages))
     val denoTypingsVirtualFile = typings.getDenoTypingsVirtualFile()
     return listOfNotNull(depsVirtualFile, denoTypingsVirtualFile)
   }
