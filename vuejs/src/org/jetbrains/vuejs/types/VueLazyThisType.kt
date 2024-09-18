@@ -23,7 +23,7 @@ class VueLazyThisType(source: JSTypeSource,
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is VueLazyThisType && type.instanceOwner == instanceOwner
 
-  override fun hashCodeImpl(): Int = instanceOwner.hashCode()
+  override fun hashCode(allowResolve: Boolean): Int = instanceOwner.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

@@ -30,7 +30,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
   override fun copyWithNewSource(source: JSTypeSource): JSType =
     VueUnwrapRefType(typeToUnwrap, source)
 
-  override fun hashCodeImpl(): Int = typeToUnwrap.hashCode()
+  override fun hashCode(allowResolve: Boolean): Int = typeToUnwrap.hashCode(allowResolve)
 
   override fun acceptChildren(visitor: JSRecursiveTypeVisitor) {
     // We don't want to expose any children,

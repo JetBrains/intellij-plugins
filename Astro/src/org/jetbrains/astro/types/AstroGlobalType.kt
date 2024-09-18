@@ -26,7 +26,7 @@ class AstroGlobalType(source: JSTypeSource,
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is AstroGlobalType && type.file == file
 
-  override fun hashCodeImpl(): Int = file.hashCode()
+  override fun hashCode(allowResolve: Boolean): Int = file.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

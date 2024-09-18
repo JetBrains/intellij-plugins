@@ -43,7 +43,7 @@ class VueSourceProvideType private constructor(typeSource: JSTypeSource,
            }?.let { VueUnwrapRefType(it, element) } ?: JSUnknownType.TS_INSTANCE
   }
 
-  override fun hashCodeImpl(): Int = Objects.hash(element, symbolSource)
+  override fun hashCode(allowResolve: Boolean): Int = Objects.hash(element, symbolSource)
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

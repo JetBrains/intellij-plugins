@@ -37,8 +37,8 @@ class Angular2TemplateBindingType : Angular2BaseType<Angular2TemplateBindings> {
     return super.isEquivalentToWithSameClass(type, context, allowResolve) && myKey == (type as Angular2TemplateBindingType).myKey
   }
 
-  override fun hashCodeImpl(): Int {
-    return super.hashCodeImpl() * 31 + myKey.hashCode()
+  override fun hashCode(allowResolve: Boolean): Int {
+    return super.hashCode(allowResolve) * 31 + myKey.hashCode()
   }
 
   override fun resolveType(context: JSTypeSubstitutionContext): JSType? {

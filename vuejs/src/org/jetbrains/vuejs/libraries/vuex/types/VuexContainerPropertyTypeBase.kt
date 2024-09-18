@@ -22,7 +22,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
   : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
 
-  override fun hashCodeImpl(): Int {
+  override fun hashCode(allowResolve: Boolean): Int {
     return Objects.hash(element, baseNamespace)
   }
 

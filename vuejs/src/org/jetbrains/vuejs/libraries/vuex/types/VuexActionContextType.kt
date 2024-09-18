@@ -32,7 +32,7 @@ class VuexActionContextType private constructor(source: JSTypeSource,
 
   override fun copyWithNewSource(source: JSTypeSource): JSType = VuexActionContextType(source, element)
 
-  override fun hashCodeImpl(): Int {
+  override fun hashCode(allowResolve: Boolean): Int {
     return Objects.hash(element)
   }
 

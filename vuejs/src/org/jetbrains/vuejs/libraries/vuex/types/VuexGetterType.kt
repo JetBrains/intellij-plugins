@@ -14,8 +14,8 @@ class VuexGetterType(source: JSTypeSource,
     return VuexGetterType(source, element)
   }
 
-  override fun hashCodeImpl(): Int {
-    return element.jsType?.hashCode() ?: 0
+  override fun hashCode(allowResolve: Boolean): Int {
+    return element.jsType?.hashCode(allowResolve) ?: 0
   }
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean {
