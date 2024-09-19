@@ -16,7 +16,7 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('value')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     HtmlTag:div
       XmlToken:XML_START_TAG_START('<')
@@ -38,7 +38,7 @@ HtmlFile:test.html
                   PsiWhiteSpace(' ')
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('value')
-        PsiElement(NG:BLOCK_SEMICOLON)(';')
+          PsiElement(NG:BLOCK_SEMICOLON)(';')
       XmlText
         PsiWhiteSpace('\n')
       XmlToken:XML_END_TAG_START('</')
@@ -119,7 +119,7 @@ HtmlFile:test.html
                     PsiWhiteSpace(' ')
                     JSReferenceExpression
                       PsiElement(JS:IDENTIFIER)('value')
-          PsiElement(NG:BLOCK_SEMICOLON)(';')
+            PsiElement(NG:BLOCK_SEMICOLON)(';')
         XmlText
           PsiWhiteSpace('\n  ')
         Angular2HtmlBlock (@if)
@@ -218,7 +218,7 @@ HtmlFile:test.html
                   PsiWhiteSpace(' ')
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('value')
-        PsiElement(NG:BLOCK_SEMICOLON)(';')
+          PsiElement(NG:BLOCK_SEMICOLON)(';')
       XmlText
         PsiWhiteSpace('\n  ')
       HtmlTag:div

@@ -22,7 +22,7 @@ HtmlFile:test.html
                     JSLiteralExpression
                       PsiElement(JS:NUMERIC_LITERAL)('12')
                     PsiElement(JS:RPAR)(')')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')
     PsiWhiteSpace(' ')

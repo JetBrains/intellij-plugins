@@ -96,6 +96,8 @@ class Angular2FormattingTest : Angular2TestCase("formatting", false) {
 
   fun testDeferBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
+  fun testLetBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html")
+
   fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
 
   fun testEditorConfigWithinInjection() = doConfiguredTest(dir = true, checkResult = true, editorConfigEnabled = true) {

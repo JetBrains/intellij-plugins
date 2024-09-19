@@ -145,7 +145,10 @@ internal object Angular2HtmlFormattingHelper {
           Angular2HtmlTokenTypes.BLOCK_SEMICOLON ->
             Spacing.createSpacing(1, 1, 0, true, xmlFormattingPolicy.keepBlankLines)
           else ->
-            Spacing.createSpacing(0, 0, 0, false, xmlFormattingPolicy.keepBlankLines)
+            if ((child2 as? AbstractBlock)?.node?.elementType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON)
+              Spacing.createSpacing(0, 0, 0, false, 0)
+            else
+              Spacing.createSpacing(0, 0, 0, false, xmlFormattingPolicy.keepBlankLines)
         }
       }
       Angular2HtmlElementTypes.BLOCK_CONTENTS -> {

@@ -32,7 +32,7 @@ HtmlFile:test.html
                   PsiElement(JS:STRING_LITERAL)('" + test(12)')
                 PsiErrorElement:Unclosed string literal
                   <empty list>
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')
     PsiWhiteSpace(' ')
