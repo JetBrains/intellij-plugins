@@ -7,14 +7,15 @@ import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.platform.lsp.tests.checkLspHighlightingForData
 import junit.framework.TestCase
 
-private const val stdVersion = "std@0.187.0"
-private const val stdPathUrl = "https://deno.land/$stdVersion/path/mod.ts"
 
 class DenoCacheServiceTest : DenoServiceTestBase() {
 
-  fun testModulePathCompletion() {
+  override fun setUp() {
+    super.setUp()
     deleteDenoCache()
+  }
 
+  fun testModulePathCompletion() {
     val denoPath = DenoSettings.getService(project).getDenoPath()
     runSimpleCommandLine("$denoPath cache -r $stdPathUrl")
     DenoSettings.getService(project).setUseDeno(UseDeno.ENABLE)
@@ -32,8 +33,6 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
   }
 
   fun testCacheSimple() {
-    deleteDenoCache()
-
     myFixture.addFileToProject("deno/deno.json", "{}")
     val path = "./deno/src/main.ts"
     val url = """https://deno.land/$stdVersion/testing/asserts.ts"""
@@ -62,8 +61,6 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
   }
 
   fun testCacheConfigUrl() {
-    deleteDenoCache()
-
     myFixture.addFileToProject("./deno/deno.json", """
       {
         "imports": {
@@ -98,8 +95,6 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
   }
 
   fun testCacheJsr() {
-    deleteDenoCache()
-
     myFixture.addFileToProject("deno/deno.json", "{}")
     val path = "./deno/src/main.ts"
     val url = "jsr:@luca/cases@^1.0.0"
@@ -128,7 +123,6 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
   }
 
   fun testCacheConfigJsr() {
-    deleteDenoCache()
 
     val url = "jsr:@luca/cases@^1.0.0"
     myFixture.addFileToProject("./deno/deno.json", """
@@ -166,8 +160,6 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
   }
 
   fun testCacheConfigNpm() {
-    deleteDenoCache()
-
     val url = "npm:chalk@5"
     myFixture.addFileToProject("./deno/deno.json", """
       {
@@ -204,8 +196,6 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
   }
 
   fun testCacheNpm() {
-    deleteDenoCache()
-
     myFixture.addFileToProject("deno/deno.json", "{}")
     val path = "./deno/src/main.ts"
     val url = "npm:chalk@5"
@@ -232,6 +222,35 @@ class DenoCacheServiceTest : DenoServiceTestBase() {
     val resolved = ref!!.resolve()
     assertNotNull(resolved)
   }
+
+  fun testCacheNpmIndirectTypings() {
+    myFixture.addFileToProject("deno/deno.json", "{}")
+    val path = "./deno/src/main.ts"
+    val url = "npm:marked@11.2.0"
+
+    myFixture.addFileToProject(path, """
+      |import { lexer } from <error>"$url<caret>"</error>;
+      |lexer("")
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    val tmpFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+    invokeCacheCommand(tmpFile.virtualFile, url)
+
+    val data = createExpectedDataFromText("""
+      |import { lexer } from "$url";
+      |lexer("")
+      |<error>assertEqualsError123</error>();
+    """.trimMargin())
+
+    myFixture.checkLspHighlightingForData(data)
+
+    val ref = myFixture.getReferenceAtCaretPosition()
+    val resolved = ref!!.resolve()
+    assertNotNull(resolved)
+  }
+
 
   fun testCleanCache() { //for debugging purposes
     deleteDenoCache()

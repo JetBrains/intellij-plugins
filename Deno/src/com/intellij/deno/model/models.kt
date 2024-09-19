@@ -3,9 +3,11 @@ package com.intellij.deno.model
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.lang.DenoPackageInfo
 import com.intellij.deno.lang.getDenoCacheElementsByKey
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.Service.Level
@@ -14,12 +16,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.text.nullize
 
 const val npmImportPrefix = "npm:"
 const val jsrImportPrefix = "jsr:"
+const val jsrUrlPart = "https://jsr.io/"
+const val modFileName = "mod.ts"
 
 private const val npmRegistry = "registry.npmjs.org"
 private val denoUrlFileRefKey = Key.create<String?>("deno.file.url")
@@ -43,10 +48,26 @@ data class UrlModel(
     return "$namespace${subNamespacePart()}/$packageName${subPathPart()}"
   }
 
-  private fun subPathPart(): String = subPath?.let { "/$it" } ?: ""
-  private fun subNamespacePart(): String = if (subNamespace.isEmpty()) "" else "/$subNamespace"
+  fun subPathPart(): String = subPath?.let { "/$it" } ?: ""
+  fun subNamespacePart(): String = if (subNamespace.isEmpty()) "" else "/$subNamespace"
 }
 
+data class DenoNpmModel(val packageName: String, val version: String?, val root: VirtualFile, val path: VirtualFile) {
+  fun toImportPath(): String {
+    val path = VfsUtil.getRelativePath(path, root) ?: ""
+    val versionPart = version?.let { "@$version" } ?: ""
+    return npmImportPrefix + packageName + versionPart + if (path.isEmpty()) "" else "/$path"
+  }
+}
+
+fun buildNpmModel(moduleFileOrDirectory: VirtualFile): DenoNpmModel? {
+  val packageJson = PackageJsonUtil.findUpPackageJson(moduleFileOrDirectory) ?: return null
+  val data = PackageJsonData.getOrCreate(packageJson)
+  val packageName = data.name
+  if (packageName == null) return null
+
+  return DenoNpmModel(packageName, data.version?.toString(), packageJson.parent, moduleFileOrDirectory)
+}
 
 fun parseDenoUrl(url: String): UrlModel? {
   try {
@@ -114,6 +135,8 @@ fun parseDenoUrl(url: String): UrlModel? {
 
 @Service(Level.PROJECT)
 class DenoModel(private val project: Project) {
+
+  @NlsSafe
   fun findFilePathByUrlImport(importPath: String): String? {
     if (!JSUrlImportsUtil.startsWithRemoteUrlPrefix(importPath)) return null
 
@@ -127,11 +150,12 @@ class DenoModel(private val project: Project) {
     return "$deps/${url.schema}/${url.namespace}/${el.hash}"
   }
 
+  @NlsSafe
   fun findFilePathByJsrImport(importPath: String): String? {
     if (!hasJsrImportPrefix(importPath)) return null
     val path = importPath.removePrefix(jsrImportPrefix)
 
-    val url = parseDenoUrl("https://jsr.io/$path") ?: return null
+    val url = parseDenoUrl("$jsrUrlPart$path") ?: return null
 
     val key = url.fullPath() + getJsrPostfix(url)
 
@@ -148,11 +172,12 @@ class DenoModel(private val project: Project) {
    */
   fun getJsrPostfix(url: UrlModel): String {
     val subPath = url.subPath
-    if (subPath == null) return "/mod.ts"
+    if (subPath == null) return "/$modFileName"
 
     return subPath + if (subPath.endsWith(".ts")) "" else ".ts"
   }
 
+  @NlsSafe
   fun findFilePathByNpmImport(unquotedEscapedText: String): String? {
     val path = unquotedEscapedText.removePrefix(npmImportPrefix)
 
@@ -164,7 +189,7 @@ class DenoModel(private val project: Project) {
     val url = "$denoNpm/$npmRegistry/$packagePath"
     val packageDirectory = LocalFileSystem.getInstance().findFileByPath(url) ?: return null
     val versionDirectory = packageDirectory.children.firstOrNull {
-      it.isDirectory && (it.name == version || version != null && it.name.startsWith(version))
+      it.isDirectory && (version == null || it.name == version || it.name.startsWith(version))
     } ?: return null
 
     return "$url/${versionDirectory.name}"
@@ -209,3 +234,11 @@ class DenoModel(private val project: Project) {
 fun isJsr(namespace: String): Boolean = namespace == "jsr.io"
 fun hasJsrImportPrefix(importText: String): Boolean = importText.startsWith(jsrImportPrefix)
 fun hasNpmImportPrefix(importText: String): Boolean = importText.startsWith(npmImportPrefix)
+fun isDepsFile(project: Project, file: VirtualFile): Boolean {
+  val denoDeps = DenoSettings.getService(project).getDenoCacheDeps()
+  return file.path.startsWith(denoDeps)
+}
+fun isNpmFile(project: Project, file: VirtualFile): Boolean {
+  val denoNpm = DenoSettings.getService(project).getDenoNpm()
+  return file.path.startsWith(denoNpm)
+}

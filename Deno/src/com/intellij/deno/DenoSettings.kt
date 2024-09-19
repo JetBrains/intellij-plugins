@@ -15,11 +15,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.concurrency.annotations.RequiresEdt
 
 enum class UseDeno {
   CONFIGURE_AUTOMATICALLY,
@@ -185,16 +188,18 @@ class DenoSettings(private val project: Project) : PersistentStateComponent<Deno
       })
   }
 
+  @RequiresEdt
   fun updateLibraries() {
     val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
     val oldRoots = libraryProvider.getRootsToWatch(project)
-    WriteAction.run(
-      ThrowableRunnable<ConfigurationException> {
-        val newRoots = libraryProvider.getRootsToWatch(project)
-        AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
-
-        DaemonCodeAnalyzer.getInstance(project).restart()
-      })
+    ApplicationManager.getApplication().runWriteAction {
+      val fs = LocalFileSystem.getInstance()
+      val deps = fs.refreshAndFindFileByPath(getDenoCacheDeps())
+      val npm = fs.refreshAndFindFileByPath(getDenoNpm())
+      VfsUtil.markDirtyAndRefresh(false, true, true, deps, npm)
+      val newRoots = libraryProvider.getRootsToWatch(project)
+      AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
+    }
   }
 }
 

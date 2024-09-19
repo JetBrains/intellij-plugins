@@ -36,33 +36,31 @@ class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary("DenoL
   override fun getSourceRoots(): Collection<VirtualFile> = libs
   override fun getPresentableText() = DenoBundle.message("deno.library.name")
   override fun hashCode(): Int = libs.hashCode()
-
-  override fun getIcon(unused: Boolean): Icon? = null
+  override fun getIcon(unused: Boolean) = DenoUtil.getDefaultDenoIcon()
 }
 
 class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibraryProvider {
   override fun getAdditionalProjectLibraries(project: Project): Collection<SyntheticLibrary> {
     if (useWorkspaceModel()) return emptyList()
-    val service = DenoSettings.getService(project)
     if (!useDenoLibrary(project)) return emptyList()
 
-    val libs = getLibs(project, service)
+    val libs = getLibs(project)
     if (libs.isEmpty()) return emptyList()
 
     return listOf(DenoLibrary(libs))
   }
 
-  private fun getLibs(project: Project, settings: DenoSettings): List<VirtualFile> {
-    val denoPackages = settings.getDenoCacheDeps()
+  private fun getLibs(project: Project): List<VirtualFile> {
+    val settings = DenoSettings.getService(project)
     val typings = DenoTypings.getInstance(project)
-    val depsVirtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(denoPackages))
+    val deps = VirtualFileManager.getInstance().findFileByNioPath(Path.of(settings.getDenoCacheDeps()))
+    val npm = VirtualFileManager.getInstance().findFileByNioPath(Path.of(settings.getDenoNpm()))
     val denoTypingsVirtualFile = typings.getDenoTypingsVirtualFile()
-    return listOfNotNull(depsVirtualFile, denoTypingsVirtualFile)
+
+    return listOfNotNull(deps, npm, denoTypingsVirtualFile)
   }
 
   override fun getRootsToWatch(project: Project): Collection<VirtualFile> {
-    if (useWorkspaceModel()) return emptyList()
-    val service = DenoSettings.getService(project)
-    return if (useDenoLibrary(project)) getLibs(project, service) else emptyList()
+    return if (!useWorkspaceModel() && useDenoLibrary(project)) getLibs(project) else emptyList()
   }
 }

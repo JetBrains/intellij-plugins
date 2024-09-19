@@ -17,19 +17,15 @@ import com.intellij.javascript.nodejs.execution.withBackgroundProgress
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.roots.AdditionalLibraryRootsListener
-import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
@@ -41,7 +37,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import kotlinx.coroutines.Runnable
 import org.eclipse.lsp4j.Command
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 class DenoLspSupportProvider : LspServerSupportProvider {
@@ -189,22 +184,12 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
           KillableColoredProcessHandler(commandLine)
         }
 
-        val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
-        val oldRoots = libraryProvider.getRootsToWatch(project)
-
         processHandler.addProcessListener(object : ProcessListener {
           override fun processTerminated(event: ProcessEvent) {
             processHandler.notifyTextAvailable(DenoBundle.message("deno.cache.done"), ProcessOutputTypes.SYSTEM)
+
             ApplicationManager.getApplication().invokeLater(Runnable {
-              val cachePath = DenoSettings.getService(project).getDenoCache()
-              val cache = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(Path.of(cachePath))
-              cache?.refresh(false, true)
-
-              val newRoots = libraryProvider.getRootsToWatch(project)
-              runWriteAction {
-                AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
-              }
-
+              DenoSettings.getService(project).updateLibraries()
               TypeScriptService.restartServices(project)
               DaemonCodeAnalyzer.getInstance(project).restart()
             }, project.disposed)

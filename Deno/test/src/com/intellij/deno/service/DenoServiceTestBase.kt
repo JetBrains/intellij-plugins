@@ -18,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.StreamUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerManager
@@ -26,9 +27,14 @@ import com.intellij.platform.lsp.api.LspServerState
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.testFramework.utils.io.deleteRecursively
 import com.intellij.util.ui.UIUtil
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
+
+const val stdVersion = "std@0.187.0"
+const val stdPathUrl = "https://deno.land/$stdVersion/path/mod.ts"
 
 abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
   protected val denoAppRule: DenoAppRule = DenoAppRule.LATEST
@@ -55,20 +61,35 @@ abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
     val processHandler = CapturingProcessHandler(cmd)
     val output = processHandler.runProcess()
     assertEquals(output.stderr, 0, output.getExitCode())
+    updateCaches()
   }
 
   protected fun deleteDenoCache() {
     val service = DenoSettings.getService(project)
-    val depsCache = File(service.getDenoCacheDeps())
-    if (depsCache.exists()) {
+    val depsCache = Path.of(service.getDenoCacheDeps())
+    if (Files.exists(depsCache)) {
       depsCache.deleteRecursively()
-      depsCache.mkdir()
+      Files.createDirectory(depsCache)
     }
-    val npmCache = File(service.getDenoNpm())
-    if (npmCache.exists()) {
+
+    val npmCache = Path.of(service.getDenoNpm())
+    if (Files.exists(npmCache)) {
       npmCache.deleteRecursively()
-      npmCache.mkdir()
+      Files.createDirectory(npmCache)
     }
+    updateCaches()
+
+    //check the vfs refresh result
+    val deps = LocalFileSystem.getInstance().findFileByPath(service.getDenoCacheDeps())
+    assertEmpty(deps!!.children)
+    val npm = LocalFileSystem.getInstance().findFileByPath(service.getDenoNpm())
+    assertEmpty(npm!!.children)
+  }
+
+  private fun updateCaches() {
+    val service = DenoSettings.getService(project)
+    service.updateLibraries()
+    IndexingTestUtil.waitUntilIndexesAreReady(myFixture.getProject())
   }
 
   protected fun createServiceRestartCounter(): AtomicBoolean {
@@ -120,8 +141,6 @@ abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
     JSImportTestUtil.findAndInvokeIntentionAction(myFixture,
                                                   "${if (installPrefix) "Install" else "Cache"} \"$urlToCache\" and its dependencies.", false)
     waitForServiceRestart(restartFlag)
-    UIUtil.dispatchAllInvocationEvents()
-    NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
     IndexingTestUtil.waitUntilIndexesAreReady(myFixture.getProject())
   }
 

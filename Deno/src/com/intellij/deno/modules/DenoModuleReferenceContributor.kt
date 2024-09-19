@@ -7,9 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.findDenoConfig
 import com.intellij.deno.isDenoEnableForContext
-import com.intellij.deno.model.DenoModel
-import com.intellij.deno.model.hasJsrImportPrefix
-import com.intellij.deno.model.hasNpmImportPrefix
+import com.intellij.deno.model.*
 import com.intellij.javascript.JSModuleBaseReference
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
@@ -75,8 +73,13 @@ class DenoModuleReferenceContributor : JSImportMapContributorBase() {
     val moduleDescriptor = baseDescriptor.moduleDescriptor
     if (moduleDescriptor !is JSModuleNameInfo) return emptyList()
     val resolvedModuleFile = moduleDescriptor.resolvedFile
-    if (isCacheFile(configuration.place, resolvedModuleFile)) {
+    if (isDepsFile(configuration.project, resolvedModuleFile)) {
       val descriptors = buildForCachedFile(configuration, moduleDescriptor, baseDescriptor)
+      val importMapDescriptors = getImportMapDescriptorsForCachedFiles(configuration, descriptors)
+      return importMapDescriptors + descriptors
+    }
+    if (isNpmFile(configuration.project, resolvedModuleFile)) {
+      val descriptors = buildForNpm(configuration, moduleDescriptor, baseDescriptor)
       val importMapDescriptors = getImportMapDescriptorsForCachedFiles(configuration, descriptors)
       return importMapDescriptors + descriptors
     }
@@ -114,22 +117,35 @@ class DenoModuleReferenceContributor : JSImportMapContributorBase() {
     return result
   }
 
-  private fun isCacheFile(place: PsiElement, file: VirtualFile): Boolean {
-    val denoDeps = DenoSettings.getService(place.project).getDenoCacheDeps()
-    return file.path.startsWith(denoDeps)
-  }
-
   private fun buildForCachedFile(
-    configuration: JSImportPathConfiguration,
-    moduleDescriptor: JSModuleNameInfo,
-    baseDescriptor: JSImportDescriptor,
+    configuration: JSImportPathConfiguration, moduleDescriptor: JSModuleNameInfo, baseDescriptor: JSImportDescriptor,
   ): List<JSImportDescriptor> {
     val resolvedModuleFile = moduleDescriptor.resolvedFile
     val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
     val project = configuration.project
     val model = project.service<DenoModel>()
-    val ownUrlForFile = model.findOwnUrlForFile(resolvedModuleFile) ?: return emptyList()
+    var ownUrlForFile = model.findOwnUrlForFile(resolvedModuleFile) ?: return emptyList()
+    if (ownUrlForFile.startsWith(jsrUrlPart)) {
+      parseDenoUrl(ownUrlForFile)?.let {
+        val isMod = it.subPath == modFileName
+        ownUrlForFile = "$jsrImportPrefix${it.packageName}@${it.version}${if (isMod) "" else it.subPathPart()}"
+      }
+    }
+
     val newInfo = JSModuleDescriptorFactory.createExactModuleDescriptor(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile,
+                                                                        configuration.place)
+    return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
+  }
+
+  private fun buildForNpm(
+    configuration: JSImportPathConfiguration, moduleDescriptor: JSModuleNameInfo, baseDescriptor: JSImportDescriptor,
+  ): List<JSImportDescriptor> {
+    val npmModel = buildNpmModel(moduleDescriptor.moduleFileOrDirectory) ?: return emptyList()
+
+    val resolvedModuleFile = moduleDescriptor.resolvedFile
+    val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
+
+    val newInfo = JSModuleDescriptorFactory.createExactModuleDescriptor(npmModel.toImportPath(), moduleFileOrDirectory, resolvedModuleFile,
                                                                         configuration.place)
     return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }

@@ -9,14 +9,15 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
 
 
 @Service(Service.Level.PROJECT)
@@ -28,46 +29,47 @@ class DenoTypings(val project: Project) : Disposable {
 
   fun reloadAsync() {
     BackgroundTaskUtil.executeOnPooledThread(this) {
-      if (reload()) {
+      if (saveDenoTypings()) {
         ApplicationManager.getApplication().invokeLater({
-          val service = DenoSettings.getService(project)
-          service.updateLibraries()
-        }, project.disposed)
+                                                          val service = DenoSettings.getService(project)
+                                                          service.updateLibraries()
+                                                        }, project.disposed)
       }
     }
   }
 
   @Synchronized
-  fun reload(): Boolean {
+  fun saveDenoTypings(): Boolean {
     val denoDirectory = getGeneratedDenoTypings()
-
     val commandLine = GeneralCommandLine(DenoSettings.getService(project).getDenoPath(), "types")
 
     val output = try {
       execAndGetOutput(commandLine)
     }
-    catch (e: ExecutionException) {
-      return false
-    }
-    val file = File(denoDirectory)
-    val oldContent = try {
-      FileUtil.loadFile(file)
-    }
-    catch (e: FileNotFoundException) {
-      ""
-    }
-    catch (e: IOException) {
+    catch (_: ExecutionException) {
       return false
     }
 
-    if (output.exitCode == 0) {
-      val stdout = output.stdout
-      if (oldContent != stdout) {
-        FileUtil.writeToFile(file, stdout)
-        return true
-      }
+    if (output.exitCode != 0) return false
+    val file = Path.of(FileUtil.toSystemDependentName(denoDirectory))
+    val oldContent = try {
+      Files.readString(file)
     }
-    return false
+    catch (_: IOException) {
+      ""
+    }
+
+    val stdout = output.stdout
+    if (oldContent == stdout) return false
+
+    try {
+      Files.createDirectories(file.parent)
+      Files.writeString(file, stdout)
+    }
+    catch (e: IOException) {
+      logger<DenoTypings>().warn(e)
+    }
+    return true
   }
 
   private fun getDenoTypings(): String {
@@ -77,12 +79,12 @@ class DenoTypings(val project: Project) : Disposable {
   private fun getBundledTypings(): String {
     return FileUtil.toSystemIndependentName(DenoUtil.getDenoTypings())
   }
-  
-  public fun isDenoTypings(virtualFile: VirtualFile): Boolean {
+
+  fun isDenoTypings(virtualFile: VirtualFile): Boolean {
     val path = virtualFile.path
-    return path == getDenoTypings() || path == getGeneratedDenoTypings()
-  } 
-  
+    return path == getDenoTypings() || path == getBundledTypings()
+  }
+
   fun getDenoTypingsVirtualFile(): VirtualFile? {
     val typings = LocalFileSystem.getInstance().findFileByPath(getDenoTypings())
     if (typings != null && typings.isValid) return typings
@@ -90,7 +92,7 @@ class DenoTypings(val project: Project) : Disposable {
   }
 
   private fun getGeneratedDenoTypings() =
-    PathManager.getSystemPath() + File.separatorChar + "javascript" + File.separatorChar + "deno" + File.separatorChar + "deno.d.ts"
+    "${PathManager.getSystemPath()}/javascript/deno/deno.d.ts"
 
   override fun dispose() {}
 }
