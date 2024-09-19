@@ -13,6 +13,9 @@ public interface SpecScenario extends PsiElement {
     List<SpecStep> getStepList();
 
     @Nullable
+    SpecTable getTable();
+
+    @Nullable
     SpecTags getTags();
 
 }
