@@ -80,4 +80,16 @@ object OpenTofuPatterns {
       }
     })
 
+  private val IlseFromEncryptionMethod: PsiElementPattern.Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
+    .with(HILPatterns.getScopeSelectPatternCondition(setOf(OpenTofuConstants.TOFU_ENCRYPTION_METHOD_PROPERTY)))
+
+  internal val IlseOpenTofuEncryptionMethod: PsiElementPattern.Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
+    .with(object : PatternCondition<SelectExpression<*>?>(" SE_Encryption_Method()") {
+      override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
+        val from = t.from as? SelectExpression<*> ?: return false
+        return IlseFromEncryptionMethod.accepts(from)
+      }
+    })
+
+
 }

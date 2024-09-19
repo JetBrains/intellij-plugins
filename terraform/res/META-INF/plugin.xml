@@ -440,6 +440,14 @@
                      enabledByDefault="true" level="ERROR"
     />
 
+    <localInspection bundle="messages.HCLBundle" language="HCL"
+                     applyToDialects="true"
+                     implementationClass="org.intellij.terraform.opentofu.inspection.OpenTofuUnknownEncryptionMethodInspection"
+                     key="opentofu.unknown.encryption.method.inspection.display.name"
+                     groupKey="opentofu.files.inspection.group.display.name"
+                     enabledByDefault="true" level="ERROR"
+    />
+
   </extensions>
 
   <actions>
