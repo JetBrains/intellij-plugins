@@ -19,5 +19,5 @@ HtmlFile:test.html
                 PsiErrorElement:Unclosed string literal
                   <empty list>
                 PsiElement(BAD_CHARACTER)('\')
-      PsiErrorElement:Incomplete @let block - missing ;
-        <empty list>
+        PsiErrorElement:Incomplete @let block - missing ;
+          <empty list>

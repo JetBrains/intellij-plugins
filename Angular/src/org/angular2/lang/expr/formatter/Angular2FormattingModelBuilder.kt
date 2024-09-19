@@ -14,8 +14,12 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.formatter.JSSpacingProcessor
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder
 import com.intellij.lang.javascript.formatter.blocks.CompositeJSBlock
+import com.intellij.lang.javascript.formatter.blocks.JSBlock
+import com.intellij.lang.javascript.formatter.blocks.SubBlockVisitor
+import com.intellij.lang.javascript.formatter.blocks.alignment.ASTNodeBasedAlignmentFactory
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lang.typescript.formatter.TypedJSSpacingProcessor
+import com.intellij.lang.typescript.formatter.blocks.TypedJSSubBlockVisitor
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -67,6 +71,24 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     override fun createSpacingProcessor(node: ASTNode?, child1: ASTNode?, child2: ASTNode?): JSSpacingProcessor {
       return Angular2SpacingProcessor(node, child1, child2, topSettings, dialect, dialectSettings)
     }
+
+    override fun indentEachBinaryOperandSeparately(child: ASTNode, parentBlock: JSBlock?): Boolean {
+      return super.indentEachBinaryOperandSeparately(child, parentBlock)
+             || parentBlock?.node?.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
+    }
+
+    override fun createSubBlockVisitor(parentBlock: JSBlock, alignmentFactory: ASTNodeBasedAlignmentFactory?): SubBlockVisitor {
+      return object : TypedJSSubBlockVisitor(parentBlock, alignmentFactory, this) {
+        override fun getIndent(node: ASTNode, child: ASTNode, sharedSmartIndent: Indent?): Indent? {
+          if (node.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
+              && child.elementType === JSTokenTypes.IDENTIFIER
+          ) {
+            return Indent.getNoneIndent()
+          }
+          return super.getIndent(node, child, sharedSmartIndent)
+        }
+      }
+    }
   }
 
   private class Angular2SpacingProcessor(
@@ -76,8 +98,7 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     settings: CodeStyleSettings?,
     dialect: Language?,
     dialectSettings: JSCodeStyleSettings?,
-  )
-    : TypedJSSpacingProcessor(parent, child1, child2, settings, dialect, dialectSettings) {
+  ) : TypedJSSpacingProcessor(parent, child1, child2, settings, dialect, dialectSettings) {
 
     override fun visitElement(node: ASTNode) {
       when (node.elementType) {

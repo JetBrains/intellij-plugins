@@ -245,13 +245,13 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     }
     val parameters = builder.mark()
     builder.advanceLexer()
-    parameters.done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
     if (builder.tokenType != Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
       builder.error(Angular2Bundle.message("angular.parse.template.missing-let-block-closing-semicolon"))
     }
     else {
       builder.advanceLexer()
     }
+    parameters.done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
     startMarker.done(Angular2HtmlElementTypes.BLOCK)
   }
 

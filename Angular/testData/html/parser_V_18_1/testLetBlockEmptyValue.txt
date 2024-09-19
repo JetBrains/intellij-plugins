@@ -15,7 +15,7 @@ HtmlFile:test.html
                 PsiElement(JS:EQ)('=')
                 PsiErrorElement:Expression expected
                   <empty list>
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')
     PsiWhiteSpace(' ')

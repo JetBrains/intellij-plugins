@@ -19,7 +19,7 @@ HtmlFile:test.html
                     PsiElement(JS:IDENTIFIER)('user')
                   PsiElement(JS:DOT)('.')
                   PsiElement(JS:IDENTIFIER)('name')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
@@ -41,7 +41,7 @@ HtmlFile:test.html
                   PsiWhiteSpace(' ')
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('name')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
@@ -64,7 +64,7 @@ HtmlFile:test.html
                   PsiWhiteSpace(' ')
                   Angular2PipeReferenceExpression
                     PsiElement(JS:IDENTIFIER)('async')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
@@ -80,7 +80,7 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 JSLiteralExpression
                   PsiElement(JS:NUMERIC_LITERAL)('3.1459')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
@@ -111,7 +111,7 @@ HtmlFile:test.html
                     JSLiteralExpression
                       PsiElement(JS:NUMERIC_LITERAL)('100')
                   PsiElement(JS:RBRACE)('}')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace('\n')
     Angular2HtmlBlock (@let)
       PsiElement(NG:BLOCK_NAME)('@let')
@@ -139,4 +139,4 @@ HtmlFile:test.html
                   PsiWhiteSpace('\n                      ')
                   JSLiteralExpression
                     PsiElement(JS:STRING_LITERAL)(''Ut enim ad minim veniam...'')
-      PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
