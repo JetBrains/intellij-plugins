@@ -1,0 +1,2 @@
+<spot>@let data = $data | async;</spot>
+{{ data }}

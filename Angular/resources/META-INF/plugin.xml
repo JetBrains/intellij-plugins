@@ -117,6 +117,13 @@
     <localInspection implementationClass="org.angular2.inspections.AngularIncorrectLetUsageInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="ERROR" language="Angular2"
                      key="angular.inspection.incorrect-let-usage.name" bundle="messages.Angular2Bundle"/>
+
+    <intentionAction>
+      <language>Angular2</language>
+      <className>org.angular2.intentions.AngularIntroduceLetVariableIntention</className>
+      <bundleName>messages.Angular2Bundle</bundleName>
+      <categoryKey>angular.intention.category</categoryKey>
+    </intentionAction>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angular2.AngularProjectTemplatesFactory"/>
     <!-- works in new IDEA wizard -->

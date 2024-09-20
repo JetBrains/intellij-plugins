@@ -5,10 +5,11 @@ import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlTagChild
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 
-interface Angular2HtmlBlock : XmlElement, PsiExternalReferenceHost, PsiNamedElement {
+interface Angular2HtmlBlock : XmlElement, PsiExternalReferenceHost, PsiNamedElement, XmlTagChild {
 
   override fun getName(): String
 

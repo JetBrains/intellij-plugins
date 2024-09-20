@@ -142,6 +142,10 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"),
                      ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_CDK_14_2_0)
 
+  fun testExtractLetVariable() =
+    doTest(Angular2Bundle.message("angular.intention.introduce.let.variable.name"), ANGULAR_CORE_18_2_1,
+           extension = "html", checkIntentionPreview = false)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

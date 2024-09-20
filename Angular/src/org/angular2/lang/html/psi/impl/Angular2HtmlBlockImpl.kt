@@ -7,6 +7,8 @@ import com.intellij.psi.formatter.xml.AbstractXmlBlock
 import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
+import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlTagChild
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.IncorrectOperationException
@@ -102,6 +104,15 @@ class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   override fun setName(name: String): PsiElement {
     throw IncorrectOperationException()
   }
+
+  override fun getParentTag(): XmlTag? =
+    parent as? XmlTag
+
+  override fun getNextSiblingInTag(): XmlTagChild? =
+    nextSibling as? XmlTagChild
+
+  override fun getPrevSiblingInTag(): XmlTagChild? =
+    prevSibling as? XmlTagChild
 
   override fun toString(): String =
     super.toString() + " (@$name)"
