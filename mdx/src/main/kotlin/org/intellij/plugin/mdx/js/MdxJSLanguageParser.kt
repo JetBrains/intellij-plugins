@@ -1,7 +1,6 @@
 package org.intellij.plugin.mdx.js
 
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.PsiParser
 import com.intellij.lang.WhitespacesBinders
 import com.intellij.lang.ecmascript6.parsing.ES6ExpressionParser
 import com.intellij.lang.ecmascript6.parsing.ES6FunctionParser
@@ -15,7 +14,6 @@ import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.lang.javascript.types.JSFileElementType
-import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IFileElementType
 
 class MdxJSParserDefinition : ECMA6ParserDefinition() {
@@ -27,11 +25,8 @@ class MdxJSParserDefinition : ECMA6ParserDefinition() {
     return FILE
   }
 
-  override fun createParser(project: Project?): PsiParser {
-    return PsiParser { root, builder ->
-      MdxJSLanguageParser(builder).parseJS(root)
-      return@PsiParser builder.treeBuilt
-    }
+  override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
+    return MdxJSLanguageParser(builder)
   }
 }
 
