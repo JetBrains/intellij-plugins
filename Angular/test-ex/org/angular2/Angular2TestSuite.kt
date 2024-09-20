@@ -15,10 +15,7 @@ import org.angular2.codeInsight.navigation.Angular2FindUsagesTest
 import org.angular2.codeInsight.navigation.Angular2GotoDeclarationTest
 import org.angular2.codeInsight.navigation.Angular2GotoRelatedTest
 import org.angular2.codeInsight.navigation.Angular2GotoSymbolTest
-import org.angular2.codeInsight.refactoring.Angular2ChangeSignatureTest
-import org.angular2.codeInsight.refactoring.Angular2ExtractComponentTest
-import org.angular2.codeInsight.refactoring.Angular2MoveTest
-import org.angular2.codeInsight.refactoring.Angular2RenameTest
+import org.angular2.codeInsight.refactoring.*
 import org.angular2.css.Angular2CssClassTest
 import org.angular2.css.Angular2CssCompletionTest
 import org.angular2.css.Angular2CssHighlightingTest
@@ -83,6 +80,7 @@ import org.junit.runners.Suite
   Angular2ServiceInlayHintsTest::class,
   Angular2MoveTest::class,
   Angular2RenameTest::class,
+  Angular2InlineTest::class,
   Angular2ConfigTest::class,
   Angular2EditorTest::class,
   Angular2CliContextTest::class,

@@ -1,0 +1,7 @@
+<div *ngIf="true">
+  @let foo = 12 + "fo'o\"bar" + 'bar';
+  <p>test works!@let vss = 12 + foo + 12;</p>
+  {{ foo + fo<caret>o }}
+  <div [title]="foo"></div>
+  <div [title]='foo'></div>
+</div>
