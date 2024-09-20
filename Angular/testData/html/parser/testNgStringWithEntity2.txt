@@ -13,7 +13,7 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:BINDING_EXPR)
             Angular2Binding
-              JSLiteralExpression
+              Angular2StringPartsLiteralExpression
                 PsiElement(NG:XML_CHAR_ENTITY_REF)('&apos;')
                 PsiElement(JS:STRING_LITERAL_PART)('foo')
                 PsiElement(NG:XML_CHAR_ENTITY_REF)('&quot;')

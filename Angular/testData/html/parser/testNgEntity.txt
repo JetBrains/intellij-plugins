@@ -16,7 +16,7 @@ HtmlFile:test.html
             PsiElement(JS:QUEST)('?')
             PsiWhiteSpace(' ')
             JSBinaryExpression
-              JSLiteralExpression
+              Angular2StringPartsLiteralExpression
                 PsiElement(JS:STRING_LITERAL_PART)('' ')
                 PsiElement(NG:XML_CHAR_ENTITY_REF)('&mdash;')
                 PsiElement(JS:STRING_LITERAL_PART)(''')

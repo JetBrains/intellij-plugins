@@ -6,7 +6,7 @@ HtmlFile:test.html
     ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
       PsiWhiteSpace(' ')
       Angular2Interpolation
-        JSLiteralExpression
+        Angular2StringPartsLiteralExpression
           PsiElement(NG:XML_CHAR_ENTITY_REF)('&quot;')
           PsiElement(JS:STRING_LITERAL_PART)('fo')
           PsiElement(NG:XML_CHAR_ENTITY_REF)('&#123;')

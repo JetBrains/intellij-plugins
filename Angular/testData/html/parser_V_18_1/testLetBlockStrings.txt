@@ -16,14 +16,14 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 JSBinaryExpression
                   JSBinaryExpression
-                    JSLiteralExpression
+                    Angular2StringPartsLiteralExpression
                       PsiElement(JS:STRING_LITERAL_PART)('"foo')
                       PsiElement(NG:ESCAPE_SEQUENCE)('\"')
                       PsiElement(JS:STRING_LITERAL_PART)(';bar"')
                     PsiWhiteSpace(' ')
                     PsiElement(JS:PLUS)('+')
                     PsiWhiteSpace(' ')
-                    JSLiteralExpression
+                    Angular2StringPartsLiteralExpression
                       PsiElement(JS:STRING_LITERAL_PART)(''foo')
                       PsiElement(NG:ESCAPE_SEQUENCE)('\'')
                       PsiElement(JS:STRING_LITERAL_PART)(';bar'')

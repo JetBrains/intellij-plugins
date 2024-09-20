@@ -19,7 +19,7 @@ JSFile:test.string.action
         PsiWhiteSpace(' ')
         PsiElement(JS:PLUS)('+')
         PsiWhiteSpace(' ')
-        JSLiteralExpression
+        Angular2StringPartsLiteralExpression
           PsiElement(JS:STRING_LITERAL_PART)(''b ')
           PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
           PsiElement(JS:STRING_LITERAL_PART)(''')
@@ -33,7 +33,7 @@ JSFile:test.string.action
         PsiWhiteSpace(' ')
         PsiElement(JS:PLUS)('+')
         PsiWhiteSpace(' ')
-        JSLiteralExpression
+        Angular2StringPartsLiteralExpression
           PsiElement(JS:STRING_LITERAL_PART)(''b ')
           PsiElement(NG:INVALID_ESCAPE_SEQUENCE)('\u')
           PsiElement(JS:STRING_LITERAL_PART)(''')
@@ -47,7 +47,7 @@ JSFile:test.string.action
         PsiWhiteSpace(' ')
         PsiElement(JS:PLUS)('+')
         PsiWhiteSpace(' ')
-        JSLiteralExpression
+        Angular2StringPartsLiteralExpression
           PsiElement(JS:STRING_LITERAL_PART)(''b ')
           PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
         PsiErrorElement:Unclosed string literal

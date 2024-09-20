@@ -15,6 +15,7 @@ import com.intellij.psi.tree.TokenSet
 import org.angular2.codeInsight.blocks.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingStatement
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingsStatement
@@ -27,8 +28,9 @@ class Angular2Parser private constructor(
   private val myIsAction: Boolean,
   private val myIsSimpleBinding: Boolean,
   private val myIsJavaScript: Boolean,
-) : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(JavascriptLanguage.INSTANCE,
-                                                                                                               builder) {
+) : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(
+  Angular2Language, builder
+) {
   constructor(builder: PsiBuilder) : this(builder, false, false, true)
 
   init {
@@ -428,7 +430,7 @@ class Angular2Parser private constructor(
         currentToken = builder.tokenType
         text = getCurrentLiteralPartTokenText(currentToken)
       }
-      mark.done(JSStubElementTypes.LITERAL_EXPRESSION)
+      mark.done(Angular2StubElementTypes.STRING_PARTS_LITERAL_EXPRESSION)
       val errorMessage = validateLiteralText(literal.toString())
       if (errorMessage != null) {
         builder.error(errorMessage)
