@@ -4,6 +4,7 @@ package org.intellij.terraform.opentofu.patterns
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiElementPattern
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -40,6 +41,11 @@ object OpenTofuPatterns {
       .withParent(HCLSelectExpression::class.java)
       .withSuperParent(2, EncryptionMethodKeysProperty)
 
+  val EncryptionMethodKeysEmptyValue: PsiElementPattern.Capture<LeafPsiElement> =
+    PlatformPatterns.psiElement(LeafPsiElement::class.java)
+      .withParent(HCLIdentifier::class.java)
+      .withSuperParent(2, EncryptionMethodKeysProperty)
+
   val EncryptionStateBlock: PsiElementPattern.Capture<HCLBlock> =
     PlatformPatterns.psiElement(HCLBlock::class.java)
       .with(TerraformPatterns.createBlockPattern(OpenTofuConstants.TOFU_STATE_BLOCK))
@@ -66,6 +72,11 @@ object OpenTofuPatterns {
   val EncryptionMethodPropertyValue: PsiElementPattern.Capture<HCLIdentifier> =
     PlatformPatterns.psiElement(HCLIdentifier::class.java)
       .withParent(HCLSelectExpression::class.java)
+      .withSuperParent(2, EncryptionMethodProperty)
+
+  val EncryptionMethodEmptyValue: PsiElementPattern.Capture<LeafPsiElement> =
+    PlatformPatterns.psiElement(LeafPsiElement::class.java)
+      .withParent(HCLIdentifier::class.java)
       .withSuperParent(2, EncryptionMethodProperty)
 
 

@@ -100,6 +100,20 @@ internal class OpenTofuConfigCompletionTest: TFBaseCompletionTestCase() {
     myFixture.testCompletionVariants(file.virtualFile.name, "keys")
   }
 
+  fun testAesGcmEncryptionMethodPropertyValueCompletion() {
+    val file = myFixture.configureByText("main.tofu", """ 
+      terraform {
+        encryption {
+          method "aes_gcm" "aes_enc" {
+            keys = <caret>
+          }
+        }
+      }
+      """.trimIndent())
+    myFixture.testCompletionVariants(file.virtualFile.name, "key_provider")
+  }
+
+
   fun testUnencryptedEncryptionMethodPropertiesCompletion() {
     val file = myFixture.configureByText("main.tofu", """ 
       terraform {
@@ -240,6 +254,35 @@ internal class OpenTofuConfigCompletionTest: TFBaseCompletionTestCase() {
       """.trimIndent())
     myFixture.testCompletionVariants(file.virtualFile.name, "some_method", "another_method")
   }
+
+  fun testMethodPrefixCompletionTest() {
+    val file = myFixture.configureByText("main.tofu", """ 
+      terraform {
+        encryption {
+          key_provider "some_key_provider" "some_name" {
+            # Key provider options here
+          }
+          
+          method "some_method" "some_method_name" {
+            # Method options here
+            keys = key_provider.some_key_provider.some_name
+          }
+
+          method "another_method" "another_method_name" {
+            # Method options here
+            keys = key_provider.some_key_provider.some_name
+          }
+          
+          state {
+            # Encryption/decryption for state data
+            method = <caret>
+          }
+          
+      }
+      """.trimIndent())
+    myFixture.testCompletionVariants(file.virtualFile.name, "method")
+  }
+
 
   fun testMethodIdsCompletionTest() {
     val file = myFixture.configureByText("main.tofu", """ 

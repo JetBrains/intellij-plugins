@@ -432,6 +432,9 @@
 
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.opentofu.codeinsight.OpenTofuReferenceContributor"/>
 
+
+    <completion.contributor language="HCL" implementationClass="org.intellij.terraform.opentofu.codeinsight.OpenTofuCompletionContributor"/>
+
     <localInspection bundle="messages.HCLBundle" language="HCL"
                      applyToDialects="true"
                      implementationClass="org.intellij.terraform.opentofu.inspection.OpenTofuUnknownKeyProviderInspection"
