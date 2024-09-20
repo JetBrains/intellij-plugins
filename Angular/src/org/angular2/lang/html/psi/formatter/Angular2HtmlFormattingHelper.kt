@@ -12,6 +12,8 @@ import com.intellij.psi.formatter.xml.XmlTagBlock
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElementType
+import com.intellij.util.asSafely
+import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
@@ -23,9 +25,11 @@ internal object Angular2HtmlFormattingHelper {
     elementType === XmlElementType.XML_ATTRIBUTE
     || Angular2HtmlElementTypes.ALL_ATTRIBUTES.contains(elementType)
 
-  fun createSimpleChild(parent: ASTNode, child: ASTNode, indent: Indent?, wrap: Wrap?,
-                        alignment: Alignment?, range: TextRange?, xmlFormattingPolicy: XmlFormattingPolicy,
-                        preserveSpace: Boolean): XmlBlock =
+  fun createSimpleChild(
+    parent: ASTNode, child: ASTNode, indent: Indent?, wrap: Wrap?,
+    alignment: Alignment?, range: TextRange?, xmlFormattingPolicy: XmlFormattingPolicy,
+    preserveSpace: Boolean,
+  ): XmlBlock =
     when (parent.elementType) {
       Angular2HtmlElementTypes.BLOCK -> {
         Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNoneIndent(), range, false)
@@ -45,8 +49,10 @@ internal object Angular2HtmlFormattingHelper {
       }
     }
 
-  fun createTagBlock(parent: ASTNode, child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?,
-                     xmlFormattingPolicy: XmlFormattingPolicy, preserveSpace: Boolean): XmlTagBlock =
+  fun createTagBlock(
+    parent: ASTNode, child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?,
+    xmlFormattingPolicy: XmlFormattingPolicy, preserveSpace: Boolean,
+  ): XmlTagBlock =
     if (parent.elementType == Angular2HtmlElementTypes.BLOCK_CONTENTS) {
       Angular2HtmlTagBlock(child, wrap, alignment, xmlFormattingPolicy, Indent.getNormalIndent(), preserveSpace)
     }
@@ -54,15 +60,17 @@ internal object Angular2HtmlFormattingHelper {
       Angular2HtmlTagBlock(child, wrap, alignment, xmlFormattingPolicy, indent ?: Indent.getNoneIndent(), preserveSpace)
     }
 
-  fun processChild(parent: Block,
-                   result: MutableList<Block>,
-                   child: ASTNode,
-                   wrap: Wrap?,
-                   alignment: Alignment?,
-                   indent: Indent?,
-                   xmlFormattingPolicy: XmlFormattingPolicy,
-                   preserveSpace: Boolean,
-                   originalProcessChild: (MutableList<Block>, ASTNode, Wrap?, Alignment?, Indent?) -> ASTNode?): ASTNode? {
+  fun processChild(
+    parent: Block,
+    result: MutableList<Block>,
+    child: ASTNode,
+    wrap: Wrap?,
+    alignment: Alignment?,
+    indent: Indent?,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+    preserveSpace: Boolean,
+    originalProcessChild: (MutableList<Block>, ASTNode, Wrap?, Alignment?, Indent?) -> ASTNode?,
+  ): ASTNode? {
     if (child.elementType == Angular2HtmlElementTypes.BLOCK) {
       val firstBlock = child.psi as Angular2HtmlBlock
       if (firstBlock.isPrimary) {
@@ -81,14 +89,22 @@ internal object Angular2HtmlFormattingHelper {
     return originalProcessChild(result, child, wrap, alignment, indent)
   }
 
+  fun getSpacingWithinTag(
+    parent: ASTNode?,
+    child1: Block?, child2: Block,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+  ): Spacing? =
+    getSpacingBetweenTagsAndBlocksWithinTag(child1, child2, xmlFormattingPolicy)
+
   fun getSpacing(
     parent: ASTNode?,
     child1: Block?, child2: Block,
     xmlFormattingPolicy: XmlFormattingPolicy,
-    subBlocksProvider: () -> List<Block>
+    subBlocksProvider: () -> List<Block>,
   ): Spacing? =
     getSpacingBetweenAngularBlockGroups(child1, child2, xmlFormattingPolicy)
     ?: getSpacingBetweenAngularBlocks(child1, child2)
+    ?: getSpacingAroundLetBlocks(child1, child2, xmlFormattingPolicy)
     ?: getSpacingWithinAngularBlock(parent, child1, child2, xmlFormattingPolicy)
     ?: getSpacingIfInterpolationBorder(child1, child2, xmlFormattingPolicy, subBlocksProvider)
 
@@ -100,18 +116,57 @@ internal object Angular2HtmlFormattingHelper {
       else -> null
     }
 
-  private fun getSpacingBetweenAngularBlockGroups(child1: Block?,
-                                                  child2: Block,
-                                                  xmlFormattingPolicy: XmlFormattingPolicy): Spacing? =
-
+  private fun getSpacingBetweenAngularBlockGroups(
+    child1: Block?,
+    child2: Block,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+  ): Spacing? =
     if (child1 is Angular2SyntheticBlock && child2 is Angular2SyntheticBlock
         && child1.isBlockGroup && child2.isBlockGroup)
       Spacing.createSpacing(0, 0, 1, false, xmlFormattingPolicy.keepBlankLines)
     else
       null
 
-  private fun getSpacingBetweenAngularBlocks(child1: Block?,
-                                             child2: Block): Spacing? =
+  private fun getSpacingAroundLetBlocks(
+    child1: Block?,
+    child2: Block,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+  ): Spacing? =
+    if (isLetBlock(child1) || isLetBlock(child2))
+      Spacing.createSpacing(0, 0, 1, false, xmlFormattingPolicy.keepBlankLines)
+    else
+      null
+
+  private fun getSpacingBetweenTagsAndBlocksWithinTag(
+    child1: Block?,
+    child2: Block,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+  ): Spacing? =
+    if ((endsWithLetBlockWithinTag(child1) && child2 is Angular2SyntheticBlock && child2.isStartOfTag)
+        || (child1 is Angular2SyntheticBlock && child1.isEndOfTag && startsWithLetBlockWithinTag(child2)))
+      Spacing.createSpacing(0, 0, 1, false, xmlFormattingPolicy.keepBlankLines)
+    else
+      null
+
+  private fun endsWithLetBlockWithinTag(block: Block?):Boolean =
+    block is Angular2SyntheticBlock
+    && isLetBlock(block.subBlocks.lastOrNull())
+
+  private fun startsWithLetBlockWithinTag(block: Block?):Boolean =
+    block is Angular2SyntheticBlock
+    && isLetBlock(block.subBlocks.firstOrNull())
+
+  private fun isLetBlock(block: Block?): Boolean =
+    block is Angular2SyntheticBlock
+    && block.isBlockGroup
+    && block.subBlocks[0]?.asSafely<AbstractBlock>()
+      ?.node?.psi?.asSafely<Angular2HtmlBlock>()
+      ?.name == BLOCK_LET
+
+  private fun getSpacingBetweenAngularBlocks(
+    child1: Block?,
+    child2: Block,
+  ): Spacing? =
     if ((child1 as? AbstractBlock)?.node?.elementType == Angular2HtmlElementTypes.BLOCK
         && (child2 as? AbstractBlock)?.node?.elementType == Angular2HtmlElementTypes.BLOCK) {
       val block1 = child1.node.psi as Angular2HtmlBlock
@@ -125,17 +180,20 @@ internal object Angular2HtmlFormattingHelper {
     }
     else null
 
-  private fun getSpacingWithinAngularBlock(parent: ASTNode?,
-                                           child1: Block?,
-                                           child2: Block,
-                                           xmlFormattingPolicy: XmlFormattingPolicy): Spacing? =
+  private fun getSpacingWithinAngularBlock(
+    parent: ASTNode?,
+    child1: Block?,
+    child2: Block,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+  ): Spacing? =
     when (parent?.elementType) {
       Angular2HtmlElementTypes.BLOCK -> {
         when ((child1 as? AbstractBlock)?.node?.elementType) {
           Angular2HtmlTokenTypes.BLOCK_NAME,
           Angular2HtmlElementTypes.BLOCK_PARAMETERS,
-          Angular2HtmlElementTypes.BLOCK_CONTENTS -> {
-            Spacing.createSpacing(1, 1, 0, false, xmlFormattingPolicy.keepBlankLines)
+          Angular2HtmlElementTypes.BLOCK_CONTENTS,
+            -> { Spacing.createSpacing(1, 1, 0,
+                                  false, xmlFormattingPolicy.keepBlankLines)
           }
           else -> null
         }
@@ -170,7 +228,7 @@ internal object Angular2HtmlFormattingHelper {
   private fun getSpacingIfInterpolationBorder(
     child1: Block?, child2: Block,
     xmlFormattingPolicy: XmlFormattingPolicy,
-    subBlocksProvider: () -> List<Block>
+    subBlocksProvider: () -> List<Block>,
   ): Spacing? =
     if (isAngularInterpolationBorder(child1, child2) || isAngularInterpolationBorder(child2, child1)) {
       val injectedWrapper = (child1 as? AnotherLanguageBlockWrapper ?: child2 as AnotherLanguageBlockWrapper)
