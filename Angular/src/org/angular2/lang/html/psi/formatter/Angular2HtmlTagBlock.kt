@@ -1,10 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.formatter
 
-import com.intellij.formatting.Alignment
-import com.intellij.formatting.Block
-import com.intellij.formatting.Indent
-import com.intellij.formatting.Wrap
+import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.openapi.util.TextRange
@@ -22,6 +19,10 @@ class Angular2HtmlTagBlock(node: ASTNode,
                            indent: Indent?,
                            preserveSpace: Boolean)
   : XmlTagBlock(node, wrap, alignment, policy, indent, preserveSpace) {
+
+  override fun getSpacing(child1: Block?, child2: Block): Spacing? =
+    Angular2HtmlFormattingHelper.getSpacingWithinTag(node, child1, child2, myXmlFormattingPolicy)
+    ?: super.getSpacing(child1, child2)
 
   override fun createTagBlock(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlTagBlock =
     Angular2HtmlFormattingHelper.createTagBlock(
