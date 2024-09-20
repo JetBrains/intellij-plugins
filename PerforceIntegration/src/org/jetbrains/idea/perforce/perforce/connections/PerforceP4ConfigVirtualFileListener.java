@@ -9,6 +9,11 @@ import org.jetbrains.idea.perforce.application.PerforceVcs;
 
 import java.util.Objects;
 
+/**
+ * Listen P4 config files changes located in the project content roots and thus available in VFS.
+ * <p/>
+ * For listening config file changes located outside project roots consider to use {@link PerforceExternalConfigTracker}
+ */
 public class PerforceP4ConfigVirtualFileListener implements VirtualFileListener {
   private final PerforceConnectionManagerI myConnectionManager;
   private final Project myProject;

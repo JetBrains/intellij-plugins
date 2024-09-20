@@ -32,9 +32,13 @@ internal class P4RootChecker : VcsRootChecker() {
   override fun detectProjectMappings(project: Project,
                                      projectRoots: Collection<VirtualFile>,
                                      mappedDirs: Set<VirtualFile>): Collection<VirtualFile> {
-
-    project.service<PerforceWorkspaceConfigurator>()
+    val configs = project.service<PerforceWorkspaceConfigurator>()
       .configure(projectRoots)
+    if (configs.isNotEmpty()) {
+      val configTracker = project.service<PerforceExternalConfigTracker>()
+      configTracker.startTracking()
+      configTracker.addConfigsToTrack(configs.map { it.configFile.path }.toSet())
+    }
 
     val mappedRoots = try {
       val connectionManager = PerforceConnectionManager.getInstance(project)
