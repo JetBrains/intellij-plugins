@@ -1,0 +1,1 @@
+export { default as OtherName } from './OrdersListView.vue';

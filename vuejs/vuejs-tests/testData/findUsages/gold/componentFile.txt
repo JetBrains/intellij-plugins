@@ -1,0 +1,9 @@
+<IndexUser.vue:(116,138):(1,11)>	other-name
+<IndexUser.vue:(33,42):(0,9)>	{OtherName}
+<IndexUser.vue:(92,113):(1,10)>	OtherName
+<VBindImported.vue:(269,293):(1,15)>	some-component
+<VBindImported.vue:(298,321):(1,14)>	SomeComponent
+<VBindImported.vue:(32,45):(0,13)>	import SomeComponent from "./SomeComponent.vue";
+<VBindImported.vue:(46,72):(8,25)>	import SomeComponent from "./SomeComponent.vue";
+<components.js:(32,58):(8,25)>	export { default as OtherName } from './SomeComponent.vue';
+<components.js:(9,29):(0,7)>	export { default as OtherName } from './SomeComponent.vue';
