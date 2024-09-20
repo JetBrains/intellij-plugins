@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
+import com.intellij.ide.impl.isTrusted
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -11,6 +12,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectResolvePolicyCleanCache
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
+import com.jetbrains.cidr.cpp.notifications.showUntrustedProjectLoadDialog
 
 class PlatformioRefreshAction : AnAction(ExternalSystemIconProvider.getExtension(ID).reloadIcon) {
 
@@ -22,6 +24,15 @@ class PlatformioRefreshAction : AnAction(ExternalSystemIconProvider.getExtension
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     if (project != null) {
+
+      // Don't refresh untrusted projects
+      // Refreshing the project would run pio, which can execute python code via advanced scripting.
+      // Just show the untrusted project dialog and do nothing instead.
+      if (!project.isTrusted()) {
+        showUntrustedProjectLoadDialog(project)
+        return
+      }
+
       val importSpec = ImportSpecBuilder(project, ID).projectResolverPolicy(PlatformioProjectResolvePolicyCleanCache).build()
       val rerunSpec = ImportSpecBuilder(project, ID).projectResolverPolicy(PlatformioProjectResolvePolicyCleanCache).build()
       if (importSpec is ImportSpecImpl) {
