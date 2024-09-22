@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.library.JSLibraryUtil.findUpClosestNodeModul
 import com.intellij.lang.javascript.psi.JSCommonTypeNames.MODULE_PREFIX
 import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -31,7 +33,16 @@ class VueTypedGlobal(override val delegate: VueGlobal,
         .flatMap { it.stubSafeChildren }
         .filterIsInstance<TypeScriptInterface>()
         .filter { it.name == GLOBAL_COMPONENTS }
-        .flatMap { it.fields.asSequence() }
+        .flatMap { vueGlobal ->
+          val fields = vueGlobal.fields.asSequence()
+          //resolve only for locally defined extend elements, see GlobalComponents in Nuxt
+          val inheritedFields = vueGlobal.extendsList?.members
+            ?.mapNotNull { it.referenceText }
+            ?.mapNotNull { JSStubBasedPsiTreeUtil.resolveLocally(it, vueGlobal.containingFile) }
+            ?.filterIsInstance<JSClass>()
+            ?.flatMap { it.fields.asSequence() } ?: emptyList()
+          return@flatMap fields + inheritedFields
+        }
         .groupBy { it.name }
         .mapNotNull { nameToField ->
           val fromLibrary = mutableListOf<JSField>()
