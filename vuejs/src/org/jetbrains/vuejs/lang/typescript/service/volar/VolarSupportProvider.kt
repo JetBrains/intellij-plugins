@@ -41,8 +41,10 @@ class VolarSupportProvider : LspServerSupportProvider {
 }
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue") {
+  val newEvalMode = TypeScriptCompilerEvaluationFacade.getInstance(project) != null
+
   init {
-    if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
+    if (newEvalMode) {
       version = SemVer.parseFromText("2.0.26-eval")
     }
   }

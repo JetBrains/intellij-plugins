@@ -10,6 +10,7 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerState
 import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.psi.PsiElement
@@ -53,20 +54,29 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
+    if (!isNewEvalModeServer(server)) return null
     awaitServerRunningState(server)
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getElementType(args) }
   }
 
   override suspend fun getIdeSymbolType(args: TypeScriptGetSymbolTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
+    if (!isNewEvalModeServer(server)) return null
     awaitServerRunningState(server)
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getSymbolType(args) }
   }
 
   override suspend fun getIdeTypeProperties(args: TypeScriptGetTypePropertiesRequestArgs): JsonElement? {
     val server = getServer() ?: return null
+    if (!isNewEvalModeServer(server)) return null
     awaitServerRunningState(server)
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getTypeProperties(args) }
+  }
+
+  private fun isNewEvalModeServer(server: LspServer): Boolean {
+    // the lifecycle of LspServer is shorter than of VolarTypeScriptService
+    val descriptor = server.descriptor
+    return descriptor is VolarServerDescriptor && descriptor.newEvalMode
   }
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean {
