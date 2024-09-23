@@ -9,6 +9,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.model.local.LocalSchemaService
@@ -20,13 +21,22 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
     TerraformMetadataLoader().loadDefaults() ?: TypeModel()
   }
 
-  val ignored_references: Set<String> by lazy { loadIgnoredReferences() }
+  val ignoredReferences: Set<String> by lazy { loadIgnoredReferences() }
 
   companion object {
 
     @JvmStatic
+    @OptIn(ExperimentalCoroutinesApi::class)
     val globalModel: TypeModel
-      get() = runBlockingMaybeCancellable { service<TypeModelProvider>()._model.await() }
+      get() {
+        val asyncModelLoadTask = service<TypeModelProvider>()._model
+        return if (asyncModelLoadTask.isCompleted) {
+          asyncModelLoadTask.getCompleted()
+        }
+        else {
+          runBlockingMaybeCancellable { asyncModelLoadTask.await() }
+        }
+      }
 
     @RequiresBackgroundThread(generateAssertion = true)
     fun getModel(psiElement: PsiElement): TypeModel {

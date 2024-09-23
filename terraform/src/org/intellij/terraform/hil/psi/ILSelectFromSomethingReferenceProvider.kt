@@ -2,6 +2,7 @@
 package org.intellij.terraform.hil.psi
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -155,7 +156,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
         val property = r.`object`?.findProperty(name)
         val blocks = r.`object`?.blockList?.filter { it.nameElements.any { it.name == name } }.orEmpty()
         val fqn = HCLQualifiedNameProvider.getQualifiedModelName(r)
-        if (ApplicationManager.getApplication().getService(TypeModelProvider::class.java).ignored_references.contains(fqn)) {
+        if (service<TypeModelProvider>().ignoredReferences.contains(fqn)) {
           if (fake) found.add(FakeHCLProperty(name, r))
         }
         else if (isResourceReferencedFromImportBlock(r, initialContextType, name)) {
@@ -267,7 +268,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
                 }
               }
             }
-            if (ApplicationManager.getApplication().getService(TypeModelProvider::class.java).ignored_references.contains(fqn)) {
+            if (ApplicationManager.getApplication().getService(TypeModelProvider::class.java).ignoredReferences.contains(fqn)) {
               found.add(FakeHCLProperty(name, r))
             }
           }
