@@ -38,7 +38,7 @@ class VueDecoratedComponentPropType private constructor(typeSource: JSTypeSource
     ?: member.jsType
     ?: JSAnyType.get(source)
 
-  override fun hashCode(allowResolve: Boolean): Int = member.getMemberHashCode(allowResolve)
+  override fun hashCodeImpl(): Int = member.memberHashCode
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

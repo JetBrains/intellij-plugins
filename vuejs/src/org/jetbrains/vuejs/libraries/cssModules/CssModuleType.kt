@@ -44,7 +44,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is CssModuleType && type.container == this.container
 
-  override fun hashCode(allowResolve: Boolean): Int {
+  override fun hashCodeImpl(): Int {
     return container.hashCode()
   }
 

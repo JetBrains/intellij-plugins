@@ -41,7 +41,7 @@ abstract class Angular2BaseType<T : PsiElement?> protected constructor(source: J
     return type.javaClass == this.javaClass && type.sourceElement == sourceElement
   }
 
-  override fun hashCode(allowResolve: Boolean): Int {
+  override fun hashCodeImpl(): Int {
     return sourceHashCode
   }
 

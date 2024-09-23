@@ -24,7 +24,7 @@ private class VueCompleteTypeImpl(private val baseType: JSType, source: JSTypeSo
 
   override fun copyWithNewSource(source: JSTypeSource): JSType = VueCompleteTypeImpl(baseType, source)
 
-  override fun hashCode(allowResolve: Boolean): Int = baseType.hashCode(allowResolve)
+  override fun hashCodeImpl(): Int = baseType.hashCode()
 
   override fun acceptChildren(visitor: JSRecursiveTypeVisitor) {
     baseType.accept(visitor)

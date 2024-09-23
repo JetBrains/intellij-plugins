@@ -19,7 +19,7 @@ class VueRefsType(source: JSTypeSource,
 
   override fun copyWithNewSource(source: JSTypeSource): JSType = VueRefsType(source, instanceOwner)
 
-  override fun hashCode(allowResolve: Boolean): Int = instanceOwner.hashCode()
+  override fun hashCodeImpl(): Int = instanceOwner.hashCode()
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is VueRefsType

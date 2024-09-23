@@ -25,7 +25,7 @@ class VueComponentInstanceType(source: JSTypeSource,
     typeMembers.forEach { it.acceptChildren(visitor) }
   }
 
-  override fun hashCode(allowResolve: Boolean): Int = Objects.hashCode(membersNames.toTypedArray()) * 31 + instanceOwner.hashCode()
+  override fun hashCodeImpl(): Int = Objects.hashCode(membersNames.toTypedArray()) * 31 + instanceOwner.hashCode()
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean {
     return (type is VueComponentInstanceType

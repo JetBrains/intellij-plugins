@@ -26,7 +26,7 @@ class VueSourceSlotBindingType private constructor(typeSource: JSTypeSource,
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     (type is VueSourceSlotBindingType && type.attribute == attribute)
 
-  override fun hashCode(allowResolve: Boolean): Int = bindingName.hashCode()
+  override fun hashCodeImpl(): Int = bindingName.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

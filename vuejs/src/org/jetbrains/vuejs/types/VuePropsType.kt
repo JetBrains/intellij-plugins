@@ -24,7 +24,7 @@ class VuePropsType(source: JSTypeSource,
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is VuePropsType && type.instanceOwner == instanceOwner
 
-  override fun hashCode(allowResolve: Boolean): Int = instanceOwner.hashCode()
+  override fun hashCodeImpl(): Int = instanceOwner.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

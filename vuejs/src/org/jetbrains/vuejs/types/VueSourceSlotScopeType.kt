@@ -26,7 +26,7 @@ class VueSourceSlotScopeType private constructor(typeSource: JSTypeSource, priva
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     (type is VueSourceSlotScopeType && type.tag == tag)
 
-  override fun hashCode(allowResolve: Boolean): Int = slotName.hashCode()
+  override fun hashCodeImpl(): Int = slotName.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

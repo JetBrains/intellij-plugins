@@ -47,7 +47,7 @@ class VueSourcePropType private constructor(typeSource: JSTypeSource, private va
     }
   }
 
-  override fun hashCode(allowResolve: Boolean): Int = element.name.hashCode()
+  override fun hashCodeImpl(): Int = element.name.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

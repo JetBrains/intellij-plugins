@@ -31,7 +31,7 @@ class VueSourceModelPropType private constructor(
       ?.fixPrimitiveTypes()
     ?: JSAnyType.get(source)
 
-  override fun hashCode(allowResolve: Boolean): Int = name.hashCode()
+  override fun hashCodeImpl(): Int = name.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {
