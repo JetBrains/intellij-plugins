@@ -5,8 +5,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.*
-import javax.swing.*
+import com.intellij.ui.ColoredTreeCellRenderer
+import com.intellij.ui.SimpleTextAttributes
+import com.intellij.util.SlowOperations
+import javax.swing.JTree
 
 class MakefileCellRenderer(private val project: Project) : ColoredTreeCellRenderer() {
   private val rootDir: VirtualFile? = project.guessProjectDir()
@@ -20,7 +22,11 @@ class MakefileCellRenderer(private val project: Project) : ColoredTreeCellRender
     else {
       append(value.name)
       if (value is MakefileFileNode && !project.isDisposed) {
-        val file = ReadAction.compute<VirtualFile, Exception> { value.psiFile?.containingDirectory?.virtualFile } ?: return
+        val file = SlowOperations.knownIssue("CPP-41044").use {
+          ReadAction.compute<VirtualFile, Exception> {
+            value.psiFile?.containingDirectory?.virtualFile
+          } ?: return
+        }
         if (rootDir != null) {
           val relativePath = VfsUtilCore.getRelativePath(file, rootDir) ?: file.path
           if (relativePath.isBlank()) {
