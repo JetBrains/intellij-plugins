@@ -15,6 +15,7 @@ import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
+import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
@@ -40,6 +41,12 @@ class VolarSupportProvider : LspServerSupportProvider {
 }
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue") {
+  init {
+    if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
+      version = SemVer.parseFromText("2.0.26-eval")
+    }
+  }
+
   override fun createInitializationOptionsWithTS(targetPath: String): Any {
     @Suppress("unused")
     return object {
