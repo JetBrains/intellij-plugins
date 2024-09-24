@@ -1,0 +1,6 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.intellij.qodana"/>
+    <module name="intellij.platform.testFramework"/>
+  </dependencies>
+</idea-plugin>
