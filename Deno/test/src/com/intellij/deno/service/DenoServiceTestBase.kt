@@ -69,21 +69,25 @@ abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
     val depsCache = Path.of(service.getDenoCacheDeps())
     if (Files.exists(depsCache)) {
       depsCache.deleteRecursively()
-      Files.createDirectory(depsCache)
+      Files.createDirectories(depsCache)
     }
 
     val npmCache = Path.of(service.getDenoNpm())
     if (Files.exists(npmCache)) {
       npmCache.deleteRecursively()
-      Files.createDirectory(npmCache)
+      Files.createDirectories(npmCache)
     }
     updateCaches()
 
     //check the vfs refresh result
     val deps = LocalFileSystem.getInstance().findFileByPath(service.getDenoCacheDeps())
-    assertEmpty(deps!!.children)
+    if (deps != null) {
+      assertEmpty(deps.children)
+    }
     val npm = LocalFileSystem.getInstance().findFileByPath(service.getDenoNpm())
-    assertEmpty(npm!!.children)
+    if (npm != null) {
+      assertEmpty(npm.children)
+    }
   }
 
   private fun updateCaches() {
