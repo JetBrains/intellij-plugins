@@ -15,18 +15,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.io.path.Path
 
 /**
  * @author Jan Papesch
  */
 class SaveHistoryToFileAction(val terminalTextBuffer: TerminalTextBuffer, val serialPortProfile: SerialPortProfile) : DumbAwareAction(SerialMonitorBundle.message("action.save.text"), SerialMonitorBundle.message("action.save.description"), AllIcons.Actions.MenuSaveall) {
 
+  private fun SerialPortProfile.defaultLogFilename() = "${Path(this.defaultName()).fileName}.log"
+
   override fun actionPerformed(e: AnActionEvent) {
 
     val descriptor = FileSaverDescriptor(SerialMonitorBundle.message("dialog.save.title"), SerialMonitorBundle.message("dialog.save.desc"))
     val fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, e.project)
 
-    val file = fileSaverDialog.save("${serialPortProfile.defaultName()}.log")?.file
+    val file = fileSaverDialog.save(serialPortProfile.defaultLogFilename())?.file
     if (file == null) return
 
     service<SaveHistoryToFileService>().saveTerminalLogToFile(terminalTextBuffer, file)
