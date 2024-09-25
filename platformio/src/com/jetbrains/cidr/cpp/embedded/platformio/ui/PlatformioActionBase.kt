@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.TabTitle
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.LayeredIcon
+import com.jetbrains.cidr.coroutines.waitWithCancel
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
@@ -136,8 +137,12 @@ internal class PlatformioActionService(val project: Project, private val cs: Cor
   fun runPioKillAlreadyRunning(commandLine: GeneralCommandLine, @TabTitle text: String, reloadProject: Boolean ) {
     cs.launch(Dispatchers.EDT) {
       val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
-      with(Dispatchers.IO) {
-        alreadyRunningDescriptor?.processHandler?.destroyProcess()
+      alreadyRunningDescriptor?.processHandler?.let { processHandler ->
+        processHandler.waitWithCancel {
+          with(Dispatchers.IO) {
+            processHandler.destroyProcess()
+          }
+        }
       }
       doRun(project.service<PlatformioService>(), text, commandLine, reloadProject)
     }
