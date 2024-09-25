@@ -4,8 +4,10 @@ package org.jetbrains.vuejs.model.typed
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.findUpClosestNodeModulesResolveRoot
 import com.intellij.lang.javascript.psi.JSCommonTypeNames.MODULE_PREFIX
-import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -31,13 +33,21 @@ class VueTypedGlobal(override val delegate: VueGlobal,
         .flatMap { it.stubSafeChildren }
         .filterIsInstance<TypeScriptInterface>()
         .filter { it.name == GLOBAL_COMPONENTS }
-        .flatMap { it.jsType.asRecordType().properties }
-        .groupBy { it.memberName }
-        .mapNotNull { nameToProperty ->
-          val fromLibrary = mutableListOf<JSRecordType.PropertySignature>()
-          val property = nameToProperty.value.find { property ->
-            val sourceElement = property.memberSource.singleElement
-            val isFromProject = sourceElement?.containingFile?.virtualFile?.let {
+        .flatMap { vueGlobal ->
+          val fields = vueGlobal.fields.asSequence()
+          //resolve only for locally defined extend elements, see GlobalComponents in Nuxt
+          val inheritedFields = vueGlobal.extendsList?.members
+            ?.mapNotNull { it.referenceText }
+            ?.mapNotNull { JSStubBasedPsiTreeUtil.resolveLocally(it, vueGlobal.containingFile) }
+            ?.filterIsInstance<JSClass>()
+            ?.flatMap { it.fields.asSequence() } ?: emptyList()
+          return@flatMap fields + inheritedFields
+        }
+        .groupBy { it.name }
+        .mapNotNull { nameToField ->
+          val fromLibrary = mutableListOf<JSField>()
+          val field = nameToField.value.find { property ->
+            val isFromProject = property.containingFile?.virtualFile?.let {
               findUpClosestNodeModulesResolveRoot(it)
             } != null
 
@@ -48,8 +58,8 @@ class VueTypedGlobal(override val delegate: VueGlobal,
             fromLibrary.add(property)
             false
           } ?: fromLibrary.singleOrNull() ?: return@mapNotNull null
-
-          property.memberSource.singleElement?.let { Pair(property.memberName, VueTypedComponent(it, property.memberName)) }
+          val fieldName = field.name ?: return@mapNotNull null
+          Pair(fieldName, VueTypedComponent(field, fieldName))
         }.toMap()
 
       CachedValueProvider.Result.create(map, PsiModificationTracker.MODIFICATION_COUNT)
