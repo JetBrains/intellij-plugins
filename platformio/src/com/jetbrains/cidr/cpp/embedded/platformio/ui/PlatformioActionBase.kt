@@ -12,6 +12,7 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -73,29 +74,9 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
                                                   vararg arguments: String) {
     val project = e.project
     if (project == null) return
-
     val commandLine = PlatfromioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
-    val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
-
-    if (alreadyRunningDescriptor != null) {
-      alreadyRunningDescriptor.processHandler?.let {
-        val actionService = e.project?.service<PlatformioActionService>()
-        actionService?.destroyProcess(it)
-      }
-    }
-
-    val service = project.service<PlatformioService>()
-    doRun(service, text.invoke(), commandLine, reloadProject)
+    project.service<PlatformioActionService>().runPioKillAlreadyRunning(commandLine, text.invoke(), reloadProject)
   }
-
-  private fun getAlreadyRunningDescriptor(
-    runContentManager: RunContentManager,
-    commandLine: GeneralCommandLine,
-  ): RunContentDescriptor? =
-    runContentManager.allDescriptors.firstOrNull {
-      val processHandler = it.processHandler as? BaseOSProcessHandler
-      processHandler?.isProcessTerminated != true && processHandler?.commandLine == commandLine.commandLineString
-    }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -151,4 +132,23 @@ internal class PlatformioActionService(val project: Project, private val cs: Cor
       processHandler.destroyProcess()
     }
   }
+
+  fun runPioKillAlreadyRunning(commandLine: GeneralCommandLine, @TabTitle text: String, reloadProject: Boolean ) {
+    cs.launch(Dispatchers.EDT) {
+      val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
+      with(Dispatchers.IO) {
+        alreadyRunningDescriptor?.processHandler?.destroyProcess()
+      }
+      doRun(project.service<PlatformioService>(), text, commandLine, reloadProject)
+    }
+  }
 }
+
+private fun getAlreadyRunningDescriptor(
+  runContentManager: RunContentManager,
+  commandLine: GeneralCommandLine,
+): RunContentDescriptor? =
+  runContentManager.allDescriptors.firstOrNull {
+    val processHandler = it.processHandler as? BaseOSProcessHandler
+    processHandler?.isProcessTerminated != true && processHandler?.commandLine == commandLine.commandLineString
+  }
