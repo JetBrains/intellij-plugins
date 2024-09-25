@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.TabTitle
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.LayeredIcon
-import com.jetbrains.cidr.coroutines.waitWithCancel
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
@@ -35,6 +34,7 @@ import java.awt.event.ActionListener
 import javax.swing.Icon
 import javax.swing.SwingConstants
 import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
+import kotlinx.coroutines.withContext
 
 private val NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin")
 
@@ -138,10 +138,9 @@ internal class PlatformioActionService(val project: Project, private val cs: Cor
     cs.launch(Dispatchers.EDT) {
       val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
       alreadyRunningDescriptor?.processHandler?.let { processHandler ->
-        processHandler.waitWithCancel {
-          with(Dispatchers.IO) {
-            processHandler.destroyProcess()
-          }
+        withContext(Dispatchers.IO) {
+          processHandler.destroyProcess()
+          processHandler.waitFor()
         }
       }
       doRun(project.service<PlatformioService>(), text, commandLine, reloadProject)
