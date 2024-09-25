@@ -260,7 +260,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
-      val projectFileName = TypeScriptConfigUtil.getNonStandardProjectFileName(transpiledFile.originalFile.originalFile)
+      val projectFileName = TypeScriptConfigUtil.getProjectFileName(transpiledFile.originalFile.originalFile)
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
       return sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
     }
