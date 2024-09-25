@@ -227,7 +227,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
     AllIcons.Scope.Scratches) {
 
     override fun update(e: AnActionEvent) {
-      e.presentation.isEnabledAndVisible = widget.isShowing
+      e.presentation.isEnabled = widget.isShowing
     }
 
     override fun isSelected(e: AnActionEvent): Boolean {
