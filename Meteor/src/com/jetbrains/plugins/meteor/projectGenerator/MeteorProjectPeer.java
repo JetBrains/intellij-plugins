@@ -3,6 +3,7 @@ package com.jetbrains.plugins.meteor.projectGenerator;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
@@ -97,7 +98,7 @@ public class MeteorProjectPeer implements WebProjectGenerator.GeneratorPeer<Mete
 
   @NotNull
   @Override
-  public JComponent getComponent() {
+  public JComponent getComponent(@NotNull TextFieldWithBrowseButton myLocationField, @NotNull Runnable checkValid) {
     createAndInit();
     return FormBuilder.createFormBuilder()
       .addLabeledComponent(MeteorBundle.message("settings.meteor.configurable.executable.generator"), myExecutablePathField)

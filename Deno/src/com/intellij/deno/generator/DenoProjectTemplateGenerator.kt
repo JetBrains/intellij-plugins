@@ -74,7 +74,7 @@ class DenoProjectTemplateGenerator : WebProjectTemplate<DenoProjectTemplateSetti
         }
       }
 
-      override fun getComponent(): JComponent {
+      override fun getComponent(myLocationField: TextFieldWithBrowseButton, checkValid: Runnable): JComponent {
         return panel {
           row(DenoBundle.message("deno.path")) {
             cell(path)
