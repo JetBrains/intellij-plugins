@@ -14,6 +14,7 @@ import com.jediterm.terminal.model.TerminalTextBuffer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.io.path.Path
 
@@ -51,7 +52,7 @@ class SaveHistoryToFileService(val cs: CoroutineScope) {
       }
 
       val text = lines.joinToString(System.lineSeparator())
-      with(Dispatchers.IO) {
+      withContext(Dispatchers.IO) {
         file.writeText(text)
       }
       SerialMonitorCollector.logSave(lines.size)
