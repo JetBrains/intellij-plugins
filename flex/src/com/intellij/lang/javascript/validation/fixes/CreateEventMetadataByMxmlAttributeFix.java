@@ -8,8 +8,8 @@ import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
@@ -97,7 +97,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
   }
 
   private static XmlTag createOrGetMetadataTag(final XmlFile xmlFile) throws IncorrectOperationException {
-    assert JavaScriptSupportLoader.isFlexMxmFile(xmlFile) : xmlFile;
+    assert FlexSupportLoader.isFlexMxmFile(xmlFile) : xmlFile;
     final XmlTag rootTag = XmlBackedJSClassFactory.getRootTag(xmlFile);
     final XmlTag[] metadataTags = MxmlJSClass.findLanguageSubTags(rootTag, FlexPredefinedTagNames.METADATA);
 
@@ -105,8 +105,8 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
   }
 
   private static XmlTag createMetadataTag(final XmlTag rootTag) {
-    String prefix = rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3);
-    if (prefix == null) prefix = rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI);
+    String prefix = rootTag.getPrefixByNamespace(FlexSupportLoader.MXML_URI3);
+    if (prefix == null) prefix = rootTag.getPrefixByNamespace(FlexSupportLoader.MXML_URI);
     if (prefix == null) prefix = "";
 
     final String qName = prefix + (prefix.isEmpty() ? "" : ":") + FlexPredefinedTagNames.METADATA;

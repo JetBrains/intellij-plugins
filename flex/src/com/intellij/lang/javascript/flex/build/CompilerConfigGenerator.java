@@ -8,7 +8,7 @@ import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
 import com.intellij.flex.model.bc.*;
 import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.javascript.flex.FlexApplicationComponent;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -837,7 +837,7 @@ public final class CompilerConfigGenerator {
   }
 
   private static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
-    return JavaScriptSupportLoader.isMxmlOrFxgFile(file) ||
+    return FlexSupportLoader.isMxmlOrFxgFile(file) ||
            ReadAction.compute(() -> {
              // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
              // But first we try to find it in JSQualifiedElementIndex because it is faster.

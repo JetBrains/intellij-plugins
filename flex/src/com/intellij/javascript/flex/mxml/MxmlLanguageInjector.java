@@ -6,6 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -64,7 +65,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
         }
         else if ("source".equals(attrName) &&
                  FlexPredefinedTagNames.BINDING.equals(((XmlTag)tag).getLocalName()) &&
-                 JavaScriptSupportLoader.isLanguageNamespace(((XmlTag)tag).getNamespace()) &&
+                 FlexSupportLoader.isLanguageNamespace(((XmlTag)tag).getNamespace()) &&
                  !host.textContains('{')) {
           TextRange range = new TextRange(1, host.getTextLength() - 1);
           registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
@@ -142,7 +143,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
   }
 
   public static boolean isFxPrivateTag(final XmlTag tag) {
-    return tag != null && PRIVATE_TAG_NAME.equals(tag.getLocalName()) && JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace());
+    return tag != null && PRIVATE_TAG_NAME.equals(tag.getLocalName()) && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   public static boolean isInsideFxPrivateTag(final XmlTag tag) {

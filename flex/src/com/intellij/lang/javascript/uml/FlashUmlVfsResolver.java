@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramVfsResolver;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -51,7 +51,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
       else if (element instanceof JSFile) {
         return getQualifiedNameStatic(JSPsiImplUtils.findQualifiedElement((JSFile)element));
       }
-      else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
+      else if (element instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((PsiFile)element)) {
         return getQualifiedNameStatic(XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element));
       }
       else if (element instanceof PsiDirectory directory) {

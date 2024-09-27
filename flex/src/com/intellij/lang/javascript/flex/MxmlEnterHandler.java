@@ -4,7 +4,6 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -36,7 +35,7 @@ public final class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
       }
     }
 
-    if (!JavaScriptSupportLoader.isFlexMxmFile(file)) return Result.Continue;
+    if (!FlexSupportLoader.isFlexMxmFile(file)) return Result.Continue;
 
     if (CodeInsightSettings.getInstance().INSERT_BRACE_ON_ENTER && isAfterUnmatchedMxmlComment(editor, file, offset)) {
       String indent = "";

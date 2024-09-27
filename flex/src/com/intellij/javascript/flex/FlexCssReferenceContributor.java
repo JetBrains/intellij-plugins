@@ -7,7 +7,7 @@ import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.CssClassValueReference;
 import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
@@ -107,7 +107,7 @@ public final class FlexCssReferenceContributor extends PsiReferenceContributor {
                     Module module = findModuleForPsiElement(cssDeclaration);
                     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
                   }
-                  return JavaScriptSupportLoader.isFlexMxmFile(file);
+                  return FlexSupportLoader.isFlexMxmFile(file);
                 }
               }
             }

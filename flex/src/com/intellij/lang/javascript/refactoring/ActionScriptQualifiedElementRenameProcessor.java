@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.refactoring;
 
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSInheritedLanguagesHelper;
@@ -29,7 +29,7 @@ public final class ActionScriptQualifiedElementRenameProcessor extends JSDefault
     return (element instanceof JSQualifiedNamedElement && DialectDetector.isActionScript(element) &&
             (element.getParent() instanceof JSPackageStatement || element instanceof JSClass)) ||
            ((element instanceof JSFile && DialectDetector.isActionScript(element)) ||
-            (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element))) &&
+            (element instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((PsiFile)element))) &&
            (vFile = ((PsiFile)element).getVirtualFile()) != null &&
            ProjectRootManager.getInstance(element.getProject()).getFileIndex().getSourceRootForFile(vFile) != null;
   }

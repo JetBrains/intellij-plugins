@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -42,13 +43,13 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   public static final @NonNls String MXML_URI4 = "library://ns.adobe.com/flex/spark";
   public static final @NonNls String MXML_URI5 = "library://ns.adobe.com/flex/halo";
   public static final @NonNls String MXML_URI6 = "library://ns.adobe.com/flex/mx";
-  public static final @NonNls String[] MXML_URIS = {JavaScriptSupportLoader.MXML_URI, JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
-  public static final @NonNls String[] FLEX_4_NAMESPACES = {JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
+  public static final @NonNls String[] MXML_URIS = {FlexSupportLoader.MXML_URI, FlexSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
+  public static final @NonNls String[] FLEX_4_NAMESPACES = {FlexSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
   private static final String OPERATION_TAG_NAME = "operation";
   private static final String HTTP_SERVICE_TAG_NAME = "HTTPService";
   private static final String WEB_SERVICE_TAG_NAME = "WebService";
   private static final String[] REQUEST_TAG_POSSIBLE_NAMESPACES =
-    {JavaScriptSupportLoader.MXML_URI, MXML_URI4, MXML_URI6};
+    {FlexSupportLoader.MXML_URI, MXML_URI4, MXML_URI6};
   private static final String REQUEST_TAG_NAME = "request";
   private static final String[] TAGS_THAT_ALLOW_ANY_XML_CONTENT = {PRIVATE_TAG_NAME, XML_TAG_NAME, XMLLIST_TAG_NAME,
     FlexPredefinedTagNames.MODEL};
@@ -80,7 +81,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   public static boolean isFxgFile(final PsiFile file) {
-    return JavaScriptSupportLoader.isFxgFile(file.getViewProvider().getVirtualFile());
+    return FlexSupportLoader.isFxgFile(file.getViewProvider().getVirtualFile());
   }
 
   @Override
@@ -119,7 +120,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   private static @NotNull List<JSField> computeSkinComponentPredefinedFields(XmlFile file) {
     List<JSField> vars = new SmartList<>();
-    for (XmlTag t : file.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
+    for (XmlTag t : file.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, FlexSupportLoader.MXML_URI3)) {
       JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
         @Override
         protected void process(JSFile file) {
@@ -149,10 +150,10 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   private static @NotNull String getLanguageNamespace(final XmlTag rootTag) {
-    assert JavaScriptSupportLoader.isFlexMxmFile(rootTag.getContainingFile()) : rootTag.getContainingFile();
-    return rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null
-           ? JavaScriptSupportLoader.MXML_URI3
-           : JavaScriptSupportLoader.MXML_URI;
+    assert FlexSupportLoader.isFlexMxmFile(rootTag.getContainingFile()) : rootTag.getContainingFile();
+    return rootTag.getPrefixByNamespace(FlexSupportLoader.MXML_URI3) != null
+           ? FlexSupportLoader.MXML_URI3
+           : FlexSupportLoader.MXML_URI;
   }
 
   @Override
@@ -225,7 +226,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   public static boolean isFxLibraryTag(final XmlTag tag) {
-    return tag != null && FlexPredefinedTagNames.LIBRARY.equals(tag.getLocalName()) && JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace());
+    return tag != null && FlexPredefinedTagNames.LIBRARY.equals(tag.getLocalName()) && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   @Override
@@ -260,7 +261,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   public static boolean isTagThatAllowsAnyXmlContent(final XmlTag tag) {
     return tag != null &&
-           (JavaScriptSupportLoader.isLanguageNamespace(tag.getNamespace()) &&
+           (FlexSupportLoader.isLanguageNamespace(tag.getNamespace()) &&
             ArrayUtil.contains(tag.getLocalName(), TAGS_THAT_ALLOW_ANY_XML_CONTENT) || isWebOrHttpServiceRequestTag(tag));
   }
 

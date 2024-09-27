@@ -5,7 +5,7 @@ import com.intellij.diagram.ChangeTracker;
 import com.intellij.diagram.DiagramChangesProvider;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -18,7 +18,7 @@ final class FlashUmlChangesProvider extends DiagramChangesProvider {
       return true;
     }
     else if (type instanceof XmlFileType) {
-      return JavaScriptSupportLoader.isFlexMxmFile(filename);
+      return FlexSupportLoader.isFlexMxmFile(filename);
     }
     return false;
   }

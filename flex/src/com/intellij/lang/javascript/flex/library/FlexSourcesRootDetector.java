@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.ide.util.projectWizard.importSources.util.CommonSourceRootDetectionUtil;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
@@ -64,7 +64,7 @@ class FlexSourcesRootDetector extends RootDetector {
               }
             }
           }
-          else if (myDetectMxml && JavaScriptSupportLoader.isFlexMxmFile(file.getName())) {
+          else if (myDetectMxml && FlexSupportLoader.isFlexMxmFile(file.getName())) {
             result.add(file.getParent());
             // don't skip parent directory since this MXML class may be located in package
           }

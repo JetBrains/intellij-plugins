@@ -97,6 +97,6 @@ final class ActionScriptResolveScopeProvider extends JSResolveScopeProvider impl
 
   private static boolean isApplicable(final @NotNull VirtualFile file) {
     return FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE) || FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.MXML) ||
-           FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) || JavaScriptSupportLoader.isFlexMxmFile(file);
+           FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) || FlexSupportLoader.isFlexMxmFile(file);
   }
 }

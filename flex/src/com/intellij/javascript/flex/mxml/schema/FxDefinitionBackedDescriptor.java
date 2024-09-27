@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -19,7 +19,7 @@ final class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
   private final XmlTag myXmlTag;
 
   FxDefinitionBackedDescriptor(Module module, XmlTag xmlTag) {
-    super(xmlTag.getName(), "", CodeContext.getContext(JavaScriptSupportLoader.MXML_URI3, module), module.getProject());
+    super(xmlTag.getName(), "", CodeContext.getContext(FlexSupportLoader.MXML_URI3, module), module.getProject());
     myXmlTag = xmlTag;
   }
 
@@ -64,9 +64,9 @@ final class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
     final XmlTag[] subTags = rootTag.getSubTags();
     final XmlTag libraryTag = subTags.length > 0 &&
                               FlexPredefinedTagNames.LIBRARY.equals(subTags[0].getLocalName()) &&
-                              JavaScriptSupportLoader.MXML_URI3.equals(subTags[0].getNamespace()) ? subTags[0] : null;
+                              FlexSupportLoader.MXML_URI3.equals(subTags[0].getNamespace()) ? subTags[0] : null;
     final XmlTag[] definitionTags =
-      libraryTag == null ? XmlTag.EMPTY : libraryTag.findSubTags(CodeContext.DEFINITION_TAG_NAME, JavaScriptSupportLoader.MXML_URI3);
+      libraryTag == null ? XmlTag.EMPTY : libraryTag.findSubTags(CodeContext.DEFINITION_TAG_NAME, FlexSupportLoader.MXML_URI3);
 
     final String localName = xmlTag.getLocalName();
 

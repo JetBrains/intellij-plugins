@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.TagNameReference;
 import com.intellij.xml.DefaultXmlExtension;
@@ -9,7 +9,7 @@ import com.intellij.xml.DefaultXmlExtension;
 public final class FlexXmlExtension extends DefaultXmlExtension {
   @Override
   public boolean isAvailable(final PsiFile file) {
-    return JavaScriptSupportLoader.isFlexMxmFile(file);
+    return FlexSupportLoader.isFlexMxmFile(file);
   }
 
   @Override

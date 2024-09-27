@@ -14,6 +14,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
@@ -67,11 +68,11 @@ import java.util.stream.Stream;
  */
 public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   private static final String[] EXTENSIONS_TO_CHECK = {
-    JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION,
+    FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION,
     JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
     JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3,
-    JavaScriptSupportLoader.MXML_FILE_EXTENSION,
-    JavaScriptSupportLoader.FXG_FILE_EXTENSION
+    FlexSupportLoader.MXML_FILE_EXTENSION,
+    FlexSupportLoader.FXG_FILE_EXTENSION
   };
 
   public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
@@ -309,7 +310,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           name != null &&
           name.equals(((JSClass)parent).getName()) &&
           !isNative(node) &&
-          JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
+          FlexSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
         myHolder.newAnnotation(HighlightSeverity.ERROR,
                                FlexBundle.message("javascript.validation.message.constructor.in.mxml.is.not.allowed")
         ).range(nameIdentifier)

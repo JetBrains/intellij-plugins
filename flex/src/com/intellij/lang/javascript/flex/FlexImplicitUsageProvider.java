@@ -5,7 +5,6 @@ import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationProducer;
@@ -26,7 +25,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
@@ -34,7 +32,7 @@ public final class FlexImplicitUsageProvider implements ImplicitUsageProvider, C
   public boolean isImplicitUsage(@NotNull PsiElement element) {
     if (element instanceof XmlAttribute &&
         ((XmlAttribute)element).isNamespaceDeclaration() &&
-        JavaScriptSupportLoader.isLanguageNamespace(((XmlAttribute)element).getValue())) {
+        FlexSupportLoader.isLanguageNamespace(((XmlAttribute)element).getValue())) {
       return true;
     }
 

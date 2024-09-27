@@ -4,9 +4,9 @@ package com.intellij.lang.javascript.uml;
 import com.intellij.diagram.ChangeTracker;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.injection.MultiHostInjector;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -166,16 +166,16 @@ final class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement,
   private Pair<PsiElement, PsiElement> adjustBeforeAfter() {
     PsiElement before = getBefore();
     PsiElement after = getAfter();
-    if (after != null && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)after) && before == null) {
+    if (after != null && FlexSupportLoader.isFlexMxmFile((PsiFile)after) && before == null) {
       after = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)getAfter());
     }
-    else if (before != null && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)before) && after == null) {
+    else if (before != null && FlexSupportLoader.isFlexMxmFile((PsiFile)before) && after == null) {
       before = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)getBefore());
     }
     else if (before != null &&
-             JavaScriptSupportLoader.isFlexMxmFile((PsiFile)before) &&
+             FlexSupportLoader.isFlexMxmFile((PsiFile)before) &&
              after != null &&
-             JavaScriptSupportLoader.isFlexMxmFile((PsiFile)after)) {
+             FlexSupportLoader.isFlexMxmFile((PsiFile)after)) {
       before = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)before);
       after = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)after);
     }

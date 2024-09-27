@@ -2,6 +2,7 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -21,7 +22,7 @@ public final class FlexMxmlTypedHandler extends TypedHandlerDelegate {
                                          @NotNull Editor editor,
                                          @NotNull PsiFile file,
                                          @NotNull FileType fileType) {
-    if (c == '}' && JavaScriptSupportLoader.isFlexMxmFile(file)) {
+    if (c == '}' && FlexSupportLoader.isFlexMxmFile(file)) {
       PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       int offset = editor.getCaretModel().getOffset();
       PsiElement at = file.findElementAt(offset);
@@ -36,7 +37,7 @@ public final class FlexMxmlTypedHandler extends TypedHandlerDelegate {
 
   @Override
   public @NotNull Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    if (c == '{' && JavaScriptSupportLoader.isFlexMxmFile(file)) {
+    if (c == '{' && FlexSupportLoader.isFlexMxmFile(file)) {
       PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       int offset = editor.getCaretModel().getOffset();
       PsiElement at = file.findElementAt(offset);

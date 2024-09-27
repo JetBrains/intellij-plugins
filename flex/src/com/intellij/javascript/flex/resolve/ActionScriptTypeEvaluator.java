@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
@@ -80,7 +80,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
   @Override
   protected void addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
-    if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
+    if (resolveResult instanceof JSOffsetBasedImplicitElement && FlexSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
       resolveResult = ((JSOffsetBasedImplicitElement)resolveResult).getElementAtOffset();
     }
     if (resolveResult instanceof XmlToken xmlToken) {

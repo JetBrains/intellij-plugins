@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
@@ -61,7 +61,7 @@ public final class MxmlJSClassProvider extends XmlBackedJSClassProvider {
 
   @Override
   public boolean hasJSClass(XmlFile file) {
-    return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
+    return FlexSupportLoader.isMxmlOrFxgFile(file);
   }
 
   @Override
@@ -85,7 +85,7 @@ public final class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   @Override
   public XmlBackedJSClass createClassFromTag(XmlTag tag) {
     XmlFile file = (XmlFile)tag.getContainingFile();
-    if (file.getRootTag() == tag && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) {
+    if (file.getRootTag() == tag && FlexSupportLoader.isMxmlOrFxgFile(file)) {
       return new MxmlJSClass(tag);
     }
     if (isComponentSubTag(tag)) {

@@ -6,6 +6,7 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.TemplateContext;
 import com.intellij.codeInsight.template.impl.TemplateOptionalProcessor;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -44,7 +45,7 @@ public final class FlexShortenFQNamesProcessor implements TemplateOptionalProces
       final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
       psiDocumentManager.commitDocument(document);
       final PsiFile hostFile = PsiUtilBase.getPsiFileInEditor(editor, project);
-      final PsiFile file = (hostFile != null && JavaScriptSupportLoader.isFlexMxmFile(hostFile))
+      final PsiFile file = (hostFile != null && FlexSupportLoader.isFlexMxmFile(hostFile))
                            ? InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, templateRange.getStartOffset())
                            : hostFile;
       if (file instanceof JSFile && file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {

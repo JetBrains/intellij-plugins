@@ -3,7 +3,7 @@ package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 final class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
 
   private FlexInputFilter() {
-    super(ActionScriptFileType.INSTANCE, FlexApplicationComponent.SWF_FILE_TYPE, JavaScriptSupportLoader.getMxmlFileType());
+    super(ActionScriptFileType.INSTANCE, FlexApplicationComponent.SWF_FILE_TYPE, FlexSupportLoader.getMxmlFileType());
   }
 
   private static class FlexInputFilterHolder {
@@ -32,6 +32,6 @@ final class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
       return true;
     }
 
-    return JavaScriptSupportLoader.isFlexMxmFile(file);
+    return FlexSupportLoader.isFlexMxmFile(file);
   }
 }

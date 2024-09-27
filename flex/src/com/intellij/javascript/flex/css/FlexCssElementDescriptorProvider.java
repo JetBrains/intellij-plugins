@@ -12,7 +12,7 @@ import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -386,7 +386,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     if (module == null) {
       return ArrayUtilRt.EMPTY_STRING_ARRAY;
     }
-    CodeContext codeContext = CodeContext.getContext(JavaScriptSupportLoader.MXML_URI, module);
+    CodeContext codeContext = CodeContext.getContext(FlexSupportLoader.MXML_URI, module);
     XmlElementDescriptor[] descriptors = codeContext.getDescriptorsWithAllowedDeclaration();
     String[] selectors = new String[descriptors.length + 1];
     selectors[0] = "global";

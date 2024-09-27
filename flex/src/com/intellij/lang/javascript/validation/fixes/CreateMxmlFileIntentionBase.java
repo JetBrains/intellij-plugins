@@ -5,6 +5,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.LanguageNamesValidation;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -89,7 +90,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        final String fileName = myClassName + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT;
+        final String fileName = myClassName + FlexSupportLoader.MXML_FILE_EXTENSION_DOT;
         final PsiFile newFile = fileTextAndDir.second.createFile(fileName);
 
         final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);

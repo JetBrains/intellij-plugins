@@ -7,7 +7,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.inspections.JSInspection;
@@ -54,7 +54,7 @@ public final class JSFieldCanBeLocalInspection extends JSInspection {
       if (!(parentParent instanceof JSClass) &&
           !(parentParent instanceof JSFile &&
             context instanceof XmlText &&
-            JavaScriptSupportLoader.isFlexMxmFile(context.getContainingFile()))) {
+            FlexSupportLoader.isFlexMxmFile(context.getContainingFile()))) {
         return;
       }
 

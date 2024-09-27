@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexAnnotationNames;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -92,7 +92,7 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
       @Override
       public @NotNull Map<String, Set<FlexStyleIndexInfo>> map(@NotNull FileContent inputData) {
         final Map<String, Set<FlexStyleIndexInfo>> map = new HashMap<>();
-        if (JavaScriptSupportLoader.isFlexMxmFile(inputData.getFileName())) {
+        if (FlexSupportLoader.isFlexMxmFile(inputData.getFileName())) {
           PsiFile file = inputData.getPsiFile();
           VirtualFile virtualFile = inputData.getFile();
           if (file instanceof XmlFile) {

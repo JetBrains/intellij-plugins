@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -39,7 +39,7 @@ import java.util.List;
 
 public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFix {
   public static final Collection<String> FLEX_TEMPLATES_EXTENSIONS =
-    List.of(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
+    List.of(FlexSupportLoader.MXML_FILE_EXTENSION);
   static final @NonNls String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
   static final @NonNls String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
 

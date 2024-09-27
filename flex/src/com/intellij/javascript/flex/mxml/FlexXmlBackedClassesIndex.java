@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -61,10 +61,10 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
 
   @Override
   public @NotNull FileBasedIndex.InputFilter getInputFilter() {
-    return new DefaultFileTypeSpecificInputFilter(JavaScriptSupportLoader.getMxmlFileType()) {
+    return new DefaultFileTypeSpecificInputFilter(FlexSupportLoader.getMxmlFileType()) {
       @Override
       public boolean acceptInput(@NotNull VirtualFile file) {
-        return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
+        return FlexSupportLoader.isMxmlOrFxgFile(file);
       }
     };
   }

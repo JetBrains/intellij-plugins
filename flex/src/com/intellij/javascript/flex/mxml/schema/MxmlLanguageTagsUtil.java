@@ -9,6 +9,7 @@ import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.MxmlLanguageInjector;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.openapi.editor.Editor;
@@ -29,8 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Set;
-
-import static com.intellij.lang.javascript.JavaScriptSupportLoader.*;
 
 public final class MxmlLanguageTagsUtil {
 
@@ -69,7 +68,7 @@ public final class MxmlLanguageTagsUtil {
     return tag != null &&
            (MxmlJSClass.XML_TAG_NAME.equals(tag.getLocalName()) ||
             MxmlJSClass.XMLLIST_TAG_NAME.equals(tag.getLocalName())) &&
-           (isLanguageNamespace(tag.getNamespace()));
+           (FlexSupportLoader.isLanguageNamespace(tag.getNamespace()));
   }
 
   static boolean isFxLibraryTag(final XmlTag tag) {
@@ -77,34 +76,34 @@ public final class MxmlLanguageTagsUtil {
   }
 
   static boolean isFxDefinitionTag(final XmlTag tag) {
-    return tag != null && CodeContext.DEFINITION_TAG_NAME.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+    return tag != null && CodeContext.DEFINITION_TAG_NAME.equals(tag.getLocalName()) && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   static boolean isFxDeclarationsTag(final XmlTag tag) {
-    return tag != null && FlexPredefinedTagNames.DECLARATIONS.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+    return tag != null && FlexPredefinedTagNames.DECLARATIONS.equals(tag.getLocalName()) && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   public static boolean isFxReparentTag(final XmlTag tag) {
-    return tag != null && CodeContext.REPARENT_TAG_NAME.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+    return tag != null && CodeContext.REPARENT_TAG_NAME.equals(tag.getLocalName()) && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   public static boolean isScriptTag(final XmlTag tag) {
-    return tag != null && FlexPredefinedTagNames.SCRIPT.equals(tag.getLocalName()) && isLanguageNamespace(tag.getNamespace());
+    return tag != null && FlexPredefinedTagNames.SCRIPT.equals(tag.getLocalName()) && FlexSupportLoader.isLanguageNamespace(tag.getNamespace());
   }
 
   public static boolean isDesignLayerTag(final XmlTag tag) {
-    return tag != null && FlexPredefinedTagNames.DESIGN_LAYER.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+    return tag != null && FlexPredefinedTagNames.DESIGN_LAYER.equals(tag.getLocalName()) && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   public static boolean isLanguageTagAllowedUnderRootTag(final XmlTag tag) {
     return tag != null &&
-           (MXML_URI3.equals(tag.getNamespace()) || MXML_URI.equals(tag.getNamespace())) &&
+           (FlexSupportLoader.MXML_URI3.equals(tag.getNamespace()) || FlexSupportLoader.MXML_URI.equals(tag.getNamespace())) &&
            ArrayUtil.contains(tag.getLocalName(), LANGUAGE_TAGS_ALLOWED_UNDER_ROOT_TAG);
   }
 
   public static boolean isLanguageTagAllowedUnderInlineComponentRootTag(final XmlTag tag) {
     return tag != null &&
-           (MXML_URI3.equals(tag.getNamespace()) || MXML_URI.equals(tag.getNamespace())) &&
+           (FlexSupportLoader.MXML_URI3.equals(tag.getNamespace()) || FlexSupportLoader.MXML_URI.equals(tag.getNamespace())) &&
            ArrayUtil.contains(tag.getLocalName(), LANGUAGE_TAGS_ALLOWED_UNDER_INLINE_COMPONENT_ROOT_TAG);
   }
 
@@ -188,8 +187,8 @@ public final class MxmlLanguageTagsUtil {
       if (attribute.isNamespaceDeclaration()) {
         final String namespace = attribute.getValue();
         switch (namespace) {
-          case MXML_URI -> flex3NamespaceDeclaration = attribute;
-          case MXML_URI3 -> flex4NamespaceDeclaration = attribute;
+          case FlexSupportLoader.MXML_URI -> flex3NamespaceDeclaration = attribute;
+          case FlexSupportLoader.MXML_URI3 -> flex4NamespaceDeclaration = attribute;
         }
       }
       else if (checkStateSpecificAttrs) {
@@ -213,10 +212,10 @@ public final class MxmlLanguageTagsUtil {
           }
         }
 
-        final DeclareNamespaceIntention flex4Intention = new DeclareNamespaceIntention(tag, "fx", MXML_URI3);
+        final DeclareNamespaceIntention flex4Intention = new DeclareNamespaceIntention(tag, "fx", FlexSupportLoader.MXML_URI3);
 
         final IntentionAction[] intentions = suggestFlex3Namespace ? new IntentionAction[]{flex4Intention,
-          new DeclareNamespaceIntention(tag, "mx", MXML_URI)} : new IntentionAction[]{flex4Intention};
+          new DeclareNamespaceIntention(tag, "mx", FlexSupportLoader.MXML_URI)} : new IntentionAction[]{flex4Intention};
 
         addErrorMessage(tag, FlexBundle.message("root.tag.must.contain.language.namespace"), host, intentions);
       }
@@ -229,11 +228,11 @@ public final class MxmlLanguageTagsUtil {
     }
     else {
       final String[] knownNamespaces = tag.knownNamespaces();
-      if (flex3NamespaceDeclaration != null && ArrayUtil.contains(MXML_URI3, knownNamespaces)) {
+      if (flex3NamespaceDeclaration != null && ArrayUtil.contains(FlexSupportLoader.MXML_URI3, knownNamespaces)) {
         addErrorMessage(flex3NamespaceDeclaration.getValueElement(), FlexBundle.message("different.language.namespaces"), host,
                         new RemoveNamespaceDeclarationIntention(flex3NamespaceDeclaration));
       }
-      if (flex4NamespaceDeclaration != null && ArrayUtil.contains(MXML_URI, knownNamespaces)) {
+      if (flex4NamespaceDeclaration != null && ArrayUtil.contains(FlexSupportLoader.MXML_URI, knownNamespaces)) {
         addErrorMessage(flex4NamespaceDeclaration.getValueElement(), FlexBundle.message("different.language.namespaces"), host,
                         new RemoveNamespaceDeclarationIntention(flex4NamespaceDeclaration));
       }

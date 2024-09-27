@@ -5,7 +5,7 @@ import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.impl.xml.XmlStructureViewTreeModel;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -33,7 +33,7 @@ public final class FlexStructureViewProvider implements XmlStructureViewBuilderP
 
   @Override
   public StructureViewBuilder createStructureViewBuilder(final @NotNull XmlFile file) {
-    if (!JavaScriptSupportLoader.isFlexMxmFile(file)) return null;
+    if (!FlexSupportLoader.isFlexMxmFile(file)) return null;
 
     return new TreeBasedStructureViewBuilder() {
       @Override

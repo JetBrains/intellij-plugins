@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -20,7 +20,7 @@ import java.util.Map;
 public final class FlexMoveFileHandler extends MoveFileHandler {
   @Override
   public boolean canProcessElement(final PsiFile element) {
-    return element instanceof JSFile || JavaScriptSupportLoader.isFlexMxmFile(element);
+    return element instanceof JSFile || FlexSupportLoader.isFlexMxmFile(element);
   }
 
   @Override

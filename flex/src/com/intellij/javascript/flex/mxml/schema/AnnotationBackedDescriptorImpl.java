@@ -12,7 +12,7 @@ import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -721,7 +721,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
     if (ClassBackedElementDescriptor.IFACTORY_SHORT_CLASS_NAME.equals(ClassBackedElementDescriptor.className(type))) {
       if (!FlexNameAlias.COMPONENT_TYPE_NAME.equals(childTag.getLocalName()) ||
-          !JavaScriptSupportLoader.isLanguageNamespace(childTag.getNamespace())) {
+          !FlexSupportLoader.isLanguageNamespace(childTag.getNamespace())) {
         return null;
       }
     }
@@ -745,13 +745,13 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static boolean isVectorDescriptor(final XmlElementDescriptor descriptor) {
     return descriptor instanceof ClassBackedElementDescriptor &&
            JSCommonTypeNames.VECTOR_CLASS_NAME.equals(descriptor.getName()) &&
-           JavaScriptSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
+           FlexSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
   }
 
   private static boolean isArrayDescriptor(final XmlElementDescriptor descriptor) {
     return descriptor instanceof ClassBackedElementDescriptor &&
            JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getName()) &&
-           JavaScriptSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
+           FlexSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
   }
 
   public static @Nullable JSAttribute findInspectableAttr(final PsiElement element) {

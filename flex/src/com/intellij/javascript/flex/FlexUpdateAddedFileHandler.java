@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.file.UpdateAddedFileProcessor;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public final class FlexUpdateAddedFileHandler extends UpdateAddedFileProcessor{
   @Override
   public boolean canProcessElement(final @NotNull PsiFile element) {
-    return element instanceof JSFile || JavaScriptSupportLoader.isFlexMxmFile(element);
+    return element instanceof JSFile || FlexSupportLoader.isFlexMxmFile(element);
   }
 
   @Override

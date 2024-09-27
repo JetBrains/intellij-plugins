@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.MxmlLanguage;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -95,7 +96,7 @@ public final class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
 
   public static @Nullable JSQualifiedNamedElement adjustForMove(PsiElement element) {
     PsiFile file = element.getContainingFile();
-    if (file == null || !file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4) && !JavaScriptSupportLoader.isFlexMxmFile(file)) {
+    if (file == null || !file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4) && !FlexSupportLoader.isFlexMxmFile(file)) {
       return null;
     }
 
@@ -124,7 +125,7 @@ public final class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
       }
       return JSPsiImplUtils.findQualifiedElement((JSFile)element);
     }
-    if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
+    if (element instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((PsiFile)element)) {
       return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     return null;

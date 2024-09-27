@@ -10,7 +10,7 @@ import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.SwcCatalogXmlUtil;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -80,7 +80,7 @@ public final class CodeContext {
     namespace = _namespace;
     module = _module;
     this.scope = scope;
-    if (JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
+    if (FlexSupportLoader.isLanguageNamespace(namespace)) {
       addPredefinedTags(this);
 
       // XML and XMLList language tags represent respective classes, so they must not be marked as 'predefined'
@@ -91,7 +91,7 @@ public final class CodeContext {
   }
 
   private void putDescriptor(final String name, final ClassBackedElementDescriptor descriptor, final boolean addGumboAttributesIfNeeded) {
-    if (JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
+    if (FlexSupportLoader.isLanguageNamespace(namespace)) {
       if (MxmlJSClass.XML_TAG_NAME.equals(name) || MxmlJSClass.XMLLIST_TAG_NAME.equals(name)) {
         // XML and XMLList are added in constructor
         return;
@@ -107,7 +107,7 @@ public final class CodeContext {
       }
     }
 
-    if (JavaScriptSupportLoader.MXML_URI3.equals(namespace) && JSCommonTypeNames.VECTOR_CLASS_NAME.equals(name)) {
+    if (FlexSupportLoader.MXML_URI3.equals(namespace) && JSCommonTypeNames.VECTOR_CLASS_NAME.equals(name)) {
       final AnnotationBackedDescriptorImpl typeDescriptor = new AnnotationBackedDescriptorImpl("type", descriptor, true, null, null, null);
       typeDescriptor.setRequired(true);
       descriptor.addPredefinedMemberDescriptor(typeDescriptor);
@@ -186,7 +186,7 @@ public final class CodeContext {
       public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind != JSPackageIndexInfo.Kind.CLASS) return true;
 
-        if (JavaScriptSupportLoader.isMxmlOrFxgFile(file)) {
+        if (FlexSupportLoader.isMxmlOrFxgFile(file)) {
           addFileBackedDescriptor(file, codeContext, packageName, project);
           PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(file.getParent());
           if (psiDirectory != null) codeContext.addDependency(psiDirectory);
@@ -403,7 +403,7 @@ public final class CodeContext {
     ClassBackedElementDescriptor descriptor = this == EMPTY ? null : myNameToDescriptorsMap.get(localName);
 
     if (tag != null && MxmlJSClass.XML_TAG_NAME.equals(localName)
-        && JavaScriptSupportLoader.isLanguageNamespace(tag.getNamespace())) {
+        && FlexSupportLoader.isLanguageNamespace(tag.getNamespace())) {
       final String format = tag.getAttributeValue(FORMAT_ATTR_NAME);
       if (format != null && !"e4x".equalsIgnoreCase(format)) {
         return createXmlTagDescriptor(this, XMLNODE_CLASS);
@@ -491,7 +491,7 @@ public final class CodeContext {
     predefinedTags.add(FlexPredefinedTagNames.STYLE);
     predefinedTags.add(FlexPredefinedTagNames.METADATA);
 
-    if (JavaScriptSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
+    if (FlexSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
       predefinedTags.add(FlexPredefinedTagNames.DECLARATIONS);
       predefinedTags.add(MxmlJSClass.PRIVATE_TAG_NAME);
       predefinedTags.add(FlexPredefinedTagNames.LIBRARY);
@@ -533,7 +533,7 @@ public final class CodeContext {
     bindingDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.DESTINATION_ATTR_NAME, bindingDescriptor, true, null, null, null));
 
-    if (JavaScriptSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
+    if (FlexSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
       bindingDescriptor.addPredefinedMemberDescriptor(
         new AnnotationBackedDescriptorImpl(TWO_WAY_ATTR_NAME, bindingDescriptor, true, null, null, null));
     }

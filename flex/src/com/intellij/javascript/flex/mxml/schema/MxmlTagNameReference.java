@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -136,7 +136,7 @@ public class MxmlTagNameReference extends TagNameReference {
       }
     }
     */
-    if (element instanceof JSFile || (element instanceof XmlFile && JavaScriptSupportLoader.isMxmlOrFxgFile((XmlFile)element))) {
+    if (element instanceof JSFile || (element instanceof XmlFile && FlexSupportLoader.isMxmlOrFxgFile((XmlFile)element))) {
       final VirtualFile virtualFile = ((PsiFile)element).getVirtualFile();
       if (virtualFile != null) {
         final VirtualFile sourceRoot =

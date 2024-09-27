@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateEventMetadataByMxmlAttributeFix;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public final class FlexUndefinedElementFixProvider extends XmlUndefinedElementFixProvider {
   @Override
   public IntentionAction @Nullable [] createFixes(@NotNull XmlAttribute attribute) {
-    if (!JavaScriptSupportLoader.isFlexMxmFile(attribute.getContainingFile())) return null;
+    if (!FlexSupportLoader.isFlexMxmFile(attribute.getContainingFile())) return null;
 
     final String name = attribute.getName();
     if (!JSRefactoringUtil.isValidIdentifier(name, attribute.getProject())) {
@@ -38,7 +38,7 @@ public final class FlexUndefinedElementFixProvider extends XmlUndefinedElementFi
       return IntentionAction.EMPTY_ARRAY;
     }
 
-    if (declaration instanceof JSClass || declaration instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((XmlFile)declaration)) {
+    if (declaration instanceof JSClass || declaration instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((XmlFile)declaration)) {
       final String attributeValue = attribute.getValue();
 
       final FixAndIntentionAction fix1 = new CreateFieldByMxmlAttributeFix(name, attributeValue);

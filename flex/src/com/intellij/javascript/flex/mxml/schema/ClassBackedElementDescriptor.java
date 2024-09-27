@@ -16,8 +16,8 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -163,7 +163,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
 
       if (IFACTORY_SHORT_CLASS_NAME.equals(className(type)) &&
-          JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
+          FlexSupportLoader.isLanguageNamespace(context.namespace)) {
         final XmlElementDescriptor descriptor = context.getElementDescriptor(FlexNameAlias.COMPONENT_TYPE_NAME, (XmlTag)null);
         return descriptor == null ? EMPTY_ARRAY : new XmlElementDescriptor[]{descriptor};
       }
@@ -185,7 +185,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
     else if (parentDescriptor.getDefaultPropertyDescriptor() != null && parentDescriptor.defaultPropertyDescriptor.getType() != null) {
       final PsiElement contextParent = _context.getParent();
-      if (contextParent instanceof XmlDocument && JavaScriptSupportLoader.isLanguageNamespace(_context.getNamespace())) {
+      if (contextParent instanceof XmlDocument && FlexSupportLoader.isLanguageNamespace(_context.getNamespace())) {
         // Predefined tags like <fx:Declaration/> can be children of a tag with [DefaultProperty] annotation if this tag is root tag in the mxml file
         for (XmlElementDescriptor descriptor : context.getDescriptorsWithAllowedDeclaration()) {
           if (descriptor instanceof ClassBackedElementDescriptor && ((ClassBackedElementDescriptor)descriptor).predefined) {
@@ -199,7 +199,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                        ? getElementDescriptorsInheritedFromGivenType(type)
                                        : context.getDescriptorsWithAllowedDeclaration());
 
-      if (JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
+      if (FlexSupportLoader.isLanguageNamespace(context.namespace)) {
         ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null));
         ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(CodeContext.REPARENT_TAG_NAME, (XmlTag)null));
 
@@ -276,7 +276,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       return descriptor;
     }
 
-    if (descriptor == null && JavaScriptSupportLoader.MXML_URI3.equals(childTag.getNamespace()) && contextTag != null) {
+    if (descriptor == null && FlexSupportLoader.MXML_URI3.equals(childTag.getNamespace()) && contextTag != null) {
       return FxDefinitionBackedDescriptor.getFxDefinitionBackedDescriptor(context.module, childTag);
     }
 
@@ -327,7 +327,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     final PsiElement parent = parentTag.getParent();
-    if (!ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, parentTag.knownNamespaces()) &&
+    if (!ArrayUtil.contains(FlexSupportLoader.MXML_URI3, parentTag.knownNamespaces()) &&
         (parent instanceof XmlDocument || (parent instanceof XmlTag && MxmlLanguageTagsUtil.isComponentTag((XmlTag)parent)))) {
       return false;
     }
@@ -380,7 +380,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   static boolean sameNs(final String childNs, final String namespace) {
     if (childNs.equals(namespace)) return true;
-    return JavaScriptSupportLoader.isLanguageNamespace(childNs) && JavaScriptSupportLoader.isLanguageNamespace(namespace);
+    return FlexSupportLoader.isLanguageNamespace(childNs) && FlexSupportLoader.isLanguageNamespace(namespace);
   }
 
   @Nullable
@@ -990,7 +990,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final XmlFile xmlFile = (XmlFile)jsClass.getContainingFile();
       final XmlTag rootTag = xmlFile.getRootTag();
       if (rootTag != null) {
-        for (XmlTag metadataTag : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
+        for (XmlTag metadataTag : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, FlexSupportLoader.MXML_URI3)) {
           JSResolveUtil.processInjectedFileForTag(metadataTag, new JSResolveUtil.JSInjectedFilesVisitor() {
             @Override
             protected void process(final JSFile file) {
@@ -1047,7 +1047,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     PsiElement jsClass = ActionScriptClassResolver.findClassByQNameStatic(className, scope);
     final PsiFile file = jsClass == null ? null : jsClass.getContainingFile();
     // can be MXML file listed as a component in the manifest file
-    return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
+    return (file != null && FlexSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
   }
 
   @Override
@@ -1057,13 +1057,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     if (MxmlLanguageTagsUtil.isFxLibraryTag(context)) {
-      return JavaScriptSupportLoader.MXML_URI3.equals(namespace);
+      return FlexSupportLoader.MXML_URI3.equals(namespace);
     }
 
     final XmlElementDescriptor _descriptor = context.getDescriptor();
     if (_descriptor instanceof ClassBackedElementDescriptor descriptor) {
 
-      if (context.getParent() instanceof XmlDocument && JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
+      if (context.getParent() instanceof XmlDocument && FlexSupportLoader.isLanguageNamespace(namespace)) {
         return true;
       }
 
@@ -1234,10 +1234,10 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   static boolean isPrivateAttribute(final String attributeName, final XmlTag context) {
     final int colonIndex = attributeName.indexOf(':');
     final String namespacePrefix = colonIndex == -1 ? null : attributeName.substring(0, colonIndex);
-    if (namespacePrefix != null && context != null && ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, context.knownNamespaces())) {
+    if (namespacePrefix != null && context != null && ArrayUtil.contains(FlexSupportLoader.MXML_URI3, context.knownNamespaces())) {
       final String namespace = context.getNamespaceByPrefix(namespacePrefix);
       if (!StringUtil.isEmpty(namespace) &&
-          !namespace.equals(JavaScriptSupportLoader.MXML_URI3) &&
+          !namespace.equals(FlexSupportLoader.MXML_URI3) &&
           !namespace.equals(context.getNamespace())) {
         return true;
       }

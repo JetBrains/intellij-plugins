@@ -2,7 +2,7 @@
 package com.intellij.lang.actionscript.highlighting;
 
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -22,7 +22,7 @@ public final class ActionScriptProblemFileHighlightFilter implements Condition<V
   public boolean value(VirtualFile file) {
     FileType fileType = file.getFileType();
 
-    if (fileType == ActionScriptFileType.INSTANCE || JavaScriptSupportLoader.isMxmlOrFxgFile(file)) {
+    if (fileType == ActionScriptFileType.INSTANCE || FlexSupportLoader.isMxmlOrFxgFile(file)) {
       return ProjectFileIndex.getInstance(myProject).isInSource(file);
     }
 

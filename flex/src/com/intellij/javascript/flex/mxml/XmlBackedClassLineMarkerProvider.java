@@ -4,7 +4,7 @@ package com.intellij.javascript.flex.mxml;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
 import com.intellij.icons.AllIcons;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -42,7 +42,7 @@ public final class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDe
           XmlTagUtil.getStartTagNameElement((XmlTag)parent) == element &&
           parent.getParent() instanceof XmlDocument &&
           parent.getContainingFile() != null &&
-          JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
+          FlexSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
         final XmlBackedJSClass clazz = XmlBackedJSClassFactory.getInstance().getXmlBackedClass((XmlTag)parent);
         Query<JSClass> classQuery = JSClassSearch.searchClassInheritors(clazz, true);
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)parent);

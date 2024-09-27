@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor;
 import com.intellij.lang.javascript.navigation.JavaScriptClassContributor;
@@ -42,7 +42,7 @@ public final class FlexXmlBackedSymbolContributor extends DumbAwareChooseByNameC
   @Override
   public void doProcessNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     if (!FileBasedIndex.getInstance().processAllKeys(FlexXmlBackedMembersIndex.NAME, processor, scope, filter)) return;
-    FileType type = JavaScriptSupportLoader.getMxmlFileType();
+    FileType type = FlexSupportLoader.getMxmlFileType();
     if (type != null) {
       if (!FileTypeIndex.processFiles(type, Processors.map(processor, VirtualFile::getNameWithoutExtension), scope)) return;
     }

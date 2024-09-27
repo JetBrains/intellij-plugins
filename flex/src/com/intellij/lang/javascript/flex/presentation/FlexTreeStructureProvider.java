@@ -9,7 +9,7 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -79,7 +79,7 @@ public final class FlexTreeStructureProvider implements TreeStructureProvider, D
       for (AbstractTreeNode child : children) {
         Object o = child.getValue();
         if (o instanceof JSFileImpl && !(o instanceof PsiCompiledFile) && DialectDetector.isActionScript((PsiFile)o) ||
-            o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
+            o instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((PsiFile)o)) {
           result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode<?>)parent).getSettings()));
           continue;
         }

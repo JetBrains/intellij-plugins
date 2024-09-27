@@ -2,7 +2,6 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.flex.model.bc.OutputType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -66,7 +65,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     if (element instanceof JSClass) {
       return (JSClass)element;
     }
-    if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((XmlFile)element)) {
+    if (element instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((XmlFile)element)) {
       return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     if (element instanceof JSFile) {

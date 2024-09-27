@@ -12,6 +12,7 @@ import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.psi.*;
@@ -80,7 +81,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
   public static final @NonNls String SUPER_INTERFACES = "SuperInterfaces";
 
   public static final Collection<String> ACTIONSCRIPT_TEMPLATES_EXTENSIONS =
-    List.of(JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
+    List.of(FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
             JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3);
 
   private static String ourPreviousClassTemplateName;

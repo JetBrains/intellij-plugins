@@ -4,7 +4,7 @@ package com.intellij.javascript.flex.mxml.schema;
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
@@ -80,7 +80,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
       return null;
     }
 
-    if (descriptor == null && JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace())) {
+    if (descriptor == null && FlexSupportLoader.MXML_URI3.equals(tag.getNamespace())) {
       return FxDefinitionBackedDescriptor.getFxDefinitionBackedDescriptor(module, tag);
     }
 
@@ -101,7 +101,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
         }
       }
 
-      if (JavaScriptSupportLoader.isLanguageNamespace(descriptor.context.namespace)){
+      if (FlexSupportLoader.isLanguageNamespace(descriptor.context.namespace)){
         final String tagName = _descriptor.getName();
         return !descriptor.isPredefined() && !ArrayUtil.contains(tagName, ILLEGAL_LANGUAGE_ROOT_TAGS);
       }

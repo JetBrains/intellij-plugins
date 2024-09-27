@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.PredefinedImportSet;
 import com.intellij.lang.javascript.flex.ScopedImportSet;
@@ -50,7 +50,7 @@ public final class MxmlImplicitImports {
 
     if (context != null) {
       XmlTag tag = PsiTreeUtil.getParentOfType(context, XmlTag.class, false);
-      boolean flex4ns = tag != null && ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, tag.knownNamespaces());
+      boolean flex4ns = tag != null && ArrayUtil.contains(FlexSupportLoader.MXML_URI3, tag.knownNamespaces());
 
       ScopedImportSet flexImplicitImports = flex4ns ? flex4ImplicitImports : flex3ImplicitImports;
       if (!flexImplicitImports.tryResolveImportedClass(scope, resolveProcessor)) return false;

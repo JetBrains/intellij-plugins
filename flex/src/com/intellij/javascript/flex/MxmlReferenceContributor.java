@@ -8,7 +8,7 @@ import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
@@ -169,7 +169,7 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
       registrar,
       new String[]{FlexReferenceContributor.DESTINATION_ATTR_NAME},
       new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new TagNameFilter(BINDING_TAG_NAME),
-                                                            new NamespaceFilter(JavaScriptSupportLoader.LANGUAGE_NAMESPACES)), 2)),
+                                                            new NamespaceFilter(FlexSupportLoader.LANGUAGE_NAMESPACES)), 2)),
       new PsiReferenceProvider() {
         @Override
         public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element,
@@ -196,7 +196,7 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
 
         final String trimmedText = StringUtil.unquoteString(element.getText());
 
-        if (JavaScriptSupportLoader.isLanguageNamespace(tag.getNamespace())) {
+        if (FlexSupportLoader.isLanguageNamespace(tag.getNamespace())) {
           if (FlexPredefinedTagNames.SCRIPT.equals(tagName)) {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.SCRIPT_SOURCE);
           }
@@ -293,7 +293,7 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
         String attrName = xmlAttribute.getLocalName();
         int dotPos = attrName.indexOf('.');
         if (dotPos == -1) return false;
-        return JavaScriptSupportLoader.isFlexMxmFile(xmlAttribute.getContainingFile());
+        return FlexSupportLoader.isFlexMxmFile(xmlAttribute.getContainingFile());
       }
     }), new PsiReferenceProvider() {
       @Override
@@ -421,7 +421,7 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
         new ParentElementFilter(
           new AndFilter(XmlTagFilter.INSTANCE,
                         new TagNameFilter(CodeContext.REPARENT_TAG_NAME),
-                        new NamespaceFilter(JavaScriptSupportLoader.MXML_URI3)
+                        new NamespaceFilter(FlexSupportLoader.MXML_URI3)
           ), 2
         )
       ),
