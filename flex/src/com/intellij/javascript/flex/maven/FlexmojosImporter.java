@@ -32,7 +32,6 @@ import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
-import org.jetbrains.idea.maven.server.NativeMavenProjectHolder;
 import org.jetbrains.idea.maven.utils.MavenLog;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
@@ -82,15 +81,6 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   @Override
   public void getSupportedDependencyScopes(Collection<? super String> result) {
     Collections.addAll(result, "merged", "internal", "external", "caching", "rsl");
-  }
-
-  public void resolve(Project project, MavenProject mavenProject, NativeMavenProjectHolder nativeMavenProject,
-                      MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
-    final MavenPlugin plugin = getFlexmojosPlugin(mavenProject);
-    final String version = plugin.getVersion();
-    if (version != null && StringUtil.compareVersionNumbers(version, "4") < 0) {
-      embedder.resolvePlugin(plugin, mavenProject, MavenProjectsManager.getInstance(project).getForceUpdateSnapshots());
-    }
   }
 
   private @NotNull MavenPlugin getFlexmojosPlugin(final MavenProject mavenProject) {
