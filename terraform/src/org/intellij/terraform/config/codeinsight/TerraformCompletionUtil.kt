@@ -12,10 +12,13 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
+import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.model.Function
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.Icons
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
@@ -23,7 +26,9 @@ import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.codeinsight.FunctionInsertHandler
 import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
+import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.util.*
+import javax.swing.Icon
 
 object TerraformCompletionUtil {
   val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module") + OpenTofuScopes
@@ -125,4 +130,13 @@ object TerraformCompletionUtil {
       }
     }
   }
+
+  internal fun getLookupIcon(element: PsiElement): Icon {
+    return when (element.containingFile.fileType) {
+      is TerraformFileType -> {TerraformIcons.Terraform}
+      is OpenTofuFileType -> {TerraformIcons.Opentofu}
+      else -> Icons.FileTypes.HCL
+    }
+  }
+
 }

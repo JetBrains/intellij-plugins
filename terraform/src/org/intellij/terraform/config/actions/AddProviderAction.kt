@@ -29,9 +29,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.TerraformIcons
-import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper.getAllTypesForBlockByIdentifier
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.TypeModel
@@ -157,7 +156,7 @@ private class SelectUnknownResourceStep(
   }
 
   override fun getIconFor(value: BlockType?): Icon? {
-    return value?.let { TerraformIcons.Terraform }
+    return value?.let { TerraformCompletionUtil.getLookupIcon(pointer.element ?: return@getIconFor null) }
            ?: AllIcons.General.QuestionDialog
   }
 

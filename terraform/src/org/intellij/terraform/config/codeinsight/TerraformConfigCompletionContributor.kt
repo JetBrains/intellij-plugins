@@ -21,7 +21,6 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -35,6 +34,7 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createP
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.dumpPsiFileModel
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.documentation.psi.FakeHCLElementPsiFactory
 import org.intellij.terraform.config.model.*
@@ -329,7 +329,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             presentation.setItemText(TerraformCompletionUtil.buildResourceDisplayString(it as BlockType, providerLocalNamesReversed))
             presentation.typeText = TerraformCompletionUtil.buildProviderTypeText(it.provider)
             presentation.isTypeGrayed = true
-            presentation.icon = TerraformIcons.Terraform
+            presentation.icon = getLookupIcon(position)
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
@@ -344,7 +344,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             presentation.tailText = " (${it.namespace})"
             presentation.typeText = it.version
             presentation.isTypeGrayed = true
-            presentation.icon = TerraformIcons.Terraform
+            presentation.icon = getLookupIcon(position)
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it))
@@ -353,7 +353,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
 
     private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement): LookupElementBuilder = create(typeName)
       .withTypeText(typeText, true)
-      .withIcon(TerraformIcons.Terraform)
+      .withIcon(getLookupIcon(position))
       .withInsertHandler(BlockSubNameInsertHandler(it))
       .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, position.containingFile.originalFile))
   }

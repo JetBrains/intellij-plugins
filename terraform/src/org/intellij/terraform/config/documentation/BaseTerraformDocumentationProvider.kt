@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
-import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLIdentifier
@@ -32,7 +32,7 @@ internal abstract class BaseTerraformDocumentationProvider {
 
     override fun computePresentation(): TargetPresentation {
       return TargetPresentation.builder(getHelpWindowHeader(pointer.element))
-        .icon(TerraformIcons.Terraform)
+        .icon(pointer.element?.let {TerraformCompletionUtil.getLookupIcon(it)})
         .presentation()
     }
 
