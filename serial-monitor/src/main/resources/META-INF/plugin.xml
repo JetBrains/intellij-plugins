@@ -32,7 +32,7 @@
                        bundle="messages.SerialMonitorBundle" key="notification.group.serial.monitor.notification"/>
 
     <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorCollector"/>
-    <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
+    <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorUsagesCollector"/>
   </extensions>
   <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
 </idea-plugin>

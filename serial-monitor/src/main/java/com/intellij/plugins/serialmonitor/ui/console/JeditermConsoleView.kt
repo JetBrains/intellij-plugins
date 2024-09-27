@@ -49,6 +49,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
   @Volatile
   var paused: Boolean = false
 
+  fun isTimestamped() = emulator?.isTimestamped == true
 
   private val bytesStream = object : InputStream() {
     override fun read(): Int {
@@ -230,9 +231,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
       e.presentation.isEnabled = widget.isShowing
     }
 
-    override fun isSelected(e: AnActionEvent): Boolean {
-      return emulator?.isTimestamped == true
-    }
+    override fun isSelected(e: AnActionEvent): Boolean = isTimestamped()
     override fun setSelected(e: AnActionEvent, isSelected: Boolean) {
       emulator?.isTimestamped = isSelected
     }

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nls
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
-private val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::javaClass.name)
+internal val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::javaClass.name)
 
 class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f, 0.1f, 0.9f) {
 

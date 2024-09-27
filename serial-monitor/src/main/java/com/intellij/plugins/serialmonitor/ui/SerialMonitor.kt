@@ -87,6 +87,10 @@ class SerialMonitor(private val project: Project,
     duplexConsoleView.connect(true)
   }
 
+  internal fun isTimestamped(): Boolean = duplexConsoleView.isTimestamped
+
+  internal fun isHex(): Boolean = !duplexConsoleView.isPrimaryConsoleEnabled
+
   init {
     myPanel.setLoadingText(SerialMonitorBundle.message("connecting"))
     duplexConsoleView = JeditermSerialMonitorDuplexConsoleView.create(project, name, portProfile, myPanel)

@@ -129,6 +129,10 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     return myConnection.getStatus();
   }
 
+  public boolean isTimestamped() {
+    return getPrimaryConsoleView().isTimestamped();
+  }
+
   public synchronized void connect(boolean doConnect) {
     myLoadingPanel.startLoading();
     ApplicationManager.getApplication().executeOnPooledThread(
