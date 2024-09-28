@@ -1,7 +1,6 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.FromInterfacesRunner
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
@@ -9,7 +8,6 @@ import com.intellij.lang.javascript.typescript.TypeScriptHighlightingWithoutServ
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.util.Function
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.junit.runner.RunWith
@@ -41,7 +39,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() 
   )
 
   override fun doTestFor(checkWeakWarnings: Boolean,
-                         function: Function<in MutableCollection<HighlightInfo>, Void>,
                          vararg fileNames: String?) {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {
@@ -58,7 +55,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() 
       return
     }
 
-    super.doTestFor(checkWeakWarnings, function, *fileNames)
+    super.doTestFor(checkWeakWarnings, *fileNames)
   }
 
   private fun skipTest() = toFix.contains(getTestName(false))

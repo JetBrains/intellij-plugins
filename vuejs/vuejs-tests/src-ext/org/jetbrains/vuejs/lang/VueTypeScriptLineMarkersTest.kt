@@ -1,13 +1,11 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.typescript.TypeScriptLineMarkersTest
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.util.Function
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
@@ -27,14 +25,13 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
   )
 
   override fun doTestFor(checkWeakWarnings: Boolean,
-                         function: Function<in MutableCollection<HighlightInfo>, Void>,
                          vararg fileNames: String?) {
     LOG.info("Running overridden code for vue")
     if (fileNames.getOrNull(0)?.endsWith(".d.ts") == true) {
       LOG.info("Skipping because only .d.ts file for test")
       return
     }
-    super.doTestFor(checkWeakWarnings, function, *fileNames)
+    super.doTestFor(checkWeakWarnings, *fileNames)
   }
 
   override fun configureEditorFile(name: String?) {
