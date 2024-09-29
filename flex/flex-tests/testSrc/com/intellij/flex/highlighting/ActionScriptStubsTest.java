@@ -1,12 +1,13 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
@@ -120,7 +121,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     doTest(null, getTestName(false) + ".as", getTestName(false) + "_2.as", getTestName(false) + "_3.as", getTestName(false) + "_4.as");
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions(JSTestOption.WithSymbolNames)
   public void testCreateVariable() {
     doTest(() -> {
       final IntentionAction action =

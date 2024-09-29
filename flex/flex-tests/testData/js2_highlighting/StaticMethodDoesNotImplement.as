@@ -1,7 +1,7 @@
-interface <lineMarker descr="Has implementations"><info descr="interface">Int</info></lineMarker> {
-    function <info descr="instance method">foo</info>():void;
+interface <lineMarker descr="Has implementations">Int</lineMarker> {
+    function foo():void;
 }
-class <error descr="Method foo from interface Int is not implemented"><info descr="classes//class name">Impl</info></error> implements <info descr="interface">Int</info> {
-  public static function <info descr="static method">f<caret>oo</info>():void {
+class <error descr="Method foo from interface Int is not implemented">Impl</error> implements Int {
+  public static function f<caret>oo():void {
   }
 }

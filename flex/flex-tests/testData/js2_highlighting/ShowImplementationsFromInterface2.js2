@@ -1,8 +1,8 @@
-interface <lineMarker descr="Has implementations"><info>XX<caret>X</info></lineMarker> {
-  function <info descr="instance method">bbb2</info>();
+interface <lineMarker descr="Has implementations">XXX</lineMarker> {
+  function bbb2();
 }
 
-interface <lineMarker descr="Has implementations"><info>XXX2</info></lineMarker> extends <info>XXX</info> {
+interface <lineMarker descr="Has implementations">XXX2</lineMarker> extends XXX {
 }
-interface <info>XXX3</info> extends <info>XXX2</info> {
+interface XXX3 extends XXX2 {
 }

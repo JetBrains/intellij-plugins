@@ -1,9 +1,9 @@
-<script lang="ts">
-<info descr="null">namespace</info> <info descr="moduleName">space</info> {
-export class <info descr="classes//exported class">SpaceInterface</info> {
+<<symbolName descr="Custom tag name">script</symbolName> lang="ts">
+<info descr="null">namespace</info> <symbolName descr="moduleName">space</symbolName> {
+export class <symbolName descr="classes//exported class">SpaceInterface</symbolName> {
 }
-var <info descr="static field">i</info>:<info descr="classes//exported class">SpaceInterface</info>;
+var <symbolName descr="static field">i</symbolName>:<symbolName descr="classes//exported class">SpaceInterface</symbolName>;
 }
-import <info descr="classes//exported class">SpaceInterface</info> = <info descr="module name">space</info>.<info descr="classes//exported class">SpaceInterface</info>;
-var <info descr="identifiers//local variable">i</info>:<info descr="classes//exported class">SpaceInterface</info>;
-</script>
+import <symbolName descr="classes//exported class">SpaceInterface</symbolName> = <symbolName descr="module name">space</symbolName>.<symbolName descr="classes//exported class">SpaceInterface</symbolName>;
+var <symbolName descr="identifiers//local variable">i</symbolName>:<symbolName descr="classes//exported class">SpaceInterface</symbolName>;
+</<symbolName descr="Custom tag name">script</symbolName>>

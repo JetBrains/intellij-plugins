@@ -1,21 +1,21 @@
-<template>
-  {{<inject descr="null"> <info descr="instance field">newName</info> </inject>}}
-  {{<inject descr="null"> <info descr="identifiers//global variable">window</info>.<info descr="instance field">name</info> </inject>}}
-  {{<inject descr="null"> <info descr="identifiers//local function">foo12</info>() </inject>}}
-  {{<inject descr="null"> <info descr="instance field">foo</info> </inject>}}
-</template>
+<<symbolName descr="Custom tag name">template</symbolName>>
+  {{<inject descr="null"> <symbolName descr="instance field">newName</symbolName> </inject>}}
+  {{<inject descr="null"> <symbolName descr="identifiers//global variable">window</symbolName>.<symbolName descr="instance field">name</symbolName> </inject>}}
+  {{<inject descr="null"> <symbolName descr="identifiers//local function">foo12</symbolName>() </inject>}}
+  {{<inject descr="null"> <symbolName descr="instance field">foo</symbolName> </inject>}}
+</<symbolName descr="Custom tag name">template</symbolName>>
 
-<script setup>
+<<symbolName descr="Custom tag name">script</symbolName> setup>
 
 import {ref} <info descr="null">from</info> "vue";
 
-export const <info descr="identifiers//exported variable">foo</info> = 12
+export const <symbolName descr="identifiers//exported variable">foo</symbolName> = 12
 
-let <info descr="identifiers//local variable">newName</info> = ref(12)
+let <symbolName descr="identifiers//local variable">newName</symbolName> = ref(12)
 
-function <info descr="identifiers//local function">foo12</info>() {
-  let <info descr="identifiers//local variable">bar</info> = {<info descr="instance field">a</info>: 12}
-  return <info descr="identifiers//local variable">bar</info>.<info descr="instance field">a</info>.<info descr="instance method">toExponential</info>()
+function <symbolName descr="identifiers//local function">foo12</symbolName>() {
+  let <symbolName descr="identifiers//local variable">bar</symbolName> = {<symbolName descr="instance field">a</symbolName>: 12}
+  return <symbolName descr="identifiers//local variable">bar</symbolName>.<symbolName descr="instance field">a</symbolName>.<symbolName descr="instance method">toExponential</symbolName>()
 }
 
-</script>
+</<symbolName descr="Custom tag name">script</symbolName>>

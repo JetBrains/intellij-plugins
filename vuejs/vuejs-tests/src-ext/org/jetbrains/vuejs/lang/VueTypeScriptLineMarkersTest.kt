@@ -40,10 +40,10 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
 
     val testName = getTestName(true)
     localVarsMap[testName]?.forEach {
-      text = text.replace("<info descr=\"identifiers//global variable\">$it", "<info descr=\"identifiers//local variable\">$it")
+      text = text.replace("<symbolName descr=\"identifiers//global variable\">$it", "<symbolName descr=\"identifiers//local variable\">$it")
     }
     localFunsMap[testName]?.forEach {
-      text = text.replace("<info descr=\"identifiers//global function\">$it", "<info descr=\"identifiers//local function\">$it")
+      text = text.replace("<symbolName descr=\"identifiers//global function\">$it", "<symbolName descr=\"identifiers//local function\">$it")
     }
 
     myFixture.configureByText(VueFileType, surroundWithScriptTag(text))
@@ -60,6 +60,8 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
     JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, relativePath, text)
   }
 
-  private fun surroundWithScriptTag(text: Any) = "<script lang=\"ts\">\n$text\n</script>"
+  private fun surroundWithScriptTag(text: Any) = "<<symbolName descr=\"Custom tag name\">script</symbolName> lang=\"ts\">\n" +
+                                                 "$text\n" +
+                                                 "</<symbolName descr=\"Custom tag name\">script</symbolName>>"
 
 }

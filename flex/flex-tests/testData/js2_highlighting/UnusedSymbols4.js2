@@ -1,27 +1,27 @@
 package {
-public class <info descr="classes//class name">UnusedSymbols4</info>
+public class <symbolName descr="classes//class name">UnusedSymbols4</symbolName>
 {
-  var <info descr="instance field">x</info>:<info descr="classes//class name">Bar</info>;
-  var <info descr="instance field">y</info>:<info descr="classes//class name">Object</info> = new <info descr="classes//class name">Foo2</info>();
+  var <symbolName descr="instance field">x</symbolName>:<symbolName descr="classes//class name">Bar</symbolName>;
+  var <symbolName descr="instance field">y</symbolName>:<symbolName descr="classes//class name">Object</symbolName> = new <symbolName descr="classes//class name">Foo2</symbolName>();
 }
 }
 
-class <info descr="classes//class name">Bar</info> {}
-class <warning descr="Unused inner class Foo"><info descr="classes//class name">F<caret>oo</info></warning> {
+class <symbolName descr="classes//class name">Bar</symbolName> {}
+class <warning descr="Unused inner class Foo"><symbolName descr="classes//class name">Foo</symbolName></warning> {
 }
 
-class <info descr="classes//class name">Foo2</info> {
-    function <info descr="classes//class name">Foo2</info>() {}
+class <symbolName descr="classes//class name">Foo2</symbolName> {
+    function <symbolName descr="classes//class name">Foo2</symbolName>() {}
 }
 
-class <lineMarker><info descr="classes//class name">Base</info></lineMarker> {
-    public function <lineMarker><info descr="instance method">foo</info></lineMarker>(<info descr="Unused parameter s"><info descr="identifiers//parameter">s</info></info>:<info descr="classes//class name">String</info>, <info descr="Unused parameter n"><info descr="identifiers//parameter">n</info></info>:int):void {}
+class <symbolName descr="classes//class name">Base</symbolName> {
+    public function <symbolName descr="instance method">foo</symbolName>(<info descr="Unused parameter s"><symbolName descr="identifiers//parameter">s</symbolName></info>:<symbolName descr="classes//class name">String</symbolName>, <info descr="Unused parameter n"><symbolName descr="identifiers//parameter">n</symbolName></info>:int):void {}
 }
 
-class <info descr="classes//class name">Derived</info> extends <info descr="classes//class name">Base</info> {
-    public override function <lineMarker><info descr="instance method">foo</info></lineMarker>(<info descr="identifiers//parameter">s</info>:<info descr="classes//class name">String</info>, <info descr="identifiers//parameter">n</info>:int):void {
-        var <info descr="identifiers//local variable">x</info>:<info descr="classes//class name">Derived</info> = new <info descr="classes//class name">Derived</info>();
-        <info descr="identifiers//local variable">x</info> = null;
-        <info descr="identifiers//parameter">n</info> = -1;
+class <symbolName descr="classes//class name">Derived</symbolName> extends <symbolName descr="classes//class name">Base</symbolName> {
+    public override function <symbolName descr="instance method">foo</symbolName>(<symbolName descr="identifiers//parameter">s</symbolName>:<symbolName descr="classes//class name">String</symbolName>, <symbolName descr="identifiers//parameter">n</symbolName>:int):void {
+        var <symbolName descr="identifiers//local variable">x</symbolName>:<symbolName descr="classes//class name">Derived</symbolName> = new <symbolName descr="classes//class name">Derived</symbolName>();
+        <symbolName descr="identifiers//local variable">x</symbolName> = null;
+        <symbolName descr="identifiers//parameter">n</symbolName> = -1;
     }
 }

@@ -3,6 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -129,8 +130,13 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testComplexFormControls() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
                                                     extension = "ts", strictTemplates = true)
 
-  fun testSignalsColors() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
-                                              extension = "ts", checkInformation = true)
+  fun testSignalsColors() {
+    doConfiguredTest(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
+                     extension = "ts", configureFileName = "$testName.${"ts"}",
+                     configurators = listOf(Angular2TsConfigFile(strictTemplates = false))) {
+      JSTestUtils.checkHighlightingWithSymbolNames(myFixture, true, true, true)
+    }
+  }
 
   fun testSignalsColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, dir = true,
                                                   configureFileName = "signalsColors.html", checkInformation = true)

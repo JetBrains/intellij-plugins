@@ -1,13 +1,13 @@
-interface <lineMarker descr="Has implementations"><info descr="interface">IAAA</info></lineMarker> {
-  function get <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>():int
-  function set <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>(<info descr="identifiers//parameter">v</info>:int):void
+interface <lineMarker descr="Has implementations">IAAA</lineMarker> {
+  function get <lineMarker descr="Is implemented">bbb</lineMarker>():int
+  function set <lineMarker descr="Is implemented">bbb</lineMarker>(v:int):void
 }
-class <lineMarker descr="Has subclasses"><info descr="classes//class name">AAA</info></lineMarker> implements <info descr="interface">IAAA</info> {
-  public function get <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>():int {}
-  public function set <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>(<info descr="identifiers//parameter">v</info>:int):void {}
+class <lineMarker descr="Has subclasses">AAA</lineMarker> implements IAAA {
+  public function get <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA">bbb</lineMarker></lineMarker>():int {}
+  public function set <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA">bbb</lineMarker></lineMarker>(v:int):void {}
 }
 
-class <info descr="classes//class name">BBB</info> extends <info descr="classes//class name">AAA</info> {
-  public override function set <lineMarker descr="Overrides property 'bbb' in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>(<info descr="identifiers//parameter">x</info>:int):void {}
-  public override function get <lineMarker descr="Overrides property 'bbb' in AAA"><info descr="instance method">bbb</info></lineMarker>():int {}
+class BBB extends AAA {
+  public override function set <lineMarker descr="Overrides property 'bbb' in AAA">b<caret>bb</lineMarker>(x:int):void {}
+  public override function get <lineMarker descr="Overrides property 'bbb' in AAA">bbb</lineMarker>():int {}
 }

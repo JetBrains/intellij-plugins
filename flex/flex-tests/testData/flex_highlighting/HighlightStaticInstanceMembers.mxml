@@ -2,20 +2,20 @@
 
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" >
   <mx:Script><inject descr="null">
-    static var <info descr="static field">staticField</info>:int;
-    static function <info descr="static method">staticMethod</info>():void {}
-    function <info descr="instance method">instanceMethod</info>(<info descr="identifiers//parameter">p</info>):int {}
-    var <info descr="instance field">instanceField</info>:int;
+    static var <symbolName descr="static field">staticField</symbolName>:int;
+    static function <symbolName descr="static method">staticMethod</symbolName>():void {}
+    function <symbolName descr="instance method">instanceMethod</symbolName>(<symbolName descr="identifiers//parameter">p</symbolName>):int {}
+    var <symbolName descr="instance field">instanceField</symbolName>:int;
 
-    function <info descr="instance method">testFun</info>(<info descr="identifiers//parameter">param</info>:int):void {
-        <info descr="static field">staticField</info> = 1
-        <info descr="static method">staticMethod</info>();
-        var <info descr="identifiers//local variable">a</info>:<info descr="classes//class name">HighlightStaticInstanceMembers</info>;
-        <info descr="identifiers//local variable">a</info>.<info descr="instance method">instanceMethod</info>(<info descr="identifiers//parameter">param</info>)
-        <info descr="identifiers//local variable">a</info>.<info descr="instance field">instanceField</info> = 1
+    function <symbolName descr="instance method">testFun</symbolName>(<symbolName descr="identifiers//parameter">param</symbolName>:int):void {
+        <symbolName descr="static field">staticField</symbolName> = 1
+        <symbolName descr="static method">staticMethod</symbolName>();
+        var <symbolName descr="identifiers//local variable">a</symbolName>:<symbolName descr="classes//class name">HighlightStaticInstanceMembers</symbolName>;
+        <symbolName descr="identifiers//local variable">a</symbolName>.<symbolName descr="instance method">instanceMethod</symbolName>(<symbolName descr="identifiers//parameter">param</symbolName>)
+        <symbolName descr="identifiers//local variable">a</symbolName>.<symbolName descr="instance field">instanceField</symbolName> = 1
     }
   </inject></mx:Script>
 
-  <mx:Canvas width="{<inject descr="null"><info descr="instance field">conventionsChoiceForm</info>.<info descr="instance method">width</info></inject>}" />
+  <mx:Canvas width="{<inject descr="null"><symbolName descr="instance field">conventionsChoiceForm</symbolName>.<symbolName descr="instance method">width</symbolName></inject>}" />
   <mx:Canvas id="conventionsChoiceForm" />
 </mx:Application>

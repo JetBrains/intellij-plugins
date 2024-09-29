@@ -1,5 +1,5 @@
 package {
-interface <lineMarker descr="Has implementations"><info>ImplicitImplementMarkerInterface</info></lineMarker> {
-    function <lineMarker descr="Is implemented"><info descr="instance method">foo</info></lineMarker>();
+interface <lineMarker descr="Has implementations">ImplicitImplementMarkerInterface</lineMarker> {
+    function <lineMarker descr="Is implemented">foo</lineMarker>();
 }
 }

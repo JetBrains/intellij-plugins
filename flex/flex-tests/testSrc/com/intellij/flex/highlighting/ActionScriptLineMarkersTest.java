@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
@@ -115,18 +115,18 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     assertTrue(parentOfType.isGetProperty());
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   public void testUnusedSymbols4() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doSimpleHighlightingWithInvokeFixAndCheckResult("Remove unused inner class 'Foo'");
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   public void testHighlightStaticInstanceMembers() {
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   public void testGenerics() {
     defaultTest();
   }
@@ -239,7 +239,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     doTestFor(true, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions(JSTestOption.WithInfos)
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   public void testSemanticHighlighting() {
     defaultTest(); // IDEA-110040
   }

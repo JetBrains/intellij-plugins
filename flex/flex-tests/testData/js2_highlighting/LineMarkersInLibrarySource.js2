@@ -1,16 +1,16 @@
 package {
 
 
-public interface <error descr="Class 'IFoo' should be defined in file 'IFoo.js2'"><error descr="More than one externally visible symbol defined in file"><lineMarker descr="Has implementations"><info descr="interface">IFoo</info></lineMarker></error></error> {
-    function <info><lineMarker descr="Is implemented"><info descr="instance method">foo</info></lineMarker></info>();
+public interface <error descr="Class 'IFoo' should be defined in file 'IFoo.js2'"><error descr="More than one externally visible symbol defined in file"><lineMarker descr="Has implementations">IFoo</lineMarker></error></error> {
+    function <lineMarker descr="Is implemented">foo</lineMarker>();
 }
 
-public class <error descr="Class 'Foo' should be defined in file 'Foo.js2'"><error descr="More than one externally visible symbol defined in file"><lineMarker descr="Has subclasses"><info descr="classes//class name">Foo</info></lineMarker></error></error> implements <info descr="interface">IFoo</info> {
-    public function <info><lineMarker descr="Is overridden"><lineMarker descr="Implements method 'foo' in IFoo">foo</lineMarker></lineMarker></info>() {}
+public class <error descr="Class 'Foo' should be defined in file 'Foo.js2'"><error descr="More than one externally visible symbol defined in file"><lineMarker descr="Has subclasses">Foo</lineMarker></error></error> implements IFoo {
+    public function <lineMarker descr="Is overridden"><lineMarker descr="Implements method 'foo' in IFoo">foo</lineMarker></lineMarker>() {}
 }
 
-public class <error descr="Class 'FooEx' should be defined in file 'FooEx.js2'"><error descr="More than one externally visible symbol defined in file"><info descr="classes//class name">FooEx</info></error></error> extends <info descr="classes//class name">Foo</info> {
-    public override function <info><lineMarker descr="Overrides method 'foo' in Foo">foo</lineMarker></info>() {}
+public class <error descr="Class 'FooEx' should be defined in file 'FooEx.js2'"><error descr="More than one externally visible symbol defined in file">FooEx</error></error> extends Foo {
+    public override function <lineMarker descr="Overrides method 'foo' in Foo">foo</lineMarker>() {}
 }
 
 }

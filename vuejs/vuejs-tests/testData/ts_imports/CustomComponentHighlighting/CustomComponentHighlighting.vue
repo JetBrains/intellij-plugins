@@ -8,20 +8,20 @@
       <div>test</div>
     </<symbolName descr="Custom tag name">CustomComponentHighlighting_2</symbolName>>
     <script>
-      function <info descr="identifiers//local function">foo</info>() {
+      function <symbolName descr="identifiers//local function">foo</symbolName>() {
       }
     </script>
  </div>
 </<symbolName descr="Custom tag name">template</symbolName>>
 
 <<symbolName descr="Custom tag name">script</symbolName>>
-  import <info descr="identifiers//exported variable">CustomComponentHighlighting_2</info> <info descr="null">from</info> './CustomComponentHighlighting_2.vue'
-  import <info descr="identifiers//exported variable">Button</info> <info descr="null">from</info> './Button.vue'
+  import <symbolName descr="identifiers//exported variable">CustomComponentHighlighting_2</symbolName> <info descr="null">from</info> './CustomComponentHighlighting_2.vue'
+  import <symbolName descr="identifiers//exported variable">Button</symbolName> <info descr="null">from</info> './Button.vue'
   export default {
-    <info descr="instance field">name</info>: 'CustomComponentHighlighting',
-    <info descr="instance field">components</info>: {
-      <info descr="identifiers//exported variable">CustomComponentHighlighting_2</info>,
-      <info descr="identifiers//exported variable">Button</info>
+    <symbolName descr="instance field">name</symbolName>: 'CustomComponentHighlighting',
+    <symbolName descr="instance field">components</symbolName>: {
+      <symbolName descr="identifiers//exported variable">CustomComponentHighlighting_2</symbolName>,
+      <symbolName descr="identifiers//exported variable">Button</symbolName>
     }
   }
 </<symbolName descr="Custom tag name">script</symbolName>>

@@ -1,47 +1,47 @@
-var <info descr="identifiers//global variable">globalVar</info>:int;
+var <symbolName descr="identifiers//global variable">globalVar</symbolName>:int;
 
-class <info descr="classes//class name">SampleClass</info> {
-    static var <info descr="static field">staticField</info>:int;
-    static function <info descr="static method">staticMethod</info>():void {}
-    function <info descr="instance method">instanceMethod</info>(<info descr="identifiers//parameter">p</info>):int {}
-    var <info descr="instance field">instanceField</info>:int;
+class <symbolName descr="classes//class name">SampleClass</symbolName> {
+    static var <symbolName descr="static field">staticField</symbolName>:int;
+    static function <symbolName descr="static method">staticMethod</symbolName>():void {}
+    function <symbolName descr="instance method">instanceMethod</symbolName>(<symbolName descr="identifiers//parameter">p</symbolName>):int {}
+    var <symbolName descr="instance field">instanceField</symbolName>:int;
 }
 
-function <info descr="identifiers//global function">testFun</info>(<info descr="identifiers//parameter">param</info>:int):void {
-    <info descr="classes//class name">SampleClass</info>.<info descr="static field">staticField</info> = <info descr="identifiers//global variable">globalVar</info>
-    <info descr="classes//class name">SampleClass</info>.<info descr="static method">staticMethod</info>();
-    var <info descr="identifiers//local variable">a</info>:<info descr="classes//class name">SampleClass</info>;
-    <info descr="identifiers//local variable">a</info>.<info descr="instance method">instanceMethod</info>(<info descr="identifiers//parameter">param</info>)
-    <info descr="identifiers//local variable">a</info>.<info descr="instance field">instanceField</info> = 1
+function <symbolName descr="identifiers//global function">testFun</symbolName>(<symbolName descr="identifiers//parameter">param</symbolName>:int):void {
+    <symbolName descr="classes//class name">SampleClass</symbolName>.<symbolName descr="static field">staticField</symbolName> = <symbolName descr="identifiers//global variable">globalVar</symbolName>
+    <symbolName descr="classes//class name">SampleClass</symbolName>.<symbolName descr="static method">staticMethod</symbolName>();
+    var <symbolName descr="identifiers//local variable">a</symbolName>:<symbolName descr="classes//class name">SampleClass</symbolName>;
+    <symbolName descr="identifiers//local variable">a</symbolName>.<symbolName descr="instance method">instanceMethod</symbolName>(<symbolName descr="identifiers//parameter">param</symbolName>)
+    <symbolName descr="identifiers//local variable">a</symbolName>.<symbolName descr="instance field">instanceField</symbolName> = 1
 }
 
-class <info descr="classes//class name">SomeConstants</info> {
-    public static const <info descr="static field">SOME_CONST</info>:<info descr="classes//class name">String</info> = "test";
+class <symbolName descr="classes//class name">SomeConstants</symbolName> {
+    public static const <symbolName descr="static field">SOME_CONST</symbolName>:<symbolName descr="classes//class name">String</symbolName> = "test";
 }
 
-class <info descr="classes//class name">Foo2</info> {
-    public function <info descr="instance method">f</info>():void {
-        var <info descr="identifiers//local variable">aa</info>:<info descr="classes//class name">String</info> = <error>SOME_CONST</error>;
+class <symbolName descr="classes//class name">Foo2</symbolName> {
+    public function <symbolName descr="instance method">f</symbolName>():void {
+        var <symbolName descr="identifiers//local variable">aa</symbolName>:<symbolName descr="classes//class name">String</symbolName> = <error descr="Unresolved variable or type SOME_CONST">SOME_CONST</error>;
     }
 }
 
-class <lineMarker descr="Has subclasses"><info descr="classes//class name">Base</info></lineMarker> {
-    var <info descr="instance field">x</info>;
-    public static function  <info descr="static method">staticFunction</info>():void {}
+class <symbolName descr="classes//class name">Base</symbolName> {
+    var <symbolName descr="instance field">x</symbolName>;
+    public static function  <symbolName descr="static method">staticFunction</symbolName>():void {}
 }
 
-class <info descr="classes//class name">Derived</info> extends <info descr="classes//class name">Base</info> {
-    var <info descr="instance field">x2</info>;
+class <symbolName descr="classes//class name">Derived</symbolName> extends <symbolName descr="classes//class name">Base</symbolName> {
+    var <symbolName descr="instance field">x2</symbolName>;
 
-    public static function  <info descr="static method">derivedStaticFunction</info>():void {
-      <error descr="Instance member is not accessible"><info descr="instance field">x</info></error> = 1;
-      <error descr="Instance member is not accessible"><info descr="instance field">x2</info></error> = 1;
-      <info descr="classes//class name">Base</info>.<error descr="Instance member is not accessible"><info descr="instance field">x</info></error> = 1;
-      <info descr="classes//class name">Derived</info>.<error descr="Instance member is not accessible"><info descr="instance field">x</info></error> = 1;
-      <info descr="classes//class name">Derived</info>.<error descr="Instance member is not accessible"><info descr="instance field">x2</info></error> = 1;
+    public static function  <symbolName descr="static method">derivedStaticFunction</symbolName>():void {
+      <error descr="Instance member is not accessible"><symbolName descr="instance field">x</symbolName></error> = 1;
+      <error descr="Instance member is not accessible"><symbolName descr="instance field">x2</symbolName></error> = 1;
+      <symbolName descr="classes//class name">Base</symbolName>.<error descr="Instance member is not accessible"><symbolName descr="instance field">x</symbolName></error> = 1;
+      <symbolName descr="classes//class name">Derived</symbolName>.<error descr="Instance member is not accessible"><symbolName descr="instance field">x</symbolName></error> = 1;
+      <symbolName descr="classes//class name">Derived</symbolName>.<error descr="Instance member is not accessible"><symbolName descr="instance field">x2</symbolName></error> = 1;
     }
 }
 
-<info descr="classes//class name">Base</info>.<info descr="static method">staticFunction</info>();
-<info descr="classes//class name">Derived</info>.<info descr="static method">derivedStaticFunction</info>();
-<info descr="classes//class name">Derived</info>.<error descr="Static member is not accessible"><info descr="static method">staticFunction</info></error>();
+<symbolName descr="classes//class name">Base</symbolName>.<symbolName descr="static method">staticFunction</symbolName>();
+<symbolName descr="classes//class name">Derived</symbolName>.<symbolName descr="static method">derivedStaticFunction</symbolName>();
+<symbolName descr="classes//class name">Derived</symbolName>.<error descr="Static member is not accessible"><symbolName descr="static method">staticFunction</symbolName></error>();

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <<lineMarker descr="Has subclasses">mx:Application</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml">
     <mx:Script><![CDATA[<inject descr="null">
-      public function <lineMarker descr="Is overridden"><info descr="instance method">foo</info></lineMarker>() :void {}
+      public function <lineMarker descr="Is overridden">foo</lineMarker>() :void {}
         </inject>]]></mx:Script>
     <mx:Script><![CDATA[<inject descr="null">
-      public function <lineMarker descr="Is overridden"><info descr="instance method">bar</info></lineMarker>() :void {}
+      public function <lineMarker descr="Is overridden">bar</lineMarker>() :void {}
         </inject>]]></mx:Script>
 </mx:Application>

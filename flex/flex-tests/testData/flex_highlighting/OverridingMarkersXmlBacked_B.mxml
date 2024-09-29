@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<<lineMarker descr="Has subclasses">OverridingMarkersXmlBacked_A</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" implements="<info descr="interface"><inject descr="null">IMyInterface</inject></info>">
+<<lineMarker descr="Has subclasses">OverridingMarkersXmlBacked_A</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" implements="<inject descr="null">IMyInterface</inject>">
     <mx:Script><inject descr="null">
 
-    override function <lineMarker descr="Is overridden"><lineMarker descr="Overrides method 'foo' in OverridingMarkersXmlBacked_A"><info descr="instance method"><caret>foo</info></lineMarker></lineMarker>() : <info>String</info> {
+    override function <lineMarker descr="Is overridden"><lineMarker descr="Overrides method 'foo' in OverridingMarkersXmlBacked_A"><caret>foo</lineMarker></lineMarker>() : String {
         return "B";
     }
 
-        public function <lineMarker descr="Implements method 'bar' in IMyInterface"><info descr="instance method">bar</info></lineMarker>(): <info>String</info> {
+        public function <lineMarker descr="Implements method 'bar' in IMyInterface">bar</lineMarker>(): String {
             return "bar";
         }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -131,7 +131,7 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     invokeNamedActionWithExpectedFileCheck(testName, "OverrideMethods", "mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testHighlightStaticInstanceMembers() {
     defaultTest();
@@ -219,7 +219,7 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + "Interface.as", getTestName(false) + "Base.mxml", getTestName(false) + ".mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testFlexWithMockFlexWithLineMarkers() {
     defaultTest();
