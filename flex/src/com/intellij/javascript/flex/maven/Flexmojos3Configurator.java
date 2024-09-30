@@ -442,7 +442,7 @@ public class Flexmojos3Configurator {
   }
 
   private static String getArtifactFilePath(final MavenProject mavenProject, final MavenId mavenId, final String type) {
-    return FileUtil.toSystemIndependentName(MavenArtifactUtil.getArtifactFile(mavenProject.getLocalRepository(), mavenId, type).toString());
+    return FileUtil.toSystemIndependentName(MavenArtifactUtil.getArtifactFile(mavenProject.getLocalRepositoryPath(), mavenId, type).toString());
   }
 
   private void ensureSdkHasRequiredAdditionalJarPaths(final @NotNull Sdk sdk) {

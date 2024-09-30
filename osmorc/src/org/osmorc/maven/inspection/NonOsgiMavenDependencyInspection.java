@@ -42,7 +42,6 @@ import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -64,7 +63,7 @@ public final class NonOsgiMavenDependencyInspection extends XmlSuppressableInspe
           if (dependency != null) {
             String scope = dependency.getScope().getStringValue();
             if (!MavenConstants.SCOPE_TEST.equals(scope)) {
-              File repo = MavenProjectsManager.getInstance(tag.getProject()).getLocalRepository();
+              Path repo = MavenProjectsManager.getInstance(tag.getProject()).getReposirotyPath();
               String groupId = dependency.getGroupId().getStringValue();
               String artifactId = dependency.getArtifactId().getStringValue();
               String version = dependency.getVersion().getStringValue();

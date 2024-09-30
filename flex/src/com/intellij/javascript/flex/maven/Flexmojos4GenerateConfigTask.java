@@ -38,6 +38,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType;
 import javax.swing.event.HyperlinkEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -64,8 +65,8 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     super(null, tree);
   }
 
-  private static String getSettingsFilePath(File settingsFile) {
-    return settingsFile == null || !settingsFile.exists() ? " " : settingsFile.getAbsolutePath();
+  private static String getSettingsFilePath(Path settingsFile) {
+    return settingsFile == null || !Files.exists(settingsFile) ? " " : settingsFile.toAbsolutePath().toString();
   }
 
   @Override
@@ -166,9 +167,10 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     programParametersList.add(
       getSettingsFilePath(MavenUtil.resolveGlobalSettingsFile(staticOrBundled(mavenGeneralSettings.getMavenHomeType()))));
-    programParametersList.add(getSettingsFilePath(MavenUtil.resolveUserSettingsFile(mavenGeneralSettings.getUserSettingsFile())));
+    programParametersList.add(getSettingsFilePath(MavenUtil.resolveUserSettingsPath(mavenGeneralSettings.getUserSettingsFile(), project)));
 
     programParametersList.add(getSettingsFilePath(MavenUtil.resolveLocalRepository(
+      project,
       mavenGeneralSettings.getLocalRepository(),
       staticOrBundled(mavenGeneralSettings.getMavenHomeType()),
       mavenGeneralSettings.getUserSettingsFile()
@@ -381,7 +383,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private static void configureMavenClassPath(Project project, MavenGeneralSettings mavenGeneralSettings, PathsList classPath)
     throws ExecutionException {
     Path mavenHome = MavenDistributionsCache.getInstance(project).getSettingsDistribution().getMavenHome();
-    String version = MavenUtil.getMavenVersion(mavenHome.toFile());
+    String version = MavenUtil.getMavenVersion(mavenHome);
     String pathToBundledJar = FlexCommonUtils.getPathToBundledJar(StringUtil.compareVersionNumbers(version, "3.1") >= 0
                                                                   ? "flexmojos-flex-configs-generator-server-31.jar"
                                                                   : "flexmojos-flex-configs-generator-server.jar");
