@@ -4,6 +4,7 @@ import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields.Int
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector
+import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.wm.ToolWindowManager
@@ -14,7 +15,7 @@ import com.intellij.plugins.serialmonitor.ui.SERIAL_MONITOR
 internal class SerialMonitorUsagesCollector : ApplicationUsagesCollector() {
   override fun getGroup(): EventLogGroup = GROUP
 
-  private fun gatherTabMetric(): MetricEvent {
+  private suspend fun gatherTabMetric(): MetricEvent {
     var total = 0
     var timestamped = 0
     var hex = 0
@@ -23,7 +24,9 @@ internal class SerialMonitorUsagesCollector : ApplicationUsagesCollector() {
       .filter { !it.isDisposed && !it.isDefault }
       .mapNotNull { project -> ToolWindowManager.getInstance(project).getToolWindow("Serial Monitor")?.contentManagerIfCreated }
       .flatMap { contentManager ->
-        contentManager.contents.mapNotNull { content ->
+        readActionBlocking {
+          contentManager.contents
+        }.mapNotNull { content ->
           content.getUserData(SERIAL_MONITOR)
         }
       }
@@ -48,7 +51,7 @@ internal class SerialMonitorUsagesCollector : ApplicationUsagesCollector() {
     )
   }
 
-  override fun getMetrics(): Set<MetricEvent> {
+  override suspend fun getMetricsAsync(): Set<MetricEvent> {
     val profileService: SerialProfileService = service<SerialProfileService>()
     val portService: SerialPortService = service<SerialPortService>()
     val tabMetric = gatherTabMetric()
