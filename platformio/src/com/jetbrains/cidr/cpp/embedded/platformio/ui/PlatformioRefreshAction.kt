@@ -29,8 +29,10 @@ class PlatformioRefreshAction : AnAction(ExternalSystemIconProvider.getExtension
       // Refreshing the project would run pio, which can execute python code via advanced scripting.
       // Just show the untrusted project dialog and do nothing instead.
       if (!project.isTrusted()) {
-        showUntrustedProjectLoadDialog(project)
-        return
+        val trusted = showUntrustedProjectLoadDialog(project)
+        if(!trusted) {
+          return
+        }
       }
 
       val importSpec = ImportSpecBuilder(project, ID).projectResolverPolicy(PlatformioProjectResolvePolicyCleanCache).build()

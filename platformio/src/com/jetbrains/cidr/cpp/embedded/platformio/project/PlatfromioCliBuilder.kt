@@ -29,8 +29,10 @@ class PlatfromioCliBuilder(
 
   init {
     if (project?.isTrusted() == false) {
-      showUntrustedProjectLoadDialog(project)
-      throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
+      val answer = showUntrustedProjectLoadDialog(project)
+      if (!answer) {
+        throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
+      }
     }
     commandLine = if(usePty) PtyCommandLine() else GeneralCommandLine()
   }
