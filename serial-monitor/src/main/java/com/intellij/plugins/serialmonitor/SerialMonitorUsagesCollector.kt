@@ -21,7 +21,7 @@ internal class SerialMonitorUsagesCollector : ApplicationUsagesCollector() {
     var connected = 0
     ProjectManager.getInstance().openProjects
       .filter { !it.isDisposed && !it.isDefault }
-      .mapNotNull { project -> ToolWindowManager.getInstance(project).getToolWindow("Serial Monitor")?.contentManager }
+      .mapNotNull { project -> ToolWindowManager.getInstance(project).getToolWindow("Serial Monitor")?.contentManagerIfCreated }
       .flatMap { contentManager ->
         contentManager.contents.mapNotNull { content ->
           content.getUserData(SERIAL_MONITOR)
