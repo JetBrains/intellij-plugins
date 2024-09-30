@@ -22,6 +22,15 @@
         }
       }
     },
+    "vue-ssr-framework": {
+      "nuxt": {
+        "enable-when": {
+          "node-packages": [
+            "nuxt"
+          ]
+        }
+      }
+    },
     "vue-class-component-library": {
       "vue-class-component": {
         "enable-when": {

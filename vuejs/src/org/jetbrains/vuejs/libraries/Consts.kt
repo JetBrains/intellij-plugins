@@ -9,3 +9,6 @@ const val VUE_STORE_PINIA = "pinia"
 const val KIND_VUE_CLASS_COMPONENT_LIBRARY = "vue-class-component-library"
 
 const val VUE_CLASS_COMPONENT = "vue-class-component"
+
+const val KIND_VUE_SSR_FRAMEWORK = "vue-ssr-framework"
+const val VUE_FRAMEWORK_NUXT = "nuxt"

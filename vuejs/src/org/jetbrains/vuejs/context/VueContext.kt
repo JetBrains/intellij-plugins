@@ -41,6 +41,9 @@ fun hasPinia(context: PsiElement) =
 fun hasVuex(context: PsiElement) =
   WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_VUEX
 
+fun hasNuxt(context: PsiElement) =
+  WebSymbolsContext.get(KIND_VUE_SSR_FRAMEWORK, context) == VUE_FRAMEWORK_NUXT
+
 fun supportsDefineComponent(context: PsiElement): Boolean =
   detectPkgVersion(context, VUE_MODULE).let {
     it == null || it >= VERSION_2_7_0
