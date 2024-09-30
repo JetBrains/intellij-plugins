@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -17,14 +17,14 @@ import static org.intellij.terraform.config.CompletionTestCase.Matcher.*;
 @SuppressWarnings({"ArraysAsListWithZeroOrOneArgument", "RedundantThrows"})
 public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
-  private static final int ENTRIES_LIST_SIZE = 1000; //x2 to the default registry value
+  private static final int ENTRIES_LIST_SIZE = 900; //almost x2 to the default registry value
 
   private static final Set<ProviderTier> tiers = Set.of(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL);
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    Registry.get("ide.completion.variant.limit").setValue(ENTRIES_LIST_SIZE * 2, getTestRootDisposable());
+    Registry.get("ide.completion.variant.limit").setValue((ENTRIES_LIST_SIZE + 100) * 2, getTestRootDisposable());
   }
 
   @Override
