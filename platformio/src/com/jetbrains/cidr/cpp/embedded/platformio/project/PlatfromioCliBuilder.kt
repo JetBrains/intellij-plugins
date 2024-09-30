@@ -29,8 +29,8 @@ class PlatfromioCliBuilder(
 
   init {
     if (project?.isTrusted() == false) {
-      val answer = showUntrustedProjectLoadDialog(project)
-      if (!answer) {
+      val trusted = showUntrustedProjectLoadDialog(project)
+      if (!trusted) {
         throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
       }
     }
