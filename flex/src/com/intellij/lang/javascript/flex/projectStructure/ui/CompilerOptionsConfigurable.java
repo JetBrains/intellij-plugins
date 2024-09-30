@@ -6,6 +6,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.ValueSource;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeCoreBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -35,7 +36,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
@@ -975,30 +975,17 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
   }
 
   static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
-    private String @Nullable [] myAllowedExtensions;
-
     ExtensionAwareFileChooserDescriptor() {
       super(true, false, true, true, false, false);
     }
 
-    @Override
-    public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-      return super.isFileVisible(file, showHiddenFiles) &&
-             (file.isDirectory() || isAllowedExtension(file.getExtension()));
-    }
-
-    private boolean isAllowedExtension(final String extension) {
-      if (myAllowedExtensions == null) return true;
-
-      for (String allowedExtension : myAllowedExtensions) {
-        if (allowedExtension.equalsIgnoreCase(extension)) return true;
+    public void setAllowedExtensions(String @Nullable ... extensions) {
+      if (extensions != null) {
+        withExtensionFilter(IdeCoreBundle.message("file.chooser.files.label", extensions[0]), extensions);
       }
-
-      return false;
-    }
-
-    public void setAllowedExtensions(final String @Nullable ... allowedExtensions) {
-      myAllowedExtensions = allowedExtensions;
+      else {
+        withoutExtensionFilter();
+      }
     }
   }
 

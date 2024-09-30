@@ -5,6 +5,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.ide.IdeCoreBundle;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
@@ -78,23 +79,12 @@ public final class FlexUtils {
   private FlexUtils() {
   }
 
-  public static FileChooserDescriptor createFileChooserDescriptor(final String @Nullable ... allowedExtensions) {
-    return allowedExtensions == null
-           ? new FileChooserDescriptor(true, false, true, true, false, false)
-           : new FileChooserDescriptor(true, false, true, true, false, false) {
-             @Override
-             public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-               return super.isFileVisible(file, showHiddenFiles) &&
-                      (file.isDirectory() || isAllowedExtension(file.getExtension()));
-             }
-
-             private boolean isAllowedExtension(final String extension) {
-               for (String allowedExtension : allowedExtensions) {
-                 if (allowedExtension.equalsIgnoreCase(extension)) return true;
-               }
-               return false;
-             }
-           };
+  public static FileChooserDescriptor createFileChooserDescriptor(String @Nullable ... extensions) {
+    var descriptor = new FileChooserDescriptor(true, false, true, true, false, false);
+    if (extensions != null) {
+      descriptor = descriptor.withExtensionFilter(IdeCoreBundle.message("file.chooser.files.label", extensions[0]), extensions);
+    }
+    return descriptor;
   }
 
   static void createSampleApp(final Project project,

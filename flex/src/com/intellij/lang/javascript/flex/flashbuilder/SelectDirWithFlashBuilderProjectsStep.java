@@ -66,13 +66,6 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
     var descriptor = new FileChooserDescriptor(true, true, true, true, false, false) {
       @Override
-      public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-        return (super.isFileVisible(file, showHiddenFiles) &&
-                (file.isDirectory() || FlashBuilderProjectFinder.isFlashBuilderProject(file)) ||
-                FlashBuilderProjectFinder.hasArchiveExtension(file.getPath()));
-      }
-
-      @Override
       public Icon getIcon(final VirtualFile file) {
         // do not use Flash Builder specific icon for zip
         return !file.isDirectory() &&
@@ -80,7 +73,10 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
                ? dressIcon(file, getBuilder().getIcon())
                : super.getIcon(file);
       }
-    }.withTitle(FlexBundle.message("select.flash.builder.workspace.or.project"));
+    }
+      .withFileFilter(file -> FlashBuilderProjectFinder.isFlashBuilderProject(file) ||
+                              FlashBuilderProjectFinder.hasArchiveExtension(file.getPath()))
+      .withTitle(FlexBundle.message("select.flash.builder.workspace.or.project"));
 
     var button = myInitialPathComponent.getComponent();
     button.addBrowseFolderListener(getWizardContext().getProject(), descriptor);

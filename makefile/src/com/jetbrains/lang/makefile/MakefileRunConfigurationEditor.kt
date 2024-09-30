@@ -44,7 +44,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   }
 
   init {
-    filenameField.addBrowseFolderListener(project, MakefileFileChooserDescriptor()
+    filenameField.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFileDescriptor(MakefileFileType)
       .withTitle(MakefileLangBundle.message("file.chooser.title"))
       .withDescription(MakefileLangBundle.message("file.chooser.description")))
     filenameField.textField.document.addDocumentListener(object : DocumentAdapter() {

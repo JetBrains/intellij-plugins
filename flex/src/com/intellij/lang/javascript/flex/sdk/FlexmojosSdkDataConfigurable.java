@@ -8,10 +8,8 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -75,17 +73,8 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     }
 
     private void initAdlChooser() {
-      final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false) {
-        @Override
-        public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-          return super.isFileVisible(file, showHiddenFiles) &&
-                 (file.isDirectory() || (file.getName().startsWith("adl") && isExecutableExtension(file.getExtension())));
-        }
-
-        private static boolean isExecutableExtension(final String extension) {
-          return SystemInfo.isWindows ? "exe".equalsIgnoreCase(extension) : extension == null || "uexe".equalsIgnoreCase(extension);
-        }
-      }.withTitle("Select ADL executable file");
+      final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false)
+        .withTitle("Select ADL executable file");
 
       myAdlComponent.getComponent()
         .addBrowseFolderListener(null, descriptor, new TextComponentAccessor<>() {
@@ -108,12 +97,8 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     }
 
     private void initAirRuntimeChooser() {
-      var descriptor = new FileChooserDescriptor(true, true, true, false, false, false) {
-        @Override
-        public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-          return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || ("zip".equalsIgnoreCase(file.getExtension())));
-        }
-      }
+      var descriptor = new FileChooserDescriptor(true, true, true, false, false, false)
+        .withExtensionFilter("zip")
         .withTitle("Select AIR Runtime")
         .withDescription("Select AIR Runtime as a directory like <Flex SDK>/runtimes/AIR/win/ or as a .zip file");
       TextFieldWithBrowseButton button = myAirRuntimeComponent.getComponent();

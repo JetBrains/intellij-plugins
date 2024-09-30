@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,14 +42,9 @@ public final class FlexmojosSdkType extends SdkType {
 
   @Override
   public @NotNull FileChooserDescriptor getHomeChooserDescriptor() {
-    final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, false, false, false, false, false) {
-      @Override
-      public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-        return false;
-      }
-    };
-    descriptor.setTitle("SDK of this type can only be created automatically during Maven project import.");
-    return descriptor;
+    return new FileChooserDescriptor(false, false, false, false, false, false)
+      .withFileFilter(Conditions.alwaysFalse())
+      .withTitle("SDK of this type can only be created automatically during Maven project import.");
   }
 
   @Override
