@@ -21,10 +21,7 @@ public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfiguratio
   public BndRunConfigurationEditor(Project project) {
     myJrePathEditor.setDefaultJreSelector(DefaultJreSelector.projectSdk(project));
     myChooser.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
-      .withFileFilter(file -> {
-        String ext = file.getExtension();
-        return BndFileType.BND_RUN_EXT.equals(ext) || BndFileType.BND_EXT.equals(ext);
-      })
+      .withExtensionFilter(OsmorcBundle.message("bnd.run.file.chooser.label"), BndFileType.BND_RUN_EXT, BndFileType.BND_EXT)
       .withTitle(OsmorcBundle.message("bnd.run.file.chooser.title")));
   }
 
