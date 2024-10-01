@@ -25,9 +25,8 @@ public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfiguratio
       .withTitle(OsmorcBundle.message("bnd.run.file.chooser.title")));
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myPanel;
   }
 

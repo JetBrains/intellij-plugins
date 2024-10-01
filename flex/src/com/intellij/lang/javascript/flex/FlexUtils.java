@@ -71,13 +71,8 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-/**
- * @author Maxim.Mossienko
- */
 public final class FlexUtils {
-
-  private FlexUtils() {
-  }
+  private FlexUtils() { }
 
   public static FileChooserDescriptor createFileChooserDescriptor(String @Nullable ... extensions) {
     var descriptor = new FileChooserDescriptor(true, false, true, true, false, false);
