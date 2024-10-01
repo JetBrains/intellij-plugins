@@ -4,7 +4,7 @@ package com.intellij.lang.actionscript.arrangement;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
-import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.JavaScriptFrontBackBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.arrangement.JSArrangementEntry;
 import com.intellij.lang.javascript.arrangement.JSElementArrangementEntry;
@@ -285,7 +285,7 @@ public final class ActionScriptRearranger extends JSRearrangerBase {
   @Override
   public @NotNull Collection<ArrangementTabInfo> getArrangementTabInfos() {
     return List.of(new ArrangementTabInfo(AllIcons.FileTypes.AS,
-                                          JavaScriptBundle.message("filetype.actionscript.description"),
+                                          JavaScriptFrontBackBundle.message("filetype.actionscript.description"),
                                           ActionScriptLanguageCodeStyleSettingsProvider.CONFIGURABLE_DISPLAY_NAME));
   }
 }
