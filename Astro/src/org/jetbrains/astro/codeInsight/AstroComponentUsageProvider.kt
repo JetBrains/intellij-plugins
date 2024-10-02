@@ -20,7 +20,7 @@ private val SKIP_TOKENS = TokenSet.orSet(
 )
 
 class AstroComponentUsageProvider : JSComponentUsageProvider {
-  override fun computeRange(file: PsiFile, document: Document): TextRange? {
+  override fun computeRangeForInlineHint(file: PsiFile, document: Document): TextRange? {
     if (file is AstroFileImpl) {
       var anchor = file.astroContentRoot()?.firstChild
       while (anchor != null) {
@@ -31,6 +31,6 @@ class AstroComponentUsageProvider : JSComponentUsageProvider {
       }
     }
 
-    return super.computeRange(file, document)
+    return super.computeRangeForInlineHint(file, document)
   }
 }
