@@ -37,15 +37,19 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 
     val virtualFile = context.virtualFile ?: return null
     val commandLine = createCommandLine(project)
-    val processHandler = CapturingProcessHandler(commandLine)
 
     return object : FormattingTask {
+      private var processHandler: CapturingProcessHandler? = null
+
       override fun run() {
         try {
-          processHandler.processInput.write(request.documentText.toByteArray())
-          processHandler.processInput.close()
+          processHandler = CapturingProcessHandler(commandLine)
 
-          val output = processHandler.runProcess()
+          val handler = processHandler ?: return
+          handler.processInput.write(request.documentText.toByteArray())
+          handler.processInput.close()
+
+          val output = handler.runProcess()
           if (output.exitCode == 0) {
             request.onTextReady(output.stdout)
           }
@@ -60,7 +64,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
       }
 
       override fun cancel(): Boolean {
-        processHandler.destroyProcess()
+        processHandler?.destroyProcess()
         return true
       }
 
