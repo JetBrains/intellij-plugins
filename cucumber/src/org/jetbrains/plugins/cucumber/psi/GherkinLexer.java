@@ -177,7 +177,7 @@ public class GherkinLexer extends LexerBase {
       myCurrentToken = GherkinTokenTypes.COLON;
       myPosition++;
     }
-    else if (c == '@') {
+    else if (c == '@' && myState != STATE_AFTER_STEP_KEYWORD) {
       myCurrentToken = GherkinTokenTypes.TAG;
       myPosition++;
       while (myPosition < myEndOffset && isValidTagChar(myBuffer.charAt(myPosition))) {
