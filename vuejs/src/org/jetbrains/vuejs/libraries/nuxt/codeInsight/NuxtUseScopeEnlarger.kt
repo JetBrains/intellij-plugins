@@ -12,15 +12,17 @@ import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 
 class NuxtUseScopeEnlarger : UseScopeEnlarger() {
-  override fun getAdditionalUseScope(element: PsiElement): SearchScope? {
-    if (element is VueFile && hasNuxt(element)) {
-      val file = element.virtualFile ?: return null
+  override fun getAdditionalUseScope(element: PsiElement): SearchScope? = buildNuxtGlobalComponentsScope(element)
+}
 
-      return JSProjectUtil.processDirectoriesUpToContentRootAndFindFirst(element.project, file) { dir ->
-        dir.findChild(NUXT_OUTPUT_FOLDER)?.takeIf { it.isValid && it.isDirectory }?.findChild(NUXT_COMPONENTS_DEFS)
-      }?.let { GlobalSearchScope.fileScope(element.project, it) }
-    }
+internal fun buildNuxtGlobalComponentsScope(element: PsiElement): GlobalSearchScope? {
+  if (element is VueFile && hasNuxt(element)) {
+    val file = element.virtualFile ?: return null
 
-    return null
+    return JSProjectUtil.processDirectoriesUpToContentRootAndFindFirst(element.project, file) { dir ->
+      dir.findChild(NUXT_OUTPUT_FOLDER)?.takeIf { it.isValid && it.isDirectory }?.findChild(NUXT_COMPONENTS_DEFS)
+    }?.let { GlobalSearchScope.fileScope(element.project, it) }
   }
+
+  return null
 }
