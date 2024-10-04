@@ -1,14 +1,14 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-import {<info descr="identifiers//exported function">Component</info>} <info descr="null">from</info> '@angular/core';
+import {<symbolName descr="identifiers//exported function">Component</symbolName>} <info descr="null">from</info> '@angular/core';
 
 <info descr="decorator">@</info><info descr="decorator">Component</info>({
-   <info descr="instance field">selector</info>: 'robot-profile',
-   <info descr="instance field">standalone</info>: true,
-   <info descr="instance field">template</info>: `<inject descr="null">
-      @for (<info descr="ng-variable">foo</info> <info descr="null">of</info> <info descr="instance field">bar</info>; track <info descr="ng-variable">foo</info>) {
+   <symbolName descr="instance field">selector</symbolName>: 'robot-profile',
+   <symbolName descr="instance field">standalone</symbolName>: true,
+   <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
+      @for (<symbolName descr="ng-variable">foo</symbolName> <info descr="null">of</info> <symbolName descr="instance field">bar</symbolName>; track <symbolName descr="ng-variable">foo</symbolName>) {
       }
     </inject>`
  })
-export class <info descr="classes//exported class">RobotProfileComponent</info> {
-  <info descr="instance field">bar</info>!: <info descr="null">string</info>[]
+export class <symbolName descr="classes//exported class">RobotProfileComponent</symbolName> {
+  <symbolName descr="instance field">bar</symbolName>!: <info descr="null">string</info>[]
 }

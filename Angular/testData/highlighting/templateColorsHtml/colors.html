@@ -1,18 +1,18 @@
 <li <warning descr="Attribute attr is not allowed here">attr</warning>="value"
-    *ngFor="let <info descr="ng-variable">hero</info> of <info descr="instance field">heroes</info> as <info descr="ng-variable">test</info>"
-    [class.selected]="<info descr="ng-variable">hero</info> === <info descr="instance field">selectedHero</info>"
-    (click)="<error descr="TS2339: Property 'onSelect' does not exist on type 'AppComponent'."><info descr="Unresolved function or method onSelect()">onSelect</info></error>(<info descr="ng-variable">hero</info>)">
-  {{<info descr="ng-variable">hero</info>.<info descr="instance field">name</info>}}
-  {{<info descr="ng-variable">test</info>}}
+    *ngFor="let <symbolName descr="ng-variable">hero</symbolName> of <symbolName descr="instance field">heroes</symbolName> as <symbolName descr="ng-variable">test</symbolName>"
+    [class.selected]="<symbolName descr="ng-variable">hero</symbolName> === <symbolName descr="instance field">selectedHero</symbolName>"
+    (click)="<error descr="TS2339: Property 'onSelect' does not exist on type 'AppComponent'."><info descr="Unresolved function or method onSelect()">onSelect</info></error>(<symbolName descr="ng-variable">hero</symbolName>)">
+  {{<symbolName descr="ng-variable">hero</symbolName>.<symbolName descr="instance field">name</symbolName>}}
+  {{<symbolName descr="ng-variable">test</symbolName>}}
 </li>
-{<info descr="instance field">heroes</info>.<info descr="instance field">length</info>, plural, =0 {no heroes} =1 {one hero} other {{{<info descr="instance field">heroes</info>.<info descr="instance field">length</info>}} heroes}} found
+{<symbolName descr="instance field">heroes</symbolName>.<symbolName descr="instance field">length</symbolName>, plural, =0 {no heroes} =1 {one hero} other {{{<symbolName descr="instance field">heroes</symbolName>.<symbolName descr="instance field">length</symbolName>}} heroes}} found
 
-{{<info descr="ng-signal">movieSig</info>()}}
+{{<symbolName descr="ng-signal">movieSig</symbolName>()}}
 
-<input [(ngModel)]="<info descr="instance field">hero</info>.<info descr="instance field">name</info>" #<info descr="ng-variable">model</info>="ngModel"/>
+<input [(ngModel)]="<symbolName descr="instance field">hero</symbolName>.<symbolName descr="instance field">name</symbolName>" #<symbolName descr="ng-variable">model</symbolName>="ngModel"/>
 
-{{<info descr="ng-variable">model</info>}}
+{{<symbolName descr="ng-variable">model</symbolName>}}
 
-<span *ngIf="true; else <info descr="ng-variable">other</info>">Test</span>
+<span *ngIf="true; else <symbolName descr="ng-variable">other</symbolName>">Test</span>
 
-<ng-template #<info descr="ng-variable">other</info>>Test 2</ng-template>
+<ng-template #<symbolName descr="ng-variable">other</symbolName>>Test 2</ng-template>
