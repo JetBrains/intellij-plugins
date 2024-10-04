@@ -15,7 +15,7 @@ import training.learn.course.KLesson
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
 
-class RefactoringLesson
+internal class RefactoringLesson
   : KLesson("Refactorings in a Nutshell", JsLessonsBundle.message("js.editor.refactorings.title")) {
 
   private val sample = parseLessonSample(""" 
