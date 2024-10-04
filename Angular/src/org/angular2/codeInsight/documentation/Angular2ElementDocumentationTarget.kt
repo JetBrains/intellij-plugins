@@ -335,7 +335,7 @@ class Angular2ElementDocumentationTarget private constructor(
   }
   companion object {
 
-    private val moduleRegex = Regex("<tr><td valign='top'( colspan='2')?><icon src='JavaScriptPsiIcons\\.FileTypes\\.[^']+'/>[^<]+</td>")
+    private val moduleRegex = Regex("<tr><td valign='top'( colspan='2')?><icon src='JavaScriptCoreIcons\\.FileTypes\\.[^']+'/>[^<]+</td>")
 
     private val docsPrivate = JSDocBlockTags.definitionFor("docs-private")
 
