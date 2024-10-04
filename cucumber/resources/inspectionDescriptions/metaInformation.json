@@ -1,0 +1,24 @@
+{
+  "inspections": [
+    {
+      "id": "CucumberTableInspection",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "GherkinMisplacedBackground",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "CucumberUndefinedStep",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "GherkinBrokenTableInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "CucumberExamplesColon",
+      "codeQualityCategory": "Code Style"
+    }
+  ]
+}

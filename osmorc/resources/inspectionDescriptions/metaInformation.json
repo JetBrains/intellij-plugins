@@ -1,0 +1,20 @@
+{
+  "inspections": [
+    {
+      "id": "UnregisteredActivator",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "NonOsgiMavenDependency",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "ClassInDefaultPackage",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "WrongImportPackage",
+      "codeQualityCategory": "Sanity"
+    }
+  ]
+}

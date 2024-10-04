@@ -1,0 +1,12 @@
+{
+  "inspections": [
+    {
+      "id": "DartOutdatedDependencies",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "DartPathPackageReference",
+      "codeQualityCategory": "Sanity"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "inspections": [
+    {
+      "id": "AstroMissingComponentImportInspection",
+      "codeQualityCategory": "Sanity"
+    }
+  ]
+}

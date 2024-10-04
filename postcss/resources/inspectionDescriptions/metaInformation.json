@@ -1,0 +1,20 @@
+{
+  "inspections": [
+    {
+      "id": "PostCssNesting",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "PostCssCustomMedia",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "PostCssCustomSelector",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "PostCssMediaRange",
+      "codeQualityCategory": "Code Style"
+    }
+  ]
+}
