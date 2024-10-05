@@ -211,7 +211,7 @@ internal class QodanaReportHighlightingPass(
   private fun updateWasAnalyzedOnceStatus(): Boolean {
     val codeAnalyzer = (DaemonCodeAnalyzerEx.getInstance(myProject) as? DaemonCodeAnalyzerImpl)
     val firstAnalysisPassed = QodanaHighlightingSupportInfoProvider.getPrecedingPassesIds().all {
-      codeAnalyzer?.fileStatusMap?.getFileDirtyScope(document, myFile, it) == null
+      codeAnalyzer?.fileStatusMap?.getFileDirtyScope(document, context, myFile, it) == null
     }
     return passState.updateWasAnalysedOnce(firstAnalysisPassed)
   }
