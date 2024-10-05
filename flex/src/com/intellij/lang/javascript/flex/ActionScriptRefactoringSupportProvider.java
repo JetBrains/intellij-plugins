@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractInterfaceDialog;
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperClassDialog;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider;
 import com.intellij.lang.javascript.refactoring.extractMethod.ActionScriptExtractFunctionHandler;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractInterfaceHandler;
@@ -23,7 +22,7 @@ public final class ActionScriptRefactoringSupportProvider extends JavascriptRefa
   @Override
   public boolean isAvailable(@NotNull PsiElement context) {
     PsiFile containingFile = context.getContainingFile();
-    return containingFile != null && containingFile.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    return containingFile != null && containingFile.getLanguage().is(FlexSupportLoader.ECMA_SCRIPT_L4);
   }
 
   @Override

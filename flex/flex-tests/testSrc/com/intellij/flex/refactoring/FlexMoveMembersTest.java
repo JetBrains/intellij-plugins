@@ -6,9 +6,9 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersProcessor;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -83,7 +83,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
 
   private void performAction(String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames) {
     final JSClassResolver resolver =
-      JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
+      JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     final JSClass sourceClass = (JSClass)resolver.findClassByQName(sourceClassName, ActionScriptMoveMembersDialog.getScope(myProject));
     assertNotNull("Class " + sourceClassName + " not found", sourceClass);
     JSClass targetClass = (JSClass)resolver.findClassByQName(targetClassName, ActionScriptMoveMembersDialog.getScope(myProject));

@@ -7,7 +7,7 @@ import com.intellij.javaee.StandardResourceProvider;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.MxmlFileType;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileTypes.FileType;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public final class FlexApplicationComponent implements MetaDataContributor, StandardResourceProvider {
   public static final FileType SWF_FILE_TYPE = SwfFileType.SWF_FILE_TYPE;
 
-  public static final Language DECOMPILED_SWF = new Language(JavaScriptSupportLoader.ECMA_SCRIPT_L4, "Decompiled SWF") {
+  public static final Language DECOMPILED_SWF = new Language(FlexSupportLoader.ECMA_SCRIPT_L4, "Decompiled SWF") {
   };
 
   public static final LanguageFileType MXML = MxmlFileType.MXML;

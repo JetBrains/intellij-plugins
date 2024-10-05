@@ -4,7 +4,7 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,11 +23,11 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   }
 
   private CommonCodeStyleSettings getCommonJSSettings() {
-    return CodeStyle.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    return CodeStyle.getSettings(getProject()).getCommonSettings(FlexSupportLoader.ECMA_SCRIPT_L4);
   }
 
   private CommonCodeStyleSettings getEcma4Settings() {
-    return CodeStyle.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    return CodeStyle.getSettings(getProject()).getCommonSettings(FlexSupportLoader.ECMA_SCRIPT_L4);
   }
 
   public void testWrapLongLinesInFlex() {
@@ -390,7 +390,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
       class _X extends X,
                        Y implements Z,
                                     T {
-      }""", JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2);
+      }""", FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2);
   }
 
 

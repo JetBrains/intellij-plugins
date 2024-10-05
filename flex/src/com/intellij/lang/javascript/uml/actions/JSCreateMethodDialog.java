@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSElementFactory;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -38,14 +38,14 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     if (inClass) {
       JSFile file = JSElementFactory.createExpressionCodeFragment(clazz.getProject(),
                                                                   (clazz.isInterface() ? "interface" : "class") + " Dummy {" + text + "}",
-                                                                  clazz, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null,
+                                                                  clazz, FlexSupportLoader.ECMA_SCRIPT_L4, null,
                                                                   JSElementFactory.TopLevelCompletion.NO, null);
       JSClass aClass = PsiTreeUtil.findChildOfType(file, JSClass.class);
       return aClass.getFunctions()[0];
     }
     else {
       JSFile file = JSElementFactory.createExpressionCodeFragment(clazz.getProject(), text, clazz,
-                                                                  JavaScriptSupportLoader.ECMA_SCRIPT_L4, null,
+                                                                  FlexSupportLoader.ECMA_SCRIPT_L4, null,
                                                                   JSElementFactory.TopLevelCompletion.NO, null);
       return PsiTreeUtil.findChildOfType(file, JSFunction.class);
     }

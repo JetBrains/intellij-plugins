@@ -3,8 +3,8 @@ package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramBuilder;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSVarStatement;
@@ -60,7 +60,7 @@ public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
       var.append(JSCodeStyleSettings.getSemicolon(clazz));
 
       JSVarStatement varStatement = (JSVarStatement)JSChangeUtil.createStatementFromText(clazz.getProject(), var.toString(),
-                                                                                         JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+                                                                                         FlexSupportLoader.ECMA_SCRIPT_L4).getPsi();
       JSRefactoringUtil.addMemberToTargetClass(clazz, varStatement);
       new ECMAScriptImportOptimizer().processFile(clazz.getContainingFile()).run();
     };

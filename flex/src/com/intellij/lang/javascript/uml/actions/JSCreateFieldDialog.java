@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.parsing.JavaScriptParserBase;
 import com.intellij.lang.javascript.psi.JSElementFactory;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
@@ -85,7 +85,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
   }
 
   public static JSExpressionCodeFragment createInitializerCodeFragment(JSClass c) {
-    return JSElementFactory.createExpressionCodeFragment(c.getProject(), "", c, JavaScriptSupportLoader.ECMA_SCRIPT_L4,
+    return JSElementFactory.createExpressionCodeFragment(c.getProject(), "", c, FlexSupportLoader.ECMA_SCRIPT_L4,
                                                          c.getResolveScope(), JSElementFactory.TopLevelCompletion.LITERAL_VALUES, null);
   }
 

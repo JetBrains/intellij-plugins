@@ -9,8 +9,8 @@ import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
 import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.lang.javascript.JSHierarchyTestBase;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.hierarchy.call.JSCalleeMethodsTreeStructure;
 import com.intellij.lang.javascript.hierarchy.call.JSCallerMethodsTreeStructure;
 import com.intellij.lang.javascript.hierarchy.method.JSMethodHierarchyTreeStructure;
@@ -55,7 +55,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn, final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
       final JSClass jsClass =
-        (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        (JSClass)JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
           .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
       if (TypeHierarchyBrowserBase.getTypeHierarchyType().equals(hierarchyType)) {
@@ -81,7 +81,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
 
     doHierarchyTest(() -> {
       final JSClass jsClass =
-        (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        (JSClass)JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
           .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
       final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
@@ -99,7 +99,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
                                      final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
       final JSClass jsClass =
-        (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        (JSClass)JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
           .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
       final JSFunction jsFunction = jsClass.findFunctionByName(methodName);

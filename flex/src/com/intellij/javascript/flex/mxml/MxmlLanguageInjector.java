@@ -8,7 +8,6 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSTargetedInjector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.MxmlLanguage;
@@ -59,7 +58,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
 
         if ("implements".equals(attrName)) {
           TextRange range = new TextRange(1, host.getTextLength() - 1);
-          registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+          registrar.startInjecting(FlexSupportLoader.ECMA_SCRIPT_L4)
             .addPlace("class Foo implements ", " {}", (PsiLanguageInjectionHost)host, range)
             .doneInjecting();
         }
@@ -68,7 +67,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
                  FlexSupportLoader.isLanguageNamespace(((XmlTag)tag).getNamespace()) &&
                  !host.textContains('{')) {
           TextRange range = new TextRange(1, host.getTextLength() - 1);
-          registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+          registrar.startInjecting(FlexSupportLoader.ECMA_SCRIPT_L4)
             .addPlace(FUNCTION_CALL_PREFIX, FUNCTION_CALL_SUFFIX, (PsiLanguageInjectionHost)host, range)
             .doneInjecting();
         }
@@ -110,7 +109,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
         if ((XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(localName) ||
              FlexPredefinedTagNames.METADATA.equals(localName)) &&
             tag.getAttributeValue("source") == null) {
-          JSInXmlLanguagesInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
+          JSInXmlLanguagesInjector.injectToXmlText(registrar, host, FlexSupportLoader.ECMA_SCRIPT_L4, null, null);
         }
         else if (FlexPredefinedTagNames.STYLE.equals(localName) && FlexUtils.isMxmlNs(tag.getNamespace()) && Holder.cssLanguage != null) {
           JSInXmlLanguagesInjector.injectToXmlText(registrar, host, Holder.cssLanguage, null, null);
@@ -130,7 +129,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
         //if (nestedCommentStart != -1) end = nestedCommentStart;
         if (end < marker.length()) return;
         TextRange range = new TextRange(marker.length(), end);
-        registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+        registrar.startInjecting(FlexSupportLoader.ECMA_SCRIPT_L4)
           .addPlace("/***", "*/", (PsiLanguageInjectionHost)host, range)
           .doneInjecting();
       }
@@ -174,7 +173,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
       @NonNls String suffix = "})(null);";
 
       if (host instanceof XmlText) {
-        JSInXmlLanguagesInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, prefix, suffix);
+        JSInXmlLanguagesInjector.injectToXmlText(registrar, host, FlexSupportLoader.ECMA_SCRIPT_L4, prefix, suffix);
       }
       else {
         if (JSCommonTypeNames.FUNCTION_CLASS_NAMES.contains(type) && host.textContains('{')) {
@@ -188,7 +187,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
 
         TextRange range = new TextRange(offset, length - offset);
 
-        registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+        registrar.startInjecting(FlexSupportLoader.ECMA_SCRIPT_L4)
           .addPlace(prefix, (host instanceof XmlAttributeValue ? "\n" : "") + suffix, (PsiLanguageInjectionHost)host, range)
           .doneInjecting();
       }
@@ -217,7 +216,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
         else if (ch == '}') {
           openedBraces--;
           if (openedBraces == 0 && start != -1) {
-            registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+            registrar.startInjecting(FlexSupportLoader.ECMA_SCRIPT_L4)
               .addPlace(FUNCTION_CALL_PREFIX, FUNCTION_CALL_SUFFIX, (PsiLanguageInjectionHost)host,
                         new TextRange(offset + start, i + offset))
               .doneInjecting();
@@ -235,7 +234,7 @@ public final class MxmlLanguageInjector implements MultiHostInjector, JSTargeted
             trimmedText.length() > 1 &&
             Character.isUpperCase(trimmedText.charAt(1))) { // @id can be reference to attribute
           offset += text.indexOf(trimmedText);
-          registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+          registrar.startInjecting(FlexSupportLoader.ECMA_SCRIPT_L4)
             .addPlace(null, null, (PsiLanguageInjectionHost)host, new TextRange(offset, trimmedText.length() + offset))
             .doneInjecting();
         }

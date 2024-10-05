@@ -69,8 +69,8 @@ import java.util.stream.Stream;
 public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   private static final String[] EXTENSIONS_TO_CHECK = {
     FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION,
-    JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
-    JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3,
+    FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
+    FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3,
     FlexSupportLoader.MXML_FILE_EXTENSION,
     FlexSupportLoader.FXG_FILE_EXTENSION
   };

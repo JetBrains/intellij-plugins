@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -370,7 +371,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       else if (inEventListenerCall) {
         if (handlerCallerAnchorInArgumentList != null) {
           PsiElement element =
-            JSChangeUtil.createJSTreeFromText(psiFile.getProject(), eventHandlerName, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+            JSChangeUtil.createJSTreeFromText(psiFile.getProject(), eventHandlerName, FlexSupportLoader.ECMA_SCRIPT_L4).getPsi();
           PsiElement created = null;
           if (element != null) {
             created = handlerCallerAnchorInArgumentList.getParent().addAfter(element, handlerCallerAnchorInArgumentList);
@@ -397,7 +398,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       else if (inEventConstantExpression) {
         final String text = "addEventListener(" + eventConstantExpression.getExpression().getText() + ", " + eventHandlerName + ");";
         final PsiElement element =
-          JSChangeUtil.createJSTreeFromText(psiFile.getProject(), text, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+          JSChangeUtil.createJSTreeFromText(psiFile.getProject(), text, FlexSupportLoader.ECMA_SCRIPT_L4).getPsi();
         if (element != null) {
           final PsiElement addedElement = eventConstantExpression.replace(element);
           final JSExpression expression = ((JSExpressionStatement)addedElement).getExpression();

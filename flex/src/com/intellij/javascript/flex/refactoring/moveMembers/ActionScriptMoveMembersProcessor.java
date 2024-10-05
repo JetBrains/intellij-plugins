@@ -2,8 +2,8 @@
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -67,7 +67,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
     myMembersToMove.clear();
     ContainerUtil.addAll(myMembersToMove, members);
 
-    myTargetClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+    myTargetClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
       .findClassByQName(options.getTargetClassName(), scope);
 
     setCommandName(sourceClass, members);

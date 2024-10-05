@@ -4,7 +4,7 @@ package com.intellij.lang.javascript.formatter;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.util.ArrayUtilRt;
@@ -304,7 +304,7 @@ public final class ActionScriptLanguageCodeStyleSettingsProvider extends Languag
 
   @Override
   public @NotNull Language getLanguage() {
-    return JavaScriptSupportLoader.ECMA_SCRIPT_L4;
+    return FlexSupportLoader.ECMA_SCRIPT_L4;
   }
 
   @Override

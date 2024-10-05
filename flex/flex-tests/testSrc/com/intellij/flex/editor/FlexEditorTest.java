@@ -5,6 +5,7 @@ import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -99,7 +100,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   public void testReformatInjectedProblem() {
-    JSTestUtils.registerScriptTagInjector(getProject(), JavaScriptSupportLoader.ECMA_SCRIPT_L4, myFixture.getTestRootDisposable());
+    JSTestUtils.registerScriptTagInjector(getProject(), FlexSupportLoader.ECMA_SCRIPT_L4, myFixture.getTestRootDisposable());
     doFormatterTest("mxml");
   }
 

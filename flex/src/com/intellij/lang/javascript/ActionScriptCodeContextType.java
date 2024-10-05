@@ -4,9 +4,9 @@ package com.intellij.lang.javascript;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.liveTemplates.JSLikeTemplateContextType;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class ActionScriptCodeContextType extends TemplateContextType implements JSLikeTemplateContextType {
@@ -17,11 +17,11 @@ public final class ActionScriptCodeContextType extends TemplateContextType imple
 
   @Override
   public boolean isInContext(final @NotNull PsiFile file, int offset) {
-    if (file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
+    if (file.getLanguage().isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4)) {
       return true;
     }
 
     final Language language = JSLanguageUtil.getLanguage(file.findElementAt(offset));
-    return language != null && language.isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    return language != null && language.isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4);
   }
 }

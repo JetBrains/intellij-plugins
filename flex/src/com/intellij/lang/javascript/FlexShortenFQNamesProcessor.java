@@ -48,7 +48,7 @@ public final class FlexShortenFQNamesProcessor implements TemplateOptionalProces
       final PsiFile file = (hostFile != null && FlexSupportLoader.isFlexMxmFile(hostFile))
                            ? InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, templateRange.getStartOffset())
                            : hostFile;
-      if (file instanceof JSFile && file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
+      if (file instanceof JSFile && file.getLanguage().isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4)) {
         final ActionScriptUnusedImportsHelper.Results unusedImportsResults = ActionScriptUnusedImportsHelper.getUnusedImports(file);
         for (final JSReferenceExpression reference : unusedImportsResults.fqnsToReplaceWithShortName) {
           final TextRange range = InjectedLanguageManager.getInstance(project).injectedToHost(file, reference.getTextRange());

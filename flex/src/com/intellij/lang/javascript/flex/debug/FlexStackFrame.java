@@ -4,7 +4,7 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.debugger.JSDebuggerSupportUtils;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -196,7 +196,7 @@ public class FlexStackFrame extends XStackFrame {
       String evalCommand = ReadAction.compute(() -> {
         final PsiFile fromText =
           PsiFileFactory.getInstance(myDebugProcess.getSession().getProject())
-            .createFileFromText("A.js2", JavaScriptSupportLoader.ECMA_SCRIPT_L4, _expression);
+            .createFileFromText("A.js2", FlexSupportLoader.ECMA_SCRIPT_L4, _expression);
         final PsiElement[] elements = fromText.getChildren();
 
         if (elements.length == 1 && elements[0] instanceof JSExpressionStatement) {

@@ -33,6 +33,7 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -1484,7 +1485,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml");
 
     final JSClassResolver resolver =
-      JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
+      JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     final JSClass jsClass =
       (JSClass)resolver.findClassByQName("mx.controls.CheckBox", GlobalSearchScope.moduleWithLibrariesScope(myModule));
     final Collection<PsiReference> usages = ReferencesSearch.search(jsClass, GlobalSearchScope.moduleScope(myModule)).findAll();

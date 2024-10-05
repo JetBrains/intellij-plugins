@@ -3,8 +3,8 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -105,7 +105,7 @@ public class ActionScriptAddConstructorAndSuperInvocationFix implements Intentio
 
     Collection<String> toImport = new HashSet<>();
     final String text = getConstructorText(jsClass, superConstructor, toImport);
-    jsClass.add(JSChangeUtil.createJSTreeFromText(jsClass.getProject(), text, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi());
+    jsClass.add(JSChangeUtil.createJSTreeFromText(jsClass.getProject(), text, FlexSupportLoader.ECMA_SCRIPT_L4).getPsi());
     if (!toImport.isEmpty()) {
       ImportUtils.insertImportStatements(jsClass, toImport);
       new ECMAScriptImportOptimizer().processFile(jsClass.getContainingFile()).run();

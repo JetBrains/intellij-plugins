@@ -7,8 +7,8 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalInspection;
 import com.intellij.lang.javascript.psi.*;
@@ -84,7 +84,7 @@ public class ConvertToLocalFix implements LocalQuickFix {
 
     text.append(JSCodeStyleSettings.getSemicolon(anchorBlock));
     final PsiElement varStatement =
-      JSChangeUtil.createJSTreeFromText(project, text.toString(), JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+      JSChangeUtil.createJSTreeFromText(project, text.toString(), FlexSupportLoader.ECMA_SCRIPT_L4).getPsi();
     if (varStatement == null) return false;
 
     final PsiElement newDeclaration;

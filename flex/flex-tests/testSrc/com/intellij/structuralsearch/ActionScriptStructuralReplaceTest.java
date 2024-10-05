@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_L4;
+import static com.intellij.lang.javascript.flex.FlexSupportLoader.ECMA_SCRIPT_L4;
 import static com.intellij.lang.javascript.JavaScriptSupportLoader.JAVASCRIPT;
 
 public class ActionScriptStructuralReplaceTest extends JSStructuralReplaceTestBase {

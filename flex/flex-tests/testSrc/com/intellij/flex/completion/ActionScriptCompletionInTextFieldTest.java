@@ -9,7 +9,7 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinDialog;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -59,7 +59,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     JSFunction function = createFakeFunction();
     JSExpressionCodeFragment fragment =
       JSChangeSignatureDialog.createReturnTypeCodeFragment(new JSMethodDescriptor(function, false).getReturnType(), function,
-                                                           JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+                                                           FlexSupportLoader.ECMA_SCRIPT_L4);
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
     checkTextFieldCompletion(fragment, included, excluded, "Z111", getTestName(false) + ".txt");

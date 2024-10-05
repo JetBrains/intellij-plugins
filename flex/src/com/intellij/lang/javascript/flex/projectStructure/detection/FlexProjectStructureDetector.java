@@ -14,7 +14,6 @@ import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Pair;
@@ -32,7 +31,7 @@ import java.util.List;
 public final class FlexProjectStructureDetector extends ProjectStructureDetector {
 
   public static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = charSequence -> {
-    Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
+    Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
     lexer.start(charSequence);
     return readPackageName(charSequence, lexer);
   };

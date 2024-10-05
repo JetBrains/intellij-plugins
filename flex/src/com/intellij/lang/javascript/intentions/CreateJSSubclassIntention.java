@@ -7,8 +7,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.generation.JSChooserElementNode;
 import com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -53,7 +53,7 @@ public final class CreateJSSubclassIntention extends PsiElementBaseIntentionActi
     final PsiFile psiFile = element.getContainingFile();
     if (!(psiFile instanceof JSFile) ||
         InjectedLanguageManager.getInstance(project).getInjectionHost(psiFile) != null ||
-        !psiFile.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
+        !psiFile.getLanguage().isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4)) {
       return false;
     }
 

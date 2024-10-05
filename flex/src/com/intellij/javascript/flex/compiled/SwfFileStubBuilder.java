@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.lang.javascript.psi.stubs.impl.JSFileCachedData;
 import com.intellij.lang.javascript.psi.stubs.impl.JSFileStubImpl;
@@ -39,7 +39,7 @@ public final class SwfFileStubBuilder implements BinaryFileStubBuilder {
   }
 
   static PsiFileStub<?> buildFileStub(VirtualFile file, byte[] content) {
-    PsiFileStubImpl<?> stub = new JSFileStubImpl(JavaScriptSupportLoader.ECMA_SCRIPT_L4, new JSFileCachedData(), Collections.emptySet());
+    PsiFileStubImpl<?> stub = new JSFileStubImpl(FlexSupportLoader.ECMA_SCRIPT_L4, new JSFileCachedData(), Collections.emptySet());
     try {
 
       FlexImporter.buildStubsInterfaceFromStream(

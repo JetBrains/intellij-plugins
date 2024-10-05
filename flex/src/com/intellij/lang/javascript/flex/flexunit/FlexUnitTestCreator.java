@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
@@ -84,7 +84,7 @@ public final class FlexUnitTestCreator implements TestCreator {
         getMethodsText(createdClass, generateSetUp, generateTearDown, selectedMemberInfos);
       if (!methodsText.isEmpty()) {
         final PsiElement methods =
-          JSChangeUtil.createJSTreeFromText(project, "{" + methodsText + "}", JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+          JSChangeUtil.createJSTreeFromText(project, "{" + methodsText + "}", FlexSupportLoader.ECMA_SCRIPT_L4).getPsi();
         if (methods != null) {
           for (final PsiElement psiElement : PsiTreeUtil.getChildrenOfTypeAsList(methods, JSFunction.class)) {
             createdClass.add(psiElement);

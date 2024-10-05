@@ -8,8 +8,8 @@ import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveClassProcessor;
 import com.intellij.lang.javascript.JSMoveTestBase;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -63,7 +63,7 @@ public class FlexMoveTest extends JSMoveTestBase {
   @Nullable
   @Override
   protected PsiElement findElementToMove(VirtualFile rootDir, String toMove) {
-    final PsiElement clazz = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+    final PsiElement clazz = JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
       .findClassByQName(toMove, GlobalSearchScope.moduleScope(getModule()));
     if (clazz != null) {
       return clazz;

@@ -7,8 +7,8 @@ import com.intellij.ide.util.projectWizard.importSources.DetectedProjectRoot;
 import com.intellij.ide.util.projectWizard.importSources.DetectedSourceRoot;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.text.StringUtil;
@@ -49,7 +49,7 @@ public class FlexModuleInsight extends ModuleInsight {
 
   @Override
   protected void scanSourceFileForImportedPackages(final CharSequence chars, final Consumer<? super String> result) {
-    Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
+    Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
     lexer.start(chars);
 
     if (FlexProjectStructureDetector.readPackageName(chars, lexer) == null) {

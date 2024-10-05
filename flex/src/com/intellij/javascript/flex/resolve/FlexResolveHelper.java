@@ -4,7 +4,6 @@ package com.intellij.javascript.flex.resolve;
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -181,7 +180,7 @@ public final class FlexResolveHelper implements JSResolveHelper {
         (element instanceof XmlBackedJSClass ||
          (element instanceof XmlFile && FlexSupportLoader.isFlexMxmFile((PsiFile)element)) ||
          (file = element.getContainingFile()) == null ||
-         file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4))) {
+         file.getLanguage().isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4))) {
       boolean qualify;
       boolean doImport;
 

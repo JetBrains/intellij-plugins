@@ -1,7 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
@@ -87,7 +86,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   }
 
   private static boolean isASDictionaryAccess(final JSIndexedPropertyAccessExpression expression) {
-    if (expression.getContainingFile().getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
+    if (expression.getContainingFile().getLanguage() != FlexSupportLoader.ECMA_SCRIPT_L4) return false;
 
     final JSExpression qualifier = expression.getQualifier();
     final PsiElement resolve = qualifier instanceof JSReferenceExpression ? ((JSReferenceExpression)qualifier).resolve() : null;

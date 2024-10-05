@@ -81,8 +81,8 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
   public static final @NonNls String SUPER_INTERFACES = "SuperInterfaces";
 
   public static final Collection<String> ACTIONSCRIPT_TEMPLATES_EXTENSIONS =
-    List.of(FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
-            JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3);
+    List.of(FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
+            FlexSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3);
 
   private static String ourPreviousClassTemplateName;
   private static String ourPreviousInterfaceTemplateName;
@@ -358,7 +358,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
       GlobalSearchScope superClassScope = module != null
                                           ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
                                           : GlobalSearchScope.projectScope(context.getProject());
-      PsiElement byQName = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+      PsiElement byQName = JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
         .findClassByQName(superClassFqn, superClassScope);
       return byQName instanceof JSClass ? (JSClass)byQName : null;
     }
@@ -440,7 +440,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
             if (superConstructor != null && superConstructor.getParameterList().getParameters().length > 0) {
               String text = ActionScriptAddConstructorAndSuperInvocationFix.getConstructorText(createdClass, superConstructor, toImport);
               PsiElement newConstructor =
-                JSChangeUtil.createJSTreeFromText(createdClass.getProject(), text, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+                JSChangeUtil.createJSTreeFromText(createdClass.getProject(), text, FlexSupportLoader.ECMA_SCRIPT_L4).getPsi();
               if (newConstructor != null) {
                 JSFunction constructor = createdClass.getConstructor();
                 if (constructor != null) {

@@ -12,7 +12,7 @@ import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSAbstractRenameTest;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.index.JSPackageIndex;
@@ -378,7 +378,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
     assertTrue(!namesValidator.isIdentifier("zzz<=", myFixture.getProject()));
 
-    final NamesValidator ecmaL4NamesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    final NamesValidator ecmaL4NamesValidator = LanguageNamesValidation.INSTANCE.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4);
     assertTrue(ecmaL4NamesValidator.isKeyword("private", myFixture.getProject()));
     assertTrue(ecmaL4NamesValidator.isKeyword("namespace", myFixture.getProject()));
     assertTrue(ecmaL4NamesValidator.isIdentifier("namespace", myFixture.getProject()));

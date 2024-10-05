@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -211,7 +211,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     if (parent instanceof JSPackageStatement) {
       final JSNamedElement jsClass = resolveTypeNameInTheSamePackage(resolveProcessor.getName(), parent);
       return jsClass == null || resolveProcessor.execute(jsClass, ResolveState.initial());
-    } else if (parent instanceof JSFile && parent.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
+    } else if (parent instanceof JSFile && parent.getLanguage().isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4)) {
       if (element instanceof XmlBackedJSClassImpl) {
         //if(!((XmlBackedJSClassImpl)element).doImportFromScripts(resolveProcessor, parent)) return false; REMOVE?
 

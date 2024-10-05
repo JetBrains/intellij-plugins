@@ -7,9 +7,9 @@ import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ApplicationManager;
@@ -127,7 +127,7 @@ public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
       return null;
     });
 
-    PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+    PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
       .findClassByQName(classQName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(getModule()));
     assertTrue("Class " + classQName + " not found", element instanceof JSClass);
 

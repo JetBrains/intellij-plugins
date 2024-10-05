@@ -4,8 +4,8 @@ package com.intellij.javascript.flex.refactoring.moveMembers;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -289,7 +289,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     final String packageName = StringUtil.getPackageName(fqName);
 
     final GlobalSearchScope scope = getScope();
-    final JSClassResolver resolver = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
+    final JSClassResolver resolver = JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     PsiElement aClass = resolver.findClassByQName(fqName, scope);
     if (aClass instanceof JSClass) return (JSClass)aClass;
 

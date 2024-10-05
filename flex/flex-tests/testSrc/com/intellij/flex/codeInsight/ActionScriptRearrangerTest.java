@@ -7,7 +7,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest;
@@ -24,7 +24,7 @@ public class ActionScriptRearrangerTest extends AbstractRearrangerTest {
   @Override
   protected void setUp() throws Exception {
     fileType = ActionScriptFileType.INSTANCE;
-    language = JavaScriptSupportLoader.ECMA_SCRIPT_L4;
+    language = FlexSupportLoader.ECMA_SCRIPT_L4;
 
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();

@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.daemon.ReferenceImporter;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
@@ -28,7 +27,7 @@ public final class FlexReferenceImporter implements ReferenceImporter {
   @Override
   public boolean isAddUnambiguousImportsOnTheFlyEnabled(@NotNull PsiFile file) {
     return file instanceof JSFile &&
-           file.getLanguage() == JavaScriptSupportLoader.ECMA_SCRIPT_L4 &&
+           file.getLanguage() == FlexSupportLoader.ECMA_SCRIPT_L4 &&
            ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly();
   }
 }

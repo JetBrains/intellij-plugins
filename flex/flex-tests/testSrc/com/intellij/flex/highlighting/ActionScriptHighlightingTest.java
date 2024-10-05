@@ -21,6 +21,7 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
@@ -381,7 +382,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testBindableClassImplicitlyImplementsIEventDispatcher2() {
     doTestFor(true, new File(getTestDataPath() + BASE_PATH + getTestName(false)), (Runnable)null, getTestName(false) + "/Main.js2");
     final JSClassResolver resolver =
-      JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
+      JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     assertNotNull(((ActionScriptClassImpl)resolver.findClassByQName("OtherClass", myModule.getModuleScope())).getStub());
     assertNotNull(((ActionScriptClassImpl)resolver.findClassByQName("OtherClass2", myModule.getModuleScope())).getStub());
   }
@@ -2229,7 +2230,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
     configureByFiles(null, BASE_PATH + getTestName(false) + ".js2");
     final JSClassResolver resolver =
-      JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
+      JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     final PsiElement class1 = resolver.findClassByQName("com.foo.Foo", myModule.getModuleScope());
     assertNotNull(class1);
     final PsiElement class2 = resolver.findClassByQName("com.foo.Foo", module2.getModuleScope());
