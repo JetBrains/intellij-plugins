@@ -3,6 +3,7 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
+import com.intellij.ide.actions.NewFileActionWithCategory
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -11,7 +12,7 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
 
-class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware {
+class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware, NewFileActionWithCategory {
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
     builder.run {
       setTitle(HCLBundle.message("action.create.terraform.file.title"))
@@ -40,6 +41,8 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
     }
     return if (isDefaultName) newName else name
   }
+
+  override fun getCategory(): String = "Deployment"
 }
 
 private const val EMPTY_TF_TEMPLATE = "Empty File"
