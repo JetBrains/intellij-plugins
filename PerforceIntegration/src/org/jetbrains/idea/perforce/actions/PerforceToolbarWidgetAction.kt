@@ -14,6 +14,7 @@ import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
+import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionProblemsNotifier
 import java.util.function.Function
 import javax.swing.JComponent
 import javax.swing.ListCellRenderer
@@ -82,7 +83,9 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
 
     val connection = PerforceToolbarWidgetHelper.getConnection(e, perforceSettings)
     val workspace = connection?.connectionKey?.client
-    val isNoConnections = allConnections.isEmpty() || allConnections.size == 1 && workspace.isNullOrEmpty()
+    val isNoConnections = allConnections.isEmpty()
+                          || allConnections.size == 1 && workspace.isNullOrEmpty()
+                          || PerforceConnectionProblemsNotifier.getInstance(project).hasConnectionProblems()
 
     with (e.presentation) {
       description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections, perforceSettings.ENABLED)

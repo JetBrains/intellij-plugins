@@ -178,6 +178,14 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
     recalculateState();
   }
 
+  public boolean hasConnectionProblems() {
+    return myConnectionProblems;
+  }
+
+  public static @NotNull PerforceConnectionProblemsNotifier getInstance(@NotNull Project project) {
+    return project.getService(PerforceConnectionProblemsNotifier.class);
+  }
+
   @NotNull
   @Override
   protected Object getKey(Object obj) {
