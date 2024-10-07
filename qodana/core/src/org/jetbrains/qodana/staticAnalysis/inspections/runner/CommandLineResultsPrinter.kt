@@ -85,7 +85,7 @@ class CommandLineResultsPrinter(
     val result = StringBuilder()
     result.appendLine(sectionTitle)
 
-    metricsData?.forEach { (key, value) ->
+    metricsData?.filter { it.key.printable }?.forEach { (key, value) ->
       result.appendLine("${key.title}:")
       result.append("$value ${key.dim}")
     } ?: result.appendLine(QodanaBundle.message("cli.metrics.no.metrics"))
