@@ -2,6 +2,7 @@
 package org.jetbrains.idea.perforce.perforce
 
 import com.intellij.openapi.components.service
+import com.intellij.execution.process.ProcessNotCreatedException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -52,12 +53,12 @@ internal class P4RootChecker : VcsRootChecker() {
       }
     }
     catch (e: VcsException) {
-      LOG.warn(e)
-      emptyList()
+      throw e
     }
 
-    if (PerforceManager.getInstance(project).isActive)
+    if (PerforceManager.getInstance(project).isActive) {
       PerforceConnectionManager.getInstance(project).updateConnections()
+    }
     return mappedRoots
   }
 
@@ -105,7 +106,17 @@ internal class P4RootChecker : VcsRootChecker() {
                                           settings: PerforceSettings,
                                           unmappedRoots: List<VirtualFile>): List<VirtualFile> {
     val p4InfoOut = connection.runP4CommandLine(settings, arrayOf("info"), null)
-    val root = parseP4Info(p4InfoOut.stdout) ?: return emptyList()
+    val root = parseP4Info(p4InfoOut.stdout)
+    if (root == null) {
+      val stderr = p4InfoOut.stderr
+      val processException = p4InfoOut.exception
+      when {
+        p4InfoOut.exitCode < 0 && processException is ProcessNotCreatedException -> return emptyList() //p4 not present
+        processException != null -> throw VcsException(processException)
+        stderr.isNotBlank() -> throw VcsException(stderr)
+        else -> return emptyList()
+      }
+    }
     val rootFile = LocalFileSystem.getInstance().findFileByPath(root) ?: return emptyList()
     LOG.debug("found root file: ${rootFile.path}")
 
