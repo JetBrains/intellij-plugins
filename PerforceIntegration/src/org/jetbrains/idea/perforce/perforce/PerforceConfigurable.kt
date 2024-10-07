@@ -259,9 +259,11 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
     val connectionManager = TestPerforceConnectionManager(myProject, !settings.useP4CONFIG)
     val testLoginManager = TestLoginManager(myProject, settings, connectionManager)
     val runner = PerforceRunner(connectionManager, settings, testLoginManager)
+    val isSuccess: Boolean
+
     if (settings.useP4CONFIG) {
       val connectionTestDataProvider = ConnectionTestDataProvider(myProject, connectionManager, runner)
-      val isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
         { connectionTestDataProvider.refresh() }, PerforceBundle.message("connection.test"), true, myProject)
       if (!isSuccess) {
         showCancelledConnectionDialog()
@@ -274,7 +276,7 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
     else {
       connectionManager.setSingletonConnection(SingletonConnection(myProject, settings))
       var checker : PerforceClientRootsChecker? = null
-      val isSuccess = ProgressManager.getInstance()
+      isSuccess = ProgressManager.getInstance()
         .runProcessWithProgressSynchronously({
                                                val allConnections = connectionManager.getAllConnections()
                                                val cache = ClientRootsCache.getClientRootsCache(myProject)
@@ -289,8 +291,9 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
       }
     }
 
-    // +-, can do better
-    if (!isEmpty) {
+    val wasConnectionProblems = isSuccess && PerforceConnectionProblemsNotifier.getInstance(myProject).hasConnectionProblems()
+
+    if (!isEmpty || wasConnectionProblems) {
       PerforceConnectionManager.getInstance(myProject).updateConnections()
     }
 
