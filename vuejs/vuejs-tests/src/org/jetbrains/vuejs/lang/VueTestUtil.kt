@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.BaseCompletionService
 import com.intellij.lang.javascript.completion.JSCompletionContributor
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
+import com.intellij.lang.javascript.refactoring.JSRefactoringSettings
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import com.intellij.webSymbols.LookupElementInfo
 import org.jetbrains.vuejs.codeInsight.VueCompletionContributor
@@ -45,4 +46,17 @@ private fun getContribPath(): String {
     homePath + File.separatorChar + "contrib"
   }
   else homePath
+}
+
+internal fun withRenameUsages(action: () -> Unit) {
+  val settings = JSRefactoringSettings.getInstance()
+  val before = settings.RENAME_SEARCH_FOR_COMPONENT_USAGES
+  settings.RENAME_SEARCH_FOR_COMPONENT_USAGES = true
+
+  try {
+    action()
+  }
+  finally {
+    settings.RENAME_SEARCH_FOR_COMPONENT_USAGES = before
+  }
 }

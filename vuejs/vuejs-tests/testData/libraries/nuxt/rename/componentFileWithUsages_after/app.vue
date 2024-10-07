@@ -1,0 +1,10 @@
+<template>
+  <div>
+    <NuxtRouteAnnouncer/>
+    <NuxtWelcome/>
+    <Link/>
+    <NewName>
+      123
+    </NewName>
+  </div>
+</template>

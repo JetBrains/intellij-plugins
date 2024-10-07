@@ -11,5 +11,7 @@ import org.junit.runners.Suite
   NuxtResolveTest::class,
   NuxtHighlightingTest::class,
   NuxtNavigationTest::class,
+  NuxtFindUsagesTest::class,
+  NuxtRenameTest::class,
 )
 class NuxtTestSuite

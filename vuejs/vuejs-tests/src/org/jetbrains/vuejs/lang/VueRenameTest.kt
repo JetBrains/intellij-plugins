@@ -26,7 +26,6 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.refactoring.JSRefactoringSettings
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
@@ -244,19 +243,6 @@ class VueRenameTest : BasePlatformTestCase() {
     if (renameUsages) withRenameUsages(performRefactoring) else performRefactoring()
 
     checkResultByDir()
-  }
-
-  private fun withRenameUsages(action: () -> Unit) {
-    val settings = JSRefactoringSettings.getInstance()
-    val before = settings.RENAME_SEARCH_FOR_COMPONENT_USAGES
-    settings.RENAME_SEARCH_FOR_COMPONENT_USAGES = true
-
-    try {
-      action()
-    }
-    finally {
-      settings.RENAME_SEARCH_FOR_COMPONENT_USAGES = before
-    }
   }
 
   private fun checkResultByDir(resultsDir: String = getTestName(true) + "_after") {
