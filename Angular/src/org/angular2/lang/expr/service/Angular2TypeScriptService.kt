@@ -222,7 +222,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
       // on server cache locking leading to tests instability.
       val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
-      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile))
       result
     }
   }
