@@ -16,7 +16,7 @@ var Run.codeQualityMetrics: Map<String, Any>
   }
   get() = (properties?.get(CODE_QUALITY_METRICS_FIELD_NAME) as? Map<String, Any>?).orEmpty()
 
-enum class CodeQualityMetrics(val prop: String, @Nls val title: String, @Nls val dim: String) {
+enum class CodeQualityMetrics(val prop: String, @Nls val title: String, @Nls val dim: String, val printable: Boolean = true) {
   LINES_OF_CODE(
     "linesOfCode",
     QodanaBundle.message("cli.metrics.lines.of.code.title"),
@@ -26,5 +26,11 @@ enum class CodeQualityMetrics(val prop: String, @Nls val title: String, @Nls val
     "cyclomaticComplexity",
     QodanaBundle.message("cli.metrics.cyclomatic.complexity.title"),
     QodanaBundle.message("cli.metrics.cyclomatic.complexity.complexity")
+  ),
+  DFA_COMPLEXITY(
+    "dfaComplexity",
+    QodanaBundle.message("cli.metrics.dfa.complexity.title"),
+    QodanaBundle.message("cli.metrics.dfa.complexity.complexity"),
+    printable = false
   )
 }
