@@ -43,7 +43,7 @@ public final class PrettierUtil {
   public static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
   public static final String RC_FILE_NAME = ".prettierrc";
   public static final String CONFIG_FILE_NAME = "prettier.config";
-  private static final String IGNORE_FILE_NAME = ".prettierignore";
+  public static final String IGNORE_FILE_NAME = ".prettierignore";
 
   /**
    * <a href="https://github.com/prettier/prettier/blob/main/docs/configuration.md">github.com/prettier/prettier/blob/main/docs/configuration.md</a>
@@ -95,13 +95,6 @@ public final class PrettierUtil {
   @Contract("null -> false")
   public static boolean isConfigFile(@Nullable VirtualFile virtualFile) {
     return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
-  }
-
-  @Nullable
-  public static VirtualFile findIgnoreFile(@NotNull VirtualFile source, @NotNull Project project) {
-    VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(source);
-    VirtualFile rootDir = packageJson != null ? packageJson.getParent() : project.getBaseDir();
-    return rootDir == null ? null : rootDir.findChild(IGNORE_FILE_NAME);
   }
 
   @NotNull

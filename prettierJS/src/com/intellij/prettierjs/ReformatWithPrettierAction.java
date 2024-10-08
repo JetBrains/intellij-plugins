@@ -406,8 +406,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       }
 
       text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
-
-      VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
+      VirtualFile ignoreVFile = PrettierConfiguration.getInstance(project).findIgnoreFile(currentVFile);
       if (ignoreVFile != null) {
         ignoreFilePath.set(ignoreVFile.getPath());
       }

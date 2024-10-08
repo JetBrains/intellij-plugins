@@ -15,7 +15,9 @@ import com.intellij.openapi.observable.util.whenItemSelected
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
@@ -48,6 +50,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private lateinit var packageField: NodePackageField
   private lateinit var runForFilesField: JBTextField
   private lateinit var runOnSaveCheckBox: JCheckBox
+  private lateinit var customIgnorePathField: TextFieldWithBrowseButton
 
   private lateinit var disabledConfiguration: JRadioButton
   private lateinit var automaticConfiguration: JRadioButton
@@ -103,6 +106,15 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
                     MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
               )
           }
+          row(PrettierBundle.message("prettier.ignore.path.field.label")) {
+            customIgnorePathField = textFieldWithBrowseButton(project)
+              .align(AlignX.FILL)
+              .bind({ textField -> textField.text.trim() },
+                    TextFieldWithBrowseButton::setText,
+                    MutableProperty({ prettierState.customIgnorePath }, { prettierState.customIgnorePath = it }))
+              .component
+            customIgnorePathField.emptyText.setText(PrettierBundle.message("prettier.ignore.path.field.empty.text"))
+          }.enabledIf(manualConfiguration.selected)
           row {
             checkBox(PrettierBundle.message("run.on.code.reformat.label"))
               .bindSelected({ prettierState.runOnReformat }, { prettierState.runOnReformat = it })
@@ -176,9 +188,11 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
   }
 
-  private class ConfigurationModeProperty(private val prettierConfiguration: PrettierConfiguration.State,
-                                          private val defaultMode: ConfigurationMode,
-                                          private val mode: ConfigurationMode) : MutableProperty<Boolean> {
+  private class ConfigurationModeProperty(
+    private val prettierConfiguration: PrettierConfiguration.State,
+    private val defaultMode: ConfigurationMode,
+    private val mode: ConfigurationMode,
+  ) : MutableProperty<Boolean> {
     override fun get(): Boolean =
       prettierConfiguration.configurationMode.let {
         it == mode || (it == null && defaultMode == mode)

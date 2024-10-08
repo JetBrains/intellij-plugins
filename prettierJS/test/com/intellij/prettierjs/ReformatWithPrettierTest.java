@@ -80,6 +80,46 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile("toReformat", "js");
   }
 
+  public void testSubFolderIgnoredFileInRoot() {
+    doReformatFile("package/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileInsidePackage() {
+    doReformatFile("package/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileInsideSubDir() {
+    doReformatFile("package/subdir/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileManual() {
+    PrettierConfiguration.getInstance(getProject())
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+    doReformatFile("package/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileManualSubDir() {
+    doReformatFile("package/toReformat", "js", () -> {
+      PrettierConfiguration.getInstance(getProject())
+        .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+
+      var ignoreFile = myFixture.findFileInTempDir(".prettierignore");
+      PrettierConfiguration.getInstance(getProject())
+        .getState().customIgnorePath = VfsUtilCore.virtualToIoFile(ignoreFile).getAbsolutePath();
+    });
+  }
+
+  public void testSubFolderIgnoredFileManualSubDirFormat() {
+    doReformatFile("package/toReformat", "js", () -> {
+      PrettierConfiguration.getInstance(getProject())
+        .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+
+      var ignoreFile = myFixture.findFileInTempDir(".prettierignore");
+      PrettierConfiguration.getInstance(getProject())
+        .getState().customIgnorePath = VfsUtilCore.virtualToIoFile(ignoreFile).getAbsolutePath();
+    });
+  }
+
   public void testInvalidConfigErrorReported() {
     assertError((s) -> s.contains("tabWidth"), () -> doReformatFile("js"));
   }
