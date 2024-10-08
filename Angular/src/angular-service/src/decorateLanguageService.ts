@@ -31,10 +31,18 @@ function toGeneratedRange(language: Language, serviceScript: TypeScriptServiceSc
   return undefined
 }
 
-export type UnboundReverseMapper = (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range) => { pos: number, end: number, fileName: string } | undefined;
+export type UnboundReverseMapper = (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range) => {
+  pos: number,
+  end: number,
+  fileName: string
+} | undefined;
 
 export function createUnboundReverseMapper(language: Language<string>, languageService: TS.LanguageService): UnboundReverseMapper {
-  return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): { pos: number, end: number, fileName: string } | undefined {
+  return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): {
+    pos: number,
+    end: number,
+    fileName: string
+  } | undefined {
     const [serviceScript, targetScript, sourceScript] =
       getServiceScript(language, sourceFile.fileName);
     if (targetScript?.associatedOnly) {
@@ -78,6 +86,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     startOffset: number,
     endOffset: number,
     forceReturnType: boolean,
+    cancellationToken: TS.CancellationToken,
     reverseMapper?: ReverseMapper,
   ): GetElementTypeResponse => {
     const [serviceScript, targetScript, sourceScript] =
@@ -90,36 +99,33 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     const generatedFile = targetScript ? program?.getSourceFile(targetScript.id) : undefined;
 
     if (serviceScript && sourceFile && generatedFile) {
-      try {
-        const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, startOffset, endOffset, (it) => it.types);
-        if (generatedRange !== undefined) {
-          return webStormGetElementType(ts, targetScript.id,  generatedRange[0], generatedRange[1], forceReturnType, unboundReverseMapper.bind(null, ts))
-        }
-      }
-      catch (e) {
-        // ignore
+      const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, startOffset, endOffset, (it) => it.types);
+      if (generatedRange !== undefined) {
+        return webStormGetElementType(ts, targetScript.id, generatedRange[0], generatedRange[1], forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
       }
       return undefined;
     }
     else {
-      return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, reverseMapper)
+      return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, cancellationToken, reverseMapper)
     }
   }
 
   languageService.webStormGetSymbolType = (
     ts,
     symbolId: number,
+    cancellationToken: TS.CancellationToken,
     _reverseMapper?: ReverseMapper,
   ) => {
-    return webStormGetSymbolType(ts, symbolId, unboundReverseMapper.bind(null, ts))
+    return webStormGetSymbolType(ts, symbolId, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 
   languageService.webStormGetTypeProperties = (
     ts,
     typeId: number,
+    cancellationToken: TS.CancellationToken,
     _reverseMapper?: ReverseMapper,
   ) => {
-    return webStormGetTypeProperties(ts, typeId, unboundReverseMapper.bind(null, ts))
+    return webStormGetTypeProperties(ts, typeId, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 
 }
@@ -130,7 +136,7 @@ export function decorateNgLanguageServiceExtensions(
   unboundReverseMapper: UnboundReverseMapper,
   webStormGetElementType: TS.LanguageService["webStormGetElementType"]) {
   languageService.webStormNgGetGeneratedElementType = (
-    ts, fileName, startOffset, endOffset, forceReturnType
+    ts, fileName, startOffset, endOffset, forceReturnType, cancellationToken
   ) => {
     let program = languageService.getProgram();
     if (!program) {
@@ -141,7 +147,7 @@ export function decorateNgLanguageServiceExtensions(
       return undefined
     }
 
-    return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, unboundReverseMapper.bind(null, ts))
+    return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 }
 
@@ -149,7 +155,7 @@ function searchExternalFilesPatched(ts: typeof TS, project: TS.server.Project, e
   if (project.projectKind !== ts.server.ProjectKind.Configured) {
     return [];
   }
-  const parseHost: TS.ParseConfigHost  = {
+  const parseHost: TS.ParseConfigHost = {
     useCaseSensitiveFileNames: project.useCaseSensitiveFileNames(),
     fileExists: project.fileExists.bind(project),
     readFile: project.readFile.bind(project),

@@ -11,6 +11,7 @@ declare module "tsc-ide-plugin/tsserverlibrary.shim" {
       startOffset: number,
       endOffset: number,
       forceReturnType: boolean,
+      cancellationToken: import("tsc-ide-plugin/tsserverlibrary.shim").CancellationToken,
     ): GetElementTypeResponse | undefined
   }
 }
