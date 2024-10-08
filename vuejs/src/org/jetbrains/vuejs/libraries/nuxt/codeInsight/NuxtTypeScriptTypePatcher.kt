@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.context.hasNuxt
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 
 class NuxtTypeScriptTypePatcher : TypeScriptCompilerTypePatcher {
-  override fun adjustDeclarationTypeFromServer(type: JSType, element: PsiElement): JSType? {
+  override fun adjustTypeFromServer(type: JSType, element: PsiElement): JSType? {
     if (isAdjustableType(type) && isNuxtComponentGlobalDeclaration(element) && hasNuxt(element)) {
       return null
     }
