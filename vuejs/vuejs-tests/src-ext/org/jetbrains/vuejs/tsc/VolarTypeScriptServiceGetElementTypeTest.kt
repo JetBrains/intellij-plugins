@@ -29,7 +29,6 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
   @Rule
   val rule: TestRule = TrackFailedTestRule(
     "testObjectLiteralWithSymbol",
-    "testInWriteAction",
     "testAnonymousThread"
   )
   
@@ -83,5 +82,9 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
       val unwrapRefType = VueUnwrapRefType(jsType!!, element).substitute()
       assertEquals("number", unwrapRefType.getTypeText(JSType.TypeTextFormat.PRESENTABLE))
     }
+  }
+
+  override fun testInWriteAction_beforeWrite() {
+    waitUntilFileOpenedByLspServer(project, file.virtualFile)
   }
 }
