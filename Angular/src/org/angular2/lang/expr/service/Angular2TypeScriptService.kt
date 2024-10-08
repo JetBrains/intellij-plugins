@@ -109,21 +109,13 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
-  override fun getInlayHints(file: PsiFile, textRange: TextRange): CompletableFuture<TypeScriptInlayHintsResponse?>? {
+  override fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? {
+    val result = super.getInlayHints(file, textRange) ?: return null
     val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile ?: return null) != null
-    return super.getInlayHints(file, textRange)?.let { future ->
-      if (hasTranspiledTemplate) {
-        future.thenApply { hints ->
-          if (hints != null) {
-            computeCancellable<Array<InlayHintItem>, Throwable> {
-              repositionInlayHints(file, hints)
-            }
-          }
-          else null
-        }
-      }
-      else future
-    }
+    return if (hasTranspiledTemplate)
+      repositionInlayHints(file, result)
+    else
+      result
   }
 
   private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> {
