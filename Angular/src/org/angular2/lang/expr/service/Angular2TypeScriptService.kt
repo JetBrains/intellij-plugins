@@ -25,6 +25,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
@@ -60,7 +61,6 @@ import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
@@ -109,13 +109,15 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
-  override fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? {
+  override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? {
+    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile ?: return null) != null
     val result = super.getInlayHints(file, textRange) ?: return null
-    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile ?: return null) != null
-    return if (hasTranspiledTemplate)
-      repositionInlayHints(file, result)
-    else
-      result
+    return readAction {
+      if (hasTranspiledTemplate)
+        repositionInlayHints(file, result)
+      else
+        result
+    }
   }
 
   private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> {
@@ -214,7 +216,23 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
       // on server cache locking leading to tests instability.
       val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
-      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile))
+      runBlockingCancellable {
+        process?.executeCancellable(Angular2TranspiledTemplateCommand(virtualFile))
+      }
+      result
+    }
+  }
+
+  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? {
+    return readAction {
+      // Updating the cache can cause the transpiled template to be (re)built,
+      // so let's build the template first and ensure that it doesn't change
+      // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
+      // on server cache locking leading to tests instability.
+      val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+      runBlockingCancellable {
+        process?.executeCancellable(Angular2TranspiledTemplateCommand(virtualFile))
+      }
       result
     }
   }
@@ -302,8 +320,9 @@ private class Angular2GetGeneratedElementTypeRequest(
   args: Angular2GetGeneratedElementTypeRequestArgs,
   service: Angular2TypeScriptService,
   coroutineContext: CoroutineContext,
-) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs>(args, service, coroutineContext) {
+) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs, JsonObject>(args, service, coroutineContext) {
   override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
+  override suspend fun processResult(answer: JsonObject): JsonObject? = answer.getAsJsonObject(TypeScriptServerServiceImpl.BODY_FIELD)
 }
 
 private fun isAngularServiceSupport(project: Project, context: VirtualFile): Boolean =
