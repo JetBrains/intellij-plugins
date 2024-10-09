@@ -50,7 +50,8 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
   @NotNull
   @Override
   protected String getActionTextForFiles() {
-    return DartBundle.message("dart.style.action.name.ellipsis"); // because with dialog
+    // Use ellipsis version of action name due to opening confirmation dialog.
+    return DartBundle.message("dart.style.action.name.ellipsis");
   }
 
   @Override

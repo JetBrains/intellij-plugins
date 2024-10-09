@@ -26,7 +26,8 @@ public class DartFixAction extends AbstractDartFileProcessingAction {
   @NotNull
   @Override
   protected String getActionTextForFiles() {
-    return DartBundle.message("dart.fix.action.name.ellipsis"); // because with dialog
+    // Use ellipsis version of action name due to opening confirmation dialog.
+    return DartBundle.message("dart.fix.action.name.ellipsis");
   }
 
   @Override

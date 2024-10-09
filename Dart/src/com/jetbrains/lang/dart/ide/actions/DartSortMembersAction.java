@@ -41,7 +41,8 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
   @NotNull
   @Override
   protected String getActionTextForFiles() {
-    return DartBundle.message("dart.sort.members.action.name.ellipsis"); // because with dialog
+    // Use ellipsis version of action name due to opening confirmation dialog.
+    return DartBundle.message("dart.sort.members.action.name.ellipsis");
   }
 
   @Override
