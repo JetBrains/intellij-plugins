@@ -19,7 +19,7 @@ class Angular2SyntaxHighlighter : TypeScriptHighlighter(Angular2Language.optionH
   override fun getKeywords(): TokenSet =
     Angular2TokenTypes.KEYWORDS
 
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> =
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> =
     angularKeys[tokenType]?.let { SyntaxHighlighterBase.pack(it) }
     ?: super.getTokenHighlights(tokenType)
 }
