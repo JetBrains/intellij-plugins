@@ -45,6 +45,14 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doEqualsAndHashcodeTest();
   }
 
+  public void testEqualsAndHashCode20() {
+    doEqualsAndHashcodeTest();
+  }
+
+  public void testEqualsAndHashCode21() {
+    doEqualsAndHashcodeTest();
+  }
+
   public void testImplement1() {
     doImplementTest();
   }
