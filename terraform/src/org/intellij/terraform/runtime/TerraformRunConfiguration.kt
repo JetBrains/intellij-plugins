@@ -40,6 +40,12 @@ class TerraformRunConfiguration(
   private val myEnvs: MutableMap<String, String> = LinkedHashMap()
   private var passParentEnvs: Boolean = true
 
+  internal var commandType: TfMainCommand = TfMainCommand.NONE
+    set(value) {
+      field = value
+      programParameters = value.command
+    }
+
   override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration?> {
     return TfRunConfigurationEditor(this)
   }

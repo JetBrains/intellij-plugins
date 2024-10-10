@@ -13,16 +13,9 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 
-sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRunConfigurationProducer<TerraformRunConfiguration>(), DumbAware {
-  enum class Type(val title: String, val factory: () -> ConfigurationFactory) {
-    PLAN("Plan", { tfRunConfigurationType().planFactory }),
-    APPLY("Apply", { tfRunConfigurationType().applyFactory });
-
-    override fun toString(): String = title.lowercase()
-  }
-
+sealed class TerraformFileConfigurationProducer(private val type: TfMainCommand) : LazyRunConfigurationProducer<TerraformRunConfiguration>(), DumbAware {
   override fun getConfigurationFactory(): ConfigurationFactory {
-    return type.factory()
+    return tfRunConfigurationType().createFactory(type)
   }
 
   override fun setupConfigurationFromContext(configuration: TerraformRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>): Boolean {
@@ -50,8 +43,11 @@ sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRu
   }
 
   companion object {
-    class Plan : TerraformFileConfigurationProducer(Type.PLAN)
-    class Apply : TerraformFileConfigurationProducer(Type.APPLY)
+    class Init : TerraformFileConfigurationProducer(TfMainCommand.INIT)
+    class Validate : TerraformFileConfigurationProducer(TfMainCommand.VALIDATE)
+    class Plan : TerraformFileConfigurationProducer(TfMainCommand.PLAN)
+    class Apply : TerraformFileConfigurationProducer(TfMainCommand.APPLY)
+    class Destroy : TerraformFileConfigurationProducer(TfMainCommand.DESTROY)
 
     fun getModuleTarget(context: ConfigurationContext): Pair<String, String>? {
       val location = context.location ?: return null

@@ -407,7 +407,11 @@
 
     <configurationType implementation="org.intellij.terraform.runtime.TfConfigurationType"/>
     <runLineMarkerContributor language="HCL" implementationClass="org.intellij.terraform.runtime.TerraformRunLineMarkerContributor"/>
-
+    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Init"/>
+    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Validate"/>
+    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Plan"/>
+    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Apply"/>
+    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Destroy"/>
     <checkinHandlerFactory implementation="org.intellij.terraform.config.actions.TFFmtCheckinFactory" order="last"/>
     <macro implementation="org.intellij.terraform.macros.TerraformExecutableMacro"/>
 

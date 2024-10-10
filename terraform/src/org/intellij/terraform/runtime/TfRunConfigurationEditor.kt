@@ -7,6 +7,7 @@ import com.intellij.execution.ui.utils.fragments
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Computable
+import com.intellij.ui.SimpleListCellRenderer
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -15,17 +16,21 @@ import javax.swing.JComponent
 internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfiguration) :
   RunConfigurationFragmentedEditor<TerraformRunConfiguration>(runConfiguration) {
 
-  private val commandComboBox = ComboBox(TerraformFileConfigurationProducer.Type.entries.toTypedArray())
-    .withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
+  private val commandComboBox = ComboBox(TfMainCommand.entries.toTypedArray()).apply {
+    selectedItem = TfMainCommand.NONE
+    renderer = SimpleListCellRenderer.create { label, value, _ ->
+      label.text = value.command
+    }
+  }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
 
   override fun createRunFragments(): MutableList<SettingsEditorFragment<TerraformRunConfiguration, *>> =
     fragments<TerraformRunConfiguration>(HCLBundle.message("terraform.run.text"), "terraform.run.configuration") {
       fragment("terraform.command", commandComboBox) {
         apply = { model, ui ->
-          model.programParameters = ui.component.selectedItem?.toString()
+          model.commandType = ui.component.selectedItem as? TfMainCommand ?: TfMainCommand.NONE
         }
         reset = { model, ui ->
-          ui.component.selectedItem = model.programParameters
+          ui.component.selectedItem = model.commandType
         }
         isRemovable = false
       }
