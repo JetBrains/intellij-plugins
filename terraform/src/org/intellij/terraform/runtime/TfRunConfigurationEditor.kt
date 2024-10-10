@@ -15,18 +15,17 @@ import javax.swing.JComponent
 internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfiguration) :
   RunConfigurationFragmentedEditor<TerraformRunConfiguration>(runConfiguration) {
 
-  private val commandComboBox = ComboBox(TerraformFileConfigurationProducer.Type.entries.toTypedArray()).apply {
-    isEditable = true
-  }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
+  private val commandComboBox = ComboBox(TerraformFileConfigurationProducer.Type.entries.toTypedArray())
+    .withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
 
   override fun createRunFragments(): MutableList<SettingsEditorFragment<TerraformRunConfiguration, *>> =
     fragments<TerraformRunConfiguration>(HCLBundle.message("terraform.run.text"), "terraform.run.configuration") {
       fragment("terraform.command", commandComboBox) {
         apply = { model, ui ->
-          model.programParameters = ui.component.editor.item.toString()
+          model.programParameters = ui.component.selectedItem?.toString()
         }
         reset = { model, ui ->
-          ui.component.editor.item = model.programParameters
+          ui.component.selectedItem = model.programParameters
         }
         isRemovable = false
       }
