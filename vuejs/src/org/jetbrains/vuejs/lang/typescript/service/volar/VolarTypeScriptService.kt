@@ -8,6 +8,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
+import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilteringStrategy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
@@ -16,6 +17,7 @@ import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.delay
+import org.eclipse.lsp4j.Diagnostic
 import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -51,6 +53,8 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     }
     return super.createQuickInfoResponse(markupContent)
   }
+
+  override fun createAnnotationErrorFilteringStrategy() = VolarAnnotationErrorFilteringStrategy(project)
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
@@ -94,5 +98,12 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
         else -> return
       }
     }
+  }
+}
+
+class VolarAnnotationErrorFilteringStrategy(project: Project) : LspAnnotationErrorFilteringStrategy(project) {
+  override fun isProblemEnabled(diagnostic: Diagnostic): Boolean {
+    if (diagnostic.message == "Unknown at rule @apply") return false
+    return super.isProblemEnabled(diagnostic)
   }
 }

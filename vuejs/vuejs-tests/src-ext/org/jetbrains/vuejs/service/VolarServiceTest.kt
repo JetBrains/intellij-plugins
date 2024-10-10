@@ -348,6 +348,24 @@ class VolarServiceTest : VolarServiceTestBase() {
     myFixture.checkLspHighlighting()
   }
 
+  @Test
+  fun testTailwindApplyInterop() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0)
+
+    myFixture.configureByText("tsconfig.json", tsconfig)
+    // @apply is not part of CSS spec,
+    myFixture.configureByText("Simple.vue", """
+      <style scoped>
+      button {
+        @apply bg-red-500;
+      }
+      </style>
+    """)
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+  }
+
   private fun getPresentationTexts(elements: Array<LookupElement>): List<String?> {
     return elements.map { element ->
       val presentation = LookupElementPresentation()
