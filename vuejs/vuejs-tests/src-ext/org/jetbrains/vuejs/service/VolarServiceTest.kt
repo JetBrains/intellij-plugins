@@ -53,13 +53,13 @@ class VolarServiceTest : VolarServiceTestBase() {
       <script setup lang="ts">
       const <error>shouldError</error>: string = 5;
       const id = "el"
-      const <weak_warning>ariaLabel</weak_warning> = "hello"
+      const ariaLabel = "hello"
       </script>
       
       <template>
         <div :id />
-        <!-- below is a bug in Vue LS, TODO wait & update -->
-        <div <error><warning>:<error>aria</error>-<error>label</error></warning></error> />
+        <!-- below was a bug in Vue LS https://github.com/vuejs/language-tools/issues/3830 -->
+        <div <warning>:aria-label</warning> />
       </template>
     """)
     myFixture.checkLspHighlighting()
