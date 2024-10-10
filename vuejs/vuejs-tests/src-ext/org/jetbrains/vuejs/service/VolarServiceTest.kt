@@ -17,7 +17,7 @@ import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.options.getVueSettings
 import org.junit.Test
 
-class VolarServiceTest : VolarServiceTestBase() {
+class VolarServiceTest : VueLspServiceTestBase() {
 
   @Test
   fun testSimpleVue() {

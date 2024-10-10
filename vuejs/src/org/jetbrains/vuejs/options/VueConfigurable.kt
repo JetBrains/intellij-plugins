@@ -11,15 +11,15 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getVueSettings(project)
 
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
-      row(VueBundle.message("vue.configurable.service.volar.package")) {
-        cell(VolarExecutableDownloader.createNodePackageField(project))
+      row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
+        cell(VueLspExecutableDownloader.createNodePackageField(project))
           .align(AlignX.FILL)
           .bind(settings::packageRef)
       }

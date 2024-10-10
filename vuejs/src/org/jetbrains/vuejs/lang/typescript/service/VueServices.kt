@@ -11,12 +11,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
 
-object VueServiceSetActivationRule : JSServiceSetActivationRule(VolarExecutableDownloader, null) {
+object VueServiceSetActivationRule : JSServiceSetActivationRule(VueLspExecutableDownloader, null) {
   override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 
@@ -43,7 +43,7 @@ private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean
 //<editor-fold desc="VueClassicTypeScriptService">
 
 /**
- * Refers to the classic service that predates Volar.
+ * Refers to the classic service that predates official Vue LSP.
  */
 fun isVueClassicTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   if (!isVueServiceContext(project, context)) return false

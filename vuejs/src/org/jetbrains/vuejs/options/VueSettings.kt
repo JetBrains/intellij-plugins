@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.ApiStatus.Obsolete
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
 
 fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
 
@@ -39,7 +39,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     }
 
   var packageRef
-    get() = createPackageRef(state.packageName, VolarExecutableDownloader.packageDescriptor.serverPackage)
+    get() = createPackageRef(state.packageName, VueLspExecutableDownloader.packageDescriptor.serverPackage)
     set(value) {
       val refText = extractRefText(value)
       val changed = state.packageName != refText
@@ -57,7 +57,7 @@ class VueSettingsState : BaseState() {
 enum class VueServiceSettings {
   AUTO,
   /**
-   * Must work exactly the same as AUTO, kept for settings deserialization compatibility
+   * Must work exactly the same as AUTO, kept for settings deserialization compatibility, aka Vue LSP
    */
   @Obsolete
   VOLAR,

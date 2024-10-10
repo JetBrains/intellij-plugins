@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.lang.typescript.service.volar
+package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
@@ -23,16 +23,16 @@ import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
-private object VolarLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
-                                                                            "2.1.6",
-                                                                            "/bin/vue-language-server.js") {
+private object VueLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
+                                                                          "2.1.6",
+                                                                          "/bin/vue-language-server.js") {
   override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
 }
 
-class VolarSupportProvider : LspServerSupportProvider {
+class VueLspServerSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
     if (VueServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)) {
-      serverStarter.ensureServerStarted(VolarServerDescriptor(project))
+      serverStarter.ensureServerStarted(VueLspServerDescriptor(project))
     }
   }
 
@@ -40,7 +40,7 @@ class VolarSupportProvider : LspServerSupportProvider {
     JSLspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
-class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue") {
+class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue") {
   val newEvalMode = TypeScriptCompilerEvaluationFacade.getInstance(project) != null
 
   init {
@@ -63,7 +63,7 @@ class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(p
 }
 
 @ApiStatus.Experimental
-object VolarExecutableDownloader : LspServerDownloader(VolarLspServerPackageDescriptor) {
+object VueLspExecutableDownloader : LspServerDownloader(VueLspServerPackageDescriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
   }

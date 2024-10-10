@@ -12,13 +12,13 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.classic.VueClassicTypeScriptService
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
   private val classicLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
-  private val volarLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VolarServiceWrapper>() }
+  private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }
 
-  override fun getAllServices(): List<JSLanguageService> = listOf(classicLanguageService.service, volarLanguageService.service)
+  override fun getAllServices(): List<JSLanguageService> = listOf(classicLanguageService.service, lspLanguageService.service)
 
   override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 
@@ -38,8 +38,8 @@ private class VueClassicServiceWrapper(project: Project) : Disposable {
 }
 
 @Service(Service.Level.PROJECT)
-private class VolarServiceWrapper(project: Project) : Disposable {
-  val service = VolarTypeScriptService(project)
+private class VueLspServiceWrapper(project: Project) : Disposable {
+  val service = VueLspTypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)

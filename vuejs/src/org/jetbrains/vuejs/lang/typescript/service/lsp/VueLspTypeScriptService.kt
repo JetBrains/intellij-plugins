@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.lang.typescript.service.volar
+package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.google.gson.JsonElement
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetElementTypeRequestArgs
@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 
-class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(project, VolarSupportProvider::class.java) {
+class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(project, VueLspServerSupportProvider::class.java) {
   override val name: String
     get() = VueBundle.message("vue.service.name")
   override val prefix: String
@@ -54,7 +54,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     return super.createQuickInfoResponse(markupContent)
   }
 
-  override fun createAnnotationErrorFilteringStrategy() = VolarAnnotationErrorFilteringStrategy(project)
+  override fun createAnnotationErrorFilteringStrategy() = VueLspAnnotationErrorFilteringStrategy(project)
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
@@ -78,9 +78,9 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   }
 
   private fun isNewEvalModeServer(server: LspServer): Boolean {
-    // the lifecycle of LspServer is shorter than of VolarTypeScriptService
+    // the lifecycle of LspServer is shorter than of TypeScriptService
     val descriptor = server.descriptor
-    return descriptor is VolarServerDescriptor && descriptor.newEvalMode
+    return descriptor is VueLspServerDescriptor && descriptor.newEvalMode
   }
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean {
@@ -101,7 +101,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   }
 }
 
-class VolarAnnotationErrorFilteringStrategy(project: Project) : LspAnnotationErrorFilteringStrategy(project) {
+class VueLspAnnotationErrorFilteringStrategy(project: Project) : LspAnnotationErrorFilteringStrategy(project) {
   override fun isProblemEnabled(diagnostic: Diagnostic): Boolean {
     if (diagnostic.message == "Unknown at rule @apply") return false
     return super.isProblemEnabled(diagnostic)

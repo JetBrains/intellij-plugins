@@ -34,13 +34,13 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.isVueClassicTypeScriptServiceEnabled
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
 
 /**
  * Original [TypeScriptService] implementation for Vue.
- * Superseded by integration with [Vue Language Tools (Volar)][VolarTypeScriptService] through LSP.
+ * Superseded by integration with [Vue Language Tools (ex-Volar)][VueLspTypeScriptService] through LSP.
  *
  * Not used anymore by default but can be toggled in Settings for people that have problems with Vue LS, particularly some Vue 2.x users;
  * therefore, it's not reasonable to delete it.

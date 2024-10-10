@@ -7,12 +7,12 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.text.SemVer
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
-abstract class VolarServiceTestBase : BaseLspTypeScriptServiceTest() {
+abstract class VueLspServiceTestBase : BaseLspTypeScriptServiceTest() {
   protected val tsconfig = """
     {
       "compilerOptions": {
@@ -36,10 +36,10 @@ abstract class VolarServiceTestBase : BaseLspTypeScriptServiceTest() {
     }
     vueSettings.serviceType = VueServiceSettings.VOLAR
 
-    ensureServerDownloaded(VolarExecutableDownloader)
+    ensureServerDownloaded(VueLspExecutableDownloader)
   }
 
   protected fun assertCorrectService(version: SemVer? = null) {
-    assertCorrectServiceImpl<VolarTypeScriptService>(version)
+    assertCorrectServiceImpl<VueLspTypeScriptService>(version)
   }
 }

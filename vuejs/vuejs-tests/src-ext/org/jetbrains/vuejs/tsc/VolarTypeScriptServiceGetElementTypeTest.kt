@@ -17,12 +17,13 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 
+// todo rename to VueLspTypeScriptServiceGetElementTypeTest
 class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementTypeTest() {
 
   @JvmField
@@ -31,11 +32,11 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
     "testObjectLiteralWithSymbol",
     "testAnonymousThread"
   )
-  
+
   override fun setUpTypeScriptService() {
     VueServiceSetActivationRule.markForceEnabled(true)
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-      it is VolarTypeScriptService
+      it is VueLspTypeScriptService
     }
   }
 
@@ -43,7 +44,7 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
     waitUntilFileOpenedByLspServer(project, file.virtualFile)
 
     return super.calculateType(element, useTsc).also {
-      UsefulTestCase.assertInstanceOf(TypeScriptService.getForFile(project, file.virtualFile), VolarTypeScriptService::class.java)
+      UsefulTestCase.assertInstanceOf(TypeScriptService.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
     }
   }
 
