@@ -276,7 +276,10 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
   }
 
   private static void foldClassBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final DartFile dartFile) {
-    for (PsiElement element : PsiTreeUtil.getChildrenOfAnyType(dartFile, DartClass.class, DartExtensionDeclaration.class)) {
+    for (PsiElement element : PsiTreeUtil.getChildrenOfAnyType(dartFile,
+                                                               DartClass.class,
+                                                               DartExtensionDeclaration.class,
+                                                               DartExtensionTypeDeclaration.class)) {
       if (element instanceof DartClassDefinition) {
         final DartClassBody body = ((DartClassDefinition)element).getClassBody();
         if (body != null && body.getTextLength() > 3) {
@@ -299,6 +302,12 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
       else if (element instanceof DartExtensionDeclaration) {
         final DartClassBody body = ((DartExtensionDeclaration)element).getClassBody();
         if (body.getTextLength() > 3) {
+          descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
+        }
+      }
+      else if (element instanceof DartExtensionTypeDeclaration) {
+        final DartClassBody body = ((DartExtensionTypeDeclaration)element).getClassBody();
+        if (body != null && body.getTextLength() > 3) {
           descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
