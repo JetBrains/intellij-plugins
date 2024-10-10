@@ -13,5 +13,5 @@ public final class DenoIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, DenoIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 40x40 */ public static final @NotNull Icon Deno = load("icons/deno.svg", -1506264749, 2);
+  /** 40x40 */ public static final @NotNull Icon Deno = load("icons/deno.svg", 1611459345, 2);
 }
