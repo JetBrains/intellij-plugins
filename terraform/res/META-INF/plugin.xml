@@ -406,8 +406,6 @@
                          key="terraform.name" bundle="messages.HCLBundle"/>
 
     <configurationType implementation="org.intellij.terraform.runtime.TfConfigurationType"/>
-    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Plan"/>
-    <runConfigurationProducer implementation="org.intellij.terraform.runtime.TerraformFileConfigurationProducer$Companion$Apply"/>
     <runLineMarkerContributor language="HCL" implementationClass="org.intellij.terraform.runtime.TerraformRunLineMarkerContributor"/>
 
     <checkinHandlerFactory implementation="org.intellij.terraform.config.actions.TFFmtCheckinFactory" order="last"/>
