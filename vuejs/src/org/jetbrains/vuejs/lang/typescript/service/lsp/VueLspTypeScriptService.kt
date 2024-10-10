@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilter
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
@@ -23,6 +24,8 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
+import org.jetbrains.vuejs.options.VueServiceSettings
+import org.jetbrains.vuejs.options.VueSettings
 
 class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(project, VueLspServerSupportProvider::class.java) {
   override val name: String
@@ -86,6 +89,9 @@ class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(proje
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean {
     return virtualFile.extension == "vue" || super.supportsTypeEvaluation(virtualFile, element)
   }
+
+  override fun isTypeEvaluationEnabled(): Boolean =
+    project.service<VueSettings>().let { it.serviceType != VueServiceSettings.DISABLED && it.useTypesFromServer }
 
   override fun supportsInjectedFile(file: PsiFile): Boolean {
     return file.language is VueJSLanguage || file.language is VueTSLanguage

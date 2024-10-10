@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
@@ -7,7 +7,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.JSLspServerWidgetItem
 import com.intellij.lang.typescript.lsp.LspServerDownloader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
-import com.intellij.lang.typescript.resolve.TypeScriptCompilerEvaluationFacade
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 import org.jetbrains.vuejs.options.VueConfigurable
+import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
@@ -41,7 +42,7 @@ class VueLspServerSupportProvider : LspServerSupportProvider {
 }
 
 class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueServiceSetActivationRule, "Vue") {
-  val newEvalMode = TypeScriptCompilerEvaluationFacade.getInstance(project) != null
+  val newEvalMode = project.service<VueSettings>().useTypesFromServer
 
   init {
     if (newEvalMode) {
@@ -69,7 +70,7 @@ object VueLspExecutableDownloader : LspServerDownloader(VueLspServerPackageDescr
   }
 
   override fun getExecutableForDefaultKey(project: Project): String? {
-    if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
+    if (project.service<VueSettings>().useTypesFromServer) {
       return getNewEvalExecutable()
     }
 

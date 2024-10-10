@@ -1,8 +1,9 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 @file:Suppress("DialogTitleCapitalization")
 
 package org.jetbrains.vuejs.options
 
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.lsp.bind
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
@@ -10,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
+import com.intellij.ui.dsl.builder.bindSelected
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
 
@@ -38,6 +40,16 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
             .comment(VueBundle.message("vue.configurable.service.ts.help"))
         }
       }.bind(settings::serviceType)
+
+      separator()
+
+      row {
+        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server"))
+          .applyToComponent {
+            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server.description")
+          }
+          .bindSelected(settings::useTypesFromServer)
+      }
     }
   }
 

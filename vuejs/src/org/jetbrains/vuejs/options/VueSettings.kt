@@ -1,6 +1,7 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.options
 
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.lsp.createPackageRef
 import com.intellij.lang.typescript.lsp.defaultPackageKey
 import com.intellij.lang.typescript.lsp.extractRefText
@@ -30,7 +31,7 @@ fun configureVueService(project: Project, disposable: Disposable, serviceSetting
 @State(name = "VueSettings", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
 class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSettingsState>(VueSettingsState()) {
 
-  var serviceType
+  var serviceType: VueServiceSettings
     get() = state.innerServiceType
     set(value) {
       val changed = state.innerServiceType != value
@@ -47,11 +48,20 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
       if (changed) restartTypeScriptServicesAsync(project)
     }
 
+  var useTypesFromServer: Boolean
+    get() {
+      val useTypesFromServerInTests = TypeScriptCompilerSettings.isUseTypesFromServerInTests()
+      return useTypesFromServerInTests ?: state.useTypesFromServer
+    }
+    set(value) {
+      state.useTypesFromServer = value
+    }
 }
 
 class VueSettingsState : BaseState() {
   var innerServiceType by enum(VueServiceSettings.AUTO)
   var packageName by string(defaultPackageKey)
+  var useTypesFromServer by property(false)
 }
 
 enum class VueServiceSettings {

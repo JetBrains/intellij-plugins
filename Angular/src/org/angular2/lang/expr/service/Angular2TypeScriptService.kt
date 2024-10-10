@@ -61,6 +61,7 @@ import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.Transpi
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
+import org.angular2.options.AngularSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
@@ -128,6 +129,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       repositionInlayHint(file, document, it)
     }.toTypedArray()
   }
+
+  override fun isTypeEvaluationEnabled(): Boolean = project.service<AngularSettings>().serviceType != AngularServiceSettings.DISABLED
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
