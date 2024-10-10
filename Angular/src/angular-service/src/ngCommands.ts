@@ -85,8 +85,7 @@ function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverl
       })
   }
   return {
-    responseRequired: true,
-    response: {}
+    responseRequired: false,
   }
 };
 

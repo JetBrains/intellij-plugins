@@ -7,4 +7,8 @@ class Angular2TranspiledTemplateCommand(val templateFile: VirtualFile) : JSLangu
 
   override fun getCommand(): String = "ngTranspiledTemplate"
 
+  override fun responseExpected(): Boolean {
+    return false
+  }
+
 }
