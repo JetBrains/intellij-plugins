@@ -31,7 +31,7 @@ internal class VueTypeScriptServiceProtocol(project: Project,
   override fun getProbeLocations(): Array<LocalFilePath> {
     val probeLocations = super.getProbeLocations()
     val pluginProbe = JSLanguageServiceUtil.getPluginDirectory(this::class.java,
-                                                               "vue-service/node_modules/ws-typescript-vue-plugin").parentFile.parentFile.path
+                                                               "vue-service/node_modules/ws-typescript-vue-plugin")!!.parentFile.parentFile.path
 
     val element = LocalFilePath.create(pluginProbe) ?: return probeLocations
     return probeLocations + element
