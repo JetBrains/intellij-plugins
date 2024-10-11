@@ -28,7 +28,7 @@ import java.io.File
 
 private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
   "@vue/language-server",
-  PackageVersion.downloadable("2.1.6"),
+  PackageVersion.bundled<VueLspServerPackageDescriptor>("2.1.6", "vuejs", "vue-language-server"),
   "/bin/vue-language-server.js"
 ) {
   override val registryVersion: String get() = Registry.stringValue("vue.language.server.default.version")
