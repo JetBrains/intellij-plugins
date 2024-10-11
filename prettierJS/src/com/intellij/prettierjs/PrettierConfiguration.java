@@ -49,7 +49,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     public boolean runOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
     @OptionTag("myFilesPattern")
     public @NotNull String filesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
-    @OptionTag("myCustomIgnorePath")
     public @NotNull String customIgnorePath = "";
   }
 
@@ -131,8 +130,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return PKG_DESC.createPackage("");
   }
 
-  @Nullable
-  public VirtualFile findIgnoreFile(@NotNull VirtualFile source) {
+  public @Nullable VirtualFile findIgnoreFile(@NotNull VirtualFile source) {
     if (isDisabled()) {
       return null;
     }

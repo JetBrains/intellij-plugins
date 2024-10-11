@@ -43,7 +43,7 @@ public final class PrettierUtil {
   public static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
   public static final String RC_FILE_NAME = ".prettierrc";
   public static final String CONFIG_FILE_NAME = "prettier.config";
-  public static final String IGNORE_FILE_NAME = ".prettierignore";
+  static final String IGNORE_FILE_NAME = ".prettierignore";
 
   /**
    * <a href="https://github.com/prettier/prettier/blob/main/docs/configuration.md">github.com/prettier/prettier/blob/main/docs/configuration.md</a>
