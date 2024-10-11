@@ -8,7 +8,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
-import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilteringStrategy
+import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
@@ -54,7 +54,7 @@ class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(proje
     return super.createQuickInfoResponse(markupContent)
   }
 
-  override fun createAnnotationErrorFilteringStrategy() = VueLspAnnotationErrorFilteringStrategy(project)
+  override fun createAnnotationErrorFilter() = VueLspAnnotationErrorFilter(project)
 
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
@@ -101,7 +101,7 @@ class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(proje
   }
 }
 
-class VueLspAnnotationErrorFilteringStrategy(project: Project) : LspAnnotationErrorFilteringStrategy(project) {
+class VueLspAnnotationErrorFilter(project: Project) : LspAnnotationErrorFilter(project) {
   override fun isProblemEnabled(diagnostic: Diagnostic): Boolean {
     if (diagnostic.message == "Unknown at rule @apply") return false
     return super.isProblemEnabled(diagnostic)
