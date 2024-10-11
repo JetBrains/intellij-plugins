@@ -29,6 +29,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
 private const val TOKEN_TEXT = "{{ secrets.QODANA_TOKEN }}"
+private const val REF_TEXT = "{{ github.event.pull_request.head.sha }}"
 
 @TestDataPath("\$CONTENT_ROOT/test-data/SetupGitHubActionsViewModelTest")
 class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
@@ -48,9 +49,14 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
       jobs:
         qodana:
           runs-on: ubuntu-latest
+          permissions:
+            contents: write
+            pull-requests: write
+            checks: write
           steps:
             - uses: actions/checkout@v3
               with:
+                ref: $$REF_TEXT
                 fetch-depth: 0
             - name: 'Qodana Scan'
               uses: JetBrains/qodana-action@v42
@@ -74,9 +80,14 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
       jobs:
         qodana:
           runs-on: ubuntu-latest
+          permissions:
+            contents: write
+            pull-requests: write
+            checks: write
           steps:
             - uses: actions/checkout@v3
               with:
+                ref: $$REF_TEXT
                 fetch-depth: 0
             - name: 'Qodana Scan'
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
@@ -158,9 +169,14 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
 
         qodana:
           runs-on: ubuntu-latest
+          permissions:
+            contents: write
+            pull-requests: write
+            checks: write
           steps:
             - uses: actions/checkout@v3
               with:
+                ref: $$REF_TEXT
                 fetch-depth: 0
             - name: 'Qodana Scan'
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
@@ -341,9 +357,14 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
 
         qodana:
           runs-on: ubuntu-latest
+          permissions:
+            contents: write
+            pull-requests: write
+            checks: write
           steps:
             - uses: actions/checkout@v3
               with:
+                ref: $$REF_TEXT
                 fetch-depth: 0
             - name: 'Qodana Scan'
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
@@ -396,9 +417,14 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
       jobs:
         qodana:
           runs-on: ubuntu-latest
+          permissions:
+            contents: write
+            pull-requests: write
+            checks: write
           steps:
             - uses: actions/checkout@v3
               with:
+                ref: $$REF_TEXT
                 fetch-depth: 0
             - name: 'Qodana Scan'
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
@@ -435,9 +461,14 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
       jobs:
         qodana:
           runs-on: ubuntu-latest
+          permissions:
+            contents: write
+            pull-requests: write
+            checks: write
           steps:
             - uses: actions/checkout@v3
               with:
+                ref: $$REF_TEXT
                 fetch-depth: 0
             - name: 'Qodana Scan'
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
