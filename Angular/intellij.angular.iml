@@ -84,5 +84,6 @@
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.webide.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="library" name="opentelemetry" level="project" />
   </component>
 </module>

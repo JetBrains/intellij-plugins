@@ -5,6 +5,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.service.withTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -33,14 +34,14 @@ object Angular2TranspiledComponentFileBuilder {
   private val mappingsComparator: Comparator<SourceMapping> =
     Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength }
 
-  fun getTranspiledComponentAndTopLevelTemplateFile(context: PsiElement): Pair<TranspiledComponentFile, PsiFile>? {
+  fun getTranspiledComponentAndTopLevelTemplateFile(context: PsiElement): Pair<TranspiledComponentFile, PsiFile>? = withTraceSpan("getTranspiledComponentAndTopLevelTemplateFile") {
     val templateFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
     val componentFile = if (templateFile.language is Angular2HtmlDialect)
       Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile
-      ?: return null
+      ?: return@withTraceSpan null
     else
       templateFile
-    return getTranspiledComponentFile(componentFile)
+    return@withTraceSpan getTranspiledComponentFile(componentFile)
       ?.let { Pair(it, templateFile) }
   }
 
@@ -68,7 +69,7 @@ object Angular2TranspiledComponentFileBuilder {
       }, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
-  private fun buildTranspiledComponentFile(componentFile: PsiFile, cache: ComponentFileCache): TranspiledComponentFile {
+  private fun buildTranspiledComponentFile(componentFile: PsiFile, cache: ComponentFileCache): TranspiledComponentFile = withTraceSpan("buildTranspiledComponentFile") {
     val templates = cache.components.mapIndexedNotNull { index, cls ->
       CachedValuesManager.getCachedValue(cls) {
         val context = getComponentFileCache(cls.containingFile)!!.environment
@@ -79,7 +80,7 @@ object Angular2TranspiledComponentFileBuilder {
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
-    return buildTranspiledComponentFile(cache.environment, componentFile, templates)
+    return@withTraceSpan buildTranspiledComponentFile(cache.environment, componentFile, templates)
   }
 
   private fun getComponentFileCache(file: PsiFile): ComponentFileCache? =
