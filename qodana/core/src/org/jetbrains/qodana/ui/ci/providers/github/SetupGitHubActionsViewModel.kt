@@ -269,19 +269,24 @@ class SetupGitHubActionsViewModel(
 
   private suspend fun defaultQodanaJobText(): String {
     val cloudTokenText = "\${{ secrets.QODANA_TOKEN }}"
+    val refsText = "\${{ github.event.pull_request.head.sha }}"
 
     val baselineText = getSarifBaseline(project)?.let { "args: --baseline,$it" }
 
     val qodanaGitHubActionVersion = ApplicationInfo.getInstance().shortVersion
 
-    @Suppress("UnnecessaryVariable")
     @Language("YAML")
     val jobText = """
       qodana:
         runs-on: ubuntu-latest
+        permissions:
+          contents: write
+          pull-requests: write
+          checks: write
         steps:
           - uses: actions/checkout@v3
             with:
+              ref: ${refsText}
               fetch-depth: 0
           - name: 'Qodana Scan'
             uses: JetBrains/qodana-action@v$qodanaGitHubActionVersion
