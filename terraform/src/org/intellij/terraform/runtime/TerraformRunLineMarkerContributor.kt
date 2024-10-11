@@ -29,7 +29,6 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware 
     if (block !== firstHCLBlock) {
       return null
     }
-
     if (block.nameIdentifier !== identifier) {
       return null
     }

@@ -35,16 +35,12 @@ class TerraformRunConfiguration(
   override var envFilePaths: List<String>,
 ) :
   LocatableConfigurationBase<Any?>(project, factory, name), CommonProgramRunConfigurationParameters, EnvFilesOptions, DumbAware {
-  private var programParameters: String? = ""
   private var directory: String = ""
   private val myEnvs: MutableMap<String, String> = LinkedHashMap()
   private var passParentEnvs: Boolean = true
 
   internal var commandType: TfMainCommand = TfMainCommand.NONE
-    set(value) {
-      field = value
-      programParameters = value.command
-    }
+  internal var programArguments: String = ""
 
   override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration?> {
     return TfRunConfigurationEditor(this)
@@ -158,13 +154,12 @@ class TerraformRunConfiguration(
   private val terraformPath
     get() = TerraformPathDetector.getInstance(project).actualTerraformPath
 
-  override fun setProgramParameters(value: String?) {
-    programParameters = value
-  }
+  override fun setProgramParameters(value: String?): Unit = Unit
 
-  override fun getProgramParameters(): String? {
-    return programParameters
-  }
+  override fun getProgramParameters(): String = listOf(
+    commandType.command,
+    programArguments
+  ).joinToString(" ").trim()
 
   override fun setWorkingDirectory(value: String?) {
     directory = ExternalizablePath.urlValue(value)

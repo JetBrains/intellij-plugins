@@ -97,7 +97,7 @@ class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
       LOG.warn("Cannot run on non-local FS: $vf")
       return
     }
-    configuration.programParameters = "get"
+    configuration.programArguments = "get"
     configuration.workingDirectory = vf.path
 
     try {
