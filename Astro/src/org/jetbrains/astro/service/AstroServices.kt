@@ -15,16 +15,19 @@ import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 
-private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor("@astrojs/language-server",
-                                                                            "2.10.0",
-                                                                            "/bin/nodeServer.js") {
+private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
+  "@astrojs/language-server",
+  "2.10.0",
+  "/bin/nodeServer.js"
+) {
   override val defaultVersion: String get() = Registry.stringValue("astro.language.server.default.version")
 }
 
 @ApiStatus.Experimental
 object AstroLspExecutableDownloader : LspServerDownloader(AstroLspServerPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef =
-    getAstroServiceSettings(project).lspServerPackageRef
+  override fun getSelectedPackageRef(project: Project): NodePackageRef {
+    return getAstroServiceSettings(project).lspServerPackageRef
+  }
 }
 
 object AstroServiceSetActivationRule : JSServiceSetActivationRule(AstroLspExecutableDownloader, null) {
