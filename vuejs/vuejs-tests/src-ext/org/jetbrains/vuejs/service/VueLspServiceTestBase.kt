@@ -7,7 +7,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.text.SemVer
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
@@ -36,7 +36,7 @@ abstract class VueLspServiceTestBase : BaseLspTypeScriptServiceTest() {
     }
     vueSettings.serviceType = VueServiceSettings.VOLAR
 
-    ensureServerDownloaded(VueLspExecutableDownloader)
+    ensureServerDownloaded(VueLspServerLoader)
   }
 
   protected fun assertCorrectService(version: SemVer? = null) {

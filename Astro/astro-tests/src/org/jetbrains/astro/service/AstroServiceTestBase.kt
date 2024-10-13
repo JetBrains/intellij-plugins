@@ -25,7 +25,7 @@ open class AstroServiceTestBase : BaseLspTypeScriptServiceTest() {
     }
     serviceSettings.serviceMode = AstroServiceMode.ENABLED
 
-    ensureServerDownloaded(AstroLspExecutableDownloader)
+    ensureServerDownloaded(AstroLspServerLoader)
   }
 
   protected fun assertCorrectService() = assertCorrectServiceImpl<AstroLspTypeScriptService>()

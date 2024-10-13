@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
-import com.intellij.lang.typescript.lsp.LspServerDownloader
+import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
 import com.intellij.openapi.components.service
@@ -34,7 +34,7 @@ private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
 }
 
 @ApiStatus.Experimental
-object VueLspExecutableDownloader : LspServerDownloader(VueLspServerPackageDescriptor) {
+object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
   }
@@ -62,7 +62,7 @@ object VueLspExecutableDownloader : LspServerDownloader(VueLspServerPackageDescr
 
 internal val vueLspNewEvalVersion = SemVer.parseFromText("2.0.26-eval")
 
-object VueServiceSetActivationRule : JSServiceSetActivationRule(VueLspExecutableDownloader, null) {
+object VueServiceSetActivationRule : JSServiceSetActivationRule(VueLspServerLoader, null) {
   override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 

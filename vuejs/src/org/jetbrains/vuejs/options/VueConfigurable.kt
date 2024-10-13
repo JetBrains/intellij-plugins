@@ -12,7 +12,7 @@ import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.not
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getVueSettings(project)
@@ -20,7 +20,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
       row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
-        cell(VueLspExecutableDownloader.createNodePackageField(project))
+        cell(VueLspServerLoader.createNodePackageField(project))
           .align(AlignX.FILL)
           .bind(settings::packageRef)
       }

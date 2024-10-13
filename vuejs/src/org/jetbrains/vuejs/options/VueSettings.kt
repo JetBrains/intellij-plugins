@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.ApiStatus.Obsolete
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
+import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
 
 fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
 
@@ -40,7 +40,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     }
 
   var packageRef
-    get() = createPackageRef(state.packageName, VueLspExecutableDownloader.packageDescriptor.serverPackage)
+    get() = createPackageRef(state.packageName, VueLspServerLoader.packageDescriptor.serverPackage)
     set(value) {
       val refText = extractRefText(value)
       val changed = state.packageName != refText

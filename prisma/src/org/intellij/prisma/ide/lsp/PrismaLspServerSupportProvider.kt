@@ -1,7 +1,7 @@
 package org.intellij.prisma.ide.lsp
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.typescript.lsp.LspServerDownloader
+import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -49,7 +49,7 @@ fun restartPrismaServerAsync(project: Project) {
   }, project.disposed)
 }
 
-object PrismaLspExecutableDownloader : LspServerDownloader(PrismaLspServerPackageDescriptor) {
+object PrismaLspServerLoader : LspServerLoader(PrismaLspServerPackageDescriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef =
     PrismaServiceSettings.getInstance(project).lspServerPackageRef
 
