@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -47,10 +47,12 @@ abstract class VuexContainerImpl : VuexContainer {
       ?.let { VuexContainerInfoProvider.INSTANCE.getInfo(it) }
 }
 
-class VuexModuleImpl(override val name: String,
-                     private val initializerElement: PsiElement,
-                     nameElement: PsiElement,
-                     private val forceNamespaced: Boolean = false) : VuexContainerImpl(), VuexModule {
+class VuexModuleImpl(
+  override val name: String,
+  private val initializerElement: PsiElement,
+  nameElement: PsiElement,
+  private val forceNamespaced: Boolean = false,
+) : VuexContainerImpl(), VuexModule {
 
   constructor(name: String, element: PsiElement, forceNamespaced: Boolean = false) : this(name, element, element, forceNamespaced)
 
@@ -94,7 +96,7 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
         ?.stub
         ?.let {
           @Suppress("USELESS_CAST")
-          return it.findChildStubByType(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
+          return it.findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
             ?.psi as JSObjectLiteralExpression?
         }
       return call.arguments.getOrNull(0) as? JSObjectLiteralExpression
@@ -102,8 +104,10 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
   }
 }
 
-abstract class VuexNamedSymbolImpl(override val name: String,
-                                   override val source: PsiElement) : VuexNamedSymbol
+abstract class VuexNamedSymbolImpl(
+  override val name: String,
+  override val source: PsiElement,
+) : VuexNamedSymbol
 
 class VuexStatePropertyImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexStateProperty {

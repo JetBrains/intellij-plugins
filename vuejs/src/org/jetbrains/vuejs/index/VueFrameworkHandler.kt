@@ -328,25 +328,31 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
-  private fun recordDirective(outData: JSElementIndexingData,
-                              provider: JSImplicitElementProvider,
-                              directiveName: String,
-                              descriptorRef: PsiElement?) {
+  private fun recordDirective(
+    outData: JSElementIndexingData,
+    provider: JSImplicitElementProvider,
+    directiveName: String,
+    descriptorRef: PsiElement?,
+  ) {
     outData.addImplicitElement(createImplicitElement(VUE_GLOBAL_DIRECTIVES_INDEX_JS_KEY, directiveName, provider,
                                                      null, descriptorRef, true))
   }
 
-  private fun recordMixin(outData: JSElementIndexingData,
-                          provider: JSImplicitElementProvider,
-                          descriptorRef: PsiElement?,
-                          isGlobal: Boolean) {
+  private fun recordMixin(
+    outData: JSElementIndexingData,
+    provider: JSImplicitElementProvider,
+    descriptorRef: PsiElement?,
+    isGlobal: Boolean,
+  ) {
     outData.addImplicitElement(createImplicitElement(VUE_MIXIN_BINDING_INDEX_JS_KEY, if (isGlobal) GLOBAL else LOCAL, provider, null,
                                                      descriptorRef, isGlobal))
   }
 
-  private fun recordExtends(outData: JSElementIndexingData,
-                            provider: JSImplicitElementProvider,
-                            descriptorRef: PsiElement?) {
+  private fun recordExtends(
+    outData: JSElementIndexingData,
+    provider: JSImplicitElementProvider,
+    descriptorRef: PsiElement?,
+  ) {
     outData.addImplicitElement(createImplicitElement(VUE_EXTENDS_BINDING_INDEX_JS_KEY, LOCAL, provider, null,
                                                      descriptorRef, false))
   }
@@ -393,7 +399,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val treeParent = literalExpressionNode.treeParent
     val parentType = treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
-        || (JSElementTypes.PROPERTY == parentType
+        || (JSStubElementTypes.PROPERTY == parentType
             && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(treeParent)))) {
       return TreeUtil.getFileElement(literalExpressionNode)?.psi?.containingFile is VueFile
              || insideVueDescriptor(literalExpressionNode)
@@ -412,12 +418,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun isComponentModelProperty(property: ASTNode) =
     property.findChildByType(JSTokenTypes.IDENTIFIER)?.text.let { it == MODEL_PROP_PROP || it == MODEL_EVENT_PROP }
     && property.treeParent?.treeParent.let {
-      it != null && it.elementType == JSElementTypes.PROPERTY
+      it != null && it.elementType == JSStubElementTypes.PROPERTY
       && it.findChildByType(JSTokenTypes.IDENTIFIER)?.text == MODEL_PROP
     }
 
   private fun isVueComponentDecoratorCall(callNode: ASTNode): Boolean =
-    callNode.treeParent?.elementType == JSElementTypes.ES6_DECORATOR
+    callNode.treeParent?.elementType == JSStubElementTypes.ES6_DECORATOR
     && checkCallExpression(callNode) { refName, hasQualifier ->
       !hasQualifier && isVueComponentDecoratorName(refName)
     }
@@ -448,12 +454,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return index == VUE_URL_INDEX_KEY
   }
 
-  private fun createImplicitElement(indexKey: String,
-                                    name: String,
-                                    provider: PsiElement,
-                                    nameQualifiedReference: String? = null,
-                                    descriptor: PsiElement? = null,
-                                    isGlobal: Boolean = false): JSImplicitElementImpl {
+  private fun createImplicitElement(
+    indexKey: String,
+    name: String,
+    provider: PsiElement,
+    nameQualifiedReference: String? = null,
+    descriptor: PsiElement? = null,
+    isGlobal: Boolean = false,
+  ): JSImplicitElementImpl {
     val normalizedName = normalizeNameForIndex(name)
     val descriptorAsIndexed = descriptor as? JSIndexedPropertyAccessExpression
     val descriptorQualifiedRef = descriptorAsIndexed?.qualifier?.text
@@ -501,10 +509,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
       .let { it?.psi?.let { it as? HtmlTag }?.name == SCRIPT_TAG_NAME }
 
-  private fun recordVueFunctionName(vueFrameworkHandler: VueFrameworkHandler,
-                                    outData: JSElementIndexingData,
-                                    callExpression: JSCallExpression,
-                                    referenceName: String) {
+  private fun recordVueFunctionName(
+    vueFrameworkHandler: VueFrameworkHandler,
+    outData: JSElementIndexingData,
+    callExpression: JSCallExpression,
+    referenceName: String,
+  ) {
     outData.addImplicitElement(
       JSImplicitElementImpl.Builder(referenceName, callExpression)
         .setUserStringWithData(
@@ -526,7 +536,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   private fun checkCallExpression(callNode: ASTNode, check: (referenceName: String, hasQualifier: Boolean) -> Boolean): Boolean {
-    if (callNode.elementType != JSElementTypes.CALL_EXPRESSION) return false
+    if (callNode.elementType != JSStubElementTypes.CALL_EXPRESSION) return false
     val methodExpression = JSCallExpressionImpl.getMethodExpression(callNode)
     if (methodExpression == null || methodExpression.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
     val referenceName = JSReferenceExpressionImpl.getReferenceName(methodExpression) ?: return false
