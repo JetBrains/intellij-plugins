@@ -1,0 +1,248 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.sanity.results": [
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference Foo",
+              "markdown": "Unresolved reference Foo"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 3,
+                    "startColumn": 12,
+                    "charOffset": 24,
+                    "charLength": 3,
+                    "snippet": {
+                      "text": "Foo"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 1,
+                    "startColumn": 1,
+                    "charOffset": 0,
+                    "charLength": 101,
+                    "snippet": {
+                      "text": "package org\n\nclass Baz: Foo() {\n  fun method(param: Param, param: List<Param2>) {\n    unknownMethod()"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved types",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "644913a16b134c65",
+              "equalIndicator/v1": "c057c0e12e7bda99f77e9fa326ff5a8f22e07caeeec2d6e27a2a76bc4416723d"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          },
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference Param",
+              "markdown": "Unresolved reference Param"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 4,
+                    "startColumn": 21,
+                    "charOffset": 52,
+                    "charLength": 5,
+                    "snippet": {
+                      "text": "Param"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 2,
+                    "startColumn": 1,
+                    "charOffset": 12,
+                    "charLength": 93,
+                    "snippet": {
+                      "text": "\nclass Baz: Foo() {\n  fun method(param: Param, param: List<Param2>) {\n    unknownMethod()\n  }"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved types",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "1b84c6189d6b1a99",
+              "equalIndicator/v1": "2bf15009add3ce690e3fa0337f286f2ae3c9aa3050f570ea02c8fa6f326b129a"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          },
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference List",
+              "markdown": "Unresolved reference List"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 4,
+                    "startColumn": 35,
+                    "charOffset": 66,
+                    "charLength": 12,
+                    "snippet": {
+                      "text": "List<Param2>"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 2,
+                    "startColumn": 1,
+                    "charOffset": 12,
+                    "charLength": 93,
+                    "snippet": {
+                      "text": "\nclass Baz: Foo() {\n  fun method(param: Param, param: List<Param2>) {\n    unknownMethod()\n  }"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved types",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "0dcc177e6a68e7d6",
+              "equalIndicator/v1": "d817024e9da41f1702254e55240a158a4ffe2cffb02311341c1c6268bf2d04fb"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          },
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference Param2",
+              "markdown": "Unresolved reference Param2"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 4,
+                    "startColumn": 40,
+                    "charOffset": 71,
+                    "charLength": 6,
+                    "snippet": {
+                      "text": "Param2"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 2,
+                    "startColumn": 1,
+                    "charOffset": 12,
+                    "charLength": 93,
+                    "snippet": {
+                      "text": "\nclass Baz: Foo() {\n  fun method(param: Param, param: List<Param2>) {\n    unknownMethod()\n  }"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved types",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "4c82d983f7847c2c",
+              "equalIndicator/v1": "60085c8b77ba14bf2faa7ae0c0008adcbcf1dfcd8a2db16130b6d744ed0a69a0"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

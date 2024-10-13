@@ -1,0 +1,193 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition '1 == 1' is always 'true'",
+            "markdown": "Condition `1 == 1` is always `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9,
+                  "charOffset": 87,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "1 == 1"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 10,
+                  "charLength": 129,
+                  "snippet": {
+                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testPromo one inspection is present only in promo profile",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "197078e950b7b5df",
+            "equalIndicator/v1": "82ed8cf504ab0e0b4ba08e0e680f94ecd4ae7d2f0c636ced983d7f4301f6ec4e"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.promo.results": [
+          {
+            "ruleId": "IgnoreResultOfCall",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Result of 'A.unusedResult()' is ignored",
+              "markdown": "Result of `A.unusedResult()` is ignored"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 7,
+                    "startColumn": 5,
+                    "charOffset": 144,
+                    "charLength": 12,
+                    "snippet": {
+                      "text": "unusedResult"
+                    },
+                    "sourceLanguage": "JAVA"
+                  },
+                  "contextRegion": {
+                    "startLine": 5,
+                    "startColumn": 1,
+                    "charOffset": 97,
+                    "charLength": 86,
+                    "snippet": {
+                      "text": "      System.out.println(\"Another\");\n    }\n    unusedResult();\n    unusedResult();\n  }"
+                    },
+                    "sourceLanguage": "JAVA"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testPromo one inspection is present only in promo profile",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "7ed123e845f4e90f",
+              "equalIndicator/v1": "78db7bf409c5f2b51d0518139040f31206bb0388d5bbc8ef9daaff0a103ea5a7"
+            },
+            "properties": {
+              "ideaSeverity": "WARNING",
+              "qodanaSeverity": "High",
+              "tags": [
+                "JAVA"
+              ]
+            }
+          },
+          {
+            "ruleId": "IgnoreResultOfCall",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Result of 'A.unusedResult()' is ignored",
+              "markdown": "Result of `A.unusedResult()` is ignored"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 8,
+                    "startColumn": 5,
+                    "charOffset": 164,
+                    "charLength": 12,
+                    "snippet": {
+                      "text": "unusedResult"
+                    },
+                    "sourceLanguage": "JAVA"
+                  },
+                  "contextRegion": {
+                    "startLine": 6,
+                    "startColumn": 1,
+                    "charOffset": 134,
+                    "charLength": 50,
+                    "snippet": {
+                      "text": "    }\n    unusedResult();\n    unusedResult();\n  }\n"
+                    },
+                    "sourceLanguage": "JAVA"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testPromo one inspection is present only in promo profile",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "b5229326c8bd525e",
+              "equalIndicator/v1": "085482e368b7d965f4e30fe5551f0a7d83219627679098ba220ccb996917ef63"
+            },
+            "properties": {
+              "ideaSeverity": "WARNING",
+              "qodanaSeverity": "High",
+              "tags": [
+                "JAVA"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

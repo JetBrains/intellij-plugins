@@ -1,0 +1,77 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResult2()' is ignored",
+            "markdown": "Result of `A.unusedResult2()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 5,
+                  "charOffset": 64,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "unusedResult2"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 10,
+                  "charLength": 111,
+                  "snippet": {
+                    "text": "  public static void main() {\n    unusedResult();\n    unusedResult2();\n  }\n  public static int unusedResult() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "local changes_ absent and new",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "522f727c77190cb3",
+            "equalIndicator/v1": "efa598a7ca4714c00f67960a440c5b5a90ac5ee55dd4b74edabed56ec861223f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "incremental"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

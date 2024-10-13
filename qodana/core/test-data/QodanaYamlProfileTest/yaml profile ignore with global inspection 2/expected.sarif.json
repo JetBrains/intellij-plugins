@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class is never used.",
+            "markdown": "Class is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile ignore with global inspection 2",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "938e74141b1ee9ac",
+            "equalIndicator/v1": "6c795cad8066562eb83b84c69783ea26cca3bb7d2a3c1a3fc72c1dfa7355a871"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method is never used.",
+            "markdown": "Method is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile ignore with global inspection 2",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c2d615826a813301",
+            "equalIndicator/v1": "004cf9eef128bd83be06ba4604e6d5de32551af8edab5d05095cd8bc41df9721"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "CanBeFinal",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Declaration can have final modifier",
+            "markdown": "Declaration can have final modifier"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 15,
+                  "charOffset": 24,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "a"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 61,
+                  "snippet": {
+                    "text": "class A {\n  private int a = 0;\n\n  public static void main() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testAggregation",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "91a9a36f2be81887",
+            "equalIndicator/v1": "02ac2fd268e68f6f4e2f159e6ba12450a810cb5cc93d908649db95326e74510e"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "CanBeFinal",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Declaration can have final modifier",
+            "markdown": "Declaration can have final modifier"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 14,
+                  "charOffset": 201,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "unusedZeroResult"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 183,
+                  "charLength": 56,
+                  "snippet": {
+                    "text": "  }\n\n  public int unusedZeroResult() {\n    return 0;\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testAggregation",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "bae29a702dfb3d36",
+            "equalIndicator/v1": "8fe09175f09dfc7483fc0a54a23e8c90f29a5447911daf4d2e216646e3818fd4"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+image: atlassian/default-image:4
+
+pipelines:
+  branches:
+    another:
+      - step:
+          name: Another
+          script:
+            - echo "A"

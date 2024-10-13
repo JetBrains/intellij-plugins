@@ -1,0 +1,5 @@
+baseProfile: empty
+
+inspections:
+  - inspection: EscapeCategoryTool
+    enabled: true

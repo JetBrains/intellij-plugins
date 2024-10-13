@@ -1,0 +1,17 @@
+<idea-plugin package="org.jetbrains.qodana.jvm.kotlin">
+  <dependencies>
+    <plugin id="org.jetbrains.kotlin"/>
+  </dependencies>
+  <extensions defaultExtensionNs="com.intellij">
+    <localInspection language="kotlin" shortName="QodanaKotlinSanity"
+                     groupKey="inspection.general.tools.group.name" groupBundle="messages.InspectionsBundle"
+                     bundle="messages.QodanaBundle" key="inspection.kotlin.sanity.inspection"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="org.jetbrains.qodana.jvm.kotlin.QodanaKotlinSanityInspection"
+    />
+  </extensions>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <cyclomaticComplexityFileVisitor
+      implementation="org.jetbrains.qodana.jvm.kotlin.metrics.cyclomaticComplexity.KotlinCyclomaticComplexityMetricFileVisitor"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,412 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "tool",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Root problem",
+            "markdown": "Root problem"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 17,
+                  "charOffset": 53,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "toString"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 15,
+                  "charLength": 69,
+                  "snippet": {
+                    "text": "class A {\n  @Override\n  public String toString() {\n\n    return \"A{}\";"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2551da779ab0a178",
+            "equalIndicator/v1": "16d401905bf2c6f15510474492ffa6be1cfd7f0c40f896134da7e049fb3f40fd"
+          },
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "charOffset": 71,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "return \"A{}\";"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 37,
+                  "charLength": 52,
+                  "snippet": {
+                    "text": "  public String toString() {\n\n    return \"A{}\";\n  }\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "relatedProblemsRootHash": "toString",
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "tool",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Child problem",
+            "markdown": "Child problem"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "charOffset": 71,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "return \"A{}\";"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 37,
+                  "charLength": 52,
+                  "snippet": {
+                    "text": "  public String toString() {\n\n    return \"A{}\";\n  }\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "622be4af87157ec4",
+            "equalIndicator/v1": "4b6b050f41d8c305006ab2bf41fb78210efda0183e9e3638c7c6f68973065046"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "relatedProblemsChildHash": "toString",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "tool",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Root problem",
+            "markdown": "Root problem"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 17,
+                  "charOffset": 106,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "foo"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 85,
+                  "charLength": 44,
+                  "snippet": {
+                    "text": "  }\n\n  public String foo() {\n\n    int a = 0;"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "73efa79bc0af74b3",
+            "equalIndicator/v1": "d02ff6a10e6a4dd83c4820429ecc5591fc911d362b1060feb6dccb1e084967f9"
+          },
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "charOffset": 119,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "int a = 0;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 90,
+                  "charLength": 52,
+                  "snippet": {
+                    "text": "  public String foo() {\n\n    int a = 0;\n    a++;\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "charOffset": 134,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "a++;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 114,
+                  "charLength": 30,
+                  "snippet": {
+                    "text": "\n    int a = 0;\n    a++;\n  }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "relatedProblemsRootHash": "foo",
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "tool",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Child problem",
+            "markdown": "Child problem"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "charOffset": 119,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "int a = 0;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 90,
+                  "charLength": 52,
+                  "snippet": {
+                    "text": "  public String foo() {\n\n    int a = 0;\n    a++;\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "25ea8ca878edc167",
+            "equalIndicator/v1": "916275479cec650bb13cb2263aa2ffd862e21b3fee1251986b760dbb6a5c41ee"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "relatedProblemsChildHash": "foo",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "tool",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Child problem",
+            "markdown": "Child problem"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "charOffset": 134,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "a++;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 114,
+                  "charLength": 30,
+                  "snippet": {
+                    "text": "\n    int a = 0;\n    a++;\n  }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testRelatedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a803396260bb6ca9",
+            "equalIndicator/v1": "18a1d69e89a9be14243bb0b0ffeb2997f4c6b6629151d4b67560878c68aed7e0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "relatedProblemsChildHash": "foo",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# The inspection profile 'empty' is provided by Qodana.
+baseProfile: empty
+
+inspections:
+  - inspection: ConstantValue
+    enabled: true
+    ignore:
+      - "*/A.java"
+      - "**/C.java"

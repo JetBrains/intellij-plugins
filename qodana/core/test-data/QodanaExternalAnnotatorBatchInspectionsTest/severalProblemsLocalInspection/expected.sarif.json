@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "localTest",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "test",
+            "markdown": "test"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 3,
+                  "charOffset": 26,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "public void func() {\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 63,
+                  "snippet": {
+                    "text": "package pack;\nclass A {\n  public void func() {\n  }\n\n  @Override"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testSeveralProblemsLocalInspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "51923fea37a96235",
+            "equalIndicator/v1": "e4a29bbaf84b35a3828525cc9e43a2aa735fa1b94fb7ca820168b35d589e8e89"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "localTest",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "test",
+            "markdown": "test"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/pack/Some.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 3,
+                  "charOffset": 54,
+                  "charLength": 60,
+                  "snippet": {
+                    "text": "@Override\n  public String toString() {\n    return \"A{}\";\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 47,
+                  "charLength": 69,
+                  "snippet": {
+                    "text": "  }\n\n  @Override\n  public String toString() {\n    return \"A{}\";\n  }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testSeveralProblemsLocalInspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "67dcfc02370a7de9",
+            "equalIndicator/v1": "8da1b4e295f60fbb7fe55706ed12f71a9d392627f697e9f278c40c7f29cf68be"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

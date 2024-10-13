@@ -1,0 +1,2 @@
+test-module/B.java:CHANGED:hash
+test-module/C.java:REMOVED:hash

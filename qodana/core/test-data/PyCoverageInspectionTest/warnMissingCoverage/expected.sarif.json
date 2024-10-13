@@ -1,0 +1,476 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'FooCls.py' coverage is below the threshold 50%",
+            "markdown": "File `FooCls.py` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "class FooCls:"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "class FooCls:"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f21d2dba048fccf0",
+            "equalIndicator/v1": "5b04924d16dd5c7b909bb230ab100a684905e3e57c8f07ad4230405090f9d8f9"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'FooCls' coverage is below the threshold 50%",
+            "markdown": "Class `FooCls` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "FooCls"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "class FooCls:"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b4985849fe465903",
+            "equalIndicator/v1": "a34e0433e30e4d2292404ae544ed5d50f41ec28c4539f52f6bba010781f6f5c0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo' coverage is below the threshold 50%",
+            "markdown": "Method `foo` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 9,
+                  "charOffset": 22,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "foo"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 14,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "    def foo(self):"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0afec1ce78ad8a8b",
+            "equalIndicator/v1": "8c718c3a616d1685e80fe810bfefb5a9da32f056c480b91c4481a694a0eb0168"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'baz' coverage is below the threshold 50%",
+            "markdown": "Method `baz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 9,
+                  "charOffset": 302,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "baz"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 20,
+                  "startColumn": 1,
+                  "charOffset": 294,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "    def baz(self, i):"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4766fcbcd502dcbe",
+            "equalIndicator/v1": "86e72844dd42f0c911b037d02184fd56bb737f50f20a2ff556a665d0d9cc3e02"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'fun1' coverage is below the threshold 50%",
+            "markdown": "Method `fun1` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "charOffset": 512,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "fun1"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 33,
+                  "startColumn": 1,
+                  "charOffset": 508,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "def fun1():"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "edb52e800ffcfa37",
+            "equalIndicator/v1": "add434eb8bfaf93785c26396b683c2ced58dd265ab321b3bc4c442a049244453"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Constructor 'BaseClass' coverage is below the threshold 50%",
+            "markdown": "Constructor `BaseClass` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 9,
+                  "charOffset": 617,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "__init__"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 42,
+                  "startColumn": 1,
+                  "charOffset": 609,
+                  "charLength": 23,
+                  "snippet": {
+                    "text": "    def __init__(self):"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f70075c137bdc7a9",
+            "equalIndicator/v1": "221eb7c4b77fbd84cfdf233c8e9a1e3cabc298017d7259d756fecccb421c2f54"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'another.py' coverage is below the threshold 50%",
+            "markdown": "File `another.py` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/another.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "def ff():"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "def ff():"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "87ab55b5a5a80966",
+            "equalIndicator/v1": "833d01c99b07912b351838f510a918538cdf4287a043bebef8f911a90a6fde8d"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'ff' coverage is below the threshold 50%",
+            "markdown": "Method `ff` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/another.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 5,
+                  "charOffset": 4,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "ff"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "def ff():"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cd9d7335d0467a7f",
+            "equalIndicator/v1": "b7f80199db2e5503c6b59cb3856d4028430b9f227f206d6336f288f979336b74"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "Python"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 44,
+          "totalLines": 38,
+          "totalCoveredLines": 17
+        }
+      }
+    }
+  ]
+}

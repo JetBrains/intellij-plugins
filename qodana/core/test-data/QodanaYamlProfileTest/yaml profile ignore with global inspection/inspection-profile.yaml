@@ -1,0 +1,7 @@
+baseProfile: empty
+
+inspections:
+  - inspection: unused
+    enabled: true
+    ignore:
+      - "**/C.java"

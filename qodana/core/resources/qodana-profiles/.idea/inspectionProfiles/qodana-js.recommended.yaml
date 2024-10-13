@@ -1,0 +1,5 @@
+baseProfile: "Project Default"
+name: "qodana.recommended"
+
+include:
+  - "qodana.recommended.all.yaml"

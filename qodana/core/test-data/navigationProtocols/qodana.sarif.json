@@ -1,0 +1,63 @@
+{
+  "runs": [
+    {
+      "versionControlProvenance": [
+        {
+          "revisionId": "latest"
+        }
+      ],
+      "tool": {
+      },
+      "results": [
+        {
+          "ruleId": "inspection1",
+          "message": {
+            "text": "qodana"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "charLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "qodanaSeverity": "Moderate"
+          }
+        },
+        {
+          "ruleId": "inspection2",
+          "message": {
+            "text": "qodana"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 3,
+                  "charLength": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "qodanaSeverity": "Critical"
+          }
+        }
+      ]
+    }
+  ]
+}

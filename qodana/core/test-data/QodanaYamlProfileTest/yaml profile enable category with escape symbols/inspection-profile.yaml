@@ -1,0 +1,5 @@
+baseProfile: empty
+
+inspections:
+  - group: "category:Language/A_B/C\\"
+    enabled: true

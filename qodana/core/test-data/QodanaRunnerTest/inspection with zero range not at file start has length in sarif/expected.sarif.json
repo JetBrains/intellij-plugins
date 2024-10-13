@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "QdTestEmptyRangeNotAtStart",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Empty range",
+            "markdown": "Empty range"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 3,
+                  "charOffset": 12,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "p"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInspection with zero range not at file start has length in sarif",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2b1edd5fadf122ce",
+            "equalIndicator/v1": "eb474dedd23ed007c49a1625ab4fc7dd0c8a166f6d507035084bd788af32dc52"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "QdTestEmptyRangeNotAtStart",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Empty range",
+            "markdown": "Empty range"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 3,
+                  "charOffset": 187,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "p"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 180,
+                  "charLength": 59,
+                  "snippet": {
+                    "text": "  }\n\n  public static int unusedResult() {\n    return 5;\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInspection with zero range not at file start has length in sarif",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f5083bc485155948",
+            "equalIndicator/v1": "8f4070572efdb227ad9709aeb142348c75ca233fa8c9381b6aa34202962f4009"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+baseProfile: "Project Default"
+name: "qodana.recommended"
+
+include:
+  - "qodana-dotnet.static.yaml"
+
+groups:
+  - groupId: ReSharperInspections   # ReSharper inspections are enabled by default
+    groups:
+      - "category:C++"
+      - "category:C#"
+      - "category:XAML"
+      - "category:VB.NET"
+      - "category:Aspx"
+      - "category:HTML/Common Practices and Code Improvements"
+      - "category:HTML/Potential Code Quality Issues"
+      - "category:ResX"
+      - "category:Web.Config"
+      - "category:Razor"
+      - "category:Blazor"
+      - "category:Angular 2 HTML"
+      - "category:HttpHandler or WebService"
+      - "category:F#"
+      - "category:ASP.NET route templates"
+      - "category:RegExpBase"
+      - "category:XML/Spelling Issues"
+      - "category:T4"
+      - "category:Roslyn"
+      - "!RiderStaticSanityInspections"
+
+  - groupId: ReSharperGlobalInspections  # ReSharper global inspections that could be disabled for faster non-SWEA scan
+    inspections:
+      - MemberCanBePrivate.Global
+      - MemberCanBeProtected.Global
+      - MemberCanBeInternal
+      - MemberCanBeFileLocal
+      - MemberCanBeMadeStatic.Global
+      - ClassCanBeSealed.Global
+      - FieldCanBeMadeReadOnly.Global
+      - StructCanBeMadeReadOnly
+      - AutoPropertyCanBeMadeGetOnly.Global
+      - PropertyCanBeMadeInitOnly.Global
+      - ConvertToConstant.Global
+      - ParameterTypeCanBeEnumerable.Global
+      - ReturnTypeCanBeEnumerable.Global
+      - ClassNeverInstantiated.Global
+      - NotAccessedField.Global
+      - EventNeverSubscribedTo.Global
+      - UnassignedField.Global
+      - UnusedAutoPropertyAccessor.Global
+      - NotAccessedPositionalProperty.Global
+      - EventNeverInvoked.Global
+      - SuspiciousTypeConversion.Global
+      - CollectionNeverUpdated.Global
+      - CollectionNeverQueried.Global
+      - RedundantUsingDirective.Global
+      - IntroduceOptionalParameters.Global
+      - RedundantOverload.Global
+      - UnusedMember.Global
+      - UnusedType.Global
+      - UnusedMemberInSuper.Global
+      - UnusedMemberHierarchy.Global
+      - UnusedMethodReturnValue.Global
+      - UnusedParameter.Global
+      - ParameterOnlyUsedForPreconditionCheck.Global
+      - OutParameterValueIsAlwaysDiscarded.Global
+      - VirtualMemberNeverOverridden.Global
+      - ClassWithVirtualMembersNeverInherited.Global
+      - EntityNameCapturedOnly.Global
+
+  - groupId: QodanaDotNetInspections # Qodana inspections for .NET - coverage and vulnerability analysis
+    inspections:
+      - NetCoverageInspection
+      - CheckDependencyLicenses
+      - RiderSecurityErrorsInspection
+
+  # JavaScript inspections
+  - groupId: JSRelatedInspections
+    inspections:
+      - JsCoverageInspection
+
+  - groupId: JSInspections
+    groups:
+      - "category:JavaScript and TypeScript"
+      - "category:Angular"
+      - "category:Vue"
+      - "category:MongoJS"
+      - "category:Pug_Jade"
+      - "JSRelatedInspections"
+
+  - groupId: FlakyInspections
+    inspections:
+      - InconsistentNaming
+      - SpellCheckingInspection
+
+  - groupId: ProofreadingInspections
+    inspections:
+      - LanguageDetectionInspection
+      - GrazieInspection
+
+  - groupId: UnsupportedInspections # Annotator causes exceptions on MSBuild related files
+    inspections:
+      - Annotator
+
+  - groupId: DotnetExcluded
+    groups:
+      - "GLOBAL" # Qodana doesn't run global inspections by default, due to significant time consumption
+      - "JSRelatedInspections"
+      - "JSInspections"
+      - "FlakyInspections"
+      - "ProofreadingInspections"
+      - "UnsupportedInspections"
+      - "RiderStaticSanityInspections" # Inspections that appear in sanity profile
+      - "severity:INFORMATION" # Qodana doesn't run "invisible" and "technical" in IDE inspections
+      - "severity:TEXT ATTRIBUTES" # Qodana don't run "invisible" and "technical" in IDE inspections
+
+inspections:
+  - group: DotnetExcluded
+    enabled: false
+  - group: QodanaDotNetInspections  # Explicitly enable coverage and dependency vulnerability analysis by default
+    enabled: true
+  - inspection: HttpUrlsUsage # Spam
+    enabled: false
+  - group: ALL
+    ignore:
+      - ".qodana/**"
+      - "**/*.DotSettings" # Ignore .DotSettings files by default
+      - "scope#$gitignore" # $gitignore scope available only in qodana execution
+      - "scope#$UnrealEngine" # Ignore Unreal Engine files by default

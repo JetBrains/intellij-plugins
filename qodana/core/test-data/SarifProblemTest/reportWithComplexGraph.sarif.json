@@ -1,0 +1,329 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "results": [
+        {
+          "ruleId": "PhpVulnerablePathsInspection",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 22,
+                  "charLength": 19
+                }
+              },
+              "relationships": [
+                {
+                  "target": 1,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 8,
+                  "charLength": 39
+                }
+              },
+              "relationships": [
+                {
+                  "target": 2,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "charLength": 18
+                }
+              },
+              "relationships": [
+                {
+                  "target": 3,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 2,
+                  "charLength": 47
+                }
+              },
+              "relationships": [
+                {
+                  "target": 4,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/Logic.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 3,
+                  "endLine": 4,
+                  "endColumn": 23
+                }
+              },
+              "relationships": [
+                {
+                  "target": 5,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 6,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            }
+          ],
+          "graphs": [
+            {
+              "nodes": [
+                {
+                  "id": "1",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "Main.java",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 3,
+                        "startColumn": 36,
+                        "charLength": 4,
+                        "snippet": {
+                          "text": "args"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "2"
+                    ],
+                    "predecessors": [],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "2",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "Main.java",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 7,
+                        "startColumn": 42,
+                        "charLength": 4,
+                        "snippet": {
+                          "text": "args"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "3"
+                    ],
+                    "predecessors": [
+                      "1"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "3",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "Main.java",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 8,
+                        "startColumn": 16,
+                        "charLength": 7,
+                        "snippet": {
+                          "text": "args[1]"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [],
+                    "predecessors": [
+                      "2"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "4",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "Main.java",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 9,
+                        "startColumn": 47,
+                        "charLength": 4,
+                        "snippet": {
+                          "text": "args"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "5"
+                    ],
+                    "predecessors": [
+                      "2"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "5",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "src/Logic.java",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 3,
+                        "startColumn": 42,
+                        "charLength": 4,
+                        "snippet": {
+                          "text": "args"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "6"
+                    ],
+                    "predecessors": [
+                      "4"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "6",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "src/Logic.java",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 4,
+                        "startColumn": 16,
+                        "charLength": 7,
+                        "snippet": {
+                          "text": "args[2]"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [],
+                    "predecessors": [
+                      "5"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "id": "1",
+                  "sourceNodeId": "1",
+                  "targetNodeId": "2"
+                },
+                {
+                  "id": "2",
+                  "sourceNodeId": "2",
+                  "targetNodeId": "3"
+                },
+                {
+                  "id": "3",
+                  "sourceNodeId": "2",
+                  "targetNodeId": "4"
+                },
+                {
+                  "id": "4",
+                  "sourceNodeId": "4",
+                  "targetNodeId": "5"
+                },
+                {
+                  "id": "5",
+                  "sourceNodeId": "5",
+                  "targetNodeId": "6"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_1",
+        "guid": "REPORT_1"
+      }
+    }
+  ]
+}

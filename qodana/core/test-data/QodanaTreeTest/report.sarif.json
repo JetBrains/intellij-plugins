@@ -1,0 +1,139 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "results": [
+        {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 1
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 15,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "a"
+                  }
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "module/Logic.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 4,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "M"
+                  }
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "anotherModule/AnotherLogic.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 4,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "M"
+                  }
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "module/inner/Inner.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 4,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "M"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "INSPECTION_ID2",
+          "message": {
+            "text": "PROBLEM_2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "anotherModule/AnotherLogic.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 4,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "M"
+                  }
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "module/inner/Inner.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 4,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "M"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_1",
+        "guid": "REPORT_1"
+      }
+    }
+  ]
+}

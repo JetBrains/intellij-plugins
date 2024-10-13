@@ -1,0 +1,7 @@
+baseProfile: qodana.recommended
+
+inspections:
+  - inspection: ConstantValue
+    enabled: true
+    ignore:
+      - "scope#@gitgnore"

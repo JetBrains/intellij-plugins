@@ -1,0 +1,11 @@
+[
+  {
+    "message": {
+      "text": "Analysis by sanity inspection \"SimpleLocalSanity\" was suspended due to high number of problems."
+    },
+    "level": "error",
+    "properties": {
+      "qodanaKind": "sanityFailure"
+    }
+  }
+]

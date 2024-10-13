@@ -1,0 +1,192 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "QodanaSanity",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: unknow",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: unknow"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/org/Main.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 8,
+                  "charOffset": 20,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "unknow"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 87,
+                  "snippet": {
+                    "text": "package org\n\nimport unknow.Classname\nimport java.lang.Runnable\nimport java.lang.Unknown"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testUnresolved imports",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "7299740e88595892",
+            "equalIndicator/v1": "37fb350203f397f499157a2bec87c312dcf769ddaa1fd9b88a557687f7f36487"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "tags": [
+              "kotlin",
+              "UNRESOLVED_REFERENCE"
+            ]
+          }
+        },
+        {
+          "ruleId": "QodanaSanity",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Unknown",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Unknown"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/org/Main.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 18,
+                  "charOffset": 80,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "Unknown"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 13,
+                  "charLength": 116,
+                  "snippet": {
+                    "text": "import unknow.Classname\nimport java.lang.Runnable\nimport java.lang.Unknown\nimport java.lang.Unknown2 as JavaUnknown\n"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testUnresolved imports",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "115d038b666c23ae",
+            "equalIndicator/v1": "e5f7a7c3692e5091ae5ddd7b4aa7ff875b9be09787eff23887b61029061b11e1"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "tags": [
+              "kotlin",
+              "UNRESOLVED_REFERENCE"
+            ]
+          }
+        },
+        {
+          "ruleId": "QodanaSanity",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Unknown2",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Unknown2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/org/Main.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 18,
+                  "charOffset": 105,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "Unknown2"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 37,
+                  "charLength": 104,
+                  "snippet": {
+                    "text": "import java.lang.Runnable\nimport java.lang.Unknown\nimport java.lang.Unknown2 as JavaUnknown\n\nclass Baz {"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testUnresolved imports",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e04fe6f316516380",
+            "equalIndicator/v1": "55ba97065eb6daf432f9260c5597058062269cab676ce7ca7f39af1ab8e01a2f"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "tags": [
+              "kotlin",
+              "UNRESOLVED_REFERENCE"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

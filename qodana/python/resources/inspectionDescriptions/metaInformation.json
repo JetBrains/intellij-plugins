@@ -1,0 +1,8 @@
+{
+  "inspections": [
+    {
+      "id": "PyCoverageInspection",
+      "codeQualityCategory": "Reliability"
+    }
+  ]
+}

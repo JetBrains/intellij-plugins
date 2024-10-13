@@ -1,0 +1,80 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.sanity.results": [
+          {
+            "ruleId": "QodanaJavaSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference Unresolved",
+              "markdown": "Unresolved reference Unresolved"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 2,
+                    "startColumn": 27,
+                    "charOffset": 36,
+                    "charLength": 10,
+                    "snippet": {
+                      "text": "Unresolved"
+                    },
+                    "sourceLanguage": "JAVA"
+                  },
+                  "contextRegion": {
+                    "startLine": 1,
+                    "startColumn": 1,
+                    "charOffset": 0,
+                    "charLength": 97,
+                    "snippet": {
+                      "text": "class A {\n  public static void main(Unresolved u) {\n    for\n    System.kl.println(\"Hello world\");"
+                    },
+                    "sourceLanguage": "JAVA"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved references",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "542351094ca768cb",
+              "equalIndicator/v1": "c12660b10b653265ca67bfcd4beecb1076069ac9edc5cfaf0f8889743f707362"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "JAVA"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: SomeTask
+  - task: QodanaScan@2023
+    inputs:
+      args: -l,jetbrains/qodana-<linter>:latest
+    env:
+      QODANA_TOKEN: $(QODANA_TOKEN)

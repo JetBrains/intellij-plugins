@@ -1,0 +1,868 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'coverage.go' coverage is below the threshold 50%",
+            "markdown": "File `coverage.go` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a02003bf95d728f6",
+            "equalIndicator/v1": "ce7689d8c43f108ac80279ec97d745e3f4bd6b29d2894b1f02c937e0381fc767"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'Gar' coverage is below the threshold 50%",
+            "markdown": "Method `Gar` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 6,
+                  "charOffset": 169,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "Gar"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 16,
+                  "startColumn": 1,
+                  "charOffset": 164,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "func Gar(x, y int) int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "eb76eff4f597bedd",
+            "equalIndicator/v1": "b04c66d39b93960384ae689464370b01fb360342574169aa7e9d2b03ff197c7e"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'Gaz' coverage is below the threshold 50%",
+            "markdown": "Method `Gaz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 6,
+                  "charOffset": 362,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "Gaz"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 34,
+                  "startColumn": 1,
+                  "charOffset": 357,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "func Gaz(x int) func() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "710958aa0557bfb4",
+            "equalIndicator/v1": "6c425667ed793176595f68b1e9705f04d9218d3b3cff2192504c71d9189c7970"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in Gaz)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in Gaz)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 7,
+                  "charOffset": 392,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "func() int {"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 35,
+                  "startColumn": 1,
+                  "charOffset": 386,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "\tf := func() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "411b337f00bf9c85",
+            "equalIndicator/v1": "d17f9c8cca534d6bad9615fedc6ca041759a28de212f601b717fb4f6a588a400"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in Gaz)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in Gaz)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 7,
+                  "charOffset": 459,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "func() int {"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 40,
+                  "startColumn": 1,
+                  "charOffset": 453,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "\tg := func() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b6ac20ce4c82ac66",
+            "equalIndicator/v1": "d17594a1c1b0d4d50587506e9f913a2ec4068494d9f7d1edb0aeed015434adb7"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'f1 for receiver with type MyFloat' coverage is below the threshold 50%",
+            "markdown": "Method `f1 for receiver with type MyFloat` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 61,
+                  "startColumn": 18,
+                  "charOffset": 677,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "f1"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 61,
+                  "startColumn": 1,
+                  "charOffset": 660,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "func (a MyFloat) f1() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "68dbfbee2f47270a",
+            "equalIndicator/v1": "40790fd37d6959be48d735a2920d7e14de00130e626b58a731a387a97e2bd748"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'C' coverage is below the threshold 50%",
+            "markdown": "Method `C` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 6,
+                  "charOffset": 809,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 74,
+                  "startColumn": 1,
+                  "charOffset": 804,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "func C() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "edef1a2fc46d9633",
+            "equalIndicator/v1": "25e1057ab84e043e0a90808aca1acd6153cd7598fd0d7ae612f4aeec4f6dcace"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'not_covered.go' coverage is below the threshold 50%",
+            "markdown": "File `not_covered.go` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_covered.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "30e8bb4bbdab47f7",
+            "equalIndicator/v1": "6304f65c64d8e3bdd87f2097bd95de411208adc3e8358da042cc7a2d05776ad9"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'A' coverage is below the threshold 50%",
+            "markdown": "Method `A` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_covered.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 6,
+                  "charOffset": 22,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "A"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 17,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "func A() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5eb7a2a1425b8961",
+            "equalIndicator/v1": "bf927883a0503ca9e8495773341253dd3496e03014f9bda3565ae787a4a10668"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'A2' coverage is below the threshold 50%",
+            "markdown": "Method `A2` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_covered.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 6,
+                  "charOffset": 51,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "A2"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 46,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "func A2() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "febb253e1245a0d7",
+            "equalIndicator/v1": "c23e05f5545bc6200e0f19ab2de05c1985f2b8859a55029ab683ff5575777f5a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'A3' coverage is below the threshold 50%",
+            "markdown": "Method `A3` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_covered.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 6,
+                  "charOffset": 81,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "A3"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 76,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "func A3() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "dc0178e61444d313",
+            "equalIndicator/v1": "38200083cc3d0e2363f89b0da87bb8529c735981a3d6fff48d9b1cbe317e54dc"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'not_reported.go' coverage is below the threshold 50%",
+            "markdown": "File `not_reported.go` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_reported.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cb452de30733b2d0",
+            "equalIndicator/v1": "fa686aaf8abdfd0c307348425d02417d298adb670ec51646be4a75830fc5c237"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'X' coverage is below the threshold 50%",
+            "markdown": "Method `X` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_reported.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 6,
+                  "charOffset": 22,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "X"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 17,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "func X() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "68e4da977eafd320",
+            "equalIndicator/v1": "14694064f70d23f7c178f16159d1bc76d1dee18074d84acdbe223866cee10b21"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'X2' coverage is below the threshold 50%",
+            "markdown": "Method `X2` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_reported.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 6,
+                  "charOffset": 51,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "X2"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 46,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "func X2() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "76eb51a81d58dec0",
+            "equalIndicator/v1": "d33c627d324044c9190f8305bb78db27a29dc230a63367bcccec67087943cc9c"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'X3' coverage is below the threshold 50%",
+            "markdown": "Method `X3` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_reported.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 6,
+                  "charOffset": 81,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "X3"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 76,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "func X3() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9a56639d57770624",
+            "equalIndicator/v1": "62a81b7d9b9ce0239c0bc24e3502187c93145a47adae465c81e2db484dc2e720"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "go"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 44,
+          "totalLines": 69,
+          "totalCoveredLines": 31
+        }
+      }
+    }
+  ]
+}

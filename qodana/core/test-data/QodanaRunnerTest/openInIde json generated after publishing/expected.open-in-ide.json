@@ -1,0 +1,12 @@
+{
+  "cloud" : {
+    "url" : "https://host-url/projects/TEST_PROJECT_ID/reports/TEST_REPORT_ID",
+    "reportId" : "TEST_REPORT_ID",
+    "projectId" : "TEST_PROJECT_ID",
+    "projectName" : "test-project",
+    "host" : "https://host-url"
+  },
+  "vcs" : {
+    "origin" : "https://remote-url"
+  }
+}

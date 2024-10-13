@@ -1,0 +1,44 @@
+<idea-plugin package="org.jetbrains.qodana.yaml">
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.yaml"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="JavaScript.JsonSchema">
+    <ProviderFactory implementation="org.jetbrains.qodana.yaml.QodanaYamlSchemaProviderFactory"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--yaml support -->
+    <completion.contributor
+      language="yaml"
+      id="qodanaYamlInspectionsCompetion"
+      order="first"
+      implementationClass="org.jetbrains.qodana.yaml.QodanaYamlInspectionsCompletion"/>
+    <completion.contributor
+      language="yaml"
+      id="qodanaYamlProfilesCompetion"
+      order="first"
+      implementationClass="org.jetbrains.qodana.yaml.QodanaYamlProfilesCompletion"/>
+    <completion.contributor
+      language="yaml"
+      id="qodanaYamlPathsCompetion"
+      order="first"
+      implementationClass="org.jetbrains.qodana.yaml.QodanaYamlPathsCompletion"/>
+    <codeInsight.declarativeInlayProvider language="yaml"
+                                          implementationClass="org.jetbrains.qodana.yaml.QodanaYamlInspectionHintProvider"
+                                          isEnabledByDefault="true"
+                                          group="OTHER_GROUP"
+                                          providerId="qodana.yaml.inspection.descriptions"
+                                          bundle="messages.QodanaBundle"
+                                          nameKey="qodana.yaml.inspection.hints.provider.name"
+                                          descriptionKey="qodana.yaml.inspection.hints.provider.name"/>
+    <platform.backend.documentation.psiTargetProvider implementation="org.jetbrains.qodana.yaml.QodanaYamlInspectionDocumentationProvider"/>
+    <psi.referenceContributor language="yaml" implementation="org.jetbrains.qodana.yaml.QodanaYamlPathReferenceContributor"/>
+    <intentionAction>
+      <language>yaml</language>
+      <className>org.jetbrains.qodana.yaml.QodanaShowInspectionIntention</className>
+      <bundleName>messages.QodanaBundle</bundleName>
+      <categoryKey>qodana.yaml.intention.category</categoryKey>
+    </intentionAction>
+  </extensions>
+</idea-plugin>

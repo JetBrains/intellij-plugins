@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "UNUSED_IMPORT",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unused import 'import java.util.ArrayList;'",
+            "markdown": "Unused import `import java.util.ArrayList;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 53,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;\nimport java.util.Arrays;\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testUnusedImports",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9f5deef3fafa8efd",
+            "equalIndicator/v1": "ff5ecf9c8e898adb0c37465e12c4cd274995fcb330b712d7a561c60df6e7a6d0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "UNUSED_IMPORT",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unused import 'import java.util.Arrays;'",
+            "markdown": "Unused import `import java.util.Arrays;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 28,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "import java.util.Arrays;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 66,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;\nimport java.util.Arrays;\n\nclass Main {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testUnusedImports",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5d1fec955e582af0",
+            "equalIndicator/v1": "6ae50b27ef1f504f7db13008158e4a62f057b86b21aacbceb9b387ab17eca366"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

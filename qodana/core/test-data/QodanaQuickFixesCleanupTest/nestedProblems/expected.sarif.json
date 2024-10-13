@@ -1,0 +1,357 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 9,
+                  "charOffset": 139,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 48,
+                  "charLength": 124,
+                  "snippet": {
+                    "text": "  public static void main(String[] args) {\n    System.out.println(\"Hello World!\");\n    if (true) {\n      if (true) {\n      }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testNestedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "42ce44d46f8b548d",
+            "equalIndicator/v1": "b9605b05bfd8f68b6c55ba264c2ef0d3ae88d0970a2f2f010f0759aa863131e0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "charOffset": 157,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 91,
+                  "charLength": 87,
+                  "snippet": {
+                    "text": "    System.out.println(\"Hello World!\");\n    if (true) {\n      if (true) {\n      }\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testNestedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "01fc4cdf37ec735d",
+            "equalIndicator/v1": "91365f2e2e32abb64ba7165b55c0ba8192eb0521b4fd00c5b1e654cb9eac9b34"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "DuplicateCondition",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Duplicate condition 'true'",
+            "markdown": "Duplicate condition `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 9,
+                  "charOffset": 139,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 48,
+                  "charLength": 124,
+                  "snippet": {
+                    "text": "  public static void main(String[] args) {\n    System.out.println(\"Hello World!\");\n    if (true) {\n      if (true) {\n      }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testNestedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "ad3741c6c7dec4a9",
+            "equalIndicator/v1": "2692b576c32eedab568d4b623623e3fba5cf9b7ffba91bf319bd6c066240b9ee"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "DuplicateCondition",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Duplicate condition 'true'",
+            "markdown": "Duplicate condition `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "charOffset": 157,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 91,
+                  "charLength": 87,
+                  "snippet": {
+                    "text": "    System.out.println(\"Hello World!\");\n    if (true) {\n      if (true) {\n      }\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testNestedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "1eaaf722a7538589",
+            "equalIndicator/v1": "a4296533146efa9b8997656f2403ee67bcc1fe1d779111b07fb24c33613de1ac"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "EmptyStatementBody",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'if' statement has empty body",
+            "markdown": "`if` statement has empty body"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 7,
+                  "charOffset": 153,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "if"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 91,
+                  "charLength": 87,
+                  "snippet": {
+                    "text": "    System.out.println(\"Hello World!\");\n    if (true) {\n      if (true) {\n      }\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testNestedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9cf6dd33afed1e9b",
+            "equalIndicator/v1": "ba437beb79597478ca0b999679d72bcdd209c59f2fea114a66132dd5ec479e02"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "UNUSED_IMPORT",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unused import 'import java.util.ArrayList;'",
+            "markdown": "Unused import `import java.util.ArrayList;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 47,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;\n\npublic class App {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testNestedProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "07dbd3df96b8d56c",
+            "equalIndicator/v1": "7cc3bcfc83db0618ac6bac3c455069c68284ced951713188924406ad2e299a51"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

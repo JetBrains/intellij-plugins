@@ -1,0 +1,25 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "metrics": {
+          "linesOfCode": 14
+        }
+      }
+    }
+  ]
+}

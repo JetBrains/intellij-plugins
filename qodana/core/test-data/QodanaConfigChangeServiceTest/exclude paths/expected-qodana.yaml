@@ -1,0 +1,6 @@
+version: "1.0"
+exclude:
+  - name: All
+    paths:
+      - excluded/path1
+      - excluded/path2

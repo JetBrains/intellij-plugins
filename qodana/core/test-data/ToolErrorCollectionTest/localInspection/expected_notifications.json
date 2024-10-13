@@ -1,0 +1,27 @@
+[
+  {
+    "locations": [
+      {
+        "physicalLocation": {
+          "artifactLocation": {
+            "uri": "test-module/pack/Foo.java",
+            "uriBaseId": "SRCROOT"
+          }
+        }
+      }
+    ],
+    "message": {
+      "text": "Inspection SimpleLocal failed"
+    },
+    "level": "error",
+    "timeUtc": "2023-10-26T13:10:49Z",
+    "exception": {
+      "message": "<<EXPECTED>>"
+    },
+    "properties": {
+      "exceptionClass": "java.lang.IllegalStateException",
+      "qodanaKind": "toolError",
+      "toolId": "SimpleLocal"
+    }
+  }
+]

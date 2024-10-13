@@ -1,0 +1,14 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.GitReportContributor"/>
+    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.workflow.GitCommitsSummaryLogger"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.LocalChangesScriptFactory"/>
+    <repositoryRevisionProvider implementation="org.jetbrains.qodana.extensions.GitRepositoryRevisionProvider"/>
+    <repositoryInfoProvider implementation="org.jetbrains.qodana.extensions.GitRepositoryInfoProvider"/>
+    <vcsIgnoredFilesProvider implementation="org.jetbrains.qodana.extensions.GitIgnoredFilesProvider"/>
+    <vcsRevisionProvider implementation="org.jetbrains.qodana.vcs.GitRevisionProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <customScopesProvider implementation="org.jetbrains.qodana.staticAnalysis.scopes.GitIgnoreScopeProvider" id="gitignore"/>
+  </extensions>
+</idea-plugin>
