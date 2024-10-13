@@ -4,6 +4,7 @@ package com.intellij.lang.actionscript.parsing;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
 import com.intellij.lang.actionscript.ActionScriptElementTypes;
+import com.intellij.lang.actionscript.ActionScriptStubElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.parsing.StatementParser;
@@ -21,7 +22,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   public void parseAttributeBody() {
     final PsiBuilder.Marker attribute = builder.mark();
-    if(!checkMatches(builder, JSTokenTypes.IDENTIFIER, "javascript.parser.message.expected.identifier")) {
+    if (!checkMatches(builder, JSTokenTypes.IDENTIFIER, "javascript.parser.message.expected.identifier")) {
       attribute.drop();
       return;
     }
@@ -33,7 +34,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
   @Override
   protected boolean parseVarName(PsiBuilder.Marker var) {
     if (!isIdentifierToken(builder.getTokenType())) {
-      builder.error(JavaScriptBundle.message("javascript.parser.message.expected.variable.name"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.variable.name"));
       builder.advanceLexer();
       var.drop();
       return false;
@@ -98,7 +99,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     checkMatches(builder, JSTokenTypes.STRING_LITERAL, "javascript.parser.message.expected.string.literal");
     checkForSemicolon();
 
-    useNSStatement.done(ActionScriptElementTypes.INCLUDE_DIRECTIVE);
+    useNSStatement.done(ActionScriptStubElementTypes.INCLUDE_DIRECTIVE);
   }
 
   private boolean parseNamespaceNoMarker(final @NotNull PsiBuilder.Marker useNSStatement) {
@@ -119,14 +120,16 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
       if (tokenType == JSTokenTypes.PUBLIC_KEYWORD) {
         builder.advanceLexer();
-      } else if (tokenType == JSTokenTypes.STRING_LITERAL || tokenType == JSTokenTypes.IDENTIFIER) {
+      }
+      else if (tokenType == JSTokenTypes.STRING_LITERAL || tokenType == JSTokenTypes.IDENTIFIER) {
         myJavaScriptParser.getExpressionParser().parseExpression();
-      } else {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.string.literal"));
+      }
+      else {
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.string.literal"));
       }
     }
     checkForSemicolon();
-    useNSStatement.done(ActionScriptElementTypes.NAMESPACE_DECLARATION);
+    useNSStatement.done(ActionScriptStubElementTypes.NAMESPACE_DECLARATION);
     useNSStatement.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
     return true;
   }
@@ -139,7 +142,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
     if (builder.getTokenType() == JSTokenTypes.IDENTIFIER &&
         "xml".equals(builder.getTokenText())
-      ) {
+    ) {
       builder.advanceLexer();
 
       if (checkMatches(builder, JSTokenTypes.NAMESPACE_KEYWORD, "javascript.parser.message.expected.namespace")) {
@@ -147,8 +150,9 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
           myJavaScriptParser.getExpressionParser().parseExpression();
         }
       }
-    } else {
-      builder.error(JavaScriptBundle.message("javascript.parser.message.expected.xml"));
+    }
+    else {
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.xml"));
     }
     marker.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
     checkForSemicolon();
@@ -167,7 +171,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   @Override
   public IElementType getVariableElementType() {
-    return isBlockBodyContext() ? ActionScriptElementTypes.LOCAL_VARIABLE : ActionScriptElementTypes.ACTIONSCRIPT_VARIABLE;
+    return isBlockBodyContext() ? ActionScriptStubElementTypes.LOCAL_VARIABLE : ActionScriptStubElementTypes.ACTIONSCRIPT_VARIABLE;
   }
 
   public void parseUseNamespaceDirective() {
@@ -175,24 +179,25 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     builder.advanceLexer();
 
     if (builder.getTokenType() != JSTokenTypes.NAMESPACE_KEYWORD) {
-      builder.error(JavaScriptBundle.message("javascript.parser.message.expected.namespace"));
-    } else {
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.namespace"));
+    }
+    else {
       builder.advanceLexer();
 
       if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName()) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
       }
 
-      while(builder.getTokenType() == JSTokenTypes.COMMA) {
+      while (builder.getTokenType() == JSTokenTypes.COMMA) {
         builder.advanceLexer();
         if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.typename.or.*"));
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
           break;
         }
       }
     }
     checkForSemicolon();
-    useNSStatement.done(ActionScriptElementTypes.USE_NAMESPACE_DIRECTIVE);
+    useNSStatement.done(ActionScriptStubElementTypes.USE_NAMESPACE_DIRECTIVE);
   }
 
   private void parsePackage() {
@@ -203,7 +208,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     }
 
     if (builder.getTokenType() != JSTokenTypes.LBRACE) {
-      builder.error(JavaScriptBundle.message("javascript.parser.message.expected.name.or.lbrace"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.name.or.lbrace"));
     }
     else {
       parseBlockAndAttachStatementsDirectly();
@@ -218,7 +223,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
       final PsiBuilder.Marker nsAssignment = builder.mark();
       if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName(true)) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
         nsAssignment.drop();
         return;
       }
@@ -226,11 +231,12 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       if (builder.getTokenType() == JSTokenTypes.EQ) {
         builder.advanceLexer();
         if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.typename.or.*"));
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
         }
 
         nsAssignment.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
-      } else {
+      }
+      else {
         nsAssignment.drop();
       }
 
@@ -258,7 +264,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
         parsePossiblyQualifiedName();
       }
       else {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
       }
 
       if (builder.getTokenType() == JSTokenTypes.EXTENDS_KEYWORD) {
@@ -270,7 +276,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
 
       parseBlockAndAttachStatementsDirectly();
-      clazz.done(ActionScriptElementTypes.ACTIONSCRIPT_CLASS);
+      clazz.done(ActionScriptStubElementTypes.ACTIONSCRIPT_CLASS);
       clazz.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
     }
     finally {
@@ -291,7 +297,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       builder.advanceLexer();
       validQualifier = JSKeywordSets.IDENTIFIER_NAMES.contains(builder.getTokenType());
       if (!validQualifier) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
       }
       builder.advanceLexer();
     }
@@ -300,7 +306,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   @Override
   protected IElementType getClassElementType() {
-    return ActionScriptElementTypes.ACTIONSCRIPT_CLASS;
+    return ActionScriptStubElementTypes.ACTIONSCRIPT_CLASS;
   }
 
   @Override

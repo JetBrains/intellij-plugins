@@ -30,7 +30,7 @@ public final class ActionScriptExpressionParser extends ExpressionParser<ActionS
 
   @Override
   protected boolean isFunctionPropertyStart(@NotNull PsiBuilder builder) {
-    return JSKeywordSets.PROPERTY_NAMES.contains(builder.getTokenType()) && builder.lookAhead(1) == JSTokenTypes.LPAR ;
+    return JSKeywordSets.PROPERTY_NAMES.contains(builder.getTokenType()) && builder.lookAhead(1) == JSTokenTypes.LPAR;
   }
 
   @Override
@@ -72,12 +72,14 @@ public final class ActionScriptExpressionParser extends ExpressionParser<ActionS
 
             possibleNamespaceStartMarker = null;
           }
-        } else if (tokenType == JSTokenTypes.LBRACKET) {
+        }
+        else if (tokenType == JSTokenTypes.LBRACKET) {
           builder.advanceLexer();
           parseExpression();
           checkMatches(builder, JSTokenTypes.RBRACKET, "javascript.parser.message.expected.rbracket");
-        } else {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
+        }
+        else {
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
         }
       }
 

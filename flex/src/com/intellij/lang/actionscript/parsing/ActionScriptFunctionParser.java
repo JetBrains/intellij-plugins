@@ -1,7 +1,7 @@
 package com.intellij.lang.actionscript.parsing;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.actionscript.ActionScriptElementTypes;
+import com.intellij.lang.actionscript.ActionScriptStubElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl;
@@ -36,7 +36,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
   @Override
   public IElementType getFunctionDeclarationElementType() {
-    return ActionScriptElementTypes.ACTIONSCRIPT_FUNCTION;
+    return ActionScriptStubElementTypes.ACTIONSCRIPT_FUNCTION;
   }
 
   @Override
@@ -51,12 +51,12 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
       boolean hadConditionalCompileBlock = false;
 
       boolean doNotAllowAttributes = false;
-      while(hasSomethingInAttrList) {
+      while (hasSomethingInAttrList) {
         hasSomethingInAttrList = false;
 
         while (builder.getTokenType() == JSTokenTypes.LBRACKET) {
           if (doNotAllowAttributes) {
-            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.declaration"));
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.declaration"));
             break;
           }
 
@@ -66,7 +66,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
           IElementType tokenType = builder.getTokenType();
           if (tokenType == JSTokenTypes.RBRACKET) {
-            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
           }
           else if (tokenType == null || !isIdentifierToken(tokenType)) {
             attribute.drop();
@@ -76,12 +76,12 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
             builder.advanceLexer();
           }
 
-          while(builder.getTokenType() != JSTokenTypes.RBRACKET) {
+          while (builder.getTokenType() != JSTokenTypes.RBRACKET) {
             parseAttributeBody();
 
             if (builder.eof()) {
               attribute.done(JSStubElementTypes.ATTRIBUTE);
-              builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rbracket"));
+              builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rbracket"));
               return true;
             }
           }
@@ -112,13 +112,15 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
           IElementType tokenType = builder.getTokenType();
 
           if (!hadConditionalCompileBlock) {
-            if(tokenType == JSTokenTypes.COLON_COLON && myJavaScriptParser.getExpressionParser().proceedWithNamespaceReference(identifier, false)) {
+            if (tokenType == JSTokenTypes.COLON_COLON &&
+                myJavaScriptParser.getExpressionParser().proceedWithNamespaceReference(identifier, false)) {
               (identifier = identifier.precede()).done(JSElementTypes.REFERENCE_EXPRESSION);
               identifier.precede().done(JSElementTypes.CONDITIONAL_COMPILE_VARIABLE_REFERENCE);
               hadConditionalCompileBlock = true;
               seenNs = false;
-            } else if (tokenType == JSTokenTypes.DOT) {
-              while(builder.getTokenType() == JSTokenTypes.DOT) {
+            }
+            else if (tokenType == JSTokenTypes.DOT) {
+              while (builder.getTokenType() == JSTokenTypes.DOT) {
                 builder.advanceLexer();
                 boolean identifierToken = isIdentifierToken(builder.getTokenType());
                 if (identifierToken) {
@@ -127,27 +129,31 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
                 identifier.done(JSElementTypes.REFERENCE_EXPRESSION);
                 identifier = identifier.precede();
                 if (!identifierToken) {
-                  builder.error(JavaScriptBundle.message("javascript.parser.message.expected.name"));
+                  builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.name"));
                   break;
                 }
               }
               identifier.drop();
-            } else {
+            }
+            else {
               identifier.drop();
             }
-          } else {
+          }
+          else {
             identifier.drop();
           }
         }
 
         IElementType tokenType;
-        while(JSTokenTypes.MODIFIERS.contains(tokenType = builder.getTokenType())
-          || tokenType == JSTokenTypes.GET_KEYWORD || tokenType == JSTokenTypes.SET_KEYWORD) {
+        while (JSTokenTypes.MODIFIERS.contains(tokenType = builder.getTokenType())
+               || tokenType == JSTokenTypes.GET_KEYWORD || tokenType == JSTokenTypes.SET_KEYWORD) {
           doNotAllowAttributes = true;
           seenAnyAttributes = true;
           hasSomethingInAttrList = true;
           if (builder.getTokenType() == JSTokenTypes.NATIVE_KEYWORD ||
-              builder.getTokenType() == JSTokenTypes.DECLARE_KEYWORD) builder.putUserData(methodsEmptinessKey, MethodEmptiness.ALWAYS);
+              builder.getTokenType() == JSTokenTypes.DECLARE_KEYWORD) {
+            builder.putUserData(methodsEmptinessKey, MethodEmptiness.ALWAYS);
+          }
           builder.advanceLexer();
         }
 
@@ -162,9 +168,10 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
       if (seenNs &&
           !seenAnyAttributes &&
           isNonAttrListOwner(currentTokenType)
-        ) {
+      ) {
         modifierList.rollbackTo();
-      } else {
+      }
+      else {
         modifierList.done(getAttributeListElementType());
       }
     }
@@ -173,17 +180,17 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
   @Override
   public IElementType getAttributeListElementType() {
-    return ActionScriptElementTypes.ACTIONSCRIPT_ATTRIBUTE_LIST;
+    return ActionScriptStubElementTypes.ACTIONSCRIPT_ATTRIBUTE_LIST;
   }
 
   public void parseAttributeBody() {
     final boolean haveLParen = checkMatches(builder, JSTokenTypes.LPAR, "javascript.parser.message.expected.lparen");
 
-    while(haveLParen) {
+    while (haveLParen) {
       boolean hasName = JSAttributeNameValuePairImpl.IDENTIFIER_TOKENS_SET.contains(builder.getTokenType());
 
       if (builder.getTokenType() == JSTokenTypes.COMMA) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier.or.value"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier.or.value"));
         break;
       }
       IElementType tokenType = builder.getTokenType();
@@ -215,7 +222,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
           }
         }
         else {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.value"));
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.value"));
         }
       }
 
@@ -224,13 +231,17 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
       builder.advanceLexer();
 
       if (builder.eof()) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rparen"));
         return;
       }
     }
 
-    if (haveLParen) checkMatches(builder, JSTokenTypes.RPAR, "javascript.parser.message.expected.rparen");
-    else builder.advanceLexer();
+    if (haveLParen) {
+      checkMatches(builder, JSTokenTypes.RPAR, "javascript.parser.message.expected.rparen");
+    }
+    else {
+      builder.advanceLexer();
+    }
   }
 
   private static boolean isNonAttrListOwner(IElementType currentTokenType) {
@@ -255,11 +266,11 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
   @Override
   protected IElementType getFunctionExpressionElementType() {
-    return ActionScriptElementTypes.ACTIONSCRIPT_FUNCTION_EXPRESSION;
+    return ActionScriptStubElementTypes.ACTIONSCRIPT_FUNCTION_EXPRESSION;
   }
 
   @Override
   public IElementType getParameterType() {
-    return ActionScriptElementTypes.ACTIONSCRIPT_PARAMETER;
+    return ActionScriptStubElementTypes.ACTIONSCRIPT_PARAMETER;
   }
 }

@@ -53,7 +53,7 @@ class Angular2Parser private constructor(
         count++
         val expression = builder.mark()
         if (!expressionParser!!.parseExpressionOptional(false)) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
           builder.advanceLexer()
           expression.drop()
         }
@@ -78,7 +78,7 @@ class Angular2Parser private constructor(
         }
         else if (tokenType != null) {
           if (!parenExpectedReported && openParensCount > 0) {
-            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen", builder.tokenText))
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rparen", builder.tokenText))
             parenExpectedReported = true
           }
           else {
@@ -87,7 +87,7 @@ class Angular2Parser private constructor(
         }
       }
       if (openParensCount > 0) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.missing.rparen"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.missing.rparen"))
       }
       when (count) {
         0 -> {
@@ -97,7 +97,7 @@ class Angular2Parser private constructor(
           else {
             chain.done(JSStubElementTypes.EMPTY_EXPRESSION)
             if (!allowEmpty) {
-              chain.precede().error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+              chain.precede().error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
             }
           }
         }
@@ -177,7 +177,7 @@ class Angular2Parser private constructor(
         }
         else if (builder.tokenType !== JSTokenTypes.LET_KEYWORD
                  && !expressionParser!!.parsePipe()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
         binding.done(createTemplateBindingStatement(key, isVar, name))
         if (builder.tokenType === JSTokenTypes.AS_KEYWORD && !isVar) {
@@ -267,7 +267,7 @@ class Angular2Parser private constructor(
         while (builder.tokenType === JSTokenTypes.COLON) {
           builder.advanceLexer()
           if (!parseAssignmentExpressionChecked()) {
-            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
           }
           else {
             hasParams = true
@@ -291,10 +291,10 @@ class Angular2Parser private constructor(
     private fun parseAssignmentExpressionChecked(): Boolean {
       val expr = builder.mark()
       if (builder.tokenType === JSTokenTypes.EQ) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         builder.advanceLexer()
         if (!parsePipe()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
         expr.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION)
         return true
@@ -312,7 +312,7 @@ class Angular2Parser private constructor(
         }
         builder.advanceLexer()
         if (!parsePipe()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
         expr.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION)
       }
@@ -399,7 +399,7 @@ class Angular2Parser private constructor(
         }
       }
       else {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.property.name"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.property.name"))
         builder.advanceLexer()
       }
       parsePropertyInitializer(false)
@@ -586,20 +586,20 @@ class Angular2Parser private constructor(
 
     private fun parseLetDefinition(builder: PsiBuilder, parser: Angular2StatementParser) {
       if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
         skipContents(builder)
         return
       }
       val definition = builder.mark()
       builder.advanceLexer()
       if (builder.tokenType != JSTokenTypes.EQ) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.equal"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.equal"))
         skipContents(builder)
       }
       else {
         builder.advanceLexer()
         if (builder.eof()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
         else {
           // Parse binding
@@ -612,7 +612,7 @@ class Angular2Parser private constructor(
 
     private fun parseOnTrigger(builder: PsiBuilder) {
       if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
         skipContents(builder)
         return
       }
@@ -623,7 +623,7 @@ class Angular2Parser private constructor(
         return
       }
       if (builder.tokenType != JSTokenTypes.LPAR) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.lparen", builder.tokenText!!))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.lparen", builder.tokenText!!))
       }
       else {
         builder.advanceLexer()
@@ -637,17 +637,17 @@ class Angular2Parser private constructor(
         parseDeferredTime(builder, JSTokenTypes.RPAR)
       }
       else if (!builder.eof()) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
         skipContents(builder)
         return
       }
       if (builder.tokenType != JSTokenTypes.RPAR) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rparen"))
       }
       else {
         builder.advanceLexer()
         if (!builder.eof()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
         }
       }
       skipContents(builder)
@@ -686,7 +686,7 @@ class Angular2Parser private constructor(
       }
       timeLiteral.done(Angular2StubElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION)
       if (!builder.eof() && builder.tokenType != endToken) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
         while (!builder.eof() && builder.tokenType != endToken) {
           builder.advanceLexer()
         }
@@ -750,14 +750,14 @@ class Angular2Parser private constructor(
       if (isParameterName(builder, "let")) {
         builder.advanceLexer()
         if (builder.eof()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
           return
         }
         val stmt = builder.mark()
         while (!builder.eof()) {
           val variable = builder.mark()
           if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
-            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
             if (builder.tokenType.let { it != JSTokenTypes.EQ && it != JSTokenTypes.COMMA }) {
               builder.advanceLexer()
             }
@@ -775,12 +775,12 @@ class Angular2Parser private constructor(
           }
           if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
             if (builder.tokenType == JSTokenTypes.COMMA) {
-              builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+              builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
             }
             else {
               val errorStart = builder.mark()
               builder.advanceLexer()
-              errorStart.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+              errorStart.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
             }
           }
           else {
@@ -817,7 +817,7 @@ class Angular2Parser private constructor(
 
     private fun tryParseParameterVariable(builder: PsiBuilder): Boolean {
       if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
         return false
       }
       else {
