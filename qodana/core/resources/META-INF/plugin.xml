@@ -1,0 +1,381 @@
+<idea-plugin>
+  <id>org.intellij.qodana</id>
+  <name>Qodana</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+    <b>Qodana:</b> The code quality platform for your favorite CI.
+    <br/><br/>
+    Qodana is a code quality monitoring platform that brings into your CI/CD pipelines all the smart features you love in the JetBrains IDEs as well as project-level checks like clone detection and license audit.
+    <br/><br/>
+    <a href='https://www.jetbrains.com/qodana/'>Explore Qodana</a>
+    <br/><br/>
+    The plugin provides a link between a Qodana and your project opened in an IDE:
+    <ul>
+     <li>Open Qodana static analysis SARIF report and view the issues detected by a Qodana linter</li>
+     <li>Use the "Open in IDE" functionality provided by the Qodana UI</li>
+    </ul>
+    ]]></description>
+
+  <content>
+    <module name="intellij.qodana/yaml"/>
+    <module name="intellij.qodana.coverage"/>
+    <module name="intellij.qodana.go"/>
+    <module name="intellij.qodana.inspectionKts.js"/>
+    <module name="intellij.qodana.inspectionKts.kotlin"/>
+    <module name="intellij.qodana.js"/>
+    <module name="intellij.qodana.php"/>
+    <module name="intellij.qodana.python"/>
+    <module name="intellij.qodana.jvm.dev"/>
+    <module name="intellij.qodana.jvm.gradle"/>
+    <module name="intellij.qodana.jvm.groovy"/>
+    <module name="intellij.qodana.jvm.kotlin"/>
+    <module name="intellij.qodana.jvm.java"/>
+    <module name="intellij.qodana.jvm.maven"/>
+    <module name="intellij.qodana.jvm.swagger"/>
+    <module name="intellij.qodana.jvm.coverage"/>
+  </content>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+    <plugin id="com.intellij.modules.json"/>
+    <module name="intellij.platform.collaborationTools"/>
+  </dependencies>
+
+  <depends optional="true" config-file="static-analysis-intellijLang.xml">org.intellij.intelliLang</depends>
+  <depends optional="true" config-file="static-analysis-git.xml">Git4Idea</depends>
+  <depends optional="true" config-file="static-analysis-yaml.xml">org.jetbrains.plugins.yaml</depends>
+  <depends optional="true" config-file="static-analysis-java.xml">com.intellij.java</depends>
+
+  <resource-bundle>messages.QodanaBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <appStarter id="qodana" implementation="org.jetbrains.qodana.staticAnalysis.inspections.starter.QodanaApplicationStarter"/>
+    <notificationGroup id="Qodana" displayType="STICKY_BALLOON" bundle="messages.QodanaBundle" key="notification.group.qodana"/>
+    <notificationGroup id="Qodana Problems Tab" displayType="BALLOON" bundle="messages.QodanaBundle"
+                       key="notification.group.qodana.problems"/>
+    <notificationGroup id="Qodana Tips" displayType="BALLOON" bundle="messages.QodanaBundle" key="notification.group.qodana.tips"/>
+    <highlightingPassFactory implementation="org.jetbrains.qodana.highlight.QodanaHighlightingPassRegistrar"/>
+    <jbProtocolCommand implementation="org.jetbrains.qodana.protocol.JBProtocolQodanaCommand"/>
+    <inspectionResultsExportActionProvider implementation="org.jetbrains.qodana.actions.ExportToSarifAction"/>
+    <fileType name="SARIF" extensions="sarif" patterns="*.sarif.json;*.sarif*.json"
+              implementationClass="org.jetbrains.qodana.filetype.SarifFileType" fieldName="INSTANCE" language="JSON"/>
+    <applicationService serviceInterface="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthService"
+                        serviceImplementation="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthServiceImpl"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthCallbackHandler"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.cloud.authorization.QodanaLicenseAgreementHandler"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.webUi.handlers.QodanaWebUiFileHandler"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.webUi.handlers.QodanaWebUiResourcesHandler"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.webUi.handlers.QodanaWebUiSetupCiHandler"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.webUi.handlers.QodanaWebUiSourcesHandler"/>
+    <httpRequestHandler implementation="org.jetbrains.qodana.webUi.handlers.QodanaWebUiStatisticsHandler"/>
+    <backgroundPostStartupActivity implementation="org.jetbrains.qodana.QodanaStartupActivity"/>
+    <projectService serviceInterface="org.jetbrains.qodana.run.QodanaRunInIdeService"
+                    serviceImplementation="org.jetbrains.qodana.run.QodanaRunInIdeServiceImpl"
+                    testServiceImplementation="org.jetbrains.qodana.run.QodanaRunInIdeServiceTestImpl"/>
+    <applicationService serviceInterface="org.jetbrains.qodana.cloud.project.QodanaArtifactsDownloader"
+                        serviceImplementation="org.jetbrains.qodana.cloud.project.QodanaArtifactsDownloaderImpl"
+                        testServiceImplementation="org.jetbrains.qodana.cloud.project.QodanaArtifactsDownloaderTestImpl"/>
+    <applicationService serviceInterface="org.jetbrains.qodana.staticAnalysis.QodanaEnvService"
+                        serviceImplementation="org.jetbrains.qodana.staticAnalysis.QodanaEnvServiceImpl"
+                        testServiceImplementation="org.jetbrains.qodana.staticAnalysis.QodanaEnvServiceTestImpl"/>
+    <applicationService serviceInterface="org.jetbrains.qodana.cloud.api.IjQDCloudClientProvider"
+                        serviceImplementation="org.jetbrains.qodana.cloud.api.IjQDCloudClientProviderImpl"
+                        testServiceImplementation="org.jetbrains.qodana.cloud.api.IjQDCloudClientProviderTestImpl"/>
+
+    <webHelpProvider implementation="org.jetbrains.qodana.help.QodanaWebHelpProvider"/>
+    <codeInsight.linkHandler prefix="#sarifInspection/" handlerClass="org.jetbrains.qodana.highlight.SarifInspectionDescriptionLinkHandler"/>
+
+    <projectConfigurable
+      id="settings.qodana"
+      groupId="tools"
+      bundle="messages.QodanaBundle"
+      key="configurable.name"
+      provider="org.jetbrains.qodana.ui.settings.FactorySettingsPanel"/>
+
+    <editorNotificationProvider implementation="org.jetbrains.qodana.inspectionKts.ui.InspectionKtsBannerProvider"/>
+
+    <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.stats.QodanaPluginStatsStateCollector"/>
+
+    <registryKey defaultValue="true" description="Enable Qodana Cloud integration" key="qd.cloud.integration.enabled"
+                 restartRequired="true"/>
+    <registryKey defaultValue="true" description="Enable Qodana Cloud license agreement check" key="qd.license.agreement.callback.enabled"/>
+    <registryKey defaultValue="false" description="Force enabling of Qodana local run" key="qd.force.local.run.enabled"/>
+    <registryKey defaultValue="false" description="Force enabling of Qodana Setup CI" key="qd.force.setup.ci.enabled"/>
+    <registryKey defaultValue="false" description="Open SARIF in editor" key="qd.open.sarif.in.editor"/>
+    <registryKey defaultValue="" description="Qodana Web UI sources" key="qd.web.ui.sources.url"/>
+    <registryKey defaultValue="true" description="Open coverage report from Qodana Cloud" key="qd.open.coverage.enabled"/>
+    <registryKey defaultValue="true" description="Use smart package filtering for coverage from Qodana Cloud" key="qd.open.coverage.smart.filter.enabled"/>
+    <registryKey defaultValue="3" description="Common package filter length for coverage reports from Qodana Cloud" key="qd.open.coverage.common.package.length"/>
+    <registryKey defaultValue="100" description="Number of commits to load from VCS per request, used to search Qodana Cloud report relevant to current revision" key="qd.vcs.revision.page.size" restartRequired="true"/>
+    <registryKey defaultValue="10" description="Max number of requests to VCS, used to search Qodana Cloud report relevant to current revision" key="qd.vcs.revision.max.pages" restartRequired="true"/>
+    <registryKey defaultValue="2" description="Retry attempts count to Qodana Cloud server on failed request" key="qd.cloud.request.retries.count"/>
+    <registryKey defaultValue="2" description="Retry attempts count to Qodana Cloud server on failed report download" key="qd.cloud.download.retries.count"/>
+    <registryKey defaultValue="false" description="Use whole distribution for .inspection.kts" key="qd.inspection.kts.all.distribution.for.dependencies"/>
+    <registryKey defaultValue="true" description="Use inspection.kts dependencies limited only to flexinspect" key="qd.inspection.kts.limited.dependencies"/>
+
+    <registryKey defaultValue="" description="Qodana Cloud website url" key="qd.cloud.website"/>
+    <registryKey defaultValue="" description="Qodana Cloud backend api" key="qd.cloud.api"/>
+    <registryKey defaultValue="" description="Oauth url used to auth in qodana.cloud" key="qd.cloud.jba.oauth.url"/>
+    <registryKey defaultValue="" description="JBA auth referrer accepted by IDE" key="qd.cloud.jba.auth.referrer"/>
+    <registryKey defaultValue="" description="Qodana Cloud JBA client id" key="qd.cloud.jba.auth.client.id"/>
+
+    <appStarter id="qodanaExcludedPlugins" implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaExcludedPluginsCalculator"/>
+    <projectService serviceImplementation="org.jetbrains.qodana.QodanaIntelliJYamlService"
+                    configurationSchemaKey="qodana" />
+    <inspectResultsConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.targets.QodanaTeamcityTestReporter"/>
+    <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector"/>
+    <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.staticAnalysis.stat.UsageCollector"/>
+    <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector"/>
+    <statistics.validation.customValidationRule implementation="org.jetbrains.qodana.staticAnalysis.stat.InspectionIdValidationRule"/>
+
+    <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.staticAnalysis.stat.QodanaProjectInfoCollector"/>
+    <problemsViewPanelProvider implementation="org.jetbrains.qodana.ui.problemsView.QodanaProblemsViewPanelProvider"/>
+    <localInspection shortName="QodanaSanity" groupKey="inspection.qodana.tools.group.name" groupBundle="messages.QodanaBundle"
+                      enabledByDefault="false" level="ERROR" isInternal="true"
+                      bundle="messages.QodanaBundle" key="inspection.qodana.sanity.display.name"
+                      implementationClass="org.jetbrains.qodana.staticAnalysis.inspections.sanity.QodanaSanity"/>
+    <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.KtsDynamicInspectionsProvider"/>
+
+    <localInspection language=""
+                     shortName="CyclomaticComplexityInspection"
+                     key="code.metrics.group.display.name"
+                     bundle="messages.QodanaBundle"
+                     groupKey="inspection.qodana.tools.group.name"
+                     enabledByDefault="false"
+                     implementationClass="org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMetricInspection"/>
+
+    <activityTracker implementation="org.jetbrains.qodana.staticAnalysis.QodanaVfsRefreshEventsTracker"/>
+
+  </extensions>
+
+  <actions resource-bundle="messages.QodanaBundle">
+    <group id="Qodana.ShowReportGroup" class="org.jetbrains.qodana.actions.QodanaShowReportGroup" popup="true" icon="icons.QodanaIcons.Icons.Qodana">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </group>
+    <action id="Qodana.RunQodanaAction" class="org.jetbrains.qodana.actions.RunQodanaAction">
+      <synonym text="Run Qodana"/>
+      <synonym text="Qodana Analysis"/>
+    </action>
+    <action id="Qodana.AddQodanaToCiAction" class="org.jetbrains.qodana.actions.AddQodanaToCiAction"/>
+    <action id="Qodana.OpenReportAction" class="org.jetbrains.qodana.actions.OpenReportAction"/>
+    <action id="Qodana.OpenQodanaCloudSettingsAction" class="org.jetbrains.qodana.actions.OpenQodanaCloudSettingsAction"/>
+    <action id="Qodana.OpenQodanaCloudReportAction" class="org.jetbrains.qodana.actions.OpenQodanaCloudReportAction"/>
+    <action id="Qodana.SarifFileReportAction" class="org.jetbrains.qodana.actions.SarifFileReportAction"
+            icon="icons.QodanaIcons.Icons.Qodana">
+      <add-to-group group-id="ProjectViewPopupMenu"/>
+    </action>
+    <action id="Qodana.ClearQodanaCacheAction" class="org.jetbrains.qodana.actions.ClearQodanaCacheAction"/>
+
+    <group id="Qodana.ProblemTreeActionGroup" class="org.jetbrains.qodana.actions.QodanaProblemTreeExcludeActionGroup" popup="true">
+      <add-to-group group-id="ProblemsView.ToolWindow.TreePopup"/>
+    </group>
+    <action id = "Qodana.ShowBuildPage" class="org.jetbrains.qodana.actions.QodanaShowBuildPageAction" icon="com.intellij.icons.AllIcons.General.Export">
+      <add-to-group group-id="ProblemsView.ToolWindow.TreePopup"/>
+    </action>
+    <action id = "Qodana.ShowBrowserPage" class="org.jetbrains.qodana.actions.QodanaOpenBrowserPageAction" icon="com.intellij.icons.AllIcons.General.Export">
+      <add-to-group group-id="ProblemsView.ToolWindow.TreePopup"/>
+    </action>
+
+    <group id="Qodana.ProblemsView">
+      <action id="Qodana.ProblemsViewCloseReportAction" class="org.jetbrains.qodana.actions.ProblemsViewCloseReportAction"
+              icon="AllIcons.Actions.Cancel"/>
+      <action id="Qodana.ProblemsView.RefreshReportAction" class="org.jetbrains.qodana.actions.ProblemsViewRefreshReportAction"
+              icon="AllIcons.Actions.Refresh"/>
+      <action id="Qodana.ProblemsView.Login" class="org.jetbrains.qodana.actions.ProblemsViewCloudLoginAction"/>
+      <group id="Qodana.ProblemsView.Link" class="org.jetbrains.qodana.actions.ProblemsViewCloudLinkAction"/>
+      <group id="Qodana.ProblemsView.Options" class="org.jetbrains.qodana.ui.problemsView.QodanaProblemsViewGroupByActionGroup"
+             icon="AllIcons.Actions.GroupBy" popup="true"/>
+      <action id="Qodana.ProblemsView.ShowPreview" class="org.jetbrains.qodana.ui.problemsView.QodanaProblemsViewShowPreviewAction"
+              icon="AllIcons.Actions.PreviewDetails"/>
+      <reference ref="ExpandAll"/>
+      <reference ref="CollapseAll"/>
+      <action id="Qodana.ProblemsView.OpenWebUI" class="org.jetbrains.qodana.actions.ProblemsViewOpenWebUiAction"
+              icon="AllIcons.Actions.InlayGlobe"/>
+      <group id="Qodana.ProblemsView.OtherActions" class="org.jetbrains.qodana.actions.ProblemsViewOtherActionsGroup"
+             icon="AllIcons.Actions.More" popup="true"/>
+    </group>
+    <action id="org.jetbrains.qodana.ui.problemsView.ResetQodanaTabPromoIconAction"
+            class="org.jetbrains.qodana.ui.problemsView.ResetQodanaTabPromoIconAction" text="Reset Qodana Tab" internal="true">
+      <add-to-group group-id="Internal" anchor="last"/>
+    </action>
+
+    <action id="Qodana.NewInspectionKts" class="org.jetbrains.qodana.inspectionKts.templates.NewKtsInspectionAction"
+            icon="QodanaIcons.Icons.Qodana">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
+    </action>
+  </actions>
+
+  <projectListeners>
+    <listener class="org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsListener"
+              topic="com.intellij.codeInspection.ex.InspectListener"/>
+    <listener class="org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener"
+              topic="com.intellij.codeInspection.ex.InspectListener"/>
+  </projectListeners>
+
+  <extensionPoints>
+    <extensionPoint name="projectDescriber"
+                    interface="org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber"
+                    dynamic="true"/>
+    <extensionPoint name="inspectionProfileProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider"
+                    dynamic="true"/>
+    <extensionPoint name="sarifReportContributor"
+                    interface="org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor"
+                    dynamic="true"/>
+    <extensionPoint name="qodanaScriptFactory"
+                    interface="org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory"
+                    dynamic="true"/>
+    <extensionPoint name="repositoryRevisionProvider"
+                    interface="org.jetbrains.qodana.extensions.RepositoryRevisionProvider"
+                    dynamic="true"/>
+    <extensionPoint name="repositoryInfoProvider"
+                    interface="org.jetbrains.qodana.extensions.RepositoryInfoProvider"
+                    dynamic="true"/>
+    <extensionPoint name="vcsIgnoredFilesProvider"
+                    interface="org.jetbrains.qodana.extensions.VcsIgnoredFilesProvider"
+                    dynamic="true"/>
+    <extensionPoint name="configUpdateHandler"
+                    interface="org.jetbrains.qodana.extensions.ConfigUpdateHandler"
+                    dynamic="true"/>
+    <extensionPoint name="githubCiConfigHandler"
+                    interface="org.jetbrains.qodana.extensions.ci.GitHubCIConfigHandler"
+                    dynamic="true"/>
+    <extensionPoint name="gitlabCiConfigHandler"
+                    interface="org.jetbrains.qodana.extensions.ci.GitLabCIConfigHandler"
+                    dynamic="true"/>
+    <extensionPoint name="jenkinsConfigHandler"
+                    interface="org.jetbrains.qodana.extensions.ci.JenkinsConfigHandler"
+                    dynamic="true"/>
+    <extensionPoint name="azureCiConfigUpdateHandler"
+                    interface="org.jetbrains.qodana.extensions.ci.AzureCIConfigHandler"
+                    dynamic="true"/>
+    <extensionPoint name="circleCiConfigUpdateHandler"
+                    interface="org.jetbrains.qodana.extensions.ci.CircleCIConfigHandler"
+                    dynamic="true"/>
+    <extensionPoint name="bitbucketCiConfigUpdateHandler"
+                    interface="org.jetbrains.qodana.extensions.ci.BitbucketCIConfigHandler"
+                    dynamic="true"/>
+    <extensionPoint name="vcsRevisionProvider"
+                    interface="org.jetbrains.qodana.vcs.VcsRevisionProvider"
+                    dynamic="true"/>
+    <extensionPoint name="workflowExtension"
+                    interface="org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension"
+                    dynamic="true"/>
+    <extensionPoint name="highlightingListener"
+                    interface="org.jetbrains.qodana.highlight.QodanaHighlightingListener"
+                    dynamic="true"/>
+    <extensionPoint name="externalToolsConfigurationProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsConfigurationProvider"
+                    dynamic="true"/>
+    <extensionPoint name="globalOutputConsumer"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer"
+                    dynamic="true"/>
+    <extensionPoint name="externalToolsProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider"
+                    dynamic="true"/>
+    <extensionPoint name="problemsViewModuleSupport"
+                    interface="org.jetbrains.qodana.ui.problemsView.QodanaGroupByModuleSupport"
+                    dynamic="true"/>
+    <extensionPoint name="setupCIProviderFactory"
+                    interface="org.jetbrains.qodana.ui.ci.SetupCIProviderFactory"
+                    dynamic="true"/>
+    <extensionPoint name="defaultQodanaYamlItemProvider"
+                    interface="org.jetbrains.qodana.settings.QodanaYamlItemProvider"
+                    dynamic="true"/>
+    <extensionPoint name="qodanaHighlightInfoTypeProvider"
+                    interface="org.jetbrains.qodana.extensions.QodanaHighlightInfoTypeProvider"
+                    dynamic="true"/>
+    <extensionPoint name="qodanaHighlightingSupportInfoProvider"
+                    interface="org.jetbrains.qodana.extensions.QodanaHighlightingSupportInfoProvider"
+                    dynamic="true"/>
+    <extensionPoint name="qodanaHighlightInfoComparator"
+                    interface="org.jetbrains.qodana.extensions.QodanaHighlightInfoComparator"
+                    dynamic="true"/>
+    <extensionPoint name="reportMetadataArtifact"
+                    interface="org.jetbrains.qodana.report.ReportMetadataArtifactProvider"
+                    dynamic="true"/>
+    <extensionPoint name="contextMarginProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.sarif.ContextMarginProvider"
+                    dynamic="true"/>
+    <extensionPoint name="inspectionKtsDefaultImportProvider"
+                    interface="org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider"
+                    dynamic="true"/>
+    <extensionPoint name="inspectionKtsTemplateProvider"
+                    interface="org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate$Provider"
+                    dynamic="true"/>
+    <extensionPoint name="psiViewerSupport"
+                    interface="org.jetbrains.qodana.inspectionKts.ui.PsiViewerSupport"
+                    dynamic="true"/>
+    <extensionPoint name="inspectionKtsExampleProvider"
+                    interface="org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample$Provider"
+                    dynamic="true"/>
+    <extensionPoint name="quickFixesStrategyProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.sarif.QuickFixesStrategyProvider"
+                    dynamic="true"/>
+    <extensionPoint name="metricTable"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.MetricTable"
+                    dynamic="true"/>
+
+    <extensionPoint name="metricsAggregator"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.MetricAggregator"
+                    dynamic="true"/>
+
+    <extensionPoint name="cyclomaticComplexityFileVisitor"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMetricFileVisitor"
+                    dynamic="true"/>
+
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.LibrariesDescriber"/>
+    <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.SdksDescriber"/>
+    <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.ModulesDescriber"/>
+    <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.ProjectFingerprintDescriber"/>
+    <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfilesProvider"/>
+    <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaSingleInspectionProfileProvider"/>
+    <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmptyProfileProvider"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.DefaultScriptFactory"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.scoped.ScopedScriptFactory"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.TeamCityChangesScriptFactory"/>
+    <globalOutputConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.DuplicateCodeConsumer"/>
+    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>
+
+    <workflowExtension
+      implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationWorkflowExtension"/>
+    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.stat.InspectionStatisticsLogger"/>
+    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.profile.ProfileDescriptionWriter"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.github.SetupGitHubActionsProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.gitlab.SetupGitLabCIProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.teamcity.SetupTeamcityDslProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.jenkins.SetupJenkinsProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.azure.SetupAzurePipelinesProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.circleci.SetupCircleCIProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.space.SetupSpaceAutomationProviderFactory"/>
+    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.bitbucket.SetupBitbucketCIProviderFactory"/>
+
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlHeaderItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlVersionItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlProfileItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlIncludeItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlExcludeItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlBootstrapItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlPluginItemProvider"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlLinterItemProvider"/>
+    <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor"/>
+    <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.FailureConditionsContributor"/>
+    <sarifReportContributor
+      implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationReportContributor"/>
+    <qodanaHighlightingSupportInfoProvider implementation="org.jetbrains.qodana.extensions.DefaultQodanaHighlightingSupportInfoProvider"/>
+    <qodanaHighlightInfoComparator implementation="org.jetbrains.qodana.extensions.DuplicatedCodeQodanaHighlightInfoComparator"/>
+    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>
+    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageGlobalInspectionKtsTemplateProvider"/>
+    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.examples.JsonYamlInspectionKtsExampleProvider"/>
+
+    <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.LinesOfCodeMetricAggregator"/>
+    <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.CyclomaticComplexityMetricAggregator"/>
+    <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.LinesOfCodeMetricTable"/>
+    <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.CyclomaticComplexityMetricTable"/>
+  </extensions>
+</idea-plugin>

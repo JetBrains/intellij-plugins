@@ -1,0 +1,158 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "inspection-1",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "",
+            "markdown": ""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "004b6012df2e31e8cf02f09565b9a1d64e7782c7811368085e9c0213c067ccf3"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "java"
+            ]
+          }
+        },
+        {
+          "ruleId": "inspection-2",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "",
+            "markdown": ""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "ddf2dce654c492bdc9d4c2e7ae2461595b14915e2a61b7a25558185622fbd26e"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "java"
+            ]
+          }
+        },
+        {
+          "ruleId": "inspection-2",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "",
+            "markdown": ""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/C.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "8aafed1bf6af0aaa7da2b6b2095eda02ae9cb653b97e8773887ea14834274430"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "java"
+            ]
+          }
+        },
+        {
+          "ruleId": "inspection-2",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "",
+            "markdown": ""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/D.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "6cb4a1156c69376a6ba2258d1b0af0784c5da09a71bb69fb63b632048ecda252"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "java"
+            ]
+          }
+        },
+        {
+          "ruleId": "inspection-3",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "",
+            "markdown": ""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/D.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "5b3b7a554d6d89be5ae7876043504be769517c1b44df6db6329ad6622aa34617"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "java"
+            ]
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "DuplicatedCode",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Duplicated code",
+            "markdown": "Duplicated code"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 5,
+                  "charOffset": 40,
+                  "charLength": 193,
+                  "snippet": {
+                    "text": "const strings = [];\n    strings[0] = \"mmm\";\n    strings[1] = \"mmm\";\n    strings[2] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
+                  },
+                  "sourceLanguage": "ECMAScript 6"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 36,
+                  "charLength": 197,
+                  "snippet": {
+                    "text": "    const strings = [];\n    strings[0] = \"mmm\";\n    strings[1] = \"mmm\";\n    strings[2] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testDuplicatedCodeInspection",
+                  "kind": "module"
+                }
+              ]
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 5,
+                  "charOffset": 267,
+                  "charLength": 193,
+                  "snippet": {
+                    "text": "const strings = [];\n    strings[0] = \"mmm\";\n    strings[1] = \"mmm\";\n    strings[2] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
+                  },
+                  "sourceLanguage": "ECMAScript 6"
+                },
+                "contextRegion": {
+                  "startLine": 14,
+                  "startColumn": 1,
+                  "charOffset": 263,
+                  "charLength": 197,
+                  "snippet": {
+                    "text": "    const strings = [];\n    strings[0] = \"mmm\";\n    strings[1] = \"mmm\";\n    strings[2] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testDuplicatedCodeInspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "d542f15977f50e02",
+            "equalIndicator/v1": "803c1542612aa70af75bacf34ce530b64f9e392f54f452897ad53fe68772ef9a"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "ECMAScript 6"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

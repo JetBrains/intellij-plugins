@@ -1,0 +1,756 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'FooCls.php' coverage is below the threshold 50%",
+            "markdown": "File `FooCls.php` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "<?php"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "<?php"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "09589c4c98cc9178",
+            "equalIndicator/v1": "c06c1255de778d56b7092789255be7ed2bc425e7d3ae33b6987821b04f91d2c6"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'baz' coverage is below the threshold 50%",
+            "markdown": "Method `baz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 21,
+                  "charOffset": 254,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "baz"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 21,
+                  "startColumn": 1,
+                  "charOffset": 234,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "    public function baz($i)"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "581c366d3704d832",
+            "equalIndicator/v1": "c81f6128f04683d74c4c25b8db6a5aa75ffbf2f12e0b13036f2b3de84107c2b3"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foobar' coverage is below the threshold 50%",
+            "markdown": "Method `foobar` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 21,
+                  "charOffset": 397,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "foobar"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 31,
+                  "startColumn": 1,
+                  "charOffset": 377,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "    public function foobar()"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "bca9b2892006aab5",
+            "equalIndicator/v1": "1852f10e575099192c32b3d12610a5f0a10e143098c4f7250dc7a332b3c27ed1"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'fun1' coverage is below the threshold 50%",
+            "markdown": "Method `fun1` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 37,
+                  "startColumn": 10,
+                  "charOffset": 449,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "fun1"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 37,
+                  "startColumn": 1,
+                  "charOffset": 440,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "function fun1()"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "30c3ba4a81a0d670",
+            "equalIndicator/v1": "2a48e43f7b6481b154b0b1509a4fc677dff31fa330fcbd5d96713355b4eb04b2"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class '(anonymous class in qodana)' coverage is below the threshold 50%",
+            "markdown": "Class `(anonymous class in qodana)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "charOffset": 516,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "class {"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 47,
+                  "startColumn": 1,
+                  "charOffset": 512,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "new class {"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2223f441baece6b5",
+            "equalIndicator/v1": "4154f29486f57508bfb9a411f3249d015d20e1ddb558626c7b8e0676616c51e3"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo' coverage is below the threshold 50%",
+            "markdown": "Method `foo` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 48,
+                  "startColumn": 21,
+                  "charOffset": 544,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "foo"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 48,
+                  "startColumn": 1,
+                  "charOffset": 524,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "    public function foo()"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5b1bf6a9d81509c7",
+            "equalIndicator/v1": "a7b1b379d93ad448e6980c07d8e11fd18eca668f2a19696cd95ecfd5b61dc9dd"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in foo)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in foo)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 50,
+                  "startColumn": 9,
+                  "charOffset": 564,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "function ($number) {"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 50,
+                  "startColumn": 1,
+                  "charOffset": 556,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "        function ($number) {"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "06f3450960e30041",
+            "equalIndicator/v1": "40d541e116194db5e89bf1342ed1dc605c90a56c29e91cfba2bf81d7c1e4df63"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in foo)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in foo)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 54,
+                  "startColumn": 9,
+                  "charOffset": 637,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "function ($string) {"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 54,
+                  "startColumn": 1,
+                  "charOffset": 629,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "        function ($string) {"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2e19fdca584cedd6",
+            "equalIndicator/v1": "22a24533ee158a42f927c5ccbc833c582d8d432782838e9bb727d7e8f08a42bc"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in foo)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in foo)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 9,
+                  "charOffset": 718,
+                  "charLength": 19,
+                  "snippet": {
+                    "text": "function ($array) {"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 58,
+                  "startColumn": 1,
+                  "charOffset": 710,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "        function ($array) {"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b4bfae441b0fb04b",
+            "equalIndicator/v1": "fadd4cffc67eaa46c462193a81745b62b971dc7b30ab8943227e07a6821c0127"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in qodana)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in qodana)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 64,
+                  "startColumn": 7,
+                  "charOffset": 807,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "fn($x = 42) =>"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 64,
+                  "startColumn": 1,
+                  "charOffset": 801,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "$fn = fn($x = 42) =>"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "53e5345793ec33cf",
+            "equalIndicator/v1": "8b2bd876bfc5f902178b609d0be73157126f50cb64f952fc342f7bf79da2574b"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'BaseClass' coverage is below the threshold 50%",
+            "markdown": "Class `BaseClass` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 70,
+                  "startColumn": 7,
+                  "charOffset": 903,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "BaseClass"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 70,
+                  "startColumn": 1,
+                  "charOffset": 897,
+                  "charLength": 17,
+                  "snippet": {
+                    "text": "class BaseClass {"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cc6b101687971b01",
+            "equalIndicator/v1": "85df3d1f3db3f63ceeca83abe656f8755654878eb8cb539eb2479954ce8bf833"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Constructor 'BaseClass' coverage is below the threshold 50%",
+            "markdown": "Constructor `BaseClass` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 14,
+                  "charOffset": 928,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "__construct"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 71,
+                  "startColumn": 1,
+                  "charOffset": 915,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "    function __construct() {"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a046b02e96ad2f0b",
+            "equalIndicator/v1": "a35bf39dbcec2d51c80d16700cc1d81832d030ef20051a68947b796a94e5e62c"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'index.php' coverage is below the threshold 50%",
+            "markdown": "File `index.php` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "<?php"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "<?php"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "fa49f18bdd46cd11",
+            "equalIndicator/v1": "13022c8ef23acc43e084a44b7c6f4398958eb54e070541be03b7aefe2afb1c51"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "PHP"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 40,
+          "totalLines": 35,
+          "totalCoveredLines": 14
+        }
+      }
+    }
+  ]
+}

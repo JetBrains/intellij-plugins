@@ -1,0 +1,192 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResultUnchanged()' is ignored",
+            "markdown": "Result of `A.unusedResultUnchanged()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "charOffset": 232,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "unusedResultUnchanged"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 157,
+                  "charLength": 145,
+                  "snippet": {
+                    "text": "  public static void main(String[] args) {\n    //unusedResultAbsent();\n    unusedResultUnchanged();\n    unusedResultNew();\n    unusedResultNew();"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ failThreshold surpassed",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4213e3bf9fa4f05d",
+            "equalIndicator/v1": "432e8a2306dfc046c09de1b1f9b8b1db365a66f709c9c6449d608dfaeedb10b3"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResultNew()' is ignored",
+            "markdown": "Result of `A.unusedResultNew()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "charOffset": 261,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "unusedResultNew"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 200,
+                  "charLength": 106,
+                  "snippet": {
+                    "text": "    //unusedResultAbsent();\n    unusedResultUnchanged();\n    unusedResultNew();\n    unusedResultNew();\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ failThreshold surpassed",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "63952ce48cdb765b",
+            "equalIndicator/v1": "71bbed41a8164021ff08bb4af04ba1c81d043b253871ec221d021bf35c274278"
+          },
+          "baselineState": "new",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResultNew()' is ignored",
+            "markdown": "Result of `A.unusedResultNew()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "charOffset": 284,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "unusedResultNew"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 228,
+                  "charLength": 80,
+                  "snippet": {
+                    "text": "    unusedResultUnchanged();\n    unusedResultNew();\n    unusedResultNew();\n  }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ failThreshold surpassed",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a21d5f3d3731b071",
+            "equalIndicator/v1": "1d899cd8bf536ac7e481f248c6ff21cd2c63d5e2b3a1ca0684375b00220a73c0"
+          },
+          "baselineState": "new",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

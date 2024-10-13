@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "TrivialIf",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'if' statement can be simplified",
+            "markdown": "`if` statement can be simplified"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 7,
+                  "charOffset": 92,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "if"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 19,
+                  "charLength": 108,
+                  "snippet": {
+                    "text": "  public Boolean f(Boolean a, Boolean b, Boolean c) {\n    if (a) {\n      if (b) return true\n    }\n    else {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInterferingProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f4fdb90464feb4a1",
+            "equalIndicator/v1": "2fcc6695403c2fd1f89342acf32c1268be7e1867d95541cc2ef4754c3cdf4d75"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "TrivialIf",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'if' statement can be simplified",
+            "markdown": "`if` statement can be simplified"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 7,
+                  "charOffset": 134,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "if"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 111,
+                  "charLength": 64,
+                  "snippet": {
+                    "text": "    }\n    else {\n      if (c) return true\n    }\n    return false"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInterferingProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a02541509a716cde",
+            "equalIndicator/v1": "dc6ea101c1730ae9c44b2532668eaa3331e0a9e76f8f843601b485b760a7a140"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

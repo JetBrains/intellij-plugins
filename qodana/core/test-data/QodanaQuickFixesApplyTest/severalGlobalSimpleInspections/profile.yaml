@@ -1,0 +1,9 @@
+name: "My custom profile"
+
+baseProfile: qodana.recommended
+
+inspections:
+  - inspection: UNUSED_IMPORT
+    enabled: true
+  - inspection: testGlobalSimpleInspectionName
+    enabled: true

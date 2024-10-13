@@ -1,0 +1,118 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "BusyWait",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Call to 'Thread.sleep()' in a loop, probably busy-waiting",
+            "markdown": "Call to `Thread.sleep()` in a loop, probably busy-waiting"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/test/java/org/mockitousage/bugs/MultithreadedStubbingHalfManualTest.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "mockito.test",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "bf0314cf24187a838a87d03efbb88aa82fd0f216e3968db2733dce84b9355b46"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "BusyWait",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Call to 'Thread.sleep()' in a loop, probably busy-waiting",
+            "markdown": "Call to `Thread.sleep()` in a loop, probably busy-waiting"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/test/java/org/mockitousage/bugs/ShouldNotDeadlockAnswerExecutionTest.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "mockito.test",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "e1aa7b716377dc161d1914db0f5a12b2754c1b706ce92ae5bdab21333accf041"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JSUnresolvedVariable",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Unresolved variable or type global",
+            "markdown": "Unresolved variable or type global"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/js/tests/yii.captcha.test.js",
+                  "uriBaseId": "SRCROOT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "yii2",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "2d347af17e590d4e1a8b3a2349aeb519f656fd49c6f516695f5b25d739169a0e"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

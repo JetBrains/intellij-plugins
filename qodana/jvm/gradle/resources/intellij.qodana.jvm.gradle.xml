@@ -1,0 +1,17 @@
+<idea-plugin package="org.jetbrains.qodana.jvm.gradle">
+  <dependencies>
+    <plugin id="com.intellij.gradle"/>
+    <module name="intellij.qodana.jvm.java"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <projectDescriber implementation="org.jetbrains.qodana.jvm.gradle.GradleProjectDescriber"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <projectResolve implementation="org.jetbrains.qodana.jvm.gradle.QodanaGradleProjectResolver"/>
+  </extensions>
+  <projectListeners>
+    <listener
+      class="org.jetbrains.qodana.jvm.gradle.QodanaGradleJdkConfigurator"
+      topic="org.jetbrains.plugins.gradle.settings.GradleSettingsListener"/>
+  </projectListeners>
+</idea-plugin>

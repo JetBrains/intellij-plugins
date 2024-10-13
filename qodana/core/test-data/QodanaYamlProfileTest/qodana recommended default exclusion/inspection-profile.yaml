@@ -1,0 +1,6 @@
+# The inspection profile 'empty' is provided by Qodana.
+baseProfile: qodana.recommended
+
+inspections:
+  - inspection: ConstantValue
+    enabled: true

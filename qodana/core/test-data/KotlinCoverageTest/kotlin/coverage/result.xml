@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<report name="Intellij Coverage Report">
+<package name="org/example">
+<class name="org/example/Bar" sourcefilename="Main.kt">
+<method name="&lt;init&gt;" desc="(II)V">
+<counter type="INSTRUCTION" missed="3" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<method name="&lt;init&gt;" desc="(I)V">
+<counter type="INSTRUCTION" missed="7" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<counter type="INSTRUCTION" missed="10" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="2" covered="0"/>
+<counter type="METHOD" missed="2" covered="0"/>
+</class>
+<class name="org/example/Baz" sourcefilename="Main.kt">
+<method name="&lt;clinit&gt;" desc="()V">
+<counter type="INSTRUCTION" missed="11" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="5" covered="0"/>
+</method>
+<method name="&lt;init&gt;" desc="()V">
+<counter type="INSTRUCTION" missed="2" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<counter type="INSTRUCTION" missed="13" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="6" covered="0"/>
+<counter type="METHOD" missed="2" covered="0"/>
+</class>
+<class name="org/example/Baz$Companion" sourcefilename="Main.kt">
+<method name="getB" desc="()I">
+<counter type="INSTRUCTION" missed="3" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<method name="getA" desc="()I">
+<counter type="INSTRUCTION" missed="1" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<counter type="INSTRUCTION" missed="4" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="2" covered="0"/>
+<counter type="METHOD" missed="2" covered="0"/>
+</class>
+<class name="org/example/Fellow" sourcefilename="Main.kt">
+<method name="&lt;init&gt;" desc="(ILjava/lang/String;)V">
+<counter type="INSTRUCTION" missed="12" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<counter type="INSTRUCTION" missed="12" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+<counter type="METHOD" missed="1" covered="0"/>
+</class>
+<class name="org/example/Foo" sourcefilename="Main.kt">
+<method name="&lt;init&gt;" desc="(I)V">
+<counter type="INSTRUCTION" missed="7" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<counter type="INSTRUCTION" missed="7" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+<counter type="METHOD" missed="1" covered="0"/>
+</class>
+<class name="org/example/MainKt" sourcefilename="Main.kt">
+<method name="answer" desc="()I">
+<counter type="INSTRUCTION" missed="0" covered="1"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="0" covered="1"/>
+</method>
+<counter type="INSTRUCTION" missed="0" covered="1"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="0" covered="1"/>
+<counter type="METHOD" missed="0" covered="1"/>
+</class>
+<sourcefile name="Main.kt">
+<line nr="3" mi="0" ci="1" mb="0" cb="0"/>
+<line nr="5" mi="7" ci="0" mb="0" cb="0"/>
+<line nr="7" mi="7" ci="0" mb="0" cb="0"/>
+<line nr="8" mi="3" ci="0" mb="0" cb="0"/>
+<line nr="11" mi="2" ci="0" mb="0" cb="0"/>
+<line nr="13" mi="1" ci="0" mb="0" cb="0"/>
+<line nr="14" mi="5" ci="0" mb="0" cb="0"/>
+<line nr="15" mi="1" ci="0" mb="0" cb="0"/>
+<line nr="16" mi="3" ci="0" mb="0" cb="0"/>
+<line nr="17" mi="3" ci="0" mb="0" cb="0"/>
+<line nr="19" mi="2" ci="0" mb="0" cb="0"/>
+<line nr="25" mi="12" ci="0" mb="0" cb="0"/>
+<counter type="INSTRUCTION" missed="46" covered="1"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="12" covered="1"/>
+</sourcefile>
+<counter type="INSTRUCTION" missed="46" covered="1"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="12" covered="1"/>
+<counter type="METHOD" missed="8" covered="1"/>
+<counter type="CLASS" missed="5" covered="1"/>
+</package>
+<counter type="INSTRUCTION" missed="46" covered="1"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="12" covered="1"/>
+<counter type="METHOD" missed="8" covered="1"/>
+<counter type="CLASS" missed="5" covered="1"/>
+</report>

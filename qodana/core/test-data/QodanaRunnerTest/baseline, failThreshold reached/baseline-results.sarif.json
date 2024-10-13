@@ -1,0 +1,115 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of \u0027A.unusedResultAbsent()\u0027 is ignored",
+            "markdown": "Result of `A.unusedResultAbsent()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "charOffset": 204,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "unusedResultAbsent"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 156,
+                  "charLength": 123,
+                  "snippet": {
+                    "text": "\n  public static void main(String[] args) {\n    unusedResultAbsent();\n    unusedResultUnchanged();\n    //unusedResultNew();"
+                  }
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ failThreshold reached",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "519880455850f56d2a34747150c40e09b90ce396b8ca758c69587eee9e4d648b"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High"
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of \u0027A.unusedResultUnchanged()\u0027 is ignored",
+            "markdown": "Result of `A.unusedResultUnchanged()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "charOffset": 230,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "unusedResultUnchanged"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 157,
+                  "charLength": 126,
+                  "snippet": {
+                    "text": "  public static void main(String[] args) {\n    unusedResultAbsent();\n    unusedResultUnchanged();\n    //unusedResultNew();\n  }"
+                  }
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ failThreshold reached",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "5edbf1a64fdb88930a9ccf1c9f86cfd2a924cf0a6214982764fc415f1bcd0c6f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High"
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

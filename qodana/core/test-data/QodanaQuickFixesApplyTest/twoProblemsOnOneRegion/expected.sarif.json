@@ -1,0 +1,245 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 6,
+                  "charOffset": 177,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 120,
+                  "charLength": 72,
+                  "snippet": {
+                    "text": "    {\n        System.out.println( \"Hello World!\" );\n\tif (true) {}\n    }\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testTwoProblemsOnOneRegion",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "70d29ab3cd072fb7",
+            "equalIndicator/v1": "8665749082b74f6f178155cad63e2b806630dac02dc5782f236d646e2688b146"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "EmptyStatementBody",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'if' statement has empty body",
+            "markdown": "`if` statement has empty body"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 2,
+                  "charOffset": 173,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "if"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 120,
+                  "charLength": 72,
+                  "snippet": {
+                    "text": "    {\n        System.out.println( \"Hello World!\" );\n\tif (true) {}\n    }\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testTwoProblemsOnOneRegion",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "d229e36fce68948b",
+            "equalIndicator/v1": "7b30239b805606945471c1fbc13c89b369578f64be8df9b0685652e2857ea5d6"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'String.hashCode()' is ignored",
+            "markdown": "Result of `String.hashCode()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 20,
+                  "charOffset": 457,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "hashCode"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 20,
+                  "startColumn": 1,
+                  "charOffset": 370,
+                  "charLength": 114,
+                  "snippet": {
+                    "text": "        strings.add(\"mmm\");\n        for (String string : strings) {\n            string.hashCode();\n        }\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testTwoProblemsOnOneRegion",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "27018c114a537299",
+            "equalIndicator/v1": "c97e7bb0a602ec51bf796c2587835ebf4b329a227a79501bbbc63910e206a4de"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'String.hashCode()' is ignored",
+            "markdown": "Result of `String.hashCode()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 20,
+                  "charOffset": 750,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "hashCode"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 31,
+                  "startColumn": 1,
+                  "charOffset": 663,
+                  "charLength": 114,
+                  "snippet": {
+                    "text": "        strings.add(\"mmm\");\n        for (String string : strings) {\n            string.hashCode();\n        }\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testTwoProblemsOnOneRegion",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4a58d93e948c8f44",
+            "equalIndicator/v1": "24f13b8289af956583148591768a5e83b2808f3c875bbd0f6d5707ff133da045"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

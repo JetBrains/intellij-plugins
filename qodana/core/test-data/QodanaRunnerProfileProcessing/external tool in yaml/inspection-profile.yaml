@@ -1,0 +1,14 @@
+groups:
+  - groupId: IncludedInspections
+    inspections:
+      - inspection-1
+      - inspection-3
+
+  - groupId: Excluded
+    groups:
+      - "ALL"
+      - "!IncludedInspections"
+
+inspections:
+  - group: Excluded
+    enabled: false

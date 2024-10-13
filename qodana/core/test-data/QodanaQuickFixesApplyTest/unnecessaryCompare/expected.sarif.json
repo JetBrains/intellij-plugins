@@ -1,0 +1,77 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "PointlessBooleanExpression",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'isCustomElement(field) == true' can be simplified to 'isCustomElement(field)'",
+            "markdown": "`isCustomElement(field) == true` can be simplified to 'isCustomElement(field)'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 9,
+                  "charOffset": 94,
+                  "charLength": 30,
+                  "snippet": {
+                    "text": "isCustomElement(field) == true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 42,
+                  "charLength": 108,
+                  "snippet": {
+                    "text": "\n  public static void main(String[] args) {\n    if (isCustomElement(field) == true) {\n      field = 1;\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testUnnecessaryCompare",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "ca47fb72fa8c1c3e",
+            "equalIndicator/v1": "30418164d40f403ac9129eac07c905c81be7ce4e951715d6902a2cf00ecb5f88"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

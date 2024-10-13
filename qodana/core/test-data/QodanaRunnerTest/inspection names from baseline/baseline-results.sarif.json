@@ -1,0 +1,212 @@
+{
+  "$schema": "https://raw.githubusercontent.com/schemastore/schemastore/master/src/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "extensions": [
+          {
+            "name": "org.intellij.intelliLang",
+            "version": "243.SNAPSHOT",
+            "rules": [
+              {
+                "id": "NotExistingId",
+                "shortDescription": {
+                  "text": "Not existing inspection"
+                },
+                "fullDescription": {
+                  "text": "(Not existing inspection). Reports duplicate conditions in '&&' and '||' expressions and branches of 'if' statements. While sometimes duplicate conditions are intended, in most cases they are the result of an oversight. Example: 'boolean result = digit1 != digit2 || digit1 != digit2;' To ignore conditions that may produce side effects, use the Ignore conditions with side effects option. Disabling this option may lead to false-positives, for example, when the same method returns different values on subsequent invocations. Example: 'native boolean unknownMethod();\n  \n  ...\n  \n  if (unknownMethod() || unknownMethod()) {\n    System.out.println(\"Got it\");\n  }' Due to possible side effects of 'unknownMethod()' (on the example), the warning will only be triggered if the Ignore conditions with side effects option is disabled.",
+                  "markdown": "(Not existing inspection). Reports duplicate conditions in `&&` and `||` expressions and branches of `if` statements. While sometimes duplicate conditions are intended, in most cases they are the result of an oversight.\n\nExample:\n\n\n      boolean result = digit1 != digit2 || digit1 != digit2;\n\n\nTo ignore conditions that may produce side effects, use the **Ignore conditions with side effects** option.\nDisabling this option may lead to false-positives, for example, when the same method returns different values on subsequent invocations.\n\nExample:\n\n\n      native boolean unknownMethod();\n      \n      ...\n      \n      if (unknownMethod() || unknownMethod()) {\n        System.out.println(\"Got it\");\n      }\n\nDue to possible side effects of `unknownMethod()` (on the example), the warning will only be\ntriggered if the **Ignore conditions with side effects** option is disabled."
+                },
+                "defaultConfiguration": {
+                  "enabled": true,
+                  "level": "warning",
+                  "parameters": {
+                    "suppressToolId": "NotExistingId",
+                    "ideaSeverity": "WARNING",
+                    "qodanaSeverity": "High"
+                  }
+                },
+                "relationships": [
+                  {
+                    "target": {
+                      "id": "Java/Control flow issues",
+                      "index": 33,
+                      "toolComponent": {
+                        "name": "IU"
+                      }
+                    },
+                    "kinds": [
+                      "superset"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "language": "en-US",
+            "contents": [
+              "localizedData",
+              "nonLocalizedData"
+            ],
+            "isComprehensive": false
+          }
+        ],
+        "driver": {
+          "name": ""
+        }
+      },
+      "invocations": [
+        {
+          "startTimeUtc": "2024-07-26T11:13:55.540002166Z",
+          "exitCode": 0,
+          "executionSuccessful": true
+        }
+      ],
+      "language": "en-US",
+      "versionControlProvenance": [
+        {
+          "branch": "master",
+          "properties": {
+            "repoUrl": "",
+            "vcsType": "Git"
+          },
+          "repositoryUri": ""
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "NotExistingId",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Duplicate condition 'var > 10'",
+            "markdown": "Duplicate condition `var > 10`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 44,
+                  "startColumn": 13,
+                  "charOffset": 987,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "var > 10"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 42,
+                  "startColumn": 1,
+                  "charOffset": 951,
+                  "charLength": 116,
+                  "snippet": {
+                    "text": "            }\n        }\n        if (var > 10) return 3;\n        else if (var > 10) return 8;\n        else return 13;"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "baseline",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0e1382ba21c28b43",
+            "equalIndicator/v1": "19a138fe602055a1a2660836515db98eef15679806a045cf4ebe0e914ef71756"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "NotExistingId",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Duplicate condition 'var > 10'",
+            "markdown": "Duplicate condition `var > 10`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 18,
+                  "charOffset": 1024,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "var > 10"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 43,
+                  "startColumn": 1,
+                  "charOffset": 965,
+                  "charLength": 108,
+                  "snippet": {
+                    "text": "        }\n        if (var > 10) return 3;\n        else if (var > 10) return 8;\n        else return 13;\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "baseline",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "641be7a3e09f1061",
+            "equalIndicator/v1": "de0699b6aa63247266ced7f5627c2bd2b9e158262196226c3e1673b6359d9986"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "baseline/qodana/2024-07-26",
+        "guid": "06314406-7ca2-45a9-af05-3d4e97ca7bb2",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "configProfile": "path",
+        "deviceId": "200820300000000-0000-0000-0000-000000000000",
+        "qodanaNewResultSummary": {
+          "high": 2,
+          "total": 2
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "cloud" : {
+    "url" : "https://qodana.cloud/projects/TEST_PROJECT_ID/reports/TEST_REPORT_ID",
+    "reportId" : "TEST_REPORT_ID",
+    "projectId" : "TEST_PROJECT_ID",
+    "projectName" : "test-project",
+    "host" : "https://qodana.cloud"
+  },
+  "vcs" : {
+    "origin" : "https://remote-url"
+  }
+}

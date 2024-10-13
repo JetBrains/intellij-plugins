@@ -1,0 +1,24 @@
+<idea-plugin package="org.jetbrains.qodana.js">
+  <dependencies>
+    <plugin id="JavaScript"/>
+    <plugin id="NodeJS"/>
+    <module name="intellij.qodana.coverage"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <reportMetadataArtifact implementation="org.jetbrains.qodana.js.JestCoverageReportMetadataArtifact"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.js.JSCoverageArtifactProcessor"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <!--<commandLineInspectionProjectConfigurator implementation="org.jetbrains.qodana.js.JsProjectConfigurator"/>-->
+    <globalInspection hasStaticDescription="true"
+                      language="JavaScript"
+                      shortName="JsCoverageInspection"
+                      key="check.js.display.name"
+                      bundle="messages.QodanaBundle"
+                      groupKey="coverage.group.display.name"
+                      enabledByDefault="true"
+                      implementationClass="org.jetbrains.qodana.js.JsCoverageInspection"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,5 @@
+image: atlassian/default-image:4
+
+definitions:
+  other:
+    a: b

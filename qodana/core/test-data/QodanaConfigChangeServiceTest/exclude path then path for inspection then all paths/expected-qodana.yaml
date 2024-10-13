@@ -1,0 +1,6 @@
+version: "1.0"
+exclude:
+  - name: All
+  - name: ExcludedInspection
+    paths:
+      - excluded/path/for/inspection

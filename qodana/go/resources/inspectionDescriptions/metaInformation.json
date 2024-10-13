@@ -1,0 +1,8 @@
+{
+  "inspections": [
+    {
+      "id": "GoCoverageInspection",
+      "codeQualityCategory": "Reliability"
+    }
+  ]
+}

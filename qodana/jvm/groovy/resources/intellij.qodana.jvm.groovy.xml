@@ -1,0 +1,8 @@
+<idea-plugin package="org.jetbrains.qodana.jvm.groovy">
+  <dependencies>
+    <plugin id="org.intellij.groovy"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <jenkinsConfigHandler implementation="org.jetbrains.qodana.jvm.groovy.GroovyJenkinsConfigHandler"/>
+  </extensions>
+</idea-plugin>

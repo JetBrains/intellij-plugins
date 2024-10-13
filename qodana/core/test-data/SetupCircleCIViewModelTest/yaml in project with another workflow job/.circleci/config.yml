@@ -1,0 +1,13 @@
+version: 2.1
+orbs:
+  another: orb
+jobs:
+  another:
+    machine:
+      image: 'ubuntu-2004:current'
+    steps:
+      - checkout
+workflows:
+  main:
+    jobs:
+      - another

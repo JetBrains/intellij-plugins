@@ -1,0 +1,34 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "results": [
+      {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uriBaseId": "SRCBAD"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_1",
+        "guid": "REPORT_1"
+      }
+    }
+  ]
+}

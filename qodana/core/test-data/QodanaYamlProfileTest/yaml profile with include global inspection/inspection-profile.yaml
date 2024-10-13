@@ -1,0 +1,7 @@
+baseProfile: qodana.starter
+
+inspections:
+  - inspection: unused
+    enabled: true
+    ignore:
+      - "**/C.java"

@@ -1,0 +1,13 @@
+qodana:
+  only:
+    - main
+    - dev
+    - test-branch
+    - merge_requests
+  image:
+    name: jetbrains/qodana-<linter>
+    entrypoint: [""]
+  variables:
+    QODANA_TOKEN: $qodana_token
+  script:
+    - qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana

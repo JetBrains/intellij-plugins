@@ -1,0 +1,37 @@
+{"results":[
+  {
+    "ruleId": "JSUnresolvedVariable",
+    "kind": "fail",
+    "level": "note",
+    "message": {
+      "text": "Unresolved variable or type global",
+      "markdown": "Unresolved variable or type global"
+    },
+    "locations": [
+      {
+        "physicalLocation": {
+          "artifactLocation": {
+            "uri": "tests/js/tests/yii.captcha.test.js",
+            "uriBaseId": "SRCROOT"
+          }
+        },
+        "logicalLocations": [
+          {
+            "fullyQualifiedName": "yii2",
+            "kind": "module"
+          }
+        ]
+      }
+    ],
+    "partialFingerprints": {
+      "equalIndicator/v1": "2d347af17e590d4e1a8b3a2349aeb519f656fd49c6f516695f5b25d739169a0e"
+    },
+    "properties": {
+      "ideaSeverity": "WEAK WARNING",
+      "qodanaSeverity": "Moderate",
+      "tags": [
+        "JavaScript"
+      ]
+    }
+  }
+]}
