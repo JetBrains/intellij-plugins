@@ -8,10 +8,9 @@ import com.intellij.lang.typescript.lsp.bind
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.AlignX
-import com.intellij.ui.dsl.builder.Panel
-import com.intellij.ui.dsl.builder.bind
-import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.components.JBRadioButton
+import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.layout.not
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
 
@@ -26,9 +25,10 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           .bind(settings::packageRef)
       }
 
+      lateinit var radioButtonDisabled: Cell<JBRadioButton>
       buttonsGroup {
         row {
-          radioButton(VueBundle.message("vue.configurable.service.disabled"), VueServiceSettings.DISABLED)
+          radioButtonDisabled = radioButton(VueBundle.message("vue.configurable.service.disabled"), VueServiceSettings.DISABLED)
             .comment(VueBundle.message("vue.configurable.service.disabled.help"))
         }
         row {
@@ -48,6 +48,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           .applyToComponent {
             toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server.description")
           }
+          .enabledIf(radioButtonDisabled.selected.not())
           .bindSelected(settings::useTypesFromServer)
       }
     }
