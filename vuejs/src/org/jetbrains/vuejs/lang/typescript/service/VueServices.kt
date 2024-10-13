@@ -2,19 +2,63 @@
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
+import com.intellij.lang.typescript.lsp.LspServerDownloader
+import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.text.SemVer
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspExecutableDownloader
 import org.jetbrains.vuejs.options.VueServiceSettings
+import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.getVueSettings
+import java.io.File
 
+
+private object VueLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
+                                                                          "2.1.6",
+                                                                          "/bin/vue-language-server.js") {
+  override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
+}
+
+@ApiStatus.Experimental
+object VueLspExecutableDownloader : LspServerDownloader(VueLspServerPackageDescriptor) {
+  override fun getSelectedPackageRef(project: Project): NodePackageRef {
+    return getVueSettings(project).packageRef
+  }
+
+  override fun getExecutableForDefaultKey(project: Project): String? {
+    if (project.service<VueSettings>().useTypesFromServer) {
+      return getNewEvalExecutable()
+    }
+
+    return super.getExecutableForDefaultKey(project)
+  }
+
+  private fun getNewEvalExecutable(): String {
+    // work in progress
+    val registryValue = Registry.stringValue("vue.language.server.default.version")
+    val version =
+      if (registryValue.startsWith("1")) "tsc-vue1" // explicit Registry value is needed for old Vue LS 1 New Eval
+      else "tsc-vue"
+    val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
+                    "typescript/node_modules/$version/${packageDescriptor.defaultPackageRelativePath}")
+    val path = file.absolutePath
+    return path
+  }
+}
+
+internal val vueLspNewEvalVersion = SemVer.parseFromText("2.0.26-eval")
 
 object VueServiceSetActivationRule : JSServiceSetActivationRule(VueLspExecutableDownloader, null) {
   override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {

@@ -1,34 +1,21 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
-import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.JSLspServerWidgetItem
-import com.intellij.lang.typescript.lsp.LspServerDownloader
-import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
-import com.intellij.util.text.SemVer
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
+import org.jetbrains.vuejs.lang.typescript.service.vueLspNewEvalVersion
 import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.VueSettings
-import org.jetbrains.vuejs.options.getVueSettings
-import java.io.File
 
-private object VueLspServerPackageDescriptor : LspServerPackageDescriptor("@vue/language-server",
-                                                                          "2.1.6",
-                                                                          "/bin/vue-language-server.js") {
-  override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
-}
 
 class VueLspServerSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -46,7 +33,7 @@ class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(
 
   init {
     if (newEvalMode) {
-      version = SemVer.parseFromText("2.0.26-eval")
+      version = vueLspNewEvalVersion
     }
   }
 
@@ -60,32 +47,5 @@ class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(
         val hybridMode = false
       }
     }
-  }
-}
-
-@ApiStatus.Experimental
-object VueLspExecutableDownloader : LspServerDownloader(VueLspServerPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef {
-    return getVueSettings(project).packageRef
-  }
-
-  override fun getExecutableForDefaultKey(project: Project): String? {
-    if (project.service<VueSettings>().useTypesFromServer) {
-      return getNewEvalExecutable()
-    }
-
-    return super.getExecutableForDefaultKey(project)
-  }
-
-  private fun getNewEvalExecutable(): String {
-    // work in progress
-    val registryValue = Registry.stringValue("vue.language.server.default.version")
-    val version =
-      if (registryValue.startsWith("1")) "tsc-vue1" // explicit Registry value is needed for old Vue LS 1 New Eval
-      else "tsc-vue"
-    val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                    "typescript/node_modules/$version/${packageDescriptor.defaultPackageRelativePath}")
-    val path = file.absolutePath
-    return path
   }
 }
