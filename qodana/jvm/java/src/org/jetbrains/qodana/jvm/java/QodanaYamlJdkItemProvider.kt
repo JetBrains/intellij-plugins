@@ -23,7 +23,7 @@ class QodanaYamlJdkItemProvider : QodanaYamlItemProvider {
     @Language("YAML")
     val content = """
       
-      projectJDK: ${jdkVersion.maxLanguageLevel.feature()} #$APPLIED_IN_CI_COMMENT
+      projectJDK: "${jdkVersion.maxLanguageLevel.feature()}" #$APPLIED_IN_CI_COMMENT
     """.trimIndent()
     return QodanaYamlItem(ID, 120, content)
   }
