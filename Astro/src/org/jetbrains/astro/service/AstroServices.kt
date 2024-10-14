@@ -3,10 +3,10 @@ package org.jetbrains.astro.service
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
-import com.intellij.lang.typescript.lsp.DownloadableVersion
 import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
 import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
+import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
@@ -18,7 +18,7 @@ import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
   "@astrojs/language-server",
-  DownloadableVersion.of("2.10.0"),
+  PackageVersion.downloadable("2.10.0"),
   "/bin/nodeServer.js"
 ) {
   override val registryVersion: String get() = Registry.stringValue("astro.language.server.default.version")

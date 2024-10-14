@@ -6,10 +6,10 @@ import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
-import com.intellij.lang.typescript.lsp.DownloadableVersion
 import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
 import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
+import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -28,7 +28,7 @@ import java.io.File
 
 private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
   "@vue/language-server",
-  DownloadableVersion.of("2.1.6"),
+  PackageVersion.downloadable("2.1.6"),
   "/bin/vue-language-server.js"
 ) {
   override val registryVersion: String get() = Registry.stringValue("vue.language.server.default.version")

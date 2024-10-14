@@ -1,9 +1,9 @@
 package org.intellij.prisma.ide.lsp
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.typescript.lsp.DownloadableVersion
 import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
+import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -17,7 +17,7 @@ import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.ide.ui.PrismaSettingsConfigurable
 
 private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@prisma/language-server",
-                                                                             DownloadableVersion.of("5.20.0"),
+                                                                             PackageVersion.downloadable("5.20.0"),
                                                                              "/dist/bin.js") {
   private val sinceNewServiceLayoutVersion = SemVer.parseFromText("5.15.0")!! // inclusive
 
