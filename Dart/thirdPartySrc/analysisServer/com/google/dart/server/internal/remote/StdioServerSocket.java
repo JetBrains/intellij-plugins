@@ -13,14 +13,12 @@
  */
 package com.google.dart.server.internal.remote;
 
-import com.google.common.base.Preconditions;
 import com.google.dart.server.AnalysisServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A remote server socket over standard input and output.
@@ -56,27 +54,27 @@ public class StdioServerSocket implements AnalysisServerSocket {
       String analysisServerPath, List<String> additionalServerArguments,
       DebugPrintStream debugStream) {
     this.runtimePath = runtimePath;
-    this.vmArguments = defaultIfNull(additionalVmArguments, new ArrayList<String>());
+    this.vmArguments = Objects.requireNonNullElse(additionalVmArguments, new ArrayList<>());
     this.analysisServerPath = analysisServerPath;
-    this.serverArguments = defaultIfNull(additionalServerArguments, new ArrayList<String>());
+    this.serverArguments = Objects.requireNonNullElse(additionalServerArguments, new ArrayList<>());
     this.debugStream = debugStream;
   }
 
   @Override
   public ByteLineReaderStream getErrorStream() {
-    Preconditions.checkNotNull(errorStream, "Server is not started.");
+    Objects.requireNonNull(errorStream, "Server is not started.");
     return errorStream;
   }
 
   @Override
   public RequestSink getRequestSink() {
-    Preconditions.checkNotNull(requestSink, "Server is not started.");
+    Objects.requireNonNull(requestSink, "Server is not started.");
     return requestSink;
   }
 
   @Override
   public ResponseStream getResponseStream() {
-    Preconditions.checkNotNull(responseStream, "Server is not started.");
+    Objects.requireNonNull(responseStream, "Server is not started.");
     return responseStream;
   }
 

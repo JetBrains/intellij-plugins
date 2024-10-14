@@ -13,9 +13,6 @@
  */
 package com.google.dart.server.internal.remote;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.internal.BroadcastAnalysisServerListener;
@@ -35,6 +32,7 @@ import org.osgi.framework.Version;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -106,13 +104,13 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   private final List<ResponseListener> responseListenerList = new ArrayList<>();
 
-  private final List<AnalysisServerStatusListener> statusListenerList = new ArrayList<AnalysisServerStatusListener>();
+  private final List<AnalysisServerStatusListener> statusListenerList = new ArrayList<>();
 
   /**
    * A mapping between {@link String} ids' and the associated {@link Consumer} that was passed when
    * the request was made.
    */
-  private final Map<String, Consumer> consumerMap = Maps.newHashMap();
+  private final Map<String, Consumer> consumerMap = new HashMap<>();
 
   /**
    * The object used to synchronize access to {@link #consumerMap}.
@@ -127,7 +125,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   /**
    * A mapping between "getRefactoring" request ids and the requested refactoring kinds.
    */
-  private final Map<String, String> requestToRefactoringKindMap = Maps.newHashMap();
+  private final Map<String, String> requestToRefactoringKindMap = new HashMap<>();
 
   /**
    * The thread that restarts an unresponsive server or {@code null} if it has not been started.
@@ -266,7 +264,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   public void analysis_setSubscriptions(Map<String, List<String>> subscriptions) {
     String id = generateUniqueId();
     if (subscriptions == null) {
-      subscriptions = Maps.newHashMap();
+      subscriptions = new HashMap<>();
     }
     sendRequestToServer(id, RequestUtilities.generateAnalysisSetSubscriptions(id, subscriptions));
   }
@@ -275,7 +273,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   public void analysis_updateContent(Map<String, Object> files, UpdateContentConsumer consumer) {
     String id = generateUniqueId();
     if (files == null) {
-      files = Maps.newHashMap();
+      files = new HashMap<>();
     }
     sendRequestToServer(id, RequestUtilities.generateAnalysisUpdateContent(id, files), consumer);
   }
@@ -630,13 +628,6 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
     startWatcher(5000);
   }
 
-  @VisibleForTesting
-  public void test_waitForWorkerComplete() {
-    while (!consumerMap.isEmpty()) {
-      Thread.yield();
-    }
-  }
-
   /**
    * Generate and return a unique {@link String} id to be used in the requests sent to the analysis
    * server.
@@ -959,7 +950,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   private void notifyRequestListeners(JsonObject request) {
     synchronized (requestListenerList) {
-      List<RequestListener> listeners = ImmutableList.copyOf(requestListenerList);
+      List<RequestListener> listeners = List.copyOf(requestListenerList);
       for (RequestListener listener : listeners) {
         listener.onRequest(request.toString());
       }
@@ -968,7 +959,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   private void notifyResponseListeners(JsonObject response) {
     synchronized (responseListenerList) {
-      List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
+      List<ResponseListener> listeners = List.copyOf(responseListenerList);
       for (ResponseListener listener : listeners) {
         listener.onResponse(response.toString());
       }

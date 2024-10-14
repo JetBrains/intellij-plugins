@@ -13,11 +13,8 @@
  */
 package com.google.dart.server.internal.remote.processor;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.dart.server.AnalysisServerListener;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 import java.util.*;
 
