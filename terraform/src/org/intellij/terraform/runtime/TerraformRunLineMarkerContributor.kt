@@ -4,6 +4,7 @@ package org.intellij.terraform.runtime
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.hcl.HCLBundle
@@ -35,8 +36,15 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware 
     return Info(icon, computeActions(block), tooltipProvider)
   }
 
-  private fun computeActions(block: HCLBlock): Array<AnAction> = TfMainCommand.entries
-    .filter { it != TfMainCommand.NONE }
-    .map { TfRunConfigAction(block, it) }
-    .toTypedArray()
+  private fun computeActions(block: HCLBlock): Array<AnAction> {
+    val actions: MutableList<AnAction> = TfMainCommand.entries
+      .filter { it != TfMainCommand.NONE }
+      .map { TfRunConfigurationAction(block, it) }
+      .toMutableList()
+
+    actions.add(Separator())
+    actions.add(TfEditConfigurationsAction(block))
+
+    return actions.toTypedArray()
+  }
 }

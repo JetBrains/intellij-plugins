@@ -12,6 +12,7 @@ import com.intellij.ui.SimpleListCellRenderer
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
+import java.awt.Font
 import javax.swing.JComponent
 
 internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfiguration) :
@@ -21,6 +22,7 @@ internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfigurat
     selectedItem = TfMainCommand.NONE
     renderer = SimpleListCellRenderer.create { label, value, _ ->
       label.text = value.command
+      font = Font(Font.MONOSPACED, font.style, font.size)
     }
   }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
 
