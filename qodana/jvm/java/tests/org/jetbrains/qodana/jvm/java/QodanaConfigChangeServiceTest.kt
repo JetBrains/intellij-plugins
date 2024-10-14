@@ -40,7 +40,7 @@ class QodanaConfigChangeServiceTest: QodanaPluginHeavyTestBase() {
         #    paths:
         #      - <path/where/not/run/inspection>
         
-        projectJDK: 17 #(Applied in CI/CD pipeline)
+        projectJDK: "17" #(Applied in CI/CD pipeline)
         
         #Execute shell command before Qodana execution (Applied in CI/CD pipeline)
         #bootstrap: sh ./prepare-qodana.sh
