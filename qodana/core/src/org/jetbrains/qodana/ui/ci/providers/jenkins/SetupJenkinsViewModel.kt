@@ -93,7 +93,7 @@ class SetupJenkinsViewModel(
                       -v "$WORKSPACE_ENV":/data/project
                       --entrypoint=""
                       '''
-                  image '${getQodanaImageNameMatchingIDE(useLatestPostfix = false)}'
+                  image '${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}'
               }
           }
           stages {
@@ -135,7 +135,7 @@ class SetupJenkinsViewModel(
                       -v "$WORKSPACE_ENV":/data/project
                       --entrypoint=""
                       '''
-                  image '${getQodanaImageNameMatchingIDE(useLatestPostfix = false)}'
+                  image '${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}'
               }
           }""" + branchesText + """
           steps {

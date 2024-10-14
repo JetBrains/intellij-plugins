@@ -26,6 +26,6 @@ profile:
 #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
 
 #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-linter: jetbrains/qodana-<linter>:latest
+linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
 exclude:
   - name: All

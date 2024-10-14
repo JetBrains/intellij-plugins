@@ -3,8 +3,10 @@ package org.jetbrains.qodana.ui
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.util.application
 
-fun getQodanaImageNameMatchingIDE(useLatestPostfix: Boolean): String {
-  return "jetbrains/${getLinterName()}${if (useLatestPostfix) ":latest" else ""}"
+fun getQodanaImageNameMatchingIDE(useVersionPostfix: Boolean): String {
+  val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+  val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+  return "jetbrains/${getLinterName()}${if (useVersionPostfix) ":${ideMajorVersion}.${ideMinorVersion}" else ""}"
 }
 
 private fun getLinterName(): String {

@@ -68,7 +68,7 @@ class SetupSpaceAutomationViewModel(
     @Language("YAML")
     val spaceJobConfiguration = ("""
       job("Qodana") {""" + branchesText + """
-        container("${getQodanaImageNameMatchingIDE(useLatestPostfix = false)}") {
+        container("${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}") {
           env["QODANA_TOKEN"] = "{{ project:qodana-token }}"
           shellScript {
             content = "qodana$baselineText"

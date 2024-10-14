@@ -9,9 +9,9 @@ pipelines:
           image: jetbrains/qodana-<linter>
           script:
             - export QODANA_TOKEN=$QODANA_TOKEN  # Export the environment variable
-            - qodana --results-dir=$BITBUCKET_CLONE_DIR/.qodana --report-dir=$BITBUCKET_CLONE_DIR/.qodana/report --cache-dir=$BITBUCKET_CLONE_DIR/.qodana/cache
+            - qodana --results-dir=$BITBUCKET_CLONE_DIR/.qodana --report-dir=$BITBUCKET_CLONE_DIR/.qodana/report --cache-dir=~/.qodana/cache
           artifacts:
             - .qodana/report
 definitions:
   caches:
-    qodana: .qodana/cache
+    qodana: ~/.qodana/cache

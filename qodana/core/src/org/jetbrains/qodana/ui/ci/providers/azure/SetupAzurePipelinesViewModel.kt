@@ -2,6 +2,7 @@ package org.jetbrains.qodana.ui.ci.providers.azure
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -76,6 +77,8 @@ class SetupAzurePipelinesViewModel(
 
     val baselineText = getSarifBaseline(project)?.let { "--baseline,$it," } ?: ""
 
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+
     @Language("YAML")
     val yamlConfiguration = branchesText + """
       
@@ -90,7 +93,7 @@ class SetupAzurePipelinesViewModel(
             restoreKeys: |
               "$(Build.Repository.Name)" | "$(Build.SourceBranchName)"
               "$(Build.Repository.Name)"
-        - task: QodanaScan@2023
+        - task: QodanaScan@${ideMajorVersion}
           inputs:
             args: ${baselineText}-l,${getQodanaImageNameMatchingIDE(true)}
           env:
@@ -100,9 +103,10 @@ class SetupAzurePipelinesViewModel(
   }
 
   private suspend fun defaultQodanaTaskText(): String {
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
     val baselineText = getSarifBaseline(project)?.let { "--baseline,$it," } ?: ""
     return """
-      task: QodanaScan@2023
+      task: QodanaScan@${ideMajorVersion}
         inputs:
           args: ${baselineText}-l,${getQodanaImageNameMatchingIDE(true)}
         env:
