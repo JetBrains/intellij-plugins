@@ -20,7 +20,7 @@ private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
   "2.10.0",
   "/bin/nodeServer.js"
 ) {
-  override val defaultVersion: String get() = Registry.stringValue("astro.language.server.default.version")
+  override val registryVersion: String get() = Registry.stringValue("astro.language.server.default.version")
 }
 
 @ApiStatus.Experimental

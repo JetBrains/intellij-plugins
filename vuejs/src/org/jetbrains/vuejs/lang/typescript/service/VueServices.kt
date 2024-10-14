@@ -30,7 +30,7 @@ private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
   "2.1.6",
   "/bin/vue-language-server.js"
 ) {
-  override val defaultVersion: String get() = Registry.stringValue("vue.language.server.default.version")
+  override val registryVersion: String get() = Registry.stringValue("vue.language.server.default.version")
 }
 
 @ApiStatus.Experimental

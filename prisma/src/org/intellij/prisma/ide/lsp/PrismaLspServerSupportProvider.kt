@@ -20,7 +20,7 @@ private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@p
                                                                              "/dist/bin.js") {
   private val sinceNewServiceLayoutVersion = SemVer.parseFromText("5.15.0")!! // inclusive
 
-  override val defaultVersion: String get() = Registry.stringValue("prisma.language.server.default.version")
+  override val registryVersion: String get() = Registry.stringValue("prisma.language.server.default.version")
 
   override fun getPackageRelativePath(project: Project, ref: NodePackageRef): String {
     val version = ref.constantPackage?.version
