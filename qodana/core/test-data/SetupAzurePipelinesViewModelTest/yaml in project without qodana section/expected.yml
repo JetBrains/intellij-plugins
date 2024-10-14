@@ -6,8 +6,8 @@ pool:
 
 steps:
   - task: SomeTask
-  - task: QodanaScan@2023
+  - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
-      args: -l,jetbrains/qodana-<linter>:latest
+      args: -l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
     env:
       QODANA_TOKEN: $(QODANA_TOKEN)

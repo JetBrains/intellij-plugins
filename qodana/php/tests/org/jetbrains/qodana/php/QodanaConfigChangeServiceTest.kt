@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.php
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import org.assertj.core.api.Assertions.assertThat
@@ -47,14 +48,21 @@ class QodanaConfigChangeServiceTest: QodanaPluginHeavyTestBase() {
         #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
         
         #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-        linter: jetbrains/qodana-<linter>:latest
+        linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
         
-      """.trimIndent()
+      """.trimIndent().updateVersion()
     val generated = configChangeService.createDefaultConfigContent()
     assertThat(generated).isEqualTo(expected)
   }
 
   private fun configurePhpLanguageLevel(newLanguageLevel: PhpLanguageLevel) {
     PhpProjectConfigurationFacade.getInstance(project).languageLevel = newLanguageLevel
+  }
+
+
+  private fun String.updateVersion(): String {
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    return this.replace("LINTER_PLACEHOLDER","${ideMajorVersion}.${ideMinorVersion}")
   }
 }

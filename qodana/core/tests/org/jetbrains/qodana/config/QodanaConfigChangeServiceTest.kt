@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.config
 
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.vfs.readText
@@ -49,7 +50,7 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
       document!!.saveToDisk()
     }
     assertThat(document!!.getVirtualFile().readText().replace("\r", ""))
-      .isEqualTo(expectedQodanaYaml.readText().replace("\r", ""))
+      .isEqualTo(expectedQodanaYaml.readText().replace("\r", "").updateVersion())
   }
 
   fun `test config don't exists`() = runDispatchingOnUi {
@@ -160,9 +161,9 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
       #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
       
       #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-      linter: jetbrains/qodana-<linter>:latest
+      linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
       
-    """.trimIndent()
+    """.trimIndent().updateVersion()
     val generated = configChangeService.createDefaultConfigContent()
     assertThat(generated).isEqualTo(expected)
   }
@@ -199,9 +200,9 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
         #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
         
         #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-        linter: jetbrains/qodana-<linter>:latest
+        linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
         
-      """.trimIndent()
+      """.trimIndent().updateVersion()
       val generated = configChangeService.createDefaultConfigContent()
       assertThat(generated).isEqualTo(expected)
     }
@@ -239,9 +240,9 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
         #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
         
         #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-        linter: jetbrains/qodana-<linter>:latest
+        linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
         
-      """.trimIndent()
+      """.trimIndent().updateVersion()
       val generated = configChangeService.createDefaultConfigContent()
       assertThat(generated).isEqualTo(expected)
     }
@@ -268,5 +269,11 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
       profileManager.setCurrentProfile(null)
       profileManager.deleteProfile(profile)
     }
+  }
+
+  private fun String.updateVersion(): String {
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    return this.replace("LINTER_PLACEHOLDER","${ideMajorVersion}.${ideMinorVersion}")
   }
 }

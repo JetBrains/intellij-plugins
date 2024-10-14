@@ -69,7 +69,7 @@ class SetupGitLabCIViewModel(
     @Language("YAML")
     val yamlConfiguration = branchesText + """
         image:
-          name: ${getQodanaImageNameMatchingIDE(useLatestPostfix = false)}
+          name: ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}
           entrypoint: [""]
         variables:
           QODANA_TOKEN: $QODANA_CLOUD_TOKEN_ENV

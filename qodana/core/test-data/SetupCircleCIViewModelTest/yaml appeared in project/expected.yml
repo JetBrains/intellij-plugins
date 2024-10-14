@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  qodana: jetbrains/qodana@2023.2
+  qodana: jetbrains/qodana@VERSION_PLACEHOLDER
 jobs:
   code-quality:
     machine:
