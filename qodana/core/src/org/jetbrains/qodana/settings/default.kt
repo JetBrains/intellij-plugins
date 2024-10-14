@@ -211,7 +211,7 @@ class QodanaYamlLinterItemProvider : QodanaYamlItemProvider {
     val content = """
       
       #Specify Qodana linter for analysis $APPLIED_IN_CI_COMMENT
-      linter: ${getQodanaImageNameMatchingIDE(useLatestPostfix = true)}
+      linter: ${getQodanaImageNameMatchingIDE(useVersionPostfix = true)}
     """.trimIndent()
     return QodanaYamlItem(ID, 1000, content)
   }

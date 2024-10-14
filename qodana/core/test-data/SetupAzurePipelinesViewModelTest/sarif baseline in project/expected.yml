@@ -12,8 +12,8 @@ steps:
       restoreKeys: |
         "$(Build.Repository.Name)" | "$(Build.SourceBranchName)"
         "$(Build.Repository.Name)"
-  - task: QodanaScan@2023
+  - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
-      args: --baseline,qodana.sarif.json,-l,jetbrains/qodana-<linter>:latest
+      args: --baseline,qodana.sarif.json,-l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
     env:
       QODANA_TOKEN: $(QODANA_TOKEN)

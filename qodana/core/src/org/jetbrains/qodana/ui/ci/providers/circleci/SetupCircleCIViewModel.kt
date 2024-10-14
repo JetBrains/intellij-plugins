@@ -2,6 +2,7 @@ package org.jetbrains.qodana.ui.ci.providers.circleci
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -55,7 +56,14 @@ class SetupCircleCIViewModel(
   private suspend fun getInMemoryPatchOfPhysicalConfig(configFile: VirtualFile): CIConfigFileState.InMemoryPatchOfPhysicalFile? {
     val physicalDocument = readAction { FileDocumentManager.getInstance().getDocument(configFile) } ?: return null
     val physicalText = physicalDocument.immutableCharSequence.toString()
-    val textWithOrb = CircleCIConfigHandler.addOrb(project, physicalText, "qodana", "jetbrains/qodana@2023.2")
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    val textWithOrb = CircleCIConfigHandler.addOrb(
+      project,
+      physicalText,
+      "qodana",
+      "jetbrains/qodana@${ideMajorVersion}.${ideMinorVersion}"
+    )
 
     val baselineText = getSarifBaseline(project)?.let { "--baseline $it " } ?: ""
     @Language("YAML")
@@ -66,7 +74,7 @@ class SetupCircleCIViewModel(
         steps:
           - checkout
           - qodana/scan:
-              args: ${baselineText}-l ${getQodanaImageNameMatchingIDE(useLatestPostfix = false)} # use space to separate arguments
+              args: ${baselineText}-l ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)} # use space to separate arguments
     """.trimIndent()
     val textWithJob = CircleCIConfigHandler.addJob(project, textWithOrb, jobText)
 
@@ -84,12 +92,14 @@ class SetupCircleCIViewModel(
 
   private suspend fun defaultConfigurationText(): String {
     val baselineText = getSarifBaseline(project)?.let { "--baseline $it " } ?: ""
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
 
     @Language("YAML")
     val yamlConfiguration = """
       version: 2.1
       orbs:
-        qodana: jetbrains/qodana@2023.2
+        qodana: jetbrains/qodana@${ideMajorVersion}.${ideMinorVersion}
       jobs:
         code-quality:
           machine:
@@ -97,7 +107,7 @@ class SetupCircleCIViewModel(
           steps:
             - checkout
             - qodana/scan:
-                args: ${baselineText}-l ${getQodanaImageNameMatchingIDE(useLatestPostfix = false)} # use space to separate arguments
+                args: ${baselineText}-l ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)} # use space to separate arguments
       workflows:
         main:
           jobs:

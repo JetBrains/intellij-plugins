@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.ui.ci
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.vfs.VirtualFile
@@ -74,7 +75,7 @@ class SetupAzurePipelinesViewModelTest : QodanaPluginHeavyTestBase() {
     assertThat(configState).isNotNull
     assertThat(configState.ciConfigFileState).isNotNull
     assertThat(configState.ciConfigFileState).isInstanceOf(CIConfigFileState.Physical::class.java)
-    assertThat(configState.ciConfigFileState.document.text).isEqualTo(expectedText)
+    assertThat(configState.ciConfigFileState.document.text.updateVersion()).isEqualTo(expectedText) //update to pass check
   }
 
   fun `test yaml in project without qodana section`() = runDispatchingOnUi {
@@ -115,7 +116,7 @@ class SetupAzurePipelinesViewModelTest : QodanaPluginHeavyTestBase() {
     assertThat(configState).isNotNull
     assertThat(configState.ciConfigFileState).isNotNull
     assertThat(configState.ciConfigFileState).isInstanceOf(CIConfigFileState.Physical::class.java)
-    assertThat(configState.ciConfigFileState.document.text).isEqualTo(expectedText)
+    assertThat(configState.ciConfigFileState.document.text.updateVersion()).isEqualTo(expectedText) // update for check to pass
 
     dispatchAllTasksOnUi()
 
@@ -234,7 +235,7 @@ class SetupAzurePipelinesViewModelTest : QodanaPluginHeavyTestBase() {
   }
 
   private val expectedText: String
-    get() = myFixture.tempDirFixture.getFile("expected.yml")?.readText() ?: ""
+    get() = myFixture.tempDirFixture.getFile("expected.yml")?.readText()?.updateVersion() ?: ""
 
   private fun physicalConfigYml(): VirtualFile? {
     return myFixture.tempDirFixture.getFile("azure-pipelines.yml")
@@ -250,5 +251,13 @@ class SetupAzurePipelinesViewModelTest : QodanaPluginHeavyTestBase() {
     writeAction {
       myFixture.tempDirFixture.getFile("azure-pipelines.yml")!!.delete(this)
     }
+  }
+
+  private fun String.updateVersion(): String {
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    return this
+      .replace("VERSION_PLACEHOLDER", ideMajorVersion)
+      .replace("LINTER_PLACEHOLDER", "${ideMajorVersion}.${ideMinorVersion}")
   }
 }

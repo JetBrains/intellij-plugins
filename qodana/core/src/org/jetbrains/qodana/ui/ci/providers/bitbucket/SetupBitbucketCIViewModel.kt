@@ -67,10 +67,10 @@ class SetupBitbucketCIViewModel(
           name: Qodana
           caches:
             - qodana
-          image: ${getQodanaImageNameMatchingIDE(useLatestPostfix = false)}
+          image: ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}
           script:
             - export QODANA_TOKEN=$QODANA_TOKEN  # Export the environment variable
-            - qodana$baselineText --results-dir=$BITBUCKET_CLONE_DIR/.qodana --report-dir=$BITBUCKET_CLONE_DIR/.qodana/report --cache-dir=$BITBUCKET_CLONE_DIR/.qodana/cache
+            - qodana$baselineText --results-dir=$BITBUCKET_CLONE_DIR/.qodana --report-dir=$BITBUCKET_CLONE_DIR/.qodana/report --cache-dir=~/.qodana/cache
           artifacts:
             - .qodana/report
     """.trimIndent()
@@ -95,10 +95,10 @@ class SetupBitbucketCIViewModel(
             name: Qodana
             caches:
               - qodana
-            image: ${getQodanaImageNameMatchingIDE(useLatestPostfix = false)}
+            image: ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}
             script:
               - export QODANA_TOKEN=$QODANA_TOKEN  # Export the environment variable
-              - qodana$baselineText --results-dir=$BITBUCKET_CLONE_DIR/.qodana --report-dir=$BITBUCKET_CLONE_DIR/.qodana/report --cache-dir=$BITBUCKET_CLONE_DIR/.qodana/cache
+              - qodana$baselineText --results-dir=$BITBUCKET_CLONE_DIR/.qodana --report-dir=$BITBUCKET_CLONE_DIR/.qodana/report --cache-dir=~/.qodana/cache
             artifacts:
               - .qodana/report
     """.replaceIndent("      ")
@@ -114,7 +114,7 @@ class SetupBitbucketCIViewModel(
     """.trimIndent() + pipelinesText + """
       definitions:
         caches:
-          qodana: .qodana/cache
+          qodana: ~/.qodana/cache
     """.trimIndent()
     return yamlConfiguration
   }

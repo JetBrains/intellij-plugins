@@ -51,13 +51,13 @@ class YamlBitbucketCIConfigHandler : BitbucketCIConfigHandler {
       val definitions = findMappingOrAdd(project, file, elementGenerator, topMapping, "definitions", """
         definitions:
           caches:
-            qodana: .qodana/cache
+            qodana: ~/.qodana/cache
       """.trimIndent())?.value as? YAMLMapping ?: return@readAction file.text
       val caches = findMappingOrAdd(project, file, elementGenerator, definitions, "caches", """
         caches:
-          qodana: .qodana/cache
+          qodana: ~/.qodana/cache
       """.replaceIndent("  "))?.value as? YAMLMapping ?: return@readAction file.text
-      val newNode = elementGenerator.createKeyValue("qodana: .qodana/cache") ?: return@readAction null
+      val newNode = elementGenerator.createKeyValue("qodana: ~/.qodana/cache") ?: return@readAction null
       caches.putKeyValue(newNode)
       file.text
     }
