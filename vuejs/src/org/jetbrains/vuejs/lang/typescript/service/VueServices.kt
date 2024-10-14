@@ -39,15 +39,15 @@ object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
     return getVueSettings(project).packageRef
   }
 
-  override fun getExecutableForDefaultKey(project: Project): String? {
+  override fun getAbsolutePathForDefaultKey(project: Project): String? {
     if (project.service<VueSettings>().useTypesFromServer) {
-      return getNewEvalExecutable()
+      return getNewEvalPath()
     }
 
-    return super.getExecutableForDefaultKey(project)
+    return super.getAbsolutePathForDefaultKey(project)
   }
 
-  private fun getNewEvalExecutable(): String {
+  private fun getNewEvalPath(): String {
     // work in progress
     val registryValue = Registry.stringValue("vue.language.server.default.version")
     val version =
