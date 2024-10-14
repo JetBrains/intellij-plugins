@@ -1,0 +1,1 @@
+Please see [WEB-68605 Bundle Vue, Svelte, Astro language servers](https://youtrack.jetbrains.com/issue/WEB-68605).
