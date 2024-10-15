@@ -9,6 +9,19 @@ import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 open class AstroServiceTestBase : BaseLspTypeScriptServiceTest() {
+  protected val packageJson = """
+    {
+      "name": "astro-test",
+      "type": "module",
+      "version": "0.0.1",
+      "private": true,
+      "dependencies": {
+        "astro": "^4.8.6",
+        "typescript": "^5.4.5"
+      }
+    }
+  """.trimIndent()
+
   override fun getExtension(): String = "astro"
 
   override fun setUp() {
@@ -26,6 +39,9 @@ open class AstroServiceTestBase : BaseLspTypeScriptServiceTest() {
     serviceSettings.serviceMode = AstroServiceMode.ENABLED
 
     ensureServerDownloaded(AstroLspServerLoader)
+
+    myFixture.addFileToProject("package.json", packageJson)
+    performNpmInstallForPackageJson("package.json")
   }
 
   protected fun assertCorrectService() = assertCorrectServiceImpl<AstroLspTypeScriptService>()
