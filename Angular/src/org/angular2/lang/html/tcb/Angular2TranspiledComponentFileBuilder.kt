@@ -34,7 +34,7 @@ object Angular2TranspiledComponentFileBuilder {
   private val mappingsComparator: Comparator<SourceMapping> =
     Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength }
 
-  fun getTranspiledComponentAndTopLevelTemplateFile(context: PsiElement): Pair<TranspiledComponentFile, PsiFile>? = withTraceSpan("getTranspiledComponentAndTopLevelTemplateFile") {
+  fun getTranspiledComponentAndTopLevelTemplateFile(context: PsiElement): Pair<TranspiledComponentFile, PsiFile>? = withTraceSpan(javaClass, "getTranspiledComponentAndTopLevelTemplateFile") {
     val templateFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
     val componentFile = if (templateFile.language is Angular2HtmlDialect)
       Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile
@@ -69,7 +69,7 @@ object Angular2TranspiledComponentFileBuilder {
       }, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
-  private fun buildTranspiledComponentFile(componentFile: PsiFile, cache: ComponentFileCache): TranspiledComponentFile = withTraceSpan("buildTranspiledComponentFile") {
+  private fun buildTranspiledComponentFile(componentFile: PsiFile, cache: ComponentFileCache): TranspiledComponentFile = withTraceSpan(javaClass, "buildTranspiledComponentFile") {
     val templates = cache.components.mapIndexedNotNull { index, cls ->
       CachedValuesManager.getCachedValue(cls) {
         val context = getComponentFileCache(cls.containingFile)!!.environment
