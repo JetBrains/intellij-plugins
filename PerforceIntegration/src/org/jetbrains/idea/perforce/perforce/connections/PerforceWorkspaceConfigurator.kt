@@ -53,7 +53,7 @@ class PerforceWorkspaceConfigurator(private val project: Project) {
       add("${P4PORT.name}=${parameters.server}")
       add("${P4USER.name}=${parameters.user}")
       add("${P4CLIENT.name}=${client.clientName}")
-      add("${P4IGNORE.name}=$P4IGNORE_NAME")
+      add("${P4IGNORE.name}=$P4IGNORE_NAME;$GITIGNORE_NAME")
     }.joinToString("\n")
 
     try {
@@ -78,5 +78,10 @@ class PerforceWorkspaceConfigurator(private val project: Project) {
 
     const val P4CONFIG_NAME = "p4config.txt"
     const val P4IGNORE_NAME = ".p4ignore.txt"
+
+    /**
+     *.gitignore exist by default in all .idea directory and already contains project configuration files which should be ignored
+     */
+    const val GITIGNORE_NAME = ".gitignore"
   }
 }
