@@ -5,13 +5,11 @@ import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.impl.RunDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import org.intellij.terraform.config.model.getTerraformModule
-import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.jetbrains.annotations.Nls
 
@@ -62,22 +60,6 @@ internal class TfRunConfigurationAction(block: HCLBlock, tfCommand: TfMainComman
     runManager.addConfiguration(settings)
     runManager.selectedConfiguration = settings
     ProgramRunnerUtil.executeConfiguration(settings, DefaultRunExecutor.getRunExecutorInstance())
-  }
-}
-
-internal class TfEditConfigurationsAction(block: HCLBlock) : TfRunConfigActionBase(block, TfMainCommand.NONE) {
-  init {
-    templatePresentation.text = HCLBundle.message("terraform.edit.configurations.action.text")
-  }
-
-  override fun actionPerformed(e: AnActionEvent) {
-    val selectedConfiguration = runManager.selectedConfiguration
-
-    val settings = if (selectedConfiguration?.configuration is TerraformRunConfiguration)
-      selectedConfiguration
-    else createAndConfigureSettings()
-
-    RunDialog.editConfiguration(project, settings, HCLBundle.message("terraform.edit.configuration.dialog.title", settings.name))
   }
 }
 
