@@ -14,7 +14,6 @@
 
 package com.google.dart.server.internal;
 
-import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerListener;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -232,7 +231,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
    */
   private List<AnalysisServerListener> getListeners() {
     synchronized (listeners) {
-      return Lists.newArrayList(listeners);
+      return new ArrayList<>(listeners);
     }
   }
 }
