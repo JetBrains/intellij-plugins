@@ -407,7 +407,7 @@
                          key="terraform.opentofu.settings.label" bundle="messages.HCLBundle"/>
 
     <configurationType implementation="org.intellij.terraform.runtime.TfConfigurationType"/>
-    <runLineMarkerContributor language="HCL" implementationClass="org.intellij.terraform.runtime.TerraformRunLineMarkerContributor"/>
+    <runLineMarkerContributor language="HCL" implementationClass="org.intellij.terraform.runtime.TfRunLineMarkerContributor"/>
     <checkinHandlerFactory implementation="org.intellij.terraform.config.actions.TFFmtCheckinFactory" order="last"/>
     <macro implementation="org.intellij.terraform.macros.TerraformExecutableMacro"/>
 
