@@ -112,7 +112,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
-  override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
+  override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedTraceSpan(javaClass, "getInlayHintsAngular", myLifecycleSpan) {
     val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile ?: return@withScopedTraceSpan null) != null
     val result = super.getInlayHints(file, textRange) ?: return@withScopedTraceSpan null
     return@withScopedTraceSpan readAction {
@@ -123,7 +123,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
-  private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> = withTraceSpan("repositionInlayHints") {
+  private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> = withTraceSpan(javaClass, "repositionInlayHints") {
     val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@withTraceSpan hints
     return@withTraceSpan hints.map {
       repositionInlayHint(file, document, it)
@@ -163,7 +163,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     return psiFile.language.let { it !is Angular2Language && it !is Angular2HtmlDialect }
   }
 
-  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> = withTraceSpan("translateNamesInErrors") {
+  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> = withTraceSpan(javaClass, "translateNamesInErrors") {
     val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
                    ?: return@withTraceSpan emptyList()
     return@withTraceSpan errors.map { error ->
@@ -214,7 +214,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     element is LeafPsiElement
     && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language }
 
-  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? = withTraceSpan("refreshTranspiledTemplateIfNeededCancellable", myLifecycleSpan) {
+  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? = withTraceSpan(javaClass, "refreshTranspiledTemplateIfNeededCancellable") {
     JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
@@ -228,7 +228,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
-  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? = withScopedTraceSpan("refreshTranspiledTemplateIfNeededCancellable", myLifecycleSpan) {
+  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? = withScopedTraceSpan(javaClass, "refreshTranspiledTemplateIfNeededCancellable") {
     readAction {
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
@@ -258,7 +258,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       }
     }
 
-    override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? = withTraceSpan("getGeneratedElementType", myLifecycleSpan) {
+    override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? = withTraceSpan(javaClass, "getGeneratedElementType", myLifecycleSpan) {
       val componentVirtualFile = transpiledFile.originalFile.originalFile.virtualFile
                                  ?: return@withTraceSpan null
       val evaluationLocation = InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(templateFile.originalFile).virtualFile

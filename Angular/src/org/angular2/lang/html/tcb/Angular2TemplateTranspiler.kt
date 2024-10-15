@@ -22,7 +22,7 @@ object Angular2TemplateTranspiler {
     fileContext: FileContext,
     component: Angular2Component,
     tcbId: String,
-  ): TranspiledTemplate? = withTraceSpan("transpileTemplate") {
+  ): TranspiledTemplate? = withTraceSpan(javaClass, "transpileTemplate") {
     val boundTarget = BoundTarget(component)
     if (boundTarget.templateFile == null) return@withTraceSpan null
 
