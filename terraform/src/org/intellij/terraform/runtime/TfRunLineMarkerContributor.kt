@@ -7,11 +7,14 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
+import com.intellij.ui.IconManager
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import java.util.function.Function
+import javax.swing.Icon
 
-class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
+class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   override fun getInfo(leaf: PsiElement): Info? {
     val psiFile = leaf.containingFile
     if (psiFile.fileType.defaultExtension != "tf") {
@@ -29,9 +32,16 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware 
       return null
     }
 
-    // TODO: consider showing or not showing the warning about not initialized Terraform project
-    val icon = AllIcons.RunConfigurations.TestState.Run
-    val tooltipProvider = Function<PsiElement, String?> { HCLBundle.message("terraform.run.text") }
+    val icon: Icon
+    val tooltipProvider: Function<PsiElement, String>
+    if (TFInitAction.isInitRequired(leaf.project, leaf.containingFile.virtualFile)) {
+      icon = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
+      tooltipProvider = Function<PsiElement, String> { HCLBundle.message("not.initialized.inspection.error.message") }
+    }
+    else {
+      icon = AllIcons.RunConfigurations.TestState.Run
+      tooltipProvider = Function<PsiElement, String> { HCLBundle.message("terraform.run.text") }
+    }
 
     return Info(icon, computeActions(block), tooltipProvider)
   }
