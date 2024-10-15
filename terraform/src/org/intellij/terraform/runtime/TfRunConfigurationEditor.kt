@@ -21,7 +21,12 @@ internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfigurat
   private val commandComboBox = ComboBox(TfMainCommand.entries.toTypedArray()).apply {
     selectedItem = TfMainCommand.NONE
     renderer = SimpleListCellRenderer.create { label, value, _ ->
-      label.text = value.command
+      if (value != TfMainCommand.NONE) {
+        label.text = value.command
+      }
+      else {
+        label.text = HCLBundle.message("terraform.run.configuration.command.combobox.none.item")
+      }
       font = Font(Font.MONOSPACED, font.style, font.size)
     }
   }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
