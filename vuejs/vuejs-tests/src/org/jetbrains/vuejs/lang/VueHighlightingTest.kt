@@ -23,6 +23,7 @@ import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
+import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
@@ -439,14 +440,18 @@ const props = {seeMe: {}}
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
                                 SassScssResolvedByNameOnlyInspection::class.java,
                                 SassScssUnresolvedVariableInspection::class.java)
-    doTest()
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+      doTest()
+    }
   }
 
   fun testSassBuiltInModules() {
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
                                 SassScssResolvedByNameOnlyInspection::class.java,
                                 SassScssUnresolvedVariableInspection::class.java)
-    doTest()
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+      doTest()
+    }
   }
 
   fun testIndirectExport() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
