@@ -11,6 +11,6 @@ class EqualsAndHashCode1 {
               str == other.str && v == other.v && i == other.i;
 
   @override
-  int get hashCode => str.hashCode ^ v.hashCode ^ i.hashCode;
+  int get hashCode => Object.hash(str, v, i);
 <caret>
 }

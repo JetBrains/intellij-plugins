@@ -1,0 +1,57 @@
+class Test {
+  int? a;
+  int? b;
+  int? c;
+  int? d;
+  int? e;
+  int? f;
+  int? g;
+  int? h;
+  int? i;
+  int? j;
+  int? k;
+  int? l;
+  int? m;
+  int? n;
+  int? o;
+  int? p;
+  int? q;
+  int? r;
+  int? s;
+  int? t;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Test && runtimeType == other.runtimeType && a == other.a &&
+              b == other.b && c == other.c && d == other.d && e == other.e &&
+              f == other.f && g == other.g && h == other.h && i == other.i &&
+              j == other.j && k == other.k && l == other.l && m == other.m &&
+              n == other.n && o == other.o && p == other.p && q == other.q &&
+              r == other.r && s == other.s && t == other.t;
+
+  @override
+  int get hashCode =>
+      Object.hash(
+          a,
+          b,
+          c,
+          d,
+          e,
+          f,
+          g,
+          h,
+          i,
+          j,
+          k,
+          l,
+          m,
+          n,
+          o,
+          p,
+          q,
+          r,
+          s,
+          t);
+
+}
