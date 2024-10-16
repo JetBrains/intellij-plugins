@@ -88,18 +88,19 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                                   listener: ExternalSystemTaskNotificationListener): DataNode<ProjectData>? {
     cancelled = false
     val project = id.findProject()!!
+    val platformioService = project.service<PlatformioService>()
 
     if (!project.isTrusted()) {
       // To prevent a deadlock
       assert(!EDT.isCurrentThreadEdt())
       runBlockingCancellable {
         if (!showUntrustedProjectLoadDialog(project)) {
+          platformioService.projectStatus = NOT_TRUSTED
           throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
         }
       }
     }
 
-    val platformioService = project.service<PlatformioService>()
     platformioService.projectStatus = PARSING
     try {
       val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectPath) ?: throw ExternalSystemException(FileNotFoundException(ClionEmbeddedPlatformioBundle.message("project.not.found", projectPath)))

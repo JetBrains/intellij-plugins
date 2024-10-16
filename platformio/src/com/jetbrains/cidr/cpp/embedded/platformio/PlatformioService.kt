@@ -203,7 +203,8 @@ enum class PlatformioProjectStatus {
   PARSING,
   PARSED,
   PARSE_FAILED,
-  UTILITY_FAILED
+  UTILITY_FAILED,
+  NOT_TRUSTED
 }
 
 interface PlatformioUpdatesNotifier {
