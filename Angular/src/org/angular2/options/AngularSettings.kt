@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.options
 
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.lsp.defaultPackageKey
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.Disposable
@@ -34,11 +35,20 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
       if (changed) restartTypeScriptServicesAsync(project)
     }
 
+  var useTypesFromServer: Boolean
+    get() {
+      val useTypesFromServerInTests = TypeScriptCompilerSettings.isUseTypesFromServerInTests()
+      return useTypesFromServerInTests ?: state.useTypesFromServer
+    }
+    set(value) {
+      state.useTypesFromServer = value
+    }
 }
 
 class AngularSettingsState : BaseState() {
   var innerServiceType by enum(AngularServiceSettings.DISABLED)
   var packageName by string(defaultPackageKey)
+  var useTypesFromServer by property(false)
 }
 
 enum class AngularServiceSettings {
