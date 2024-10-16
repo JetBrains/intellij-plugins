@@ -14,6 +14,7 @@
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="org.jetbrains.qodana.jvm.java.QodanaJdkProjectActivity"/>
+    <postStartupActivity implementation="org.jetbrains.qodana.jvm.java.SdkRootsFixActivity"/>
     <commandLineInspectionProjectConfigurator implementation="org.jetbrains.qodana.jvm.java.JdkConfigurator"/>
     <jarRepositoryAuthenticationDataProvider implementation="org.jetbrains.qodana.jvm.java.jps.QodanaSpaceJarRepositoryAuthenticationDataProvider"/>
     <localInspection language="JAVA" shortName="QodanaJavaSanity"
