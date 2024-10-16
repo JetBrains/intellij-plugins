@@ -2,6 +2,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const esbuild = require('esbuild');
 
 // .js is here, so it's easier to Find in Files
 const packageRelativePath = "bin/nodeServer.js"
@@ -16,13 +17,17 @@ if (ownPackageJson.version !== theirPackageJson.version) {
     throw new Error(`Make sure that the version in package.json matches the version of official server distribution (${theirPackageJson.version})`);
 }
 
-require('esbuild').build({
+const vendoredDependencies = [
+  `@astrojs/compiler`
+];
+
+esbuild.build({
     entryPoints: {
         [packageRelativePath]: `./node_modules/${languageServerPackage}/${packageRelativePath}`,
     },
     outdir: '.',
     bundle: true,
-    external: ['@astrojs/compiler', 'prettier', 'prettier-plugin-astro'],
+    external: [...vendoredDependencies, 'prettier', 'prettier-plugin-astro'],
     format: 'cjs',
     platform: 'node',
     target: 'es2015',
@@ -44,3 +49,9 @@ require('esbuild').build({
         },
     ],
 });
+
+fs.rmSync('./bin/node_modules/', {recursive: true, force: true});
+
+for (const vendoredDependency of vendoredDependencies) {
+  fs.cpSync(`./node_modules/${vendoredDependency}`, `./bin/node_modules/${vendoredDependency}`, {recursive: true});
+}

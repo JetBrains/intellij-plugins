@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinition
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.RegistryManager
 import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
@@ -38,6 +39,7 @@ open class AstroServiceTestBase : BaseLspTypeScriptServiceTest() {
     }
     serviceSettings.serviceMode = AstroServiceMode.ENABLED
 
+    RegistryManager.getInstance().get("astro.language.server.bundled.enabled").setValue(true, testRootDisposable)
     ensureServerDownloaded(AstroLspServerLoader)
 
     myFixture.addFileToProject("package.json", packageJson)
