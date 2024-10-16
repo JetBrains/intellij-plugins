@@ -12,14 +12,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.*
-import com.jetbrains.cidr.cpp.notifications.showUntrustedProjectLoadDialog
 import java.nio.file.Path
 
 private const val POSIX_HOME_ENV_VAR_NAME = "HOME"
 private const val WIN_HOME_ENV_VAR_NAME = "USERPROFILE"
 const val ENV_PATH = "PATH"
 
-class PlatfromioCliBuilder(
+class PlatformioCliBuilder(
   usePty:Boolean,
   private val project: Project?,
   private var useEnvName: Boolean = false,
@@ -29,31 +28,28 @@ class PlatfromioCliBuilder(
 
   init {
     if (project?.isTrusted() == false) {
-      val trusted = showUntrustedProjectLoadDialog(project)
-      if (!trusted) {
-        throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
-      }
+      throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
     }
     commandLine = if(usePty) PtyCommandLine() else GeneralCommandLine()
   }
 
-  fun withParams(vararg params: String): PlatfromioCliBuilder {
+  fun withParams(vararg params: String): PlatformioCliBuilder {
     commandLine.withParameters(*params)
     return this
   }
 
-  fun withParams(params: List<String>): PlatfromioCliBuilder {
+  fun withParams(params: List<String>): PlatformioCliBuilder {
     commandLine.withParameters(params)
     return this
   }
 
   @Suppress("unused")
-  fun withEnvName(appendKeys: Boolean = true): PlatfromioCliBuilder {
+  fun withEnvName(appendKeys: Boolean = true): PlatformioCliBuilder {
     useEnvName = appendKeys
     return this
   }
 
-  fun withVerboseAllowed(verboseAllowed: Boolean = true): PlatfromioCliBuilder {
+  fun withVerboseAllowed(verboseAllowed: Boolean = true): PlatformioCliBuilder {
     this.verboseAllowed = verboseAllowed
     return this
   }
@@ -83,14 +79,14 @@ class PlatfromioCliBuilder(
     return commandLine
   }
 
-  fun withGdbHomeCompatibility(): PlatfromioCliBuilder {
+  fun withGdbHomeCompatibility(): PlatformioCliBuilder {
     if (commandLine.effectiveEnvironment[POSIX_HOME_ENV_VAR_NAME] == null) {
       commandLine.withEnvironment(POSIX_HOME_ENV_VAR_NAME, commandLine.effectiveEnvironment[WIN_HOME_ENV_VAR_NAME]!!)
     }
     return this
   }
 
-  fun withRedirectErrorStream(q: Boolean): PlatfromioCliBuilder {
+  fun withRedirectErrorStream(q: Boolean): PlatformioCliBuilder {
     commandLine.withRedirectErrorStream(q)
     return this
   }

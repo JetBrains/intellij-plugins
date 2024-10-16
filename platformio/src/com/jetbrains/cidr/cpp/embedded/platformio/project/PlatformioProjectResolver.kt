@@ -6,6 +6,7 @@ import com.intellij.execution.DefaultExecutionTarget
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.process.*
+import com.intellij.ide.impl.isTrusted
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
@@ -22,6 +23,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
@@ -29,9 +31,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.asSafely
+import com.intellij.util.ui.EDT
 import com.jetbrains.cidr.cpp.embedded.platformio.*
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.*
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.showUntrustedProjectLoadDialog
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.cpp.external.system.project.attachExternalModule
 import com.jetbrains.cidr.external.system.model.ExternalLanguageConfiguration
@@ -84,6 +88,17 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                                   listener: ExternalSystemTaskNotificationListener): DataNode<ProjectData>? {
     cancelled = false
     val project = id.findProject()!!
+
+    if (!project.isTrusted()) {
+      // To prevent a deadlock
+      assert(!EDT.isCurrentThreadEdt())
+      runBlockingCancellable {
+        if (!showUntrustedProjectLoadDialog(project)) {
+          throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
+        }
+      }
+    }
+
     val platformioService = project.service<PlatformioService>()
     platformioService.projectStatus = PARSING
     try {
@@ -440,7 +455,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                      logStdout: Boolean = false): ProcessOutput {
     checkCancelled()
 
-    val commandLine = PlatfromioCliBuilder(false, project).withParams(parameters).withVerboseAllowed(false)
+    val commandLine = PlatformioCliBuilder(false, project).withParams(parameters).withVerboseAllowed(false)
     val processHandler = CapturingAnsiEscapesAwareProcessHandler(commandLine.build())
     processHandlerToKill = processHandler
 

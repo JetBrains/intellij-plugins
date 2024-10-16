@@ -21,7 +21,7 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import com.jetbrains.cidr.ArchitectureType;
 import com.intellij.clion.embedded.execution.custom.McuResetActionKt;
-import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder;
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
@@ -105,7 +105,7 @@ public class PlatformioLauncher extends CLionLauncher {
         public @NotNull
         GeneralCommandLine createDriverCommandLine(@NotNull DebuggerDriver driver, @NotNull ArchitectureType architectureType)
           throws ExecutionException {
-          return new PlatfromioCliBuilder(false, getProject(), true, true)
+          return new PlatformioCliBuilder(false, getProject(), true, true)
             .withParams("debug", "--interface=gdb", "--interpreter=mi2", "-x", ".pioinit", "--iex", "set mi-async on")
             .withGdbHomeCompatibility()
             .withRedirectErrorStream(true)

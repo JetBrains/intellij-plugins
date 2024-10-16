@@ -26,7 +26,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
-import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.notifyPlatformioNotFound
 import com.jetbrains.cidr.cpp.execution.build.runners.CLionCompileResolveConfigurationTaskRunner
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
@@ -89,7 +89,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
     }
 
     try {
-      val compilerCommandLine = PlatfromioCliBuilder(false, project, true)
+      val compilerCommandLine = PlatformioCliBuilder(false, project, true)
 
       @Nls val title: String
       when (task) {

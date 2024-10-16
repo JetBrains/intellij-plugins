@@ -17,8 +17,8 @@ import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts.TabTitle
@@ -30,6 +30,8 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
 import com.jetbrains.cidr.execution.CidrPathConsoleFilter
 import com.jetbrains.cidr.system.LocalHost.TerminalEmulatorOSProcessHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.BorderLayout
 import java.nio.file.Path
 import javax.swing.JPanel
@@ -73,7 +75,9 @@ fun doRun(service: PlatformioService,
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
       override fun actionPerformed(e: AnActionEvent) {
-        project.service<PlatformioActionService>().destroyProcess(processHandler)
+        currentThreadCoroutineScope().launch(Dispatchers.IO) {
+          processHandler.destroyProcess()
+        }
       }
 
       override fun update(e: AnActionEvent) {
