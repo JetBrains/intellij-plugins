@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
+import com.intellij.execution.RunManager
 import com.intellij.execution.impl.EditConfigurationsDialog
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
@@ -8,11 +9,15 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.ui.IconManager
 import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.jetbrains.annotations.Nls
 import java.util.function.Function
 import javax.swing.Icon
 
@@ -49,22 +54,58 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   }
 
   private fun computeActions(block: HCLBlock): Array<AnAction> {
-    val actions: MutableList<AnAction> = TfMainCommand.entries
-      .filter { it != TfMainCommand.NONE }
-      .map { TfRunConfigurationAction(block, it) }
-      .toMutableList()
+    val project = block.project
+    val runManager = RunManager.getInstance(project)
+    val rootModule = getRootModule(block)
+
+    val existingConfigs = runManager.allSettings.filter {
+      val configuration = it.configuration as? TerraformRunConfiguration
+      configuration != null && configuration.workingDirectory == rootModule.path && configuration.commandType != TfMainCommand.NONE
+    }
+    val templateConfigs = getTemplateConfigsName(rootModule.name, existingConfigs.map { it.name })
+
+    val actions: MutableList<AnAction> = mutableListOf()
+    actions.addAll(existingConfigs.map { TfRunExistingConfigAction(it) })
+    actions.addAll(templateConfigs.map { TfRunTemplateConfigAction(it, rootModule.path) })
 
     actions.add(Separator())
-    actions.add(object : AnAction() {
-      init {
-        templatePresentation.text = HCLBundle.message("terraform.edit.configurations.action.text")
-      }
-
-      override fun actionPerformed(e: AnActionEvent) {
-        EditConfigurationsDialog(block.project, tfRunConfigurationType().baseFactory).show()
-      }
-    })
+    actions.add(getEditConfigurationAction(project))
 
     return actions.toTypedArray()
   }
+
+  private fun getTemplateConfigsName(
+    moduleName: @NlsSafe String,
+    existingConfigs: List<String>,
+  ): List<@Nls String> = TfMainCommand.entries.mapNotNull {
+    if (it == TfMainCommand.NONE) return@mapNotNull null
+
+    val configName = "${it.title} $moduleName".trim()
+    if (configName in existingConfigs) null else configName
+  }
+
+  private fun getRootModule(block: HCLBlock): RootModulePath {
+    val moduleRoot = block.getTerraformModule().moduleRoot
+
+    return if (moduleRoot.isDirectory) {
+      val virtualFile = moduleRoot.virtualFile
+      RootModulePath(virtualFile.path, virtualFile.name)
+    }
+    else {
+      val project = block.project
+      RootModulePath(project.basePath ?: "", project.name)
+    }
+  }
+
+  private fun getEditConfigurationAction(project: Project): AnAction = object : AnAction() {
+    init {
+      templatePresentation.text = HCLBundle.message("terraform.edit.configurations.action.text")
+    }
+
+    override fun actionPerformed(e: AnActionEvent) {
+      EditConfigurationsDialog(project, tfRunConfigurationType().baseFactory).show()
+    }
+  }
 }
+
+private data class RootModulePath(val path: String, @NlsSafe val name: String)
