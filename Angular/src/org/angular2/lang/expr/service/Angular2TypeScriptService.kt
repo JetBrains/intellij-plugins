@@ -130,7 +130,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }.toTypedArray()
   }
 
-  override fun isTypeEvaluationEnabled(): Boolean = project.service<AngularSettings>().serviceType != AngularServiceSettings.DISABLED
+  override fun isTypeEvaluationEnabled(): Boolean = project.service<AngularSettings>().let {
+    it.serviceType != AngularServiceSettings.DISABLED && it.useTypesFromServer
+  }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
