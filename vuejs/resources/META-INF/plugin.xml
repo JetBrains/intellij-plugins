@@ -50,6 +50,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <registryKey defaultValue="true" description="Use bundled Vue service" key="vue.language.server.bundled.enabled"/>
     <registryKey defaultValue="" description="Vue service version for downloading" key="vue.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
     <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
