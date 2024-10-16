@@ -18,7 +18,9 @@ import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
   "@astrojs/language-server",
-  PackageVersion.bundled<AstroLspServerPackageDescriptor>("2.10.0", "Astro", "astro-language-server"),
+  PackageVersion.bundled<AstroLspServerPackageDescriptor>("2.10.0", "Astro", "astro-language-server") {
+    Registry.`is`("astro.language.server.bundled.enabled")
+  },
   "/bin/nodeServer.js"
 ) {
   override val registryVersion: String get() = Registry.stringValue("astro.language.server.default.version")
