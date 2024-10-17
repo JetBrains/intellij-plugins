@@ -34,12 +34,12 @@ class TerraformRunConfiguration(
   name: String?,
   override var envFilePaths: List<String>,
 ) :
-  LocatableConfigurationBase<Any?>(project, factory, name), CommonProgramRunConfigurationParameters, EnvFilesOptions, DumbAware {
+  RunConfigurationBase<Any?>(project, factory, name), CommonProgramRunConfigurationParameters, EnvFilesOptions, DumbAware {
   private var directory: String = ""
   private val myEnvs: MutableMap<String, String> = LinkedHashMap()
   private var passParentEnvs: Boolean = true
 
-  internal var commandType: TfMainCommand = TfMainCommand.NONE
+  internal var commandType: TfMainCommand = TfMainCommand.CUSTOM
   internal var programArguments: String = ""
 
   override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration?> {

@@ -17,6 +17,7 @@ import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.isTerraformFile
 import org.jetbrains.annotations.Nls
 import java.util.function.Function
 import javax.swing.Icon
@@ -24,7 +25,7 @@ import javax.swing.Icon
 class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   override fun getInfo(leaf: PsiElement): Info? {
     val psiFile = leaf.containingFile
-    if (psiFile.fileType.defaultExtension != "tf") {
+    if (!isTerraformFile(psiFile)) {
       return null
     }
 
@@ -55,18 +56,18 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
 
   private fun computeActions(block: HCLBlock): Array<AnAction> {
     val project = block.project
-    val runManager = RunManager.getInstance(project)
     val rootModule = getRootModule(block)
-
-    val existingConfigs = runManager.allSettings.filter {
-      val configuration = it.configuration as? TerraformRunConfiguration
-      configuration != null && configuration.workingDirectory == rootModule.path && configuration.commandType != TfMainCommand.NONE
-    }
-    val templateConfigs = getTemplateConfigsName(rootModule.name, existingConfigs.map { it.name })
+    val templateConfigNames = getTemplateConfigNames(rootModule.name)
 
     val actions: MutableList<AnAction> = mutableListOf()
+    actions.addAll(templateConfigNames.map { TfRunTemplateConfigAction(it, rootModule.path) })
+
+    val runManager = RunManager.getInstance(project)
+    val existingConfigs = runManager.allSettings.filter {
+      val configuration = it.configuration as? TerraformRunConfiguration
+      configuration != null && configuration.workingDirectory == rootModule.path && configuration.name !in templateConfigNames
+    }
     actions.addAll(existingConfigs.map { TfRunExistingConfigAction(it) })
-    actions.addAll(templateConfigs.map { TfRunTemplateConfigAction(it, rootModule.path) })
 
     actions.add(Separator())
     actions.add(getEditConfigurationAction(project))
@@ -74,15 +75,9 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
     return actions.toTypedArray()
   }
 
-  private fun getTemplateConfigsName(
-    moduleName: @NlsSafe String,
-    existingConfigs: List<String>,
-  ): List<@Nls String> = TfMainCommand.entries.mapNotNull {
-    if (it == TfMainCommand.NONE) return@mapNotNull null
-
-    val configName = "${it.title} $moduleName".trim()
-    if (configName in existingConfigs) null else configName
-  }
+  private fun getTemplateConfigNames(moduleName: @NlsSafe String): List<@Nls String> = TfMainCommand.entries
+    .filter { it != TfMainCommand.CUSTOM }
+    .map { "${it.title} $moduleName".trim() }
 
   private fun getRootModule(block: HCLBlock): RootModulePath {
     val moduleRoot = block.getTerraformModule().moduleRoot

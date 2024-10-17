@@ -6,6 +6,7 @@ import com.intellij.execution.ui.*
 import com.intellij.execution.ui.utils.fragments
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Computable
 import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.SimpleListCellRenderer
@@ -19,9 +20,9 @@ internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfigurat
   RunConfigurationFragmentedEditor<TerraformRunConfiguration>(runConfiguration) {
 
   private val commandComboBox = ComboBox(TfMainCommand.entries.toTypedArray()).apply {
-    selectedItem = TfMainCommand.NONE
+    selectedItem = TfMainCommand.CUSTOM
     renderer = SimpleListCellRenderer.create { label, value, _ ->
-      if (value != TfMainCommand.NONE) {
+      if (value != TfMainCommand.CUSTOM) {
         label.text = value.command
       }
       else {
@@ -38,7 +39,7 @@ internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfigurat
     fragments<TerraformRunConfiguration>(HCLBundle.message("terraform.run.text"), "terraform.run.configuration") {
       fragment("terraform.command", commandComboBox) {
         apply = { model, ui ->
-          model.commandType = ui.component.selectedItem as? TfMainCommand ?: TfMainCommand.NONE
+          model.commandType = ui.component.selectedItem as? TfMainCommand ?: TfMainCommand.CUSTOM
         }
         reset = { model, ui ->
           ui.component.selectedItem = model.commandType
@@ -53,13 +54,17 @@ internal class TfRunConfigurationEditor(runConfiguration: TerraformRunConfigurat
         reset = { model, ui ->
           ui.component.text = model.programArguments
         }
+        validation = { model, _ ->
+          if (model.commandType == TfMainCommand.CUSTOM && model.programArguments.isBlank()) {
+            ValidationInfo(HCLBundle.message("terraform.run.configuration.arguments.empty.validation.text"))
+          } else null
+        }
         isRemovable = false
       }
     }.apply {
       add(CommonParameterFragments.createWorkingDirectory(project, Computable { null }))
 
       // 'Operating System'
-      add(CommonTags.parallelRun())
       add(CommonParameterFragments.createEnvParameters())
 
       // 'Logs'
