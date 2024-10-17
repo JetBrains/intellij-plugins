@@ -2,7 +2,6 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.wsl.WslPath
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
@@ -18,7 +17,6 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TFToolType
 import org.intellij.terraform.install.getToolVersion
 import org.intellij.terraform.install.installTFTool
-import org.intellij.terraform.opentofu.runtime.OpenTofuPathDetector
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import java.io.File
 
@@ -36,10 +34,10 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   override fun createPanel(): DialogPanel {
     return panel {
       group(HCLBundle.message("terraform.name")) {
-        executableToolSettingsPanel(this, terraformConfig, TFToolType.TERRAFORM, project.service<TerraformPathDetector>())
+        executableToolSettingsPanel(this, terraformConfig, TFToolType.TERRAFORM)
       }
       group(HCLBundle.message("opentofu.name")) {
-        executableToolSettingsPanel(this, openTofuConfig, TFToolType.OPENTOFU, project.service<OpenTofuPathDetector>())
+        executableToolSettingsPanel(this, openTofuConfig, TFToolType.OPENTOFU)
       }
     }
   }
@@ -48,8 +46,8 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     parent: Panel,
     settings: ToolSettings,
     type: TFToolType,
-    pathDetector: ToolPathDetector,
   ) = parent.apply {
+    val pathDetector = type.getPathDetector(project)
     val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.getBinaryName())) {}
     val executorField = myRow.textFieldWithBrowseButton(
       fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false),
