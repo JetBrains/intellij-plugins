@@ -18,6 +18,7 @@ import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.TFToolType
 import org.jetbrains.annotations.Nls
 import kotlin.io.path.Path
 
@@ -102,7 +103,7 @@ internal class TerraformActionService(private val project: Project, private val 
       }
     }
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
-    val success = TFExecutor.`in`(project)
+    val success = TFExecutor.`in`(project, TFToolType.TERRAFORM)
       .withPresentableName(title)
       .withParameters("init")
       .showOutputOnError()

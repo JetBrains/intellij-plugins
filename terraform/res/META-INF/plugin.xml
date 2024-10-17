@@ -241,6 +241,7 @@
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
     <postStartupActivity implementation="org.intellij.terraform.runtime.TerraformPathDetector$DetectOnStart" />
+    <postStartupActivity implementation="org.intellij.terraform.opentofu.runtime.OpenTofuPathDetector$DetectOnStart" />
 
     <!-- Code Inspections -->
     <!-- HCL used instead HCL-Terraform, to apply to all psi elements. .hcl files filtered out in #buildVisito method -->
@@ -403,7 +404,7 @@
 
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settings.dialog.project.terraform"
-                         key="terraform.name" bundle="messages.HCLBundle"/>
+                         key="terraform.opentofu.settings.label" bundle="messages.HCLBundle"/>
 
     <configurationType implementation="org.intellij.terraform.runtime.TfConfigurationType"/>
     <runLineMarkerContributor language="HCL" implementationClass="org.intellij.terraform.runtime.TerraformRunLineMarkerContributor"/>

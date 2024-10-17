@@ -19,7 +19,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
+import org.intellij.terraform.install.TFToolType;
 import org.intellij.terraform.runtime.TerraformPathDetector;
+import org.intellij.terraform.runtime.ToolPathDetector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,14 +46,17 @@ public final class TFExecutor {
   private @Nullable @Nls String myPresentableName;
   private OSProcessHandler myProcessHandler;
   private final Collection<ProcessListener> myProcessListeners = new ArrayList<>();
+  private final TFToolType myToolType;
 
-  private TFExecutor(@NotNull Project project) {
+  private TFExecutor(@NotNull Project project, TFToolType toolType) {
     myProject = project;
-    myExePath = TerraformPathDetector.Companion.getInstance(myProject).getActualTerraformPath();
+    myToolType = toolType;
+    ToolPathDetector pathDetector = project.getService(toolType.getDetectorClass());
+    myExePath = pathDetector.getActualPath();
   }
 
-  public static @NotNull TFExecutor in(@NotNull Project project) {
-    return new TFExecutor(project);
+  public static @NotNull TFExecutor in(@NotNull Project project, TFToolType toolType) {
+    return new TFExecutor(project, toolType);
   }
 
   public @NotNull TFExecutor withPresentableName(@Nullable @Nls String presentableName) {
@@ -229,6 +234,6 @@ public final class TFExecutor {
   }
 
   private @NotNull @Nls String getPresentableName() {
-    return ObjectUtils.notNull(myPresentableName, HCLBundle.message("terraform.name.lowercase"));
+    return ObjectUtils.notNull(myPresentableName, myToolType.getDisplayName());
   }
 }
