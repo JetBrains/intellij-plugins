@@ -4,6 +4,7 @@ package org.intellij.terraform.runtime
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -19,7 +20,7 @@ internal class TfRunTemplateConfigAction(private val configurationName: @Nls Str
     val configType = tfRunConfigurationType()
 
     val configurationName = runManager.suggestUniqueName(configurationName, configType)
-    val settings = runManager.createConfiguration(configurationName, configType.createFactory(getTfMainCommand(configurationName)))
+    val settings = runManager.createConfiguration(configurationName, getConfigurationFactory(configurationName, configType))
 
     settings.isTemporary = true
     (settings.configuration as? TerraformRunConfiguration)?.let {
@@ -40,13 +41,14 @@ internal class TfRunTemplateConfigAction(private val configurationName: @Nls Str
     ProgramRunnerUtil.executeConfiguration(settings, DefaultRunExecutor.getRunExecutorInstance())
   }
 
-  private fun getTfMainCommand(configurationName: String) = when (configurationName.split(' ').firstOrNull()) {
-    "Init" -> TfMainCommand.INIT
-    "Validate" -> TfMainCommand.VALIDATE
-    "Plan" -> TfMainCommand.PLAN
-    "Apply" -> TfMainCommand.APPLY
-    "Destroy" -> TfMainCommand.DESTROY
-    else -> TfMainCommand.NONE
-  }
+  private fun getConfigurationFactory(configurationName: String, configType: TfConfigurationType): ConfigurationFactory =
+    when (configurationName.split(' ').firstOrNull()) {
+      "Init" -> configType.initFactory
+      "Validate" -> configType.validateFactory
+      "Plan" -> configType.planFactory
+      "Apply" -> configType.applyFactory
+      "Destroy" -> configType.destroyFactory
+      else -> configType.baseFactory
+    }
 }
 

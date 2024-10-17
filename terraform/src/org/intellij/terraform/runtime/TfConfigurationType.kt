@@ -13,34 +13,43 @@ import org.jetbrains.annotations.Nls
 import javax.swing.Icon
 
 internal class TfConfigurationType : ConfigurationType, DumbAware {
-  internal val baseFactory: ConfigurationFactory = createFactory(TfMainCommand.NONE)
+  val baseFactory: ConfigurationFactory = createFactory(TfMainCommand.CUSTOM)
+  val initFactory: ConfigurationFactory = createFactory(TfMainCommand.INIT)
+  val validateFactory: ConfigurationFactory = createFactory(TfMainCommand.VALIDATE)
+  val planFactory: ConfigurationFactory = createFactory(TfMainCommand.PLAN)
+  val applyFactory: ConfigurationFactory = createFactory(TfMainCommand.APPLY)
+  val destroyFactory: ConfigurationFactory = createFactory(TfMainCommand.DESTROY)
 
   override fun getDisplayName(): String = HCLBundle.message("terraform.name")
   override fun getConfigurationTypeDescription(): String = HCLBundle.message("terraform.configuration.type.description")
   override fun getIcon(): Icon = TerraformIcons.Terraform
-  override fun getConfigurationFactories(): Array<ConfigurationFactory> = arrayOf(baseFactory)
+  override fun getConfigurationFactories(): Array<ConfigurationFactory> = arrayOf(
+    baseFactory, initFactory, validateFactory, planFactory, applyFactory, destroyFactory
+  )
+
   override fun getId(): String = TF_RUN_CONFIGURATION_ID
 
-  internal fun createFactory(type: TfMainCommand): ConfigurationFactory = object : ConfigurationFactory(this) {
+  private fun createFactory(type: TfMainCommand): ConfigurationFactory = object : ConfigurationFactory(this) {
     override fun getName(): @Nls String {
       val name = super.getName()
       return "$name ${type.title}".trim()
     }
 
     override fun createTemplateConfiguration(project: Project): RunConfiguration {
-      val configuration = TerraformRunConfiguration(project, this, name, emptyList())
+      val configuration = TerraformRunConfiguration(project, this, "", emptyList())
       val path = project.basePath
       if (path != null) {
         configuration.workingDirectory = path
       }
       configuration.commandType = type
+      if (type == TfMainCommand.CUSTOM) {
+        configuration.programArguments = "-help"
+      }
       return configuration
     }
 
-    override fun getId(): String {
-      // The same like getName(), but not localized
-      return "Terraform ${type.command.replaceFirstChar { it.titlecase() }}".trim()
-    }
+    // The same like getName(), but not localized
+    override fun getId(): String = type.id
 
     override fun isApplicable(project: Project): Boolean = true
   }
