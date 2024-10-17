@@ -20,7 +20,6 @@ import com.intellij.util.ObjectUtils;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
 import org.intellij.terraform.install.TFToolType;
-import org.intellij.terraform.runtime.TerraformPathDetector;
 import org.intellij.terraform.runtime.ToolPathDetector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +50,7 @@ public final class TFExecutor {
   private TFExecutor(@NotNull Project project, TFToolType toolType) {
     myProject = project;
     myToolType = toolType;
-    ToolPathDetector pathDetector = project.getService(toolType.getDetectorClass());
+    ToolPathDetector pathDetector = toolType.getPathDetector(project);
     myExePath = pathDetector.getActualPath();
   }
 

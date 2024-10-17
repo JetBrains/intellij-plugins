@@ -2,20 +2,18 @@
 package org.intellij.terraform.install
 
 import com.intellij.execution.process.CapturingProcessAdapter
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.isFile
 import com.intellij.util.system.CpuArch
 import kotlinx.coroutines.ensureActive
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.opentofu.runtime.OpenTofuPathDetector
 import org.intellij.terraform.runtime.TerraformPathDetector
 import org.intellij.terraform.runtime.ToolPathDetector
@@ -35,8 +33,9 @@ enum class TFToolType(@Nls val executableName: String) {
 
     override val downloadServerUrl: String
       get() = "https://releases.hashicorp.com/terraform"
-    override val detectorClass: Class<out ToolPathDetector>
-      get() = TerraformPathDetector::class.java
+    override fun getPathDetector(project: Project): ToolPathDetector {
+      return project.service<TerraformPathDetector>()
+    }
   },
   OPENTOFU("tofu") {
     override val displayName = "OpenTofu"
@@ -47,8 +46,9 @@ enum class TFToolType(@Nls val executableName: String) {
     override val downloadServerUrl: String
       get() = "" //"https://get.opentofu.org/tofu/api.json"
 
-    override val detectorClass: Class<out ToolPathDetector>
-      get() = OpenTofuPathDetector::class.java
+    override fun getPathDetector(project: Project): ToolPathDetector {
+      return project.service<OpenTofuPathDetector>()
+    }
   };
 
   fun getBinaryName(): String {
@@ -60,7 +60,7 @@ enum class TFToolType(@Nls val executableName: String) {
 
   abstract fun getDownloadUrl(): String
   abstract val downloadServerUrl: String
-  abstract val detectorClass: Class<out ToolPathDetector>
+  abstract fun getPathDetector(project: Project): ToolPathDetector
   abstract val displayName: String
 
   protected fun getOSName(): String? {
