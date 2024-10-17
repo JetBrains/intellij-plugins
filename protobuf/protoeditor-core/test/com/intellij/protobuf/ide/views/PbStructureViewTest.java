@@ -18,6 +18,8 @@ package com.intellij.protobuf.ide.views;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
 
+import javax.swing.*;
+
 
 /** Test structure view. */
 public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
@@ -28,9 +30,11 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
   }
 
   private void testStructureView(String expectedLines) {
-    myFixture.testStructureView(it  -> {
-      PlatformTestUtil.expandAll(it.getTree());
-      PlatformTestUtil.assertTreeEqual(it.getTree(), expectedLines);
+    myFixture.testStructureView(it -> {
+      JTree tree = it.getTree();
+      PlatformTestUtil.waitWhileBusy(tree);
+      PlatformTestUtil.expandAll(tree);
+      PlatformTestUtil.assertTreeEqual(tree, expectedLines);
     });
   }
 
@@ -53,32 +57,32 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestDataPath() + "NestedMessage.proto");
     String expectedLines =
       """
-      -NestedMessage.proto
-       -WithoutNest
-        field1
-        field2
-       -WithNest
-        field1
-        field2
-        -NestedMessage
-         -NestedMessage2
-          inner_nested1
-         nested1
-         nested2
-         inner_nested_instance
-        -NestedEnum
-         VARIANT1
-         VARIANT2
-        msg_instance
-        enum_instance
-        -Group
-         field1
-         field2
-        -oneof_field
-         oneof_uint32
-         oneof_nested_message
-         oneof_string
-         oneof_bytes
+        -NestedMessage.proto
+         -WithoutNest
+          field1
+          field2
+         -WithNest
+          field1
+          field2
+          -NestedMessage
+           -NestedMessage2
+            inner_nested1
+           nested1
+           nested2
+           inner_nested_instance
+          -NestedEnum
+           VARIANT1
+           VARIANT2
+          msg_instance
+          enum_instance
+          -Group
+           field1
+           field2
+          -oneof_field
+           oneof_uint32
+           oneof_nested_message
+           oneof_string
+           oneof_bytes
         """;
     testStructureView(expectedLines);
   }
