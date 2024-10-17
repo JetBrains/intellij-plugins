@@ -47,7 +47,9 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
+import kotlin.coroutines.EmptyCoroutineContext;
 import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.CoroutineScopeKt;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,12 +69,16 @@ import org.jetbrains.idea.perforce.perforce.jobs.PerforceJob;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static com.intellij.platform.util.coroutines.CoroutineScopeKt.childScope;
+import static com.intellij.util.concurrency.AppJavaExecutorUtil.awaitCancellationAndDispose;
 
 public final class PerforceVcs extends AbstractVcs {
   public static final @NlsSafe String NAME = "Perforce";
   private static final VcsKey ourKey = createKey(NAME);
-  @NotNull private final CoroutineScope coroutineScope;
+
   private PerforceCheckinEnvironment myPerforceCheckinEnvironment;
   private PerforceUpdateEnvironment myPerforceUpdateEnvironment;
   private PerforceIntegrateEnvironment myPerforceIntegrateEnvironment;
@@ -90,7 +96,7 @@ public final class PerforceVcs extends AbstractVcs {
 
   private MergeProvider myMergeProvider;
 
-  private Disposable myDisposable;
+  private final AtomicReference<CoroutineScope> myActiveScope = new AtomicReference<>();
 
   private final Set<VirtualFile> myAsyncEditFiles = new HashSet<>();
 
@@ -98,9 +104,8 @@ public final class PerforceVcs extends AbstractVcs {
 
   private final ReentrantReadWriteLock myP4Lock = new ReentrantReadWriteLock();
 
-  public PerforceVcs(@NotNull Project project, @NotNull CoroutineScope coroutineScope) {
+  public PerforceVcs(@NotNull Project project) {
     super(project, NAME);
-    this.coroutineScope = coroutineScope;
     myMyEditFileProvider = new MyEditFileProvider();
   }
 
@@ -375,10 +380,13 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Override
   public void activate() {
-    Disposable disposable = Disposer.newDisposable();
-    myDisposable = disposable;
+    CoroutineScope globalScope = PerforceDisposable.getCoroutineScope(myProject);
+    CoroutineScope activeScope = childScope(globalScope, "PerforceVcs", EmptyCoroutineContext.INSTANCE, true);
 
-    Disposer.register(disposable, PerforceVFSListener.createInstance(myProject, coroutineScope));
+    Disposable disposable = Disposer.newDisposable();
+    awaitCancellationAndDispose(activeScope, disposable);
+
+    Disposer.register(disposable, PerforceVFSListener.createInstance(myProject, activeScope));
 
     PerforceManager.getInstance(myProject).startListening(disposable);
     ((PerforceConnectionManager)PerforceConnectionManager.getInstance(myProject)).startListening(disposable);
@@ -393,10 +401,8 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Override
   public void deactivate() {
-    if (myDisposable != null) {
-      Disposer.dispose(myDisposable);
-      myDisposable = null;
-    }
+    CoroutineScope oldScope = myActiveScope.getAndSet(null);
+    if (oldScope != null) CoroutineScopeKt.cancel(oldScope, null);
   }
 
   @Override
