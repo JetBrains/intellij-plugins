@@ -3,6 +3,7 @@ package org.intellij.terraform.runtime
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.ide.progress.ModalTaskOwner
@@ -15,6 +16,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.CoroutineScope
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.TFToolType
 import org.jetbrains.annotations.Nls
 import java.awt.FlowLayout
 import javax.swing.JButton
@@ -22,7 +24,9 @@ import javax.swing.JPanel
 
 private const val ICON_TEXT_HGAP: Int = 4
 
-internal class TerraformTestButtonComponent(
+internal class ToolExecutableTestButtonComponent(
+  private val pathDetector: ToolPathDetector,
+  private val toolType: TFToolType,
   buttonText: @Nls String,
   private val installAction: ((Boolean) -> Unit) -> Unit,
   private val test: suspend CoroutineScope.() -> @NlsSafe String,
@@ -40,6 +44,7 @@ internal class TerraformTestButtonComponent(
     }
 
   init {
+
     resultLabel.isAllowAutoWrapping = true
 
     resultLabel.setCopyable(true)
@@ -53,19 +58,19 @@ internal class TerraformTestButtonComponent(
 
     button.addActionListener {
       button.isEnabled = false
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.progressTitle")
+      resultLabel.text = HCLBundle.message("tool.testResultLabel.progressTitle")
       resultLabel.icon = AllIcons.Actions.BuildLoadChanges
 
       val (result, exception) = try {
+        installButton.isVisible = false
         runTestBlocking(resultLabel.text) to null
       }
       catch (exception: Exception) {
         installButton.isVisible = true
-
         null to exception.takeUnless { it is ProcessCanceledException }
       }
 
-      resultLabel.text = result ?: HCLBundle.message("terraform.testResultLabel.not.found", "terraform")
+      resultLabel.text = result ?: HCLBundle.message("tool.testResultLabel.not.found", toolType.displayName)
       resultLabel.icon = if (result != null) AllIcons.General.InspectionsOK
       else if (exception != null) AllIcons.General.BalloonWarning
       else null
@@ -83,7 +88,7 @@ internal class TerraformTestButtonComponent(
   }
 
   private fun createInstallButton(): ActionLink {
-    val actionLink = ActionLink(HCLBundle.message("terraform.installButton.text"))
+    val actionLink = ActionLink(HCLBundle.message("tool.installButton.text"))
     actionLink.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
     actionLink.isVisible = false
 
@@ -93,7 +98,7 @@ internal class TerraformTestButtonComponent(
       spinnerIcon.isVisible = true
       resultLabel.border = JBUI.Borders.emptyLeft(ICON_TEXT_HGAP)
 
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.download.progress.title", "terraform")
+      resultLabel.text = HCLBundle.message("tool.testResultLabel.download.progress.title", toolType.displayName)
       resultLabel.icon = null
 
       installAction(::handleInstallationResult)
@@ -107,11 +112,11 @@ internal class TerraformTestButtonComponent(
     resultLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
 
     if (success) {
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.tool.installed", "terraform")
+      resultLabel.text = HCLBundle.message("tool.testResultLabel.installed", toolType.displayName)
       resultLabel.icon = AllIcons.General.InspectionsOK
     }
     else {
-      resultLabel.text = HCLBundle.message("terraform.testResultLabel.tool.not.installed", "terraform")
+      resultLabel.text = HCLBundle.message("tool.testResultLabel.not.installed", toolType.displayName)
       resultLabel.icon = AllIcons.General.BalloonError
     }
   }
@@ -120,5 +125,15 @@ internal class TerraformTestButtonComponent(
   private fun runTestBlocking(title: @NlsContexts.ProgressTitle String): String = runWithModalProgressBlocking(
     owner = ModalTaskOwner.component(this),
     title = title,
-  ) { test() }
+  ) { updateTestButton(test()) }
+
+  private fun updateTestButton(toolPath: String): String {
+    this.text =
+      if (toolPath.isEmpty() && pathDetector.detectedPath() == null)
+        HCLBundle.message("tool.detectAndTestButton.text")
+      else
+        HCLBundle.message("tool.testButton.text")
+    return toolPath
+  }
+
 }

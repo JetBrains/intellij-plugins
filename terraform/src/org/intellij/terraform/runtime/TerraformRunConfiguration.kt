@@ -24,7 +24,7 @@ import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.getBinaryName
+import org.intellij.terraform.install.TFToolType
 import org.jdom.Element
 import org.jetbrains.annotations.Nls
 
@@ -74,7 +74,7 @@ class TerraformRunConfiguration(
       private fun createCommandLine(): GeneralCommandLine {
         val parameters = parameters
 
-        return TFExecutor.`in`(project)
+        return TFExecutor.`in`(project, TFToolType.TERRAFORM)
           .withPresentableName(HCLBundle.message("terraform.run.configuration.name"))
           .withWorkDirectory(parameters.workingDirectory)
           .withParameters(parameters.programParametersList.parameters)
@@ -119,12 +119,12 @@ class TerraformRunConfiguration(
       )
       exception.setQuickFix(Runnable {
         val settings = TerraformProjectSettings.getInstance(project)
-        settings.terraformPath = with(TerraformPathDetector.getInstance(project)) {
-          detectedPath ?: run {
+        settings.toolPath = with(TerraformPathDetector.getInstance(project)) {
+           detectedPath() ?: run {
             runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable")) {
               detect()
             }
-            detectedPath ?: getBinaryName()
+             detectedPath() ?: TFToolType.TERRAFORM.getBinaryName()
           }
         }
       })
@@ -152,7 +152,7 @@ class TerraformRunConfiguration(
     }
 
   private val terraformPath
-    get() = TerraformPathDetector.getInstance(project).actualTerraformPath
+    get() = TerraformPathDetector.getInstance(project).actualPath
 
   override fun setProgramParameters(value: String?): Unit = Unit
 

@@ -15,6 +15,7 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.TFToolType
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -73,7 +74,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   }
 
   private fun createCommandLine(project: Project): GeneralCommandLine =
-    TFExecutor.`in`(project)
+    TFExecutor.`in`(project, TFToolType.TERRAFORM)
       .withPresentableName(TF_FMT)
       .withParameters("fmt", "-")
       .createCommandLine()

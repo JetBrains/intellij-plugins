@@ -120,7 +120,7 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
 }
 
 internal fun isTerraformExecutable(project: Project): Boolean {
-  val terraformPath = TerraformPathDetector.getInstance(project).actualTerraformPath
+  val terraformPath = TerraformPathDetector.getInstance(project).actualPath
   return if (isPathExecutable(terraformPath)) {
     true
   } else {

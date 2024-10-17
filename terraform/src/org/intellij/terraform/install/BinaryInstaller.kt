@@ -5,12 +5,16 @@ import com.google.common.hash.Hashing
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfoRt
@@ -23,6 +27,7 @@ import com.intellij.util.io.RequestBuilder
 import com.sun.jna.platform.win32.*
 import org.intellij.terraform.config.TerraformConstants.EXECUTION_NOTIFICATION_GROUP
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.jetbrains.annotations.Nls
 import java.io.File
 import java.io.IOException
@@ -440,3 +445,16 @@ internal class SuccessfulInstallation(override val binary: Path)
 
 internal class FailedInstallation(override val errorMsg: Supplier<@Nls String>)
   : InstallationResult(null, errorMsg)
+
+internal class InstallTerraformAction : DumbAwareAction() {
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = e.project != null
+  }
+
+  override fun actionPerformed(e: AnActionEvent) {
+    e.project?.let { installTFTool(it, type = TFToolType.TERRAFORM, toolSettings = it.service<TerraformProjectSettings>()) }
+  }
+}

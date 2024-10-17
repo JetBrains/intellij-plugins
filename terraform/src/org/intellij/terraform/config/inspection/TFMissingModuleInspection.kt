@@ -80,9 +80,9 @@ class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
     private val LOG = Logger.getInstance(RunTerraformGetFix::class.java)
   }
 
-  override fun getName(): String = HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.name", directoryName)
+  override fun getName(): String = HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.name", directoryName)
 
-  override fun getFamilyName(): String = HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.family.name")
+  override fun getFamilyName(): String = HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.family.name")
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     val block = descriptor.psiElement as? HCLBlock ?: return
@@ -106,8 +106,8 @@ class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
     catch (e: ExecutionException) {
       LOG.warn("Failed to run 'terraform get': ${e.message}", e)
       Messages.showMessageDialog(project,
-                                 HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.failure.message", e.message),
-                                 HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.failure.title"),
+                                 HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.failure.message", e.message),
+                                 HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.failure.title"),
                                  Messages.getErrorIcon())
     }
   }
