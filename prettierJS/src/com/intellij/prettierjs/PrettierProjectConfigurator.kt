@@ -2,7 +2,7 @@
 package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
 import com.intellij.openapi.application.readAndWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -10,6 +10,8 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.DirectoryProjectConfigurator
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 
 class PrettierProjectConfigurator : DirectoryProjectConfigurator.AsyncDirectoryProjectConfigurator() {
   override suspend fun configure(project: Project, baseDir: VirtualFile, moduleRef: Ref<Module>, isProjectCreatedWithWizard: Boolean) {
@@ -17,67 +19,93 @@ class PrettierProjectConfigurator : DirectoryProjectConfigurator.AsyncDirectoryP
       val config = PrettierConfiguration.getInstance(project)
 
       // checking default configuration mode for preventing overriding after unexpected IDE closing
-      if (config.isDefaultConfigurationMode) {
-        val detectionInfo = getPrettierDetectionInfo(baseDir)
+      if (!config.isDefaultConfigurationMode) return@readAndWriteAction value(Unit)
 
-        if (detectionInfo.hasDependencyOnPrettier && !detectionInfo.hasPrettierConfig) {
-          PrettierConfigurationCollector.logAutoEnableInNewProject(
-            PrettierConfigurationCollector.EnabledStatus.UNCHANGED,
-            PrettierConfigurationCollector.PackageDeclarationLocation.IN_PROJECT_ROOT_PACKAGE
-          )
-        }
-        else if (shouldAutoconfigurePrettierForRootDirectory(detectionInfo)) {
-          return@readAndWriteAction writeAction {
-            config.state.configurationMode = ConfigurationMode.AUTOMATIC
+      val (packageDeclarationLocation, configLocation) = getDetectionInfo(project, baseDir)
 
+      if (packageDeclarationLocation != PrettierConfigurationCollector.PackageDeclarationLocation.NONE) {
+        when (configLocation) {
+          PrettierConfigurationCollector.ConfigLocation.NONE -> {
             PrettierConfigurationCollector.logAutoEnableInNewProject(
-              PrettierConfigurationCollector.EnabledStatus.AUTOMATIC,
-              PrettierConfigurationCollector.PackageDeclarationLocation.IN_PROJECT_ROOT_PACKAGE,
-              getPrettierConfigLocation(detectionInfo)
+              PrettierConfigurationCollector.EnabledStatus.UNCHANGED,
+              packageDeclarationLocation,
+              configLocation,
             )
+          }
+          else -> {
+            return@readAndWriteAction writeAction {
+              config.state.configurationMode = ConfigurationMode.AUTOMATIC
+
+              PrettierConfigurationCollector.logAutoEnableInNewProject(
+                PrettierConfigurationCollector.EnabledStatus.AUTOMATIC,
+                packageDeclarationLocation,
+                configLocation,
+              )
+            }
           }
         }
       }
+
       value(Unit)
     }
   }
 
-  private fun getRootPackageJsonData(dir: VirtualFile): PackageJsonData? {
-    if (!dir.isDirectory) return null
-    val packageJson = dir.findChild(PackageJsonUtil.FILE_NAME) ?: return null
-    return PackageJsonData.getOrCreate(packageJson)
+  @RequiresBackgroundThread
+  @RequiresReadLock
+  private fun getDetectionInfo(project: Project, baseDir: VirtualFile): DetectionInfo {
+    val packageJsonFiles = PackageJsonFileManager.getInstance(project)
+      .getValidPackageJsonFiles()
+      .map { PackageJsonData.getOrCreate(it) }
+      .filter { it.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME) }
+
+    val detectionMetrics = packageJsonFiles.fold(DetectionMetrics()) { acc, packageJson ->
+      val directory = packageJson.packageJsonFile.parent
+      acc.apply {
+        if (directory == baseDir) {
+          hasRootDependency = true
+        }
+        else {
+          dependencySubdirectoryCount++
+        }
+        hasConfigInPackageJson = hasConfigInPackageJson || packageJson.hasConfigSection()
+        hasConfigFile = hasConfigFile || PrettierUtil.findSingleConfigInDirectory(directory) != null
+      }
+    }
+
+    val packageDeclarationLocation = determinePackageDeclarationLocation(detectionMetrics)
+    val configLocation = determineConfigLocation(detectionMetrics)
+
+    return DetectionInfo(packageDeclarationLocation, configLocation)
   }
 
-  private fun getPrettierDetectionInfo(dir: VirtualFile): PrettierDetectionInfo {
-    val packageJsonData = getRootPackageJsonData(dir) ?: return PrettierDetectionInfo()
-    if (!packageJsonData.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
-      return PrettierDetectionInfo(true)
+  private fun determinePackageDeclarationLocation(metrics: DetectionMetrics): PrettierConfigurationCollector.PackageDeclarationLocation =
+    when {
+      metrics.hasRootDependency -> PrettierConfigurationCollector.PackageDeclarationLocation.IN_PROJECT_ROOT_PACKAGE
+      metrics.dependencySubdirectoryCount > 1 -> PrettierConfigurationCollector.PackageDeclarationLocation.IN_MULTIPLE_SUBDIR_PACKAGES
+      metrics.dependencySubdirectoryCount == 1 -> PrettierConfigurationCollector.PackageDeclarationLocation.IN_SUBDIR_PACKAGE
+      else -> PrettierConfigurationCollector.PackageDeclarationLocation.NONE
     }
-    return PrettierDetectionInfo(true,
-                                 true,
-                                 packageJsonData.topLevelProperties.contains(PrettierUtil.CONFIG_SECTION_NAME),
-                                 PrettierUtil.findSingleConfigInDirectory(dir) != null)
-  }
 
-  private fun shouldAutoconfigurePrettierForRootDirectory(detectionInfo: PrettierDetectionInfo): Boolean =
-    detectionInfo.hasPackageJsonInProjectRoot && detectionInfo.hasDependencyOnPrettier && detectionInfo.hasPrettierConfig
-
-  private fun getPrettierConfigLocation(detectionInfo: PrettierDetectionInfo): PrettierConfigurationCollector.ConfigLocation {
-    if (detectionInfo.hasPrettierConfigInPackageJson) {
-      return PrettierConfigurationCollector.ConfigLocation.PACKAGE_JSON
+  private fun determineConfigLocation(metrics: DetectionMetrics): PrettierConfigurationCollector.ConfigLocation =
+    when {
+      metrics.hasConfigFile && metrics.hasConfigInPackageJson -> PrettierConfigurationCollector.ConfigLocation.MIXED
+      metrics.hasConfigFile -> PrettierConfigurationCollector.ConfigLocation.CONFIG_FILE
+      metrics.hasConfigInPackageJson -> PrettierConfigurationCollector.ConfigLocation.PACKAGE_JSON
+      else -> PrettierConfigurationCollector.ConfigLocation.NONE
     }
-    else if (detectionInfo.hasPrettierConfigFile) {
-      return PrettierConfigurationCollector.ConfigLocation.CONFIG_FILE
-    }
-    return PrettierConfigurationCollector.ConfigLocation.NONE
-  }
-}
 
-private data class PrettierDetectionInfo(
-  val hasPackageJsonInProjectRoot: Boolean = false,
-  val hasDependencyOnPrettier: Boolean = false,
-  val hasPrettierConfigInPackageJson: Boolean = false,
-  val hasPrettierConfigFile: Boolean = false,
-) {
-  val hasPrettierConfig: Boolean get() = hasPrettierConfigInPackageJson || hasPrettierConfigFile
+  private data class DetectionInfo(
+    val packageDeclarationLocation: PrettierConfigurationCollector.PackageDeclarationLocation,
+    val configLocation: PrettierConfigurationCollector.ConfigLocation,
+  )
+
+  private data class DetectionMetrics(
+    var hasRootDependency: Boolean = false,
+    var dependencySubdirectoryCount: Int = 0,
+    var hasConfigInPackageJson: Boolean = false,
+    var hasConfigFile: Boolean = false,
+  )
+
+  private fun PackageJsonData.hasConfigSection(): Boolean =
+    topLevelProperties.contains(PrettierUtil.CONFIG_SECTION_NAME)
 }

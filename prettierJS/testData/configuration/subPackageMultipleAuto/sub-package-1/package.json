@@ -1,0 +1,13 @@
+{
+  "name": "sub-package-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "npx prettier . --write"
+  },
+  "private": true,
+  "dependencies": {
+    "prettier": "latest"
+  }
+}

@@ -7,7 +7,7 @@ import com.intellij.internal.statistic.eventLog.events.EventId3
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 
 internal object PrettierConfigurationCollector : CounterUsagesCollector() {
-  private val GROUP: EventLogGroup = EventLogGroup("prettier.configuration", 1)
+  private val GROUP: EventLogGroup = EventLogGroup("prettier.configuration", 2)
 
   override fun getGroup(): EventLogGroup = GROUP
 
@@ -25,12 +25,15 @@ internal object PrettierConfigurationCollector : CounterUsagesCollector() {
 
   enum class PackageDeclarationLocation {
     IN_PROJECT_ROOT_PACKAGE,
+    IN_SUBDIR_PACKAGE,
+    IN_MULTIPLE_SUBDIR_PACKAGES,
     NONE
   }
 
   enum class ConfigLocation {
     CONFIG_FILE,
     PACKAGE_JSON,
+    MIXED,
     NONE
   }
 
