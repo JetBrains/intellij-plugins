@@ -10,6 +10,7 @@ import com.intellij.openapi.application.readAndWriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments
+import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -94,6 +95,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       myDeferred.getCompleted()
     }
     catch (e: Exception) {
+      fileLogger().warn("Failed to load local model for $lock", e)
       null
     }
   }
@@ -356,9 +358,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
-    val toolType = getApplicableToolType(project, lock)
-
-    val success = TFExecutor.`in`(project, toolType)
+    val success = TFExecutor.`in`(project, getApplicableToolType(project, lock))
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
       .withParameters("providers", "schema", "-json")
       .withWorkDirectory(lock.parent.path)

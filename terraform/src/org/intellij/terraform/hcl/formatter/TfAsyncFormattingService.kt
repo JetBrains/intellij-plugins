@@ -7,6 +7,7 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
@@ -14,6 +15,7 @@ import org.intellij.terraform.config.TerraformConstants.EXECUTION_NOTIFICATION_G
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TFToolType
 
@@ -37,7 +39,8 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
 
     val virtualFile = context.virtualFile ?: return null
-    val commandLine = createCommandLine(project)
+    val toolType = getApplicableToolType(project, virtualFile)
+    val commandLine = createCommandLine(project, toolType)
 
     return object : FormattingTask {
       private var processHandler: CapturingProcessHandler? = null
@@ -55,12 +58,13 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
             request.onTextReady(output.stdout)
           }
           else {
-            request.onError(HCLBundle.message("terraform.formatter.error.title"), output.stderr)
+            request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), output.stderr)
           }
         }
         catch (e: Exception) {
+          logger<TfAsyncFormattingService>().warn("Failed to run FormattingTask", e)
           request.onError(HCLBundle.message("terraform.formatter.error.title"),
-                          HCLBundle.message("terraform.formatter.error.message", virtualFile.name))
+                          HCLBundle.message("terraform.formatter.error.message", virtualFile.name, toolType.executableName))
         }
       }
 
@@ -73,9 +77,9 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     }
   }
 
-  private fun createCommandLine(project: Project): GeneralCommandLine =
-    TFExecutor.`in`(project, TFToolType.TERRAFORM)
-      .withPresentableName(TF_FMT)
+  private fun createCommandLine(project: Project, applicableToolType: TFToolType): GeneralCommandLine =
+    TFExecutor.`in`(project, applicableToolType)
+      .withPresentableName(HCLBundle.message("tool.format.display", applicableToolType.displayName))
       .withParameters("fmt", "-")
       .createCommandLine()
 }

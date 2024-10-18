@@ -3,7 +3,6 @@ package org.intellij.terraform.runtime
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.ide.progress.ModalTaskOwner
@@ -54,7 +53,9 @@ internal class ToolExecutableTestButtonComponent(
     add(button)
     add(spinnerIcon)
     add(resultLabel)
-    add(installButton)
+    if (!toolType.downloadServerUrl.isEmpty()) {
+      add(installButton)
+    }
 
     button.addActionListener {
       button.isEnabled = false
