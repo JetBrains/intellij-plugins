@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetManager
+import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.AnActionEvent.createEvent
@@ -70,7 +71,7 @@ internal class PlatformioActionTree(private val project: Project, private val me
       envNode = addNode(targetName(null))
       addNode(ClionEmbeddedPlatformioBundle.message("project.action.folder")).apply {
         addNode(actionManager.getAction("Build"))
-        addNode(actionManager.getAction("Debug"))
+        addNode(actionManager.getAction(DefaultDebugExecutor.EXECUTOR_ID))
         addNode(actionManager.getAction("Clean").withIcon(ClionEmbeddedPlatformioIcons.CleanPlatformIO))
       }
 
