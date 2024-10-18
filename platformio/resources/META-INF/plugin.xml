@@ -105,6 +105,7 @@
       <reference id="platformio-group"/>
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
+    <action id="target-platformio-upload" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadAction"/>
     <action id="target-platformio-upload-monitor" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction"/>
   </actions>
   <resource-bundle>messages.ClionEmbeddedPlatformioBundle</resource-bundle>

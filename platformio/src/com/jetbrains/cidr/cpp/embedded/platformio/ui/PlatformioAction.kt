@@ -56,6 +56,14 @@ open class PlatformioTargetAction(val target: String,
       e.project?.service<PlatformioService>()?.isTargetActive(target) == true
   }
 }
+
+@NlsSafe
+private const val UPLOAD_COMMAND = "pio run -t upload"
+object PlatformioUploadAction : PlatformioTargetAction(target = "upload",
+                                                       text = { ClionEmbeddedPlatformioBundle.message("action.upload") },
+                                                       toolTip = { UPLOAD_COMMAND },
+                                                       icon = ClionEmbeddedPlatformioIcons.LogoPlatformIO)
+
 @NlsSafe
 private const val UPLOAD_MONITOR_COMMAND = "pio run -t upload -t monitor"
 
