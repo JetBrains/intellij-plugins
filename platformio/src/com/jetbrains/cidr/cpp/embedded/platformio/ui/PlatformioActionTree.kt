@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.AnActionEvent.createEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.components.service
@@ -163,7 +164,8 @@ internal class PlatformioActionTree(private val project: Project, private val me
     val action = selectionPath?.lastPathComponent?.asSafely<DefaultMutableTreeNode>()?.userObject?.asSafely<AnAction>()
     if (action != null) {
       val dataContext = SimpleDataContext.getProjectContext(project)
-      action.actionPerformed(AnActionEvent.createFromAnAction(action, e, ActionPlaces.UNKNOWN, dataContext))
+      val actionEvent = createEvent(dataContext, null, ActionPlaces.TOOLBAR, ActionUiKind.TOOLBAR, e)
+      ActionUtil.invokeAction(action, actionEvent, null)
     }
   }
 
