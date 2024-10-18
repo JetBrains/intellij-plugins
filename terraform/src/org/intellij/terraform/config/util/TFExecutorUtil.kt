@@ -29,7 +29,7 @@ suspend fun TFExecutor.executeSuspendable(): Boolean {
   }
 }
 
-internal fun getApplicableExecutorType(project: Project, file: VirtualFile): TFToolType {
+internal fun getApplicableToolType(project: Project, file: VirtualFile): TFToolType {
   val moduleFolder = if (file.isFile) file.parent else file
   val tool = if (moduleFolder.children.any { child -> child.extension == OpenTofuFileType.DEFAULT_EXTENSION })
     TFToolType.OPENTOFU

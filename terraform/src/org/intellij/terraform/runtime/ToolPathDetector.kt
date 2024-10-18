@@ -3,7 +3,7 @@ package org.intellij.terraform.runtime
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.execution.wsl.WslPath
-import com.intellij.openapi.diagnostic.fileLogger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +38,7 @@ internal abstract class ToolPathDetectorBase(protected val project: Project, pro
               }
             }
             catch (e: Exception) {
-              fileLogger().warn(e)
+              logger<ToolPathDetector>().warn(e)
             }
           }
         }

@@ -46,7 +46,7 @@ import org.intellij.terraform.config.model.getVFSParents
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
-import org.intellij.terraform.config.util.getApplicableExecutorType
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.HILCompatibleLanguage
@@ -356,7 +356,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
-    val toolType = getApplicableExecutorType(project, lock)
+    val toolType = getApplicableToolType(project, lock)
 
     val success = TFExecutor.`in`(project, toolType)
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
