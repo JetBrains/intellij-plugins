@@ -200,7 +200,7 @@ internal class BinaryInstaller private constructor(
         .toString()
     }
     catch (e: Exception) {
-      LOG.error("Failed to calculate hashcode for binary")
+      LOG.error("Failed to calculate hashcode for binary", e)
       return false
     }
 
@@ -455,6 +455,7 @@ internal class InstallTerraformAction : DumbAwareAction() {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    e.project?.let { installTFTool(it, type = TFToolType.TERRAFORM, toolSettings = it.service<TerraformProjectSettings>()) }
+    val project = e.project ?: return
+    installTFTool(project, type = TFToolType.TERRAFORM, toolSettings = project.service<TerraformProjectSettings>())
   }
 }
