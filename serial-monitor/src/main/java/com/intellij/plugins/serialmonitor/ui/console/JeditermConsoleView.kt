@@ -112,7 +112,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
   }
 
   override fun clear() {
-    widget.terminalTextBuffer.historyBuffer.clearAll()
+    widget.terminalTextBuffer.clearScreenAndHistoryBuffers()
     widget.terminal.clearScreen()
     widget.terminal.cursorPosition(0, 1)
   }
