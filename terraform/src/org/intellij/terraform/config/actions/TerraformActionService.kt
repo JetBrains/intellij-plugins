@@ -17,8 +17,8 @@ import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.TFToolType
 import org.jetbrains.annotations.Nls
 import kotlin.io.path.Path
 
@@ -55,11 +55,13 @@ internal class TerraformActionService(private val project: Project, private val 
         return@withBackgroundProgress
       }
 
+      val applicableToolType = getApplicableToolType(project, dirFile)
+
       if (!execTerraformInit(dirFile, project, title)) {
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
           .createNotification(
             title,
-            HCLBundle.message("notification.content.terraform.init.failed"),
+            HCLBundle.message("notification.content.terraform.init.failed", applicableToolType.displayName),
             NotificationType.WARNING
           ).notify(project)
         return@withBackgroundProgress
@@ -84,7 +86,7 @@ internal class TerraformActionService(private val project: Project, private val 
           TerraformConstants.EXECUTION_NOTIFICATION_GROUP
             .createNotification(
               title,
-              HCLBundle.message("notification.content.terraform.init.succeed"),
+              HCLBundle.message("notification.content.terraform.init.succeed", applicableToolType.displayName),
               NotificationType.INFORMATION
             ).notify(project)
         }
@@ -103,7 +105,7 @@ internal class TerraformActionService(private val project: Project, private val 
       }
     }
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
-    val success = TFExecutor.`in`(project, TFToolType.TERRAFORM)
+    val success = TFExecutor.`in`(project, getApplicableToolType(project, directory))
       .withPresentableName(title)
       .withParameters("init")
       .showOutputOnError()

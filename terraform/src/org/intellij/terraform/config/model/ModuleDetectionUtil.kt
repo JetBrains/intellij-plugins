@@ -33,6 +33,8 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.version.MalformedConstraintException
 import org.intellij.terraform.config.model.version.Version
 import org.intellij.terraform.config.model.version.VersionConstraint
+import org.intellij.terraform.config.util.getApplicableToolType
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLProperty
@@ -71,8 +73,7 @@ object ModuleDetectionUtil {
    * @param[root] path inside `dir` directory
    */
   data class ModuleManifest(val source: String, val key: String, val version: String, val dir: String, val root: String) {
-    val full
-      get() = dir + if (root.isNotEmpty()) "/$root" else ""
+    val full: String = dir + if (root.isNotEmpty()) "/$root" else ""
   }
 
   fun getAsModuleBlock(moduleBlock: HCLBlock): Module? {
@@ -176,35 +177,38 @@ object ModuleDetectionUtil {
   }
 
   fun getManifestForDirectory(dotTerraform: VirtualFile, file: UserDataHolder, project: Project): Result<ModulesManifest> {
+    val toolType = getApplicableToolType(project, dotTerraform.parent)
 
     LOG.debug("Found .terraform directory: $dotTerraform")
     val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
-                       ?: return Result.Failure("No modules/modules.json found in .terraform directory, please run `terraform get` in appropriate place")
+                       ?: return Result.Failure(HCLBundle.message("module.detection.error.no.modules.json.found", toolType.executableName))
 
     LOG.debug("Found manifest.json: $manifestFile")
     val manifest = CachedValuesManager.getManager(project).getCachedValue(file, ManifestCachedValueProvider(manifestFile.url))
-                   ?: return Result.Failure("Failed to parse .terraform/modules/modules.json, please rerun `terraform get`")
+                   ?: return Result.Failure(HCLBundle.message("module.detection.error.failed.parse.modules.json", toolType.executableName))
 
     return Result.Success(manifest)
   }
 
   private fun doGetAsModuleBlock(moduleBlock: HCLBlock): CachedValueProvider.Result<Result<Module>> {
     val name = moduleBlock.getNameElementUnquoted(1)
-               ?: return CachedValueProvider.Result(Result.Failure("Module name is not defined"), moduleBlock)
+               ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.name.not.defined")), moduleBlock)
     val sourceVal = moduleBlock.`object`?.findProperty("source")?.value
-                    ?: return CachedValueProvider.Result(Result.Failure("No 'source' property"), moduleBlock)
+                    ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.source.property")), moduleBlock)
 
     val file = moduleBlock.containingFile.originalFile
     val directory = file.containingDirectory
-                    ?: return CachedValueProvider.Result(Result.Failure("File ${file.name} does not have containing directory"), moduleBlock, file)
+                    ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.containing.directory", file.name)), moduleBlock, file)
+
+    val toolType = getApplicableToolType(moduleBlock.project, directory.virtualFile)
 
     val source = getModuleSourceString(file, sourceVal)
-                 ?: return CachedValueProvider.Result(Result.Failure("Cannot get module source value"), moduleBlock)
+                 ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.module.source")), moduleBlock)
     val project = moduleBlock.project
 
     val dotTerraform = getTerraformDirSomewhere(directory.virtualFile, project)
     if (dotTerraform == null) {
-      val err = "No .terraform found under project directory, please run `terraform get` in appropriate place"
+      val err = HCLBundle.message("module.detection.error.no.dir.found", toolType.executableName)
       LOG.warn(err)
       return directoryResult(directory, source, err, moduleBlock)
     }
@@ -243,7 +247,7 @@ object ModuleDetectionUtil {
     val path = FileUtil.toSystemIndependentName(module.full)
     var relative = manifest.context.findFileByRelativePath(path)
     if (relative == null) {
-      val err = "Can't find relative dir '$path' in '${manifest.context}'"
+      val err = HCLBundle.message("module.detection.error.no.relative.dir.in.manifest", path, manifest.context)
       LOG.debug(err)
       return directoryResult(directory, source, err, moduleBlock)
     }
@@ -266,7 +270,7 @@ object ModuleDetectionUtil {
     }
     val dir = PsiManager.getInstance(project).findDirectory(relative)
     if (dir == null) {
-      val err = "Can't find PsiDirectory for $relative"
+      val err = HCLBundle.message("module.detection.error.no.psi.dir", relative)
       LOG.debug(err)
       return directoryResult(directory, source, err, moduleBlock)
     }
@@ -304,7 +308,7 @@ object ModuleDetectionUtil {
   }
 
   fun getHilReferenceValue(injectedHil: PsiElement?): PsiElement? {
-    var result: PsiElement? = null;
+    var result: PsiElement? = null
     injectedHil?.accept(object : ILRecursiveVisitor() {
       override fun visitILVariable(o: ILVariable) {
         result = (o.references.firstOrNull { it is HCLElementLazyReference<*> }?.resolve() as? HCLProperty)?.value
@@ -323,7 +327,7 @@ object ModuleDetectionUtil {
   ): CachedValueProvider.Result<Result<Module>> {
     val relativeModule = findRelativeModule(directory, source)
                            ?.let { Result.Success(it) }
-                         ?: Result.Failure(err ?: "Could not find module directory in '${directory.name}/.terraform/modules'")
+                         ?: Result.Failure(err ?: HCLBundle.message("module.detection.error.no.module.dir.found", directory.name))
     return CachedValueProvider.Result(relativeModule, *dependencies, directory, *getVFSChainOrVFS(directory),
                                       *getModuleFiles(relativeModule.value))
   }
@@ -483,6 +487,7 @@ object ModuleDetectionUtil {
     // Check whether current dir is a module itself
     val relativeToDotTerraform = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform)
     val relativeToRoot = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform.parent)
+    val toolType = getApplicableToolType(directory.project, directory.virtualFile)
     if (relativeToDotTerraform != null) {
       val currentModule = manifest.modules.find { it.full == ".terraform/$relativeToDotTerraform" }
       if (currentModule != null) {
@@ -494,7 +499,7 @@ object ModuleDetectionUtil {
         }
       }
       else {
-        val err = "Path '.terraform/$relativeToDotTerraform' not found among modules, either `terraform get` should be run or we're in non-referenced module, e.g. subdir of some module"
+        val err = HCLBundle.message("module.detection.error.no.path.found", relativeToDotTerraform, toolType.executableName)
         LOG.info(err)
         return null to err
       }
@@ -506,7 +511,7 @@ object ModuleDetectionUtil {
         currentModule.key + '.' to null
       }
       else {
-        val err = "Path '$relativeToRoot' not found among modules, either `terraform get` should be run or we're in non-referenced module, e.g. subdir of some module"
+        val err = HCLBundle.message("module.detection.error.no.relative.path.found", relativeToRoot, toolType.executableName)
         LOG.info(err)
         null to err
       }

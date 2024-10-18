@@ -1,14 +1,22 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.components.service
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.TerraformTestUtils
 import org.intellij.terraform.config.inspection.TFMissingModuleInspection
+import org.intellij.terraform.runtime.TerraformPathDetector
+import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class MissingModuleInspectionTest : BasePlatformTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    myFixture.project.service<TerraformProjectSettings>().toolPath = project.service<TerraformPathDetector>().actualPath
+  }
 
   override fun getTestDataPath(): String? = TerraformTestUtils.getTestDataPath()
   @org.junit.Test
@@ -148,7 +156,7 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
         source = "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git///modules/vpc-endpoints?ref=v3.14.2"
       }
 
-      <warning descr="Cannot locate module locally: Could not find module directory in 'src/.terraform/modules'">module "unresolved" {
+      <warning descr="Cannot locate module locally: Could not find module directory in `src/.terraform/modules`">module "unresolved" {
         source = "git::ssh://git@github.com/not-found"
       }</warning>
 

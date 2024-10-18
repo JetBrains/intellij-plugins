@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
 import org.intellij.terraform.install.TFToolType;
@@ -120,12 +121,16 @@ public final class TFExecutor {
     return this;
   }
 
+  public @Nullable String getWorkDirectory() {
+    return myWorkDirectory;
+  }
+
   public boolean execute() {
     return execute(new ExecutionModes.SameThreadMode(getPresentableName()));
   }
 
+  @RequiresBackgroundThread
   public boolean execute(ExecutionMode executionMode) {
-    ApplicationManager.getApplication().assertIsNonDispatchThread();
     Logger.getInstance(getClass()).assertTrue(myProcessHandler == null, "Process has already run with this executor instance");
     final Ref<Boolean> result = Ref.create(false);
     GeneralCommandLine commandLine = null;
@@ -232,7 +237,7 @@ public final class TFExecutor {
     return commandLine;
   }
 
-  private @NotNull @Nls String getPresentableName() {
+  @NotNull @Nls String getPresentableName() {
     return ObjectUtils.notNull(myPresentableName, myToolType.getDisplayName());
   }
 }
