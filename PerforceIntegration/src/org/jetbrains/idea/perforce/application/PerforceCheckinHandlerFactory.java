@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.application;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
@@ -20,6 +21,8 @@ import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
 import java.util.List;
 
+import static org.jetbrains.idea.perforce.actions.ShelveAction.P4SHELF_EXECUTOR_ID;
+
 public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
   public PerforceCheckinHandlerFactory() {
     super(PerforceVcs.getKey());
@@ -36,6 +39,18 @@ public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                                           PerforceBundle.message("message.revert.unchanged.files"),
                                           () -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN,
                                           value -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN = value);
+      }
+
+      @Override
+      public RefreshableOnComponent getAfterCheckinConfigurationPanel(Disposable parentDisposable) {
+        if (panel.getCommitWorkflowHandler().getExecutor(P4SHELF_EXECUTOR_ID) == null) {
+          return null;
+        }
+
+        return BooleanCommitOption.create(project, this, false,
+                                          PerforceBundle.message("checkbox.revert.files.after.shelf"),
+                                          () -> PerforceSettings.getSettings(project).REVERT_FILES_AFTER_SHELF,
+                                          value -> PerforceSettings.getSettings(project).REVERT_FILES_AFTER_SHELF = value);
       }
 
       @Override

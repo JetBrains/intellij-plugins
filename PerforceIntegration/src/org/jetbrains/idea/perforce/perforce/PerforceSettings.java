@@ -95,6 +95,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public boolean SYNC_RUN_RESOLVE = true;
   public boolean REVERT_UNCHANGED_FILES = true;
   public boolean REVERT_UNCHANGED_FILES_CHECKIN = false;
+  public boolean REVERT_FILES_AFTER_SHELF = true;
   public @NlsSafe String CHARSET = PerforcePhysicalConnectionParametersI.getCharsetNone();
   public boolean SHOW_BRANCHES_HISTORY = true;
   public boolean ENABLED = true;
