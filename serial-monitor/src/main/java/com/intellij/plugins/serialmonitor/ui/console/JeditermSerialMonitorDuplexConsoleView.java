@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 
 /**
@@ -198,8 +199,16 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
 
   private class SwitchConsoleViewAction extends ToggleAction implements DumbAware {
 
+    private static Supplier<String> getDynamicText(JeditermSerialMonitorDuplexConsoleView consoleView) {
+      return () -> {
+        return consoleView.isPrimaryConsoleEnabled() ?
+          SerialMonitorBundle.message("switch.console.view.to.hex.title") :
+          SerialMonitorBundle.message("switch.console.view.off.hex.title");
+      };
+    }
+
     private SwitchConsoleViewAction() {
-      super(SerialMonitorBundle.messagePointer("switch.console.view.title"), () -> "", SerialMonitorIcons.HexSerial);
+      super(getDynamicText(JeditermSerialMonitorDuplexConsoleView.this), () -> "", SerialMonitorIcons.HexSerial);
     }
 
     @Override
