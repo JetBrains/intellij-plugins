@@ -427,6 +427,11 @@
     <fileTypeUsageSchemaDescriptor schema="Terraform"
                                    implementationClass="org.intellij.terraform.config.editor.TerraformJsonFileTypeUsageSchemaDescriptor"/>
 
+    <fileTypeUsageSchemaDescriptor schema="Terragrunt"
+                                   implementationClass="org.intellij.terraform.config.editor.TerraformTerragruntTypeUsageSchemaDescriptor"/>
+
+    <statistics.projectUsagesCollector implementation="org.intellij.terraform.TerraformUsageCollector"/>
+
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.opentofu.codeinsight.OpenTofuReferenceContributor"/>
 
 

@@ -7,12 +7,18 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class TerraformJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
   override fun describes(project: Project, file: VirtualFile): Boolean {
-    return file.name.endsWith(".tf.json")
+    return file.name.endsWith(".tf.json", ignoreCase = true)
   }
 }
 
 class OpenTofuJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
   override fun describes(project: Project, file: VirtualFile): Boolean {
-    return file.name.endsWith(".tofu.json")
+    return file.name.endsWith(".tofu.json", ignoreCase = true)
+  }
+}
+
+class TerraformTerragruntTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
+  override fun describes(project: Project, file: VirtualFile): Boolean {
+    return file.name.equals("terragrunt.hcl", ignoreCase = true)
   }
 }
