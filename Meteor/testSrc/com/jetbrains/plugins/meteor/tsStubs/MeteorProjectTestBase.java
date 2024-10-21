@@ -1,12 +1,12 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplateIndex;
@@ -32,7 +32,7 @@ public abstract class MeteorProjectTestBase extends CodeInsightFixtureTestCase<M
   }
 
   public static void initMeteorDirs(Project project) {
-    ApplicationManager.getApplication().assertReadAccessNotAllowed();
+    ThreadingAssertions.assertNoOwnReadAccess();
     ReadAction.run(() -> {
       FileBasedIndex.getInstance().ensureUpToDate(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX, project, GlobalSearchScope.allScope(project));
       findAndInitMeteorRoots(project);
