@@ -8,10 +8,11 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.Plow
+import com.intellij.util.CommonProcessors
 import org.intellij.terraform.hcl.HCLLanguage
 
 internal class TerraformUsageCollector : ProjectUsagesCollector() {
@@ -32,7 +33,7 @@ internal class TerraformUsageCollector : ProjectUsagesCollector() {
   override fun requiresSmartMode(): Boolean = true
 
   override fun getMetrics(project: Project): Set<MetricEvent> {
-    val sevents = mutableSetOf<MetricEvent>()
+    val result = mutableSetOf<MetricEvent>()
 
     val hasTerraformFiles = FileTypeManager.getInstance()
       .registeredFileTypes
@@ -41,13 +42,12 @@ internal class TerraformUsageCollector : ProjectUsagesCollector() {
       .any { ft -> FileTypeIndex.containsFileOfType(ft, GlobalSearchScope.allScope(project)) }
 
     if (hasTerraformFiles) {
-      val hasTerragrunt = Plow.of { processor ->
-        FilenameIndex.processFilesByName("terragrunt.hcl", false, GlobalSearchScope.allScope(project), processor)
-      }.findAny() != null
-      sevents.add(TERRAGRUNT.metric(hasTerragrunt))
+      val terragruntSearch = CommonProcessors.FindFirstProcessor<VirtualFile>()
+      FilenameIndex.processFilesByName("terragrunt.hcl", false, GlobalSearchScope.allScope(project), terragruntSearch)
+      result.add(TERRAGRUNT.metric(terragruntSearch.isFound))
     }
 
-    return sevents
+    return result
   }
 }
 

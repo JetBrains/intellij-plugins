@@ -5,7 +5,7 @@ import com.intellij.internal.statistic.collectors.fus.fileTypes.FileTypeUsageSch
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
-class TerraformJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
+class TfJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
   override fun describes(project: Project, file: VirtualFile): Boolean {
     return file.name.endsWith(".tf.json", ignoreCase = true)
   }
@@ -17,7 +17,7 @@ class OpenTofuJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor 
   }
 }
 
-class TerraformTerragruntTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
+class TfTerragruntTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
   override fun describes(project: Project, file: VirtualFile): Boolean {
     return file.name.equals("terragrunt.hcl", ignoreCase = true)
   }
