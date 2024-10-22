@@ -53,9 +53,9 @@ public abstract class UnversionedScopeScanner {
       checkCanceled();
 
       final LocalFileSystem fs = LocalFileSystem.getInstance();
-      myRunner.haveMultiple(collectPaths(files), connection, new P4HaveParser(PerforceManager.getInstance(myProject)) {
+      myRunner.executeMultiple(collectPaths(files), connection, new P4HaveParser(PerforceManager.getInstance(myProject)) {
         @Override
-        public void consumeRevision(@NotNull String path, long revision) {
+        protected void consumeRevision(@NotNull String path, long revision) {
           checkCanceled();
 
           VirtualFile vFile = findVirtualFile(path);

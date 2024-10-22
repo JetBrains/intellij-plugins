@@ -7,7 +7,9 @@ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 
-open class P4HaveParser(private val perforceManager: PerforceManager, revisions: Object2LongMap<String>) : P4Parser(revisions) {
+open class P4HaveParser(private val perforceManager: PerforceManager, revisions: Object2LongMap<String>) :
+  P4Parser(P4Command.have, revisions) {
+
   companion object {
     private const val HAVE_DELIMITER = " - ";
   }

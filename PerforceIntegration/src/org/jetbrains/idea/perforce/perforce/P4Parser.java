@@ -13,9 +13,15 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class P4Parser {
   private final @NotNull RevisionCollector myRevisionCollector;
+  private final @NotNull P4Command myCommand;
 
-  public P4Parser(@NotNull Object2LongMap<String> revisions) {
+  public P4Parser(@NotNull P4Command command, @NotNull Object2LongMap<String> revisions) {
     myRevisionCollector = new RevisionCollector(revisions);
+    myCommand = command;
+  }
+
+  public @NotNull P4Command getCommand() {
+    return myCommand;
   }
 
   protected abstract @Nullable ParsedLine consumeLine(@NotNull String outputLine) throws VcsException;

@@ -113,6 +113,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   @NonNls public static final String NOT_UNDER_CLIENT_ROOT_MESSAGE = "is not under client's root";
   @NonNls public static final String NOT_IN_CLIENT_VIEW_MESSAGE = " - file(s) not in client view";
   @NonNls public static final String NOT_ON_CLIENT_MESSAGE = "file(s) not on client";
+  @NonNls public static final String NOT_OPENED_ON_CLIENT_MESSAGE = "file(s) not opened on this client";
   @NonNls private static final String NO_FILES_RESOLVED_MESSAGE = "no file(s) resolved";
   @NonNls private static final String INVALID_REVISION_NUMBER = "Invalid revision number";
 
@@ -707,8 +708,22 @@ public final class PerforceRunner implements PerforceRunnerI {
     return parsePerforceChangeLists(execResult.getStdout(), connection, new PerforceChangeCache(myProject));
   }
 
-  public void setChangeRevisionsFromHave(P4Connection connection, List<PerforceChange> result) throws VcsException {
-    final List<FilePath> files = new ArrayList<>();
+  public void setChangeRevisions(@NotNull P4Command command, @NotNull P4Connection connection, @NotNull List<PerforceChange> result)
+    throws VcsException {
+    Object2LongMap<String> revisions =
+      new Object2LongOpenCustomHashMap<>(FastUtilHashingStrategies.getStringStrategy(SystemInfoRt.isFileSystemCaseSensitive));
+
+    P4Parser parser = null;
+    if (command == P4Command.have) {
+      parser = new P4HaveParser(myPerforceManager, revisions);
+    }
+    else if (command == P4Command.opened) {
+      parser = new P4OpenedParser(revisions);
+    }
+
+    if (parser == null) return;
+
+    List<FilePath> files = new ArrayList<>();
     for (PerforceChange perforceChange : result) {
       File file = perforceChange.getFile();
       if (file != null) {
@@ -716,21 +731,28 @@ public final class PerforceRunner implements PerforceRunnerI {
       }
     }
 
-    Object2LongMap<String> haveRevisions =
-      new Object2LongOpenCustomHashMap<>(FastUtilHashingStrategies.getStringStrategy(SystemInfoRt.isFileSystemCaseSensitive));
-
-    final PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
+    PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
     pathsHelper.addAllPaths(files);
-    haveMultiple(pathsHelper, connection, new P4HaveParser(myPerforceManager, haveRevisions));
+
+    executeMultiple(pathsHelper, connection, parser);
 
     for (PerforceChange change : result) {
       File file = change.getFile();
-      if (file != null) {
-        final String path = file.getAbsolutePath();
-        final long revision = haveRevisions.getLong(FileUtil.toSystemDependentName(path));
-        if (revision != 0) {
-          change.setRevision(revision);
-        }
+      if (file == null) continue;
+
+      String revisionKey = null;
+      if (command == P4Command.have) {
+        revisionKey = FileUtil.toSystemDependentName(file.getAbsolutePath());
+      }
+      if (command == P4Command.opened) {
+        revisionKey = change.getDepotPath();
+      }
+
+      if (revisionKey == null) continue;
+
+      long revision = revisions.getLong(revisionKey);
+      if (revision != 0) {
+        change.setRevision(revision);
       }
     }
   }
@@ -1397,7 +1419,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
     final P4Parser haveParser = new P4HaveParser(myPerforceManager, haveRevisions);
-    doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), file.isDirectory())), connection, haveParser, false);
+    doExecute(Collections.singletonList(getP4FilePath(file, file.isDirectory(), file.isDirectory())), connection, haveParser, false);
     return !haveRevisions.isEmpty();
   }
 
@@ -1407,7 +1429,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
     final P4Parser haveParser = new P4HaveParser(myPerforceManager, haveRevisions);
-    doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), false)), connection, haveParser, false);
+    doExecute(Collections.singletonList(getP4FilePath(file, file.isDirectory(), false)), connection, haveParser, false);
     return haveRevisions.isEmpty() ? -1 : haveRevisions.values().iterator().nextLong();
   }
 
@@ -1428,11 +1450,12 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  public void haveMultiple(final PathsHelper helper, @NotNull final P4Connection connection, final P4Parser consumer) throws VcsException {
+  public void executeMultiple(@NotNull PathsHelper helper,
+                              @NotNull P4Connection connection, @NotNull P4Parser consumer) throws VcsException {
     if (helper.isEmpty()) return;
     final List<String> args = helper.getRequestString();
 
-    doHave(args, connection, consumer, true);
+    doExecute(args, connection, consumer, true);
   }
 
   static String getP4FilePath(final P4File file, boolean isDirectory, final boolean recursively) {
@@ -1440,10 +1463,10 @@ public final class PerforceRunner implements PerforceRunnerI {
     return isDirectory ? escapedPath + "/" + (recursively ? "..." : "*") : escapedPath;
   }
 
-  private void doHave(final List<String> filesSpec,
-                      @NotNull final P4Connection connection,
-                      final P4Parser consumer,
-                      boolean longTimeout) throws VcsException {
+  private void doExecute(@NotNull List<String> filesSpec,
+                         @NotNull P4Connection connection,
+                         @NotNull P4Parser consumer,
+                         boolean longTimeout) throws VcsException {
     // See http://www.perforce.com/perforce/doc.052/manuals/cmdref/have.html#1040665
     // According to Perforce docs output will be presented patterned like: depot-file#revision-number - local-path
     // One line per file
@@ -1451,18 +1474,19 @@ public final class PerforceRunner implements PerforceRunnerI {
     PerforceContext context = new PerforceContext(connection, longTimeout, false);
 
     for (List<String> chunk : Lists.partition(new ArrayList<>(new LinkedHashSet<>(filesSpec)), CHUNK_SIZE)) {
-      final ExecResult execResult = executeP4Command(new String[]{"have"}, chunk, null, context);
+      final ExecResult execResult = executeP4Command(new String[]{consumer.getCommand().getName()}, chunk, null, context);
       final String stderr = execResult.getStderr();
-      final boolean notUnderRoot = stderr.contains(NOT_ON_CLIENT_MESSAGE) || stderr.contains(NOT_UNDER_CLIENT_ROOT_MESSAGE);
+      final boolean notUnderRoot =
+        stderr.contains(NOT_OPENED_ON_CLIENT_MESSAGE) || stderr.contains(NOT_ON_CLIENT_MESSAGE) || stderr.contains(NOT_UNDER_CLIENT_ROOT_MESSAGE);
       if (! notUnderRoot) {
-        // Perforce bug: if ask "p4 have <local path>/*" and in <local path> directory it would be unversioned file with symbols
+        // Perforce bug: if ask "p4 have <local path>/*" or "p4 opened <local path>/*" and in <local path> directory it would be unversioned file with symbols
         // that should be escaped, Perforce reports "Invalid revision number" somewhy
         // since we do NOT pass revision number in have string, we can filter out this message and use other strings of output
         if (! stderr.contains(INVALID_REVISION_NUMBER)) {
           checkError(execResult, connection);
         }
       } else {
-        LOG.debug("Problem while doing 'have': " + stderr);
+        LOG.debug("Problem while doing '" + consumer.getCommand().getName() + "': " + stderr);
       }
       final Ref<VcsException> vcsExceptionRef = new Ref<>();
       try {
