@@ -18,7 +18,8 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
   private val classicLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
   private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }
 
-  override fun getAllServices(): List<JSLanguageService> = listOf(classicLanguageService.service, lspLanguageService.service)
+  override val allServices: List<JSLanguageService>
+    get() = listOf(classicLanguageService.service, lspLanguageService.service)
 
   override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 

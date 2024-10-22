@@ -15,7 +15,8 @@ import com.intellij.openapi.vfs.VirtualFile
 internal class Angular2LanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
   private val tsLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<AngularServiceWrapper>() }
 
-  override fun getAllServices(): List<JSLanguageService> = listOf(tsLanguageService.service)
+  override val allServices: List<JSLanguageService>
+    get() = listOf(tsLanguageService.service)
 
   override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 
