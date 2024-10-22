@@ -1,11 +1,9 @@
 package org.jetbrains.idea.perforce.perforce;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.VcsException;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.application.PerforceManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,53 +12,45 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 public abstract class P4Parser {
-  private static final String HAVE_DELIMITER = " - ";
-  private final PerforceManager myPerforceManager;
+  private final @NotNull RevisionCollector myRevisionCollector;
 
-  public P4Parser(PerforceManager perforceManager) {
-    myPerforceManager = perforceManager;
+  public P4Parser(@NotNull Object2LongMap<String> revisions) {
+    myRevisionCollector = new RevisionCollector(revisions);
   }
 
-  public void consumeLine(final String haveLine) throws VcsException {
-    final int hashIndex = haveLine.indexOf('#');
-    if (hashIndex < 0) {
-      throw new VcsException(PerforceBundle.message("error.unexpected.p4.have.output.format", haveLine));
-    }
-    final int idx = haveLine.indexOf(HAVE_DELIMITER, hashIndex);
-    if (idx < 0) {
-      throw new VcsException(PerforceBundle.message("error.unexpected.p4.have.output.format", haveLine));
-    }
-    String localPath = haveLine.substring(idx + HAVE_DELIMITER.length());
-    localPath = myPerforceManager.convertP4ParsedPath(null, localPath);
-    final long revision = Long.parseLong(haveLine.substring(hashIndex+1, idx));
-    consumeRevision(FileUtil.toSystemDependentName(localPath), revision);
+  protected abstract @Nullable ParsedLine consumeLine(@NotNull String outputLine) throws VcsException;
+
+  protected void consumeRevision(@NotNull String path, long revision) {
+    myRevisionCollector.consumeRevision(path, revision);
   }
 
-  public abstract void consumeRevision(String path, long revision);
-
-  void readHaveOutput(InputStream inputStream) throws IOException, VcsException {
+  void readOutput(@NotNull InputStream inputStream) throws IOException, VcsException {
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     do {
       String line = reader.readLine();
-      if (line == null || line.length() == 0) break;
-      consumeLine(line);
+      if (line == null || line.isEmpty()) break;
+      ParsedLine parsedLine = consumeLine(line);
+      if (parsedLine != null) {
+        consumeRevision(parsedLine.path, parsedLine.revision);
+      }
     }
     while (true);
   }
 
-  static final class RevisionCollector extends P4Parser {
-    private final Object2LongMap<String> myHaveRevisions;
+  static final class RevisionCollector {
+    private final Object2LongMap<String> myRevisions;
 
-    RevisionCollector(PerforceManager perforceManager, @NotNull Object2LongMap<String> haveRevisions) {
-      super(perforceManager);
-      myHaveRevisions = haveRevisions;
+    RevisionCollector(@NotNull Object2LongMap<String> revisions) {
+      myRevisions = revisions;
     }
 
-    @Override
-    public void consumeRevision(String path, long revision) {
-      myHaveRevisions.put(path, revision);
+    void consumeRevision(@NotNull String path, long revision) {
+      myRevisions.put(path, revision);
     }
+  }
+
+  protected record ParsedLine(@NotNull String path, long revision) {
   }
 }
 

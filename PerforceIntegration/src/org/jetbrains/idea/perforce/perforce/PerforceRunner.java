@@ -721,7 +721,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     final PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
     pathsHelper.addAllPaths(files);
-    haveMultiple(pathsHelper, connection, new P4Parser.RevisionCollector(myPerforceManager, haveRevisions));
+    haveMultiple(pathsHelper, connection, new P4HaveParser(myPerforceManager, haveRevisions));
 
     for (PerforceChange change : result) {
       File file = change.getFile();
@@ -1396,7 +1396,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     if (connection == null) return false;
 
     Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
-    final P4Parser haveParser = new P4Parser.RevisionCollector(myPerforceManager, haveRevisions);
+    final P4Parser haveParser = new P4HaveParser(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), file.isDirectory())), connection, haveParser, false);
     return !haveRevisions.isEmpty();
   }
@@ -1406,7 +1406,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     if (connection == null) return -1;
 
     Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
-    final P4Parser haveParser = new P4Parser.RevisionCollector(myPerforceManager, haveRevisions);
+    final P4Parser haveParser = new P4HaveParser(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), false)), connection, haveParser, false);
     return haveRevisions.isEmpty() ? -1 : haveRevisions.values().iterator().nextLong();
   }
@@ -1468,7 +1468,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       try {
         execResult.allowSafeStdoutUsage(inputStream -> {
           try {
-            consumer.readHaveOutput(inputStream);
+            consumer.readOutput(inputStream);
           }
           catch (VcsException e) {
             vcsExceptionRef.set(e);
