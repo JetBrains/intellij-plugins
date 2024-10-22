@@ -81,7 +81,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -722,7 +721,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     final PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
     pathsHelper.addAllPaths(files);
-    haveMultiple(pathsHelper, connection, new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions));
+    haveMultiple(pathsHelper, connection, new P4Parser.RevisionCollector(myPerforceManager, haveRevisions));
 
     for (PerforceChange change : result) {
       File file = change.getFile();
@@ -1397,7 +1396,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     if (connection == null) return false;
 
     Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
-    final P4HaveParser haveParser = new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions);
+    final P4Parser haveParser = new P4Parser.RevisionCollector(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), file.isDirectory())), connection, haveParser, false);
     return !haveRevisions.isEmpty();
   }
@@ -1407,7 +1406,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     if (connection == null) return -1;
 
     Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
-    final P4HaveParser haveParser = new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions);
+    final P4Parser haveParser = new P4Parser.RevisionCollector(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), false)), connection, haveParser, false);
     return haveRevisions.isEmpty() ? -1 : haveRevisions.values().iterator().nextLong();
   }
@@ -1429,7 +1428,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  public void haveMultiple(final PathsHelper helper, @NotNull final P4Connection connection, final P4HaveParser consumer) throws VcsException {
+  public void haveMultiple(final PathsHelper helper, @NotNull final P4Connection connection, final P4Parser consumer) throws VcsException {
     if (helper.isEmpty()) return;
     final List<String> args = helper.getRequestString();
 
@@ -1443,7 +1442,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
   private void doHave(final List<String> filesSpec,
                       @NotNull final P4Connection connection,
-                      final P4HaveParser consumer,
+                      final P4Parser consumer,
                       boolean longTimeout) throws VcsException {
     // See http://www.perforce.com/perforce/doc.052/manuals/cmdref/have.html#1040665
     // According to Perforce docs output will be presented patterned like: depot-file#revision-number - local-path

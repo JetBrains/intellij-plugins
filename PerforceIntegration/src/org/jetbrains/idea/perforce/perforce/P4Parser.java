@@ -13,11 +13,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public abstract class P4HaveParser {
+public abstract class P4Parser {
   private static final String HAVE_DELIMITER = " - ";
   private final PerforceManager myPerforceManager;
 
-  public P4HaveParser(PerforceManager perforceManager) {
+  public P4Parser(PerforceManager perforceManager) {
     myPerforceManager = perforceManager;
   }
 
@@ -49,7 +49,7 @@ public abstract class P4HaveParser {
     while (true);
   }
 
-  static final class RevisionCollector extends P4HaveParser {
+  static final class RevisionCollector extends P4Parser {
     private final Object2LongMap<String> myHaveRevisions;
 
     RevisionCollector(PerforceManager perforceManager, @NotNull Object2LongMap<String> haveRevisions) {
