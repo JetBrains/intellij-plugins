@@ -477,5 +477,13 @@
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </group>
+
+    <group id="TfRunConfigurationActions">
+      <action id="TfInitConfigAction" class="org.intellij.terraform.runtime.InitAction"/>
+      <action id="TfValidateConfigAction" class="org.intellij.terraform.runtime.ValidateAction"/>
+      <action id="TfPlanConfigAction" class="org.intellij.terraform.runtime.PlanAction"/>
+      <action id="TfApplyConfigAction" class="org.intellij.terraform.runtime.ApplyAction"/>
+      <action id="TfDestroyConfigAction" class="org.intellij.terraform.runtime.DestroyAction"/>
+    </group>
   </actions>
 </idea-plugin>

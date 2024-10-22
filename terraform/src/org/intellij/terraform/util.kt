@@ -9,16 +9,16 @@ internal fun isTerraformFileExtension(extension: String?): Boolean {
   return extension == TerraformFileType.DEFAULT_EXTENSION || extension == TerraformFileType.TFVARS_EXTENSION
 }
 
-internal fun isTerraformCompatiblePsiFile(file: PsiFile): Boolean {
+internal fun isTerraformCompatiblePsiFile(file: PsiFile?): Boolean {
   return isTerraformFile(file) || isOpenTofuFile(file)
 }
 
-internal fun isTerraformFile(psiFile: PsiFile): Boolean {
-  return psiFile.fileType is TerraformFileType
+internal fun isTerraformFile(psiFile: PsiFile?): Boolean {
+  return psiFile?.fileType is TerraformFileType
 }
 
-internal fun isOpenTofuFile(psiFile: PsiFile): Boolean {
-  return psiFile.fileType is OpenTofuFileType
+internal fun isOpenTofuFile(psiFile: PsiFile?): Boolean {
+  return psiFile?.fileType is OpenTofuFileType
 }
 
 internal fun joinCommaOr(list: List<String>): String = when (list.size) {
