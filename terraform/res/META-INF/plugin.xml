@@ -425,10 +425,10 @@
     <fileTypeUsageSchemaDescriptor schema="OpenTofu"
                                    implementationClass="org.intellij.terraform.config.editor.OpenTofuJsonFileTypeUsageSchemaDescriptor"/>
     <fileTypeUsageSchemaDescriptor schema="Terraform"
-                                   implementationClass="org.intellij.terraform.config.editor.TerraformJsonFileTypeUsageSchemaDescriptor"/>
+                                   implementationClass="org.intellij.terraform.config.editor.TfJsonFileTypeUsageSchemaDescriptor"/>
 
     <fileTypeUsageSchemaDescriptor schema="Terragrunt"
-                                   implementationClass="org.intellij.terraform.config.editor.TerraformTerragruntTypeUsageSchemaDescriptor"/>
+                                   implementationClass="org.intellij.terraform.config.editor.TfTerragruntTypeUsageSchemaDescriptor"/>
 
     <statistics.projectUsagesCollector implementation="org.intellij.terraform.TerraformUsageCollector"/>
 
