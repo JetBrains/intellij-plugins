@@ -23,8 +23,8 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
 
   override fun getService(file: VirtualFile) = allServices.firstOrNull()
 
-  override fun getAllServices() =
-    if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
+  override val allServices
+    get() = if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
 }
 
 @Service(Service.Level.PROJECT)
