@@ -34,8 +34,8 @@ class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
 
     val warnedRun = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
     assertEquals(warnedRun, info.icon)
-    checkActionNames(info)
     testRunConfigActions(info)
+    checkActionNames(info)
 
     val gutter = myFixture.findGutter("with_comment.tf")
     assertNotNull(gutter)
@@ -52,12 +52,15 @@ class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
 
   private fun checkActionNames(info: Info) {
     val actions = info.actions
-    assertEquals(lineMarkerActionsSize, actions?.size)
-
-    val actionNames = actions?.take(5)?.map { it.templateText }
-    assertEquals(runTemplateConfigActionsName, actionNames)
-
     assertEquals(actions?.last()?.templateText, "Edit Configurations…")
+
+    val templateActions = actions?.take(5)
+    val presentations = templateActions?.map { myFixture.testAction(it) }
+    assertEquals(presentations?.size, runTemplateConfigActionsName.size)
+
+    runTemplateConfigActionsName.forEachIndexed { index, name ->
+      assertEquals(name, presentations?.get(index)?.text)
+    }
   }
 
   private fun testRunConfigActions(info: Info) {
@@ -89,5 +92,4 @@ class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
   }
 }
 
-private const val lineMarkerActionsSize = 7
 private val runTemplateConfigActionsName = listOf("Init src", "Validate src", "Plan src", "Apply src", "Destroy src")
