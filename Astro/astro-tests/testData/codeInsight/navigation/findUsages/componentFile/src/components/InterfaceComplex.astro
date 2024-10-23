@@ -1,0 +1,18 @@
+---
+import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+interface Props {
+    myString: string;
+    myDate_upd: Date;
+    myFunction: () => void;
+}
+
+const {myString, myDate_upd, myFunction} = Astro.props;
+---
+
+<div>
+    <h1>{myString}</h1>
+    <time datetime={myDate_upd.toISOString()}>{myDate_upd.toDateString()}</time>
+</div>
+
+
+<ManyImportsUpd/>

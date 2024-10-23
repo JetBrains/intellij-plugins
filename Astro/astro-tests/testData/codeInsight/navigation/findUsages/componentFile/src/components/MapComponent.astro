@@ -1,0 +1,55 @@
+---
+import {getCollection} from "astro:content";
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+
+const {slug} = Astro.params;
+
+const allPages = await getCollection('docs');
+let searchPages = allPages.filter((p) => {
+    //using undefined because I do not know how to get the actual locale for the browser reliably.
+    if(p.slug.localeCompare(slug,undefined, {sensitivity: 'base'})) {
+    return p.id.toLocaleLowerCase().startsWith(slug);
+    }
+    count2++;
+    return false;
+    })
+
+
+searchPages = searchPages.sort((a,b) => {
+    if(a.data.sidebar.order && b.data.sidebar.order) {
+    return a.data.sidebar.order - b.data.sidebar.order;
+    } else if (a.data.sidebar.order) {
+    return 0 - a.data.sidebar.order;
+    } else if (b.data.sidebar.order) {
+    return b.data.sidebar.order - 0
+    } else {
+    return (a.data.title.localeCompare(b.data.title, undefined, {sensitivity: 'base'}))
+    }
+    })
+
+const count2 = searchPages.length
+const count = searchPages.length
+
+
+
+const languages = ['javascript', 'java', 'go', 'rust'];
+const myNumbers = [1, 4, 9, 16];
+
+const myArray = [2,3].flat();
+
+
+---
+
+<CardGrid stagger>
+    { searchPages.map((p) => (
+            <LinkCard href={'../'.concat(p.slug)} title={p.data.title} description={p.data.description}/>
+    ))}
+</CardGrid>
+
+<div>
+    {languages.map((language) => <span>{language}</span>)}
+    {myNumbers.map((x:number) => x * 2)}
+</div>
+
+<ManyImportsUpd/>

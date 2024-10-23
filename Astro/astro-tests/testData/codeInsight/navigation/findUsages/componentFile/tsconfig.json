@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "target": "ES2019",
+    "lib": [
+      "ES2019", "ES2019.Array"
+    ]
+  }
+
+}

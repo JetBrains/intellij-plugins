@@ -1,0 +1,18 @@
+---
+import DefaultValue from './DefaultValue.astro';
+import InterfaceAndStory from "./InterfaceAndStory.astro";
+
+/**
+    * Props Interface
+    *
+    * The Props interface represents the properties of a component.
+    *
+    * @template T - The type of the "when" property.
+    */
+interface Props<T> {
+    when: T | number | boolean | undefined | null;
+}
+
+const { when } = Astro.props;
+---
+<DefaultValue/>

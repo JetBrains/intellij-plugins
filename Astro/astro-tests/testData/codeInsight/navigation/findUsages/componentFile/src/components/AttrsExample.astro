@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Card from "./Card.astro";
+import {greet} from "../interfaces";
+import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+
+type Props = HTMLAttributes<'time'> & {
+    date: Date;
+};
+
+const { date, ...attrs } = Astro.props;
+---
+
+<time datetime={date.toISOString()} {...attrs}>
+    {
+        date.toLocaleDateString('en-us', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        })
+    }
+</time>
+
+<ManyImportsUpd/>
+
+<Card isActive href="dd" title="d" idNumber={4} body=""/>
+{greet}

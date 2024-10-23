@@ -1,0 +1,68 @@
+---
+import Card from "./Card.astro";
+import GreetingHeadline from "./GreetingHeadline.astro";
+//import Prefix from "./Prefix.astro";
+import DefaultValue from "./DefaultValue.astro";
+import InterfaceAndDefault from "./InterfaceAndDefault.astro";
+import InterfaceComplex from "./InterfaceComplex.astro";
+import InterfaceGeneric from "./InterfaceGeneric.astro";
+import InterfaceAndStory from "./InterfaceAndStory.astro";
+import type {IStory} from "../interfaces";
+import UnionInterface from "./UnionInterface.astro";
+import ExampleUndefined from "./ExampleUndefined.astro";
+import CheckSupress from "./CheckSupress.astro";
+import ImportProp from "./ImportProp.astro";
+import Prefix from "./Prefix.astro";
+
+
+let myStory: IStory = {
+    title: "Asd",
+    user: "QA",
+    id: "12"
+}
+let idValue = 1;
+
+let myFunctionVar = () => console.log('test')
+
+---
+<!--Has interface Props-->
+<!--Red code: {false} is not a valid value for isActive. Expected: isActive-->
+<Card body="test1" title="test2" href="tet3" isActive={true} idNumber={idValue}> Test props for Card component </Card>
+<Card body="" href="" idNumber="" isActive title=""> </Card>
+
+
+<!--Has interface Props with optional field-->
+<Prefix prefix="test4"> </Prefix>
+
+<!--Has interface Props and const {} = Astro props with default value-->
+<!--isOld:boolean. Red code: {true} is not a valid value for isOld. Expected: isOld -->
+<InterfaceAndDefault description_updated="test" isOld={true} title="test"> </InterfaceAndDefault>
+
+<InterfaceComplex myDate_upd={new Date()} myString="hey" myFunction={myFunctionVar}> </InterfaceComplex>
+
+<InterfaceGeneric when={123}> </InterfaceGeneric>
+<InterfaceGeneric when="hello"> </InterfaceGeneric>
+
+<InterfaceAndStory story={myStory}> </InterfaceAndStory>
+
+<!-- Astro LSP. Red code in the next line is expected -->
+<UnionInterface variant="test"> Should be red! </UnionInterface>
+<UnionInterface variant="offset"> No error is expected </UnionInterface>
+
+<ExampleUndefined property1={undefined} property2="hi"> </ExampleUndefined>
+<!--Astro LSP. Red code for property1 is expected-->
+<ExampleUndefined property1="test of red code here" non-exist="test" property2="should be ok"> </ExampleUndefined>
+
+<!-- props are not completed and recognized, no resolve. Same in VSCode-->
+<!-- Has no interface, const {} = Astro.props -->
+<GreetingHeadline greeting="test" name="test2"> </GreetingHeadline>
+
+<!-- Has no interface, const { } = Astro.props with defaults-->
+<!-- props are not completed and recognized, no resolve. Same in VSCode-->
+<DefaultValue color="emerald" flower="lavender"> </DefaultValue>
+<DefaultValue/>
+
+<CheckSupress title="smth" non-exist="test"> </CheckSupress>
+
+<ImportProp name="test"> </ImportProp>
+
