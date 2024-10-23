@@ -86,6 +86,7 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
   "if"                        { return IF_KEYWORD; }
   "else"                      { return ELSE_KEYWORD; }
   "this"                      { return THIS_KEYWORD; }
+  "typeof"                    { return TYPEOF_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
   {IDENT}                     { return IDENTIFIER; }
