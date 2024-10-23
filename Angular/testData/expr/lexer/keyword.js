@@ -8,3 +8,4 @@ false
 if
 else
 this
+typeof

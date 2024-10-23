@@ -1,0 +1,32 @@
+[
+  {
+    "file-name": "typeof.ts",
+    "mappings": [
+      "«typeof» [124] => «typeof» [109]}",
+      "«value» [131] => «value» [121]} (no types)",
+      "«value» [131] => «this.value» [116]}",
+      "«typeof value» [124] => «typeof this.value» [109]}",
+      "«===» [137] => «===» [127]}",
+      "«'string'» [141] => «'string'» [131]}",
+      "«typeof value === 'string'» [124] => «typeof this.value === 'string'» [109]}",
+      "«check» [161] => «check» [153]} (no types)",
+      "«check» [161] => «this.check» [148]}",
+      "«(» [166] => «(» [158]}",
+      "«value» [167] => «value» [164]} (no types)",
+      "«value» [167] => «this.value» [159]}",
+      "«)» [172] => «)» [169]}",
+      "«(value)» [166] => «(this.value)» [158]}",
+      "«check(value)» [161] => «this.check(this.value)» [148]}",
+      "«check» [198] => «check» [191]} (no types)",
+      "«check» [198] => «this.check» [186]}",
+      "«(» [203] => «(» [196]}",
+      "«value» [204] => «value» [202]} (no types)",
+      "«value» [204] => «this.value» [197]}",
+      "«)» [209] => «)» [207]}",
+      "«(value)» [203] => «(this.value)» [196]}",
+      "«check(value)» [198] => «this.check(this.value)» [186]}",
+      "0:113 => 0:113 (source)",
+      "221:323 => 221:323 (source)"
+    ]
+  }
+]
