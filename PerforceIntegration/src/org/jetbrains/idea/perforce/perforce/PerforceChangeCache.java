@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.idea.perforce.application.ConnectionKey;
 import org.jetbrains.idea.perforce.application.PerforceManager;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
@@ -28,6 +29,7 @@ public class PerforceChangeCache {
     myPerforceManager = PerforceManager.getInstance(project);
   }
 
+  @Unmodifiable
   public List<PerforceChange> getChanges(P4Connection connection, final long changeListNumber, @Nullable final VirtualFile vcsRoot) {
     List<PerforceChange> all = myCache.get(createKey(connection, changeListNumber));
     if (all == null) {
