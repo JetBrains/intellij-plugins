@@ -53,7 +53,7 @@ data class SarifProblem(
           result.locations?.filter { location ->
             location != null && location.relationships != null
           } ?: emptyList()
-        }.filter { !it.value.isEmpty() && it.key.ruleId == PHP_VULNERABLE_PATHS }
+        }.filter { !it.value.isEmpty() && !it.key.graphs.isNullOrEmpty() }
 
         val problemsForTaintAnalysisSinks = getPossibleTaintAnalysisSinksResultsAndLocations(
           reportResults, resultsWithRelationshipsTaint
@@ -231,10 +231,11 @@ private fun getPossibleTaintAnalysisSinksResultsAndLocations(
   reportResults: List<Result>,
   resultsWithRelationshipsTaint: Map<Result, List<Location>>
 ): List<Pair<Result, Location>> {
-  val graphs = reportResults.mapNotNull { it.graphs }.flatten()
-  val nodes = graphs.mapNotNull { it.nodes }.flatten()
-  val edges = graphs.mapNotNull { it.edges }.flatten()
-  val sinks = nodes.filter { node -> edges.all { it.sourceNodeId != node.id } }
+  val sinks = reportResults.mapNotNull { it.graphs }.map { graph ->
+    val nodes = graph.mapNotNull { it.nodes }.flatten()
+    val edges = graph.mapNotNull { it.edges }.flatten()
+    nodes.filter { node -> edges.all { it.sourceNodeId != node.id } }
+  }.flatten()
 
   val resultsAndLocationsForSinks = sinks.flatMap { sink ->
     resultsWithRelationshipsTaint.filterValues { locations ->

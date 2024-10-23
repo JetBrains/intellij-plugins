@@ -26,13 +26,13 @@ data class CommonDescriptor(val file: String, val line: Int?, val column: Int?, 
 object ElementToSarifConverter {
   const val FILE = "file"
   const val LINE = "line"
+  const val DESCRIPTION = "description"
   private const val OFFSET = "offset"
   private const val LENGTH = "length"
   private const val INSPECTION_RESULTS_LANGUAGE = "language"
   private const val FRAMEWORK = "framework"
   private const val MODULE = "module"
   private const val SEVERITY_ATTR = "severity"
-  private const val DESCRIPTION = "description"
   private const val HIGHLIGHTED_ELEMENT = "highlighted_element"
 
   internal suspend fun convertFromXmlFormat(problem: Element,
@@ -121,7 +121,7 @@ object ElementToSarifConverter {
       tags.add("CWE Top 25")
     }
 
-    val message = providedMessage ?: Message().withText(description?.let { htmlToPlainText(description) }).withMarkdown(description?.let { htmlToMarkdown(it) })
+    val message = providedMessage ?: safeDescriptionText(description)
     return Result(message)
       .withRuleId(inspectionId)
       .withLevel(level)
@@ -129,6 +129,9 @@ object ElementToSarifConverter {
         it.tags.addAll(tags)
       })
   }
+
+  fun safeDescriptionText(description: String?): Message? =
+    Message().withText(description?.let { htmlToPlainText(description) }).withMarkdown(description?.let { htmlToMarkdown(it) })
 
   private fun getFingerprintData(element: Element): Map<String, String>? =
     element.getChild(DefaultInspectionToolResultExporter.INSPECTION_RESULTS_FINGERPRINT_DATA)
