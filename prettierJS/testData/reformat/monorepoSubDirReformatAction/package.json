@@ -1,0 +1,17 @@
+{
+  "name": "prettier-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"main\" && exit 1"
+  },
+  "workspaces": [
+    "package-a",
+    "package-b"
+  ],
+  "private": true,
+  "dependencies": {
+    "lodash": "latest"
+  }
+}

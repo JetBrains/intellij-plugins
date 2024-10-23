@@ -49,7 +49,9 @@ public final class PrettierPostFormatProcessor implements PostFormatProcessor {
       if (template != null) return false;
     }
 
-    return GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file);
+    if (!GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file)) return false;
+
+    return PrettierUtil.findPackageJsonWithPrettierUpTree(project, file) != null;
   }
 
   private static @NotNull TextRange extendRange(@NotNull PsiFile file, @NotNull TextRange rangeToReformat) {
