@@ -65,7 +65,13 @@ abstract class GlobalFlowOutputConsumer: GlobalOutputConsumer {
 
 private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: PathMacroManager): Result {
   val problemLocation = ElementToSarifConverter.commonDescriptor(problem)
-  val result = ElementToSarifConverter.convertCommonXmlPart(problem, vulnerableFlowMessage)
+  val descriptionInProblem = problem.getChildText(ElementToSarifConverter.DESCRIPTION)
+  val description = if (descriptionInProblem != null) {
+    ElementToSarifConverter.safeDescriptionText(descriptionInProblem)
+  } else {
+    vulnerableFlowMessage
+  }
+  val result = ElementToSarifConverter.convertCommonXmlPart(problem, description)
 
   val nodes = mutableSetOf<Node>()
   val edges = mutableSetOf<Edge>()
