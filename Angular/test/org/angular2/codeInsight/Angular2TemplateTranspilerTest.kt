@@ -80,6 +80,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_COMMON_17_3_0,
   )
 
+  fun testTypeof() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

@@ -86,4 +86,14 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testTypeOfInsideIf() {
+    doTestHtml("""
+      @if (typeof value === 'string') {
+        {{value.length}}
+      } @else {
+        {{value}}
+      }
+    """.trimIndent())
+  }
+
 }
