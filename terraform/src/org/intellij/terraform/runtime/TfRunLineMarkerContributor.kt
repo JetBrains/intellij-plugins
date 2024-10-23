@@ -56,7 +56,7 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
     val actions = mutableListOf(*templateActions)
     val templateConfigNames = templateActions.map { it.templatePresentation.text }
 
-    val rootModule = TfRunConfigActionBase.getRootModule(block)
+    val rootModule = TfRunBaseConfigAction.getRootModule(block)
     val runManager = RunManager.getInstance(project)
     val existingConfigs = runManager.allSettings.filter {
       val configuration = it.configuration as? TerraformRunConfiguration

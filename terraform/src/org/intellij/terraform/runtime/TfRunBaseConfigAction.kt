@@ -17,7 +17,7 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.isTerraformFile
 import org.jetbrains.annotations.Nls
 
-internal sealed class TfRunConfigActionBase : AnAction(), DumbAware {
+internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
   abstract val command: TfMainCommand
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -97,22 +97,22 @@ internal sealed class TfRunConfigActionBase : AnAction(), DumbAware {
 
 internal data class RootModulePath(val path: String, @NlsSafe val name: String)
 
-internal class InitAction : TfRunConfigActionBase() {
+internal class InitAction : TfRunBaseConfigAction() {
   override val command: TfMainCommand = TfMainCommand.INIT
 }
 
-internal class ValidateAction : TfRunConfigActionBase() {
+internal class ValidateAction : TfRunBaseConfigAction() {
   override val command: TfMainCommand = TfMainCommand.VALIDATE
 }
 
-internal class PlanAction : TfRunConfigActionBase() {
+internal class PlanAction : TfRunBaseConfigAction() {
   override val command: TfMainCommand = TfMainCommand.PLAN
 }
 
-internal class ApplyAction : TfRunConfigActionBase() {
+internal class ApplyAction : TfRunBaseConfigAction() {
   override val command: TfMainCommand = TfMainCommand.APPLY
 }
 
-internal class DestroyAction : TfRunConfigActionBase() {
+internal class DestroyAction : TfRunBaseConfigAction() {
   override val command: TfMainCommand = TfMainCommand.DESTROY
 }
