@@ -1,0 +1,14 @@
+---
+import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+interface Props {
+    title: string,
+    isOld?: boolean,
+    description_updated: string;
+}
+
+const {title= "Default title for prop", isOld, description_updated} = Astro.props;
+---
+
+<h2> {title}, {isOld}, {description_updated}</h2>
+
+<ManyImportsUpd/>

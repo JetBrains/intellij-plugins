@@ -1,0 +1,22 @@
+---
+import Card from "./temp/Card.astro";
+import CheckBuildComponent from "./unused-import/CheckBuildComponent.astro";
+interface Props {
+    foo: string;
+    bar: number;
+}
+
+const {
+    foo,
+    bar,
+} = Astro.props;
+---
+
+
+<div>
+    {foo}
+    {bar}
+</div>
+
+<Card/>
+<CheckBuildComponent/>

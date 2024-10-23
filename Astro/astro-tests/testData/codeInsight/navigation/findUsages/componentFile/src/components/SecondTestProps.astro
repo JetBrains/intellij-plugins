@@ -1,0 +1,24 @@
+---
+import Card from "./Card.astro";
+import Prefix from "./Prefix.astro";
+import InterfaceAndDefault from "./InterfaceAndDefault.astro";
+import InterfaceComplex from "./InterfaceComplex.astro";
+import InterfaceGeneric from "./InterfaceGeneric.astro";
+let testFunc = () => console.log("Test");
+import { Image } from 'astro:assets';
+import ViewTransitions from "astro:transitions";
+---
+
+<!--<Card body="test"  title="test2" href="something" idNumber={1} isActive={true}> Test Card props </Card>-->
+<!--<Card body="test"></Card>-->
+
+<!--<Prefix> </Prefix>-->
+<!--<Prefix prefix="sm"> </Prefix>-->
+
+<!--<InterfaceAndDefault description_updated="test" isOld={true}> Test </InterfaceAndDefault>-->
+
+<Image src={} alt="test"></Image>
+<InterfaceComplex myFunction={testFunc} myString="hey" myDate_upd={new Date()}> </InterfaceComplex>
+
+<InterfaceGeneric when={1333} > </InterfaceGeneric>
+<ViewTransitions> </ViewTransitions>

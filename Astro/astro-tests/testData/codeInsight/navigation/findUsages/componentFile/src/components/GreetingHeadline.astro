@@ -1,0 +1,16 @@
+---
+
+// https://docs.astro.build/en/basics/astro-components/#component-props
+// https://docs.astro.build/en/reference/api-reference/#astroprops
+
+
+import InterfaceComplex from "./InterfaceComplex.astro";
+import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+const { greeting, name } = Astro.props;
+---
+<h2> {greeting}, {name}</h2>
+
+
+<InterfaceComplex > </InterfaceComplex>
+
+<ManyImportsUpd/>
