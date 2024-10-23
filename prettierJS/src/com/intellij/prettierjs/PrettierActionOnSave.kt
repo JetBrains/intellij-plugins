@@ -47,6 +47,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
     }
 
     if (!GlobPatternUtil.isFileMatchingGlobPattern(project, prettierConfiguration.filesPattern, file)) return null
+    if (PrettierUtil.findPackageJsonWithPrettierUpTree(project, file) == null) return null
 
     return file to psiFile
   }

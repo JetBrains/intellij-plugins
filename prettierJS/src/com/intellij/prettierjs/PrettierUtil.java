@@ -110,6 +110,13 @@ public final class PrettierUtil {
     return results;
   }
 
+  public static @Nullable PackageJsonData findPackageJsonWithPrettierUpTree(@NotNull Project project, @NotNull VirtualFile file) {
+    return PackageJsonUtil.processUpPackageJsonFilesAndFindFirst(project, file, packageJson -> {
+      var data = PackageJsonData.getOrCreate(packageJson);
+      return data.isDependencyOfAnyType(PACKAGE_NAME) ? data : null;
+    });
+  }
+
   private static void addPossibleConfigsForFile(@NotNull VirtualFile from, @NotNull Set<VirtualFile> result, @NotNull VirtualFile baseDir) {
     VirtualFile current = from.getParent();
     while (current != null && current.isValid() && current.isDirectory()) {
