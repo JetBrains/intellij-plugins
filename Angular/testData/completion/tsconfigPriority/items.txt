@@ -1,2 +1,2 @@
-errors (typeText=null; priority=101.0; bold)
+errors (typeText='Signal<string[]>'; priority=101.0; bold)
 setErrors (typeText='void'; priority=101.0; bold)
