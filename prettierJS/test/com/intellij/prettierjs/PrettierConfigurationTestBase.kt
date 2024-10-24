@@ -4,6 +4,7 @@ package com.intellij.prettierjs
 import com.intellij.openapi.util.Ref
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.runInEdtAndGet
+import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import kotlinx.coroutines.runBlocking
 
 abstract class PrettierConfigurationTestBase : BasePlatformTestCase() {
@@ -37,5 +38,7 @@ abstract class PrettierConfigurationTestBase : BasePlatformTestCase() {
     runBlocking {
       configurator.configure(myFixture.project, newPath, Ref(myFixture.module), false)
     }
+
+    waitCoroutinesBlocking(myFixture.project.getService(PrettierConfiguratorService::class.java).cs)
   }
 }
