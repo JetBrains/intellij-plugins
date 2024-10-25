@@ -6,6 +6,7 @@ import org.jetbrains.qodana.license.QodanaLicenseType.*
 private val ULTIMATE_PLUS_PLUGINS: Set<String> = setOf(
   "com.intellij.plugins.dependencyAnalysis",
   "com.intellij.taintAnalysis",
+  "intellij.jvm.dfa.analysis",
   "org.jetbrains.security.package-checker"
 )
 
