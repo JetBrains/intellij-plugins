@@ -103,7 +103,6 @@ internal class MeteorLibraryUpdater(private val project: Project, coroutineScope
     do {
       try {
         queue.waitForAllExecuted(1, TimeUnit.MINUTES)
-        UIUtil.dispatchAllInvocationEvents()
         if (projectStatusRequests.replayCache.isNotEmpty()) {
           projectStatusRequests.resetReplayCache()
           @Suppress("SSBasedInspection")

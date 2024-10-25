@@ -2,11 +2,15 @@ package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.IndexingTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdater;
 
+import java.util.concurrent.Future;
+
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
 import static com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdaterKt.findAndInitMeteorRoots;
 
 public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
@@ -46,9 +50,8 @@ public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
 
   private void updateMeteorStatus() {
     findAndInitMeteorRoots(getProject());
-    MeteorLibraryUpdater.getInstance(getProject()).waitForUpdate();
-    UIUtil.dispatchAllInvocationEvents();
-    MeteorLibraryUpdater.getInstance(getProject()).waitForUpdate();
+    Future<?> updateFinished = getApplication().executeOnPooledThread(MeteorLibraryUpdater.getInstance(getProject())::waitForUpdate);
+    PlatformTestUtil.waitForFuture(updateFinished);
     IndexingTestUtil.waitUntilIndexesAreReady(getProject());
     assertTrue(MeteorFacade.getInstance().isMeteorProject(getProject()));
   }
