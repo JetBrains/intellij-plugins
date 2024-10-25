@@ -32,7 +32,6 @@ import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -100,13 +99,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     else
       super.getQuickInfoAt(usageElement, originalFile)
 
-  override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
-    runBlockingMaybeCancellable {
-      smartReadAction(file.project) {
-        val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
-                                                      ?: return@smartReadAction list
-        translateNamesInErrors(list, transpiledComponentFile, templateFile)
-      }
+  override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> =
+    smartReadAction(file.project) {
+      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
+                                                    ?: return@smartReadAction errors
+      translateNamesInErrors(errors, transpiledComponentFile, templateFile)
     }
 
   override fun supportsInlayHints(file: PsiFile): Boolean =
@@ -157,8 +154,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun createLSCache(): TypeScriptLanguageServiceCache =
     Angular2LanguageServiceCache(myProject)
 
-  override fun beforeGetErrors(file: VirtualFile) {
-    refreshTranspiledTemplateIfNeeded(file)
+  override suspend fun beforeGetErrors(file: VirtualFile) {
+    refreshTranspiledTemplateIfNeededCancellable(file)
   }
 
   override fun isGeterrSupported(psiFile: PsiFile): Boolean {
