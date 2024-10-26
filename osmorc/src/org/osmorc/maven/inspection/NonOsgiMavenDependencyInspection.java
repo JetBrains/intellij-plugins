@@ -63,7 +63,7 @@ public final class NonOsgiMavenDependencyInspection extends XmlSuppressableInspe
           if (dependency != null) {
             String scope = dependency.getScope().getStringValue();
             if (!MavenConstants.SCOPE_TEST.equals(scope)) {
-              Path repo = MavenProjectsManager.getInstance(tag.getProject()).getReposirotyPath();
+              Path repo = MavenProjectsManager.getInstance(tag.getProject()).getRepositoryPath();
               String groupId = dependency.getGroupId().getStringValue();
               String artifactId = dependency.getArtifactId().getStringValue();
               String version = dependency.getVersion().getStringValue();
