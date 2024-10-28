@@ -41,7 +41,9 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
       return useTypesFromServerInTests ?: state.useTypesFromServer
     }
     set(value) {
+      val changed = state.useTypesFromServer != value
       state.useTypesFromServer = value
+      if (changed) restartTypeScriptServicesAsync(project)
     }
 }
 
