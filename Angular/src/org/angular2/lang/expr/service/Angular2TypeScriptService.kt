@@ -222,7 +222,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // on server cache locking leading to tests instability.
       val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
       runBlockingCancellable {
-        process?.executeCancellable(Angular2TranspiledTemplateCommand(virtualFile))
+        process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
       }
       result
     }
@@ -236,7 +236,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // on server cache locking leading to tests instability.
       val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
       runBlockingCancellable {
-        process?.executeCancellable(Angular2TranspiledTemplateCommand(virtualFile))
+        process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
       }
       result
     }
