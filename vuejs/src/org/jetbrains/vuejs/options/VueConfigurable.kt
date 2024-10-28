@@ -28,8 +28,9 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
       lateinit var radioButtonDisabled: Cell<JBRadioButton>
       buttonsGroup {
         row {
-          radioButtonDisabled = radioButton(VueBundle.message("vue.configurable.service.disabled"), VueServiceSettings.DISABLED)
+          radioButton(VueBundle.message("vue.configurable.service.disabled"), VueServiceSettings.DISABLED)
             .comment(VueBundle.message("vue.configurable.service.disabled.help"))
+            .also { radioButtonDisabled = it }
         }
         row {
           radioButton(VueBundle.message("vue.configurable.service.auto"), VueServiceSettings.AUTO)
@@ -48,9 +49,8 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           .applyToComponent {
             toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server.description")
           }
-          .enabledIf(radioButtonDisabled.selected.not())
           .bindSelected(settings::useTypesFromServer)
-      }
+      }.enabledIf(radioButtonDisabled.selected.not())
     }
   }
 
