@@ -54,7 +54,9 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
       return useTypesFromServerInTests ?: state.useTypesFromServer
     }
     set(value) {
+      val changed = state.useTypesFromServer != value
       state.useTypesFromServer = value
+      if (changed) restartTypeScriptServicesAsync(project)
     }
 }
 
