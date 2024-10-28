@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.service.withTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -35,6 +36,7 @@ object Angular2TranspiledComponentFileBuilder {
     Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength }
 
   fun getTranspiledComponentAndTopLevelTemplateFile(context: PsiElement): Pair<TranspiledComponentFile, PsiFile>? = withTraceSpan(javaClass, "getTranspiledComponentAndTopLevelTemplateFile") {
+    if (DumbService.isDumb(context.project)) return@withTraceSpan null
     val templateFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
     val componentFile = if (templateFile.language is Angular2HtmlDialect)
       Angular2EntitiesProvider.findTemplateComponent(templateFile)?.sourceElement?.containingFile

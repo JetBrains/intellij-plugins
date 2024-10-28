@@ -28,10 +28,10 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -100,9 +100,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.getQuickInfoAt(usageElement, originalFile)
 
   override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> =
-    smartReadAction(file.project) {
+    readAction {
       val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
-                                                    ?: return@smartReadAction errors
+                                                    ?: return@readAction errors
       translateNamesInErrors(errors, transpiledComponentFile, templateFile)
     }
 
@@ -215,6 +215,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? = withTraceSpan(javaClass, "refreshTranspiledTemplateIfNeededCancellable") {
     JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
+      if (DumbService.isDumb(project)) return@nonBlockingReadActionWithTimeout null
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
@@ -228,7 +229,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   }
 
   private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? = withScopedTraceSpan(javaClass, "refreshTranspiledTemplateIfNeededCancellable") {
-    smartReadAction(project) {
+    readAction {
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
