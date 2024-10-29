@@ -20,7 +20,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
-import org.intellij.terraform.install.TFToolType;
+import org.intellij.terraform.install.TfToolType;
 import org.intellij.terraform.runtime.ToolPathDetector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -46,16 +46,16 @@ public final class TFExecutor {
   private @Nullable @Nls String myPresentableName;
   private OSProcessHandler myProcessHandler;
   private final Collection<ProcessListener> myProcessListeners = new ArrayList<>();
-  private final TFToolType myToolType;
+  private final TfToolType myToolType;
 
-  private TFExecutor(@NotNull Project project, TFToolType toolType) {
+  private TFExecutor(@NotNull Project project, TfToolType toolType) {
     myProject = project;
     myToolType = toolType;
     ToolPathDetector pathDetector = toolType.getPathDetector(project);
-    myExePath = pathDetector.getActualPath();
+    myExePath = pathDetector.actualPath();
   }
 
-  public static @NotNull TFExecutor in(@NotNull Project project, TFToolType toolType) {
+  public static @NotNull TFExecutor in(@NotNull Project project, TfToolType toolType) {
     return new TFExecutor(project, toolType);
   }
 

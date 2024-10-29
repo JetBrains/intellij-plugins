@@ -14,7 +14,7 @@ import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.ui.dsl.builder.*
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.TFToolType
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getToolVersion
 import org.intellij.terraform.install.installTFTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
@@ -34,10 +34,10 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   override fun createPanel(): DialogPanel {
     return panel {
       group(HCLBundle.message("terraform.name")) {
-        executableToolSettingsPanel(this, terraformConfig, TFToolType.TERRAFORM)
+        executableToolSettingsPanel(this, terraformConfig, TfToolType.TERRAFORM)
       }
       group(HCLBundle.message("opentofu.name")) {
-        executableToolSettingsPanel(this, openTofuConfig, TFToolType.OPENTOFU)
+        executableToolSettingsPanel(this, openTofuConfig, TfToolType.OPENTOFU)
       }
     }
   }
@@ -45,10 +45,10 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   private fun executableToolSettingsPanel(
     parent: Panel,
     settings: ToolSettings,
-    type: TFToolType,
+    type: TfToolType,
   ) = parent.apply {
     val pathDetector = type.getPathDetector(project)
-    val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.getBinaryName())) {}
+    val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.executableName)) {}
     val executorField = myRow.textFieldWithBrowseButton(
       fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false),
       fileChosen = { chosenFile ->
@@ -61,7 +61,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     }.trimmedTextValidation(
       validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
         val wslDistribution = WslPath.getDistributionByWindowsUncPath(filePath)
-        filePath.isNotBlank() && (!File(filePath).exists() || wslDistribution == null)
+        filePath.isNotBlank() && (!File(filePath).exists() || wslDistribution != null)
       }
     ).align(AlignX.FILL)
     row {
@@ -70,7 +70,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   }
 
   private fun testToolButton(
-    type: TFToolType,
+    type: TfToolType,
     pathDetector: ToolPathDetector,
     toolSettings: ToolSettings,
     executorPathField: Cell<TextFieldWithBrowseButton>?,
@@ -89,7 +89,8 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     }
   ) {
     if (pathDetector.detectedPath() == null && pathDetector.detect()) {
-      executorPathField?.component?.emptyText?.text = pathDetector.detectedPath() ?: type.getBinaryName()
+      val detectedPath = pathDetector.detectedPath() ?: type.getBinaryName()
+      executorPathField?.component?.emptyText?.text = detectedPath
     }
     val versionLine = getToolVersion(project, type).lineSequence().firstOrNull()?.trim()
     versionLine?.split(" ")?.getOrNull(1) ?: HCLBundle.message("tool.executor.unrecognized.version", type)

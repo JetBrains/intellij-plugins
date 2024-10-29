@@ -14,9 +14,9 @@ import com.intellij.openapi.vfs.isFile
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.*
-import org.intellij.terraform.install.TFToolType
+import org.intellij.terraform.config.actions.isPathExecutable
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.opentofu.OpenTofuFileType
-import org.intellij.terraform.runtime.TerraformProjectSettings
 
 @Service(Service.Level.PROJECT)
 internal class TFExecutorService(val project: Project, val coroutineScope: CoroutineScope) {
@@ -49,18 +49,11 @@ internal suspend fun TFExecutor.executeSuspendable(): Boolean {
   }
 }
 
-internal fun getApplicableToolType(project: Project, file: VirtualFile): TFToolType {
+internal fun getApplicableToolType(project: Project, file: VirtualFile): TfToolType {
   val moduleFolder = if (file.isFile) file.parent else file
-  val tool = if (moduleFolder.children.any { FileUtilRt.extensionEquals(it.name, OpenTofuFileType.DEFAULT_EXTENSION) })
-    TFToolType.OPENTOFU
+  return if (moduleFolder.children.any { FileUtilRt.extensionEquals(it.name, OpenTofuFileType.DEFAULT_EXTENSION) })
+    TfToolType.OPENTOFU
   else {
-    if (project.service<TerraformProjectSettings>().toolPath.isBlank()) {
-      logger<TFExecutor>().warn("Tool path is not set for ${TFToolType.TERRAFORM.displayName}, using ${TFToolType.OPENTOFU.displayName}")
-      TFToolType.OPENTOFU
-    }
-    else {
-      TFToolType.TERRAFORM
-    }
+      TfToolType.TERRAFORM
   }
-  return tool
 }

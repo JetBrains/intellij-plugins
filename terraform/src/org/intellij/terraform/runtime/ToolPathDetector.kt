@@ -9,15 +9,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.install.TFToolType
+import org.intellij.terraform.install.TfToolType
 
 interface ToolPathDetector {
   fun detectedPath(): String?
-  val actualPath: String
+  fun actualPath(): String
   suspend fun detect(): Boolean
 }
 
-internal abstract class ToolPathDetectorBase(protected val project: Project, protected val coroutineScope: CoroutineScope, protected val toolType: TFToolType) : ToolPathDetector {
+internal abstract class ToolPathDetectorBase(protected val project: Project, protected val coroutineScope: CoroutineScope, protected val toolType: TfToolType) : ToolPathDetector {
 
   private var detectedPath: String? = null
 

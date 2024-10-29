@@ -456,6 +456,6 @@ internal class InstallTerraformAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    installTFTool(project, type = TFToolType.TERRAFORM, toolSettings = project.service<TerraformProjectSettings>())
+    installTFTool(project, type = TfToolType.TERRAFORM, toolSettings = project.service<TerraformProjectSettings>())
   }
 }

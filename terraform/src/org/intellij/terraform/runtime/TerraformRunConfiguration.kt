@@ -21,10 +21,10 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TerraformInitCommandFilter
 import org.intellij.terraform.config.actions.isPathExecutable
-import org.intellij.terraform.config.actions.isTerraformExecutable
+import org.intellij.terraform.config.actions.isExecutableToolFileConfigured
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.TFToolType
+import org.intellij.terraform.install.TfToolType
 import org.jdom.Element
 import org.jetbrains.annotations.Nls
 
@@ -49,7 +49,7 @@ class TerraformRunConfiguration(
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
     val error = error
-    if (!isTerraformExecutable(project)) {
+    if (!isExecutableToolFileConfigured(project, TfToolType.TERRAFORM)) {
       return null
     }
     if (error != null) {
@@ -74,8 +74,8 @@ class TerraformRunConfiguration(
       private fun createCommandLine(): GeneralCommandLine {
         val parameters = parameters
 
-        return TFExecutor.`in`(project, TFToolType.TERRAFORM)
-          .withPresentableName(HCLBundle.message("terraform.run.configuration.name"))
+        return TFExecutor.`in`(project, TfToolType.TERRAFORM)
+          .withPresentableName(HCLBundle.message("terraform.run.configuration.name", TfToolType.TERRAFORM.displayName))
           .withWorkDirectory(parameters.workingDirectory)
           .withParameters(parameters.programParametersList.parameters)
           .withPassParentEnvironment(parameters.isPassParentEnvs)
@@ -114,17 +114,17 @@ class TerraformRunConfiguration(
 
     if (!isPathExecutable(terraformPath)) {
       val exception = RuntimeConfigurationException(
-        HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
+        HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath, TfToolType.TERRAFORM.displayName),
         CommonBundle.getErrorTitle()
       )
       exception.setQuickFix(Runnable {
         val settings = TerraformProjectSettings.getInstance(project)
         settings.toolPath = with(TerraformPathDetector.getInstance(project)) {
            detectedPath() ?: run {
-            runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable")) {
+            runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", TfToolType.TERRAFORM.displayName)) {
               detect()
             }
-             detectedPath() ?: TFToolType.TERRAFORM.getBinaryName()
+             detectedPath() ?: TfToolType.TERRAFORM.getBinaryName()
           }
         }
       })
@@ -143,16 +143,16 @@ class TerraformRunConfiguration(
         return HCLBundle.message("run.configuration.no.working.directory.specified")
       }
       if (terraformPath.isBlank()) {
-        return HCLBundle.message("run.configuration.no.terraform.specified")
+        return HCLBundle.message("run.configuration.no.terraform.specified", TfToolType.TERRAFORM.displayName)
       }
       if (!isPathExecutable(terraformPath)) {
-        return HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath)
+        return HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath, TfToolType.TERRAFORM.displayName)
       }
       return null
     }
 
   private val terraformPath
-    get() = TerraformPathDetector.getInstance(project).actualPath
+    get() = TerraformPathDetector.getInstance(project).actualPath()
 
   override fun setProgramParameters(value: String?): Unit = Unit
 

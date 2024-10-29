@@ -358,7 +358,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
-    val success = TFExecutor.`in`(project, getApplicableToolType(project, lock))
+    val toolType = getApplicableToolType(project, lock)
+    val success = TFExecutor.`in`(project, toolType)
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
       .withParameters("providers", "schema", "-json")
       .withWorkDirectory(lock.parent.path)
@@ -380,7 +381,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       throw RuntimeExceptionWithAttachments(
         HCLBundle.message("dialog.message.failed.to.get.output.terraform.providers.command.for",
                           lock,
-                          capturingProcessAdapter.output.exitCode),
+                          capturingProcessAdapter.output.exitCode, toolType.executableName),
         Attachment("truncatedOutput.txt", truncatedOutput),
         Attachment("stderror.txt", stderr)
       )

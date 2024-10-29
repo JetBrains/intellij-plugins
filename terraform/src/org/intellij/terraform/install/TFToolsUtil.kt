@@ -23,7 +23,7 @@ import kotlin.coroutines.coroutineContext
 
 val LOG: Logger = logger<InstallTerraformAction>()
 
-enum class TFToolType(@Nls val executableName: String) {
+enum class TfToolType(@Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
     override fun getDownloadUrl(): String {
@@ -91,7 +91,7 @@ internal fun installTFTool(
   project: Project,
   resultHandler: (Boolean) -> Unit = {},
   progressIndicator: ProgressIndicator? = null,
-  type: TFToolType,
+  type: TfToolType,
   toolSettings: ToolSettings,
 ) {
   BinaryInstaller.create(project)
@@ -108,7 +108,7 @@ internal fun installTFTool(
     .install()
 }
 
-internal suspend fun getToolVersion(project: Project, tool: TFToolType): @NlsSafe String {
+internal suspend fun getToolVersion(project: Project, tool: TfToolType): @NlsSafe String {
   val capturingProcessAdapter = CapturingProcessAdapter()
 
   val success = TFExecutor.`in`(project, tool)
@@ -122,7 +122,7 @@ internal suspend fun getToolVersion(project: Project, tool: TFToolType): @NlsSaf
 
   val stdout = capturingProcessAdapter.output.stdout
   if (!success || stdout.isEmpty()) {
-    throw RuntimeException("Couldn't get version of Terraform")
+    throw RuntimeException("Couldn't get version of ${tool.displayName}")
   }
   return stdout
 }

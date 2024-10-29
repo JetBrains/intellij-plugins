@@ -7,9 +7,15 @@ import com.intellij.icons.AllIcons
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.ui.IconManager
 import org.intellij.terraform.TerraformTestUtils
+import org.intellij.terraform.install.TfToolType
 
 class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = TerraformTestUtils.getTestDataPath() + "/runtime"
+
+  override fun setUp() {
+    super.setUp()
+    TerraformProjectSettings.getInstance(myFixture.project).toolPath = TfToolType.TERRAFORM.getBinaryName()
+  }
 
   fun testSimpleLineMarker() {
     val file = myFixture.configureByFile("simple.tf")

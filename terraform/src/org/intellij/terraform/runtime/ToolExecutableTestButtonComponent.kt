@@ -15,7 +15,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.CoroutineScope
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.TFToolType
+import org.intellij.terraform.install.TfToolType
 import org.jetbrains.annotations.Nls
 import java.awt.FlowLayout
 import javax.swing.JButton
@@ -25,7 +25,7 @@ private const val ICON_TEXT_HGAP: Int = 4
 
 internal class ToolExecutableTestButtonComponent(
   private val pathDetector: ToolPathDetector,
-  private val toolType: TFToolType,
+  private val toolType: TfToolType,
   buttonText: @Nls String,
   private val installAction: ((Boolean) -> Unit) -> Unit,
   private val test: suspend CoroutineScope.() -> @NlsSafe String,
