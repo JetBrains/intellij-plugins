@@ -6,5 +6,6 @@
     <AppAlert>
       123
     </AppAlert>
+    <app-alert/>
   </div>
 </template>
