@@ -3,55 +3,84 @@ package org.intellij.terraform.runtime
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.execution.wsl.WslPath
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.install.TFToolType
+import org.intellij.terraform.install.getBinaryName
+import java.nio.file.Files
+import kotlin.io.path.Path
+import kotlin.io.path.nameWithoutExtension
 
-interface ToolPathDetector {
-  fun detectedPath(): String?
-  val actualPath: String
-  suspend fun detect(): Boolean
-}
+@Service(Service.Level.PROJECT)
+internal class ToolPathDetector(val project: Project, val coroutineScope: CoroutineScope) {
 
-internal abstract class ToolPathDetectorBase(protected val project: Project, protected val coroutineScope: CoroutineScope, protected val toolType: TFToolType) : ToolPathDetector {
+  companion object {
+    fun getInstance(project: Project): ToolPathDetector = project.service<ToolPathDetector>()
+  }
 
-  private var detectedPath: String? = null
-
-  override fun detectedPath(): String? = detectedPath
-
-  override suspend fun detect(): Boolean {
+  suspend fun detect(path: String): String? {
     return withContext(Dispatchers.IO) {
       runInterruptible {
+        val filePath = Path(path)
+        if (Files.isExecutable(filePath)) {
+          return@runInterruptible path
+        }
+        val fileName = filePath.fileName
         val projectFilePath = project.projectFilePath
         if (projectFilePath != null) {
           val wslDistribution = WslPath.getDistributionByWindowsUncPath(projectFilePath)
           if (wslDistribution != null) {
             try {
-              val out = wslDistribution.executeOnWsl(3000, "which", toolType.executableName)
+              val out = wslDistribution.executeOnWsl(3000, "which", fileName.nameWithoutExtension)
               if (out.exitCode == 0) {
-                detectedPath = wslDistribution.getWindowsPath(out.stdout.trim())
-                return@runInterruptible true
+                return@runInterruptible wslDistribution.getWindowsPath(out.stdout.trim())
+              }
+              else {
+                logger<ToolPathDetector>().info("Cannot detect ${path} in WSL. Output stdout: ${out.stdout}")
+                return@runInterruptible null
               }
             }
             catch (e: Exception) {
-              logger<ToolPathDetector>().warn(e)
+              logger<ToolPathDetector>().warnWithDebug(e)
             }
           }
         }
-
-        val binaryPath = PathEnvironmentVariableUtil.findInPath(toolType.getBinaryName())
-        if (binaryPath != null && binaryPath.canExecute()) {
-          detectedPath = binaryPath.absolutePath
-          return@runInterruptible true
-        }
-        return@runInterruptible false
+        return@runInterruptible findExecutable(getBinaryName(fileName.nameWithoutExtension))
       }
     }
   }
 
+  private fun findExecutable(path: String): String? {
+    return PathEnvironmentVariableUtil.findInPath(path)?.takeIf { file -> file.canExecute() }?.absolutePath
+  }
 
+  suspend fun isExecutable(path: String): Boolean {
+    return withContext(Dispatchers.IO) {
+      runInterruptible {
+        val filePath = Path(path)
+        if (Files.isExecutable(filePath)) return@runInterruptible true
+
+        val wslDistribution = WslPath.getDistributionByWindowsUncPath(path)
+        if (wslDistribution != null) {
+          try {
+            val command = wslDistribution.getWslPath(filePath)
+            val out = wslDistribution.executeOnWsl(3000, "test", "-x", command)
+            out.exitCode == 0
+          }
+          catch (e: Exception) {
+            logger<ToolPathDetector>().warnWithDebug(e)
+            false
+          }
+        }
+        else {
+          false
+        }
+      }
+    }
+  }
 }

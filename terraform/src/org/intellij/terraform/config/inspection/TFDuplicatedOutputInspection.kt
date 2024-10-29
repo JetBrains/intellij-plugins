@@ -56,7 +56,7 @@ class TFDuplicatedOutputInspection : TFDuplicatedInspectionBase() {
     val fixes = ArrayList<LocalQuickFix>()
 
     val first = duplicates.first { it != block }
-    first.containingFile?.virtualFile?.let { createNavigateToDupeFix(first.createSmartPointer(), duplicates.size <= 2).let { fixes.add(it) } }
+    first.containingFile?.virtualFile?.let { createNavigateToDupeFix(first, duplicates.size <= 2).let { fixes.add(it) } }
     block.containingFile?.virtualFile?.let {
       createShowOtherDupesFix(block, NullableFunction { param ->
         getDuplicates(param as HCLBlock)

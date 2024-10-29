@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -68,7 +69,7 @@ internal class BinaryInstaller private constructor(
       configuration = configuration.copy(binaryName = it)
     }
     if (binaryName.isNullOrEmpty()) {
-      LOG.error("No binary name provided")
+      logger<BinaryInstaller>().error("No binary name provided")
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.failed"))
     }
 
@@ -99,7 +100,7 @@ internal class BinaryInstaller private constructor(
     val installationDir = installDirProvider(configuration)
     if (installationDir == null) {
       cleanup(download, folder)
-      LOG.error("No binary installation dir provided")
+      logger<BinaryInstaller>().error("No binary installation dir provided")
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.failed"))
     }
     if (!moveToInstallationDir(binary, installationDir)) {
@@ -132,7 +133,7 @@ internal class BinaryInstaller private constructor(
       configuration = configuration.copy(downloadUrl = it)
     }
     if (downloadUrl.isNullOrEmpty()) {
-      LOG.error("No binary download URL provided")
+      logger<BinaryInstaller>().error("No binary download URL provided")
       return null
     }
 
@@ -144,7 +145,7 @@ internal class BinaryInstaller private constructor(
         .saveToFile(file, progressIndicator)
     }
     catch (e: Exception) {
-      LOG.error("Failed to download binary from: $downloadUrl", e)
+      logger<BinaryInstaller>().error("Failed to download binary from: $downloadUrl", e)
       return null
     }
     return file
@@ -181,7 +182,7 @@ internal class BinaryInstaller private constructor(
       return archiveContent
     }
     else {
-      LOG.error("Unsupported archive type: $downloadFileName")
+      logger<BinaryInstaller>().error("Unsupported archive type: $downloadFileName")
     }
 
     return null
@@ -200,7 +201,7 @@ internal class BinaryInstaller private constructor(
         .toString()
     }
     catch (e: Exception) {
-      LOG.error("Failed to calculate hashcode for binary", e)
+      logger<BinaryInstaller>().error("Failed to calculate hashcode for binary", e)
       return false
     }
 
@@ -212,7 +213,7 @@ internal class BinaryInstaller private constructor(
       binary.setPosixFilePermissions(setOf(PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.OWNER_EXECUTE))
     }
     catch (e: Exception) {
-      LOG.error("Failed to make '${binary.absolutePathString()}' executable", e)
+      logger<BinaryInstaller>().error("Failed to make '${binary.absolutePathString()}' executable", e)
     }
     return Files.isExecutable(binary)
   }
@@ -232,13 +233,13 @@ internal class BinaryInstaller private constructor(
       }
 
       val output = ExecUtil.execAndGetOutput(commandLine)
-      if (!output.checkSuccess(LOG)) {
-        LOG.error(output.stderr)
+      if (!output.checkSuccess(logger<BinaryInstaller>())) {
+        logger<BinaryInstaller>().error(output.stderr)
         return false
       }
     }
     catch (e: Exception) {
-      LOG.error(e)
+      logger<BinaryInstaller>().error(e)
       return false
     }
 
@@ -250,14 +251,14 @@ internal class BinaryInstaller private constructor(
     val userPath = readPathFromRegistry() ?: ""
     val newUserPath = appendToPath(userPath, locationToAdd)
     if (newUserPath == null) {
-      LOG.debug("The '$locationToAdd' location is already in the user PATH (`$userPath`)")
+      logger<BinaryInstaller>().debug("The '$locationToAdd' location is already in the user PATH (`$userPath`)")
       return true
     }
 
     if (!updatePathInRegistry(newUserPath))
       return false
 
-    LOG.debug("The '$locationToAdd' location is added to the user PATH (`$userPath`)")
+    logger<BinaryInstaller>().debug("The '$locationToAdd' location is added to the user PATH (`$userPath`)")
     return true
   }
 
@@ -267,7 +268,7 @@ internal class BinaryInstaller private constructor(
       if (folder != null) FileUtil.delete(folder)
     }
     catch (e: IOException) {
-      LOG.error("An exception thrown during cleanup after binary installation", e)
+      logger<BinaryInstaller>().error("An exception thrown during cleanup after binary installation", e)
     }
   }
 
@@ -291,7 +292,7 @@ internal class BinaryInstaller private constructor(
       }
     }
     catch (t: Win32Exception) {
-      LOG.error(
+      logger<BinaryInstaller>().error(
         "Unable to read registry key 'WinReg.HKEY_CURRENT_USER\\$USER_PATH_SUB_KEY' valueName '$USER_PATH_VALUE_NAME': ${t.message}")
       null
     }
@@ -317,7 +318,7 @@ internal class BinaryInstaller private constructor(
       return true
     }
     catch (t: Win32Exception) {
-      LOG.error("Unable to write registry key 'HKEY_CURRENT_USER\\$USER_PATH_SUB_KEY' valueName '$USER_PATH_VALUE_NAME': ${t.message}")
+      logger<BinaryInstaller>().error("Unable to write registry key 'HKEY_CURRENT_USER\\$USER_PATH_SUB_KEY' valueName '$USER_PATH_VALUE_NAME': ${t.message}")
       return false
     }
   }
@@ -456,6 +457,16 @@ internal class InstallTerraformAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    installTFTool(project, type = TFToolType.TERRAFORM, toolSettings = project.service<TerraformProjectSettings>())
+    installTFTool(project, type = TfToolType.TERRAFORM, resultHandler = { result -> handleInstall(project, result) })
+  }
+
+  private fun handleInstall(project: Project, result: InstallationResult) {
+    when (result) {
+      is SuccessfulInstallation -> {
+        project.service<TerraformProjectSettings>().toolPath = result.binary.toString()
+      }
+      else -> {}
+    }
+
   }
 }

@@ -38,12 +38,12 @@ import org.jetbrains.annotations.Nls
 
 class HILUnresolvedReferenceInspection : LocalInspectionTool() {
 
+  private val allowedLanguages = setOf(HCLLanguage, HILLanguage)
+
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    if (!isTerraformCompatiblePsiFile(file) && file.language !in setOf(HCLLanguage, HILLanguage)) return false
-    return isTerraformCompatiblePsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
+    return (file.language in allowedLanguages || isTerraformCompatiblePsiFile(file)) &&
+           isTerraformCompatiblePsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
   }
-
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }

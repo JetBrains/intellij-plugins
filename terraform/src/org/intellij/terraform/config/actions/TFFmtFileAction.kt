@@ -28,7 +28,7 @@ class TFFmtFileAction : TFExternalToolsAction() {
       if (virtualFiles.isEmpty()) return@withBackgroundProgress
 
       val filePaths = virtualFiles.map { it.canonicalPath!! }.toTypedArray()
-      TFExecutor.`in`(project, getApplicableToolType(project, virtualFiles.first()))
+      TFExecutor.`in`(project, getApplicableToolType(virtualFiles.first()))
         .withPresentableName(title)
         .withParameters("fmt", *filePaths)
         .showOutputOnError()

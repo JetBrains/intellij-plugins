@@ -177,7 +177,7 @@ object ModuleDetectionUtil {
   }
 
   fun getManifestForDirectory(dotTerraform: VirtualFile, file: UserDataHolder, project: Project): Result<ModulesManifest> {
-    val toolType = getApplicableToolType(project, dotTerraform.parent)
+    val toolType = getApplicableToolType(dotTerraform.parent)
 
     LOG.debug("Found .terraform directory: $dotTerraform")
     val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
@@ -200,7 +200,7 @@ object ModuleDetectionUtil {
     val directory = file.containingDirectory
                     ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.containing.directory", file.name)), moduleBlock, file)
 
-    val toolType = getApplicableToolType(moduleBlock.project, directory.virtualFile)
+    val toolType = getApplicableToolType(directory.virtualFile)
 
     val source = getModuleSourceString(file, sourceVal)
                  ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.module.source")), moduleBlock)
@@ -208,7 +208,7 @@ object ModuleDetectionUtil {
 
     val dotTerraform = getTerraformDirSomewhere(directory.virtualFile, project)
     if (dotTerraform == null) {
-      val err = HCLBundle.message("module.detection.error.no.dir.found", toolType.executableName)
+      val err = HCLBundle.message("module.detection.error.no.dir.found", toolType.executableName, directory.virtualFile.name)
       LOG.warn(err)
       return directoryResult(directory, source, err, moduleBlock)
     }
@@ -282,8 +282,12 @@ object ModuleDetectionUtil {
     return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifest.context, relative, getModuleFiles(mod))
   }
 
-  private fun getModuleSourceString(file: PsiFile, sourceVal: HCLElement?): @NlsSafe String? {
+  private fun getModuleSourceString(file: PsiFile, sourceVal: HCLElement?, elementsPath: MutableList<PsiElement> = mutableListOf()): @NlsSafe String? {
     sourceVal ?: return null
+
+    if (elementsPath.contains(sourceVal)) {
+      return null //TODO IJPL-166297 implement inspection to prevent cyclic references
+    }
 
     val injectedHil = if (isOpenTofuFile(file)) {
       InjectedLanguageManager.getInstance(sourceVal.project)
@@ -299,9 +303,10 @@ object ModuleDetectionUtil {
     else {
       getReferencesSelectAware(sourceVal).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
     }
+    elementsPath.add(sourceVal)
     val sourceString = when (sourcePsi) {
-      is HCLProperty -> getModuleSourceString(file, sourcePsi.value)
-      is HCLElement -> getModuleSourceString(file, sourcePsi)
+      is HCLProperty -> getModuleSourceString(file, sourcePsi.value, elementsPath)
+      is HCLElement -> getModuleSourceString(file, sourcePsi, elementsPath)
       else -> null
     }
     return sourceString?.let { StringUtil.unquoteString(sourceString) }
@@ -487,7 +492,7 @@ object ModuleDetectionUtil {
     // Check whether current dir is a module itself
     val relativeToDotTerraform = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform)
     val relativeToRoot = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform.parent)
-    val toolType = getApplicableToolType(directory.project, directory.virtualFile)
+    val toolType = getApplicableToolType(directory.virtualFile)
     if (relativeToDotTerraform != null) {
       val currentModule = manifest.modules.find { it.full == ".terraform/$relativeToDotTerraform" }
       if (currentModule != null) {

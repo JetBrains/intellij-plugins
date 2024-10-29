@@ -5,9 +5,10 @@ import com.intellij.ide.macro.Macro
 import com.intellij.ide.macro.PathMacro
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.components.service
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.TFToolType
-import org.intellij.terraform.runtime.TerraformPathDetector
+import org.intellij.terraform.install.TfToolType
+import org.intellij.terraform.runtime.TerraformProjectSettings
 
 class TerraformExecutableMacro : Macro(), PathMacro {
   companion object {
@@ -24,7 +25,7 @@ class TerraformExecutableMacro : Macro(), PathMacro {
 
   @Throws(ExecutionCancelledException::class)
   override fun expand(dataContext: DataContext): String {
-    val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return TFToolType.TERRAFORM.getBinaryName()
-    return TerraformPathDetector.getInstance(project).actualPath
+    val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return TfToolType.TERRAFORM.getBinaryName()
+    return project.service<TerraformProjectSettings>().toolPath
   }
 }

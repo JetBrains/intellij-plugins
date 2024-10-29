@@ -1,7 +1,24 @@
 <html>
 <body>
 <p>
-  Detects non-existing encryption key providers references in OpenTofu encryption block configuration.
+  Detects non-existing encryption key providers references in OpenTofu encryption block configuration. E.g.for the code
+  <pre>
+  <code>
+    terraform {
+      encryption {
+        key_provider "pbkdf2" "foo" {
+          # Configuration parameters
+        }
+        method "aes_gcm" "yourname" {
+          keys = key_provider.pbkdf2.unknown
+        }
+        method "aes_gcm" "yourname2" {
+          keys = key_provider.pbkdf2.foo
+        }
+      }
+    }
+  </code>
+  </pre> we should check if the key provider reference is correct. In this case, <code>unknown</code> reference should be highlighted.
 </p>
 <p>
   See https://opentofu.org/docs/language/state/encryption/#methods for more information.

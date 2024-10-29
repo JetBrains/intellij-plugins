@@ -829,14 +829,14 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
       resource "aws_ec2_host<caret>"
       """);
     LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
-    assertEquals(3, lookupElements.length);
+    assertEquals(4, lookupElements.length);
     Set<String> lookupStrings = Arrays.stream(lookupElements).map(el -> {
       ResourceType resourceType = (ResourceType)el.getObject();
       String name = resourceType.getType();
       String provider = resourceType.getProvider().getFullName();
       return "%s %s".formatted(name, provider);
     }).collect(Collectors.toSet());
-    assertEquals(lookupStrings, Set.of("aws_ec2_host hashicorp/aws", "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"));
+    assertEquals(lookupStrings, Set.of("aws_ec2_host jandillenkofer/aws","aws_ec2_host hashicorp/aws", "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"));
   }
 
   public void testTerraformBlockCompletion() {

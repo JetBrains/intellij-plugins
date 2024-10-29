@@ -28,10 +28,8 @@ internal abstract class BaseTerraformDocUrlProvider {
     val PROVIDER: String = "provider"
   }
 
-  internal suspend fun getDocumentationUrl(element: PsiElement?): List<String?> {
-    element ?: return emptyList()
-
-    val blockData = buildBlockData(element)
+  internal suspend fun getDocumentationUrl(pointer: SmartPsiElementPointer<PsiElement>): List<String?> {
+    val blockData = buildBlockData(pointer)
     return when (blockData.type) {
       HCL_RESOURCE_IDENTIFIER -> listOf(getDocUrl(blockData, RESOURCES))
       HCL_DATASOURCE_IDENTIFIER -> listOf(getDocUrl(blockData, DATASOURCES))
@@ -46,7 +44,8 @@ internal abstract class BaseTerraformDocUrlProvider {
 
   protected data class ProviderData(val org: String, val provider: String, val version: String)
 
-  private suspend fun buildBlockData(element: PsiElement): BlockData = readAction {
+  private suspend fun buildBlockData(pointer: SmartPsiElementPointer<PsiElement>): BlockData = readAction {
+    val element = pointer.element ?: return@readAction BlockData("", "", null, null)
     val (block, parameter) = when (element) {
       is HCLBlock -> {
         Pair(element, null)
@@ -78,7 +77,7 @@ internal abstract class BaseTerraformDocUrlProvider {
   private fun getProviderData(element: PsiElement,
                               identifier: String): ProviderData? {
     val provider = getProvider(identifier, element) ?: return null
-    return ProviderData(provider.namespace, provider.type, if (provider.version.isEmpty()) LATEST_VERSION else provider.version)
+    return ProviderData(provider.namespace, provider.type, provider.version.ifEmpty { LATEST_VERSION })
   }
 
   private fun getProvider(identifier: String, element: PsiElement): ProviderType? {

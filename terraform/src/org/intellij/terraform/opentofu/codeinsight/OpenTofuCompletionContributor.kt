@@ -55,7 +55,7 @@ internal object EncryptionMethodsCompletionProvider : SelectFromScopeCompletionP
 }
 
 private fun getEncryptionElementsTypeNames(element: PsiElement, pattern: PsiElementPattern.Capture<HCLBlock>): List<LookupElement> {
-  return findEncryptionBlockElements(element, pattern)?.map {
+  return findEncryptionBlockElements(element, pattern).map {
     LookupElementBuilder.create(it.getNameElementUnquoted(1)!!).withIcon(TerraformIcons.CollectionKey)
-  } ?: return emptyList()
+  }
 }

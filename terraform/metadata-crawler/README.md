@@ -42,3 +42,13 @@ For example, if we want to change an artifact version, we can specify it in the 
 The following folders can be mounted for better diagnostics:
 1. `/opt/terraform-metadata/plugins-meta` stores the extracted schemas metadata files as well as error logs.
 2. `/opt/terraform-metadata/build/libs` stores the generated metadata jar file.
+
+### How to use Teamcity to collect metadata
+1. Open https://buildserver.labs.intellij.net/buildConfiguration/ijplatform_staging_TerraformMetadata_Build#all-projects
+2. Click on `Run`
+3. Specify variables in `Parameters` tab, if required:
+  * env.ARTIFACT_VERSION
+  * env.ARTIFACTORY_URL
+  * env.CLEAN_DOWNLOADED_DATA
+4. Update terraform plugin dependencies: `terraform-metadata` artifact version
+5. Commit the plugin build file and perform safe push 

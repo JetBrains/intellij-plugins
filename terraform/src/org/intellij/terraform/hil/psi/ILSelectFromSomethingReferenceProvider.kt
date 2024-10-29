@@ -3,6 +3,8 @@ package org.intellij.terraform.hil.psi
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -121,7 +123,18 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
   }
 
   fun collectReferences(r: PsiElement, name: String, found: MutableList<HCLElement>, fake: Boolean, initialContextType: HilContainingBlockType = HilContainingBlockType.UNSPECIFIED) {
-    return collectReferencesInner(r, name, found, fake, initialContextType, mutableSetOf())
+    try {
+      ProgressManager.checkCanceled()
+      return collectReferencesInner(r, name, found, fake, initialContextType, mutableSetOf())
+    }
+    catch (e: StackOverflowError) {
+      val containingFile = r.containingFile ?: throw e
+      throw RuntimeExceptionWithAttachments(
+        "collectReferencesInner stack-overflow for $name in ${r.text}", e,
+        Attachment(containingFile.name, containingFile.text).apply { this.isIncluded = false },
+      )
+    }
+
   }
 
 

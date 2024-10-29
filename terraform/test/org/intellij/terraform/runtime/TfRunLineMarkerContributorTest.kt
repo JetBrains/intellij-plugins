@@ -7,9 +7,15 @@ import com.intellij.icons.AllIcons
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.ui.IconManager
 import org.intellij.terraform.TerraformTestUtils
+import org.intellij.terraform.install.TfToolType
 
 class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = TerraformTestUtils.getTestDataPath() + "/runtime"
+
+  override fun setUp() {
+    super.setUp()
+    TerraformProjectSettings.getInstance(myFixture.project).toolPath = TfToolType.TERRAFORM.getBinaryName()
+  }
 
   fun testSimpleLineMarker() {
     val file = myFixture.configureByFile("simple.tf")
@@ -70,18 +76,18 @@ class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
 
     val initAction = myFixture.testAction(actions.first())
     assertNull(initAction.icon)
-    assertEquals(initAction.text, "Init src")
-    testTfConfiguration(runManager.allSettings.first(), TfMainCommand.INIT)
+    assertEquals("Init src", initAction.text)
+    testTfConfiguration(runManager.allSettings.first(), TfCommand.INIT)
     assertEquals(1, runManager.allSettings.size)
 
     val applyAction = myFixture.testAction(actions[3])
     assertNull(applyAction.icon)
     assertEquals(applyAction.text, "Apply src")
-    testTfConfiguration(runManager.allSettings.first(), TfMainCommand.APPLY)
+    testTfConfiguration(runManager.allSettings.first(), TfCommand.APPLY)
     assertEquals(2, runManager.allSettings.size)
   }
 
-  private fun testTfConfiguration(settings: RunnerAndConfigurationSettings, mainCommand: TfMainCommand) {
+  private fun testTfConfiguration(settings: RunnerAndConfigurationSettings, mainCommand: TfCommand) {
     val configuration = settings.configuration
     assertInstanceOf(configuration, TerraformRunConfiguration::class.java)
     configuration as TerraformRunConfiguration

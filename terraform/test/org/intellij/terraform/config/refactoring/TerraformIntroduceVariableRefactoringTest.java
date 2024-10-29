@@ -6,15 +6,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class TerraformIntroduceVariableRefactoringTest extends BaseIntroduceVariableRefactoringTest {
 
+  @Override
   protected String getTestDataPath() {
     return TerraformTestUtils.getTestDataPath() + "/terraform/refactoring/extract/variable";
   }
 
+  @Override
   @NotNull
   protected BaseIntroduceOperation createIntroduceOperation(String name) {
     return new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), name);
   }
 
+  @Override
   @NotNull
   protected BaseIntroduceVariableHandler createHandler() {
     return new TerraformIntroduceVariableHandler();

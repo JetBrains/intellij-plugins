@@ -291,7 +291,7 @@ class TypeModel(
       return gists.flatMap { it.entries }.associate { it.key to it.value }
     }
 
-    fun getContainingDir(psiElement: PsiElement?): PsiDirectory? {
+    private fun getContainingDir(psiElement: PsiElement?): PsiDirectory? {
       val containingDir = psiElement?.let { getContainingFile(it)?.parent } ?: return null
       return if (containingDir.isDirectory) containingDir else null
     }

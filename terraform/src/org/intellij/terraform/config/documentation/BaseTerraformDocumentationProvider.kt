@@ -2,6 +2,7 @@
 package org.intellij.terraform.config.documentation
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.platform.backend.documentation.DocumentationResult
@@ -37,25 +38,21 @@ internal abstract class BaseTerraformDocumentationProvider {
     }
 
     override fun computeDocumentationHint(): String {
-      val element = pointer.element ?: return NO_DOC
-      return LocalTfDocumentationProvider.fetchLocalDescription(element) ?: NO_DOC
+      return pointer.element?.let { LocalTfDocumentationProvider.fetchLocalDescription(it) } ?: NO_DOC
     }
 
     override fun computeDocumentation(): DocumentationResult? {
-      val element = pointer.element ?: return null
       val project = pointer.project
       val remoteDocProvider = project.service<RemoteTfDocumentationProvider>()
       val mdDocUrlProvider = project.service<TerraformMdDocUrlProvider>()
-      val localDescription = element.let { LocalTfDocumentationProvider.fetchLocalDescription(it) }
 
       return DocumentationResult.Companion.asyncDocumentation {
-        val docText = element.let { elem ->
-          val urlString = if (shouldDownloadDocs) mdDocUrlProvider.getDocumentationUrl(elem).firstOrNull() else null
-          urlString?.let { remoteDocProvider.getDoc(urlString) } ?: localDescription
-        }
+        val urlString = if (shouldDownloadDocs) mdDocUrlProvider.getDocumentationUrl(pointer).firstOrNull() else null
+        val docText = urlString?.let { remoteDocProvider.getDoc(urlString) }
+                      ?: readAction { LocalTfDocumentationProvider.fetchLocalDescription(pointer.element) }
 
         DocumentationResult.documentation(docText ?: NO_DOC).applyIf(docText != null) {
-          val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(element).firstOrNull()
+          val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(pointer).firstOrNull()
           val docAnchor = externalUrl?.substringAfterLast("#", ROOT_DOC_ANCHOR)
           externalUrl(externalUrl).anchor(docAnchor)
         }

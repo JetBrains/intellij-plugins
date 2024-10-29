@@ -6,7 +6,7 @@ terraform {
     }
     ably = {
       source  = "ably/ably"
-      version = "0.6.1"
+      version = "0.7.0"
     }
   }
 }

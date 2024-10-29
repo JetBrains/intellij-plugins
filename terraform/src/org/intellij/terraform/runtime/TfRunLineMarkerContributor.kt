@@ -11,16 +11,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.ui.IconManager
 import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.isTerraformFile
+import org.intellij.terraform.install.TfToolType
+import org.intellij.terraform.isTerraformCompatiblePsiFile
 import java.util.function.Function
 import javax.swing.Icon
 
 class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   override fun getInfo(leaf: PsiElement): Info? {
     val psiFile = leaf.containingFile
-    if (!isTerraformFile(psiFile)) {
+    if (!isTerraformCompatiblePsiFile(psiFile)) {
       return null
     }
 
@@ -35,6 +37,8 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
       return null
     }
 
+    val toolType = getApplicableToolType(psiFile.virtualFile)
+
     val icon: Icon
     val tooltipProvider: Function<PsiElement, String>
     if (TFInitAction.isInitRequired(leaf.project, leaf.containingFile.virtualFile)) {
@@ -43,15 +47,15 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
     }
     else {
       icon = AllIcons.RunConfigurations.TestState.Run
-      tooltipProvider = Function<PsiElement, String> { HCLBundle.message("terraform.run.text") }
+      tooltipProvider = Function<PsiElement, String> { HCLBundle.message("terraform.run.text", toolType.displayName) }
     }
 
-    return Info(icon, computeActions(block), tooltipProvider)
+    return Info(icon, computeActions(block, toolType), tooltipProvider)
   }
 
-  private fun computeActions(block: HCLBlock): Array<AnAction> {
+  private fun computeActions(block: HCLBlock, toolType: TfToolType): Array<AnAction> {
     val project = block.project
-    val templateActions = getRunTemplateActions()
+    val templateActions = getRunTemplateActions(toolType)
 
     val actions = mutableListOf(*templateActions)
     val templateConfigNames = templateActions.map { it.templatePresentation.text }
@@ -59,30 +63,30 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
     val rootModule = TfRunBaseConfigAction.getRootModule(block)
     val runManager = RunManager.getInstance(project)
     val existingConfigs = runManager.allSettings.filter {
-      val configuration = it.configuration as? TerraformRunConfiguration
+      val configuration = it.configuration as? TfToolsRunConfigurationBase
       configuration != null && configuration.workingDirectory == rootModule.path && configuration.name !in templateConfigNames
     }
     actions.addAll(existingConfigs.map { TfRunExistingConfigAction(it) })
 
     actions.add(Separator())
-    actions.add(getEditConfigurationAction(project))
+    actions.add(getEditConfigurationAction(project, toolType))
 
     return actions.toTypedArray()
   }
 
-  private fun getRunTemplateActions(): Array<AnAction> {
+  private fun getRunTemplateActions(toolType: TfToolType): Array<AnAction> {
     val actionManager = ActionManager.getInstance()
-    val group = actionManager.getAction("TfRunConfigurationActions") as DefaultActionGroup
-    return group.getChildren(actionManager)
+    val group = actionManager.getAction(tfRunConfigurationType(toolType).actionGroupId)?.let { it as DefaultActionGroup }
+    return group?.getChildren(actionManager) ?: emptyArray()
   }
 
-  private fun getEditConfigurationAction(project: Project): AnAction = object : AnAction() {
+  private fun getEditConfigurationAction(project: Project, toolType: TfToolType): AnAction = object : AnAction() {
     init {
       templatePresentation.text = HCLBundle.message("terraform.edit.configurations.action.text")
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-      EditConfigurationsDialog(project, tfRunConfigurationType().baseFactory).show()
+      EditConfigurationsDialog(project, tfRunConfigurationType(toolType).baseFactory).show()
     }
   }
 }
