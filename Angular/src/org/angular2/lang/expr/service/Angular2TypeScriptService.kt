@@ -24,6 +24,8 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
+import com.intellij.lang.typescript.tsc.ShortTimeout
+import com.intellij.lang.typescript.tsc.computeInCoroutine
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
@@ -254,8 +256,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFileName: String?): JSType? =
-      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFileName)
+    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
+      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFile)
 
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)
@@ -277,7 +279,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // Ensure that transpiled template is up-to-date
       refreshTranspiledTemplateIfNeeded(componentVirtualFile)
 
-      val filePath = getFilePath(componentVirtualFile) ?: return@withServiceTraceSpan null
+      val filePath = computeInCoroutine(ShortTimeout) {
+        getFilePath(componentVirtualFile)
+      } ?: return@withServiceTraceSpan null
 
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
