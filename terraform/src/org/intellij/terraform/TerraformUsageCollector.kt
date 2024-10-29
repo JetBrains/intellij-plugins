@@ -6,14 +6,11 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.CommonProcessors
-import org.intellij.terraform.hcl.HCLLanguage
 
 internal class TerraformUsageCollector : ProjectUsagesCollector() {
 
@@ -35,13 +32,7 @@ internal class TerraformUsageCollector : ProjectUsagesCollector() {
   override fun getMetrics(project: Project): Set<MetricEvent> {
     val result = mutableSetOf<MetricEvent>()
 
-    val hasTerraformFiles = FileTypeManager.getInstance()
-      .registeredFileTypes
-      .asSequence()
-      .filter { type -> (type as? LanguageFileType)?.language?.isKindOf(HCLLanguage) == true }
-      .any { ft -> FileTypeIndex.containsFileOfType(ft, GlobalSearchScope.allScope(project)) }
-
-    if (hasTerraformFiles) {
+    if (hasHCLLanguageFiles(project, FileTypeManager.getInstance().registeredFileTypes.asList())) {
       val terragruntSearch = CommonProcessors.FindFirstProcessor<VirtualFile>()
       FilenameIndex.processFilesByName("terragrunt.hcl", false, GlobalSearchScope.allScope(project), terragruntSearch)
       result.add(TERRAGRUNT.metric(terragruntSearch.isFound))

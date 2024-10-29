@@ -145,7 +145,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   public void testAllResourcesForSameProviderHasSamePrefix() {
     final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("marcozj/centrify", "max-gabriel-susman/gaia");
+    Set<String> exceptions = Set.of("marcozj/centrify", "max-gabriel-susman/gaia", "catchpoint/catchpoint");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();

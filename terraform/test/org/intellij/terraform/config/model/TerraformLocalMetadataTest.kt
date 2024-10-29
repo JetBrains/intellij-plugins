@@ -21,7 +21,7 @@ import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 import org.intellij.terraform.config.util.TFCommandLineServiceMock
-import org.intellij.terraform.runtime.TerraformPathDetector
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.junit.Assert
 import org.junit.Assume
@@ -46,7 +46,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     TFCommandLineServiceMock.instance.clear() // to avoid getting errors from previous tests
     TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
-    myFixture.project.service<TerraformProjectSettings>().toolPath = project.service<TerraformPathDetector>().actualPath
+    myFixture.project.service<TerraformProjectSettings>().toolPath = TfToolType.TERRAFORM.executableName
   }
 
   override fun runInDispatchThread(): Boolean = false
@@ -296,7 +296,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
   }
 
   private val terraformExe: String
-    get() = project.service<TerraformPathDetector>().actualPath
+    get() = TfToolType.TERRAFORM.executableName
 
 }
 

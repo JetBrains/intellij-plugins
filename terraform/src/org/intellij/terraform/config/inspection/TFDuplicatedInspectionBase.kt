@@ -16,11 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.usageView.UsageInfo
@@ -75,7 +71,8 @@ abstract class TFDuplicatedInspectionBase : LocalInspectionTool() {
 
   abstract fun createVisitor(holder: ProblemsHolder): PsiElementVisitor
 
-  protected fun createNavigateToDupeFix(psiPointer: SmartPsiElementPointer<PsiElement>, single: Boolean): LocalQuickFix {
+  protected fun createNavigateToDupeFix(psiElement: PsiElement, single: Boolean): LocalQuickFix {
+    val psiPointer = psiElement.createSmartPointer()
     return object : LocalQuickFix {
       override fun startInWriteAction(): Boolean = false
 

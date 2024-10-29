@@ -41,6 +41,6 @@ resource "aws_instance" "web" {
   }
 
   override fun getCodeSample(settingsType: SettingsType): String {
-    return SAMPLE + "\n" + super.getCodeSample(settingsType)
+    return "$SAMPLE\n${super.getCodeSample(settingsType)}"
   }
 }

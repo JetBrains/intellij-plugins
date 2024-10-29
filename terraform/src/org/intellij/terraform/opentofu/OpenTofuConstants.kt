@@ -12,6 +12,6 @@ object OpenTofuConstants {
   internal const val TOFU_FALLBACK_BLOCK: String = "fallback"
   internal const val TOFU_ENCRYPTION_METHOD_PROPERTY: String = "method"
 
-  internal val OpenTofuScopes = setOf(TOFU_KEY_PROVIDER, TOFU_ENCRYPTION_METHOD_BLOCK)
+  internal val OpenTofuScopes: Set<String> = setOf(TOFU_KEY_PROVIDER, TOFU_ENCRYPTION_METHOD_BLOCK)
 
 }

@@ -654,7 +654,7 @@ internal fun withDefaults(properties: List<PropertyOrBlockType>, default: Map<St
 
 internal fun getContainingFile(psiElement: PsiElement): PsiFile? {
   val containingFile = psiElement.containingFile
-  return containingFile.getUserData<PsiFile>(PsiFileFactory.ORIGINAL_FILE) ?: containingFile?.originalFile
+  return containingFile?.getUserData<PsiFile>(PsiFileFactory.ORIGINAL_FILE) ?: containingFile?.originalFile
 }
 
 internal fun getProviderForBlockType(blockType: BlockType?): ProviderType? {

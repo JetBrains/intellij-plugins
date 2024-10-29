@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.hcl.psi.HCLElement
@@ -52,6 +53,7 @@ object ForVariableCompletion : TerraformConfigCompletionContributor.TfCompletion
 fun forDeclarationForIdentifier(id: Identifier): HCLForExpression? =
   id.parentsWithInjection().filterIsInstance<HCLForExpression>().filter { forExpr ->
     forExpr.intro.identifiers.any { it.name == id.name }
+    && PsiTreeUtil.findCommonParent(id, forExpr.intro.container) != forExpr.intro.container
   }.firstOrNull()
 
 class ForVariableDirectReference(id: Identifier) : HCLElementLazyReferenceBase<Identifier>(id, false) {

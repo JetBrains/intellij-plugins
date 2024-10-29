@@ -14,7 +14,6 @@ import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -40,6 +39,7 @@ import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
 import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.Constants.PROVIDER_VERSION
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
@@ -49,8 +49,8 @@ import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLLanguage
-import org.intellij.terraform.hcl.HILCompatibleLanguage
+import org.intellij.terraform.hcl.HCLFileType
+import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -147,8 +147,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private fun getOpenTerraformFiles(): Set<PsiFile> {
     val fileTypeManager = FileTypeManager.getInstance()
-    val fileTypes = fileTypeManager.getRegisteredFileTypes()
-      .filter { it is LanguageFileType && (it.language is HILCompatibleLanguage || it.language is HCLLanguage) }
+    val fileTypes = setOf(TerraformFileType, OpenTofuFileType, HCLFileType)
     return ProjectManager.getInstance().openProjects.asSequence().flatMap { project ->
       FileEditorManager.getInstance(project).openFiles.asSequence()
         .filter { virtualFile -> fileTypes.any { fileTypeManager.isFileOfType(virtualFile, it) } }
@@ -358,7 +357,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
-    val success = TFExecutor.`in`(project, getApplicableToolType(project, lock))
+    val toolType = getApplicableToolType(lock)
+    val success = TFExecutor.`in`(project, toolType)
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
       .withParameters("providers", "schema", "-json")
       .withWorkDirectory(lock.parent.path)
@@ -380,7 +380,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       throw RuntimeExceptionWithAttachments(
         HCLBundle.message("dialog.message.failed.to.get.output.terraform.providers.command.for",
                           lock,
-                          capturingProcessAdapter.output.exitCode),
+                          capturingProcessAdapter.output.exitCode, toolType.executableName),
         Attachment("truncatedOutput.txt", truncatedOutput),
         Attachment("stderror.txt", stderr)
       )

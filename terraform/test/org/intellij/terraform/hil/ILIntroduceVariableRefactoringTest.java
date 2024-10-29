@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ILIntroduceVariableRefactoringTest extends BaseIntroduceVariableRefactoringTest {
 
+  @Override
   protected String getTestDataPath() {
     return TerraformTestUtils.getTestDataPath() + "/hil/refactoring/extract/variable";
   }

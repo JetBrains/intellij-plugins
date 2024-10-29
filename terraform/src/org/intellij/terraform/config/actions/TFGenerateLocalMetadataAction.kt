@@ -7,19 +7,23 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.TfToolType
 import org.jetbrains.annotations.Nls
 
 class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
-    val lockFile = virtualFiles.firstOrNull()?.let {  localSchemaService.findLockFile(it) }
+    val lockFile = virtualFiles.firstOrNull()?.let { localSchemaService.findLockFile(it) }
     if (lockFile == null) {
+      val toolType = virtualFiles.firstOrNull()?.let { getApplicableToolType(it) }?.executableName
+                     ?: TfToolType.TERRAFORM.executableName
       TerraformConstants.EXECUTION_NOTIFICATION_GROUP
         .createNotification(
           HCLBundle.message("notification.title.cant.generate.model"),
-          HCLBundle.message("notification.content.there.no.terraform.lock.hcl.found.please.run.terraform.init"),
+          HCLBundle.message("notification.content.there.no.terraform.lock.hcl.found.please.run.terraform.init", toolType),
           NotificationType.ERROR
         ).notify(project)
       return

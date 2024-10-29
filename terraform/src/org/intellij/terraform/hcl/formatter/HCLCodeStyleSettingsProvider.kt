@@ -22,7 +22,7 @@ open class HCLCodeStyleSettingsProvider(private val language: Language = HCLLang
             addSpacesTab(settings)
             addBlankLinesTab(settings)
             addWrappingAndBracesTab(settings)
-            addTab(HclCodeStyleOtherPanel(settings))
+            addTab(HclCodeStyleOtherPanel(settings, language))
           }
         }
       }

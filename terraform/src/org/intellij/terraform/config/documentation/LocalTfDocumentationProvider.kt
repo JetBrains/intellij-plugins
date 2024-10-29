@@ -62,7 +62,7 @@ internal object LocalTfDocumentationProvider {
       TerraformPatterns.ResourceRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.resource.0.of.type.1")
       TerraformPatterns.DataSourceRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.datasource.0.of.type.1")
       TerraformPatterns.ProviderRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.provider.0.of.type.1")
-      else -> calculateBlockDescription(element) ?: findParentBlockDocumentation(element)
+      else -> calculateBlockDescription(element)
     }
   }
 
@@ -84,7 +84,6 @@ internal object LocalTfDocumentationProvider {
     return HCLBundle.message(bundleKey, element.getNameElementUnquoted(1), description ?: "")
   }
 
-
   @Nls
   private fun getTypedBlockDocumentation(element: HCLBlock, bundleKey: String): String? {
     val block = TypeModel.RootBlocks.firstOrNull { it.literal == element.getNameElementUnquoted(0) }
@@ -103,12 +102,6 @@ internal object LocalTfDocumentationProvider {
     return block?.let {
       HCLBundle.message(bundleKey, element.name, identifier, description ?: "")
     }
-  }
-
-  @Nls
-  private fun findParentBlockDocumentation(element: HCLBlock): String? {
-    val parentBlock = element.parent?.parent as? HCLBlock ?: return null
-    return provideDocForHclBlock(parentBlock)
   }
 
   @Nls

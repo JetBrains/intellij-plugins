@@ -110,6 +110,16 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  @Test
+  fun checkSoeInForNamesakes() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
+    myFixture.configureByText("main.tf", """
+      locals {s = {}}
+      result = [for s in local.s.<error descr="Unresolved reference unresolved">unresolved</error> : s]
+    """.trimIndent())
+    myFixture.checkHighlighting()
+  }
+
   private fun assertResolvedNames(ref: PsiReference, vararg names: String?) {
 
     fun asAssertString(elt: PsiElement?): String? = elt.asSafely<HCLProperty>()?.name ?: elt?.toString()
