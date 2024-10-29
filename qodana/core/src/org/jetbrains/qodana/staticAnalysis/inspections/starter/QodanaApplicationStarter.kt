@@ -8,16 +8,13 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionAp
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplicationFactory
 import kotlin.system.exitProcess
 
-private val LOG = logger<QodanaApplicationStarter>()
-
-class QodanaApplicationStarter : ModernApplicationStarter() {
+private class QodanaApplicationStarter : ModernApplicationStarter() {
   override fun premain(args: List<String>) {
-    LOG.info("Command line arguments: $args")
+    logger<QodanaApplicationStarter>().info("Command line arguments: $args")
   }
 
   override suspend fun start(args: List<String>) {
-    val application = buildQodanaApplication(args)
-    application.startup()
+    buildQodanaApplication(args).startup()
   }
 
   private suspend fun buildQodanaApplication(args: List<String>): QodanaInspectionApplication {

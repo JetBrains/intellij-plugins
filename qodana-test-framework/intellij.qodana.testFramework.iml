@@ -11,7 +11,7 @@
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.platform.inspect" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="library" name="qodana-sarif" level="project" />
+    <orderEntry type="module" module-name="intellij.qodana.sarif" />
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.qodana" />
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" />

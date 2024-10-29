@@ -18,6 +18,7 @@
     ]]></description>
 
   <content>
+    <module name="intellij.qodana.sarif" loading="required"/>
     <module name="intellij.qodana/yaml"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>

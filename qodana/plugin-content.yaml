@@ -84,10 +84,11 @@
   - name: qodana-sarif
     files:
     - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/0/qodana-sarif-0.jar
-    reason: <- intellij.qodana.jvm.java
+    reason: <- intellij.qodana.sarif
   modules:
   - name: intellij.qodana
   contentModules:
+  - name: intellij.qodana.sarif
   - name: intellij.qodana.coverage
   - name: intellij.qodana.go
   - name: intellij.qodana.inspectionKts.js

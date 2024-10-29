@@ -27,7 +27,7 @@ import kotlin.io.path.Path
 
 internal const val BITBUCKET_CI_FILE = "bitbucket-pipelines.yml"
 
-class SetupBitbucketCIProviderFactory : SetupCIProviderFactory {
+private class SetupBitbucketCIProviderFactory : SetupCIProviderFactory {
   override fun createSetupCIProvider(project: Project, dialogScope: CoroutineScope, projectVcsDataProvider: ProjectVcsDataProvider): SetupCIProvider? {
     val projectNioPath = project.guessProjectDir()?.toNioPath() ?: project.basePath?.let { Path(it) } ?: return null
     val viewModel = SetupBitbucketCIViewModel(projectNioPath, project, dialogScope, projectVcsDataProvider)

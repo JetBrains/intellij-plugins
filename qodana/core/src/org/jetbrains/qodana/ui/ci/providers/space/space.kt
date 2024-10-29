@@ -27,7 +27,7 @@ import kotlin.io.path.Path
 
 internal const val SPACE_AUTOMATION_CI_FILE = ".space.kts"
 
-class SetupSpaceAutomationProviderFactory : SetupCIProviderFactory {
+private class SetupSpaceAutomationProviderFactory : SetupCIProviderFactory {
   override fun createSetupCIProvider(project: Project, dialogScope: CoroutineScope, projectVcsDataProvider: ProjectVcsDataProvider): SetupCIProvider? {
     val projectNioPath = project.guessProjectDir()?.toNioPath() ?: project.basePath?.let { Path(it) } ?: return null
     val viewModel = SetupSpaceAutomationViewModel(projectNioPath, project, dialogScope, projectVcsDataProvider)
