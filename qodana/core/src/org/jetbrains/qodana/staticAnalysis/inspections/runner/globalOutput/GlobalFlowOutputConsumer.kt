@@ -79,16 +79,18 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
   for (fragment in problem.getChild("fragments").getChildren("fragment")) {
     val fragmentFile = fragment.getAttributeValue(ElementToSarifConverter.FILE)
     val fragmentLine = fragment.getAttributeValue(ElementToSarifConverter.LINE).toInt()
+    val fragmentColumn = fragment.getAttributeValue("column").toInt()
     val fragmentStart = fragment.getAttributeValue("start").toInt()
     val fragmentEnd = fragment.getAttributeValue("end").toInt()
     val markerRelationships = mutableSetOf<LocationRelationship>()
     for (marker in fragment.getChildren("marker")) {
       val markerLine = marker.getAttributeValue(ElementToSarifConverter.LINE).toInt()
+      val markerColumn = marker.getAttributeValue("column").toInt()
       val markerStart = marker.getAttributeValue("start").toInt()
       val markerEnd = marker.getAttributeValue("end").toInt()
       val markerOrder = marker.getAttributeValue("order")
       val location =
-        getLocationByAttributes(fragmentFile, markerLine, markerStart, markerEnd, problemLocation.language!!,
+        getLocationByAttributes(fragmentFile, markerLine, markerColumn, markerStart, markerEnd, problemLocation.language!!,
                                 macroManager)
       if (location != null) {
         val successors = marker.getChild("successors")?.getChildren("marker")?.map(Element::getText)
@@ -112,7 +114,7 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
       }
       markerRelationships.add(LocationRelationship().withTarget(markerOrder.toInt()).withKinds(setOf("includes")))
     }
-    getLocationByAttributes(fragmentFile, fragmentLine, fragmentStart, fragmentEnd, problemLocation.language!!,
+    getLocationByAttributes(fragmentFile, fragmentLine, fragmentColumn, fragmentStart, fragmentEnd, problemLocation.language!!,
                             macroManager)
       ?.withRelationships(markerRelationships)?.let {
         fragmentLocations.add(it)
@@ -157,7 +159,7 @@ private fun computeTarget(problem: Element): Map<String, Any?> {
 }
 
 private fun getLocationByAttributes(fileUrl: String,
-                                    line: Int, startCharOffset: Int,
+                                    line: Int, column: Int, startCharOffset: Int,
                                     endCharOffset: Int, language: String,
                                     macroManager: PathMacroManager): Location? {
   val artifactLocation = getArtifactLocation(fileUrl)
@@ -165,10 +167,11 @@ private fun getLocationByAttributes(fileUrl: String,
   val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(fileUrl))
   val text = loadTextFromVirtualFile(virtualFile)
   if (text != null) {
-    val startColumn = StringUtil.offsetToLineColumn(text, startCharOffset)?.column?.let { it + 1 } ?: return null
-    val snippet = ArtifactContent().withText(text.subSequence(startCharOffset, endCharOffset) as String?)
+    val startOffset = StringUtil.lineColToOffset(text, line - 1, column - 1)
+    val length = endCharOffset - startCharOffset
+    val snippet = ArtifactContent().withText(text.subSequence(startOffset, startOffset + length) as String?)
     physicalLocation
-      .withRegion(getFlowProblemRegion(startCharOffset, startColumn, endCharOffset - startCharOffset, line, language, snippet))
+      .withRegion(getFlowProblemRegion(startOffset, column, length, line, language, snippet))
   }
   return Location()
     .withPhysicalLocation(physicalLocation)
