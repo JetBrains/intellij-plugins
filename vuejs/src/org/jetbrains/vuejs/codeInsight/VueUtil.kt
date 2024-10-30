@@ -205,7 +205,7 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
                 else null
               }
               is JSVariable -> cur.initializerOrStub
-              is TypeScriptPropertySignature -> JSStubBasedPsiTreeUtil.calculateMeaningfulElement(cur)
+              is TypeScriptPropertySignature -> JSStubBasedPsiTreeUtil.calculateMeaningfulElement(cur).takeIf { it != cur }
               else -> null
             }
             ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element, Supplier {
