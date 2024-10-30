@@ -15,6 +15,10 @@
     {
       "id": "WrongImportPackage",
       "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "PackageAccessibility",
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

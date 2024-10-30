@@ -15,6 +15,10 @@
     {
       "id": "PostCssMediaRange",
       "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "PostCssUnresolvedModuleValueReference",
+      "codeQualityCategory": "Sanity"
     }
   ]
 }
