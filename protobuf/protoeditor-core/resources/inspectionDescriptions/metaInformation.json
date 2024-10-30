@@ -1,3 +1,8 @@
 {
-  "inspections": []
+  "inspections": [
+    {
+      "id": "PbDuplicatedImports",
+      "codeQualityCategory": "Reliability"
+    }
+  ]
 }

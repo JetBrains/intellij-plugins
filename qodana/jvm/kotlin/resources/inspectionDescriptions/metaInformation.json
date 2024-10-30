@@ -1,3 +1,8 @@
 {
-  "inspections": []
+  "inspections": [
+    {
+      "id": "QodanaKotlinSanity",
+      "codeQualityCategory": "Sanity"
+    }
+  ]
 }

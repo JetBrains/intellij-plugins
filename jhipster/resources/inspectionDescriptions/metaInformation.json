@@ -11,6 +11,10 @@
     {
       "id": "JdlDuplicatedDeclaration",
       "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "JdlUnusedDeclaration",
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

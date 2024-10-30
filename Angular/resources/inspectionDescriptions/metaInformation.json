@@ -79,6 +79,42 @@
     {
       "id": "AngularInvalidEntryComponent",
       "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "AngularInvalidImportedOrDeclaredSymbol",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "AngularInvalidTemplateReferenceVariable",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "AngularInsecureBindingToEvent",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "AngularForBlockNonIterableVar",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "AngularUndefinedTag",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "AngularAmbiguousComponentTag",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "AngularIncorrectLetUsage",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "AngularUnresolvedPipe",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "AngularIncorrectTemplateDefinition",
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

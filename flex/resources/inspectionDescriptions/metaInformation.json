@@ -47,6 +47,18 @@
     {
       "id": "FlexUnitMethodReturnTypeInspection",
       "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitClassInProductSourceInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMethodInSuiteInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMixedAPIInspection",
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

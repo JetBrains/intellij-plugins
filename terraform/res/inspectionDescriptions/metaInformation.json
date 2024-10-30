@@ -91,6 +91,26 @@
     {
       "id": "MaybeTerraformTemplateInspection",
       "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "TFDuplicatedVariable",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "TFDuplicatedBlockProperty",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "HILConvertToHCL",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "TfUnknownBlockType",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "HCLLiteralValidness",
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

@@ -19,6 +19,14 @@
     {
       "id": "CucumberExamplesColon",
       "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "GherkinScenarioToScenarioOutline",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "CucumberMissedExamples",
+      "codeQualityCategory": "Reliability"
     }
   ]
 }
