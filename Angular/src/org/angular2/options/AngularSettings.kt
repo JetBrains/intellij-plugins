@@ -2,8 +2,9 @@
 package org.angular2.options
 
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.isEffectiveUseTypesFromServer
+import com.intellij.lang.typescript.compiler.ui.TypeScriptServiceRestartService
 import com.intellij.lang.typescript.lsp.defaultPackageKey
-import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
@@ -30,9 +31,13 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
   var serviceType
     get() = state.innerServiceType
     set(value) {
-      val changed = state.innerServiceType != value
+      val prevServiceType = state.innerServiceType
       state.innerServiceType = value
-      if (changed) restartTypeScriptServicesAsync(project)
+      if (prevServiceType != value) {
+        project.service<TypeScriptServiceRestartService>().restartServices(
+          isEffectiveUseTypesFromServer(prevServiceType == AngularServiceSettings.AUTO, state.useTypesFromServer)
+            != isEffectiveUseTypesFromServer(state.innerServiceType == AngularServiceSettings.AUTO, state.useTypesFromServer))
+      }
     }
 
   var useTypesFromServer: Boolean
@@ -41,9 +46,13 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
       return useTypesFromServerInTests ?: state.useTypesFromServer
     }
     set(value) {
-      val changed = state.useTypesFromServer != value
+      val prevUseTypesFromServer = state.useTypesFromServer
       state.useTypesFromServer = value
-      if (changed) restartTypeScriptServicesAsync(project)
+      if (prevUseTypesFromServer != value) {
+        project.service<TypeScriptServiceRestartService>().restartServices(
+          isEffectiveUseTypesFromServer(serviceType == AngularServiceSettings.AUTO, prevUseTypesFromServer)
+            != isEffectiveUseTypesFromServer(serviceType == AngularServiceSettings.AUTO, state.useTypesFromServer))
+      }
     }
 }
 
