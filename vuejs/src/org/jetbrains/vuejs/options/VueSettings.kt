@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.options
 
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.isEffectiveUseTypesFromServer
+import com.intellij.lang.typescript.compiler.ui.TypeScriptServiceRestartService
 import com.intellij.lang.typescript.lsp.createPackageRef
 import com.intellij.lang.typescript.lsp.defaultPackageKey
 import com.intellij.lang.typescript.lsp.extractRefText
@@ -34,9 +36,13 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
   var serviceType: VueServiceSettings
     get() = state.innerServiceType
     set(value) {
-      val changed = state.innerServiceType != value
+      val prevServiceType = state.innerServiceType
       state.innerServiceType = value
-      if (changed) restartTypeScriptServicesAsync(project)
+      if (prevServiceType != value) {
+        project.service<TypeScriptServiceRestartService>().restartServices(
+          isEffectiveUseTypesFromServer(prevServiceType.isEnabled(), state.useTypesFromServer)
+            != isEffectiveUseTypesFromServer(serviceType.isEnabled(), state.useTypesFromServer))
+      }
     }
 
   var packageRef
@@ -54,9 +60,13 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
       return useTypesFromServerInTests ?: state.useTypesFromServer
     }
     set(value) {
-      val changed = state.useTypesFromServer != value
+      val prevUseTypesFromServer = state.useTypesFromServer
       state.useTypesFromServer = value
-      if (changed) restartTypeScriptServicesAsync(project)
+      if (prevUseTypesFromServer != value) {
+        project.service<TypeScriptServiceRestartService>().restartServices(
+          isEffectiveUseTypesFromServer(serviceType.isEnabled(), prevUseTypesFromServer)
+            != isEffectiveUseTypesFromServer(serviceType.isEnabled(), state.useTypesFromServer))
+      }
     }
 }
 
@@ -74,5 +84,7 @@ enum class VueServiceSettings {
   @Obsolete
   VOLAR,
   TS_SERVICE,
-  DISABLED
+  DISABLED;
+
+  fun isEnabled(): Boolean = this != DISABLED
 }
