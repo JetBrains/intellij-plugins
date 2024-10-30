@@ -21,10 +21,10 @@ internal class QodanaHighlightingPassRegistrar : TextEditorHighlightingPassFacto
     )
   }
 
-  override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
+  override fun createHighlightingPass(psiFile: PsiFile, editor: Editor): TextEditorHighlightingPass? {
     // performance: do not load state if not yet loaded !
-    val highlightedReportService = QodanaHighlightedReportService.getInstanceIfCreated(file.project) ?: return null
-    val passState = QodanaHighlightingPassState.getOrCreateForEditor(file.project, editor, highlightedReportService, file) ?: return null
-    return QodanaReportHighlightingPass(file, editor, highlightedReportService, passState)
+    val highlightedReportService = QodanaHighlightedReportService.getInstanceIfCreated(psiFile.project) ?: return null
+    val passState = QodanaHighlightingPassState.getOrCreateForEditor(psiFile.project, editor, highlightedReportService, psiFile) ?: return null
+    return QodanaReportHighlightingPass(psiFile, editor, highlightedReportService, passState)
   }
 }
