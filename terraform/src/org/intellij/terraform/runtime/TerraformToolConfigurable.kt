@@ -2,6 +2,7 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.wsl.WslPath
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
@@ -34,10 +35,10 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   override fun createPanel(): DialogPanel {
     return panel {
       group(HCLBundle.message("terraform.name")) {
-        executableToolSettingsPanel(this, terraformConfig, TfToolType.TERRAFORM)
+        executableToolSettingsPanel(this, terraformConfig, TfToolType.TERRAFORM, disposable)
       }
       group(HCLBundle.message("opentofu.name")) {
-        executableToolSettingsPanel(this, openTofuConfig, TfToolType.OPENTOFU)
+        executableToolSettingsPanel(this, openTofuConfig, TfToolType.OPENTOFU, disposable)
       }
     }
   }
@@ -46,6 +47,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     parent: Panel,
     settings: ToolSettings,
     type: TfToolType,
+    parentDisposable: Disposable?,
   ) = parent.apply {
     val pathDetector = type.getPathDetector(project)
     val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.executableName)) {}
@@ -65,7 +67,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
       }
     ).align(AlignX.FILL)
     row {
-      cell(testToolButton(type, pathDetector, settings, executorField))
+      cell(testToolButton(type, pathDetector, settings, parentDisposable, executorField))
     }
   }
 
@@ -73,11 +75,13 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     type: TfToolType,
     pathDetector: ToolPathDetector,
     toolSettings: ToolSettings,
+    parentDisposable: Disposable?,
     executorPathField: Cell<TextFieldWithBrowseButton>?,
   ) = ToolExecutableTestButtonComponent(
     pathDetector,
     type,
     HCLBundle.message("tool.testButton.text"),
+    parentDisposable,
     { resultHandler ->
       try {
         installTFTool(project, resultHandler, EmptyProgressIndicator(), type, toolSettings)

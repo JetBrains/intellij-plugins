@@ -2,7 +2,9 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.ide.progress.ModalTaskOwner
@@ -27,13 +29,14 @@ internal class ToolExecutableTestButtonComponent(
   private val pathDetector: ToolPathDetector,
   private val toolType: TfToolType,
   buttonText: @Nls String,
+  parentDisposable: Disposable?,
   private val installAction: ((Boolean) -> Unit) -> Unit,
   private val test: suspend CoroutineScope.() -> @NlsSafe String,
 ) : JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)) {
 
   private val button = JButton(buttonText)
   private val resultLabel = JBLabel()
-  private val spinnerIcon: AsyncProcessIcon = createSpinnerIcon()
+  private val spinnerIcon: AsyncProcessIcon = createSpinnerIcon(parentDisposable)
   private val installButton: ActionLink = createInstallButton()
 
   var text: @NlsContexts.Label String
@@ -81,10 +84,11 @@ internal class ToolExecutableTestButtonComponent(
     }
   }
 
-  private fun createSpinnerIcon(): AsyncProcessIcon {
+  private fun createSpinnerIcon(parentDisposable: Disposable?): AsyncProcessIcon {
     return AsyncProcessIcon("TerraformToolInstallationProgress").apply {
       border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
       isVisible = false
+      parentDisposable?.let { Disposer.register(it, this) }
     }
   }
 
