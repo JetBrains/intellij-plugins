@@ -8,7 +8,7 @@ HtmlFile:test.html
         PsiElement(JS:LPAR)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:0))
           Angular2BlockParameter
-            PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('prefetch')
             PsiWhiteSpace(' ')
             PsiElement(NG:BLOCK_PARAMETER_NAME)('on')
             PsiWhiteSpace(' ')
@@ -56,7 +56,7 @@ HtmlFile:test.html
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:4))
           PsiWhiteSpace(' ')
           Angular2BlockParameter
-            PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('prefetch')
             PsiWhiteSpace(' ')
             PsiElement(NG:BLOCK_PARAMETER_NAME)('when')
             PsiWhiteSpace(' ')
@@ -72,7 +72,7 @@ HtmlFile:test.html
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:5))
           PsiWhiteSpace(' ')
           Angular2BlockParameter
-            PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('prefetch')
             PsiErrorElement:Expected 'when' or 'on'
               <empty list>
           PsiWhiteSpace(' ')

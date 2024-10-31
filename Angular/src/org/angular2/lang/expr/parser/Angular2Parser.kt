@@ -543,22 +543,34 @@ class Angular2Parser private constructor(
     }
 
     private fun parseDeferTrigger(builder: PsiBuilder, parser: Angular2StatementParser) {
-      var prefetchParsed = false
-      if (isParameterName(builder, "prefetch")) {
+      val prefetchPrefix = isParameterName(builder, PARAMETER_PREFIX_PREFETCH)
+      val hydratePrefix = !prefetchPrefix && isParameterName(builder, PARAMETER_PREFIX_HYDRATE)
+      if (prefetchPrefix || hydratePrefix) {
+        val prefix = builder.mark()
         builder.advanceLexer()
-        prefetchParsed = true
+        prefix.collapse(Angular2TokenTypes.BLOCK_PARAMETER_PREFIX)
       }
-      if (isParameterName(builder, "when")) {
+      if (isParameterName(builder, PARAMETER_WHEN)) {
         builder.advanceLexer()
         parser.parseChain(allowEmpty = false)
       }
-      else if (isParameterName(builder, "on")) {
+      else if (isParameterName(builder, PARAMETER_ON)) {
         builder.advanceLexer()
         parseOnTrigger(builder)
       }
+      else if (hydratePrefix && isParameterName(builder, PARAMETER_NEVER)) {
+        builder.advanceLexer()
+        if (!builder.eof()) {
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
+        }
+        skipContents(builder)
+      }
       else {
-        if (prefetchParsed) {
+        if (prefetchPrefix) {
           builder.error(Angular2Bundle.message("angular.parse.expression.expected-on-when"))
+        }
+        else if (hydratePrefix) {
+          builder.error(Angular2Bundle.message("angular.parse.expression.expected-on-when-never"))
         }
         skipContents(builder)
       }

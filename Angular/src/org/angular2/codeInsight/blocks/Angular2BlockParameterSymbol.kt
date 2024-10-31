@@ -14,6 +14,9 @@ class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
   val isPrimaryExpression: Boolean
     get() = name == PRIMARY_EXPRESSION
 
+  val hasContent: Boolean
+    get() = properties["no-content"] as? Boolean != true
+
   val triggers: List<WebSymbol>
     get() = queryExecutor.runListSymbolsQuery(NG_DEFER_ON_TRIGGERS, true, additionalScope = listOf(this))
 

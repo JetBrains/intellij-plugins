@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.IncorrectOperationException
+import org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -29,16 +30,28 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
 
   override fun getName(): String? = nameElement?.text
 
+  override val prefix: String?
+    get() = prefixElement?.text
+
   override val block: Angular2HtmlBlock?
     get() = parentOfType<Angular2HtmlBlock>()
 
+  override val prefixDefinition: Angular2BlockParameterPrefixSymbol?
+    get() {
+      val prefixName = prefix ?: return null
+      return block?.definition?.parameterPrefixes?.find { it.name == prefixName }
+    }
+
   override val definition: Angular2BlockParameterSymbol?
-    get() = block?.definition?.parameters?.let { definitions ->
-      if (isPrimaryExpression)
-        definitions.find { it.isPrimaryExpression }
-      else {
-        val name = name
-        definitions.find { it.name == name }
+    get() {
+      val name = name ?: return null
+      return block?.definition?.parameters?.let { definitions ->
+        if (isPrimaryExpression)
+          definitions.find { it.isPrimaryExpression }
+        else {
+          prefixDefinition?.parameters?.find { it.name == name }
+          ?: definitions.find { it.name == name }
+        }
       }
     }
 
@@ -50,7 +63,12 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
 
   override val nameElement: PsiElement?
     get() = node.getChildren(null)
-      .lastOrNull { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME }
+      .firstOrNull { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME }
+      ?.psi
+
+  override val prefixElement: PsiElement?
+    get() = node.getChildren(null)
+      .firstOrNull { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_PREFIX }
       ?.psi
 
   override val expression: JSExpression?

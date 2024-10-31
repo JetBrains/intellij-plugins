@@ -39,9 +39,11 @@ const val PARAMETER_AS = "as"
 const val PARAMETER_LET = "let"
 const val PARAMETER_ON = "on"
 const val PARAMETER_WHEN = "when"
+const val PARAMETER_NEVER = "never"
 const val PARAMETER_TRACK = "track"
 
 const val PARAMETER_PREFIX_PREFETCH = "prefetch"
+const val PARAMETER_PREFIX_HYDRATE = "hydrate"
 
 object Angular2HtmlBlockUtils {
 

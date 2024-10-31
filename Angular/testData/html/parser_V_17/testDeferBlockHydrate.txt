@@ -1,0 +1,54 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@defer)
+      PsiElement(NG:BLOCK_NAME)('@defer')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:0))
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('hydrate')
+            PsiWhiteSpace(' ')
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('on')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('viewport')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:1))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('hydrate')
+            PsiWhiteSpace(' ')
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('when')
+            PsiWhiteSpace(' ')
+            JSAssignmentExpression
+              JSDefinitionExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('foo')
+              PsiErrorElement:Binding expression cannot contain assignments
+                <empty list>
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:2))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('hydrate')
+            PsiWhiteSpace(' ')
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('never')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:3))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_PREFIX)('hydrate')
+            PsiErrorElement:Expected 'when', 'on' or 'never'
+              <empty list>
+          PsiWhiteSpace(' ')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(JS:RPAR)(')')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>

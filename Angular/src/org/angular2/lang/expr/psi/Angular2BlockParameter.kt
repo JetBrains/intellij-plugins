@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
@@ -13,7 +14,11 @@ interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalRefere
 
   override fun getName(): String?
 
+  val prefix: String?
+
   val block: Angular2HtmlBlock?
+
+  val prefixDefinition: Angular2BlockParameterPrefixSymbol?
 
   val definition: Angular2BlockParameterSymbol?
 
@@ -22,6 +27,8 @@ interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalRefere
   val index: Int
 
   val nameElement: PsiElement?
+
+  val prefixElement: PsiElement?
 
   val expression: JSExpression?
 

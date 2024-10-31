@@ -76,6 +76,24 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
       assertLookupShown()
     }
 
+  fun testDeferBlockTyping() =
+    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4, extension = "html") {
+      type("prefetch ")
+      assertLookupShown()
+
+      type("o\n")
+      assertLookupShown()
+
+      type("ho\n")
+      assertLookupNotShown()
+
+      type("; hydrate ")
+      assertLookupShown()
+
+      type("n\n")
+      assertLookupNotShown()
+    }
+
   fun testCompletionInExpression() {
     doCompletionAutoPopupTest(
       Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_CDK_14_2_0, dir = true,

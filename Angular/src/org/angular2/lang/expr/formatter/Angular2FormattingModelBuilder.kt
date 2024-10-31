@@ -113,7 +113,8 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     }
 
     private fun visitBlockParameterStatement(node: ASTNode) {
-      if (myChild1.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME) {
+      if (myChild1.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME
+          || myChild1.elementType == Angular2TokenTypes.BLOCK_PARAMETER_PREFIX) {
         setSingleSpace(myChild2 != null && myChild2.elementType != TokenType.ERROR_ELEMENT)
       }
       else if (myChild1.elementType == JSStubElementTypes.VAR_STATEMENT
