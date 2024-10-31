@@ -153,6 +153,14 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   // TODO WEB-67260 - improve error highlighting
   fun _testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
+  fun testBlockDeferHydrateNg18() {
+    checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
+  }
+
+  fun testBlockDeferHydrateNg19() {
+    checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, extension = "ts")
+  }
+
   fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
   fun testBlockForMultiVars() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")

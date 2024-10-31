@@ -10,6 +10,8 @@ import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.css.CSSParserDefinition
 import com.intellij.lang.html.HTMLParserDefinition
+import com.intellij.lang.javascript.BackendJavaScriptStubElementTypesSupplierService
+import com.intellij.lang.javascript.BasicJavaScriptStubElementTypesSupplierService
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
@@ -69,7 +71,14 @@ open class Angular2HtmlParsingTest : HtmlParsingTest("", "html") {
     registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
     application.registerService(
       CssElementDescriptorFactory2::class.java,
-      CssElementDescriptorFactory2("css-parsing-tests.xml"))
+      CssElementDescriptorFactory2("css-parsing-tests.xml"),
+      testRootDisposable
+    )
+    application.registerService(
+      BasicJavaScriptStubElementTypesSupplierService::class.java,
+      BackendJavaScriptStubElementTypesSupplierService(),
+      testRootDisposable
+    )
     assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
     sequenceOf(Angular2ParserDefinition(),
                Angular2HtmlParserDefinition(),

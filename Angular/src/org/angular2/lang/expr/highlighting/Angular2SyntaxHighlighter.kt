@@ -25,5 +25,6 @@ class Angular2SyntaxHighlighter : TypeScriptHighlighter(Angular2Language.optionH
 }
 
 private val angularKeys: Map<IElementType, TextAttributesKey> = mapOf(
-  Angular2TokenTypes.BLOCK_PARAMETER_NAME to TypeScriptHighlighter.TS_KEYWORD
+  Angular2TokenTypes.BLOCK_PARAMETER_NAME to TypeScriptHighlighter.TS_KEYWORD,
+  Angular2TokenTypes.BLOCK_PARAMETER_PREFIX to TypeScriptHighlighter.TS_KEYWORD,
 )

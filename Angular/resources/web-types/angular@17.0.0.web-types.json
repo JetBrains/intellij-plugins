@@ -43,6 +43,13 @@
           "doc-url": "https://angular.dev/guide/defer#defer",
           "description": "The content of the main `@defer` block is the section of content that is lazily loaded. It will not be rendered initially, and all of the content will appear once the specified trigger or `when` condition is met and the dependencies have been fetched. By default, a `@defer` block is triggered when the browser state becomes idle.",
           "is-primary": true,
+          "ng-block-parameter-prefixes": [
+            {
+              "name": "prefetch",
+              "doc-url": "https://angular.dev/guide/defer#prefetching",
+              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
+            }
+          ],
           "ng-block-parameters": [
             {
               "name": "when",
@@ -109,11 +116,6 @@
                   }
                 ]
               }
-            },
-            {
-              "name": "prefetch",
-              "doc-url": "https://angular.dev/guide/defer#prefetching",
-              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
             }
           ]
         },

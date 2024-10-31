@@ -43,6 +43,31 @@
           "doc-url": "https://angular.dev/guide/defer#defer",
           "description": "The content of the main `@defer` block is the section of content that is lazily loaded. It will not be rendered initially, and all of the content will appear once the specified trigger or `when` condition is met and the dependencies have been fetched. By default, a `@defer` block is triggered when the browser state becomes idle.",
           "is-primary": true,
+          "ng-block-parameter-prefixes": [
+            {
+              "name": "prefetch",
+              "doc-url": "https://angular.dev/guide/defer#prefetching",
+              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
+            },
+            {
+              "name": "hydrate",
+              "doc-url": "https://angular.dev/guide/defer",
+              "description": "A `@defer` block becomes a incremental hydration boundary by adding a `hydrate on`, `hydrate when`, or `hydrate never` condition.",
+              "ng-block-parameters": [
+                {
+                  "name": "never",
+                  "doc-url": "https://angular.dev/guide/defer",
+                  "description": "`hydrate never` tells Angular to leave your component dehydrated indefinitely, effectively treating it as static content. Note that this is not the same as a server-only component. When a `@defer` block is instantiated during normal client-side rendering, the content is still fetched and rendered normally.",
+                  "no-content": true
+                },
+                {
+                  "name": "when",
+                  "doc-url": "https://angular.dev/guide/defer",
+                  "description": "`hydrate when` specifies an imperative condition as an expression that returns a `boolean`. When this expression becomes truthy, the block will be hydrated."
+                }
+              ]
+            }
+          ],
           "ng-block-parameters": [
             {
               "name": "when",
@@ -109,11 +134,6 @@
                   }
                 ]
               }
-            },
-            {
-              "name": "prefetch",
-              "doc-url": "https://angular.dev/guide/defer#prefetching",
-              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
             }
           ]
         },

@@ -92,6 +92,8 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
       ?.getName() == BLOCK_FOR
 
   private fun afterParameterName(at: PsiElement): Boolean =
-    at.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME
+    (at.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME
+     || at.elementType == Angular2TokenTypes.BLOCK_PARAMETER_PREFIX
+    ) && at.parent.asSafely<Angular2BlockParameter>()?.definition?.hasContent != false
 
 }

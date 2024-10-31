@@ -29,6 +29,7 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
@@ -68,7 +69,7 @@ class Angular2CompletionContributor : CompletionContributor() {
            TemplateExpressionCompletionProvider())
 
     extend(CompletionType.BASIC,
-           psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language)),
+           psiElement().withElementType(BLOCK_PARAMETER_NAME_TOKENS).with(language(Angular2Language)),
            Angular2BlockParameterNameCompletionProvider())
 
     // Disable regular completions in after and minimum parameters
@@ -368,6 +369,9 @@ private val NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
 private val SUPPORTED_KEYWORDS = ContainerUtil.newHashSet(
   "var", "let", "as", "null", "undefined", "true", "false", "if", "else", "this"
 )
+
+private val BLOCK_PARAMETER_NAME_TOKENS = TokenSet.create(Angular2TokenTypes.BLOCK_PARAMETER_NAME,
+                                                          Angular2TokenTypes.BLOCK_PARAMETER_PREFIX)
 
 fun <T : PsiElement> language(language: Language): PatternCondition<T> {
   return object : PatternCondition<T>("language(" + language.id + ")") {

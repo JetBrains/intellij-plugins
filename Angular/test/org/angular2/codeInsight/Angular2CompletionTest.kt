@@ -190,8 +190,14 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
   fun testDeferBlockParameters() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
+  fun testDeferBlockParametersNg19() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4, extension = "html")
+
   fun testDeferBlockPrefetchParameters() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
+
+  fun testDeferBlockHydrateParameters() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4, extension = "html")
 
   fun testDeferBlockOnTriggers() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
