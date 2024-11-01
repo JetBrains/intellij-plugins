@@ -126,10 +126,13 @@
 
     <!-- works in WebStorm and other SmallIDEs -->
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
+    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.NuxtProjectGenerator"/>
     <!-- works in IDEA -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/>
+    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.NuxtProjectTemplateFactory"/>
     <!-- works in new IDEA wizard -->
     <moduleBuilder builderClass="org.jetbrains.vuejs.cli.VueCLIProjectModuleBuilder"/>
+    <moduleBuilder builderClass="org.jetbrains.vuejs.cli.NuxtProjectModuleBuilder"/>
 
     <workspaceModel.fileIndexContributor implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderLibraryContributor"/>
     <postStartupActivity implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderLibraryStartupActivity"/>
