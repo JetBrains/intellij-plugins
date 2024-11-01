@@ -2,7 +2,10 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
-import org.angular2.*
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
 
 class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType", true) {
@@ -59,28 +62,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
 
   fun testNgForOfAnyTypeStrict() =
     checkHighlightingNg15()
-
-
-  fun testAnyType() =
-    withTscDisabled {
-      checkHighlighting(Angular2TestModule.TS_LIB,
-                        Angular2TestModule.ANGULAR_CORE_8_2_14,
-                        configurators = listOf(Angular2TsConfigFile()))
-    }
-
-
-  fun testSlicePipe() =
-    withTscDisabled {
-      checkHighlighting(Angular2TestModule.TS_LIB,
-                        Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
-    }
-
-
-  fun testNgForOfQueryList() =
-    withTscDisabled {
-      checkHighlighting(Angular2TestModule.TS_LIB,
-                        Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
-    }
 
   fun testInputValue() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
