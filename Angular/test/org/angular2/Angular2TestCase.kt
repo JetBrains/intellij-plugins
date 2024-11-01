@@ -16,8 +16,8 @@ import kotlin.reflect.KClass
 
 abstract class Angular2TestCase(
   override val testCasePath: String,
-  private var useTsc: Boolean,
-) : WebFrameworkTestCase() {
+  private val useTsc: Boolean,
+) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
   private var expectedServerClass: KClass<out TypeScriptService> = Angular2TypeScriptService::class
 
@@ -31,9 +31,6 @@ abstract class Angular2TestCase(
     get() = "ts"
 
   override fun setUp() {
-    if (useTsc) {
-      mode = HybridTestMode.CodeInsightFixture
-    }
     super.setUp()
     Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
   }
@@ -51,23 +48,6 @@ abstract class Angular2TestCase(
   }
 
   override fun afterConfiguredTest() {
-  }
-
-  override fun tearDown() {
-    if (useTsc) {
-      mode = INITIAL_MODE
-    }
-    super.tearDown()
-  }
-
-  fun withTscDisabled(runnable: () -> Unit) {
-    val oldUseTsc = useTsc
-    try {
-      useTsc = false
-      runnable()
-    } finally {
-      useTsc = oldUseTsc
-    }
   }
 
   fun withTypeScriptServerService(clazz: KClass<out TypeScriptService>, runnable: () -> Unit) {
