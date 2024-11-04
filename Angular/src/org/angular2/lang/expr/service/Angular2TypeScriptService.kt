@@ -49,6 +49,7 @@ import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
 import kotlinx.coroutines.currentCoroutineContext
+import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
@@ -112,7 +113,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
   override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
-    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile ?: return@withScopedServiceTraceSpan null) != null
+    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile
+                                                                             ?: return@withScopedServiceTraceSpan null) != null
     val result = super.getInlayHints(file, textRange) ?: return@withScopedServiceTraceSpan null
     return@withScopedServiceTraceSpan readAction {
       if (hasTranspiledTemplate)
@@ -162,6 +164,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override fun isGeterrSupported(psiFile: PsiFile): Boolean {
     return psiFile.language.let { it !is Angular2Language && it !is Angular2HtmlDialect }
+  }
+
+  override fun skipInternalErrors(element: PsiElement): Boolean {
+    return !isDeferOnReferenceExpression(element)
   }
 
   private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> = withServiceTraceSpan("translateNamesInErrors") {
