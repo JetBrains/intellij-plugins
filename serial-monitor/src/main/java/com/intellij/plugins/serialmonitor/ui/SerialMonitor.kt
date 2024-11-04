@@ -11,17 +11,20 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
+import com.intellij.plugins.serialmonitor.service.SerialPortService.SerialConnection
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
 import com.intellij.ui.TextFieldWithStoredHistory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLoadingPanel
+import com.intellij.ui.dsl.builder.*
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
@@ -33,16 +36,18 @@ import java.awt.event.KeyEvent
 import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JComponent
+import kotlin.reflect.KMutableProperty1
 
 private const val HISTORY_KEY = "serialMonitor.commands"
 
 class SerialMonitor(private val project: Project,
                     name: @NlsSafe String,
                     val portProfile: SerialPortProfile) : Disposable, SerialPortsListener {
-  private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 4, JBUI.insets(5), -1, -1), this, 300)
+  private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 5, JBUI.insets(5), -1, -1), this, 300)
   private val mySend: JButton
   private val myCommand: TextFieldWithStoredHistory
   private val myLineEnd: JBCheckBox
+  private val myHardwareControlFlow: DialogPanel
   private val duplexConsoleView: JeditermSerialMonitorDuplexConsoleView
 
   fun getStatus(): PortStatus = duplexConsoleView.status
@@ -121,6 +126,34 @@ class SerialMonitor(private val project: Project,
       myCommand.text = ""
     })
 
+    myHardwareControlFlow = panel {
+      align(AlignX.RIGHT + AlignY.CENTER)
+      row {
+        val rtsCheckbox = checkBox("RTS")
+        val dtrCheckbox = checkBox("DTR")
+
+        fun Cell<JBCheckBox>.changesBind(prop: KMutableProperty1<SerialConnection, Boolean>, connection: SerialConnection) {
+          this.whenStateChangedFromUi(this@SerialMonitor) {
+            try {
+              val value = prop.get(connection)
+              if (value != it) {
+                prop.set(connection, it)
+              }
+            }
+            catch(e: SerialMonitorException) {
+              errorNotification(e.message!!, project)
+            }
+          }
+        }
+
+        val connection = duplexConsoleView.connection
+        rtsCheckbox.component.isSelected = connection.rts
+        rtsCheckbox.changesBind(SerialConnection::rts, connection)
+        dtrCheckbox.component.isSelected = connection.dtr
+        dtrCheckbox.changesBind(SerialConnection::dtr, connection)
+      }
+    }
+
     ApplicationManager.getApplication().messageBus.connect().subscribe(SerialPortsListener.SERIAL_PORTS_TOPIC, this)
     myPanel.add(toolbar.component,
                 GridConstraints(0, 0, 2, 1, ANCHOR_NORTH, FILL_VERTICAL, SIZEPOLICY_FIXED, SIZE_POLICY_RESIZEABLE, null, null, null))
@@ -130,8 +163,12 @@ class SerialMonitor(private val project: Project,
                                            SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(mySend,
                 GridConstraints(0, 3, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
+
+    myPanel.add(myHardwareControlFlow,
+                GridConstraints(0, 4, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
+
     myPanel.add(consoleComponent,
-                GridConstraints(1, 1, 1, 3, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
+                GridConstraints(1, 1, 1, 4, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
     duplexConsoleView.addSwitchListener(this::hideSendControls, this)
     hideSendControls(duplexConsoleView.isPrimaryConsoleEnabled)
   }

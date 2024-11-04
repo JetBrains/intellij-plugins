@@ -26,7 +26,6 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import java.util.regex.Pattern
-import kotlin.Comparator
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
@@ -134,6 +133,37 @@ class SerialPortService : Disposable {
 
     private var localEcho: Boolean = false
 
+    var rts = false
+      @Throws(SerialMonitorException::class)
+      set(value) {
+        runWithExceptionWrapping(value) {
+          port?.setRTS(value)
+          field = value
+        }
+      }
+
+    var dtr = false
+      @Throws(SerialMonitorException::class)
+      set(value) {
+        runWithExceptionWrapping(value) {
+          port?.setDTR(value)
+          field = value
+        }
+      }
+
+    @Throws(SerialMonitorException::class)
+    private fun <T> runWithExceptionWrapping(value: T, func: (T)->Unit) {
+      try {
+        func(value)
+      }
+      catch (e: SerialPortException) {
+        throw SerialMonitorException(SerialMonitorBundle.message("port.modify.error", e.port.portName, e.exceptionType))
+      }
+      catch (e: Exception) {
+        throw SerialMonitorException(portName, e)
+      }
+    }
+
     override fun dispose() {
       closeSilently(true)
       connections.remove(portName, this)
@@ -201,12 +231,11 @@ class SerialPortService : Disposable {
         newPort.openPort()
         newPort.addEventListener(listener, MASK_RXCHAR or MASK_ERR)
 
-        if (!newPort.setParams(baudRate, bits, portStopBits, portParity)) {
+        if (!newPort.setParams(baudRate, bits, portStopBits, portParity, rts, dtr)) {
           SerialMonitorCollector.logConnect(baudRate, false)
           throw SerialMonitorException(SerialMonitorBundle.message("serial.port.parameters.wrong"))
         }
         newPort.setFlowControlMode(FLOWCONTROL_NONE)
-        newPort.setRTS(false)
         port = newPort
         SerialMonitorCollector.logConnect(baudRate, true)
         status = PortStatus.CONNECTED
