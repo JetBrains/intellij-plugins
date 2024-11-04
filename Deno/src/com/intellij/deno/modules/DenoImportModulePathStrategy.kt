@@ -10,7 +10,8 @@ class DenoImportModulePathStrategy : JSImportModulePathStrategy {
   override fun getPathSettings(place: PsiElement,
                                extensionWithDot: String,
                                auto: Boolean): JSModuleNameInfo.ExtensionSettings? {
-    if (!TypeScriptUtil.TYPESCRIPT_DECLARATIONS_FILE_EXTENSIONS.contains(extensionWithDot)) {
+    if (!TypeScriptUtil.TYPESCRIPT_DECLARATIONS_FILE_EXTENSIONS.contains(extensionWithDot) &&
+        TypeScriptUtil.TYPESCRIPT_EXTENSIONS.contains(extensionWithDot)) {
       return JSModuleNameInfo.ExtensionSettings.FORCE_EXTENSION
     }
 

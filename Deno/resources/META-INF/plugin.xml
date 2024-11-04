@@ -50,7 +50,7 @@
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
     <moduleReferenceContributor id="deno" implementation="com.intellij.deno.modules.DenoModuleReferenceContributor"/>
-    <importModulePathStrategy order="after TypeScript"
+    <importModulePathStrategy order="first"
                               implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
     <tsImportResolver implementation="com.intellij.deno.modules.DenoTypeScriptImportResolverProvider"/>
     <itemPresentation language="TypeScript" implementationClass="com.intellij.deno.lang.DenoItemPresentationProvider"/>
