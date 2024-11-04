@@ -24,6 +24,22 @@ class DenoModulesTest : DenoTestBase() {
     myFixture.checkResult("import {} from './hello.ts'")
   }
 
+  fun testSimpleMts() {
+    myFixture.configureByText("hello.mts", "export class Hello")
+    myFixture.configureByText("usage.ts", "import {} from './hel<caret>'")
+    myFixture.complete(CompletionType.BASIC)
+    myFixture.checkResult("import {} from './hello.mts'")
+  }
+
+  fun testSimpleMtsAutoImport() {
+    myFixture.configureByText("hello.mts", "export class Hello")
+    myFixture.configureByText("usage.ts", "Hell<caret>")
+    myFixture.complete(CompletionType.BASIC)
+    myFixture.checkResult("import {Hello} from \"./hello.mts\";\n" +
+                          "\n" +
+                          "Hello")
+  }
+
   fun testImportMap() {
     myFixture.enableInspections(*JSDaemonAnalyzerLightTestCase.defaultInspections())
     myFixture.configureByText("import_map.json", """
