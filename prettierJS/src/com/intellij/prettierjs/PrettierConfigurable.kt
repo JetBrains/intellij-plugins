@@ -75,14 +75,20 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
               .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.AUTOMATIC))
               .component
 
-          val detectAutomaticallyHelpText = JavaScriptBundle.message(
+          val autoConfigHelpText = JavaScriptBundle.message(
             "settings.javascript.linters.autodetect.configure.automatically.help.text",
             ApplicationNamesInfo.getInstance().fullProductName,
             displayName,
             ".prettierrc.*"
-          ) + " " + PrettierBundle.message("run.on.save.auto-mode.tooltip")
+          )
+          val runOnSaveTooltip = PrettierBundle.message("run.on.save.auto-mode.tooltip")
+          val ignorePathHelpText = PrettierBundle.message(
+            "prettier.ignore.path.autodetect.configure.automatically.help.text",
+            ApplicationNamesInfo.getInstance().fullProductName,
+            PrettierUtil.IGNORE_FILE_NAME
+          )
 
-          val helpLabel = ContextHelpLabel.create(detectAutomaticallyHelpText)
+          val helpLabel = ContextHelpLabel.create("$autoConfigHelpText $runOnSaveTooltip<br/><br/>$ignorePathHelpText")
           helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
           cell(helpLabel)
         }
