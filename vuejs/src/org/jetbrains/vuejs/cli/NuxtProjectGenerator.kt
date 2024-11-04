@@ -6,7 +6,6 @@ import com.intellij.javascript.CreateRunConfigurationUtil
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreterUtil
 import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
-import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -19,11 +18,6 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VuejsIcons
 import java.io.File
 import javax.swing.Icon
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.psi.createSmartPointer
 
 
 class NuxtProjectGenerator : NpmPackageProjectGenerator() {
@@ -63,10 +57,6 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
     return emptyArray()
   }
 
-  override fun executable(pkg: NodePackage): String {
-    return pkg.systemDependentPath + File.separator + "bin" + File.separator + "vue.js"
-  }
-
   override fun packageName(): String {
     return NUXT_CLI_PACKAGE_NAME
   }
@@ -100,24 +90,12 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
                            workingDir: File): Runnable {
     return Runnable {
       ApplicationManager.getApplication().executeOnPooledThread {
-        val packageJson = findFileByNames(project, baseDir, arrayOf(PackageJsonUtil.FILE_NAME))
+        val packageJson = baseDir.findChild(PackageJsonUtil.FILE_NAME)
         if (packageJson != null && NodeJsLocalInterpreterUtil.detectAllLocalInterpreters().isNotEmpty()) {
-          InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJson.virtualFile)
+          InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJson)
         }
         super.postInstall(project, baseDir, workingDir).run()
       }
     }
-  }
-
-
-  private fun findFileByNames(project: Project, baseDir: VirtualFile, names: Array<String>): SmartPsiElementPointer<PsiFile>? {
-    var result: SmartPsiElementPointer<PsiFile>? = null
-    VfsUtilCore.processFilesRecursively(baseDir) { file ->
-      if (names.any { file.name.startsWith(it) }) {
-        result = PsiManager.getInstance(project).findFile(file)?.createSmartPointer()
-      }
-      true
-    }
-    return result
   }
 }
