@@ -5,7 +5,7 @@
   </dependencies>
 
   <extensionPoints>
-    <extensionPoint name="qodana.coverage.cloudArtifactsProcessor"
+    <extensionPoint qualifiedName="com.intellij.qodana.coverage.cloudArtifactsProcessor"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor"
                     dynamic="true"/>
   </extensionPoints>
