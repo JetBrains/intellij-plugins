@@ -12,7 +12,7 @@
     <workflowExtension implementation="org.jetbrains.qodana.go.GoSdkWorkflowExtension"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.js.JSCoverageArtifactProcessor"/>
+    <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.go.GoCoverageArtifactProcessor"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <globalInspection hasStaticDescription="true"
