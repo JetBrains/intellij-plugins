@@ -6,7 +6,6 @@
     <projectDescriber implementation="org.jetbrains.qodana.jvm.java.JavaDescriber"/>
     <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.QodanaYamlJdkItemProvider"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
-    <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmGlobalTaintOutputConsumer"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
     <workflowExtension implementation="org.jetbrains.qodana.jvm.java.QodanaJavaConfigApplier" />
     <cyclomaticComplexityFileVisitor
