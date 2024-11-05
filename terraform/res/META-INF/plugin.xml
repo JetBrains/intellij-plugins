@@ -232,7 +232,8 @@
     <langCodeStyleSettingsProvider implementation="org.intellij.terraform.config.formatter.TerraformConfigCodeStyleSettingsProvider"/>
     <lang.formatter language="HCL-Terraform" implementationClass="org.intellij.terraform.config.formatter.TerraformFormattingBuilderModel"/>
     <lang.quoteHandler language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.formatter.HCLQuoteHandler"/>
-    <!-- TODO: Better breadcrumbs provider-->
+
+    <lang.floatingToolbar language="HCL" minimal="true"/>
 
     <applicationService serviceInterface="org.intellij.terraform.config.util.TFCommandLineService"
                         serviceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceImpl"
