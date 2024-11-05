@@ -38,7 +38,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   private boolean isInitializing;
 
   public PerforceConnectionManager(Project project) {
-    myNotifier = project.getService(PerforceConnectionProblemsNotifier.class);
+    myNotifier = PerforceConnectionProblemsNotifier.getInstance(project);
     mySettings = PerforceSettings.getSettings(project);
     myProject = project;
   }
