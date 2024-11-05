@@ -40,6 +40,7 @@ import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
 import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.Constants.PROVIDER_VERSION
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
@@ -49,8 +50,11 @@ import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.HCLFileType
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.HILCompatibleLanguage
+import org.intellij.terraform.hcl.Icons.FileTypes.HCL
+import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -147,8 +151,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private fun getOpenTerraformFiles(): Set<PsiFile> {
     val fileTypeManager = FileTypeManager.getInstance()
-    val fileTypes = fileTypeManager.getRegisteredFileTypes()
-      .filter { it is LanguageFileType && (it.language is HILCompatibleLanguage || it.language is HCLLanguage) }
+    val fileTypes = setOf(TerraformFileType, OpenTofuFileType, HCLFileType)
     return ProjectManager.getInstance().openProjects.asSequence().flatMap { project ->
       FileEditorManager.getInstance(project).openFiles.asSequence()
         .filter { virtualFile -> fileTypes.any { fileTypeManager.isFileOfType(virtualFile, it) } }

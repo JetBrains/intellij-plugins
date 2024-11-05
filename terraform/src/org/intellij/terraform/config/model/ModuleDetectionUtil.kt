@@ -282,8 +282,12 @@ object ModuleDetectionUtil {
     return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifest.context, relative, getModuleFiles(mod))
   }
 
-  private fun getModuleSourceString(file: PsiFile, sourceVal: HCLElement?): @NlsSafe String? {
+  private fun getModuleSourceString(file: PsiFile, sourceVal: HCLElement?, elementsPath: MutableList<PsiElement> = mutableListOf()): @NlsSafe String? {
     sourceVal ?: return null
+
+    if (elementsPath.contains(sourceVal)) {
+      return null //TODO IJPL-166297 implement inspection to prevent cyclic references
+    }
 
     val injectedHil = if (isOpenTofuFile(file)) {
       InjectedLanguageManager.getInstance(sourceVal.project)
@@ -299,9 +303,10 @@ object ModuleDetectionUtil {
     else {
       getReferencesSelectAware(sourceVal).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
     }
+    elementsPath.add(sourceVal)
     val sourceString = when (sourcePsi) {
-      is HCLProperty -> getModuleSourceString(file, sourcePsi.value)
-      is HCLElement -> getModuleSourceString(file, sourcePsi)
+      is HCLProperty -> getModuleSourceString(file, sourcePsi.value, elementsPath)
+      is HCLElement -> getModuleSourceString(file, sourcePsi, elementsPath)
       else -> null
     }
     return sourceString?.let { StringUtil.unquoteString(sourceString) }

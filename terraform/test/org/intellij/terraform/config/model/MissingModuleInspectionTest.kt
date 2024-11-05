@@ -167,4 +167,20 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
 
   }
 
+  @org.junit.Test
+  fun testPreventStackOverflow() {
+    myFixture.configureByText("main.tofu", """
+      locals {
+        module_source = local.module_source
+      }
+
+      <warning descr="Cannot locate module locally: Cannot get module source value">module "test" {
+        source = local.module_source
+        variable = "test"
+      }</warning>
+    """.trimIndent())
+    myFixture.enableInspections(TFMissingModuleInspection::class.java)
+    myFixture.checkHighlighting()
+  }
+
 }
