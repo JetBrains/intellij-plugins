@@ -33,7 +33,8 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
         val lookupElement = completionResult.lookupElement
         // Filter out JavaScript symbols, and keywords such as 'class' and 'function'
         if (lookupElement is PrioritizedLookupElement<*>
-            && lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR) is JSCompletionContributor) {
+            && lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR)
+              .let { it is JSCompletionContributor || it is JSPatternBasedCompletionContributor }) {
           val priority = lookupElement.priority.toInt()
           val proximity = lookupElement.explicitProximity
 

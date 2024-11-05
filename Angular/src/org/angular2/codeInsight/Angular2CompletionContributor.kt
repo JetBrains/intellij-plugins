@@ -265,8 +265,9 @@ class Angular2CompletionContributor : CompletionContributor() {
           if (localNames.contains(name)) {
             return@runRemainingContributors
           }
-          if (lookupElement is PrioritizedLookupElement<*> && lookupElement.getUserData<CompletionContributor>(
-              BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR) is JSCompletionContributor) {
+          if (lookupElement is PrioritizedLookupElement<*> &&
+              lookupElement.getUserData<CompletionContributor>(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR)
+                .let { it is JSCompletionContributor || it is JSPatternBasedCompletionContributor}) {
             val priority = lookupElement.priority.toInt()
             // Filter out unsupported keywords
             if (priority == NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue || priority == KEYWORDS_PRIORITY.priorityValue) {
