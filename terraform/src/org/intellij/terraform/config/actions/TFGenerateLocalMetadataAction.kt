@@ -16,9 +16,10 @@ class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
-    val lockFile = virtualFiles.firstOrNull()?.let {  localSchemaService.findLockFile(it) }
+    val lockFile = virtualFiles.firstOrNull()?.let { localSchemaService.findLockFile(it) }
     if (lockFile == null) {
-      val toolType = virtualFiles.firstOrNull()?.let {getApplicableToolType(project, it) }?.executableName ?: TfToolType.TERRAFORM.executableName
+      val toolType = virtualFiles.firstOrNull()?.let { getApplicableToolType(project, it) }?.executableName
+                     ?: TfToolType.TERRAFORM.executableName
       TerraformConstants.EXECUTION_NOTIFICATION_GROUP
         .createNotification(
           HCLBundle.message("notification.title.cant.generate.model"),
