@@ -36,12 +36,14 @@ import com.intellij.openapi.vcs.annotate.AnnotationsWriteableFilesVfsListener;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.ChangeProvider;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
+import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vcs.diff.DiffProvider;
 import com.intellij.openapi.vcs.history.VcsHistoryProvider;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vcs.merge.MergeProvider;
 import com.intellij.openapi.vcs.rollback.RollbackEnvironment;
 import com.intellij.openapi.vcs.update.UpdateEnvironment;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThreeState;
@@ -200,13 +202,22 @@ public final class PerforceVcs extends AbstractVcs {
       if (list == null) {
         list = changeListManager.getDefaultChangeList();
       }
-      operations.add(new P4EditOperation(list.getName(), vFile));
+      operations.add(new P4EditOperation(list.getName(), vFile, false));
     }
     VcsOperationLog.getInstance(myProject).queueOperations(operations, PerforceBundle.message("progress.title.perforce.edit"),
-                                                           PerformInBackgroundOption.ALWAYS_BACKGROUND);
+                                                           PerformInBackgroundOption.ALWAYS_BACKGROUND,
+                                                           () -> refreshFiles(vFiles));
   }
 
-  public void startAsyncEdit(VirtualFile... vFiles) {
+  public void refreshFiles(VirtualFile @NotNull ... filesToRefresh) {
+    List<VirtualFile> files = Arrays.asList(filesToRefresh);
+    LocalFileSystem.getInstance()
+      .refreshFiles(files, true, false, null);
+    asyncEditCompleted(files);
+    VcsDirtyScopeManager.getInstance(myProject).filesDirty(files, null);
+  }
+
+  public void startAsyncEdit(VirtualFile @NotNull ... vFiles) {
     synchronized (myAsyncEditFiles) {
       Collections.addAll(myAsyncEditFiles, vFiles);
     }
@@ -218,7 +229,13 @@ public final class PerforceVcs extends AbstractVcs {
     }
   }
 
-  public void asyncEditCompleted(VirtualFile file) {
+  public void asyncEditCompleted(@NotNull Collection<VirtualFile> files) {
+    synchronized (myAsyncEditFiles) {
+      myAsyncEditFiles.removeAll(files);
+    }
+  }
+
+  public void asyncEditCompleted(@NotNull VirtualFile file) {
     synchronized (myAsyncEditFiles) {
       myAsyncEditFiles.remove(file);
     }
@@ -414,14 +431,26 @@ public final class PerforceVcs extends AbstractVcs {
     return myCommittedChangesProvider;
   }
 
-  public void runBackgroundTask(final @NlsContexts.ProgressTitle String title, @NotNull PerformInBackgroundOption option, final Runnable runnable) {
+  public void runBackgroundTask(@NotNull @NlsContexts.ProgressTitle String title,
+                                @NotNull PerformInBackgroundOption option,
+                                @NotNull Runnable runnable, @Nullable Runnable edtCallback) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       runnable.run();
+      if (edtCallback != null) {
+        edtCallback.run();
+      }
     } else {
       ProgressManager.getInstance().run(new Task.Backgroundable(myProject, title, false, option) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           runnable.run();
+        }
+
+        @Override
+        public void onFinished() {
+          if (edtCallback != null) {
+            edtCallback.run();
+          }
         }
       });
 
