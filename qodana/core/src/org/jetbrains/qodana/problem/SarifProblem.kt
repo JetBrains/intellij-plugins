@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.problem
 
 import com.intellij.codeInspection.ProblemDescriptorUtil
-import com.intellij.codeInspection.ex.JsonInspectionsReportConverter.PHP_VULNERABLE_PATHS
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
@@ -231,20 +230,22 @@ private fun getPossibleTaintAnalysisSinksResultsAndLocations(
   reportResults: List<Result>,
   resultsWithRelationshipsTaint: Map<Result, List<Location>>
 ): List<Pair<Result, Location>> {
-  val sinks = reportResults.mapNotNull { it.graphs }.map { graph ->
-    val nodes = graph.mapNotNull { it.nodes }.flatten()
-    val edges = graph.mapNotNull { it.edges }.flatten()
-    nodes.filter { node -> edges.all { it.sourceNodeId != node.id } }
-  }.flatten()
-
-  val resultsAndLocationsForSinks = sinks.flatMap { sink ->
-    resultsWithRelationshipsTaint.filterValues { locations ->
-      locations.any { location ->
-        location.relationships.any { relationship ->
-          relationship.target?.toString() == sink.id
-        }
+  return reportResults
+    .asSequence()
+    .filter { it.graphs != null }
+    .flatMap { result ->
+      result.graphs.flatMap { graph ->
+        graph.nodes.filter { node ->
+          graph.edges.none { it.sourceNodeId == node.id }
+        }.map { node -> result to node }
       }
-    }.map { Pair(it.key, sink.location) }
-  }
-  return resultsAndLocationsForSinks
+    }
+    .mapNotNull { (result, node) ->
+      val location = node.location
+                     ?: resultsWithRelationshipsTaint[result]?.singleOrNull { location ->
+                       location.relationships.any { relationship -> relationship.target == node.id.toInt() }
+                     }
+      location?.let { result to it }
+    }
+    .toList()
 }
