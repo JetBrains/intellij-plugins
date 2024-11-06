@@ -19,7 +19,7 @@ public class DartModuleWizardStep extends ModuleWizardStep implements Disposable
 
   @Override
   public JComponent getComponent() {
-    return myPeer.getComponent();
+    return myPeer.getMainPanel();
   }
 
   @Override
