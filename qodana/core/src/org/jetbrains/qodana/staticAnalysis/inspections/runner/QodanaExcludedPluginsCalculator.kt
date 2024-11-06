@@ -8,7 +8,9 @@ import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.util.PlatformUtils
+import kotlinx.coroutines.delay
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -25,6 +27,10 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     get() = ApplicationStarter.NOT_IN_EDT
 
   override fun main(args: List<String>) {
+    // Intellij may fail without some warmup
+    runBlockingCancellable {
+      delay(30000)
+    }
     if (args.size < 3) {
       printHelpAndExit()
     }
@@ -43,7 +49,7 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
       val baseFolder = dockerIgnorePath.parent.toAbsolutePath()
 
 
-      val keptPlugins = included + getKeptButDisabledPlugins().map { findDescriptor(it) }
+      val keptPlugins = included + getKeptButDisabledPlugins().mapNotNull { findDescriptor(it) }
       val includedPaths = keptPlugins.mapNotNull {
         val pathPresentation = it.pluginPath.toString()
         val path = Paths.get(pathPresentation).toAbsolutePath()
@@ -61,12 +67,16 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     }
   }
 
-  private fun findDescriptor(id: String): IdeaPluginDescriptor {
+  private fun findDescriptor(id: String): IdeaPluginDescriptor? {
     val pluginId = PluginId.findId(id)
     if (pluginId == null) {
-      throw IllegalArgumentException("Can't find plugin id '$id'")
+      LOG.error("Can't find plugin descriptor for id '$id'")
+      return null
     }
-    return PluginManagerCore.getPlugin(pluginId) ?: throw IllegalArgumentException("Can't find plugin descriptor for id '$id'")
+    return PluginManagerCore.getPlugin(pluginId) ?: kotlin.run {
+      LOG.error("Can't find plugin descriptor for id '$pluginId'")
+      null
+    }
   }
 
   private fun printHelpAndExit() {
@@ -124,6 +134,7 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
 
 fun getKeptButDisabledPlugins(): List<String> {
   if (PlatformUtils.isRider()) return listOf("intellij.rider.plugins.cwm")
+  if (PlatformUtils.isCommunityEdition()) return listOf()
   return listOf("com.jetbrains.codeWithMe")
 
 }
