@@ -11,7 +11,9 @@ import com.intellij.ide.impl.PatchProjectUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.blockingContext
@@ -154,7 +156,11 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun closeProject(config: QodanaConfig, project: Project) {
     QodanaWorkflowExtension.callBeforeProjectClose(project)
     val service = serviceAsync<ProjectManager>()
-    blockOn(StaticAnalysisDispatchers.UI) { service.closeAndDispose(project) }
+    blockOn(StaticAnalysisDispatchers.UI) {
+      WriteIntentReadAction.run {
+        service.closeAndDispose(project)
+      }
+    }
     QodanaWorkflowExtension.callAfterProjectClosed(config)
   }
 
