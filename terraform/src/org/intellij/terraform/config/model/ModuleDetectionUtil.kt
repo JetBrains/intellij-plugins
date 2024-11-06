@@ -208,7 +208,7 @@ object ModuleDetectionUtil {
 
     val dotTerraform = getTerraformDirSomewhere(directory.virtualFile, project)
     if (dotTerraform == null) {
-      val err = HCLBundle.message("module.detection.error.no.dir.found", toolType.executableName)
+      val err = HCLBundle.message("module.detection.error.no.dir.found", toolType.executableName, directory.virtualFile.name)
       LOG.warn(err)
       return directoryResult(directory, source, err, moduleBlock)
     }
