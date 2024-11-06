@@ -255,7 +255,7 @@ class SetupAzurePipelinesViewModelTest : QodanaPluginHeavyTestBase() {
 
   private fun String.updateVersion(): String {
     val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
-    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersionMainPart
     return this
       .replace("VERSION_PLACEHOLDER", ideMajorVersion)
       .replace("LINTER_PLACEHOLDER", "${ideMajorVersion}.${ideMinorVersion}")
