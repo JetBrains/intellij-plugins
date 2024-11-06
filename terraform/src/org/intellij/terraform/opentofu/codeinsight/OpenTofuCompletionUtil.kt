@@ -14,13 +14,13 @@ import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionBlock
-import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMethodBlock
+import kotlin.collections.filter
 
 internal fun findEncryptionBlocksIdsByType(element: PsiElement, blockType: String?, blockPattern: PsiElementPattern.Capture<HCLBlock>): Sequence<LookupElement> {
   blockType ?: return emptySequence()
   val keyProviderNames = findEncryptionBlockElements(element, blockPattern)
                            ?.filter { block -> block.getNameElementUnquoted(1)?.contentEquals(blockType) == true }
-                           ?.filterNotNull() ?: return emptySequence()
+                         ?: return emptySequence()
   return keyProviderNames.map {
     LookupElementBuilder.create(it.getNameElementUnquoted(2)!!)
       .withTypeText(it.getNameElementUnquoted(1))
@@ -29,12 +29,12 @@ internal fun findEncryptionBlocksIdsByType(element: PsiElement, blockType: Strin
 }
 
 internal fun findEncryptionBlockElements(element: PsiElement, template: PsiElementPattern.Capture<HCLBlock>): List<HCLBlock>? {
-  return CachedValuesManager.getCachedValue(element) {
+  val cachedResult = CachedValuesManager.getCachedValue(element) {
     val relevantBlocks = element.parentsOfType<HCLBlock>(true)
       .firstOrNull { block -> EncryptionBlock.accepts(block) }
       ?.`object`
       ?.childrenOfType<HCLBlock>()
-      ?.filter { block -> template.accepts(block) }
     CachedValueProvider.Result.create(relevantBlocks, PsiModificationTracker.MODIFICATION_COUNT)
   }
+  return cachedResult?.filter { block -> template.accepts(block) }
 }
