@@ -20,6 +20,7 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService.SerialConnection
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
+import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
 import com.intellij.ui.TextFieldWithStoredHistory
 import com.intellij.ui.components.JBCheckBox
@@ -55,6 +56,11 @@ class SerialMonitor(private val project: Project,
   override fun portsStatusChanged() {
     mySend.isEnabled = duplexConsoleView.status == PortStatus.CONNECTED
     ActivityTracker.getInstance().inc()
+  }
+
+  fun notifyProfileChanged() {
+    duplexConsoleView.reconnect()
+    updateHwcfVisibility()
   }
 
   private fun send(txt: String) {
@@ -98,13 +104,15 @@ class SerialMonitor(private val project: Project,
 
   init {
     myPanel.setLoadingText(SerialMonitorBundle.message("connecting"))
-    duplexConsoleView = JeditermSerialMonitorDuplexConsoleView.create(project, name, portProfile, myPanel)
+    duplexConsoleView = JeditermSerialMonitorDuplexConsoleView.create(project, portProfile, myPanel)
     Disposer.register(this, duplexConsoleView)
     val consoleComponent = duplexConsoleView.component
     duplexConsoleView.component.border = BorderFactory.createEtchedBorder()
     val toolbarActions = DefaultActionGroup()
     val toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, toolbarActions, false)
     toolbarActions.addAll(*duplexConsoleView.createConsoleActions())
+    val editProfileAction = EditSettingsAction(name, this)
+    toolbarActions.add(editProfileAction)
     toolbar.targetComponent = consoleComponent
     myCommand = TextFieldWithStoredHistory(HISTORY_KEY)
     myLineEnd = JBCheckBox(SerialMonitorBundle.message("checkbox.send.eol"), true)
@@ -171,6 +179,11 @@ class SerialMonitor(private val project: Project,
                 GridConstraints(1, 1, 1, 4, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
     duplexConsoleView.addSwitchListener(this::hideSendControls, this)
     hideSendControls(duplexConsoleView.isPrimaryConsoleEnabled)
+    updateHwcfVisibility()
+  }
+
+  private fun updateHwcfVisibility() {
+    myHardwareControlFlow.isVisible = portProfile.showHardwareControlFlow
   }
 
   private fun hideSendControls(q: Boolean) {

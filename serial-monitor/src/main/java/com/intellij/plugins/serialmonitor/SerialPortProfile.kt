@@ -38,7 +38,11 @@ data class SerialPortProfile(
   var localEcho: Boolean = false,
 
   @Attribute
-  var showHardware: Boolean = false //todo take into use
+  var showHardware: Boolean = false, //todo take into use
+
+  @Attribute
+  var showHardwareControlFlow: Boolean = false,
+
 ) {
   fun defaultName(): @NlsSafe String {
     return if (bits != 8 || stopBits != StopBits.BITS_1 || parity != Parity.NONE) {

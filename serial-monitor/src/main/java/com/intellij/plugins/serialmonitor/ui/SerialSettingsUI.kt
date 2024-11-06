@@ -147,6 +147,11 @@ fun Panel.serialSettings(disposable: Disposable,
       .changesBind(SerialPortProfile::localEcho)
       .label(message("label.local.echo"))
       .enabled(!readOnly)
+
+    checkBox("")
+      .changesBind(SerialPortProfile::showHardwareControlFlow)
+      .label(message("label.show.hardware.flow.control"))
+
     customize(UnscaledGapsY(bottom = 20))
   }.layout(RowLayout.PARENT_GRID)
 }
