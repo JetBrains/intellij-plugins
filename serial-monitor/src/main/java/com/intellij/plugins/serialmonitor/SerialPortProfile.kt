@@ -41,7 +41,7 @@ data class SerialPortProfile(
   var showHardware: Boolean = false, //todo take into use
 
   @Attribute
-  var showHardwareControlFlow: Boolean = false,
+  var showHardwareFlowControl: Boolean = false,
 
 ) {
   fun defaultName(): @NlsSafe String {
