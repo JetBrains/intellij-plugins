@@ -135,7 +135,6 @@ class SerialMonitor(private val project: Project,
     })
 
     myHardwareControlFlow = panel {
-      align(AlignX.RIGHT + AlignY.CENTER)
       row {
         val rtsCheckbox = checkBox("RTS")
         val dtrCheckbox = checkBox("DTR")
@@ -166,15 +165,13 @@ class SerialMonitor(private val project: Project,
     myPanel.add(toolbar.component,
                 GridConstraints(0, 0, 2, 1, ANCHOR_NORTH, FILL_VERTICAL, SIZEPOLICY_FIXED, SIZE_POLICY_RESIZEABLE, null, null, null))
     myPanel.add(myCommand,
-                GridConstraints(0, 1, 1, 1, ANCHOR_NORTHWEST, FILL_HORIZONTAL, SIZE_POLICY_RESIZEABLE, SIZEPOLICY_FIXED, null, null, null))
-    myPanel.add(myLineEnd, GridConstraints(0, 2, 1, 1, ANCHOR_CENTER, FILL_NONE, SIZEPOLICY_FIXED,
-                                           SIZEPOLICY_FIXED, null, null, null))
+                GridConstraints(0, 1, 1, 1, ANCHOR_WEST, FILL_HORIZONTAL, SIZE_POLICY_RESIZEABLE, SIZEPOLICY_FIXED, null, null, null))
+    myPanel.add(myLineEnd,
+                GridConstraints(0, 2, 1, 1, ANCHOR_EAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(mySend,
-                GridConstraints(0, 3, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
-
+                GridConstraints(0, 3, 1, 1, ANCHOR_EAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(myHardwareControlFlow,
-                GridConstraints(0, 4, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
-
+                GridConstraints(0, 4, 1, 1, ANCHOR_EAST, FILL_NONE, SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(consoleComponent,
                 GridConstraints(1, 1, 1, 4, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
     duplexConsoleView.addSwitchListener(this::hideSendControls, this)
