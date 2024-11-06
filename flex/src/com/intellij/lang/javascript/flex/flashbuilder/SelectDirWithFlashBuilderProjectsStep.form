@@ -13,7 +13,7 @@
           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="9ec05" class="com.intellij.openapi.ui.LabeledComponent" binding="myInitialPathComponent">
+      <component id="9ec05" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myInitialPathComponent">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -27,7 +27,7 @@
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
       </nested-form>
-      <component id="fd3b" class="com.intellij.openapi.ui.LabeledComponent" binding="myProjectNameComponent">
+      <component id="fd3b" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myProjectNameComponent">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -36,7 +36,7 @@
           <text value="Project name"/>
         </properties>
       </component>
-      <component id="d3b02" class="com.intellij.openapi.ui.LabeledComponent" binding="myProjectLocationComponent">
+      <component id="d3b02" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myProjectLocationComponent">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -60,7 +60,7 @@
           <text resource-bundle="messages/FlexBundle" key="extract.single.to.subfolder.0"/>
         </properties>
       </component>
-      <component id="70980" class="com.intellij.openapi.ui.LabeledComponent" binding="myExtractPathComponent">
+      <component id="70980" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myExtractPathComponent">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

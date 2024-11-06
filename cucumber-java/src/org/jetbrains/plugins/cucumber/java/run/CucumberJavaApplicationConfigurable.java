@@ -12,6 +12,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.LabeledComponentNoThrow;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,12 +36,12 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   private final Module myModuleContext;
 
   private JPanel myWholePanel;
-  private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
-  private LabeledComponent<ModuleDescriptionsComboBox> myModule;
-  private LabeledComponent<RawCommandLineEditor> myGlue;
-  private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
+  private LabeledComponentNoThrow<EditorTextFieldWithBrowseButton> myMainClass;
+  private LabeledComponentNoThrow<ModuleDescriptionsComboBox> myModule;
+  private LabeledComponentNoThrow<RawCommandLineEditor> myGlue;
+  private LabeledComponentNoThrow<TextFieldWithBrowseButton> myFeatureOrFolder;
   private CommonJavaParametersPanel myCommonProgramParameters;
-  private LabeledComponent<ShortenCommandLineModeCombo> myShortenClasspathModeCombo;
+  private LabeledComponentNoThrow<ShortenCommandLineModeCombo> myShortenClasspathModeCombo;
   private JrePathEditor myJrePathEditor;
   private JComponent myAnchor;
 
@@ -74,7 +75,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   }
 
   private void createUIComponents() {
-    myMainClass = new LabeledComponent<>();
+    myMainClass = new LabeledComponentNoThrow<>();
     myMainClass.setComponent(new EditorTextFieldWithBrowseButton(myProject, true, (declaration, place) -> {
       if (declaration instanceof PsiClass aClass) {
         if (ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null) {

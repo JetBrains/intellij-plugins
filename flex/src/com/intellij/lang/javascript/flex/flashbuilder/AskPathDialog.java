@@ -3,10 +3,7 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.*;
 import com.intellij.openapi.util.io.FileUtil;
 
 import javax.swing.*;
@@ -14,7 +11,7 @@ import java.io.File;
 
 public class AskPathDialog extends DialogWrapper {
   private JPanel myMainPanel;
-  private LabeledComponent<TextFieldWithBrowseButton> myPathComponent;
+  private LabeledComponentNoThrow<TextFieldWithBrowseButton> myPathComponent;
 
   protected AskPathDialog(final String title, final String label, final String initialPath) {
     super(true);

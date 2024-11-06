@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.LabeledComponentNoThrow;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -29,10 +29,10 @@ import java.util.Objects;
 
 public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardStep {
   private JPanel myMainPanel;
-  private LabeledComponent<TextFieldWithBrowseButton> myInitialPathComponent;
-  private LabeledComponent<TextFieldWithBrowseButton> myExtractPathComponent;
-  private LabeledComponent<JTextField> myProjectNameComponent;
-  private LabeledComponent<TextFieldWithBrowseButton> myProjectLocationComponent;
+  private LabeledComponentNoThrow<TextFieldWithBrowseButton> myInitialPathComponent;
+  private LabeledComponentNoThrow<TextFieldWithBrowseButton> myExtractPathComponent;
+  private LabeledComponentNoThrow<JTextField> myProjectNameComponent;
+  private LabeledComponentNoThrow<TextFieldWithBrowseButton> myProjectLocationComponent;
   private JLabel myMultiProjectNote;
   private JCheckBox myCreateSubfolderCheckBox;
   private ProjectFormatPanel myProjectFormatPanel;

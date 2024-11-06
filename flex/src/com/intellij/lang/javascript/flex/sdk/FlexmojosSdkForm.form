@@ -21,7 +21,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="90857" class="com.intellij.openapi.ui.LabeledComponent" binding="myAdlComponent">
+      <component id="90857" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myAdlComponent">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -30,7 +30,7 @@
           <text value="AIR De&amp;bug Launcher"/>
         </properties>
       </component>
-      <component id="61709" class="com.intellij.openapi.ui.LabeledComponent" binding="myAirRuntimeComponent">
+      <component id="61709" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myAirRuntimeComponent">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
