@@ -5,7 +5,7 @@ import com.intellij.util.application
 
 fun getQodanaImageNameMatchingIDE(useVersionPostfix: Boolean): String {
   val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
-  val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+  val ideMinorVersion = ApplicationInfo.getInstance().minorVersionMainPart
   return "jetbrains/${getLinterName()}${if (useVersionPostfix) ":${ideMajorVersion}.${ideMinorVersion}" else ""}"
 }
 

@@ -57,7 +57,7 @@ class SetupCircleCIViewModel(
     val physicalDocument = readAction { FileDocumentManager.getInstance().getDocument(configFile) } ?: return null
     val physicalText = physicalDocument.immutableCharSequence.toString()
     val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
-    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersionMainPart
     val textWithOrb = CircleCIConfigHandler.addOrb(
       project,
       physicalText,
@@ -93,7 +93,7 @@ class SetupCircleCIViewModel(
   private suspend fun defaultConfigurationText(): String {
     val baselineText = getSarifBaseline(project)?.let { "--baseline $it " } ?: ""
     val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
-    val ideMinorVersion = ApplicationInfo.getInstance().minorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersionMainPart
 
     @Language("YAML")
     val yamlConfiguration = """
