@@ -19,8 +19,7 @@ import kotlin.collections.filter
 internal fun findEncryptionBlocksIdsByType(element: PsiElement, blockType: String?, blockPattern: PsiElementPattern.Capture<HCLBlock>): Sequence<LookupElement> {
   blockType ?: return emptySequence()
   val keyProviderNames = findEncryptionBlockElements(element, blockPattern)
-                           ?.filter { block -> block.getNameElementUnquoted(1)?.contentEquals(blockType) == true }
-                         ?: return emptySequence()
+                           .filter { block -> block.getNameElementUnquoted(1)?.contentEquals(blockType) == true }.orEmpty()
   return keyProviderNames.map {
     LookupElementBuilder.create(it.getNameElementUnquoted(2)!!)
       .withTypeText(it.getNameElementUnquoted(1))
@@ -28,13 +27,13 @@ internal fun findEncryptionBlocksIdsByType(element: PsiElement, blockType: Strin
   }.asSequence()
 }
 
-internal fun findEncryptionBlockElements(element: PsiElement, template: PsiElementPattern.Capture<HCLBlock>): List<HCLBlock>? {
+internal fun findEncryptionBlockElements(element: PsiElement, template: PsiElementPattern.Capture<HCLBlock>): List<HCLBlock> {
   val cachedResult = CachedValuesManager.getCachedValue(element) {
     val relevantBlocks = element.parentsOfType<HCLBlock>(true)
       .firstOrNull { block -> EncryptionBlock.accepts(block) }
       ?.`object`
-      ?.childrenOfType<HCLBlock>()
+      ?.childrenOfType<HCLBlock>().orEmpty()
     CachedValueProvider.Result.create(relevantBlocks, PsiModificationTracker.MODIFICATION_COUNT)
   }
-  return cachedResult?.filter { block -> template.accepts(block) }
+  return cachedResult.filter { block -> template.accepts(block) }
 }
