@@ -77,7 +77,6 @@
     <pom.declarationSearcher implementation="org.jetbrains.vuejs.codeInsight.refs.VuePomDeclarationSearcher"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
-    <useScopeEnlarger implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerSupportProvider"/>
 

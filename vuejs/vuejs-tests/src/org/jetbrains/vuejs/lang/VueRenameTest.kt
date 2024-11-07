@@ -198,6 +198,10 @@ class VueRenameTest : BasePlatformTestCase() {
     doTestRenameComponent("OrdersListView.vue", "SomeComponent.vue", true)
   }
 
+  fun testComponentFileWithReexports() {
+    doTestRenameComponent("OrdersListView.vue", "SomeComponent.vue", true)
+  }
+
   private fun doTest(newName: String, usingHandler: Boolean = false) {
     myFixture.configureByFile(getTestName(true) + ".vue")
     if (usingHandler) {

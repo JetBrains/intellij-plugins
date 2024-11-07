@@ -1,0 +1,1 @@
+export { OrdersListView as SomeOtherName } from './components.js';
