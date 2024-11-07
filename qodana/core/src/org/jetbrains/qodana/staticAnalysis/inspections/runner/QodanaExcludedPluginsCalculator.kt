@@ -2,6 +2,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
@@ -116,14 +117,17 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     processed.add(idString)
     include.add(descriptor)
 
+    val required = if (descriptor is IdeaPluginDescriptorImpl) {
+      descriptor.dependencies.plugins.mapNotNull { reference -> if (processed.contains(reference.id.idString)) null else reference.id.idString}
+    } else emptyList()
+
     return descriptor.dependencies.mapNotNull {
       if (processed.contains(it.pluginId.idString) || it.isOptional) null else it.pluginId.idString
-    }
+    } + required
   }
 }
 
 fun getKeptButDisabledPlugins(): List<String> {
   if (PlatformUtils.isRider()) return listOf("intellij.rider.plugins.cwm")
   return listOf("com.jetbrains.codeWithMe")
-
 }
