@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantDialog">
+  <grid id="ea5f6" binding="myPanel" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="65" y="100" width="330" height="339"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="13b55" class="javax.swing.JCheckBox" binding="myReplaceAllCheckBox">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <actionCommand value=""/>
+          <contentAreaFilled value="false"/>
+          <focusable value="false"/>
+          <margin top="2" left="0" bottom="2" right="3"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="972d2" class="com.intellij.ui.EditorComboBox" binding="myVarType" custom-create="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="8c17f" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="972d2"/>
+          <text resource-bundle="messages/JavaScriptBundle" key="extract.constant.type"/>
+        </properties>
+      </component>
+      <component id="df809" class="javax.swing.JLabel" binding="myNameLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value=""/>
+          <requestFocusEnabled value="false"/>
+          <text resource-bundle="messages/JavaScriptBundle" key="javascript.introduce.variable.name.prompt"/>
+        </properties>
+      </component>
+      <component id="2c355" class="com.intellij.refactoring.ui.NameSuggestionsField" binding="myNameField" custom-create="true">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="60ef3" class="javax.swing.JLabel" binding="myTargetClassLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/JavaScriptBundle" key="introduce.constant.target.class"/>
+        </properties>
+      </component>
+      <nested-form id="da6ea" form-file="com/intellij/lang/javascript/refactoring/ui/JSVisibilityPanel.form" binding="myVisibilityPanel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </nested-form>
+      <grid id="86ebb" binding="myTargetClassPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <vspacer id="55f5c">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+    </children>
+  </grid>
+  <inspectionSuppressions>
+    <suppress inspection="NoButtonGroup"/>
+  </inspectionSuppressions>
+</form>

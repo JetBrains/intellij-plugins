@@ -163,7 +163,7 @@ public class ActionScriptQualifiedItemProcessor<T extends ResultSink> extends Qu
 
   @Override
   public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-    boolean b = super.execute(element, state);
+    boolean b = needPackages() && !(element instanceof JSPackage) || super.execute(element, state);
     if (getResult() != null) forceResolvedState();
     return b;
   }
