@@ -29,7 +29,7 @@ public class ActionScriptQualifiedItemProcessor<T extends ResultSink> extends Qu
   }
 
   @Override
-  protected void processImpl(@NotNull JSType type, @NotNull JSEvaluateContext evaluateContext) {
+  public void process(@NotNull JSType type, @NotNull JSEvaluateContext evaluateContext) {
     if (type instanceof JSAnyType) {
       boolean currentIsNotResolved = isActionScriptDummyResolve();
       resolved = currentIsNotResolved ? TypeResolveState.PrefixUnknown : TypeResolveState.Unknown;
