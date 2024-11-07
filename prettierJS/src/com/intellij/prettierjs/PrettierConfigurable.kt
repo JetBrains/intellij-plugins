@@ -128,6 +128,14 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
             val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
             shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
           }.enabledIf(manualConfiguration.selected)
+          row {
+            checkBox(PrettierBundle.message("prettier.format.files.only.with.prettier.dependency.label"))
+              .bindSelected({ prettierState.formatFilesOnlyWithPrettierDependency }, { prettierState.formatFilesOnlyWithPrettierDependency = it })
+            val helpLabel = ContextHelpLabel.create(PrettierBundle.message("prettier.format.files.only.with.prettier.dependency.help.text"))
+            helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
+            cell(helpLabel)
+
+          }.enabledIf(manualConfiguration.selected)
           separator()
         }.visibleIf(manualConfiguration.selected)
       }

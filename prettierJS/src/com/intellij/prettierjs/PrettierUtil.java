@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonToken;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.openapi.application.ReadAction;
@@ -108,6 +109,20 @@ public final class PrettierUtil {
       addPossibleConfigsForFile(file, results, baseDir);
     }
     return results;
+  }
+
+  public static boolean isFormattingAllowedForFile(@NotNull Project project, @NotNull VirtualFile file) {
+    var configuration = PrettierConfiguration.getInstance(project);
+
+    if (!GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file)) {
+      return false;
+    }
+
+    if (configuration.getFormatFilesOnlyWithPrettierDependency()) {
+      return findPackageJsonWithPrettierUpTree(project, file) != null;
+    }
+
+    return true;
   }
 
   public static @Nullable PackageJsonData findPackageJsonWithPrettierUpTree(@NotNull Project project, @NotNull VirtualFile file) {
