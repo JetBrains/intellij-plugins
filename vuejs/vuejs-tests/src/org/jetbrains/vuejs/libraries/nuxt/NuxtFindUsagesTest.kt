@@ -11,19 +11,19 @@ import org.jetbrains.vuejs.lang.getVueTestDataPath
 class NuxtFindUsagesTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/nuxt/findUsages"
 
-  fun testScriptSetupComponentFile() {
+  fun testScriptSetupComponentFileAllScope() {
     doTest("components/AppAlert.vue", GlobalSearchScope.everythingScope(project))
   }
 
   fun testScriptSetupComponentFileProjectScope() {
-    doTest("components/AppAlert.vue", GlobalSearchScope.projectScope(project))
+    doTest("components/AppAlert.vue")
   }
 
   fun testDefaultExportComponentFile() {
-    doTest("components/AppAlert.vue", GlobalSearchScope.everythingScope(project))
+    doTest("components/AppAlert.vue")
   }
 
-  private fun doTest(component: String, scope: GlobalSearchScope) {
+  private fun doTest(component: String, scope: GlobalSearchScope = GlobalSearchScope.projectScope(project)) {
     val testName = getTestName(true)
     myFixture.copyDirectoryToProject(testName, ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NUXT_2_15_6)
