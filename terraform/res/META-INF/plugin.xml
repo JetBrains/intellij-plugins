@@ -5,7 +5,7 @@
 
   <description><![CDATA[
    <p>
-      Improved <a href="https://www.terraform.io/">Terraform</a> support is tailored for developers, SREs, and DevOps teams, supporting
+      Improved <a href="https://www.terraform.io/">Terraform</a> and <a href="https://opentofu.org/">OpenTofu</a> support is tailored for developers, SREs, and DevOps teams, supporting
       infrastructure management with features like syntax highlighting, code completion, and real-time error checking.
       Streamline your infrastructure as code (IaC) workflow and boost productivity with comprehensive tooling designed to make development
       and deployment more efficient.
@@ -31,8 +31,42 @@
     ]]></description>
 
   <!--suppress PluginXmlValidity -->
-  <change-notes>
-    <![CDATA[
+  <change-notes><![CDATA[
+    2024.3
+    <ul>
+      <li>
+        Introduced support for OpenTofu, an open-source, community-driven alternative to Terraform. The IDE now supports .tofu files
+        when OpenTofu is selected, enhancing Infrastructure as Code development with autocompletion for encryption methods, key providers,
+        and inspections for unknown references, ensuring a more secure and efficient setup.
+      </li>
+      <li>
+        Terraform Run Configuration actions are now available through Search Everywhere, streamlining access and usability.
+      </li>
+      <li>
+        Added inspection to detect unused variables and locals in Terraform files, helping keep code cleaner and more maintainable.
+      </li>
+      <li>
+        Usage indicators now highlight variable usage across Terraform files, aiding visibility and navigation of variable dependencies.
+      </li>
+      <li>
+        Added warnings for unused resources, helping developers identify and manage redundant or inactive code.
+      </li>
+      <li>
+        Refined Terraform controls in Gutter (Init, Validate, Plan, Apply, Destroy) for a more predictable and intuitive configuration experience.
+      </li>
+      <li>
+        Improved Terraform Run Configuration form with streamlined options and settings, enhancing user experience.
+      </li>
+      <li>
+        A new option to create Terraform files directly from the Create File menu has been added, making it easier to start new configurations.
+      </li>
+      <li>
+        Git author name inlay hints are now available in Terraform files, aiding collaboration and author tracking within code.
+      </li>
+      <li>
+        The search for variables now prioritizes tfvars files, making variable management more efficient and reducing search noise.
+      </li>
+    </ul>
     2024.2
     <ul>
       <li>AI Full Line Completion for Terraform is now available, running locally on your machine without using external services. It is disabled by default but can be enabled for use. We appreciate your feedback to help improve the model (note that we do not learn from your data).</li>
