@@ -266,6 +266,53 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testMonorepoSubDirOnSaveManualWithoutScope() {
+    configureFormatFilesOnlyWithPrettierDependency(false, () -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+      doTestEditorReformat("");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+      doTestEditorReformat("package-a/");
+
+      //package without prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+      doTestEditorReformat("package-b/");
+    });
+  }
+
+  public void testMonorepoSubDirOnSaveManualWithScopeOnSave() {
+    configureFormatFilesOnlyWithPrettierDependency(true, () -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+
+      //package without prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+    });
+  }
+
+  public void testMonorepoSubDirOnSaveManualWithScopeEditorReformat() {
+    configureFormatFilesOnlyWithPrettierDependency(true, () -> {
+      //file in the root without prettier
+      doTestEditorReformat("");
+
+      //package with prettier in subfolder
+      doTestEditorReformat("package-a/");
+
+      //package without prettier in subfolder
+      doTestEditorReformat("package-b/");
+    });
+  }
+
+
   public void testCommentAfterImports() {
     configureRunOnReformat(() -> doTestEditorReformat(""));
   }
@@ -367,6 +414,32 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     }
     finally {
       configuration.getState().runOnSave = runOnSave;
+    }
+  }
+
+  private void configureFormatFilesOnlyWithPrettierDependency(boolean enabled, Runnable runnable) {
+    var configuration = PrettierConfiguration.getInstance(getProject());
+    var runOnSave = configuration.getState().runOnSave;
+    var runOnReformat = configuration.getState().runOnReformat;
+    var configurationMode = configuration.getState().configurationMode;
+    var formatFilesOnlyWithPrettierDependency = configuration.getState().formatFilesOnlyWithPrettierDependency;
+
+    configuration.getState().runOnSave = true;
+    configuration.getState().runOnReformat = true;
+    configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+    configuration.getState().formatFilesOnlyWithPrettierDependency = enabled;
+
+    try {
+      String dirName = getTestName(true);
+      myFixture.copyDirectoryToProject(dirName, "");
+
+      runnable.run();
+    }
+    finally {
+      configuration.getState().runOnSave = runOnSave;
+      configuration.getState().runOnReformat = runOnReformat;
+      configuration.getState().configurationMode = configurationMode;
+      configuration.getState().formatFilesOnlyWithPrettierDependency = formatFilesOnlyWithPrettierDependency;
     }
   }
 
