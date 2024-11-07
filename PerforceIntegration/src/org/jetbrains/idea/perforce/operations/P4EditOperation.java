@@ -118,11 +118,7 @@ public class P4EditOperation extends VcsOperationOnPath {
     }
     if (myNeedPathRefresh) {
       final FilePath filePath = getFilePath();
-      ApplicationManager.getApplication().runReadAction(() -> {
-        if (!project.isDisposed()) {
-          VcsDirtyScopeManager.getInstance(project).fileDirty(filePath);
-        }
-      });
+      VcsDirtyScopeManager.getInstance(project).fileDirty(filePath);
     }
   }
 
