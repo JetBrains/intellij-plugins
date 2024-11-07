@@ -102,6 +102,7 @@ class RunTFToolGetFix(private val directoryName: String, private val executableN
           .withWorkDirectory(vf.path)
           .withParameters("get")
           .withPresentableName("${toolType.executableName} get")
+          .showOutputOnError()
           .showNotifications(true, false)
       )
     }
