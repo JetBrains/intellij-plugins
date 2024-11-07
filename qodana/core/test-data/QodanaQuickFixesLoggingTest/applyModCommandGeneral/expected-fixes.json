@@ -1,0 +1,10 @@
+[
+    {
+        "inspectionId": "ConstantValue",
+        "inspectionName": "Constant values",
+        "problemOriginFilePath": "test-module/A.java",
+        "problemMessage": "2: Condition is always true",
+        "fixText": "Simplify boolean expression",
+        "modifiedFilePath": "test-module/A.java"
+    }
+]

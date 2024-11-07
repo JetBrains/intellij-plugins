@@ -1,0 +1,26 @@
+[
+    {
+        "inspectionId": "PointlessArithmeticExpression",
+        "inspectionName": "Pointless arithmetic expression",
+        "problemOriginFilePath": "test-module/A.java",
+        "problemMessage": "-1: '' can be replaced with '0'",
+        "fixText": "Simplify",
+        "modifiedFilePath": "test-module/A.java"
+    },
+    {
+        "inspectionId": "PointlessArithmeticExpression",
+        "inspectionName": "Pointless arithmetic expression",
+        "problemOriginFilePath": "test-module/A.java",
+        "problemMessage": "-1: '' can be replaced with 'a1'",
+        "fixText": "Simplify",
+        "modifiedFilePath": "test-module/A.java"
+    },
+    {
+        "inspectionId": "PointlessArithmeticExpression",
+        "inspectionName": "Pointless arithmetic expression",
+        "problemOriginFilePath": "test-module/A.java",
+        "problemMessage": "-1: '' can be replaced with '1024'",
+        "fixText": "Simplify",
+        "modifiedFilePath": "test-module/A.java"
+    }
+]
