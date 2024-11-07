@@ -1,0 +1,14 @@
+[
+    {
+        "beforeFix": "3    Boolean tempValue = Boolean.TRUE.equals(!v) ? true : false;\n4    return enableFileCache = Boolean.TRUE.equals(tempValue) ? true : false;",
+        "afterFix": "3    Boolean tempValue = Boolean.TRUE.equals(!v);\n4    return enableFileCache = Boolean.TRUE.equals(tempValue);",
+        "filePath": "test-module/A.java",
+        "problemMessage": "3: 'Boolean.TRUE.equals(!v) ? true : false' can be simplified to 'Boolean.TRUE.equals(!v)'"
+    },
+    {
+        "beforeFix": "4    return enableFileCache = Boolean.TRUE.equals(tempValue) ? true : false;",
+        "afterFix": "4    return enableFileCache = Boolean.TRUE.equals(tempValue);",
+        "filePath": "test-module/A.java",
+        "problemMessage": "4: 'Boolean.TRUE.equals(tempValue) ? true : false' can be simplified to 'Boolean.TRUE.equals(tempValue)'"
+    }
+]

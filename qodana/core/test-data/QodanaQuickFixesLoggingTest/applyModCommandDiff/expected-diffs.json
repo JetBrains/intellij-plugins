@@ -1,0 +1,14 @@
+[
+    {
+        "beforeFix": "2    if (true) {",
+        "afterFix": "Was deleted",
+        "filePath": "test-module/A.java",
+        "problemMessage": "2: Condition is always true"
+    },
+    {
+        "beforeFix": "4    } else {\n5      System.out.println(\"World\");\n6    }",
+        "afterFix": "Was deleted",
+        "filePath": "test-module/A.java",
+        "problemMessage": "2: Condition is always true"
+    }
+]

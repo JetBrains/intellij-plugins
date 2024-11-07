@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber
@@ -21,22 +22,45 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedQueue
 
-object FixesLogger {
+@Serializable
+private data class FixData(
+  val inspectionId: String,
+  val inspectionName: String,
+  val problemOriginFilePath: String,
+  val problemMessage: String,
+  val fixText: String,
+  val modifiedFilePath: String
+)
 
-  private val jsonEncoder
-    get() = Json { prettyPrint = true }
+@Serializable
+private data class DiffChange(
+  val beforeFix: String,
+  val afterFix: String,
+  val filePath: String,
+  val problemMessage: String
+)
 
-  @Serializable
-  private data class FixData(
-    val inspectionId: String,
-    val inspectionName: String,
-    val problemOriginFilePath: String,
-    val problemMessage: String,
-    val fixText: String,
-    val modifiedFilePath: String
-  )
+private data class FileModification(
+  val path: String,
+  val problemMessage: String,
+  val textBefore: CharSequence,
+  val textAfter: CharSequence
+)
+
+private val jsonEncoder
+  get() = Json { prettyPrint = true }
+
+class FixesLogger {
+
+  companion object {
+    const val TEXT_NOT_CAPTURED_MESSAGE = "Text was not captured"
+    const val FILE_NOT_CAPTURED_MESSAGE = "File was not captured"
+    @VisibleForTesting
+    const val INCLUDE_FIXES_DIFF_KEY = "qodana.fixes.log.include.diff"
+  }
 
   private val fixesData: MutableList<FixData> = mutableListOf()
+  val diffIncluded: Boolean = java.lang.Boolean.getBoolean(INCLUDE_FIXES_DIFF_KEY)
 
   fun logAppliedFix(
     messageReporter: QodanaMessageReporter,
@@ -72,7 +96,7 @@ object FixesLogger {
   ) {
     val fixData = FixData(
       tool.id,
-      tool.shortName,
+      tool.displayName,
       problemOriginFilePath,
       problemMessage,
       fixText,
@@ -84,6 +108,7 @@ object FixesLogger {
 
   suspend fun logFixesAsJson(logFileName: String) = withContext(StaticAnalysisDispatchers.IO) {
     val path = Path.of(PathManager.getLogPath(), "qodana", logFileName)
+    path.parent.toFile().mkdirs()
     try {
       runInterruptible(StaticAnalysisDispatchers.IO) {
         Files.newBufferedWriter(path, StandardCharsets.UTF_8).use { writer ->
@@ -96,18 +121,8 @@ object FixesLogger {
     }
   }
 
-  const val INCLUDE_FIXES_DIFF_KEY = "qodana.fixes.log.include.diff"
   private val fileDiffs = ConcurrentLinkedQueue<DiffChange>()
   private val fileModificationsQueue = ConcurrentLinkedQueue<FileModification>()
-
-  private data class FileModification(
-    val path: String,
-    val problemMessage: String,
-    val textBefore: CharSequence,
-    val textAfter: CharSequence
-  )
-
-  const val NOT_CAPTURED_MESSAGE = "Text was not captured"
 
   fun addFileModificationToQueue(
     filePath: String,
@@ -115,14 +130,6 @@ object FixesLogger {
     textBefore: CharSequence,
     textAfter: CharSequence,
   ) = fileModificationsQueue.add(FileModification(filePath, problemMessage, textBefore, textAfter))
-
-  @Serializable
-  private data class DiffChange(
-    val beforeFix: String,
-    val afterFix: String,
-    val filePath: String,
-    val problemMessage: String
-  )
 
   private fun addLineNumbers(text: String, startLine: Int): String {
     return text.split('\n')
@@ -151,15 +158,15 @@ object FixesLogger {
   fun commitFilesModificationsLog() {
     while (true) {
       val (modifiedFile, problemMessage, beforeFixText, afterFixText) = fileModificationsQueue.poll() ?: break
-      if (beforeFixText == NOT_CAPTURED_MESSAGE || afterFixText == NOT_CAPTURED_MESSAGE) {
-        fileDiffs.add(DiffChange(NOT_CAPTURED_MESSAGE, NOT_CAPTURED_MESSAGE, modifiedFile, problemMessage))
+      if (beforeFixText == TEXT_NOT_CAPTURED_MESSAGE || afterFixText == TEXT_NOT_CAPTURED_MESSAGE) {
+        fileDiffs.add(DiffChange(TEXT_NOT_CAPTURED_MESSAGE, TEXT_NOT_CAPTURED_MESSAGE, modifiedFile, problemMessage))
         continue
       }
       val diff = ComparisonManager.getInstance().compareLines(
         beforeFixText, afterFixText, ComparisonPolicy.DEFAULT, ProgressIndicatorBase()
       )
       if (diff.size == 0) {
-        fileDiffs.add(DiffChange(NOT_CAPTURED_MESSAGE, NOT_CAPTURED_MESSAGE, modifiedFile, problemMessage))
+        fileDiffs.add(DiffChange(TEXT_NOT_CAPTURED_MESSAGE, TEXT_NOT_CAPTURED_MESSAGE, modifiedFile, problemMessage))
         continue
       }
       diff.forEach { lineFragment ->
@@ -170,6 +177,7 @@ object FixesLogger {
 
   suspend fun logFileModificationsAsJson(logFileName: String) = withContext(StaticAnalysisDispatchers.IO) {
     val path = Path.of(PathManager.getLogPath(), "qodana", logFileName)
+    path.parent.toFile().mkdirs()
     try {
       runInterruptible(StaticAnalysisDispatchers.IO) {
         Files.newBufferedWriter(path, StandardCharsets.UTF_8).use { writer ->

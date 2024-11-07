@@ -1,0 +1,8 @@
+[
+    {
+        "beforeFix": "4  class InnerA {",
+        "afterFix": "4  static class InnerA {",
+        "filePath": "test-module/A.java",
+        "problemMessage": "4: Inner class 'InnerA' may be 'static'"
+    }
+]

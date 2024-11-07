@@ -1,0 +1,10 @@
+[
+    {
+        "inspectionId": "InnerClassMayBeStatic",
+        "inspectionName": "Inner class may be 'static'",
+        "problemOriginFilePath": "test-module/A.java",
+        "problemMessage": "4: Inner class 'InnerA' may be 'static'",
+        "fixText": "Make 'static'",
+        "modifiedFilePath": "test-module/A.java"
+    }
+]

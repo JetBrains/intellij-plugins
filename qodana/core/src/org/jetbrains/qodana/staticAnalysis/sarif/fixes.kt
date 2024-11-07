@@ -28,9 +28,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.util.PairProcessor
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.license.isFixesAvailable
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
@@ -38,10 +35,12 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.script.QodanaProgressIndicator
 import com.intellij.platform.util.coroutines.mapConcurrent
 import com.intellij.psi.PsiFile
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
 
 private val LOG = logger<QodanaRunner>()
+
+const val ALLOW_NON_BATCH_FIXES = "qodana.allow.non.batch.fixes"
 
 suspend fun maybeApplyFixes(sarifRun: Run, runContext: QodanaRunContext) {
   val disableDefaultFixesStrategy = System.getProperty("qodana.disable.default.fixes.strategy", "false").toBoolean()
@@ -54,11 +53,12 @@ suspend fun maybeApplyFixes(sarifRun: Run, runContext: QodanaRunContext) {
     return
   }
 
+  val fixesLogger = FixesLogger()
   runTaskAndLogTime(runContext.config.fixesStrategy.stageName) {
     try {
       QuickFixesStrategyProvider.runCustomProviders(sarifRun, runContext)
       if (!disableDefaultFixesStrategy) {
-        applyFixes(sarifRun, runContext)
+        applyFixes(sarifRun, runContext, fixesLogger)
       }
     }
     finally {
@@ -69,41 +69,46 @@ suspend fun maybeApplyFixes(sarifRun: Run, runContext: QodanaRunContext) {
           FileDocumentManager.getInstance().saveAllDocuments()
         }
       }
-      FixesLogger.logFixesAsJson("fixes.json")
-      if (java.lang.Boolean.getBoolean(FixesLogger.INCLUDE_FIXES_DIFF_KEY)) {
-        FixesLogger.logFileModificationsAsJson("files-modifications.json")
+      fixesLogger.logFixesAsJson("fixes.json")
+      if (fixesLogger.diffIncluded) {
+        fixesLogger.logFileModificationsAsJson("files-modifications.json")
       }
     }
   }
 }
 
-private suspend fun applyFixes(sarifRun: Run, runContext: QodanaRunContext) {
+private suspend fun applyFixes(sarifRun: Run, runContext: QodanaRunContext, fixesLogger: FixesLogger) {
   val projectDir = VfsUtil.findFile(runContext.projectPath, false)
   val grouped = sarifRun.results.groupBy { result -> result.locations[0].physicalLocation.artifactLocation.uri }
   val cleanup = runContext.config.fixesStrategy == FixesStrategy.CLEANUP
   LOG.debug("Applying fixes. ${grouped.size} files to process.")
-  withContext(Dispatchers.Default) {
+  supervisorScope {
     grouped.forEach { (uri, results) ->
       try {
-        runFixesForFile(runContext, uri, results, projectDir, cleanup)
+        runFixesForFile(runContext, uri, results, projectDir, cleanup, fixesLogger)
       }
       catch (e: Exception) {
         LOG.error("Failed to apply fixes for $uri", e)
       }
     }
-    if (java.lang.Boolean.getBoolean(FixesLogger.INCLUDE_FIXES_DIFF_KEY)) {
+    if (fixesLogger.diffIncluded) {
       launch {
-        FixesLogger.commitFilesModificationsLog()
+        withContext(Dispatchers.Default) {
+          fixesLogger.commitFilesModificationsLog()
+        }
       }
     }
   }
 }
 
-private suspend fun runFixesForFile(runContext: QodanaRunContext,
-                                    uri: String,
-                                    results: List<Result>,
-                                    projectDir: VirtualFile?,
-                                    cleanup: Boolean) {
+private suspend fun runFixesForFile(
+  runContext: QodanaRunContext,
+  uri: String,
+  results: List<Result>,
+  projectDir: VirtualFile?,
+  cleanup: Boolean,
+  fixesLogger: FixesLogger
+) {
   runContext.messageReporter.reportMessage(1, "Checking fixes for $uri")
   val problems = reconstructProblems(results, uri, projectDir, runContext, cleanup)
 
@@ -114,8 +119,8 @@ private suspend fun runFixesForFile(runContext: QodanaRunContext,
 
   val (cleanupProblems, otherProblems) = problems.partition { it.first.isCleanupTool }
   LOG.debug("Applying fixes. $uri has ${cleanupProblems.size} cleanup problems and ${otherProblems.size} other problems.")
-  val appliedCleanupFixes = applyCleanup(runContext, cleanupProblems, uri)
-  val appliedOtherFixes = applyOther(runContext, otherProblems, uri)
+  val appliedCleanupFixes = applyCleanup(runContext, cleanupProblems, uri, fixesLogger)
+  val appliedOtherFixes = applyOther(runContext, otherProblems, uri, fixesLogger)
   val appliedFixes = appliedCleanupFixes + appliedOtherFixes
   runContext.messageReporter.reportMessage(1, "Number of fixes applied for $uri: $appliedFixes")
 }
@@ -186,7 +191,8 @@ private suspend fun inspectGlobalSimpleTools(globalToolWrappers: List<Inspection
 private suspend fun applyCleanup(
   runContext: QodanaRunContext,
   problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
-  uri: String
+  uri: String,
+  fixesLogger: FixesLogger
 ): Int {
   if (problems.isEmpty()) return 0
   return withContext(Dispatchers.EDT) {
@@ -197,7 +203,7 @@ private suspend fun applyCleanup(
         LOG.debug("Applying cleanup ${problems.size} fixes for $uri")
         problems.forEach { (tool, problemDescriptors) ->
           problemDescriptors.forEach { problem ->
-            val textBefore: CharSequence? =  if (java.lang.Boolean.getBoolean(FixesLogger.INCLUDE_FIXES_DIFF_KEY))
+            val textBefore: CharSequence? =  if (fixesLogger.diffIncluded)
               problem.containingFileText(true) else null
 
             val fixesTask = CleanupInspectionUtil.getInstance().applyFixesNoSort(
@@ -205,10 +211,10 @@ private suspend fun applyCleanup(
 
             if (fixesTask.numberOfSucceededFixes > 0) {
               val problemMessage = problem.messageWithLine()
-              FixesLogger.logAppliedFix(runContext.messageReporter, tool, problemMessage, uri, problem, uri)
+              fixesLogger.logAppliedFix(runContext.messageReporter, tool, problemMessage, uri, problem, uri)
 
-              if (java.lang.Boolean.getBoolean(FixesLogger.INCLUDE_FIXES_DIFF_KEY)) {
-                FixesLogger.addFileModificationToQueue(uri, problemMessage, textBefore!!, problem.containingFileText())
+              if (fixesLogger.diffIncluded && textBefore != null) {
+                fixesLogger.addFileModificationToQueue(uri, problemMessage, textBefore, problem.containingFileText())
               }
             }
             counter += fixesTask.numberOfSucceededFixes
@@ -225,14 +231,15 @@ private suspend fun applyCleanup(
 private suspend fun applyOther(
   runContext: QodanaRunContext,
   problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
-  uri: String
+  uri: String,
+  fixesLogger: FixesLogger
 ): Int {
   if (problems.isEmpty()) return 0
 
   return withContext(Dispatchers.EDT) {
     LOG.debug("Applying fixes for $uri")
     writeCommandAction(runContext.project, QodanaBundle.message("apply.fixes.command")) {
-      val fixed = fixProblems(runContext, problems, uri)
+      val fixed = fixProblems(runContext, problems, uri, fixesLogger)
       LOG.debug("Applying fixes for $uri is finished. $fixed problems were fixed.")
       fixed
     }
@@ -243,14 +250,15 @@ private suspend fun applyOther(
 private fun fixProblems(
   runContext: QodanaRunContext,
   problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
-  uri: String
+  uri: String,
+  fixesLogger: FixesLogger
 ): Int {
   var counter = 0
   problems.forEach { (tool, problemDescriptors) ->
     problemDescriptors.forEach { problem ->
       val descriptionMessage = problem.messageWithLine()
       try {
-        if (tryToFixProblem(runContext, problem, descriptionMessage, tool, uri)) {
+        if (tryToFixProblem(runContext, problem, descriptionMessage, tool, uri, fixesLogger)) {
           counter++
         }
       }
@@ -267,7 +275,8 @@ private fun tryToFixProblem(
   descriptor: ProblemDescriptor,
   descriptionMessage: String,
   toolWrapper: InspectionToolWrapper<*, *>,
-  uri: String
+  uri: String,
+  fixesLogger: FixesLogger
 ): Boolean {
   val element = descriptor.psiElement
   if (element == null || !element.isValid) {
@@ -275,9 +284,9 @@ private fun tryToFixProblem(
     return false
   }
   val project = element.project
-  if (tryToApplyModCommandFixes(runContext, descriptor, descriptionMessage, toolWrapper, uri)) return true
+  if (tryToApplyModCommandFixes(runContext, descriptor, descriptionMessage, toolWrapper, uri, fixesLogger)) return true
 
-  if (!java.lang.Boolean.getBoolean("qodana.allow.non.batch.fixes")) return false
+  if (!java.lang.Boolean.getBoolean(ALLOW_NON_BATCH_FIXES)) return false
   val nonModCommandFix = descriptor.fixes?.firstOrNull { it !is ModCommandQuickFix }
   if (nonModCommandFix == null) {
     LOG.debug("No batch fix for problem '$descriptionMessage' is found.")
@@ -288,17 +297,17 @@ private fun tryToFixProblem(
   LOG.debug("Non-batch fix for problem '$descriptionMessage' is applied successfully.")
   PsiDocumentManager.getInstance(project).apply {
     if (uncommittedDocuments.isEmpty()) {
-      FixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, descriptionMessage, uri, nonModCommandFix.name,
-                                uri)
+      fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, descriptionMessage, uri, nonModCommandFix.name,
+                                FixesLogger.FILE_NOT_CAPTURED_MESSAGE)
     }
     uncommittedDocuments.forEach { uncommitedDoc ->
       val psiFile = getPsiFile(uncommitedDoc)
       psiFile?.virtualFile?.let { file ->
-        FixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, descriptionMessage, uri,
+        fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, descriptionMessage, uri,
                                   nonModCommandFix.name, file.path.absolutePathToRelative(runContext.project.basePath))
       }
-      if (java.lang.Boolean.getBoolean(FixesLogger.INCLUDE_FIXES_DIFF_KEY) && psiFile != null) {
-        FixesLogger.addFileModificationToQueue(psiFile.virtualFile.path.absolutePathToRelative(runContext.project.basePath),
+      if (fixesLogger.diffIncluded && psiFile != null) {
+        fixesLogger.addFileModificationToQueue(psiFile.virtualFile.path.absolutePathToRelative(runContext.project.basePath),
                                                descriptionMessage, descriptor.containingFileText(), uncommitedDoc.charsSequence)
       }
     }
@@ -312,7 +321,8 @@ private fun tryToApplyModCommandFixes(
   descriptor: ProblemDescriptor,
   descriptionMessage: String,
   toolWrapper: InspectionToolWrapper<*, *>,
-  uri: String
+  uri: String,
+  fixesLogger: FixesLogger
 ): Boolean {
   val fixes = descriptor.fixes?.filterIsInstance<ModCommandQuickFix>() ?: emptyList()
   LOG.debug("${fixes.size} fixes for problem '$descriptionMessage' are found.")
@@ -321,7 +331,7 @@ private fun tryToApplyModCommandFixes(
     val result = ModCommandExecutor.getInstance().executeInBatch(ActionContext.from(descriptor), modCommand)
     if (result == ModCommandExecutor.Result.SUCCESS) {
       LOG.debug("Fix for problem '$descriptionMessage' is applied successfully.")
-      logModCommand(runContext, toolWrapper, descriptionMessage, uri, it.name, modCommand)
+      logModCommand(runContext, toolWrapper, descriptionMessage, uri, it.name, modCommand, fixesLogger)
       return true
     } else {
       LOG.debug("Fix attempt for problem '$descriptionMessage' failed with message '${result.message}'.")
@@ -336,26 +346,28 @@ private fun logModCommand(
   problemMessage: String,
   problemOriginFilePath: String,
   fixText: String,
-  modCommand: ModCommand
+  modCommand: ModCommand,
+  fixesLogger: FixesLogger
 ) {
   when (modCommand) {
     is ModUpdateFileText -> {
       modCommand.modifiedFiles().forEach {
-        FixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, problemMessage, problemOriginFilePath, fixText,
+        fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, problemMessage, problemOriginFilePath, fixText,
                                   it.path.absolutePathToRelative(runContext.project.basePath))
       }
-      if (java.lang.Boolean.getBoolean(FixesLogger.INCLUDE_FIXES_DIFF_KEY)) {
-        FixesLogger.addFileModificationToQueue(modCommand.file.path.absolutePathToRelative(runContext.project.basePath), problemMessage,
+      if (fixesLogger.diffIncluded) {
+        fixesLogger.addFileModificationToQueue(modCommand.file.path.absolutePathToRelative(runContext.project.basePath), problemMessage,
                                                modCommand.oldText, modCommand.newText)
       }
     }
     is ModCompositeCommand -> {
       modCommand.commands.forEach {
-        logModCommand(runContext, toolWrapper, problemMessage, problemOriginFilePath, fixText, it)
+        logModCommand(runContext, toolWrapper, problemMessage, problemOriginFilePath, fixText, it, fixesLogger)
       }
     }
     else -> {
-      FixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, problemMessage, problemOriginFilePath, fixText, FixesLogger.NOT_CAPTURED_MESSAGE)
+      fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, problemMessage, problemOriginFilePath, fixText,
+                                FixesLogger.TEXT_NOT_CAPTURED_MESSAGE)
     }
   }
 }
@@ -367,4 +379,4 @@ private fun ProblemDescriptor.messageWithLine() =
   "${lineNumber}: ${ProblemDescriptorUtil.renderDescriptionMessage(this, psiElement)}"
 
 private fun ProblemDescriptor.containingFileText(copy: Boolean = false) =
-  psiElement?.containingFile?.fileDocument?.let { if (copy) it.text else it.charsSequence } ?: FixesLogger.NOT_CAPTURED_MESSAGE
+  psiElement?.containingFile?.fileDocument?.let { if (copy) it.text else it.charsSequence } ?: FixesLogger.TEXT_NOT_CAPTURED_MESSAGE
