@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
@@ -130,7 +131,7 @@ public class ActionScriptReferenceExpressionResolver
       }
     } else {
       final QualifiedItemProcessor<ResolveResultSink> processor =
-        new QualifiedItemProcessor<>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
+        new ActionScriptQualifiedItemProcessor<>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
       processor.evaluateExpressionOrElementType(myQualifier, myContainingFile);
 
