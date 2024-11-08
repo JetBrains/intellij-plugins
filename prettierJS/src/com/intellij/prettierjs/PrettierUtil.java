@@ -118,7 +118,7 @@ public final class PrettierUtil {
       return false;
     }
 
-    if (configuration.getFormatFilesOnlyWithPrettierDependency()) {
+    if (!configuration.getFormatFilesOutsideDependencyScope()) {
       return findPackageJsonWithPrettierUpTree(project, file) != null;
     }
 

@@ -50,13 +50,13 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     @OptionTag("myFilesPattern")
     public @NotNull String filesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
     public @NotNull String customIgnorePath = "";
-    public boolean formatFilesOnlyWithPrettierDependency = PRETTIER_FORMAT_FILES_ONLY_WITH_PRETTIER_DEPENDENCY_DEFAULT;
+    public boolean formatFilesOutsideDependencyScope = PRETTIER_FORMAT_FILES_OUTSIDE_DEPENDENCY_SCOPE_DEFAULT;
   }
 
   @NonNls private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
 
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
-  private static final boolean PRETTIER_FORMAT_FILES_ONLY_WITH_PRETTIER_DEPENDENCY_DEFAULT = true;
+  private static final boolean PRETTIER_FORMAT_FILES_OUTSIDE_DEPENDENCY_SCOPE_DEFAULT = true;
   private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = false;
   @NonNls private static final String PRETTIER_FILES_PATTERN_DEFAULT = "**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,vue,astro}";
 
@@ -174,8 +174,8 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return myState.customIgnorePath;
   }
 
-  public boolean getFormatFilesOnlyWithPrettierDependency() {
-    return !isDisabled() && (isAutomatic() || myState.formatFilesOnlyWithPrettierDependency);
+  public boolean getFormatFilesOutsideDependencyScope() {
+    return isManual() && myState.formatFilesOutsideDependencyScope;
   }
 
   public ConfigurationMode getConfigurationMode() {
@@ -200,5 +200,9 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
   private boolean isAutomatic() {
     return getConfigurationMode() == ConfigurationMode.AUTOMATIC;
+  }
+
+  private boolean isManual() {
+    return getConfigurationMode() == ConfigurationMode.MANUAL;
   }
 }
