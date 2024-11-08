@@ -267,7 +267,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   public void testMonorepoSubDirOnSaveManualWithoutScope() {
-    configureFormatFilesOnlyWithPrettierDependency(false, () -> {
+    configureFormatFilesOutsideDependencyScope(true, () -> {
       var actionId = "SaveDocument";
 
       //file in the root without prettier
@@ -285,7 +285,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   public void testMonorepoSubDirOnSaveManualWithScopeOnSave() {
-    configureFormatFilesOnlyWithPrettierDependency(true, () -> {
+    configureFormatFilesOutsideDependencyScope(false, () -> {
       var actionId = "SaveDocument";
 
       //file in the root without prettier
@@ -300,7 +300,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   public void testMonorepoSubDirOnSaveManualWithScopeEditorReformat() {
-    configureFormatFilesOnlyWithPrettierDependency(true, () -> {
+    configureFormatFilesOutsideDependencyScope(false, () -> {
       //file in the root without prettier
       doTestEditorReformat("");
 
@@ -387,47 +387,60 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   private void configureRunOnReformat(Runnable runnable) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnReformat = configuration.getState().runOnReformat;
+    var origRunOnReformat = configuration.getState().runOnReformat;
+    var configurationMode = configuration.getState().configurationMode;
+
     configuration.getState().runOnReformat = true;
+    configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC;
 
     try {
       String dirName = getTestName(true);
       myFixture.copyDirectoryToProject(dirName, "");
+      myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "node_modules/prettier");
 
       runnable.run();
     }
     finally {
       configuration.getState().runOnReformat = origRunOnReformat;
+      configuration.getState().configurationMode = configurationMode;
     }
   }
 
   private void configureRunOnSave(Runnable runnable) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean runOnSave = configuration.getState().runOnSave;
+    var runOnSave = configuration.getState().runOnSave;
+    var runOnReformat = configuration.getState().runOnReformat;
+    var configurationMode = configuration.getState().configurationMode;
+
     configuration.getState().runOnSave = true;
+    configuration.getState().runOnReformat = false;
+    configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC;
 
     try {
       String dirName = getTestName(true);
       myFixture.copyDirectoryToProject(dirName, "");
+      myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "node_modules/prettier");
 
       runnable.run();
     }
     finally {
       configuration.getState().runOnSave = runOnSave;
+      configuration.getState().runOnReformat = runOnReformat;
+      configuration.getState().configurationMode = configurationMode;
     }
   }
 
-  private void configureFormatFilesOnlyWithPrettierDependency(boolean enabled, Runnable runnable) {
+  private void configureFormatFilesOutsideDependencyScope(boolean enabled, Runnable runnable) {
     var configuration = PrettierConfiguration.getInstance(getProject());
     var runOnSave = configuration.getState().runOnSave;
     var runOnReformat = configuration.getState().runOnReformat;
     var configurationMode = configuration.getState().configurationMode;
-    var formatFilesOnlyWithPrettierDependency = configuration.getState().formatFilesOnlyWithPrettierDependency;
+    var formatFilesOutsideDependencyScope = configuration.getState().formatFilesOutsideDependencyScope;
 
     configuration.getState().runOnSave = true;
     configuration.getState().runOnReformat = true;
     configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
-    configuration.getState().formatFilesOnlyWithPrettierDependency = enabled;
+    configuration.getState().formatFilesOutsideDependencyScope = enabled;
 
     try {
       String dirName = getTestName(true);
@@ -439,7 +452,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
       configuration.getState().runOnSave = runOnSave;
       configuration.getState().runOnReformat = runOnReformat;
       configuration.getState().configurationMode = configurationMode;
-      configuration.getState().formatFilesOnlyWithPrettierDependency = formatFilesOnlyWithPrettierDependency;
+      configuration.getState().formatFilesOutsideDependencyScope = formatFilesOutsideDependencyScope;
     }
   }
 
