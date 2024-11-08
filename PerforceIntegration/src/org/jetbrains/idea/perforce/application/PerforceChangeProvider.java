@@ -367,12 +367,15 @@ public class PerforceChangeProvider implements ChangeProvider {
 
     List<PerforceChange> defChanges = filterByRoot(root, dirtyScope, changeCache.getChanges(connection, -1, root));
     if (!defChanges.isEmpty()) {
-      myRunner.setChangeRevisions(P4Command.opened, connection, defChanges);
       perforceChanges.addAll(defChanges);
     }
 
     for (PerforceChangeList changeList : allLists) {
       perforceChanges.addAll(filterByRoot(root, dirtyScope, changeCache.getChanges(connection, changeList.getNumber(), root)));
+    }
+
+    if (!perforceChanges.isEmpty()) {
+      myRunner.setChangeRevisions(P4Command.opened, connection, defChanges);
     }
 
     return perforceChanges;
