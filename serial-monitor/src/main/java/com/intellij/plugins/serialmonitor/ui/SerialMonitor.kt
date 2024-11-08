@@ -48,7 +48,7 @@ class SerialMonitor(private val project: Project,
   private val mySend: JButton
   private val myCommand: TextFieldWithStoredHistory
   private val myLineEnd: JBCheckBox
-  private val myHardwareFlowControl: DialogPanel
+  private val myHardwareControls: DialogPanel
   private val duplexConsoleView: JeditermSerialMonitorDuplexConsoleView
 
   fun getStatus(): PortStatus = duplexConsoleView.status
@@ -60,7 +60,7 @@ class SerialMonitor(private val project: Project,
 
   fun notifyProfileChanged() {
     duplexConsoleView.reconnect()
-    updateHwfcVisibility()
+    updateHardwareControlsVisibility()
   }
 
   private fun send(txt: String) {
@@ -134,7 +134,7 @@ class SerialMonitor(private val project: Project,
       myCommand.text = ""
     })
 
-    myHardwareFlowControl = panel {
+    myHardwareControls = panel {
       row {
         val rtsCheckbox = checkBox("RTS")
         val dtrCheckbox = checkBox("DTR")
@@ -170,17 +170,17 @@ class SerialMonitor(private val project: Project,
                 GridConstraints(0, 2, 1, 1, ANCHOR_EAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(mySend,
                 GridConstraints(0, 3, 1, 1, ANCHOR_EAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
-    myPanel.add(myHardwareFlowControl,
+    myPanel.add(myHardwareControls,
                 GridConstraints(0, 4, 1, 1, ANCHOR_EAST, FILL_NONE, SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(consoleComponent,
                 GridConstraints(1, 1, 1, 4, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
     duplexConsoleView.addSwitchListener(this::hideSendControls, this)
     hideSendControls(duplexConsoleView.isPrimaryConsoleEnabled)
-    updateHwfcVisibility()
+    updateHardwareControlsVisibility()
   }
 
-  private fun updateHwfcVisibility() {
-    myHardwareFlowControl.isVisible = portProfile.showHardwareFlowControl
+  private fun updateHardwareControlsVisibility() {
+    myHardwareControls.isVisible = portProfile.showHardwareControls
   }
 
   private fun hideSendControls(q: Boolean) {

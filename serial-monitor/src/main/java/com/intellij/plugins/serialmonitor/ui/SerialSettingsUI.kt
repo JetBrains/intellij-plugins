@@ -149,7 +149,7 @@ fun Panel.serialSettings(disposable: Disposable,
       .enabled(!readOnly)
 
     checkBox("")
-      .changesBind(SerialPortProfile::showHardwareFlowControl)
+      .changesBind(SerialPortProfile::showHardwareControls)
       .label(message("label.show.hardware.flow.control"))
 
     customize(UnscaledGapsY(bottom = 20))
