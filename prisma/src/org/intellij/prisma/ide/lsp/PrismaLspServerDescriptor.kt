@@ -15,6 +15,7 @@ class PrismaLspServerDescriptor(project: Project)
   // code highlighting, references resolution, code completion, and hover info are implemented without using the LSP server
   override val lspSemanticTokensSupport = null
   override val lspGoToDefinitionSupport = false
+  override val lspGoToTypeDefinitionSupport = false
   override val lspCompletionSupport = null
   override val lspHoverSupport = false
 
