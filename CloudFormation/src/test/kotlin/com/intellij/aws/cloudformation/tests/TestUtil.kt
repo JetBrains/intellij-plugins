@@ -110,15 +110,15 @@ object TestUtil {
 
     writer.append(textWithMarkers)
     if (!textWithMarkers.endsWith("\n")) {
-      writer.appendln()
+      writer.appendLine()
     }
 
     if (problems.isNotEmpty()) {
-      writer.appendln()
+      writer.appendLine()
     }
 
     for (problem in problems.withIndex()) {
-      writer.appendln("${problem.index}: ${problem.value.description}")
+      writer.appendLine("${problem.index}: ${problem.value.description}")
     }
 
     return writer.toString()
@@ -145,16 +145,16 @@ object TestUtil {
 
     writer.append(textWithMarkers)
     if (!textWithMarkers.endsWith("\n")) {
-      writer.appendln()
+      writer.appendLine()
     }
 
     for (ref in referencesList.withIndex()) {
       val result = ref.value.resolve()
       writer.append("${ref.index}: ")
       if (result == null) {
-        writer.appendln("not resolved")
+        writer.appendLine("not resolved")
       } else {
-        writer.appendln(result.text)
+        writer.appendLine(result.text)
       }
     }
 
