@@ -18,6 +18,7 @@ import org.intellij.terraform.hcl.psi.HCLLiteral
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILLiteralExpression
+import java.util.Locale
 
 class TerraformElementGenerator(val project: Project) : HCLElementGenerator(project) {
 
@@ -82,7 +83,7 @@ class TerraformElementGenerator(val project: Project) : HCLElementGenerator(proj
       append("variable \"").append(name).append("\" {")
       val typeName = when (type) {
         null -> null
-        else -> type.presentableText.toLowerCase()
+        else -> type.presentableText.lowercase(Locale.getDefault())
       }
       if (typeName != null) {
         append("\n  type=").append(typeName)

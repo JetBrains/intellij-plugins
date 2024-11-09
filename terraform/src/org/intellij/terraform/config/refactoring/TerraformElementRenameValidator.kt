@@ -8,6 +8,7 @@ import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import java.util.Locale
 
 
 class TerraformElementRenameValidator : RenameInputValidator {
@@ -44,7 +45,7 @@ class TerraformElementRenameValidator : RenameInputValidator {
   fun isInputValid(name: String, element: PsiElement): Boolean {
     if (!pattern.accepts(element)) return false
     if (TerraformPatterns.VariableRootBlock.accepts(element)) {
-      if (HCLPsiUtil.stripQuotes(name).toLowerCase() in ProhibitedVariableNames) return false
+      if (HCLPsiUtil.stripQuotes(name).lowercase(Locale.getDefault()) in ProhibitedVariableNames) return false
     }
 
     return isInputValid(name)

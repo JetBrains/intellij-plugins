@@ -14,6 +14,7 @@ import org.intellij.terraform.config.model.loader.TerraformMetadataLoader.Compan
 import org.intellij.terraform.hcl.HCLParser
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
+import java.util.Locale
 
 object BaseLoaderV2 : BaseLoader {
   override val version: String
@@ -178,7 +179,7 @@ object BaseLoaderV2 : BaseLoader {
       return parseSimpleType(string)
     }
     assert(string.last() == ')')
-    val input = string.toLowerCase()
+    val input = string.lowercase(Locale.getDefault())
     val expression = generateValuePsi(input)
     assert(expression != null) { "Failed to parse type (generate psi): $input" }
     val type = expression?.let { TypeSpecificationValidator(null, true).getType(it) }

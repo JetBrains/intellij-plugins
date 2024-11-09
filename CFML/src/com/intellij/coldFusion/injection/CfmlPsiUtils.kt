@@ -16,6 +16,7 @@ package com.intellij.coldFusion.injection
 import com.intellij.coldFusion.model.psi.CfmlLeafPsiElement
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl
 import com.intellij.psi.PsiElement
+import java.util.Locale
 
 internal fun PsiElement.traverse(untilPsiElement: PsiElement? = null): Iterable<PsiElement> {
   return Iterable {
@@ -70,5 +71,5 @@ internal fun PsiElement.isTagInsideCfQuery(): Boolean {
 }
 
 private fun PsiElement.isCfmlTag(tagName: String): Boolean {
-  return (this is CfmlTagImpl && this.name != null && this.name?.toLowerCase() == tagName)
+  return (this is CfmlTagImpl && this.name != null && this.name?.lowercase(Locale.getDefault()) == tagName)
 }

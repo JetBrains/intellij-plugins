@@ -8,6 +8,7 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
+import java.util.Locale
 
 class WebAssemblyKeywordCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters,
@@ -40,7 +41,7 @@ class WebAssemblyKeywordCompletionProvider : CompletionProvider<CompletionParame
               LookupElementBuilder.create(it
                                             .removeSuffix(",")
                                             .removeSurrounding("WebAssemblyToken.", "KEY")
-                                            .toLowerCase()
+                                            .lowercase(Locale.getDefault())
               )
             )
           }

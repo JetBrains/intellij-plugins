@@ -143,7 +143,7 @@ object QodanaLicenseChecker {
     }
 
     val (_, licensePartBase64, signatureBase64, certBase64) = licenseParts
-    val sig = Signature.getInstance("SHA" + 1 + "with" + "rsa".toUpperCase())
+    val sig = Signature.getInstance("SHA" + 1 + "with" + "rsa".uppercase(Locale.getDefault()))
     // the last parameter of 'createCertificate()' set to 'false' switches off certificate expiration checks.
     // This might be the case if the key is at the same time a perpetual fallback license for older IDE versions.
     // Here it is only important that the key was signed with an authentic JetBrains certificate.

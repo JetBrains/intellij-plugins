@@ -21,6 +21,7 @@ import com.intellij.psi.LiteralTextEscaper
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.ILeafElementType
+import java.util.Locale
 
 /**
  * @author Sergey Karashevich
@@ -38,8 +39,10 @@ class CfmlLeafPsiElement(cfmlLeafElementType: CfmlLeafElementType, leafText: Cha
   override fun isValidHost(): Boolean {
     val parent = this.parent ?: return false
     if (parent !is CfmlTagImpl) return false
-    val isCfquery = parent.name?.toLowerCase() == "cfquery"
-    val isCfifInCfquery = parent.name?.toLowerCase() == "cfif" && (parent.parent is CfmlTagImpl) && (parent.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery"
+    val isCfquery = parent.name?.lowercase(Locale.getDefault()) == "cfquery"
+    val isCfifInCfquery = parent.name?.lowercase(Locale.getDefault()) == "cfif"
+                          && (parent.parent is CfmlTagImpl)
+                          && (parent.parent as CfmlTagImpl).name?.lowercase(Locale.getDefault()) == "cfquery"
     return isCfquery || isCfifInCfquery
   }
 

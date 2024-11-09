@@ -25,6 +25,7 @@ import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.NamedStub
+import java.util.Locale
 
 
 open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost {
@@ -40,7 +41,7 @@ open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost
 
   override fun getTagName(): String {
     val tagName = findChildByType<PsiElement>(CfmlTokenTypes.CF_TAG_NAME)
-    return tagName?.text?.toLowerCase() ?: ""
+    return tagName?.text?.lowercase(Locale.getDefault()) ?: ""
   }
 
   override fun getName(): String? = tagName

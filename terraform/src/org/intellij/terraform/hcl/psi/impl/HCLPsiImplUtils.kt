@@ -319,9 +319,9 @@ object HCLPsiImplUtils {
   private fun getNumericValue(text: String): Number {
     val base: String
     val suffix: Long
-    if (text.last().toUpperCase() in "KMGB") {
+    if (text.last().uppercaseChar() in "KMGB") {
       val index: Int
-      if (text[text.lastIndex - 1].toUpperCase() in "KMGB") {
+      if (text[text.lastIndex - 1].uppercaseChar() in "KMGB") {
         index = text.lastIndex - 1
       } else {
         index = text.lastIndex
@@ -345,17 +345,17 @@ object HCLPsiImplUtils {
 
   private fun getSuffixValue(suffix: String): Long {
     val base: Int
-    when(suffix.length) {
+    when (suffix.length) {
       1 -> {
         base = 1000
       }
       2 -> {
-        LOG.assertTrue(suffix[1].toLowerCase() == 'b', "Second suffix char must be 'b' or 'B': $suffix")
+        LOG.assertTrue(suffix[1].lowercaseChar() == 'b', "Second suffix char must be 'b' or 'B': $suffix")
         base = 1024
       }
       else -> throw IllegalArgumentException("Unsupported suffix '$suffix'")
     }
-    when (suffix[0].toLowerCase()) {
+    when (suffix[0].lowercaseChar()) {
       'k' -> return pow(base, 1)
       'm' -> return pow(base, 2)
       'g' -> return pow(base, 3)

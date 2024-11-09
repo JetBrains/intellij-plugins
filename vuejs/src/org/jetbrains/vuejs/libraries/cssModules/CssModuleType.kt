@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.VueImplicitElement
+import java.util.Locale
 
 class CssModuleType private constructor(val container: PsiElement, source: JSTypeSource) : JSTypeBaseImpl(source), JSCodeBasedType {
 
@@ -153,11 +154,11 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
     },
     Dashes {
       override fun format(name: String): String =
-        dashesOnlyReplacePattern.replace(name) { it.groupValues[0].toUpperCase() }
+        dashesOnlyReplacePattern.replace(name) { it.groupValues[0].uppercase(Locale.getDefault()) }
     },
     DashesOnly {
       override fun format(name: String): String =
-        dashesOnlyReplacePattern.replace(name) { it.groupValues[0].toUpperCase() }
+        dashesOnlyReplacePattern.replace(name) { it.groupValues[0].uppercase(Locale.getDefault()) }
     };
 
     abstract fun format(name: String): String
