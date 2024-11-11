@@ -1,0 +1,102 @@
+### auto-generated section `build intellij.cucumber.java` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "cucumber-java_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "cucumber-java",
+  module_name = "intellij.cucumber.java",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//contrib/cucumber:gherkin",
+    "@community//platform/core-api:core",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//platform/lang-api:lang",
+    "@community//java/java-impl:impl",
+    "@community//java/execution/impl:java-execution-impl",
+    "@community//java/execution/openapi:java-execution",
+    "@community//platform/smRunner",
+    "@community//java/java-indexing-api:indexing",
+    "@community//java/openapi:java",
+    "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
+    "@community//java/java-psi-api:psi",
+    "@lib//:guava",
+    "@ultimate_lib//:cucumber_java_cucumber-expressions",
+    "@ultimate_lib//:cucumber_java_cucumber-core-1_2",
+    "@ultimate_lib//:cucumber_java_cucumber-java",
+    "@ultimate_lib//:cucumber_java_gherkin",
+    "@community//plugins/junit_rt:junit-rt",
+    "@community//plugins/junit",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  exports = [
+    "@ultimate_lib//:cucumber_java_cucumber-core-1_2",
+    "@ultimate_lib//:cucumber_java_gherkin",
+  ],
+  runtime_deps = [":cucumber-java_resources"]
+)
+
+kt_jvm_test(
+  name = "cucumber-java_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":cucumber-java"],
+  deps = [
+    "//contrib/cucumber:gherkin",
+    "@community//platform/core-api:core",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//platform/lang-api:lang",
+    "@community//java/java-impl:impl",
+    "@community//java/execution/impl:java-execution-impl",
+    "@community//java/execution/openapi:java-execution",
+    "@community//platform/smRunner",
+    "@community//java/java-indexing-api:indexing",
+    "@community//java/openapi:java",
+    "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
+    "@community//java/java-psi-api:psi",
+    "@lib//:guava",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//java/testFramework",
+    "@lib//:easymock",
+    "@lib//:objenesis",
+    "@ultimate_lib//:cucumber-core_2_0_1",
+    "@ultimate_lib//:cucumber_java_cucumber-expressions",
+    "@ultimate_lib//:cucumber_java_cucumber-core-1_2",
+    "@ultimate_lib//:cucumber_java_cucumber-java",
+    "@ultimate_lib//:cucumber_java_gherkin",
+    "@ultimate_lib//:cucumber_java_cucumber-core-3",
+    "@ultimate_lib//:cucumber_java_cucumber-core-4_5",
+    "@ultimate_lib//:cucumber_java_cucumber-java-4_5",
+    "@community//plugins/junit_rt:junit-rt",
+    "@community//plugins/junit",
+    "@ultimate_lib//:cucumber_java_cucumber-java-5",
+    "@ultimate_lib//:cucumber_java_cucumber-java8-5",
+    "@ultimate_lib//:cucumber_java_cucumber-core-5",
+    "@ultimate_lib//:cucumber_java_cucumber-core-5_5",
+    "@ultimate_lib//:cucumber_java_cucumber-java-5_5",
+    "@ultimate_lib//:cucumber_java_cucumber-java8-5_5",
+    "@community//plugins/maven",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//plugins/maven/testFramework",
+    "@community//plugins/gradle:gradle-common",
+    "@community//plugins/gradle/java:java-tests_test",
+  ],
+  runtime_deps = [":cucumber-java_resources"]
+)
+### auto-generated section `build intellij.cucumber.java` end

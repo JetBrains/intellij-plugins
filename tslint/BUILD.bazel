@@ -1,0 +1,64 @@
+### auto-generated section `build intellij.tslint` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "tslint_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "tslint",
+  module_name = "intellij.tslint",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript",
+    "@community//platform/lang-impl",
+    "@community//platform/lang-api:lang",
+    "@community//xml/impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//webcore/impl:webide-impl",
+    "@lib//:gson",
+    "@lib//:snakeyaml",
+    "@community//platform/statistics",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//json",
+  ],
+  runtime_deps = [":tslint_resources"]
+)
+
+kt_jvm_test(
+  name = "tslint_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":tslint"],
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript",
+    "@community//platform/lang-impl",
+    "@community//platform/lang-api:lang",
+    "@community//xml/impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//webcore/impl:webide-impl",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
+    "@lib//:gson",
+    "@lib//:snakeyaml",
+    "@community//platform/statistics",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//json",
+  ],
+  runtime_deps = [":tslint_resources"]
+)
+### auto-generated section `build intellij.tslint` end

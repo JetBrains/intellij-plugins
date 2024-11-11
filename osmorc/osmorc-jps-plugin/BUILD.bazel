@@ -1,0 +1,67 @@
+### auto-generated section `build intellij.osgi.jps` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "osgi-jps_resources",
+  files = glob(["src/META-INF/services/org.jetbrains.jps.incremental.BuilderService", "src/META-INF/services/org.jetbrains.jps.model.serialization.JpsModelSerializerExtension"]),
+  strip_prefix = "src"
+)
+
+jvm_library(
+  name = "osgi-jps",
+  module_name = "intellij.osgi.jps",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j11",
+  kotlinc_opts = "@rules_jvm//:k11",
+  deps = [
+    "@community//jps/model-api:model",
+    "@community//jps/model-serialization",
+    "@community//jps/jps-builders:build",
+    "@community//plugins/maven/jps-plugin:jps",
+    "@ultimate_lib//:osgi_jps_bndlib",
+    "@ultimate_lib//:osgi_jps_bndlib-repository",
+    "@ultimate_lib//:osgi_jps_bndlib-resolve",
+    "@lib//:plexus-utils",
+    "@community//platform/util/jdom",
+    "@community//contrib/osmorc/lib:bundlor-all",
+    "@lib//:hash4j",
+  ],
+  exports = [
+    "@ultimate_lib//:osgi_jps_bndlib",
+    "@ultimate_lib//:osgi_jps_bndlib-repository",
+    "@ultimate_lib//:osgi_jps_bndlib-resolve",
+  ],
+  runtime_deps = [":osgi-jps_resources"]
+)
+
+kt_jvm_test(
+  name = "osgi-jps_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j11",
+  kotlinc_opts = "@rules_jvm//:k11",
+  associates = [":osgi-jps"],
+  deps = [
+    "@community//jps/model-api:model",
+    "@community//jps/model-serialization",
+    "@community//jps/jps-builders:build",
+    "@community//plugins/maven/jps-plugin:jps",
+    "@ultimate_lib//:osgi_jps_bndlib",
+    "@ultimate_lib//:osgi_jps_bndlib-repository",
+    "@ultimate_lib//:osgi_jps_bndlib-resolve",
+    "@lib//:plexus-utils",
+    "@community//platform/util/jdom",
+    "@community//contrib/osmorc/lib:bundlor-all",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@lib//:kotlin-stdlib",
+    "@community//jps/jps-builders:build-tests_test",
+    "@lib//:assert_j",
+    "@lib//:hash4j",
+  ],
+  runtime_deps = [":osgi-jps_resources"]
+)
+### auto-generated section `build intellij.osgi.jps` end

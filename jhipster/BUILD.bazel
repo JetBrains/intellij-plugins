@@ -1,0 +1,65 @@
+### auto-generated section `build intellij.jhipster` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "jhipster_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "jhipster",
+  module_name = "intellij.jhipster",
+  visibility = ["//visibility:public"],
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/code-style-api:codeStyle",
+    "@community//platform/core-api:core",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/lang-impl",
+    "@community//spellchecker",
+    "@community//java/java-psi-api:psi",
+    "//plugins/uml:diagram",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:fastutil-min",
+    "//plugins/graph",
+    "@community//platform/core-ui",
+    "//plugins/uml:diagram-impl",
+    "@community//platform/execution-impl",
+  ],
+  runtime_deps = [":jhipster_resources"]
+)
+
+kt_jvm_test(
+  name = "jhipster_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":jhipster"],
+  deps = [
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/code-style-api:codeStyle",
+    "@community//platform/core-api:core",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/lang-impl",
+    "@community//spellchecker",
+    "@community//java/java-psi-api:psi",
+    "//plugins/uml:diagram",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:fastutil-min",
+    "//plugins/graph",
+    "@community//platform/core-ui",
+    "//plugins/uml:diagram-impl",
+    "@community//platform/execution-impl",
+  ],
+  runtime_deps = [":jhipster_resources"]
+)
+### auto-generated section `build intellij.jhipster` end

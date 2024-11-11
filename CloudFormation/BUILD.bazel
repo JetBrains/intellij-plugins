@@ -1,0 +1,56 @@
+### auto-generated section `build intellij.cloudFormation` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "cloudFormation_resources",
+  files = glob(["src/main/resources/**/*"]),
+  strip_prefix = "src/main/resources"
+)
+
+jvm_library(
+  name = "cloudFormation",
+  module_name = "intellij.cloudFormation",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/gen/**/*.kt", "src/main/gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//plugins/yaml",
+    "@community//platform/core-api:core",
+    "@community//json",
+    "@community//platform/lang-impl",
+    "@lib//:guava",
+    "@lib//:x_stream",
+    "@community//platform/core-ui",
+    "@ultimate_lib//:cloud_formation_intellij_aws_cloudformation_meta",
+  ],
+  runtime_deps = [":cloudFormation_resources"]
+)
+
+kt_jvm_test(
+  name = "cloudFormation_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":cloudFormation"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//plugins/yaml",
+    "@community//platform/core-api:core",
+    "@community//json",
+    "@community//platform/lang-impl",
+    "@lib//:guava",
+    "@lib//:x_stream",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/core-ui",
+    "@lib//:commons-lang3",
+    "@ultimate_lib//:cloud_formation_intellij_aws_cloudformation_meta",
+  ],
+  runtime_deps = [":cloudFormation_resources"]
+)
+### auto-generated section `build intellij.cloudFormation` end

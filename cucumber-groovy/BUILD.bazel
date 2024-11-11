@@ -1,0 +1,58 @@
+### auto-generated section `build intellij.cucumber.groovy` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "cucumber-groovy_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "cucumber-groovy",
+  module_name = "intellij.cucumber.groovy",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//contrib/cucumber:gherkin",
+    "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//plugins/groovy",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//java/java-psi-api:psi",
+    "@ultimate_lib//:cucumber_groovy_cucumber-groovy",
+    "@community//java/java-impl:impl",
+    "//contrib/cucumber-java",
+  ],
+  runtime_deps = [":cucumber-groovy_resources"]
+)
+
+kt_jvm_test(
+  name = "cucumber-groovy_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":cucumber-groovy"],
+  deps = [
+    "//contrib/cucumber:gherkin",
+    "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//plugins/groovy",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//java/java-psi-api:psi",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//java/testFramework",
+    "@ultimate_lib//:cucumber_groovy_cucumber-groovy",
+    "@community//java/java-impl:impl",
+    "//contrib/cucumber-java",
+  ],
+  runtime_deps = [":cucumber-groovy_resources"]
+)
+### auto-generated section `build intellij.cucumber.groovy` end

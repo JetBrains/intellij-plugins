@@ -1,0 +1,86 @@
+### auto-generated section `build intellij.gauge` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "gauge_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "gauge",
+  module_name = "intellij.gauge",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//platform/lang-api:lang",
+    "@community//java/java-impl:impl",
+    "@community//json",
+    "@community//plugins/properties/properties-psi-impl:psi-impl",
+    "@ultimate_lib//:gauge_com_thoughtworks_gauge_gauge-java",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//java/debugger/impl:java-debugger-impl",
+    "@community//java/execution/impl:java-execution-impl",
+    "@lib//:kotlin-stdlib",
+    "@community//platform/smRunner",
+    "@community//java/openapi:java",
+    "@community//java/compiler/openapi:java-compiler",
+    "@community//plugins/gradle:gradle-common",
+    "@community//plugins/maven",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:gson",
+    "@lib//:protobuf",
+    "@lib//:commons-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":gauge_resources",
+    "@lib//:grpc-stub",
+    "@lib//:grpc-core",
+    "@lib//:grpc-netty-shaded",
+  ]
+)
+
+kt_jvm_test(
+  name = "gauge_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":gauge"],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//platform/lang-api:lang",
+    "@community//java/java-impl:impl",
+    "@community//json",
+    "@community//plugins/properties/properties-psi-impl:psi-impl",
+    "@ultimate_lib//:gauge_com_thoughtworks_gauge_gauge-java",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//java/debugger/impl:java-debugger-impl",
+    "@community//java/execution/impl:java-execution-impl",
+    "@lib//:kotlin-stdlib",
+    "@community//platform/smRunner",
+    "@community//java/openapi:java",
+    "@community//java/compiler/openapi:java-compiler",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//plugins/gradle:gradle-common",
+    "@community//plugins/maven",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:gson",
+    "@lib//:protobuf",
+    "@lib//:commons-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":gauge_resources"]
+)
+### auto-generated section `build intellij.gauge` end

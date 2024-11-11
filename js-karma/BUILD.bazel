@@ -1,0 +1,91 @@
+### auto-generated section `build intellij.karma` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "karma_resources",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_resources(
+  name = "karma_resources_1",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "karma",
+  module_name = "intellij.karma",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/lang-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//platform/smRunner",
+    "@lib//:guava",
+    "//plugins/js-test-common:javascript-testing",
+    "@lib//:gson",
+    "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//plugins/JavaScriptDebugger/sdk/backend:javascript-debugger-backend",
+    "@community//xml/impl",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//plugins/coverage-common:coverage",
+    "//webcore/impl:webide-impl",
+    "//plugins/JavaScriptDebugger/wip/backend:javascript-wip-backend",
+    "//plugins/JavaScriptDebugger/wip/protocol:javascript-wip-protocol",
+    "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
+    "@community//platform/script-debugger/backend:scriptDebugger-backend",
+    "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  exports = ["@community//platform/smRunner"],
+  runtime_deps = [
+    ":karma_resources",
+    ":karma_resources_1",
+  ]
+)
+
+kt_jvm_test(
+  name = "karma_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":karma"],
+  deps = [
+    "@community//platform/lang-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//platform/smRunner",
+    "@lib//:guava",
+    "//plugins/js-test-common:javascript-testing",
+    "@lib//:gson",
+    "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//plugins/JavaScriptDebugger/sdk/backend:javascript-debugger-backend",
+    "@community//xml/impl",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//plugins/coverage-common:coverage",
+    "//webcore/impl:webide-impl",
+    "@lib//:junit4",
+    "//plugins/JavaScriptDebugger/wip/backend:javascript-wip-backend",
+    "//plugins/JavaScriptDebugger/wip/protocol:javascript-wip-protocol",
+    "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
+    "@community//platform/script-debugger/backend:scriptDebugger-backend",
+    "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":karma_resources",
+    ":karma_resources_1",
+  ]
+)
+### auto-generated section `build intellij.karma` end

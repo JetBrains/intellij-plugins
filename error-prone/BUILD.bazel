@@ -1,0 +1,30 @@
+### auto-generated section `build intellij.errorProne` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "errorProne_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "errorProne",
+  module_name = "intellij.errorProne",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//java/compiler/impl:java-compiler-impl",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@lib//:guava",
+    "@community//platform/lang-api:lang",
+    "@community//java/java-psi-api:psi",
+    "@lib//:stream_ex",
+    "@community//java/java-psi-impl:psi-impl",
+  ],
+  runtime_deps = [":errorProne_resources"]
+)
+### auto-generated section `build intellij.errorProne` end

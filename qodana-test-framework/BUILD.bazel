@@ -1,0 +1,35 @@
+### auto-generated section `build intellij.qodana.testFramework` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "qodana-testFramework_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-testFramework",
+  module_name = "intellij.qodana.testFramework",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/inspect",
+    "@lib//:gson",
+    "//contrib/qodana/sarif",
+    "@community//platform/util",
+    "//contrib/qodana",
+    "@community//platform/analysis-impl",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/lang-impl",
+    "@community//java/java-impl:impl",
+    "@community//platform/util/jdom",
+    "@community//platform/testFramework",
+    "@community//platform/util/coroutines",
+  ],
+  runtime_deps = [":qodana-testFramework_resources"]
+)
+### auto-generated section `build intellij.qodana.testFramework` end

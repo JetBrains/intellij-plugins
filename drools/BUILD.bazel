@@ -1,0 +1,62 @@
+### auto-generated section `build intellij.jboss.drools` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "jboss-drools_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "jboss-drools",
+  module_name = "intellij.jboss.drools",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/platform-api:ide",
+    "@community//platform/core-impl",
+    "@community//platform/lang-api:lang",
+    "@community//java/java-psi-api:psi",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//java/java-impl:impl",
+    "@community//java/java-indexing-api:indexing",
+    "@community//java/idea-ui:ui",
+    "@community//platform/core-ui",
+    "@community//java/java-impl-refactorings:impl-refactorings",
+    "@lib//:fastutil-min",
+  ],
+  runtime_deps = [":jboss-drools_resources"]
+)
+
+kt_jvm_test(
+  name = "jboss-drools_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/src/**/*.kt", "tests/src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":jboss-drools"],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/platform-api:ide",
+    "@community//platform/core-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//java/java-psi-api:psi",
+    "@community//java/java-psi-impl:psi-impl",
+    "@community//java/java-impl:impl",
+    "@community//java/java-indexing-api:indexing",
+    "@community//java/idea-ui:ui",
+    "@community//java/testFramework",
+    "@community//platform/core-ui",
+    "@community//java/java-impl-refactorings:impl-refactorings",
+    "@lib//:fastutil-min",
+  ],
+  runtime_deps = [":jboss-drools_resources"]
+)
+### auto-generated section `build intellij.jboss.drools` end

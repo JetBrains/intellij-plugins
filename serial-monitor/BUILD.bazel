@@ -1,0 +1,34 @@
+### auto-generated section `build intellij.serial.monitor` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "serial-monitor_resources",
+  files = glob(["src/main/resources/**/*"]),
+  strip_prefix = "src/main/resources"
+)
+
+jvm_library(
+  name = "serial-monitor",
+  module_name = "intellij.serial.monitor",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@community//platform/util:util-ui",
+    "@community//platform/core-ui",
+    "@community//platform/execution-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@lib//:guava",
+    "@ultimate_lib//:io_github_java_native_jssc",
+    "@community//platform/statistics",
+    "@lib//:jediterm-core",
+    "@lib//:jediterm-ui",
+    "@lib//:commons-io",
+  ],
+  runtime_deps = [":serial-monitor_resources"]
+)
+### auto-generated section `build intellij.serial.monitor` end

@@ -1,0 +1,33 @@
+### auto-generated section `build intellij.javascript.bower` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "bower_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "bower",
+  module_name = "intellij.javascript.bower",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:gson",
+    "//webcore/impl:webide-impl",
+    "@lib//:guava",
+    "@community//platform/ide-core",
+    "@community//platform/lang-impl",
+    "@community//spellchecker",
+    "@community//platform/util/jdom",
+    "@community//platform/core-ui",
+    "@community//json",
+  ],
+  runtime_deps = [":bower_resources"]
+)
+### auto-generated section `build intellij.javascript.bower` end

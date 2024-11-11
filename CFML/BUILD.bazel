@@ -1,0 +1,83 @@
+### auto-generated section `build intellij.cfml` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "cfml_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "cfml_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "cfml",
+  module_name = "intellij.cfml",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//xml/impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//java/openapi:java",
+    "@community//java/java-impl:impl",
+    "@community//platform/smRunner",
+    "@community//spellchecker",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":cfml_resources",
+    ":cfml_resources_1",
+    "//ultimate/platform-ultimate:commercial",
+    "//plugins/javaee/web/coverage:javaee-web-coverage",
+  ]
+)
+
+kt_jvm_test(
+  name = "cfml_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":cfml"],
+  deps = [
+    "@community//platform/platform-api:ide",
+    "//dbe/sql:database-sql-impl",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//xml/impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//java/openapi:java",
+    "@community//java/java-impl:impl",
+    "@community//java/testFramework",
+    "@community//platform/smRunner",
+    "//dbe/database:database-impl",
+    "//idea-tests:idea-ultimate-tests_test",
+    "@community//spellchecker",
+    "@community//platform/testFramework/extensions:testExtensions",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@lib//:kotlin-test",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":cfml_resources",
+    ":cfml_resources_1",
+  ]
+)
+### auto-generated section `build intellij.cfml` end

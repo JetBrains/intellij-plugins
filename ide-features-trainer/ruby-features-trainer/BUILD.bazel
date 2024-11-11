@@ -1,0 +1,47 @@
+### auto-generated section `build intellij.ruby.featuresTrainer` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "ruby-featuresTrainer_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "ruby-featuresTrainer",
+  module_name = "intellij.ruby.featuresTrainer",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//ruby",
+    "@community//plugins/ide-features-trainer:featuresTrainer",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/core-ui",
+  ],
+  runtime_deps = [":ruby-featuresTrainer_resources"]
+)
+
+kt_jvm_test(
+  name = "ruby-featuresTrainer_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":ruby-featuresTrainer"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//ruby",
+    "@community//plugins/ide-features-trainer:featuresTrainer",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/core-ui",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+  ],
+  runtime_deps = [":ruby-featuresTrainer_resources"]
+)
+### auto-generated section `build intellij.ruby.featuresTrainer` end

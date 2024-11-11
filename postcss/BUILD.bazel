@@ -1,0 +1,72 @@
+### auto-generated section `build intellij.postcss` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "postcss_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "postcss_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "postcss",
+  module_name = "intellij.postcss",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "//CSS/css-api:css",
+    "//CSS/css-psi-impl:css-psi",
+    "//CSS/css-analysis-impl:css-analysis",
+    "@community//platform/core-impl",
+    "@community//xml/impl",
+    "//CSS/impl:css-impl",
+    "@community//plugins/copyright",
+    "@community//platform/core-ui",
+  ],
+  exports = ["@community//xml/impl"],
+  runtime_deps = [
+    ":postcss_resources",
+    ":postcss_resources_1",
+  ]
+)
+
+kt_jvm_test(
+  name = "postcss_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":postcss"],
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "//CSS/css-api:css",
+    "//CSS/css-psi-impl:css-psi",
+    "//CSS/css-analysis-impl:css-analysis",
+    "@community//platform/core-impl",
+    "@community//xml/impl",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "//CSS/impl:css-impl",
+    "@community//plugins/copyright",
+    "@community//platform/core-ui",
+  ],
+  runtime_deps = [
+    ":postcss_resources",
+    ":postcss_resources_1",
+  ]
+)
+### auto-generated section `build intellij.postcss` end

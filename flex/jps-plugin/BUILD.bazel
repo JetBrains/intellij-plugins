@@ -1,0 +1,27 @@
+### auto-generated section `build intellij.flex.jps` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "jps_resources",
+  files = glob(["src/META-INF/services/org.jetbrains.jps.incremental.BuilderService", "src/META-INF/services/org.jetbrains.jps.builders.java.ExcludedJavaSourceRootProvider"]),
+  strip_prefix = "src"
+)
+
+jvm_library(
+  name = "jps",
+  module_name = "intellij.flex.jps",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j11",
+  kotlinc_opts = "@rules_jvm//:k11",
+  deps = [
+    "//contrib/flex/flex-shared:shared",
+    "@community//jps/jps-builders:build",
+    "@community//jps/model-api:model",
+    "@community//jps/model-serialization",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":jps_resources"]
+)
+### auto-generated section `build intellij.flex.jps` end

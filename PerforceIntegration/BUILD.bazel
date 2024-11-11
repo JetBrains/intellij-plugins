@@ -1,0 +1,68 @@
+### auto-generated section `build intellij.vcs.perforce` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "vcs-perforce_resources",
+  files = glob(["src/META-INF/pluginIcon.svg", "src/META-INF/plugin.xml"]),
+  strip_prefix = "src"
+)
+
+jvm_library(
+  name = "vcs-perforce",
+  module_name = "intellij.vcs.perforce",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/util",
+    "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
+    "@community//platform/vcs-api:vcs",
+    "@community//platform/util/concurrency",
+    "@community//platform/vcs-impl",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core-impl",
+    "@lib//:guava",
+    "@lib//:fastutil-min",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/dvcs-impl:vcs-dvcs-impl",
+    "@community//platform/dvcs-api:vcs-dvcs",
+    "@community//platform/backend/workspace",
+    "@community//platform/util/coroutines",
+  ],
+  runtime_deps = [":vcs-perforce_resources"]
+)
+### auto-generated section `build intellij.vcs.perforce` end
+
+### auto-generated section `build intellij.vcs.perforce.tests` start
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+java_library(
+  name = "vcs-perforce-tests",
+  visibility = ["//visibility:public"]
+)
+
+kt_jvm_test(
+  name = "vcs-perforce-tests_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSource/**/*.kt", "testSource/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:junit4",
+    "//contrib/PerforceIntegration:vcs-perforce",
+    "@community//platform/vcs-api:vcs",
+    "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
+    "@community//platform/vcs-impl",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/util/testSrc:tests_test",
+    "@community//platform/vcs-tests:vcs-testFramework",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:mockito",
+  ]
+)
+### auto-generated section `build intellij.vcs.perforce.tests` end

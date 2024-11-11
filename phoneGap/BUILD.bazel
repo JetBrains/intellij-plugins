@@ -1,0 +1,69 @@
+### auto-generated section `build intellij.phoneGap` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "phoneGap_resources",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_resources(
+  name = "phoneGap_resources_1",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "phoneGap",
+  module_name = "intellij.phoneGap",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//RegExpSupport:regexp",
+    "@community//xml/xml-psi-api:psi",
+    "@lib//:gson",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":phoneGap_resources",
+    ":phoneGap_resources_1",
+  ]
+)
+
+kt_jvm_test(
+  name = "phoneGap_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":phoneGap"],
+  deps = [
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//RegExpSupport:regexp",
+    "@community//xml/xml-psi-api:psi",
+    "@lib//:gson",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":phoneGap_resources",
+    ":phoneGap_resources_1",
+  ]
+)
+### auto-generated section `build intellij.phoneGap` end

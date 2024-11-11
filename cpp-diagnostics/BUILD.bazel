@@ -1,0 +1,30 @@
+### auto-generated section `build intellij.clion.diagnostics` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "clion-diagnostics_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "clion-diagnostics",
+  module_name = "intellij.clion.diagnostics",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/core-api:core",
+    "//CIDR/clion",
+    "@community//platform/platform-util-io:ide-util-io",
+    "//platform/ssh-ui",
+    "@community//platform/core-impl",
+    "@community//platform/util-ex",
+    "//CIDR/cidr-util",
+    "@community//platform/platform-impl:ide-impl",
+  ],
+  runtime_deps = [":clion-diagnostics_resources"]
+)
+### auto-generated section `build intellij.clion.diagnostics` end

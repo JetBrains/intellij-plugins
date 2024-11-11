@@ -1,0 +1,65 @@
+### auto-generated section `build intellij.dts` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "dts_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "dts",
+  module_name = "intellij.dts",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//contrib/dts/pp",
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/code-style-api:codeStyle",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-ui",
+    "@community//xml/dom-impl",
+    "@lib//:snakeyaml",
+    "//CIDR/clion-cmake",
+  ],
+  runtime_deps = [":dts_resources"]
+)
+
+kt_jvm_test(
+  name = "dts_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":dts"],
+  deps = [
+    "//contrib/dts/pp",
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/code-style-api:codeStyle",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-ui",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//xml/dom-impl",
+    "@lib//:snakeyaml",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test",
+    "//CIDR/clion-cmake",
+    "@lib//:json-schema-validator",
+    "@lib//:jackson",
+    "@lib//:jackson-databind",
+    "@lib//:jackson-dataformat-yaml",
+  ],
+  runtime_deps = [":dts_resources"]
+)
+### auto-generated section `build intellij.dts` end

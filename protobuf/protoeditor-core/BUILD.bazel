@@ -1,0 +1,70 @@
+### auto-generated section `build intellij.protoeditor.core` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "protoeditor-core_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "protoeditor-core",
+  module_name = "intellij.protoeditor.core",
+  visibility = ["//visibility:public"],
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
+    "@community//platform/core-impl",
+    "@community//platform/lang-impl",
+    "@lib//:guava",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-ui",
+    "@community//spellchecker",
+    "@community//platform/util/jdom",
+    "@community//xml/dom-impl",
+    "@community//platform/projectModel-impl",
+    "@community//platform/workspace/jps",
+    "@community//platform/backend/workspace",
+    "@lib//:protobuf",
+    "@lib//:google_protobuf_java_util",
+  ],
+  runtime_deps = [":protoeditor-core_resources"]
+)
+
+kt_jvm_test(
+  name = "protoeditor-core_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":protoeditor-core"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
+    "@community//platform/core-impl",
+    "@community//platform/lang-impl",
+    "@lib//:guava",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-ui",
+    "@community//spellchecker",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@lib//:truth",
+    "@community//platform/util/jdom",
+    "@community//xml/dom-impl",
+    "@community//platform/projectModel-impl",
+    "@community//platform/workspace/jps",
+    "@community//platform/backend/workspace",
+    "@lib//:protobuf",
+    "@lib//:google_protobuf_java_util",
+  ],
+  runtime_deps = [":protoeditor-core_resources"]
+)
+### auto-generated section `build intellij.protoeditor.core` end

@@ -1,0 +1,28 @@
+### auto-generated section `build intellij.qodana.jvm.maven` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "qodana-jvm-maven_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-jvm-maven",
+  module_name = "intellij.qodana.jvm.maven",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//plugins/maven",
+    "//contrib/qodana",
+    "@community//platform/backend/observation",
+  ],
+  runtime_deps = [":qodana-jvm-maven_resources"]
+)
+### auto-generated section `build intellij.qodana.jvm.maven` end

@@ -1,0 +1,32 @@
+### auto-generated section `build intellij.qodana.jvm.dev` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "qodana-jvm-dev_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-jvm-dev",
+  module_name = "intellij.qodana.jvm.dev",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//java/java-psi-api:psi",
+    "@community//java/java-analysis-api:analysis",
+    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
+    "@community//plugins/dev/intellij.java.dev:java-dev",
+    "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
+    "@community//platform/core-ui",
+    "//contrib/qodana",
+  ],
+  runtime_deps = [":qodana-jvm-dev_resources"]
+)
+### auto-generated section `build intellij.qodana.jvm.dev` end

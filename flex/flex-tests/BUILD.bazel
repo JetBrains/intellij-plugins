@@ -1,0 +1,45 @@
+### auto-generated section `build intellij.flex.tests` start
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+java_library(
+  name = "tests",
+  visibility = ["//visibility:public"]
+)
+
+kt_jvm_test(
+  name = "tests_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript-tests_test",
+    "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-tests-ex_test",
+    "//plugins/uml:diagram-impl",
+    "//contrib/flex",
+    "//contrib/flex/flex-shared:shared",
+    "@community//platform/util/testSrc:tests_test",
+    "//plugins/JSIntentionPowerPack:javascript-intentions",
+    "@community//platform/testFramework/extensions:testExtensions",
+    "//plugins/uml:diagram-tests_test",
+    "@community//plugins/performanceTesting/core:performanceTesting",
+    "@community//plugins/performanceTesting/core:performanceTesting_test",
+    "@community//platform/core-ui",
+    "@community//plugins/properties/properties-psi-api:psi",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//java/testFramework",
+    "@community//plugins/maven/testFramework",
+    "@community//java/java-impl-refactorings:impl-refactorings",
+    "@community//platform/util/jdom",
+    "//plugins/yourkit:performanceTesting-yourkit",
+    "@community//platform/util/nanoxml",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test",
+    "@community//platform/structuralsearch:structuralSearch-tests_test",
+    "@community//platform/structuralsearch:structuralSearch",
+  ]
+)
+### auto-generated section `build intellij.flex.tests` end

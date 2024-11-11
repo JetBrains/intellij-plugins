@@ -1,0 +1,35 @@
+### auto-generated section `build intellij.appcode.reveal` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "appcode-reveal_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "appcode-reveal_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "appcode-reveal",
+  module_name = "intellij.appcode.reveal",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//CIDR-appcode/appcode",
+    "@community//platform/statistics",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [
+    ":appcode-reveal_resources",
+    ":appcode-reveal_resources_1",
+  ]
+)
+### auto-generated section `build intellij.appcode.reveal` end

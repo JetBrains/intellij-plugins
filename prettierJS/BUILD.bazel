@@ -1,0 +1,72 @@
+### auto-generated section `build intellij.prettierJS` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "prettierJS_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "prettierJS",
+  module_name = "intellij.prettierJS",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "@community//platform/lang-api:lang",
+    "@community//xml/impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//webcore/impl:webide-impl",
+    "@lib//:gson",
+    "//CSS/css-api:css",
+    "@lib//:snakeyaml",
+    "@community//json",
+    "//plugins/fileWatcher",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/statistics",
+  ],
+  runtime_deps = [":prettierJS_resources"]
+)
+
+kt_jvm_test(
+  name = "prettierJS_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":prettierJS"],
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "@community//platform/lang-api:lang",
+    "@community//xml/impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//webcore/impl:webide-impl",
+    "@lib//:gson",
+    "//CSS/css-api:css",
+    "@lib//:snakeyaml",
+    "@community//json",
+    "//plugins/fileWatcher",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
+    "//contrib/vuejs",
+    "//plugins/JavaScriptLanguage:javascript-tests_test",
+    "@community//platform/statistics",
+  ],
+  runtime_deps = [":prettierJS_resources"]
+)
+### auto-generated section `build intellij.prettierJS` end

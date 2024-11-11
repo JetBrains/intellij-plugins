@@ -1,0 +1,25 @@
+### auto-generated section `build intellij.angular.ngtools` start
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_library(
+  name = "angular-ngtools",
+  module_name = "intellij.angular.ngtools",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//platform/platform-impl:ide-impl",
+    "//contrib/Angular:angular",
+    "@community//platform/testFramework",
+    "//WebStorm:webstorm",
+    "//ultimate/platform-ultimate:commercial",
+    "//ultimate/ultimate-verifier:commercial-verifier",
+    "@lib//:commons-compress",
+    "@lib//:gson",
+    "@community//platform/service-container:serviceContainer",
+    "@community//platform/platform-util-io:ide-util-io",
+  ]
+)
+### auto-generated section `build intellij.angular.ngtools` end

@@ -1,0 +1,59 @@
+### auto-generated section `build intellij.protoeditor.jvm` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "protoeditor-jvm_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "protoeditor-jvm",
+  module_name = "intellij.protoeditor.jvm",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//java/java-psi-api:psi",
+    "@lib//:guava",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-ui",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/lang-impl",
+    "//contrib/protobuf/protoeditor-core",
+    "@community//java/java-indexing-api:indexing",
+  ],
+  runtime_deps = [":protoeditor-jvm_resources"]
+)
+
+kt_jvm_test(
+  name = "protoeditor-jvm_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":protoeditor-jvm"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//java/java-psi-api:psi",
+    "@lib//:guava",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-ui",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/lang-impl",
+    "//contrib/protobuf/protoeditor-core",
+    "@community//java/testFramework",
+    "@lib//:truth",
+    "@community//java/java-indexing-api:indexing",
+  ],
+  runtime_deps = [":protoeditor-jvm_resources"]
+)
+### auto-generated section `build intellij.protoeditor.jvm` end

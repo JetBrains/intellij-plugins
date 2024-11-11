@@ -1,0 +1,65 @@
+### auto-generated section `build intellij.qodana.js` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "js_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "js",
+  module_name = "intellij.qodana.js",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//contrib/qodana",
+    "//contrib/qodana/coverage",
+    "//plugins/NodeJS:nodeJS",
+    "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+  ],
+  runtime_deps = [":js_resources"]
+)
+
+kt_jvm_test(
+  name = "js_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":js"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//contrib/qodana",
+    "//contrib/qodana/coverage",
+    "//plugins/NodeJS:nodeJS",
+    "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+    "@community//java/testFramework",
+    "//contrib/qodana-test-framework:qodana-testFramework",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "//duplicatedetector/src:duplicatesDetector",
+    "//duplicatedetector/src:duplicatesDetector_test",
+  ],
+  runtime_deps = [":js_resources"]
+)
+### auto-generated section `build intellij.qodana.js` end

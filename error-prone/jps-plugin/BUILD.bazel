@@ -1,0 +1,41 @@
+### auto-generated section `build intellij.errorProne.jps` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "errorProne-jps_resources",
+  files = glob(["src/META-INF/services/org.jetbrains.jps.model.serialization.JpsModelSerializerExtension", "src/META-INF/services/org.jetbrains.jps.builders.java.JavaCompilingTool"]),
+  strip_prefix = "src"
+)
+
+jvm_library(
+  name = "errorProne-jps",
+  module_name = "intellij.errorProne.jps",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j11",
+  kotlinc_opts = "@rules_jvm//:k11",
+  deps = [
+    "@community//jps/jps-builders:build",
+    "@community//jps/model-serialization",
+  ],
+  runtime_deps = [":errorProne-jps_resources"]
+)
+
+kt_jvm_test(
+  name = "errorProne-jps_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j11",
+  kotlinc_opts = "@rules_jvm//:k11",
+  associates = [":errorProne-jps"],
+  deps = [
+    "@community//jps/jps-builders:build",
+    "@community//jps/model-serialization",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+  ],
+  runtime_deps = [":errorProne-jps_resources"]
+)
+### auto-generated section `build intellij.errorProne.jps` end

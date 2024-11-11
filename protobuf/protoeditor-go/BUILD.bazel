@@ -1,0 +1,60 @@
+### auto-generated section `build intellij.protoeditor.go` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "protoeditor-go_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "protoeditor-go",
+  module_name = "intellij.protoeditor.go",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-ui",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/core-api:core",
+    "//contrib/protobuf/protoeditor-core",
+    "//goland/intellij-go/impl:go-impl",
+    "@lib//:guava",
+    "//goland/intellij-go/go-frontback",
+  ],
+  runtime_deps = [":protoeditor-go_resources"]
+)
+
+kt_jvm_test(
+  name = "protoeditor-go_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":protoeditor-go"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-ui",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/core-api:core",
+    "//contrib/protobuf/protoeditor-core",
+    "//goland/intellij-go/impl:go-impl",
+    "@lib//:guava",
+    "@community//platform/ide-core-impl",
+    "@community//platform/lang-impl",
+    "@lib//:truth",
+    "//goland/intellij-go/testFramework:go-testFramework",
+    "//goland/intellij-go/plugin:go-plugin",
+    "//goland/intellij-go/go-frontback",
+  ],
+  runtime_deps = [":protoeditor-go_resources"]
+)
+### auto-generated section `build intellij.protoeditor.go` end

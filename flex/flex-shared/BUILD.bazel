@@ -1,0 +1,31 @@
+### auto-generated section `build intellij.flex.shared` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "shared_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "shared",
+  module_name = "intellij.flex.shared",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j11",
+  kotlinc_opts = "@rules_jvm//:k11",
+  deps = [
+    "@community//platform/util",
+    "@community//jps/model-api:model",
+    "@community//jps/model-impl",
+    "@community//jps/model-serialization",
+    "@community//jps/jps-builders:build",
+    "@lib//:fastutil-min",
+    "@community//platform/util/jdom",
+    "@community//platform/core-api:core",
+    "@lib//:hash4j",
+  ],
+  runtime_deps = [":shared_resources"]
+)
+### auto-generated section `build intellij.flex.shared` end

@@ -1,0 +1,19 @@
+### auto-generated section `build intellij.protoeditor` start
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+
+jvm_resources(
+  name = "protoeditor_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+java_library(
+  name = "protoeditor",
+  visibility = ["//visibility:public"],
+  runtime_deps = [
+    ":protoeditor_resources",
+    "//contrib/protobuf/protoeditor-core",
+  ]
+)
+### auto-generated section `build intellij.protoeditor` end

@@ -1,0 +1,71 @@
+### auto-generated section `build intellij.vuejs` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "vuejs_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "vuejs_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "vuejs",
+  module_name = "intellij.vuejs",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@lib//:kotlin-stdlib",
+    "@community//xml/xml-psi-api:psi",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//xml/xml-psi-impl:psi-impl",
+    "@community//platform/core-impl",
+    "@community//platform/core-api:core",
+    "@community//platform/analysis-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
+    "//CSS/css-psi-impl:css-psi",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//xml/impl",
+    "@community//spellchecker",
+    "//CSS/css-analysis-impl:css-analysis",
+    "//CSS/css-api:css",
+    "@community//platform/built-in-server:builtInServer-impl",
+    "//webcore/impl:webide-impl",
+    "//contrib/prettierJS",
+    "//plugins/webpack",
+    "@lib//:jackson",
+    "@lib//:jackson-databind",
+    "@lib//:commons-compress",
+    "@lib//:stream_ex",
+    "@lib//:gson",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@lib//:caffeine",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//platform/webSymbols",
+    "//contrib/postcss",
+    "//platform/lsp-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@ultimate_lib//:eclipse_lsp4j",
+    "@community//platform/backend/workspace",
+    "@lib//:commons-text",
+    "@community//plugins/markdown/core:markdown",
+  ],
+  runtime_deps = [
+    ":vuejs_resources",
+    ":vuejs_resources_1",
+  ]
+)
+### auto-generated section `build intellij.vuejs` end

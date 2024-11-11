@@ -1,0 +1,70 @@
+### auto-generated section `build intellij.flex` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "flex_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "flex",
+  module_name = "intellij.flex",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//contrib/flex/flex-shared:shared",
+    "@community//java/compiler/openapi:java-compiler",
+    "@community//platform/lang-api:lang",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptDebugger:javascript-debugger",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//java/execution/openapi:java-execution",
+    "@community//platform/lang-impl",
+    "@community//xml/openapi:xml",
+    "@community//java/openapi:java",
+    "@community//xml/impl",
+    "//CSS/impl:css-impl",
+    "@community//platform/testRunner",
+    "@community//java/execution/impl:java-execution-impl",
+    "@community//platform/smRunner",
+    "//CSS/css-api:css",
+    "@community//java/idea-ui:ui",
+    "@community//plugins/maven",
+    "@community//plugins/ant",
+    "@community//plugins/copyright",
+    "@community//jps/jps-builders:build",
+    "@lib//:velocity",
+    "@community//plugins/properties",
+    "//webcore:webide",
+    "@community//plugins/properties/properties-psi-api:psi",
+    "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
+    "//plugins/uml:diagram",
+    "//plugins/graph",
+    "@lib//:protobuf",
+    "@community//platform/util/nanoxml",
+    "@lib//:stream_ex",
+    "@lib//:fastutil-min",
+    "@lib//:commons-compress",
+    "@community//platform/core-ui",
+    "@community//plugins/properties/properties-psi-impl:psi-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "//plugins/uml:diagram-impl",
+    "@community//platform/util/jdom",
+    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
+    "@community//platform/util/text-matching",
+  ],
+  exports = [
+    "//contrib/flex/flex-shared:shared",
+    "//CSS/css-api:css",
+  ],
+  runtime_deps = [
+    ":flex_resources",
+    "//contrib/flex/jps-plugin:jps",
+  ]
+)
+### auto-generated section `build intellij.flex` end

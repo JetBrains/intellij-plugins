@@ -1,0 +1,65 @@
+### auto-generated section `build intellij.makefile` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "makefile_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "makefile",
+  module_name = "intellij.makefile",
+  visibility = ["//visibility:public"],
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/core-ui",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/analysis-impl",
+    "@community//platform/execution-impl",
+    "@community//plugins/terminal",
+    "@community//spellchecker",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":makefile_resources"]
+)
+
+kt_jvm_test(
+  name = "makefile_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":makefile"],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/core-ui",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/analysis-impl",
+    "@community//platform/execution-impl",
+    "@community//plugins/terminal",
+    "@community//spellchecker",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":makefile_resources"]
+)
+### auto-generated section `build intellij.makefile` end

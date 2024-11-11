@@ -1,0 +1,51 @@
+### auto-generated section `build intellij.webassembly` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "webassembly_resources",
+  files = glob(["src/main/resources/**/*"]),
+  strip_prefix = "src/main/resources"
+)
+
+jvm_library(
+  name = "webassembly",
+  module_name = "intellij.webassembly",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/main/gen/**/*.kt", "src/main/gen/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "@lib//:gson",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":webassembly_resources"]
+)
+
+kt_jvm_test(
+  name = "webassembly_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":webassembly"],
+  deps = [
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "@lib//:gson",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":webassembly_resources"]
+)
+### auto-generated section `build intellij.webassembly` end

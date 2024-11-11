@@ -1,0 +1,32 @@
+### auto-generated section `build intellij.javascript.debugger.featuresTrainer` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "javascript-debugger-featuresTrainer_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "javascript-debugger-featuresTrainer",
+  module_name = "intellij.javascript.debugger.featuresTrainer",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/testRunner",
+    "@community//platform/smRunner",
+    "@community//plugins/ide-features-trainer:featuresTrainer",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//platform/core-ui",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+  ],
+  runtime_deps = [":javascript-debugger-featuresTrainer_resources"]
+)
+### auto-generated section `build intellij.javascript.debugger.featuresTrainer` end

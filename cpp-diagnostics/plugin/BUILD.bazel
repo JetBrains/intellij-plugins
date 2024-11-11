@@ -1,0 +1,20 @@
+### auto-generated section `build intellij.clion.diagnostics.plugin` start
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+
+jvm_resources(
+  name = "clion-diagnostics-plugin_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+java_library(
+  name = "clion-diagnostics-plugin",
+  visibility = ["//visibility:public"],
+  exports = ["//contrib/cpp-diagnostics:clion-diagnostics"],
+  runtime_deps = [
+    ":clion-diagnostics-plugin_resources",
+    "//contrib/cpp-diagnostics:clion-diagnostics",
+  ]
+)
+### auto-generated section `build intellij.clion.diagnostics.plugin` end

@@ -1,0 +1,67 @@
+### auto-generated section `build intellij.yeoman` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "yeoman_resources",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_resources(
+  name = "yeoman_resources_1",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "yeoman",
+  module_name = "intellij.yeoman",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@lib//:gson",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-plugin",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/text-matching",
+  ],
+  runtime_deps = [
+    ":yeoman_resources",
+    ":yeoman_resources_1",
+  ]
+)
+
+kt_jvm_test(
+  name = "yeoman_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":yeoman"],
+  deps = [
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@lib//:gson",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-plugin",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/text-matching",
+  ],
+  runtime_deps = [
+    ":yeoman_resources",
+    ":yeoman_resources_1",
+  ]
+)
+### auto-generated section `build intellij.yeoman` end

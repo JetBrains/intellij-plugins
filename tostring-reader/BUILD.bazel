@@ -1,0 +1,46 @@
+### auto-generated section `build intellij.tsr` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "tsr_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "tsr",
+  module_name = "intellij.tsr",
+  visibility = ["//visibility:public"],
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-impl",
+    "@community//platform/code-style-impl:codeStyle-impl",
+  ],
+  runtime_deps = [":tsr_resources"]
+)
+
+kt_jvm_test(
+  name = "tsr_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":tsr"],
+  deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//java/testFramework",
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-impl",
+    "@community//platform/code-style-impl:codeStyle-impl",
+  ],
+  runtime_deps = [":tsr_resources"]
+)
+### auto-generated section `build intellij.tsr` end

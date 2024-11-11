@@ -1,0 +1,92 @@
+### auto-generated section `build intellij.terraform` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "terraform_resources",
+  files = glob(["res/**/*"]),
+  strip_prefix = "res"
+)
+
+jvm_library(
+  name = "terraform",
+  module_name = "intellij.terraform",
+  visibility = ["//visibility:public"],
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/fileWatcher",
+    "@lib//:jackson",
+    "@lib//:jackson-databind",
+    "@ultimate_lib//:terraform_terraform-metadata",
+    "@community//platform/vcs-api:vcs",
+    "@lib//:guava",
+    "@community//spellchecker",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@lib//:fastutil-min",
+    "@community//platform/vcs-impl",
+    "@community//platform/util/coroutines",
+    "@community//platform/backend/workspace",
+    "@community//plugins/IntelliLang:langInjection",
+    "@lib//:jackson-module-kotlin",
+    "@lib//:caffeine",
+    "@lib//:jetbrains_markdown",
+    "@lib//:jna",
+    "@community//platform/statistics",
+  ],
+  runtime_deps = [":terraform_resources"]
+)
+
+kt_jvm_test(
+  name = "terraform_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":terraform"],
+  deps = [
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/platform-api:ide",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/fileWatcher",
+    "@lib//:jackson",
+    "@lib//:jackson-databind",
+    "@ultimate_lib//:terraform_terraform-metadata",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@lib//:assert_j",
+    "@community//platform/vcs-api:vcs",
+    "@community//java/testFramework",
+    "@lib//:guava",
+    "@community//spellchecker",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@lib//:fastutil-min",
+    "@community//platform/vcs-impl",
+    "@community//platform/util/coroutines",
+    "@community//platform/backend/workspace",
+    "@community//plugins/IntelliLang:langInjection",
+    "@lib//:jackson-module-kotlin",
+    "@lib//:caffeine",
+    "@lib//:jetbrains_markdown",
+    "@lib//:jna",
+    "@community//platform/navbar/testFramework",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test",
+    "@community//platform/statistics",
+  ],
+  runtime_deps = [":terraform_resources"]
+)
+### auto-generated section `build intellij.terraform` end

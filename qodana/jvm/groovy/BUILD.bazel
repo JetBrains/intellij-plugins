@@ -1,0 +1,50 @@
+### auto-generated section `build intellij.qodana.jvm.groovy` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "qodana-jvm-groovy_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-jvm-groovy",
+  module_name = "intellij.qodana.jvm.groovy",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/lang-impl",
+    "@community//java/java-psi-api:psi",
+    "@community//plugins/groovy/groovy-psi:psi",
+    "@community//plugins/groovy",
+    "//contrib/qodana",
+  ],
+  runtime_deps = [":qodana-jvm-groovy_resources"]
+)
+
+kt_jvm_test(
+  name = "qodana-jvm-groovy_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":qodana-jvm-groovy"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/lang-impl",
+    "@community//java/java-psi-api:psi",
+    "@community//plugins/groovy/groovy-psi:psi",
+    "@community//plugins/groovy",
+    "//contrib/qodana",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework/extensions:testExtensions",
+  ],
+  runtime_deps = [":qodana-jvm-groovy_resources"]
+)
+### auto-generated section `build intellij.qodana.jvm.groovy` end

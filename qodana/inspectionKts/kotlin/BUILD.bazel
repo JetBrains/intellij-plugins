@@ -1,0 +1,49 @@
+### auto-generated section `build intellij.qodana.inspectionKts.kotlin` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "qodana-inspectionKts-kotlin_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-inspectionKts-kotlin",
+  module_name = "intellij.qodana.inspectionKts.kotlin",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-impl",
+    "@community//java/java-psi-api:psi",
+    "@lib//:kotlinc_analysis-api.provided",
+    "@lib//:kotlinc_kotlin-compiler-common.provided",
+    "@ultimate_lib//:kotlinc_kotlin-scripting-common.provided",
+    "@ultimate_lib//:kotlinc_kotlin-scripting-jvm.provided",
+    "@lib//:kotlinc_kotlin-scripting-compiler-impl.provided",
+    "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
+    "//contrib/qodana",
+    "@community//platform/platform-api:ide",
+    "@community//platform/util:util-ui",
+    "@community//platform/core-ui",
+    "@community//plugins/kotlin/base/resources:kotlin-base-resources",
+    "@community//plugins/kotlin/base/plugin:kotlin-base-plugin",
+    "@community//plugins/kotlin/base/util:kotlin-base-util",
+    "@community//plugins/kotlin/base/project-structure:kotlin-base-project-structure",
+    "@community//plugins/kotlin/base/scripting:kotlin-base-scripting",
+    "@community//plugins/kotlin/scripting",
+    "@community//platform/util-class-loader:util-classLoader",
+    "@community//platform/platform-impl:ide-impl",
+  ],
+  runtime_deps = [
+    ":qodana-inspectionKts-kotlin_resources",
+    "@community//plugins/kotlin:kotlin-plugin-community-main",
+  ]
+)
+### auto-generated section `build intellij.qodana.inspectionKts.kotlin` end

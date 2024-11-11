@@ -1,0 +1,61 @@
+### auto-generated section `build intellij.handlebars` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "handlebars_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "handlebars_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "handlebars",
+  module_name = "intellij.handlebars",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/lang-impl",
+    "@community//xml/impl",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+  ],
+  runtime_deps = [
+    ":handlebars_resources",
+    ":handlebars_resources_1",
+  ]
+)
+
+kt_jvm_test(
+  name = "handlebars_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":handlebars"],
+  deps = [
+    "@community//platform/lang-impl",
+    "@community//xml/impl",
+    "//plugins/JavaScriptLanguage:javascript",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//xml/relaxng",
+    "@community//xml/relaxng:relaxng_test",
+  ],
+  runtime_deps = [
+    ":handlebars_resources",
+    ":handlebars_resources_1",
+  ]
+)
+### auto-generated section `build intellij.handlebars` end

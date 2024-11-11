@@ -1,0 +1,76 @@
+### auto-generated section `build intellij.clion.embedded.platformio` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "clion-embedded-platformio_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "clion-embedded-platformio",
+  module_name = "intellij.clion.embedded.platformio",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "//CIDR/clion-embedded/plugin:clion-embedded-plugin",
+    "//CIDR/clion",
+    "//CIDR/cidr-debugger",
+    "//CIDR/clion-embedded",
+    "//CIDR/clion-execution",
+    "@community//plugins/terminal",
+    "@community//platform/core-ui",
+    "@community//platform/statistics",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//platform/lang-impl",
+    "//CIDR/cidr-util",
+    "@lib//:gson",
+    "@community//platform/platform-api:ide",
+    "@ultimate_lib//:java-_web_socket",
+    "@ultimate_lib//:eclipse_lsp4j_jsonrpc",
+    "@lib//:jediterm-core",
+    "@lib//:jediterm-ui",
+    "@community//platform/ui.jcef:ui-jcef",
+  ],
+  runtime_deps = [":clion-embedded-platformio_resources"]
+)
+
+kt_jvm_test(
+  name = "clion-embedded-platformio_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":clion-embedded-platformio"],
+  deps = [
+    "//CIDR/clion-embedded/plugin:clion-embedded-plugin",
+    "//CIDR/clion",
+    "//CIDR/cidr-debugger",
+    "//CIDR/clion-embedded",
+    "//CIDR/clion-execution",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@community//plugins/terminal",
+    "@community//platform/core-ui",
+    "@community//platform/statistics",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//platform/lang-impl",
+    "//CIDR/cidr-util",
+    "@lib//:gson",
+    "@community//platform/platform-api:ide",
+    "@ultimate_lib//:java-_web_socket",
+    "@ultimate_lib//:eclipse_lsp4j_jsonrpc",
+    "@lib//:jediterm-core",
+    "@lib//:jediterm-ui",
+    "@community//platform/ui.jcef:ui-jcef",
+    "//CIDR/clion-testFramework",
+  ],
+  runtime_deps = [":clion-embedded-platformio_resources"]
+)
+### auto-generated section `build intellij.clion.embedded.platformio` end

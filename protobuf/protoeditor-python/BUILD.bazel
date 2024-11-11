@@ -1,0 +1,56 @@
+### auto-generated section `build intellij.protoeditor.python` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "protoeditor-python_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "protoeditor-python",
+  module_name = "intellij.protoeditor.python",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@lib//:guava",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/core-impl",
+    "@community//platform/core-ui",
+    "@community//platform/core-api:core",
+    "//contrib/protobuf/protoeditor-core",
+    "@community//python/python-psi-api:psi",
+  ],
+  runtime_deps = [":protoeditor-python_resources"]
+)
+
+kt_jvm_test(
+  name = "protoeditor-python_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":protoeditor-python"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@lib//:guava",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/editor-ui-api:editor",
+    "@community//platform/core-impl",
+    "@community//platform/core-ui",
+    "@community//platform/core-api:core",
+    "//contrib/protobuf/protoeditor-core",
+    "@community//python/python-psi-api:psi",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "@lib//:truth",
+  ],
+  runtime_deps = [":protoeditor-python_resources"]
+)
+### auto-generated section `build intellij.protoeditor.python` end

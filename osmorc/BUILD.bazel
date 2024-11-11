@@ -1,0 +1,92 @@
+### auto-generated section `build intellij.osgi` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "osgi_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "osgi_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "osgi",
+  module_name = "intellij.osgi",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@community//platform/lang-api:lang",
+    "@community//java/openapi:java",
+    "@community//xml/dom-openapi:dom",
+    "@community//plugins/maven",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//java/java-impl:impl",
+    "@community//java/compiler/openapi:java-compiler",
+    "@community//java/execution/openapi:java-execution",
+    "@community//java/execution/impl:java-execution-impl",
+    "@community//java/debugger/impl:java-debugger-impl",
+    "@community//java/manifest",
+    "@community//platform/smRunner",
+    "//contrib/osmorc/osmorc-jps-plugin:osgi-jps",
+    "@community//contrib/osmorc/lib:org_osgi_namespace_contract-1_0_0",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@lib//:plexus-utils",
+    "@lib//:jgoodies-forms",
+  ],
+  runtime_deps = [
+    ":osgi_resources",
+    ":osgi_resources_1",
+  ]
+)
+
+kt_jvm_test(
+  name = "osgi_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src_test/**/*.kt", "src_test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":osgi"],
+  deps = [
+    "@community//platform/lang-api:lang",
+    "@community//java/openapi:java",
+    "@community//xml/dom-openapi:dom",
+    "@community//plugins/maven",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//java/java-impl:impl",
+    "@community//java/compiler/openapi:java-compiler",
+    "@community//java/execution/openapi:java-execution",
+    "@community//java/execution/impl:java-execution-impl",
+    "@community//java/debugger/impl:java-debugger-impl",
+    "@community//java/manifest",
+    "@community//platform/smRunner",
+    "//contrib/osmorc/osmorc-jps-plugin:osgi-jps",
+    "@community//contrib/osmorc/lib:org_osgi_namespace_contract-1_0_0",
+    "@community//java/testFramework",
+    "@community//jps/jps-builders:build",
+    "@lib//:kotlin-stdlib",
+    "@lib//:assert_j",
+    "@community//plugins/maven/testFramework",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@lib//:plexus-utils",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test",
+    "@lib//:jgoodies-forms",
+  ],
+  runtime_deps = [
+    ":osgi_resources",
+    ":osgi_resources_1",
+  ]
+)
+### auto-generated section `build intellij.osgi` end

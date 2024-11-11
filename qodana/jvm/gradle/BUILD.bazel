@@ -1,0 +1,30 @@
+### auto-generated section `build intellij.qodana.jvm.gradle` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+
+jvm_resources(
+  name = "qodana-jvm-gradle_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-jvm-gradle",
+  module_name = "intellij.qodana.jvm.gradle",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//plugins/gradle:gradle-common",
+    "@community//platform/external-system-api:externalSystem",
+    "@community//platform/platform-impl:ide-impl",
+    "//contrib/qodana",
+    "@community//platform/backend/observation",
+    "//contrib/qodana/jvm/java:qodana-jvm-java",
+  ],
+  runtime_deps = [":qodana-jvm-gradle_resources"]
+)
+### auto-generated section `build intellij.qodana.jvm.gradle` end

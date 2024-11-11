@@ -1,0 +1,57 @@
+### auto-generated section `build intellij.qodana.jvm.kotlin` start
+load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+jvm_resources(
+  name = "qodana-jvm-kotlin_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-jvm-kotlin",
+  module_name = "intellij.qodana.jvm.kotlin",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//java/compiler/openapi:java-compiler",
+    "//contrib/qodana",
+    "@lib//:kotlinc_kotlin-compiler-common.provided",
+    "@community//platform/util-class-loader:util-classLoader",
+  ],
+  runtime_deps = [
+    ":qodana-jvm-kotlin_resources",
+    "@community//plugins/kotlin:kotlin-plugin-community-main",
+  ]
+)
+
+kt_jvm_test(
+  name = "qodana-jvm-kotlin_test",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
+  javac_opts = "@rules_jvm//:j17",
+  kotlinc_opts = "@rules_jvm//:k17",
+  associates = [":qodana-jvm-kotlin"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//java/compiler/openapi:java-compiler",
+    "//contrib/qodana/jvm/coverage:qodana-jvm-coverage",
+    "//contrib/qodana/jvm/coverage:qodana-jvm-coverage_test",
+    "@community//java/testFramework",
+    "//contrib/qodana-test-framework:qodana-testFramework",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test",
+    "//contrib/qodana",
+    "@community//platform/util-class-loader:util-classLoader",
+  ],
+  runtime_deps = [":qodana-jvm-kotlin_resources"]
+)
+### auto-generated section `build intellij.qodana.jvm.kotlin` end
