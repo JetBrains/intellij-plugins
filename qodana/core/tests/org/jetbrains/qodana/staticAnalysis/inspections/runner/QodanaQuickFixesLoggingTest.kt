@@ -15,13 +15,13 @@ import kotlin.io.path.absolutePathString
 class QodanaQuickFixesLoggingTest: QodanaRunnerTestCase() {
 
   @Test
-  fun cleanUpGeneral() {
+  fun cleanupGeneral() {
     run(FixesStrategy.CLEANUP)
     assertDefaultLogData()
   }
 
   @Test
-  fun cleanUpDiff() {
+  fun cleanupDiff() {
     runWithDiffEnabled {
       run(FixesStrategy.CLEANUP)
     }
