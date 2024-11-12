@@ -20,9 +20,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.blockingContextScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.io.toNioPathOrNull
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.util.PairProcessor
@@ -37,6 +37,7 @@ import com.intellij.platform.util.coroutines.mapConcurrent
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
+import java.nio.file.Path
 
 private val LOG = logger<QodanaRunner>()
 
@@ -304,10 +305,10 @@ private fun tryToFixProblem(
       val psiFile = getPsiFile(uncommitedDoc)
       psiFile?.virtualFile?.let { file ->
         fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, descriptionMessage, uri,
-                                  nonModCommandFix.name, file.path.absolutePathToRelative(runContext.project.basePath))
+                                  nonModCommandFix.name, file.relativePath(runContext.config.projectPath))
       }
       if (fixesLogger.diffIncluded && psiFile != null) {
-        fixesLogger.addFileModificationToQueue(psiFile.virtualFile.path.absolutePathToRelative(runContext.project.basePath),
+        fixesLogger.addFileModificationToQueue(psiFile.virtualFile.relativePath(runContext.config.projectPath),
                                                descriptionMessage, descriptor.containingFileText(), uncommitedDoc.charsSequence)
       }
     }
@@ -353,10 +354,10 @@ private fun logModCommand(
     is ModUpdateFileText -> {
       modCommand.modifiedFiles().forEach {
         fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, problemMessage, problemOriginFilePath, fixText,
-                                  it.path.absolutePathToRelative(runContext.project.basePath))
+                                  it.relativePath(runContext.config.projectPath))
       }
       if (fixesLogger.diffIncluded) {
-        fixesLogger.addFileModificationToQueue(modCommand.file.path.absolutePathToRelative(runContext.project.basePath), problemMessage,
+        fixesLogger.addFileModificationToQueue(modCommand.file.relativePath(runContext.config.projectPath), problemMessage,
                                                modCommand.oldText, modCommand.newText)
       }
     }
@@ -372,8 +373,7 @@ private fun logModCommand(
   }
 }
 
-private fun String.absolutePathToRelative(base: String?) =
-  toNioPathOrNull()?.let { base?.toNioPathOrNull()?.relativize(it)?.toString() } ?: this
+private fun VirtualFile.relativePath(base: Path) = toNioPathOrNull()?.let { base.relativize(it).toString() } ?: path
 
 private fun ProblemDescriptor.messageWithLine() =
   "${lineNumber}: ${ProblemDescriptorUtil.renderDescriptionMessage(this, psiElement)}"
