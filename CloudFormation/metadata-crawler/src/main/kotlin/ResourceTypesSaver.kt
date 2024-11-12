@@ -138,7 +138,7 @@ object ResourceTypesSaver {
     val vlists = doc.select("div.variablelist")
     if (!vlists.isEmpty()) {
       for (vlist in vlists) {
-        var cur = vlist
+        var cur: Element? = vlist
         while (cur != null) {
           if (cur.tagName() == "h2") {
             break
