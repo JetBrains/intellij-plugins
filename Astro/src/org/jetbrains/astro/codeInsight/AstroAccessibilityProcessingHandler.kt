@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler
@@ -8,9 +8,8 @@ import com.intellij.psi.PsiElement
 
 class AstroAccessibilityProcessingHandler(place: PsiElement?) : AccessibilityProcessingHandler(place) {
 
-  override fun getCheckers(): Collection<JSAccessibilityChecker> {
-    return ourCheckers
-  }
+  override val checkers: List<JSAccessibilityChecker>
+    get() = ourCheckers
 
   companion object {
 
