@@ -3,9 +3,9 @@
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.idea.AppMode;
 import com.intellij.javascript.karma.KarmaBundle;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.PathUtil;
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -40,22 +40,23 @@ public final class KarmaJsSourcesLocator {
   }
 
   private static File getBundledJsReporterDir() {
-    String jarPath = PathUtil.getJarPathForClass(KarmaJsSourcesLocator.class);
-    if (jarPath.endsWith(".jar")) {
-      File jarFile = new File(jarPath);
-      if (!jarFile.isFile()) {
-        throw new RuntimeException("jar file cannot be null");
-      }
-      File pluginBaseDir = jarFile.getParentFile().getParentFile();
-      return new File(pluginBaseDir, JS_REPORTER_NAME);
+    String relativePathToResources;
+    if (AppMode.isDevServer()) {
+      relativePathToResources = "karma";
     }
-    if (ApplicationManager.getApplication().isInternal()) {
-      String srcDir = jarPath.replace('\\', '/').replace("/out/classes/production/intellij.karma", "/contrib/js-karma/resources");
-      if (new File(srcDir).isDirectory()) {
-        jarPath = srcDir;
-      }
+    else {
+      relativePathToResources = "js-karma/resources";
     }
-    return new File(jarPath, JS_REPORTER_NAME);
+    try {
+      return JSPluginPathManager.getPluginResourceOrSource(
+        KarmaJsSourcesLocator.class,
+        JS_REPORTER_NAME,
+        relativePathToResources
+      );
+    }
+    catch (IOException e) {
+      throw new RuntimeException("Cannot find bundled karma-intellij in " + relativePathToResources);
+    }
   }
 
   private File getAppFile(@NotNull String baseName) throws IOException {
