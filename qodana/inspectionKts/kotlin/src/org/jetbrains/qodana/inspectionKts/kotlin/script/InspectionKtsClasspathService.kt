@@ -26,10 +26,9 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import org.jetbrains.kotlin.idea.base.plugin.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.idea.base.projectStructure.moduleInfo.SdkInfo
 import org.jetbrains.kotlin.idea.base.projectStructure.scope.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.base.scripting.projectStructure.ScriptDependenciesInfo
-import org.jetbrains.kotlin.idea.base.util.K1ModeProjectStructureApi
+import org.jetbrains.kotlin.idea.base.projectStructure.toKaLibraryModule
+import org.jetbrains.kotlin.idea.core.script.ScriptDependencyAware
 import org.jetbrains.qodana.QodanaIntelliJYamlService
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.inspectionKts.isInspectionKtsEnabled
@@ -67,13 +66,12 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
     return VfsUtilCore.isUnder(jarFile, roots)
   }
 
-  @OptIn(K1ModeProjectStructureApi::class)
   suspend fun collectDependenciesScope(project: Project): GlobalSearchScope {
     val dependenciesScope = dependenciesScope.await()
     return GlobalSearchScope.union(
       arrayOf(
-        ScriptDependenciesInfo.ForProject(project).sdk()?.let { SdkInfo(project, it) }?.contentScope,
-        KotlinSourceFilterScope.libraryClasses(dependenciesScope, project)
+        ScriptDependencyAware.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
+        KotlinSourceFilterScope.libraryClasses(dependenciesScope, project),
       )
     )
   }
