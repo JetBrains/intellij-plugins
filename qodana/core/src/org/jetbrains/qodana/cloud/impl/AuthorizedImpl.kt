@@ -20,7 +20,6 @@ import org.jetbrains.qodana.stats.SourceUserState
 import org.jetbrains.qodana.stats.StatsUserState
 
 internal class AuthorizedImpl(
-  private val serviceScope: CoroutineScope,
   private val stateManager: StateManager<UserState>,
   private val refreshTokenPersistence: QodanaCloudRefreshTokenPersistence,
   private val cloudClient: QDCloudClient,
@@ -86,7 +85,7 @@ internal class AuthorizedImpl(
   }
 
   override fun logOut(): UserState.NotAuthorized? {
-    return stateManager.changeState(this, NotAuthorizedImpl(serviceScope, stateManager, selfHostedFrontendUrl))
+    return stateManager.changeState(this, NotAuthorizedImpl(stateManager, selfHostedFrontendUrl))
   }
 
   /**

@@ -43,7 +43,7 @@ class QodanaCloudStateService(private val scope: CoroutineScope) : PersistentSta
   var authorizationExpirationTimeout = 10.minutes
 
   @Suppress("RemoveExplicitTypeArguments")
-  private val stateManager = StateManager<UserState> { NotAuthorizedImpl(scope, it, null) }
+  private val stateManager = StateManager<UserState> { NotAuthorizedImpl(it, null) }
   val userState: StateFlow<UserState>
     get() {
       val userStateFlow = stateManager.state
@@ -118,7 +118,7 @@ class QodanaCloudStateService(private val scope: CoroutineScope) : PersistentSta
   }
 
   private fun getUserStateFromPersisted(persistentState: ServiceState): UserState {
-    val notAuthorized = NotAuthorizedImpl(scope, stateManager, null)
+    val notAuthorized = NotAuthorizedImpl(stateManager, null)
     if (!persistentState.isAuthorized) return notAuthorized
 
     val userId = persistentState.userId
@@ -130,7 +130,6 @@ class QodanaCloudStateService(private val scope: CoroutineScope) : PersistentSta
     val frontendUrl = persistentState.frontendUrl ?: QodanaCloudDefaultUrls.websiteUrl
 
     return AuthorizedImpl(
-      scope,
       stateManager,
       refreshTokenPersistence,
       IjQDCloudClient(frontendUrl),

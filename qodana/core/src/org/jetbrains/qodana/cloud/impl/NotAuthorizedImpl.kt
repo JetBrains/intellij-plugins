@@ -2,13 +2,11 @@ package org.jetbrains.qodana.cloud.impl
 
 import com.intellij.util.Url
 import com.intellij.util.Urls
-import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.cloud.QodanaCloudDefaultUrls
 import org.jetbrains.qodana.cloud.StateManager
 import org.jetbrains.qodana.cloud.UserState
 
 internal class NotAuthorizedImpl(
-  private val serviceScope: CoroutineScope,
   private val stateManager: StateManager<UserState>,
   initialSelfHostedFrontendUrl: Url?
 ) : UserState.NotAuthorized {
@@ -19,7 +17,7 @@ internal class NotAuthorizedImpl(
 
   override fun authorize(selfHostedUrl: Url?): UserState.Authorizing? {
     val correctedSelfHostedFrontendUrl = if (selfHostedUrl == defaultQodanaCloudFrontendUrl) null else selfHostedUrl
-    val authorizing = AuthorizingImpl(serviceScope, stateManager, correctedSelfHostedFrontendUrl)
+    val authorizing = AuthorizingImpl(stateManager, correctedSelfHostedFrontendUrl)
     return stateManager.changeState(this, authorizing)
   }
 }

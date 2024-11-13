@@ -4,7 +4,6 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.service
 import com.intellij.util.Url
 import com.intellij.util.Urls
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -30,7 +29,6 @@ import java.net.MalformedURLException
 import kotlin.time.Duration.Companion.seconds
 
 internal class AuthorizingImpl(
-  private val serviceScope: CoroutineScope,
   private val stateManager: StateManager<UserState>,
   override val selfHostedFrontendUrl: Url?
 ) : UserState.Authorizing {
@@ -40,7 +38,7 @@ internal class AuthorizingImpl(
 
   suspend fun startOAuth() {
     val frontendUrlString: String = frontendUrl.toExternalForm()
-    var finalState: UserState = NotAuthorizedImpl(serviceScope, stateManager, selfHostedFrontendUrl)
+    var finalState: UserState = NotAuthorizedImpl(stateManager, selfHostedFrontendUrl)
     try {
       val cloudClient = IjQDCloudClient(frontendUrlString)
       val port = BuiltInServerManager.getInstance().port
@@ -110,7 +108,6 @@ internal class AuthorizingImpl(
     }
 
     val authorized = AuthorizedImpl(
-      serviceScope,
       stateManager,
       QodanaCloudRefreshTokenPersistence(),
       cloudClient,
@@ -193,7 +190,7 @@ internal class AuthorizingImpl(
   }
 
   override fun cancelAuthorization(): UserState.NotAuthorized? {
-    val notAuthorized = stateManager.changeState(this, NotAuthorizedImpl(serviceScope, stateManager, selfHostedFrontendUrl))
+    val notAuthorized = stateManager.changeState(this, NotAuthorizedImpl(stateManager, selfHostedFrontendUrl))
     if (notAuthorized != null) {
       service<QodanaCloudOAuthService>().cancelAuthorization()
     }
