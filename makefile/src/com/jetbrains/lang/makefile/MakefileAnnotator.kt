@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity.INFORMATION
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.FUNCTION
@@ -17,7 +18,7 @@ import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE_
 import com.jetbrains.lang.makefile.psi.*
 
 
-class MakefileAnnotator : Annotator {
+class MakefileAnnotator : Annotator, DumbAware {
   private val lineTokenSet = TokenSet.create(MakefileTypes.IDENTIFIER)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
