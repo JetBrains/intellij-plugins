@@ -8,9 +8,8 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.javascript.nodejs.NodePackageVersion;
-import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DefaultProjectFactory;
@@ -244,9 +243,8 @@ public class YeomanRunGeneratorForm implements Disposable {
 
   private void addNewYoVersionParameter(@NotNull GeneralCommandLine line) {
     assert myInfo != null;
-    NodePackageVersion version = NodePackageVersionUtil.getPackageVersion(myInfo.getFilePath());
-
-    SemVer ver = version == null ? null : version.getSemVer();
+    NodePackage pkg = new NodePackage(myInfo.getFilePath());
+    SemVer ver = pkg.getVersion(myProject);
     if (ver == null || ver.isGreaterOrEqualThan(1, 7, 1)) {
       line.addParameter("--newYoVersion");
     }
