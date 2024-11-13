@@ -10,10 +10,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.util.PlatformUtils
 import kotlinx.coroutines.delay
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.exists
@@ -38,6 +36,7 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     val input = args[1]  //list of ids
     val output = args[2] //.dockerignore for update
     // fill disabled_plugins.txt
+    @Suppress("UNUSED_VARIABLE") // disabled_plugins.txt is not modified by this script
     val disabledPluginsPath = if (args.size == 4) { args[3] } else ""
     try {
       val requiredIds = File(input).readLines()
@@ -45,38 +44,21 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
         printHelpAndExit()
       }
 
-      val (included, disabledIds) = calculateActual(requiredIds)
+      val (included, _) = calculateActual(requiredIds)
       val dockerIgnorePath = Paths.get(output)
       val baseFolder = dockerIgnorePath.parent.toAbsolutePath()
 
-
-      val keptPlugins = included + getKeptButDisabledPlugins().mapNotNull { findDescriptor(it) }
-      val includedPaths = keptPlugins.mapNotNull {
+      val includedPaths = included.mapNotNull {
         val pathPresentation = it.pluginPath.toString()
         val path = Paths.get(pathPresentation).toAbsolutePath()
         if (path.exists()) "!${baseFolder.relativize(path)}" else null
       }
       dockerIgnorePath.toFile().appendText("\n" + includedPaths.joinToString("\n"))
-      if (disabledPluginsPath.isNotEmpty()) {
-        Files.write(Paths.get(disabledPluginsPath), disabledIds)
-      }
       ApplicationManagerEx.getApplicationEx().exit(true, true)
     }
     catch (e: Throwable) {
       LOG.error(e)
       exitProcess(1)
-    }
-  }
-
-  private fun findDescriptor(id: String): IdeaPluginDescriptor? {
-    val pluginId = PluginId.findId(id)
-    if (pluginId == null) {
-      LOG.error("Can't find plugin descriptor for id '$id'")
-      return null
-    }
-    return PluginManagerCore.getPlugin(pluginId) ?: kotlin.run {
-      LOG.error("Can't find plugin descriptor for id '$pluginId'")
-      null
     }
   }
 
@@ -91,7 +73,6 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     val processed = mutableSetOf<String>()
     val toProcess = LinkedList(included)
     val include = mutableSetOf<IdeaPluginDescriptor>()
-
 
     while (toProcess.isNotEmpty()) {
       val idString = toProcess.pop()
@@ -135,10 +116,4 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
       if (processed.contains(it.pluginId.idString) || it.isOptional) null else it.pluginId.idString
     } + required
   }
-}
-
-fun getKeptButDisabledPlugins(): List<String> {
-  if (PlatformUtils.isRider()) return listOf("intellij.rider.plugins.cwm")
-  if (PlatformUtils.isCommunityEdition()) return listOf()
-  return listOf("com.jetbrains.codeWithMe")
 }
