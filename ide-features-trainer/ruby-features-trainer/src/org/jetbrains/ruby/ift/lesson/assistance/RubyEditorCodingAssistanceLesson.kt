@@ -12,7 +12,7 @@ import training.learn.lesson.general.assistance.EditorCodingAssistanceLesson
 class RubyEditorCodingAssistanceLesson(sample: LessonSample) :
   EditorCodingAssistanceLesson(sample) {
   override val errorIntentionText: String
-    get() = RBundle.message("inspection.argcount.extra.argument.fix")
+    get() = RBundle.message("ruby.inspection.incorrect.call.argument.count.excess.arguments.quickFix.name", 1)
   override val warningIntentionText: String
     get() = RBundle.message("inspection.parentheses.around.conditional.message")
 
