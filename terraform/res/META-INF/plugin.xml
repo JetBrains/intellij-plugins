@@ -441,7 +441,7 @@
                          id="reference.settings.dialog.project.terraform"
                          key="terraform.opentofu.settings.label" bundle="messages.HCLBundle"/>
 
-    <configurationType implementation="org.intellij.terraform.runtime.TfConfigurationType"/>
+    <configurationType implementation="org.intellij.terraform.runtime.TerraformConfigurationType"/>
     <runLineMarkerContributor language="HCL" implementationClass="org.intellij.terraform.runtime.TfRunLineMarkerContributor"/>
     <checkinHandlerFactory implementation="org.intellij.terraform.config.actions.TFFmtCheckinFactory" order="last"/>
     <macro implementation="org.intellij.terraform.macros.TerraformExecutableMacro"/>
@@ -460,6 +460,9 @@
 
     <fileTypeUsageSchemaDescriptor schema="OpenTofu"
                                    implementationClass="org.intellij.terraform.config.editor.OpenTofuJsonFileTypeUsageSchemaDescriptor"/>
+
+    <configurationType implementation="org.intellij.terraform.opentofu.runtime.OpenTofuConfigurationType"/>
+    <!-- OpenTofu support -->
     <fileTypeUsageSchemaDescriptor schema="Terraform"
                                    implementationClass="org.intellij.terraform.config.editor.TfJsonFileTypeUsageSchemaDescriptor"/>
 
@@ -513,12 +516,19 @@
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </group>
 
-    <group id="TfRunConfigurationActions">
+    <group id="TerraformRunConfigurationActions">
       <action id="TfInitConfigAction" class="org.intellij.terraform.runtime.InitAction"/>
       <action id="TfValidateConfigAction" class="org.intellij.terraform.runtime.ValidateAction"/>
       <action id="TfPlanConfigAction" class="org.intellij.terraform.runtime.PlanAction"/>
       <action id="TfApplyConfigAction" class="org.intellij.terraform.runtime.ApplyAction"/>
       <action id="TfDestroyConfigAction" class="org.intellij.terraform.runtime.DestroyAction"/>
+    </group>
+    <group id="OpenTofuRunConfigurationActions">
+      <action id="OtInitConfigAction" class="org.intellij.terraform.runtime.InitAction"/>
+      <action id="OtValidateConfigAction" class="org.intellij.terraform.runtime.ValidateAction"/>
+      <action id="OtPlanConfigAction" class="org.intellij.terraform.runtime.PlanAction"/>
+      <action id="OtApplyConfigAction" class="org.intellij.terraform.runtime.ApplyAction"/>
+      <action id="OtDestroyConfigAction" class="org.intellij.terraform.runtime.DestroyAction"/>
     </group>
   </actions>
 </idea-plugin>
