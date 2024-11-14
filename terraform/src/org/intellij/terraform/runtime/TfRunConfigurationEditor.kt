@@ -27,7 +27,7 @@ internal class TfRunConfigurationEditor(runConfiguration: TfToolsRunConfiguratio
         label.text = value.command
       }
       else {
-        label.text = ""
+        label.text = HCLBundle.message("terraform.run.configuration.command.combobox.none.item")
       }
       font = Font(Font.MONOSPACED, font.style, font.size)
     }
