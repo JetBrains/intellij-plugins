@@ -9,7 +9,10 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.annotations.NonNls
 
 class ActionScriptGenerateTest : JSGenerateTestBase() {
-  @Throws(Exception::class)
+  companion object {
+    const val BASE_PATH: @NonNls String = "/js2_highlighting"
+  }
+
   override fun setUp() {
     super.setUp()
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.testRootDisposable, "")
@@ -70,9 +73,5 @@ class ActionScriptGenerateTest : JSGenerateTestBase() {
 
   private fun doGenerateTest(actionId: @NonNls String) {
     doGenerateTest(actionId, "js2")
-  }
-
-  companion object {
-    const val BASE_PATH: @NonNls String = "/js2_highlighting"
   }
 }
