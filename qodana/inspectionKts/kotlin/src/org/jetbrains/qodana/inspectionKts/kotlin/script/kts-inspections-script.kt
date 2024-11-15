@@ -1,34 +1,9 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.script
 
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
-import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.intellij.ScriptDefinitionsProvider
 import kotlin.script.experimental.jvm.JvmDependency
-
-internal class QodanaKtsInspectionsScriptDefinitionsProvider : ScriptDefinitionsProvider {
-  override val id: String
-    get() = "QodanaKtsInspectionsScriptDefinitionSource"
-
-  override fun getDefinitionClasses(): Iterable<String> = emptyList()
-
-  override fun getDefinitionsClassPath(): Iterable<File> = emptyList()
-
-  override fun useDiscovery(): Boolean = false
-
-  override fun provideDefinitions(
-    baseHostConfiguration: ScriptingHostConfiguration,
-    loadedScriptDefinitions: List<kotlin.script.experimental.host.ScriptDefinition>
-  ): Iterable<kotlin.script.experimental.host.ScriptDefinition> {
-    return listOf(
-      kotlin.script.experimental.host.ScriptDefinition(
-        QodanaKtsInspectionsScriptCompilationConfiguration(baseHostConfiguration),
-        QodanaKtsInspectionsScriptEvaluationConfiguration(baseHostConfiguration)
-      )
-    )
-  }
-}
 
 /**
  * Defines the script configuration (used by resolve/highlighting/etc in IDE)
