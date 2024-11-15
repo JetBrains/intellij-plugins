@@ -1,5 +1,6 @@
 package com.intellij.plugins.serialmonitor.ui
 
+import com.intellij.icons.AllIcons
 import com.intellij.ide.ActivityTracker
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.notification.NotificationGroupManager
@@ -18,10 +19,12 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
+import com.intellij.plugins.serialmonitor.service.SerialPortService.HardwareLinesStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService.SerialConnection
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
+import com.intellij.ui.JBColor
 import com.intellij.ui.TextFieldWithStoredHistory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLoadingPanel
@@ -29,7 +32,11 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
+import com.intellij.util.IconUtil
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
+import jssc.SerialPort
+import jssc.SerialPortEvent
 import java.awt.Component
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
@@ -44,23 +51,26 @@ private const val HISTORY_KEY = "serialMonitor.commands"
 class SerialMonitor(private val project: Project,
                     name: @NlsSafe String,
                     val portProfile: SerialPortProfile) : Disposable, SerialPortsListener {
-  private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 5, JBUI.insets(5), -1, -1), this, 300)
+  private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 5, JBUI.insets(5, 10), -1, -1), this, 300)
   private val mySend: JButton
   private val myCommand: TextFieldWithStoredHistory
   private val myLineEnd: JBCheckBox
   private val myHardwareControls: DialogPanel
+  //private val myHardwareStatus: DialogPanel
+  private val myHardwareStatusComponents = HardwareStatusComponents()
   private val duplexConsoleView: JeditermSerialMonitorDuplexConsoleView
 
   fun getStatus(): PortStatus = duplexConsoleView.status
 
   override fun portsStatusChanged() {
     mySend.isEnabled = duplexConsoleView.status == PortStatus.CONNECTED
+    myHardwareStatusComponents.updateFromLinesStatus(duplexConsoleView.connection.hardwareLinesStatus)
     ActivityTracker.getInstance().inc()
   }
 
   fun notifyProfileChanged() {
     duplexConsoleView.reconnect()
-    updateHardwareControlsVisibility()
+    updateHardwareVisibility()
   }
 
   private fun send(txt: String) {
@@ -134,6 +144,7 @@ class SerialMonitor(private val project: Project,
       myCommand.text = ""
     })
 
+    val connection = duplexConsoleView.connection
     myHardwareControls = panel {
       row {
         val rtsCheckbox = checkBox("RTS")
@@ -153,13 +164,22 @@ class SerialMonitor(private val project: Project,
           }
         }
 
-        val connection = duplexConsoleView.connection
         rtsCheckbox.component.isSelected = connection.rts
         rtsCheckbox.changesBind(SerialConnection::rts, connection)
         dtrCheckbox.component.isSelected = connection.dtr
         dtrCheckbox.changesBind(SerialConnection::dtr, connection)
+
+        val statusIcon = IconUtil.colorize(AllIcons.Debugger.Db_set_breakpoint, JBColor.green, true)
+        myHardwareStatusComponents.cts = icon(statusIcon).gap(RightGap.SMALL)
+          .component
+        label("CTS")
+        myHardwareStatusComponents.dsr = icon(statusIcon).gap(RightGap.SMALL)
+          .component
+        label("DSR")
       }
     }
+
+    connection.eventListener = myHardwareStatusComponents::updateFromEvent
 
     ApplicationManager.getApplication().messageBus.connect().subscribe(SerialPortsListener.SERIAL_PORTS_TOPIC, this)
     myPanel.add(toolbar.component,
@@ -176,10 +196,10 @@ class SerialMonitor(private val project: Project,
                 GridConstraints(1, 1, 1, 4, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
     duplexConsoleView.addSwitchListener(this::hideSendControls, this)
     hideSendControls(duplexConsoleView.isPrimaryConsoleEnabled)
-    updateHardwareControlsVisibility()
+    updateHardwareVisibility()
   }
 
-  private fun updateHardwareControlsVisibility() {
+  private fun updateHardwareVisibility() {
     myHardwareControls.isVisible = portProfile.showHardwareControls
   }
 
@@ -187,6 +207,28 @@ class SerialMonitor(private val project: Project,
     mySend.isVisible = !q
     myCommand.isVisible = !q
     myLineEnd.isVisible = !q
+  }
+
+  class HardwareStatusComponents() {
+
+    lateinit var cts: JComponent
+    lateinit var dsr: JComponent
+
+    @RequiresEdt
+    fun updateFromLinesStatus(status: HardwareLinesStatus) {
+      this.cts.isEnabled = status.cts
+      this.dsr.isEnabled = status.dsr
+    }
+
+    @RequiresEdt
+    fun updateFromEvent(event: SerialPortEvent) {
+      val eventComponent = when (event.eventType) {
+        SerialPort.MASK_CTS -> cts
+        SerialPort.MASK_DSR -> dsr
+        else -> return
+      }
+     eventComponent.isEnabled = event.eventValue == 1
+    }
   }
 
   companion object {

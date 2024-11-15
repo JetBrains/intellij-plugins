@@ -2,6 +2,7 @@ package com.intellij.plugins.serialmonitor.service
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
@@ -9,6 +10,7 @@ import com.intellij.plugins.serialmonitor.Parity
 import com.intellij.plugins.serialmonitor.SerialMonitorCollector
 import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.StopBits
+import com.intellij.plugins.serialmonitor.service.SerialPortService.HardwareLinesStatus.Companion.hardwareLinesStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.util.ConcurrencyUtil
@@ -16,9 +18,13 @@ import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import jssc.SerialPort
 import jssc.SerialPort.*
+import jssc.SerialPortEvent
 import jssc.SerialPortEventListener
 import jssc.SerialPortException
 import jssc.SerialPortList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -30,7 +36,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
 @Service
-class SerialPortService : Disposable {
+class SerialPortService(val cs: CoroutineScope) : Disposable {
 
   private val portWatcher: ScheduledExecutorService = ConcurrencyUtil.newSingleScheduledThreadExecutor("Serial Port Watcher")
     .apply { scheduleWithFixedDelay({ rescanPorts() }, 0, 500, TimeUnit.MILLISECONDS) }
@@ -121,9 +127,24 @@ class SerialPortService : Disposable {
     return connections[name]?.getStatus() ?: PortStatus.READY
   }
 
+  data class HardwareLinesStatus(val cts: Boolean, val dsr: Boolean) {
+    companion object {
+      val EMPTY = HardwareLinesStatus(false, false)
+      fun SerialPort.hardwareLinesStatus(): HardwareLinesStatus {
+        val lines = this.linesStatus
+        return HardwareLinesStatus(
+          lines[0] == 1,
+          lines[1] == 1
+        )
+      }
+    }
+  }
+
   inner class SerialConnection(val portName: @NlsSafe String) : Disposable {
 
     var dataListener: Consumer<ByteArray>? = null
+
+    var eventListener: ((SerialPortEvent)->Unit)? = null
 
     @Volatile
     private var port: SerialPort? = null
@@ -150,6 +171,9 @@ class SerialPortService : Disposable {
           field = value
         }
       }
+
+    val hardwareLinesStatus: HardwareLinesStatus
+      get() = port?.takeIf{ status == PortStatus.CONNECTED }?.hardwareLinesStatus() ?: HardwareLinesStatus.EMPTY
 
     @Throws(SerialMonitorException::class)
     private fun <T> runWithExceptionWrapping(value: T, func: (T)->Unit) {
@@ -208,6 +232,9 @@ class SerialPortService : Disposable {
           dataListener?.accept(readBytes)
         }
       }
+      this@SerialPortService.cs.launch(Dispatchers.EDT) {
+        eventListener?.invoke(event)
+      }
     }
 
     @RequiresBackgroundThread
@@ -229,13 +256,12 @@ class SerialPortService : Disposable {
           else -> PARITY_NONE
         }
         newPort.openPort()
-        newPort.addEventListener(listener, MASK_RXCHAR or MASK_ERR)
+        newPort.addEventListener(listener, MASK_RXCHAR or MASK_ERR or MASK_CTS or MASK_DSR)
 
         if (!newPort.setParams(baudRate, bits, portStopBits, portParity, rts, dtr)) {
           SerialMonitorCollector.logConnect(baudRate, false)
           throw SerialMonitorException(SerialMonitorBundle.message("serial.port.parameters.wrong"))
         }
-        newPort.setFlowControlMode(FLOWCONTROL_NONE)
         port = newPort
         SerialMonitorCollector.logConnect(baudRate, true)
         status = PortStatus.CONNECTED
