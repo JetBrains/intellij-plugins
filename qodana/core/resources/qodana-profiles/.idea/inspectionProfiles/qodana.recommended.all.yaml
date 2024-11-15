@@ -16,19 +16,17 @@ groups:
 
   - groupId: AndroidInspections
     groups:
-      - "category:Room"
-      - "category:Shrinker"
-      - "caregory:Android Lint: Accessibility"
+      - "category:Android Lint: Accessibility"
       - "category:Android Lint: Compliance"
       - "category:Android Lint: Correctness"
       - "category:Android Lint: Internationalization"
       - "category:Android Lint: Interoperability"
-      - "category:Android Lint: Lint"
       - "category:Android Lint: Performance"
       - "category:Android Lint: Productivity"
       - "category:Android Lint: Security"
       - "category:Android Lint: Testing"
       - "category:Android Lint: Usability"
+      - "category:Android"
 
   - groupId: IncludedCategories # Qodana can run any inspection, but these categories are monitored by Qodana team
     groups:
