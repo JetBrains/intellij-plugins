@@ -29,6 +29,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.platform.backend.observation.Observation
 import kotlinx.coroutines.*
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
@@ -138,14 +139,25 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
 
   private fun CoroutineScope.installLogger(): Job {
     return launch {
-      HeadlessLogging.loggingFlow().collect { (severity, message) ->
-        when (severity) {
-          HeadlessLogging.SeverityKind.Info -> reporter.reportMessage(2, message.representation())
-          HeadlessLogging.SeverityKind.Warning -> reporter.reportMessage(1, message.representation())
-          HeadlessLogging.SeverityKind.Fatal -> when (message) {
-            is HeadlessLogging.Message.Exception -> reporter.reportError(message.exception)
-            is HeadlessLogging.Message.Plain -> reporter.reportError(message.message)
+      launch {
+        HeadlessLogging.loggingFlow().collect { (severity, message) ->
+          when (severity) {
+            HeadlessLogging.SeverityKind.Info -> reporter.reportMessage(2, message.representation())
+            HeadlessLogging.SeverityKind.Warning -> reporter.reportMessage(1, message.representation())
+            HeadlessLogging.SeverityKind.Fatal -> when (message) {
+              is HeadlessLogging.Message.Exception -> reporter.reportError(message.exception)
+              is HeadlessLogging.Message.Plain -> reporter.reportError(message.message)
+            }
           }
+        }
+      }
+      launch {
+        while (true) {
+          delay(10.minutes)
+          reporter.reportMessage(1, buildString {
+            appendLine("Currently awaited activities:")
+            appendLine(Observation.dumpAwaitedActivitiesToString())
+          })
         }
       }
     }
