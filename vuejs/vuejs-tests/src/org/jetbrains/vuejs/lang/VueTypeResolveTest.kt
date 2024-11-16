@@ -25,7 +25,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     testVFor(Triple("el", "any,number | string", "number"),
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
-             Triple("obj", "any,number | string", "string | number"))
+             Triple("obj", "any,string | number", "string | number"))
   }
 
   fun testVForTS() {
