@@ -145,13 +145,28 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
 private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
   val plugin = pluginClassLoader.pluginDescriptor
 
+  // blacklist: ignore some stuff from specific plugins
   fun isPluginAdditionalJarAccepted(jarName: String): Boolean {
-    return !plugin.isJetBrainsOrBundledPlugin ||
-           !jarName.endsWith(".jar") ||
-           jarName.startsWith("java-frontback") || // part of Java's PSI
-           jarName.startsWith("kotlinc.kotlin-compiler-common") || // Kotlin PSI
-           jarName.startsWith("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
-           jarName.startsWith("kotlinc.analysis-api") // Semantics of Kotlin PSI
+    if (!jarName.endsWith(".jar")) return true
+
+    val pluginId = plugin.pluginId.idString
+    val isJavaPlugin = pluginId == "com.intellij.java"
+    val isKotlinPlugin = pluginId == "org.jetbrains.kotlin"
+    val isDatabasePlugin = pluginId == "com.intellij.database"
+    return when {
+      isJavaPlugin -> {
+        jarName.startsWith("java-frontback") // part of Java's PSI
+      }
+      isKotlinPlugin -> {
+        jarName.startsWith("kotlinc.kotlin-compiler-common") || // Kotlin PSI
+        jarName.startsWith("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
+        jarName.startsWith("kotlinc.analysis-api") // Semantics of Kotlin PSI
+      }
+      isDatabasePlugin -> {
+        jarName.startsWith("database-openapi")
+      }
+      else -> true
+    }
   }
 
   val pluginJars = pluginClassLoader.baseUrls.toSet()
