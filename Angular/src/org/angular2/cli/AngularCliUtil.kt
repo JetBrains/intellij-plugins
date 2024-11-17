@@ -72,7 +72,7 @@ object AngularCliUtil {
   fun getAngularCliPackageVersion(cli: VirtualFile): SemVer? {
     val moduleInfo = findAngularCliModuleInfo(cli) ?: return null
 
-    return NodePackage(moduleInfo.virtualFile!!.path).getVersion()
+    return NodePackage(moduleInfo.virtualFile!!.path).version
   }
 
 

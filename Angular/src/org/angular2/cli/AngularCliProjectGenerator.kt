@@ -240,7 +240,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
               thisLogger().error("Failed to load schematics", e)
             }
 
-            val packageVersion = nodePackage.getVersion()
+            val packageVersion = nodePackage.version
             if (packageVersion != null) {
               cliVersion.set(packageVersion)
             }
