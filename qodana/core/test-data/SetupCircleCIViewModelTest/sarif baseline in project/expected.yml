@@ -1,0 +1,16 @@
+version: 2.1
+orbs:
+  qodana: jetbrains/qodana@VERSION_PLACEHOLDER
+jobs:
+  code-quality:
+    machine:
+      image: 'ubuntu-2004:current'
+    steps:
+      - checkout
+      - qodana/scan:
+          args: --baseline qodana.sarif.json -l jetbrains/qodana-<linter> # use space to separate arguments
+workflows:
+  main:
+    jobs:
+      - code-quality:
+          context: qodana

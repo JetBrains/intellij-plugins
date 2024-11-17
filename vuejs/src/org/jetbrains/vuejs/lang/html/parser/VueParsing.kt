@@ -3,7 +3,9 @@ package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
-import com.intellij.lang.javascript.JSStubElementTypes.*
+import com.intellij.lang.javascript.JSStubElementTypes.Companion.MOD_EMBEDDED_CONTENT
+import com.intellij.lang.javascript.JSStubElementTypes.Companion.MOD_ES6_EMBEDDED_CONTENT
+import com.intellij.lang.javascript.JSStubElementTypes.Companion.MOD_TS_EMBEDDED_CONTENT
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
@@ -179,12 +181,13 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   private fun inScriptSetup(): Boolean =
     stackSize() > 0 && (peekTagInfo() as? VueHtmlTagInfo)?.hasScriptSetup == true
 
-  private inner class VueHtmlTagInfo(normalizedName: String,
-                                     originalName: String,
-                                     marker: PsiBuilder.Marker,
-                                     var hasVPre: Boolean,
-                                     var hasScriptSetup: Boolean = false)
-    : HtmlTagInfoImpl(normalizedName, originalName, marker)
+  private inner class VueHtmlTagInfo(
+    normalizedName: String,
+    originalName: String,
+    marker: PsiBuilder.Marker,
+    var hasVPre: Boolean,
+    var hasScriptSetup: Boolean = false,
+  ) : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   companion object {
     val ALWAYS_STUBBED_TAGS: List<String> = listOf(SCRIPT_TAG_NAME, SLOT_TAG_NAME)

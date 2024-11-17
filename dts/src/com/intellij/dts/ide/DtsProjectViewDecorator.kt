@@ -28,17 +28,17 @@ class DtsProjectViewDecorator(
     }
   }
 
-  override fun decorate(node: ProjectViewNode<*>?, data: PresentationData?) {
+  override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
     val settings = DtsSettings.of(project)
     if (settings.zephyrCMakeSync) return
 
     val zephyr = DtsZephyrProvider.of(project)
     val board = zephyr.board ?: return
 
-    val file = node?.virtualFile ?: return
+    val file = node.virtualFile ?: return
     if (file.nameWithoutExtension != board.name) return
 
-    val icon = data?.getIcon(false) ?: return
+    val icon = data.getIcon(false) ?: return
     val layeredIcon = LayeredIcon.create(icon, AllIcons.Modules.SourceRootFileLayer)
 
     data.setIcon(layeredIcon)

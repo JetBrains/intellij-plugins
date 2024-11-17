@@ -1,0 +1,53 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@if)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+          Angular2BlockParameter
+            JSBinaryExpression
+              JSPrefixExpression
+                PsiElement(JS:TYPEOF_KEYWORD)('typeof')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('value')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQEQEQ)('===')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''string'')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiWhiteSpace('\n  ')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          Angular2Interpolation
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('value')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('length')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace(' ')
+    Angular2HtmlBlock (@else)
+      PsiElement(NG:BLOCK_NAME)('@else')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiWhiteSpace('\n  ')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          Angular2Interpolation
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')

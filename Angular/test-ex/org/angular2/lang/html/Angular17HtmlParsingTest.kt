@@ -67,6 +67,12 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testDeferBlockHydrate() {
+    doTestHtml("""
+      @defer(hydrate on viewport; hydrate when foo = 12; hydrate never; hydrate ;)
+    """.trimIndent())
+  }
+
   fun testIncompleteParameters() {
     doTestHtml("""
       @if(foo() {
@@ -83,6 +89,16 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
   fun testEmptyBlockName() {
     doTestHtml("""
       An empty @ (block) {name}
+    """.trimIndent())
+  }
+
+  fun testTypeOfInsideIf() {
+    doTestHtml("""
+      @if (typeof value === 'string') {
+        {{value.length}}
+      } @else {
+        {{value}}
+      }
     """.trimIndent())
   }
 

@@ -1,0 +1,189 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "MyJsInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "This is a variable strings in function function of type *[] declared as CONST. Template custom inspection inspections/my-js-inspection.inspection.kts",
+            "markdown": "This is a variable strings in function function of type \\*\\[\\] declared as CONST. Template custom inspection inspections/my-js-inspection.inspection.kts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 11,
+                  "charOffset": 37,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "strings"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 90,
+                  "snippet": {
+                    "text": "class App {\n  function() {\n    const strings = [];\n    var int = 1\n    strings[0] = \"mmm\";"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInspection works in flexinspect subdir",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "8838d7ac655c62c9",
+            "equalIndicator/v1": "f5928143a5af3e3714404b9b02811ef105c4c37aafe30602a70b5debc5bd09da"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "MyJsInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "This is a variable int in function function of type number declared as VAR. Template custom inspection inspections/my-js-inspection.inspection.kts",
+            "markdown": "This is a variable int in function function of type number declared as VAR. Template custom inspection inspections/my-js-inspection.inspection.kts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9,
+                  "charOffset": 59,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "int"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 12,
+                  "charLength": 102,
+                  "snippet": {
+                    "text": "  function() {\n    const strings = [];\n    var int = 1\n    strings[0] = \"mmm\";\n    strings[3] = \"mmm\";"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInspection works in flexinspect subdir",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "372eef5abac88f5f",
+            "equalIndicator/v1": "032e70f284cae0adfa4a7af9e0444e503ccc17a5e0e8d87b4c0854f113d23449"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "MyJsInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "This is a variable i in function function of type number declared as LET. Template custom inspection inspections/my-js-inspection.inspection.kts",
+            "markdown": "This is a variable i in function function of type number declared as LET. Template custom inspection inspections/my-js-inspection.inspection.kts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 14,
+                  "charOffset": 128,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "i"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 67,
+                  "charLength": 125,
+                  "snippet": {
+                    "text": "    strings[0] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInspection works in flexinspect subdir",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4ea49eca5b00416f",
+            "equalIndicator/v1": "f8bc9e89e619db573e20b9d281fa9fdc0fdfc6625237094bc0b70182e0e1cf1b"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

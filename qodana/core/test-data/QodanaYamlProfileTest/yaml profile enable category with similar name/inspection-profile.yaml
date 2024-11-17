@@ -1,0 +1,6 @@
+# The inspection profile 'empty' is provided by Qodana.
+baseProfile: empty
+
+inspections:
+  - group: "category:Java/Probable"
+    enabled: true

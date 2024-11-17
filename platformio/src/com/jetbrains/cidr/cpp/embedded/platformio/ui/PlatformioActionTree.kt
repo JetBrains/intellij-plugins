@@ -2,8 +2,10 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetManager
+import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.AnActionEvent.createEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.components.service
@@ -69,7 +71,7 @@ internal class PlatformioActionTree(private val project: Project, private val me
       envNode = addNode(targetName(null))
       addNode(ClionEmbeddedPlatformioBundle.message("project.action.folder")).apply {
         addNode(actionManager.getAction("Build"))
-        addNode(actionManager.getAction("Debug"))
+        addNode(actionManager.getAction(DefaultDebugExecutor.EXECUTOR_ID))
         addNode(actionManager.getAction("Clean").withIcon(ClionEmbeddedPlatformioIcons.CleanPlatformIO))
       }
 
@@ -101,10 +103,8 @@ internal class PlatformioActionTree(private val project: Project, private val me
 
   private fun reparseFailed(pioStartFailed: Boolean) {
     fun tryReparseControl() =
-      messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("parse.again"),
-                               LINK_ATTRIBUTES) { _ ->
-        val action = ActionManager.getInstance().getAction(PlatformioRefreshAction::class.java.simpleName)
-        ActionUtil.invokeAction(action, SimpleDataContext.getProjectContext(project), ActionPlaces.UNKNOWN, null, null)
+      messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("parse.again"), LINK_ATTRIBUTES) {
+        invokeProjectRefreshAction()
       }
 
     if (pioStartFailed) {
@@ -124,11 +124,28 @@ internal class PlatformioActionTree(private val project: Project, private val me
     isVisible = false
   }
 
+  private fun notTrusted() {
+    messageHolder.setText(ClionEmbeddedPlatformioBundle.message("status.text.untrusted.project.primary.text"), SimpleTextAttributes.DARK_TEXT)
+    messageHolder.appendSecondaryText(ClionEmbeddedPlatformioBundle.message("status.text.untrusted.project.link"), LINK_ATTRIBUTES) {
+      // No need to show the dialog here, the action should show it when invoked;
+      // we want to refresh the project when the project becomes trusted anyway.
+      invokeProjectRefreshAction()
+    }
+    @Suppress("DialogTitleCapitalization")
+    messageHolder.appendSecondaryText(ClionEmbeddedPlatformioBundle.message("status.text.untrusted.project.secondary.text"), SimpleTextAttributes.DARK_TEXT, null)
+  }
+
+  private fun invokeProjectRefreshAction() {
+    val action = ActionManager.getInstance().getAction(PlatformioRefreshAction::class.java.simpleName)
+    ActionUtil.invokeAction(action, createEvent(SimpleDataContext.getProjectContext(project), null, ActionPlaces.UNKNOWN, ActionUiKind.NONE, null), null)
+  }
+
   override fun projectStateChanged() {
     when (project.service<PlatformioService>().projectStatus) {
       PlatformioProjectStatus.PARSED -> isVisible = true
       PlatformioProjectStatus.PARSE_FAILED -> reparseFailed(false)
       PlatformioProjectStatus.UTILITY_FAILED -> reparseFailed(true)
+      PlatformioProjectStatus.NOT_TRUSTED -> notTrusted()
       else -> {
         messageHolder.text = ClionEmbeddedPlatformioBundle.message("status.text.parsing")
         isVisible = false
@@ -163,7 +180,8 @@ internal class PlatformioActionTree(private val project: Project, private val me
     val action = selectionPath?.lastPathComponent?.asSafely<DefaultMutableTreeNode>()?.userObject?.asSafely<AnAction>()
     if (action != null) {
       val dataContext = SimpleDataContext.getProjectContext(project)
-      action.actionPerformed(AnActionEvent.createFromAnAction(action, e, ActionPlaces.UNKNOWN, dataContext))
+      val actionEvent = createEvent(dataContext, null, ActionPlaces.TOOLBAR, ActionUiKind.TOOLBAR, e)
+      ActionUtil.invokeAction(action, actionEvent, null)
     }
   }
 

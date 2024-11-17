@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
@@ -6,13 +7,13 @@ import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantHandler;
+import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantSettings;
+import com.intellij.javascript.flex.refactoring.introduceConstant.IntroduceConstantInfoProvider;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantHandler;
-import com.intellij.lang.javascript.refactoring.introduceConstant.IntroduceConstantInfoProvider;
-import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantSettings;
 import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableTestCase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
@@ -54,11 +55,11 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
                       String ext) throws Exception {
     doTest(new FlexIntroduceConstantHandler() {
       @Override
-      protected JSIntroduceConstantSettings getSettings(Project project,
-                                                        Editor editor,
-                                                        Pair<JSExpression, TextRange> expressionDescriptor,
-                                                        JSExpression[] occurrences, PsiElement scope) {
-        return new JSIntroduceConstantSettings() {
+      protected FlexIntroduceConstantSettings getSettings(Project project,
+                                                          Editor editor,
+                                                          Pair<JSExpression, TextRange> expressionDescriptor,
+                                                          JSExpression[] occurrences, PsiElement scope) {
+        return new FlexIntroduceConstantSettings() {
           @Override
           public JSAttributeList.AccessType getAccessType() {
             return accessType;
@@ -156,13 +157,13 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
   private void doNiceNameTest(final int i) throws Exception {
     doTest(new FlexIntroduceConstantHandler() {
       @Override
-      protected JSIntroduceConstantSettings getSettings(Project project,
-                                                        Editor editor,
-                                                        Pair<JSExpression, TextRange> expressionDescriptor,
-                                                        JSExpression[] occurrences, PsiElement scope) {
+      protected FlexIntroduceConstantSettings getSettings(Project project,
+                                                          Editor editor,
+                                                          Pair<JSExpression, TextRange> expressionDescriptor,
+                                                          JSExpression[] occurrences, PsiElement scope) {
         final String[] strings = new IntroduceConstantInfoProvider(expressionDescriptor.first, occurrences, scope).suggestCandidateNames();
         assertTrue(strings != null && i < strings.length);
-        return new JSIntroduceConstantSettings() {
+        return new FlexIntroduceConstantSettings() {
           @Override
           public JSAttributeList.AccessType getAccessType() {
             return JSAttributeList.AccessType.PRIVATE;

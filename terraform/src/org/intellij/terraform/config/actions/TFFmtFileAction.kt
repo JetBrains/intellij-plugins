@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.jetbrains.annotations.Nls
 
 class TFFmtFileAction : TFExternalToolsAction() {
@@ -24,8 +25,10 @@ class TFFmtFileAction : TFExternalToolsAction() {
         }
       }
 
+      if (virtualFiles.isEmpty()) return@withBackgroundProgress
+
       val filePaths = virtualFiles.map { it.canonicalPath!! }.toTypedArray()
-      TFExecutor.`in`(project)
+      TFExecutor.`in`(project, getApplicableToolType(project, virtualFiles.first()))
         .withPresentableName(title)
         .withParameters("fmt", *filePaths)
         .showOutputOnError()

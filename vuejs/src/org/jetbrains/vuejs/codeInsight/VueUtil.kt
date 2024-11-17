@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
@@ -204,6 +205,7 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
                 else null
               }
               is JSVariable -> cur.initializerOrStub
+              is TypeScriptPropertySignature -> JSStubBasedPsiTreeUtil.calculateMeaningfulElement(cur).takeIf { it != cur }
               else -> null
             }
             ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element, Supplier {

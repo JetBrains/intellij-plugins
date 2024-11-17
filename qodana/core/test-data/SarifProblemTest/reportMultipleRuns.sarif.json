@@ -1,0 +1,98 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "results": [
+        {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 1
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "a"
+                  }
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "M"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_1",
+        "guid": "REPORT_1"
+      }
+    },
+    {
+      "tool": {
+      },
+      "results": [
+        {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 14,
+                  "charLength": 2
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_2",
+        "guid": "REPORT_2"
+      }
+    }
+  ]
+}

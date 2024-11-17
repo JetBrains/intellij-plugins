@@ -15,7 +15,9 @@ import com.intellij.openapi.observable.util.whenItemSelected
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
@@ -48,6 +50,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private lateinit var packageField: NodePackageField
   private lateinit var runForFilesField: JBTextField
   private lateinit var runOnSaveCheckBox: JCheckBox
+  private lateinit var customIgnorePathField: TextFieldWithBrowseButton
 
   private lateinit var disabledConfiguration: JRadioButton
   private lateinit var automaticConfiguration: JRadioButton
@@ -72,14 +75,20 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
               .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.AUTOMATIC))
               .component
 
-          val detectAutomaticallyHelpText = JavaScriptBundle.message(
+          val autoConfigHelpText = JavaScriptBundle.message(
             "settings.javascript.linters.autodetect.configure.automatically.help.text",
             ApplicationNamesInfo.getInstance().fullProductName,
             displayName,
             ".prettierrc.*"
-          ) + " " + PrettierBundle.message("run.on.save.auto-mode.tooltip")
+          )
+          val runOnSaveTooltip = PrettierBundle.message("run.on.save.auto-mode.tooltip")
+          val ignorePathHelpText = PrettierBundle.message(
+            "prettier.ignore.path.autodetect.configure.automatically.help.text",
+            ApplicationNamesInfo.getInstance().fullProductName,
+            PrettierUtil.IGNORE_FILE_NAME
+          )
 
-          val helpLabel = ContextHelpLabel.create(detectAutomaticallyHelpText)
+          val helpLabel = ContextHelpLabel.create("$autoConfigHelpText $runOnSaveTooltip<br/><br/>$ignorePathHelpText")
           helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
           cell(helpLabel)
         }
@@ -103,12 +112,29 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
                     MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
               )
           }
+          row(PrettierBundle.message("prettier.ignore.path.field.label")) {
+            customIgnorePathField = textFieldWithBrowseButton(project)
+              .align(AlignX.FILL)
+              .bind({ textField -> textField.text.trim() },
+                    TextFieldWithBrowseButton::setText,
+                    MutableProperty({ prettierState.customIgnorePath }, { prettierState.customIgnorePath = it }))
+              .component
+            customIgnorePathField.emptyText.setText(PrettierBundle.message("prettier.ignore.path.field.empty.text"))
+          }.enabledIf(manualConfiguration.selected)
           row {
             checkBox(PrettierBundle.message("run.on.code.reformat.label"))
               .bindSelected({ prettierState.runOnReformat }, { prettierState.runOnReformat = it })
 
             val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
             shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
+          }.enabledIf(manualConfiguration.selected)
+          row {
+            checkBox(PrettierBundle.message("prettier.format.files.outside.dependency.scope.label"))
+              .bindSelected({ prettierState.formatFilesOutsideDependencyScope }, { prettierState.formatFilesOutsideDependencyScope = it })
+            val helpLabel = ContextHelpLabel.create(PrettierBundle.message("prettier.format.files.outside.dependency.scope.help.text"))
+            helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
+            cell(helpLabel)
+
           }.enabledIf(manualConfiguration.selected)
           separator()
         }.visibleIf(manualConfiguration.selected)
@@ -176,9 +202,11 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
   }
 
-  private class ConfigurationModeProperty(private val prettierConfiguration: PrettierConfiguration.State,
-                                          private val defaultMode: ConfigurationMode,
-                                          private val mode: ConfigurationMode) : MutableProperty<Boolean> {
+  private class ConfigurationModeProperty(
+    private val prettierConfiguration: PrettierConfiguration.State,
+    private val defaultMode: ConfigurationMode,
+    private val mode: ConfigurationMode,
+  ) : MutableProperty<Boolean> {
     override fun get(): Boolean =
       prettierConfiguration.configurationMode.let {
         it == mode || (it == null && defaultMode == mode)

@@ -1,0 +1,142 @@
+<!--
+This schema is not the official definition of what an IDEA inspection profile may look like.
+Its sole purpose is to spot simple mistakes when editing the Qodana inspection profiles.
+See validate.sh.
+-->
+
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="component" type="Component" />
+
+  <xs:complexType name="Component">
+    <xs:sequence>
+      <xs:element name="profile" type="Profile" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Profile">
+    <xs:sequence>
+      <xs:element name="option" type="ProfileOption" />
+      <xs:element name="inspection_tool" type="Inspection" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" use="required" />
+    <xs:attribute name="is_locked" type="xs:boolean" />
+  </xs:complexType>
+
+  <xs:complexType name="ProfileOption">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="value" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Inspection">
+    <xs:sequence>
+      <xs:element name="scope" type="InspectionScope" minOccurs="0" />
+      <xs:element name="option" type="InspectionOption" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="group" type="InspectionGroup" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="exclude" type="InspectionExclude" minOccurs="0" />
+      <xs:element name="extension" type="InspectionExtension" minOccurs="0" />
+      <xs:element name="ignored" type="InspectionIgnored" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="class" type="xs:string" use="required" />
+    <xs:attribute name="enabled" type="xs:boolean" use="required" />
+    <xs:attribute name="level" type="InspectionLevel" use="required" />
+    <xs:attribute name="enabled_by_default" type="xs:boolean" use="required" />
+    <xs:attribute name="checkParameterExcludingHierarchy" type="xs:boolean" />
+  </xs:complexType>
+
+  <xs:simpleType name="InspectionLevel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ERROR" />
+      <xs:enumeration value="WARNING" />
+      <xs:enumeration value="WEAK WARNING" />
+      <xs:enumeration value="INFORMATION" />
+      <xs:enumeration value="INFO" />
+      <xs:enumeration value="TYPO" />
+      <xs:enumeration value="TEXT ATTRIBUTES" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="InspectionOption">
+    <xs:sequence>
+      <xs:element name="value" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="list" type="InspectionOptionValueList" minOccurs="0" />
+            <xs:element name="option" type="InspectionOption" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Options" type="InspectionOptionValueOptions" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="value" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="InspectionOptionValueList">
+    <xs:sequence>
+      <xs:element name="item" type="InspectionOptionValueListItem" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="size" type="xs:int" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="InspectionOptionValueOptions">
+    <xs:sequence>
+      <xs:element name="option" type="InspectionOption" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionOptionValue">
+    <xs:sequence>
+      <xs:element name="list" type="InspectionOptionValueList" minOccurs="0" />
+      <xs:element name="option" type="InspectionOption" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionOptionValueListItem">
+    <xs:sequence />
+    <xs:attribute name="index" type="xs:int" use="required" />
+    <xs:attribute name="class" type="xs:string" use="required" />
+    <xs:attribute name="itemvalue" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="InspectionScope">
+    <xs:sequence>
+      <xs:element name="option" type="InspectionOption" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="level" type="xs:string" use="required" />
+    <xs:attribute name="enabled" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="InspectionGroup">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="names" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionExclude">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="classes" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionExtension">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="enabled" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionIgnored">
+    <xs:sequence>
+      <xs:element name="option" type="InspectionOption" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

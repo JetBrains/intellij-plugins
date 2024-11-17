@@ -177,6 +177,7 @@ internal class TmplAstDeferredBlock(
   override val nameSpan: TextRange?,
   val triggers: TmplAstDeferredBlockTriggers,
   val prefetchTriggers: TmplAstDeferredBlockTriggers,
+  val hydrateTriggers: TmplAstDeferredBlockTriggers,
   val error: TmplAstDeferredBlockError?,
   val loading: TmplAstDeferredBlockLoading?,
   val placeholder: TmplAstDeferredBlockPlaceholder?,
@@ -887,8 +888,9 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     )
     BLOCK_DEFER -> TmplAstDeferredBlock(
       nameSpan = nameElement.textRange,
-      triggers = this.buildTriggers(false),
-      prefetchTriggers = this.buildTriggers(true),
+      triggers = this.buildTriggers(null),
+      prefetchTriggers = this.buildTriggers(PARAMETER_PREFIX_PREFETCH),
+      hydrateTriggers = this.buildTriggers(PARAMETER_PREFIX_HYDRATE),
       error = blockSiblingsForward().find { it.name == BLOCK_ERROR }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockError,
       loading = blockSiblingsForward().find { it.name == BLOCK_LOADING }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockLoading,
       placeholder = blockSiblingsForward().find { it.name == BLOCK_PLACEHOLDER }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockPlaceholder,
@@ -914,9 +916,9 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     else -> null
   }
 
-private fun Angular2HtmlBlock.buildTriggers(prefetch: Boolean): TmplAstDeferredBlockTriggers =
+private fun Angular2HtmlBlock.buildTriggers(prefix: String?): TmplAstDeferredBlockTriggers =
   TmplAstDeferredBlockTriggers(
-    `when` = parameters.find { it.name == PARAMETER_WHEN && prefetch == hasPrefetch(it) }?.let {
+    `when` = parameters.find { it.name == PARAMETER_WHEN && it.prefix == prefix }?.let {
       TmplAstBoundDeferredTrigger(
         nameSpan = it.nameElement?.textRange,
         value = it.expression
@@ -925,7 +927,7 @@ private fun Angular2HtmlBlock.buildTriggers(prefetch: Boolean): TmplAstDeferredB
   )
 
 private fun hasPrefetch(parameter: Angular2BlockParameter) =
-  parameter.getChildren().firstOrNull { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME }?.text == PARAMETER_PREFIX_PREFETCH
+  parameter.prefix == PARAMETER_PREFIX_PREFETCH
 
 private fun JSVariable.toTmplAstVariable(referenceResolver: ReferenceResolver): TmplAstVariable =
   TmplAstVariable(

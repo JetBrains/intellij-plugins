@@ -37,7 +37,7 @@ import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
-import org.intellij.terraform.runtime.TerraformPathDetector
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TerraformToolConfigurable
 import org.jetbrains.annotations.Nls
 import java.io.File
@@ -119,14 +119,12 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
     ).notify(project)
 }
 
-internal fun isTerraformExecutable(project: Project): Boolean {
-  val terraformPath = TerraformPathDetector.getInstance(project).actualTerraformPath
-  return if (isPathExecutable(terraformPath)) {
-    true
-  } else {
+internal fun isExecutableToolFileConfigured(project: Project, applicableToolType: TfToolType): Boolean {
+  val toolPath = applicableToolType.getPathDetector(project).actualPath()
+  return if (!isPathExecutable(toolPath)) {
     TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
-      HCLBundle.message("run.configuration.terraform.path.title"),
-      HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
+      HCLBundle.message("run.configuration.terraform.path.title", applicableToolType.displayName),
+      HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath, applicableToolType.displayName),
       NotificationType.ERROR
     ).addAction(object : NotificationAction(HCLBundle.message("terraform.open.settings")) {
       override fun actionPerformed(e: AnActionEvent, notification: Notification) {
@@ -135,9 +133,12 @@ internal fun isTerraformExecutable(project: Project): Boolean {
     }).notify(project)
     false
   }
+  else {
+    true
+  }
 }
 
 internal fun isPathExecutable(path: String): Boolean {
-  if(FileUtil.canExecute(File(path))) return true
+  if (FileUtil.canExecute(File(path))) return true
   return WslPath.parseWindowsUncPath(path) != null
 }

@@ -25,6 +25,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation.renderReal
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.*
+import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -1744,7 +1745,9 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testSassGlobalFunctions() {
-    doLookupTest(renderTypeText = false)
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(myFixture.project) {
+      doLookupTest(renderTypeText = false)
+    }
   }
 
   fun testImportEmptyObjectInitializerComponent() {
@@ -1921,11 +1924,15 @@ export default {
   }
 
   fun testStyleVBindScriptSetupScss() {
-    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+      doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+    }
   }
 
   fun testStyleVBindScriptSetupSass() {
-    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+      doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+    }
   }
 
   fun testStyleVBindScriptSetupLess() {

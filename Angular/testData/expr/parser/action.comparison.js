@@ -15,3 +15,4 @@ false
 2>=1
 true==2<3
 true===2<3
+typeof value === 'string'

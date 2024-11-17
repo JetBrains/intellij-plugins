@@ -2110,6 +2110,7 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
   private fun appendDeferredBlock(block: TmplAstDeferredBlock) {
     this.appendDeferredTriggers(block, block.triggers)
     this.appendDeferredTriggers(block, block.prefetchTriggers)
+    this.appendDeferredTriggers(block, block.hydrateTriggers)
     this.appendChildren(block)
     this.appendChildren(block.placeholder)
     this.appendChildren(block.loading)

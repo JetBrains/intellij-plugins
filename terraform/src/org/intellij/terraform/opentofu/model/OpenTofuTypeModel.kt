@@ -40,7 +40,7 @@ private val abstractProviderInstance: BlockType = BlockType(literal = TOFU_KEY_P
 
 internal val Pbkdf2Provider = AbstractEncryptionProvider("pbkdf2", listOf(
   PropertyType("passphrase", Types.String, required = true, description = HCLBundle.message("opentofu.key_provider.pbkdf2.passphrase.description")),
-  PropertyType("key_length", Types.Number, description = HCLBundle.message("opentofu.key_provider.pbkdf2.key_length.description"),
+  PropertyType("key_length", Types.Number, description = HCLBundle.message("opentofu.key_provider.pbkdf2.key_length.description", 1, 32),
                hint = SimpleValueHint(*(1..32).reversed().map { it.toString() }.toTypedArray())),
   PropertyType("iterations", Types.Number, description = HCLBundle.message("opentofu.key_provider.pbkdf2.iterations.description")),
   PropertyType("salt_length", Types.Number, description = HCLBundle.message("opentofu.key_provider.pbkdf2.salt_length.description")),
@@ -59,7 +59,7 @@ internal val AwsKmsProvider = AbstractEncryptionProvider("aws_kms", listOf(
 
 internal val GcpKmsProvider = AbstractEncryptionProvider("gcp_kms", listOf(
   PropertyType("kms_encryption_key", Types.String, required = true, description = HCLBundle.message("opentofu.key_provider.gcp_kms.kms_encryption_key.description")),
-  PropertyType("key_length", Types.Number, required = true, description = HCLBundle.message("opentofu.key_provider.gcp_kms.key_length.description")),
+  PropertyType("key_length", Types.Number, required = true, description = HCLBundle.message("opentofu.key_provider.gcp_kms.key_length.description", 1, 1024)),
 ), abstractProviderInstance)
 
 internal val encryptionKeyProviders = listOf(AwsKmsProvider, GcpKmsProvider, Pbkdf2Provider).associateBy { it.type }

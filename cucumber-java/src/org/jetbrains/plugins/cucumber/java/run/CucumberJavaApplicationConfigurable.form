@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="5cdda" class="com.intellij.openapi.ui.LabeledComponent" binding="myMainClass" custom-create="true">
+      <component id="5cdda" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myMainClass" custom-create="true">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="-1" height="20"/>
@@ -19,7 +19,7 @@
           <text resource-bundle="messages/ExecutionBundle" key="application.configuration.main.class.label"/>
         </properties>
       </component>
-      <component id="36fe8" class="com.intellij.openapi.ui.LabeledComponent" binding="myGlue">
+      <component id="36fe8" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myGlue">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -29,7 +29,7 @@
           <text resource-bundle="messages/CucumberJavaBundle" key="run.configuration.form.glue"/>
         </properties>
       </component>
-      <component id="4e853" class="com.intellij.openapi.ui.LabeledComponent" binding="myFeatureOrFolder">
+      <component id="4e853" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myFeatureOrFolder">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -50,7 +50,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="be76" class="com.intellij.openapi.ui.LabeledComponent" binding="myModule">
+      <component id="be76" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myModule">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -60,7 +60,7 @@
           <text resource-bundle="messages/ExecutionBundle" key="application.configuration.use.classpath.and.jdk.of.module.label"/>
         </properties>
       </component>
-      <component id="cf19a" class="com.intellij.openapi.ui.LabeledComponent" binding="myShortenClasspathModeCombo">
+      <component id="cf19a" class="com.intellij.openapi.ui.LabeledComponentNoThrow" binding="myShortenClasspathModeCombo">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

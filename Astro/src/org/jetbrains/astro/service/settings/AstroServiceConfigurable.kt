@@ -9,7 +9,7 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
 import org.jetbrains.astro.AstroBundle
-import org.jetbrains.astro.service.AstroLspExecutableDownloader
+import org.jetbrains.astro.service.AstroLspServerLoader
 
 class AstroServiceConfigurable(val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getAstroServiceSettings(project)
@@ -17,7 +17,7 @@ class AstroServiceConfigurable(val project: Project) : UiDslUnnamedConfigurable.
   override fun Panel.createContent() {
     group(AstroBundle.message("astro.service.configurable.service.group")) {
       row(AstroBundle.message("astro.service.configurable.service.languageServerPackage")) {
-        cell(AstroLspExecutableDownloader.createNodePackageField(project))
+        cell(AstroLspServerLoader.createNodePackageField(project))
           .align(AlignX.FILL)
           .bind(settings::lspServerPackageRef)
       }

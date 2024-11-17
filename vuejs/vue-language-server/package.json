@@ -1,0 +1,12 @@
+{
+  "name": "@vue/language-server",
+  "version": "2.1.6",
+  "private": true,
+  "devDependencies": {
+    "@vue/language-server": "2.1.6",
+    "esbuild": "^0.20.0"
+  },
+  "scripts": {
+    "build": "node build"
+  }
+}

@@ -1,0 +1,15 @@
+---
+// import {getCollection} from "astro:content";
+//
+// export async function getStaticPaths() {
+//     const blogEntries = await getCollection("blogEntries");
+//     return blogEntries.map(entry => ({
+//         params: {slug: entry.slug}, props: {entry,}
+//     }));
+// }
+import ManyImportsUpd from "./ManyImportsUpd.astro";
+import LessImports from "./LessImports.astro";
+---
+
+<ManyImportsUpd/>
+<LessImports/>

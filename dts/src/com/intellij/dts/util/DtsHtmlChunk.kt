@@ -7,6 +7,7 @@ import com.intellij.dts.highlighting.DtsTextAttributes
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
+import com.intellij.dts.util.DtsHtmlChunk.node
 import com.intellij.lang.documentation.QuickDocHighlightingHelper
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
@@ -168,7 +169,7 @@ object DtsHtmlChunk {
     // from binding
     CodeStyleManager.getInstance(project).reformat(fakePsiFile, true)
 
-    val holder = AnnotationHolder()
+    val holder = DtsAnnotationHolder()
 
     fakePsiFile.accept(object : PsiRecursiveElementWalkingVisitor() {
       override fun visitElement(element: PsiElement) {
@@ -184,7 +185,7 @@ object DtsHtmlChunk {
     val content = HtmlSyntaxInfoUtil.getHtmlContent(
       fakePsiFile,
       fakePsiFile.text,
-      AnnotationHolderIterator(holder.annotations, scheme),
+      DtsAnnotationHolderIterator(holder.annotations, scheme),
       scheme,
       0,
       fakePsiFile.text.length,
@@ -230,25 +231,25 @@ object DtsHtmlChunk {
   }
 }
 
-private data class Annotation(val range: TextRange, val attribute: TextAttributesKey) {
+private data class DtsAnnotation(val range: TextRange, val attribute: TextAttributesKey) {
   val startOffset = range.startOffset
 
   val endOffset = range.endOffset
 }
 
-private class AnnotationHolder : DtsHighlightAnnotator.Holder {
-  val annotations = mutableListOf<Annotation>()
+private class DtsAnnotationHolder : DtsHighlightAnnotator.Holder {
+  val annotations = mutableListOf<DtsAnnotation>()
 
   override fun newAnnotation(range: TextRange, attr: DtsTextAttributes) {
-    annotations.add(Annotation(range, attr.attribute))
+    annotations.add(DtsAnnotation(range, attr.attribute))
   }
 }
 
-private class AnnotationHolderIterator(holder: Iterable<Annotation>, val scheme: EditorColorsScheme) : SyntaxInfoBuilder.RangeIterator {
+private class DtsAnnotationHolderIterator(holder: Iterable<DtsAnnotation>, val scheme: EditorColorsScheme) : SyntaxInfoBuilder.RangeIterator {
   private val iterator = holder.iterator()
-  private var annotation: Annotation? = null
+  private var annotation: DtsAnnotation? = null
 
-  private val requireAnnotation: Annotation
+  private val requireAnnotation: DtsAnnotation
     get() = requireNotNull(annotation) { "no annotation, check atEnd first" }
 
   override fun advance() {

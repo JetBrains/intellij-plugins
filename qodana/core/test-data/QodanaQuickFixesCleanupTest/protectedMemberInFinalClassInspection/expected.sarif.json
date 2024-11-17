@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ProtectedMemberInFinalClass",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class member declared 'protected' in 'final' class",
+            "markdown": "Class member declared `protected` in 'final' class"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/ProtectedMemberInFinalClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 3,
+                  "charOffset": 44,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "protected"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 90,
+                  "snippet": {
+                    "text": "final class ProtectedMemberInFinalClass {\n  protected String s;\n\n  protected void foo() {}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testProtectedMemberInFinalClassInspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c1ce52f7fd12b161",
+            "equalIndicator/v1": "d844b60779afc8d40b615467c18a6cc591cd1114e3f5613646192d63e2ca793f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ProtectedMemberInFinalClass",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class member declared 'protected' in 'final' class",
+            "markdown": "Class member declared `protected` in 'final' class"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/ProtectedMemberInFinalClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 3,
+                  "charOffset": 67,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "protected"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 42,
+                  "charLength": 50,
+                  "snippet": {
+                    "text": "  protected String s;\n\n  protected void foo() {}\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testProtectedMemberInFinalClassInspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "184d6bbe23726e45",
+            "equalIndicator/v1": "b6e41d0d61e548b3422a59fd7f65ac481c89d2e2f19a2f39e2dcbb7b95a32f72"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

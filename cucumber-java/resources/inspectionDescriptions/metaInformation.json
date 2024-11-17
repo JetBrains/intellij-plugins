@@ -1,0 +1,12 @@
+{
+  "inspections": [
+    {
+      "id": "CucumberJavaStepDefClassInDefaultPackage",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "CucumberJavaStepDefClassIsPublic",
+      "codeQualityCategory": "Reliability"
+    }
+  ]
+}

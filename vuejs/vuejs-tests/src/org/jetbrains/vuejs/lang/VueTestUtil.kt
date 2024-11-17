@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.completion.BaseCompletionService
 import com.intellij.lang.javascript.completion.JSCompletionContributor
 import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.completion.JSPatternBasedCompletionContributor
 import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
 import com.intellij.lang.javascript.refactoring.JSRefactoringSettings
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
@@ -19,10 +20,9 @@ fun vueRelativeTestDataPath(): String = "/contrib$VUE_TEST_DATA_PATH"
 
 val filterOutMostOfGlobalJSSymbolsInVue: (item: LookupElementInfo) -> Boolean = { info ->
   info.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
-  || info.lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR)
-    .let {
-      it !is VueCompletionContributor && it !is JSCompletionContributor
-    }
+  || info.lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR).let {
+    it !is VueCompletionContributor && it !is JSCompletionContributor && it !is JSPatternBasedCompletionContributor
+  }
   || info.lookupString.startsWith("A")
 }
 

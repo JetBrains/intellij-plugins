@@ -357,20 +357,25 @@ public class PerforceChangeProvider implements ChangeProvider {
     myReadOnlyFileStateManager.processFocusLost();
   }
 
-  private List<PerforceChange> getChangesUnder(final P4Connection connection, @NotNull final VirtualFile root,
-                                               final VcsDirtyScope dirtyScope,
-                                                     final Collection<PerforceChangeList> allLists, PerforceChangeCache changeCache) throws VcsException {
+  private @NotNull List<PerforceChange> getChangesUnder(@NotNull P4Connection connection,
+                                                        @NotNull VirtualFile root,
+                                                        @NotNull VcsDirtyScope dirtyScope,
+                                                        @NotNull Collection<PerforceChangeList> allLists,
+                                                        @NotNull PerforceChangeCache changeCache) throws VcsException {
 
-    final List<PerforceChange> perforceChanges = new ArrayList<>();
+    List<PerforceChange> perforceChanges = new ArrayList<>();
 
     List<PerforceChange> defChanges = filterByRoot(root, dirtyScope, changeCache.getChanges(connection, -1, root));
     if (!defChanges.isEmpty()) {
-      myRunner.setChangeRevisionsFromHave(connection, defChanges);
       perforceChanges.addAll(defChanges);
     }
 
     for (PerforceChangeList changeList : allLists) {
       perforceChanges.addAll(filterByRoot(root, dirtyScope, changeCache.getChanges(connection, changeList.getNumber(), root)));
+    }
+
+    if (!perforceChanges.isEmpty()) {
+      myRunner.setChangeRevisions(P4Command.opened, connection, defChanges);
     }
 
     return perforceChanges;

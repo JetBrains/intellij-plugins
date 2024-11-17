@@ -1,0 +1,8 @@
+---
+import { PUBLIC_DASHBOARD_V2, getSecret } from 'astro:env/server';
+
+if (PUBLIC_DASHBOARD_V2) {
+  const API_PORT = getSecret("API_PORT") // number
+  await fetch(`https://my-secret-api.com:${API_PORT}/v2`)
+}
+---

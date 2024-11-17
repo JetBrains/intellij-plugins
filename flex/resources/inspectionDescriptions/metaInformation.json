@@ -1,0 +1,64 @@
+{
+  "inspections": [
+    {
+      "id": "FlexUnitClassVisibilityInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMethodHasParametersInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMethodIsStaticInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitEmptySuiteInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMethodIsPropertyInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitClassWithNoTestsInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "JSUntypedDeclaration",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "FlexUnitSuiteWithNoRunnerInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "JSImplicitlyInternalDeclaration",
+      "codeQualityCategory": "Code Style"
+    },
+    {
+      "id": "FlexUnitMethodVisibilityInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "JSFieldCanBeLocal",
+      "codeQualityCategory": "Performance"
+    },
+    {
+      "id": "FlexUnitMethodReturnTypeInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitClassInProductSourceInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMethodInSuiteInspection",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "FlexUnitMixedAPIInspection",
+      "codeQualityCategory": "Reliability"
+    }
+  ]
+}

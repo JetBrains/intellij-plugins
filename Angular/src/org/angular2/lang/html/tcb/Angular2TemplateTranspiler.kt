@@ -2,6 +2,7 @@ package org.angular2.lang.html.tcb
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.util.InspectionMessage
+import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.angular2.codeInsight.config.Angular2Compiler
@@ -21,9 +22,9 @@ object Angular2TemplateTranspiler {
     fileContext: FileContext,
     component: Angular2Component,
     tcbId: String,
-  ): TranspiledTemplate? {
+  ): TranspiledTemplate? = withServiceTraceSpan("transpileTemplate") {
     val boundTarget = BoundTarget(component)
-    if (boundTarget.templateFile == null) return null
+    if (boundTarget.templateFile == null) return@withServiceTraceSpan null
 
     val context = Context(
       fileContext as Environment,
@@ -34,7 +35,7 @@ object Angular2TemplateTranspiler {
     val scope = Scope.forNodes(context, null, null, boundTarget.templateRoots, null)
     val statements = scope.render()
 
-    return Expression {
+    return@withServiceTraceSpan Expression {
       append("function _tcb${context.id}")
 
       val cls = (component as? Angular2ClassBasedComponent)?.typeScriptClass

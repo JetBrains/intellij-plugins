@@ -5,9 +5,9 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.javascript.nodejs.NodePackageVersionUtil
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
@@ -46,7 +46,7 @@ fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors
   }
 
   if (parse.isEmpty()) {
-    val blueprintHelpOutput = loadBlueprintHelpOutput(configurator, cli)
+    val blueprintHelpOutput = loadBlueprintHelpOutput(project, configurator, cli)
     if (blueprintHelpOutput.isNotEmpty()) {
       try {
         parse = BlueprintParser().parse(blueprintHelpOutput)
@@ -76,15 +76,14 @@ private fun loadSchematicsInfoJson(configurator: NodeCommandLineConfigurator,
   return grabCommandOutput(commandLine, cli.path)
 }
 
-private fun loadBlueprintHelpOutput(configurator: NodeCommandLineConfigurator, cli: VirtualFile): String {
+private fun loadBlueprintHelpOutput(project: Project, configurator: NodeCommandLineConfigurator, cli: VirtualFile): String {
   val modules: MutableList<CompletionModuleInfo> = mutableListOf()
   NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
 
   val module = modules.firstOrNull() ?: return ""
   val modulePath = module.virtualFile!!.path
   val moduleExe = "$modulePath${File.separator}bin${File.separator}ng"
-  val isGt14 =
-    NodePackageVersionUtil.getPackageVersion(modulePath)?.semVer?.isGreaterOrEqualThan(14, 0, 0) ?: false
+  val isGt14 = NodePackage(modulePath).getVersion(project)?.isGreaterOrEqualThan(14, 0, 0) ?: false
   val commandLine =
     if (isGt14) GeneralCommandLine("", moduleExe, "generate", "--help") else GeneralCommandLine("", moduleExe, "help", "generate")
   configurator.configure(commandLine)

@@ -38,8 +38,9 @@ data class SerialPortProfile(
   var localEcho: Boolean = false,
 
   @Attribute
-  var showHardware: Boolean = false //todo take into use
-) {
+  var showHardwareControls: Boolean = false,
+
+  ) {
   fun defaultName(): @NlsSafe String {
     return if (bits != 8 || stopBits != StopBits.BITS_1 || parity != Parity.NONE) {
       "$portName-$baudRate-$bits${parity.shortName()}$stopBits"

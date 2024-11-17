@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.blocks
 
+import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.psi.PsiElement
@@ -38,9 +39,11 @@ const val PARAMETER_AS = "as"
 const val PARAMETER_LET = "let"
 const val PARAMETER_ON = "on"
 const val PARAMETER_WHEN = "when"
+const val PARAMETER_NEVER = "never"
 const val PARAMETER_TRACK = "track"
 
 const val PARAMETER_PREFIX_PREFETCH = "prefetch"
+const val PARAMETER_PREFIX_HYDRATE = "hydrate"
 
 object Angular2HtmlBlockUtils {
 
@@ -86,6 +89,17 @@ fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig 
         .associateBy { it.name }), queryExecutor)
   }
 }
+
+fun isDeferOnReferenceExpression(element: PsiElement): Boolean =
+/* Identifier within JSReferenceExpression or JSReferenceExpression itself */
+  (element.asSafely<JSReferenceExpression>()
+   ?: element.takeIf { JSKeywordSets.IDENTIFIER_NAMES.contains(it.elementType) }
+     ?.parent
+     ?.asSafely<JSReferenceExpression>()
+  )
+    ?.parent
+    ?.asSafely<Angular2BlockParameter>()
+    ?.name == PARAMETER_ON
 
 fun getDeferOnTriggerDefinition(parameter: Angular2BlockParameter): WebSymbol? {
   val triggerName = parameter

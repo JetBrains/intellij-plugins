@@ -1,0 +1,116 @@
+groups:
+  - groupId: StarterExcluded # qodana.starter make less checks than qodana.recommended to not overwhelm user
+    groups:
+      #Kotlin
+      - "category:Kotlin/Redundant constructs" # Style issues
+      - "category:Kotlin/Naming conventions" # Style issues
+      - "category:Kotlin/Style issues" # Style issues
+
+      #Java
+      - "category:Java/Verbose or redundant code constructs" # Style issues
+      - "category:Java/Probable bugs/Nullability problems" # Nullability checks could spam
+      - "category:Java/Naming conventions" # Style issues
+      - "category:Java/Javadoc" # Starter is concentrated on "executed" source code
+      - "category:Java/Declaration redundancy" # Style
+      - "category:Java/Code maturity" # Style
+      - "category:Java/Class structure" # Style
+      - "category:Java/Assignment issues" # Style
+      - "category:Java/Code style issues" # Style
+
+      #PHP
+      - "category:PHP/Code smell" # Style
+      - "category:PHP/Control flow" # Style
+      - "category:PHP/Code style" # Style
+      - "category:PHP/PHPDoc" # Starter is concentrated on "executed" source code
+      - "category:PHP/Behat" # Starter is concentrated on "executed" source code
+      - "category:PHP/Composer" # Starter is concentrated on "executed" source code
+      - "category:PHP/Regular expressions" # Style
+      - "category:PHP/Unused symbols" # Potential spam
+      - "category:PHP/PHPUnit" # Due to lack of information source/tests, disabling inspections instead of paths
+      - "category:JavaScript and TypeScript/Flow type checker"
+      - "category:JavaScript and TypeScript/Potentially confusing code constructs" # Style
+      - "category:JavaScript and TypeScript/Code style issues" # Style
+      - "category:Angular" # ?
+      - "category:Django" # ?
+      - "category:Google App Engine (Python)" # ?
+
+      - "StarterExcludedInspections"
+
+  - groupId: StarterExcludedInspections
+    inspections:
+      #General
+      - InjectedReferences # Heavy and spam
+      - DuplicatedCode # Heavy and spam
+
+      #RegExp
+      - RegExpSimplifiable # Mostly style problems
+
+      #Java
+      - StringEqualsEmptyString # Style
+      - SetReplaceableByEnumSet #Style
+      - PublicField # Could spam on certain classes
+      - ForLoopReplaceableByWhile # Style
+      - ConditionalBreakInInfiniteLoop # Style
+      - ConditionalCanBePushedInsideExpression # Style
+      - SwitchExpressionCanBePushedDown # Style
+      - ReuseOfLocalVariable # Style
+      - Deprecation # Possible spam
+      - UNCHECKED_WARNING # Possible spam
+      - RedundantIf # Style
+      - UnnecessaryLocalVariable # Style
+      - UnnecessaryUnicodeEscape # Style
+      - IOStreamConstructor # Depends on language level detection - possible spam
+      - ArraysAsListWithZeroOrOneArgument # Style
+      - RedundantMethodOverride # Spam
+      - UNUSED_IMPORT # Spam and not a warning in IDE
+      - SwitchStatementWithTooFewBranches # Style
+      - TrivialIf # Style
+
+      #Kotlin
+      - KotlinDeprecation # Possible spam
+
+      #PHP
+      - PhpDynamicFieldDeclarationInspection
+      - PhpPossiblePolymorphicInvocationInspection
+      - PhpConstantReassignmentInspection
+      - PhpMissingBreakStatementInspection
+      - PhpMissingParentConstructorInspection
+      - PhpNonCompoundUseInspection
+      - PhpStatementHasEmptyBodyInspection
+      - PhpMissingFieldTypeInspection
+      - PhpRedundantIntersectionTypeInspection
+      - PhpRedundantTypeInUnionTypeInspection
+
+      - PhpMissingParamTypeInspection # Spam
+      - PhpMissingReturnTypeInspection # Spam
+      - PhpUnhandledExceptionInspection # Spam
+
+      #PHP/General
+      - PhpCurlyBraceAccessSyntaxUsageInspection
+      - PhpDeprecatedDollarBraceStringInterpolationInspection
+      - PhpDeprecatedPartiallySupportedCallableInspection
+      - PhpDeprecationInspection
+      - PhpDynamicAsStaticMethodCallInspection
+      - PhpIgnoredClassAliasDeclaration
+      - PhpIncludeInspection
+      - PhpNModifierCanBeReplacedWithNonCapturingGroupInspection
+      - PhpParameterNameChangedDuringInheritanceInspection
+
+      #PHP/Attributes
+      - PhpExpectedValuesShouldBeUsedInspection
+      - PhpLineCommentWillBeParsedAsAttributeInspection
+      - PhpRedundantAttributeParenthesisInspection
+
+      #JS
+      - UnnecessaryLocalVariableJS # Style
+      - TrivialIfJS # Style
+      - TrivialConditionalJS # Style
+      - UnnecessaryLocalVariableJS # Style
+      - RegExpRedundantEscape # Style
+
+      #Ktor
+      - KtorOpenAPIUpdate
+
+inspections:
+  - group: StarterExcluded
+    enabled: false

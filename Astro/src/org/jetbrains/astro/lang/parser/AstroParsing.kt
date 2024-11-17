@@ -264,9 +264,11 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   private class AstroExpressionItem(private val expressionStart: Marker) : HtmlParserStackItem {
-    override fun done(builder: PsiBuilder,
-                      beforeMarker: Marker?,
-                      incomplete: Boolean) {
+    override fun done(
+      builder: PsiBuilder,
+      beforeMarker: Marker?,
+      incomplete: Boolean,
+    ) {
       if (beforeMarker == null) {
         expressionStart.done(JSStubElementTypes.EMBEDDED_EXPRESSION)
       }
@@ -305,7 +307,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
           }
         }
         else if (!parseArgument()) {
-          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
 
         if (!checkMatches(builder, JSTokenTypes.XML_RBRACE, "javascript.parser.message.expected.rbrace")) {

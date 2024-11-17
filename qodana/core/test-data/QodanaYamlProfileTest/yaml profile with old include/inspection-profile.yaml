@@ -1,0 +1,8 @@
+# The inspection profile 'empty' is provided by Qodana.
+baseProfile: empty
+
+inspections:
+  - inspection: IgnoreResultOfCall
+    enabled: true
+    ignore:
+      - test-module/A.java

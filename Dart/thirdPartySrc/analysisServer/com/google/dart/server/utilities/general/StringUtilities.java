@@ -13,9 +13,6 @@
  */
 package com.google.dart.server.utilities.general;
 
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,11 +37,6 @@ public final class StringUtilities {
    * An empty list of {@link String}s.
    */
   public static final List<String> EMPTY_LIST = new ArrayList<>();
-
-  /**
-   * The {@link Interner} instance to use for {@link #intern(String)}.
-   */
-  private static final Interner<String> INTERNER = Interners.newWeakInterner();
 
   /**
    * Abbreviates a String using ellipses inserted at left.
@@ -207,19 +199,6 @@ public final class StringUtilities {
       index++;
     }
     return last;
-  }
-
-  /**
-   * Returns a canonical representation for the given {@link String}.
-   *
-   * @return the given {@link String} or its canonical representation.
-   */
-  public static String intern(String str) {
-    if (str == null) {
-      return null;
-    }
-    str = new String(str);
-    return INTERNER.intern(str);
   }
 
   /**

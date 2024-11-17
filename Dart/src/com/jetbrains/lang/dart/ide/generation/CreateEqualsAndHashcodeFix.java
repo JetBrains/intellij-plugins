@@ -6,6 +6,7 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.lang.dart.DartBundle;
@@ -14,6 +15,7 @@ import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerTypeHierarchyTreeStr
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +25,7 @@ import java.util.Set;
 public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartComponent> {
 
   private boolean mySuperclassOverridesEqualEqualAndHashCode;
+  private boolean supportsObjectHashMethods = false;
 
   public CreateEqualsAndHashcodeFix(@NotNull final DartClass dartClass) {
     super(dartClass);
@@ -32,6 +35,9 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
   public void beforeInvoke(@NotNull Project project, Editor editor, PsiElement file) {
     super.beforeInvoke(project, editor, file);
     mySuperclassOverridesEqualEqualAndHashCode = doesSuperclassOverrideEqualEqualAndHashCode(myDartClass);
+
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    supportsObjectHashMethods = sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "2.14") >= 0;
   }
 
   @Override
@@ -94,20 +100,55 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
 
     template.addTextSegment("@override\n");
     template.addTextSegment("int get hashCode => ");
-    boolean firstItem = true;
-    if (mySuperclassOverridesEqualEqualAndHashCode) {
-      template.addTextSegment("super.hashCode");
-      firstItem = false;
-    }
-    for (DartComponent component : elementsToProcess) {
-      if (!firstItem) {
-        template.addTextSegment(" ^ ");
-      }
-      template.addTextSegment(component.getName() + ".hashCode");
-      firstItem = false;
-    }
-    if (!mySuperclassOverridesEqualEqualAndHashCode && elementsToProcess.isEmpty()) {
+
+    final int totalItems = elementsToProcess.size() + (mySuperclassOverridesEqualEqualAndHashCode ? 1 : 0);
+    if (totalItems <= 0) {
       template.addTextSegment("0");
+    }
+    else if (supportsObjectHashMethods && totalItems > 1) {
+      // hash() accepts up to 20 args, see https://api.flutter.dev/flutter/dart-core/Object/hash.html
+      final boolean useHashAll = totalItems > 20;
+      if (useHashAll) {
+        template.addTextSegment("Object.hashAll(");
+        template.addTextSegment("[");
+      }
+      else {
+        template.addTextSegment("Object.hash(");
+      }
+
+      boolean shouldPrependComma = false;
+      if (mySuperclassOverridesEqualEqualAndHashCode) {
+        template.addTextSegment("super.hashCode");
+        shouldPrependComma = true;
+      }
+
+      for (final DartComponent component : elementsToProcess) {
+        if (shouldPrependComma) {
+          template.addTextSegment(",");
+        }
+        template.addTextSegment(String.valueOf(component.getName()));
+        shouldPrependComma = true;
+      }
+
+      if (useHashAll) {
+        template.addTextSegment("]");
+      }
+
+      template.addTextSegment(")");
+    }
+    else {
+      boolean firstItem = true;
+      if (mySuperclassOverridesEqualEqualAndHashCode) {
+        template.addTextSegment("super.hashCode");
+        firstItem = false;
+      }
+      for (DartComponent component : elementsToProcess) {
+        if (!firstItem) {
+          template.addTextSegment(" ^ ");
+        }
+        template.addTextSegment(component.getName() + ".hashCode");
+        firstItem = false;
+      }
     }
     template.addTextSegment(";\n");
     template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed

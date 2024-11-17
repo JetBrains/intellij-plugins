@@ -1,0 +1,12 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="AngularJS"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceInterface="org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator"
+                    serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
+                    testServiceImplementation="org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl"
+                    overrides="true"/>
+  </extensions>
+</idea-plugin>

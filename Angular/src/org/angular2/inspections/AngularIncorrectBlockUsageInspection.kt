@@ -9,10 +9,15 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.containers.MultiMap
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_BLOCK
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_EXPRESSION_PREFIX
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
+import org.angular2.codeInsight.Angular2HighlightingUtils.renderCode
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
+import org.angular2.codeInsight.blocks.BLOCK_DEFER
+import org.angular2.codeInsight.blocks.PARAMETER_NEVER
+import org.angular2.codeInsight.blocks.PARAMETER_PREFIX_HYDRATE
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
@@ -51,9 +56,11 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
         validateBlockParameters(block, definition, primaryBlockDefinition)
       }
 
-      private fun validateBlocksStructure(block: Angular2HtmlBlock,
-                                          definition: Angular2HtmlBlockSymbol,
-                                          primaryBlockDefinition: Angular2HtmlBlockSymbol?) {
+      private fun validateBlocksStructure(
+        block: Angular2HtmlBlock,
+        definition: Angular2HtmlBlockSymbol,
+        primaryBlockDefinition: Angular2HtmlBlockSymbol?,
+      ) {
         val primaryBlock = block.primaryBlock
         if (definition.isPrimary) {
           val parentBlock = block.parent?.parent as? Angular2HtmlBlock
@@ -97,11 +104,15 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
         }
       }
 
-      private fun validateBlockParameters(block: Angular2HtmlBlock,
-                                          definition: Angular2HtmlBlockSymbol,
-                                          primaryBlockDefinition: Angular2HtmlBlockSymbol?) {
+      private fun validateBlockParameters(
+        block: Angular2HtmlBlock,
+        definition: Angular2HtmlBlockSymbol,
+        primaryBlockDefinition: Angular2HtmlBlockSymbol?,
+      ) {
         val expectedParams = definition.parameters
         val actualParams = block.parameters.dropLastWhile { it.textLength == 0 }
+        val hydrateNeverParam = block.takeIf { it.name == BLOCK_DEFER }?.parameters
+          ?.find { it.prefix == PARAMETER_PREFIX_HYDRATE && it.name == PARAMETER_NEVER }
 
         if (expectedParams.isEmpty() && actualParams.isNotEmpty()) {
           holder.registerProblem(block.node.findChildByType(Angular2HtmlElementTypes.BLOCK_PARAMETERS)!!.psi,
@@ -132,20 +143,42 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
 
           // Check if parameters are allowed
           val namedParameters = expectedParams.mapNotNull { if (!it.isPrimaryExpression) it.name to it else null }.toMap()
+          val parameterPrefixes = definition.parameterPrefixes.associate { Pair(it.name, it.parameters.associateBy { p -> p.name }) }
           val uniqueParameters = MultiMap<String, Angular2BlockParameter>()
           val nameParametersOffset = if (expectedParams.any { it.isPrimaryExpression }) 1 else 0
           if (actualParams.size > nameParametersOffset) {
             for (parameter in actualParams.subList(nameParametersOffset, actualParams.size)) {
-              val name = parameter.getName() ?: continue
-              val parameterDefinition = namedParameters[name]
+              val prefix = parameter.prefix
+              if (prefix != null && prefix !in parameterPrefixes) {
+                holder.registerProblem(parameter.prefixElement!!,
+                                       Angular2Bundle.htmlMessage(
+                                         "angular.inspection.incorrect-block-usage.message.unrecognized-parameter-prefix",
+                                         block.htmlName, prefix.withColor(NG_EXPRESSION_PREFIX, block)))
+              }
+              val name = parameter.name ?: continue
+              val parameterDefinition = parameterPrefixes[prefix]?.get(name)
+                                        ?: namedParameters[name]
               if (parameterDefinition == null) {
+                val receiverName = if (prefix == null) {
+                  block.htmlName
+                }
+                else {
+                  renderCode("@" + block.name to NG_BLOCK, " " to null, prefix to NG_EXPRESSION_PREFIX, context = block)
+                }
                 holder.registerProblem(parameter.nameElement!!,
                                        Angular2Bundle.htmlMessage(
                                          "angular.inspection.incorrect-block-usage.message.unrecognized-parameter",
-                                         block.htmlName, name.withColor(NG_EXPRESSION_PREFIX, block)))
+                                         receiverName, name.withColor(NG_EXPRESSION_PREFIX, block)))
               }
               else if (parameterDefinition.isUnique) {
                 uniqueParameters.putValue(name, parameter)
+              }
+              else if (hydrateNeverParam != null && parameter != hydrateNeverParam && prefix == PARAMETER_PREFIX_HYDRATE) {
+                holder.registerProblem(parameter.nameElement!!,
+                                       Angular2Bundle.htmlMessage(
+                                         "angular.inspection.incorrect-block-usage.message.hydrate-never-surplus-trigger",
+                                         PARAMETER_PREFIX_HYDRATE.withColor(NG_EXPRESSION_PREFIX, block),
+                                         "$PARAMETER_PREFIX_HYDRATE $PARAMETER_NEVER".withColor(NG_EXPRESSION_PREFIX, block)))
               }
             }
           }

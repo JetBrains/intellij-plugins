@@ -1,0 +1,133 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "CssInvalidHtmlTagReference",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Selector matches unknown element padding-left",
+            "markdown": "Selector matches unknown element padding-left"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/index.html",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 14,
+                  "charOffset": 217,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "padding-left"
+                  },
+                  "sourceLanguage": "CSS"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 57,
+                  "charLength": 212,
+                  "snippet": {
+                    "text": "  <ul>\n    <li><label for=\"id-hide-minor-data-checkbox\">Hide minor data<input checked=\"checked\" id=\"id-hide-minor-data-checkbox\" type=\"checkbox\"/>\n      <style>padding-left: 10px</style>\n    </label></li>\n  </ul>"
+                  },
+                  "sourceLanguage": "HTML"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testEmbedded problem",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "00dee480708e7ae7",
+            "equalIndicator/v1": "1c978581d438a525ca9b3bcdf98dff44effd044f25c371fe6ee722cbc24e14e2"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "CSS"
+            ]
+          }
+        },
+        {
+          "ruleId": "CssInvalidHtmlTagReference",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Selector matches unknown element px",
+            "markdown": "Selector matches unknown element px"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/index.html",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 30,
+                  "charOffset": 233,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "px"
+                  },
+                  "sourceLanguage": "CSS"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 57,
+                  "charLength": 212,
+                  "snippet": {
+                    "text": "  <ul>\n    <li><label for=\"id-hide-minor-data-checkbox\">Hide minor data<input checked=\"checked\" id=\"id-hide-minor-data-checkbox\" type=\"checkbox\"/>\n      <style>padding-left: 10px</style>\n    </label></li>\n  </ul>"
+                  },
+                  "sourceLanguage": "HTML"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testEmbedded problem",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cc37704282d6d3cb",
+            "equalIndicator/v1": "6d35e78a3ea1b8add0a05858b18afcd3d3ffee3ba710e5701bb1306d7a94bcce"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "CSS"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

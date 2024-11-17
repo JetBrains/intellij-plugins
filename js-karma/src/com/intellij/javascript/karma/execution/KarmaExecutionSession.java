@@ -128,7 +128,9 @@ public class KarmaExecutionSession {
     KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
-        ScriptRunnerUtil.terminateProcessHandler(processHandler, 2000, null);
+        ProcessIOExecutorService.INSTANCE.execute(() -> {
+          ScriptRunnerUtil.terminateProcessHandler(processHandler, 2000, null);
+        });
       }
     };
     server.onTerminated(terminationCallback);

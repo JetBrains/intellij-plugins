@@ -4,7 +4,6 @@ package org.angular2.cli
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.execution.filters.Filter
 import com.intellij.ide.util.projectWizard.SettingsStep
-import com.intellij.javascript.nodejs.NodePackageVersionUtil
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
@@ -241,9 +240,9 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
               thisLogger().error("Failed to load schematics", e)
             }
 
-            val packageVersion = NodePackageVersionUtil.getPackageVersion(nodePackage.systemIndependentPath)
-            if (packageVersion != null && packageVersion.semVer != null) {
-              cliVersion.set(packageVersion.semVer)
+            val packageVersion = nodePackage.getVersion()
+            if (packageVersion != null) {
+              cliVersion.set(packageVersion)
             }
           }
         }

@@ -8,9 +8,8 @@ import com.intellij.psi.PsiElement
 
 class Angular2AccessibilityProcessingHandler(_place: PsiElement?) : AccessibilityProcessingHandler(_place) {
 
-  override fun getCheckers(): Collection<JSAccessibilityChecker> {
-    return ourCheckers
-  }
+  override val checkers: List<JSAccessibilityChecker>
+    get() = ourCheckers
 
   companion object {
 

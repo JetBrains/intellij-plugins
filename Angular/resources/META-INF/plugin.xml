@@ -117,6 +117,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularIncorrectLetUsageInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="ERROR" language="Angular2"
                      key="angular.inspection.incorrect-let-usage.name" bundle="messages.Angular2Bundle"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularUnsupportedSyntaxInspection"
+                     groupKey="angular.inspection.group.name" enabledByDefault="true" level="ERROR" language="Angular2"
+                     key="angular.inspection.unsupported-syntax-inspection.name" bundle="messages.Angular2Bundle"/>
 
     <intentionAction>
       <language>Angular2</language>
@@ -173,6 +176,8 @@
                                        implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol$Factory"/>
     <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameters"
                                        implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol$Factory"/>
+    <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameter-prefixes"
+                                       implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol$Factory"/>
     <webSymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedWebSymbolProvider"/>
     <webSymbols.documentationCustomizer implementation="org.angular2.web.Angular2WebSymbolDocumentationCustomizer"/>
     <elementDescriptionProvider

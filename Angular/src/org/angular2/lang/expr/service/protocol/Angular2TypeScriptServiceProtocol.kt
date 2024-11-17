@@ -2,15 +2,15 @@
 package org.angular2.lang.expr.service.protocol
 
 import com.intellij.idea.AppMode
-import com.intellij.lang.javascript.psi.util.JSPluginPathManager.getPluginResourceOrSource
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager.getPluginResource
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
 import com.intellij.lang.javascript.service.protocol.LocalFilePath
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptServiceInitialStateObject
 import com.intellij.openapi.project.Project
-import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 import java.util.function.Consumer
 
 class Angular2TypeScriptServiceProtocol(project: Project,
@@ -33,15 +33,15 @@ class Angular2TypeScriptServiceProtocol(project: Project,
 
   override fun getProbeLocations(): Array<LocalFilePath> {
     val probeLocations = super.getProbeLocations()
-    val pluginProbe = getAngularServicePluginLocation().parentFile.parentFile.path
+    val pluginProbe = getAngularServicePluginLocation().parent?.parent ?: return probeLocations
 
-    val element = LocalFilePath.create(pluginProbe) ?: return probeLocations
+    val element = LocalFilePath.create(pluginProbe.toString())
     return probeLocations + element
   }
 
-  private fun getAngularServicePluginLocation(): File {
+  private fun getAngularServicePluginLocation(): Path {
     try {
-      return getPluginResourceOrSource(
+      return getPluginResource(
         this::class.java,
         "angular-service/node_modules/ws-typescript-angular-plugin",
         if (AppMode.isDevServer()) "angular-plugin" else "Angular/gen")

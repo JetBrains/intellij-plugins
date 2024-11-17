@@ -50,6 +50,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <registryKey defaultValue="true" description="Use bundled Vue service" key="vue.language.server.bundled.enabled"/>
     <registryKey defaultValue="" description="Vue service version for downloading" key="vue.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
     <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
@@ -76,9 +77,8 @@
     <pom.declarationSearcher implementation="org.jetbrains.vuejs.codeInsight.refs.VuePomDeclarationSearcher"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
-    <useScopeEnlarger implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
-    <platform.lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarSupportProvider"/>
+    <platform.lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerSupportProvider"/>
 
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
     <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>
@@ -125,10 +125,13 @@
 
     <!-- works in WebStorm and other SmallIDEs -->
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
+    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.NuxtProjectGenerator"/>
     <!-- works in IDEA -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/>
+    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.NuxtProjectTemplateFactory"/>
     <!-- works in new IDEA wizard -->
     <moduleBuilder builderClass="org.jetbrains.vuejs.cli.VueCLIProjectModuleBuilder"/>
+    <moduleBuilder builderClass="org.jetbrains.vuejs.cli.NuxtProjectModuleBuilder"/>
 
     <workspaceModel.fileIndexContributor implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderLibraryContributor"/>
     <postStartupActivity implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderLibraryStartupActivity"/>

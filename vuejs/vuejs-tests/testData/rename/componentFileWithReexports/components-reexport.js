@@ -1,0 +1,1 @@
+export { UnrelatedName as SomeOtherName } from './components.js';

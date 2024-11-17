@@ -41,3 +41,12 @@ extension NumberParsing on String <fold text='{...}' expand='true'>{
 }</fold>
 
 extension NumberParsing2 on String {}
+
+extension type Id(String _) {}
+extension type Id2(String _) {a}
+extension type Id3(String _)<fold text='{...}' expand='true'>{a }</fold>
+extension type Id4(String _)<fold text='{...}' expand='true'>{
+a,
+b,
+//c
+}</fold>

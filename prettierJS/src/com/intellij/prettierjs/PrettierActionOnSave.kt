@@ -3,7 +3,6 @@ package com.intellij.prettierjs
 
 import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptions
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveFileDocumentManagerListener
-import com.intellij.lang.javascript.linter.GlobPatternUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
@@ -46,7 +45,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
       }
     }
 
-    if (!GlobPatternUtil.isFileMatchingGlobPattern(project, prettierConfiguration.filesPattern, file)) return null
+    if (!PrettierUtil.isFormattingAllowedForFile(project, file)) return null
 
     return file to psiFile
   }

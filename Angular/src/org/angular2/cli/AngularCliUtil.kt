@@ -6,8 +6,8 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.javascript.JSRunConfigurationBuilder
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.javascript.nodejs.NodePackageVersionUtil
 import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.notification.NotificationGroupManager
@@ -72,8 +72,7 @@ object AngularCliUtil {
   fun getAngularCliPackageVersion(cli: VirtualFile): SemVer? {
     val moduleInfo = findAngularCliModuleInfo(cli) ?: return null
 
-    val nodePackageVersion = NodePackageVersionUtil.getPackageVersion(moduleInfo.virtualFile!!.path)
-    return nodePackageVersion?.semVer
+    return NodePackage(moduleInfo.virtualFile!!.path).getVersion()
   }
 
 

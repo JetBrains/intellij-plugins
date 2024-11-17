@@ -1,0 +1,7 @@
+<app.vue:(121,133):(1,10)>	app-alert
+<app.vue:(80,116):(1,9)>	AppAlert
+<app.vue:(80,116):(27,35)>	AppAlert
+<components.d.ts:(2628,2698):(0,14)>	'LazyAppAlert': typeof import("../components/AppAlert.vue")['default']
+<components.d.ts:(282,348):(0,10)>	'AppAlert': typeof import("../components/AppAlert.vue")['default']
+<components.d.ts:(5172,5236):(0,8)>	export const AppAlert: typeof import("../components/AppAlert.vue")['default']
+<components.d.ts:(7684,7752):(0,12)>	LazyAppAlert: typeof import("../components/AppAlert.vue")['default']

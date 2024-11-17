@@ -53,5 +53,6 @@
     <orderEntry type="module" module-name="intellij.diagram.impl" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.ui" />
+    <orderEntry type="module" module-name="intellij.platform.util.text.matching" />
   </component>
 </module>

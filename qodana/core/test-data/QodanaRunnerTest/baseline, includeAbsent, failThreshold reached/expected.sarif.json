@@ -1,0 +1,187 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResultAbsent()' is ignored",
+            "markdown": "Result of `A.unusedResultAbsent()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "charOffset": 204,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "unusedResultAbsent"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 156,
+                  "charLength": 123,
+                  "snippet": {
+                    "text": "\n  public static void main(String[] args) {\n    unusedResultAbsent();\n    unusedResultUnchanged();\n    //unusedResultNew();"
+                  }
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ includeAbsent_ failThreshold reached",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "9fe3afc70b84f65fd898877be994a37a63eed6cdaf55510e8202a3e2ace5c462"
+          },
+          "baselineState": "absent",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High"
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResultUnchanged()' is ignored",
+            "markdown": "Result of `A.unusedResultUnchanged()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "charOffset": 232,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "unusedResultUnchanged"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 157,
+                  "charLength": 126,
+                  "snippet": {
+                    "text": "  public static void main(String[] args) {\n    //unusedResultAbsent();\n    unusedResultUnchanged();\n    unusedResultNew();\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ includeAbsent_ failThreshold reached",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "df520428427e3b51",
+            "equalIndicator/v1": "d358f23d13354c5b6906f92791da7f8c97a5a4580819b0c72083d5ae95b12be7"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IgnoreResultOfCall",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Result of 'A.unusedResultNew()' is ignored",
+            "markdown": "Result of `A.unusedResultNew()` is ignored"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "charOffset": 261,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "unusedResultNew"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 200,
+                  "charLength": 85,
+                  "snippet": {
+                    "text": "    //unusedResultAbsent();\n    unusedResultUnchanged();\n    unusedResultNew();\n  }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testBaseline_ includeAbsent_ failThreshold reached",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b75ef58ece329fa7",
+            "equalIndicator/v1": "2ff2b64bf6c19e463edd8058b6d620f378b183f26bd944b1b4c5ae553e44842a"
+          },
+          "baselineState": "new",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

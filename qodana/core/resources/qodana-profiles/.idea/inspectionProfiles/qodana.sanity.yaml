@@ -1,0 +1,26 @@
+baseProfile: "empty"
+name: "qodana.sanity"
+
+include:
+  - "qodana-dotnet.static.yaml"
+
+groups:
+  - groupId: ClionSanity
+    groups:
+      - "category:C_C++/Compiler Issues"
+
+inspections:
+  - inspection: QodanaJavaSanity
+    enabled: true
+  - inspection: QodanaKotlinSanity
+    enabled: true
+  - inspection: PhpLanguageLevelInspection
+    enabled: true
+  - inspection: PyUnresolvedReferencesInspection
+    enabled: true
+  - inspection: PyInterpreterInspection
+    enabled: true
+  - group: RiderStaticSanityInspections
+    enabled: true
+  - group: ClionSanity
+    enabled: true

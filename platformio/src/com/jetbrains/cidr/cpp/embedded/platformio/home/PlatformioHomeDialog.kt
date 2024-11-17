@@ -19,7 +19,7 @@ import com.intellij.util.io.HttpRequests
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector
-import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.notifyPlatformioNotFound
 import java.io.IOException
 import javax.swing.Action
@@ -88,7 +88,7 @@ class PlatformioHomeDialog(private val project: Project?, parentComponent: JComp
   override fun beforeShowCallback() {
     super.beforeShowCallback()
     ApplicationManager.getApplication().executeOnPooledThread {
-      val commandLine = PlatfromioCliBuilder(false, null)
+      val commandLine = PlatformioCliBuilder(false, null)
         .withRedirectErrorStream(true)
         .withParams("home", "--port", portNumber.toString(), "--no-open").build()
       try {

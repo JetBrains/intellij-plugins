@@ -1,0 +1,15 @@
+<idea-plugin package="org.jetbrains.qodana.jvm.maven">
+  <dependencies>
+    <plugin id="org.jetbrains.idea.maven"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <projectDescriber implementation="org.jetbrains.qodana.jvm.maven.MavenProjectDescriber"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.maven.QodanaMavenReimporter" />
+  </extensions>
+  <projectListeners>
+    <listener class="org.jetbrains.qodana.jvm.maven.QodanaMavenJdkProvider"
+              topic="org.jetbrains.idea.maven.project.MavenImportListener"
+              activeInTestMode="false"
+              activeInHeadlessMode="true"/>
+  </projectListeners>
+</idea-plugin>

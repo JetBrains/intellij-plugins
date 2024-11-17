@@ -36,7 +36,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   private static final String EXPRESS_INSTALL_SWF_MACRO = "${expressInstallSwf}";
 
   private JPanel myMainPanel;
-  private LabeledComponent<TextFieldWithBrowseButton> myWrapperFolderComponent;
+  private LabeledComponentNoThrow<TextFieldWithBrowseButton> myWrapperFolderComponent;
   private JCheckBox myEnableHistoryCheckBox;
   private JCheckBox myCheckPlayerVersionCheckBox;
   private JCheckBox myExpressInstallCheckBox;

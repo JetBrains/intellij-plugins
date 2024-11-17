@@ -150,6 +150,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
 
   override val lspSemanticTokensSupport = null
   override val lspGoToDefinitionSupport = false
+  override val lspGoToTypeDefinitionSupport = false
   override val lspHoverSupport = false
   override val lspCompletionSupport = BaseLspTypeScriptServiceCompletionSupport()
   override val lspDiagnosticsSupport = null

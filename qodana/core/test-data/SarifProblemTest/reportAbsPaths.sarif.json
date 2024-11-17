@@ -1,0 +1,54 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "results": [
+        {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/home/user/projects/myProject/Main.java"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/home/user/projects/myProject/src/Logic.java"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 2
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_ABS_PATHS",
+        "guid": "REPORT_ABS_PATHS"
+      }
+    }
+  ]
+}

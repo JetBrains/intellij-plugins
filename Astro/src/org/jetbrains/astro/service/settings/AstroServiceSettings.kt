@@ -7,7 +7,7 @@ import com.intellij.lang.typescript.lsp.extractRefText
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.astro.service.AstroLspExecutableDownloader
+import org.jetbrains.astro.service.AstroLspServerLoader
 
 fun getAstroServiceSettings(project: Project) = project.service<AstroServiceSettings>()
 
@@ -23,7 +23,7 @@ class AstroServiceSettings(val project: Project) : SimplePersistentStateComponen
     }
 
   var lspServerPackageRef
-    get() = createPackageRef(state.lspServerPackageName, AstroLspExecutableDownloader.packageDescriptor.serverPackage)
+    get() = createPackageRef(state.lspServerPackageName, AstroLspServerLoader.packageDescriptor.serverPackage)
     set(value) {
       val refText = extractRefText(value)
       val changed = state.lspServerPackageName != refText

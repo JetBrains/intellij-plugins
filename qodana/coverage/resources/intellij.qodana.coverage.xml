@@ -1,0 +1,16 @@
+<idea-plugin package="org.jetbrains.qodana.staticAnalysis.inspections.coverage">
+  <dependencies>
+    <plugin id="org.intellij.qodana"/>
+    <module name="intellij.platform.coverage"/>
+  </dependencies>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.qodana.coverage.cloudArtifactsProcessor"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor"
+                    dynamic="true"/>
+  </extensionPoints>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <contextMarginProvider implementation="org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageContextMarginProvider"/>
+    <highlightingListener implementation="org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageHighlightingListener"/>
+  </extensions>
+</idea-plugin>

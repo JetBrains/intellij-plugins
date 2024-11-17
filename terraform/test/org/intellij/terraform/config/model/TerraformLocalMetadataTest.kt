@@ -10,12 +10,10 @@ import com.intellij.openapi.options.advanced.withAdvancedSettingValue
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.waitUntil
-import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
@@ -23,7 +21,9 @@ import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 import org.intellij.terraform.config.util.TFCommandLineServiceMock
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TerraformPathDetector
+import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.junit.Assert
 import org.junit.Assume
 import java.nio.file.Files
@@ -47,6 +47,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     TFCommandLineServiceMock.instance.clear() // to avoid getting errors from previous tests
     TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
+    myFixture.project.service<TerraformProjectSettings>().toolPath = project.service<TerraformPathDetector>().actualPath()
   }
 
   override fun runInDispatchThread(): Boolean = false
@@ -184,7 +185,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
   fun testLocalMetadataNotUpdatedIfForbidden() {
     // setup prev meta
     loadAndCheckDoMetadata("dummyProp1")
-    TestCase.assertFalse("Commands should have been executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
+    assertFalse("Commands should have been executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
 
     withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.auto", false) {
       // testing no process was started implicitly
@@ -195,7 +196,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
         localSchemaService.awaitModelsReady()
       }
       myFixture.testHighlighting("main.tf")
-      TestCase.assertTrue("Commands should have been not executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
+      assertTrue("Commands should have been not executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
     }
   }
 
@@ -247,7 +248,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
         val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java)
           .filter { it.lockFile.virtualFile != lock.virtualFile }
           .toList()
-        UsefulTestCase.assertEmpty(entities)
+        assertEmpty(entities)
       }
     }
   }
@@ -285,7 +286,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
         TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty()
       }
     }
-    for (i in 0..5) {
+    (0..5).forEach { i ->
       timeoutRunBlocking {
         localSchemaService.awaitModelsReady()
       }
@@ -296,7 +297,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
   }
 
   private val terraformExe: String
-    get() = TerraformPathDetector.getInstance(project).actualTerraformPath
+    get() = project.service<TerraformPathDetector>().actualPath()
 
 }
 

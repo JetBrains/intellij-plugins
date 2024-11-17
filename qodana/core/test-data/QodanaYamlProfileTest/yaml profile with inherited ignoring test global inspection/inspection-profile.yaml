@@ -1,0 +1,5 @@
+baseProfile: qodana.recommended
+
+inspections:
+  - inspection: unused
+    enabled: true

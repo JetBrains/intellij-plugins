@@ -127,7 +127,7 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
     myTree.invalidate()
 
     try {
-      val commandLine = PlatfromioCliBuilder(false, null)
+      val commandLine = PlatformioCliBuilder(false, null)
         .withParams("boards", "--json-output")
         .withRedirectErrorStream(true).build()
       val output = withContext(Dispatchers.IO) {

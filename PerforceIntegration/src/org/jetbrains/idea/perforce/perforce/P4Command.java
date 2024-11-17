@@ -16,6 +16,7 @@ public enum P4Command {
   describe("describe"),
   change("change"),
   changes("changes"),
+  have("have"),
   opened("opened"),
   submit("submit"),
   filelog("filelog"),

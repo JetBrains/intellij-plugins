@@ -14,5 +14,6 @@ public final class VuejsIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, VuejsIcons.class.getClassLoader(), cacheKey, flags);
   }
+  /** 16x16 */ public static final @NotNull Icon Nuxt = load("icons/nuxt.svg", 1295887393, 0);
   /** 16x16 */ public static final @NotNull Icon Vue = load("icons/vue.svg", 1065828359, 0);
 }

@@ -9,7 +9,7 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
 import org.intellij.prisma.PrismaBundle
-import org.intellij.prisma.ide.lsp.PrismaLspExecutableDownloader
+import org.intellij.prisma.ide.lsp.PrismaLspServerLoader
 import org.intellij.prisma.ide.lsp.PrismaServiceMode
 import org.intellij.prisma.ide.lsp.PrismaServiceSettings
 
@@ -19,7 +19,7 @@ class PrismaSettingsConfigurable(val project: Project) : UiDslUnnamedConfigurabl
   override fun Panel.createContent() {
     group(PrismaBundle.message("prisma.settings.service.configurable.service.group")) {
       row(PrismaBundle.message("prisma.settings.service.configurable.service.languageServerPackage")) {
-        cell(PrismaLspExecutableDownloader.createNodePackageField(project))
+        cell(PrismaLspServerLoader.createNodePackageField(project))
           .align(AlignX.FILL)
           .bind(settings::lspServerPackageRef)
       }

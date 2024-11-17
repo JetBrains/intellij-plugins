@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.vuex.model.component
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
@@ -38,17 +38,20 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
       private val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VuexMappedSourceMethod)
     }
 
-    private class SimpleMemberAccessor<T : VueNamedSymbol>(val member: ContainerMember,
-                                                           val provider: (String, JSElement) -> T)
-      : ListAccessor<T>() {
+    private class SimpleMemberAccessor<T : VueNamedSymbol>(
+      val member: ContainerMember,
+      val provider: (String, JSElement) -> T,
+    ) : ListAccessor<T>() {
 
       override fun build(declaration: JSElement): List<T> {
         return member.readMembers(declaration).map { (name, element) -> provider(name, element) }
       }
     }
 
-    private enum class ContainerMember(val propertyName: String,
-                                       private vararg val functionNames: String) {
+    private enum class ContainerMember(
+      val propertyName: String,
+      private vararg val functionNames: String,
+    ) {
       ComputedState(COMPUTED_PROP, MAP_STATE),
       ComputedGetters(COMPUTED_PROP, MAP_GETTERS),
       Methods(METHODS_PROP, MAP_ACTIONS, MAP_MUTATIONS);
@@ -109,14 +112,14 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
       }
 
       fun readStubbedArguments(call: StubElement<PsiElement>): List<Pair<String, JSElement>> {
-        call.findChildStubByType(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
+        call.findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
           ?.let { stub ->
             return stub.psi.properties.asSequence()
               .filter { it.name != null }
               .map { Pair(it.name!!, it) }
               .toList()
           }
-        return call.getChildrenByType(JSElementTypes.LITERAL_EXPRESSION) { arrayOfNulls<JSLiteralExpression>(it) }
+        return call.getChildrenByType(JSStubElementTypes.LITERAL_EXPRESSION) { arrayOfNulls<JSLiteralExpression>(it) }
           .asSequence()
           .filter { it?.significantValue != null }
           .map { Pair(it!!.significantValue!!, it) }
@@ -127,8 +130,10 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
   }
 }
 
-private class VuexMappedSourceComputedStateProperty(override val name: String,
-                                                    private val element: JSElement) : VueComputedProperty {
+private class VuexMappedSourceComputedStateProperty(
+  override val name: String,
+  private val element: JSElement,
+) : VueComputedProperty {
   override val source: JSElement
     get() = getCachedVuexImplicitElement(element, true, name, JSImplicitElement.Type.Property) { name, resolved ->
       when (resolved) {
@@ -143,8 +148,10 @@ private class VuexMappedSourceComputedStateProperty(override val name: String,
   override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
-private class VuexMappedSourceComputedGetterProperty(override val name: String,
-                                                     private val element: JSElement) : VueComputedProperty {
+private class VuexMappedSourceComputedGetterProperty(
+  override val name: String,
+  private val element: JSElement,
+) : VueComputedProperty {
   override val source: JSElement
     get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Property) { name, resolved ->
       (resolved as? JSFunctionItem)?.let { function ->
@@ -155,8 +162,10 @@ private class VuexMappedSourceComputedGetterProperty(override val name: String,
   override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
-private class VuexMappedSourceMethod(override val name: String,
-                                     private val element: JSElement) : VueMethod {
+private class VuexMappedSourceMethod(
+  override val name: String,
+  private val element: JSElement,
+) : VueMethod {
   override val source: JSElement
     get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Function) { name, resolved ->
       (resolved as? JSFunctionItem)?.let { function ->
@@ -205,11 +214,13 @@ private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSEle
   }
 }
 
-private fun getCachedVuexImplicitElement(source: JSElement,
-                                         resolveState: Boolean,
-                                         name: String,
-                                         type: JSImplicitElement.Type,
-                                         elementProvider: (name: String, el: JSElement) -> JSImplicitElement?): JSImplicitElement =
+private fun getCachedVuexImplicitElement(
+  source: JSElement,
+  resolveState: Boolean,
+  name: String,
+  type: JSImplicitElement.Type,
+  elementProvider: (name: String, el: JSElement) -> JSImplicitElement?,
+): JSImplicitElement =
   CachedValuesManager.getCachedValue(source, CachedValuesManager.getManager(source.project).getKeyForClass(elementProvider::class.java)) {
     CachedValueProvider.Result.create(
       resolveToVuexSymbol(source, resolveState)?.let { elementProvider(name, it) }

@@ -17,10 +17,10 @@ import javax.swing.Icon
 
 object DenoUtil {
   const val HASH_FILE_NAME_LENGTH = 64
-  
+
   fun getDenoTypings(): String {
     return JSLanguageServiceUtil.getPluginDirectory(this::class.java,
-                                                    "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts").path
+                                                    "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts")!!.path
   }
 
   fun getDefaultDenoExecutable() = detectDenoPaths().firstOrNull()

@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.plugins.serialmonitor.ui.SerialMonitor
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
-import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
 import com.intellij.plugins.serialmonitor.ui.serialSettings
 import com.intellij.ui.JBColor
 import com.intellij.ui.dsl.builder.Align
@@ -18,7 +18,7 @@ import javax.swing.JComponent
 /**
  * @author Dmitry_Cherkas, Ilia Motornyi
  */
-class EditSettingsAction(private val myName: @Nls String, private val consoleView: JeditermSerialMonitorDuplexConsoleView) :
+class EditSettingsAction(private val myName: @Nls String, private val serialMonitor: SerialMonitor) :
   DumbAwareAction(SerialMonitorBundle.message("edit-settings.title"),
                   SerialMonitorBundle.message("edit-settings.tooltip"),
                   AllIcons.General.Settings) {
@@ -27,9 +27,8 @@ class EditSettingsAction(private val myName: @Nls String, private val consoleVie
     val settingsDialog = SettingsDialog(e.project)
     val okClicked: Boolean = settingsDialog.showAndGet()
     if (okClicked) {
-      consoleView.reconnect()
+      serialMonitor.notifyProfileChanged()
     }
-
   }
 
   private inner class SettingsDialog(project: Project?) : DialogWrapper(project, false, IdeModalityType.IDE/*todo change to PROJECT when platform is fixed*/) {
@@ -41,14 +40,14 @@ class EditSettingsAction(private val myName: @Nls String, private val consoleVie
     override fun createCenterPanel(): JComponent {
       return panel {
         row {
-          label(consoleView.portProfile.portName).align(Align.FILL)
+          label(serialMonitor.portProfile.portName).align(Align.FILL)
             .resizableColumn()
             .label(SerialMonitorBundle.message("label.port"))
             .applyToComponent {
               border = BorderFactory.createLineBorder(JBColor.border())
             }
         }.layout(com.intellij.ui.dsl.builder.RowLayout.LABEL_ALIGNED)
-        serialSettings(disposable, consoleView.portProfile) { }
+        serialSettings(disposable, serialMonitor.portProfile) { }
       }
     }
   }

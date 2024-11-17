@@ -22,10 +22,10 @@ internal class OpenTofuUnknownEncryptionMethodInspection : LocalInspectionTool()
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-    return MyEV(holder)
+    return EncryptionMethodPropertyVisitor(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
+  inner class EncryptionMethodPropertyVisitor(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitIdentifier(identifier: HCLIdentifier) {
       if (!OpenTofuPatterns.EncryptionMethodPropertyValue.accepts(identifier)) return
       if (identifier.references

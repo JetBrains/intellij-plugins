@@ -1,0 +1,885 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "PhpVulnerablePathsInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Vulnerable code flow",
+            "markdown": "Vulnerable code flow"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/File.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 265,
+                  "snippet": {
+                    "text": " <?php\n function bar($a) {\n   baz($a);\n }\n function baz($b) {\n   foo($b);\n }\n function foo($param) {\n   echo $param;\n }\n bar($_POST['anyKey']);\n bar('safeString');\n\n function foo1($param) {\n   bar($param);\n   baz($param);\n   foo($param);\n }\n foo1($_POST['anyKey']);"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "relationships": [
+                {
+                  "target": 1,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 2,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 3,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 4,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 5,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 6,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 7,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 8,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 9,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 10,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 11,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "77553aa0c2fb8c22",
+            "equalIndicator/v1": "43d09d582bd80e598a7d0323bad5a1bdab7c04c2b5c7622feed9695a95bd4ae3"
+          },
+          "graphs": [
+            {
+              "nodes": [
+                {
+                  "id": "1",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 19,
+                        "startColumn": 7,
+                        "charOffset": 247,
+                        "charLength": 16,
+                        "snippet": {
+                          "text": "$_POST['anyKey']"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "2"
+                    ],
+                    "predecessors": [],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "2",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 14,
+                        "startColumn": 16,
+                        "charOffset": 180,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "3",
+                      "6",
+                      "9"
+                    ],
+                    "predecessors": [
+                      "1"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "3",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 15,
+                        "startColumn": 8,
+                        "charOffset": 197,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "4"
+                    ],
+                    "predecessors": [
+                      "2"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "4",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 2,
+                        "startColumn": 15,
+                        "charOffset": 21,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$a"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "5"
+                    ],
+                    "predecessors": [
+                      "3"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "5",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 3,
+                        "startColumn": 8,
+                        "charOffset": 34,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$a"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "7"
+                    ],
+                    "predecessors": [
+                      "4"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "6",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 16,
+                        "startColumn": 8,
+                        "charOffset": 213,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "7"
+                    ],
+                    "predecessors": [
+                      "2"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "7",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 5,
+                        "startColumn": 15,
+                        "charOffset": 56,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$b"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "8"
+                    ],
+                    "predecessors": [
+                      "5",
+                      "6"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "8",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 6,
+                        "startColumn": 8,
+                        "charOffset": 69,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$b"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "10"
+                    ],
+                    "predecessors": [
+                      "7"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "9",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 17,
+                        "startColumn": 8,
+                        "charOffset": 229,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "10"
+                    ],
+                    "predecessors": [
+                      "2"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "10",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 8,
+                        "startColumn": 15,
+                        "charOffset": 91,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "11"
+                    ],
+                    "predecessors": [
+                      "8",
+                      "9"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "11",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 9,
+                        "startColumn": 9,
+                        "charOffset": 109,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [],
+                    "predecessors": [
+                      "10"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "id": "1",
+                  "sourceNodeId": "1",
+                  "targetNodeId": "2"
+                },
+                {
+                  "id": "2",
+                  "sourceNodeId": "2",
+                  "targetNodeId": "3"
+                },
+                {
+                  "id": "3",
+                  "sourceNodeId": "2",
+                  "targetNodeId": "6"
+                },
+                {
+                  "id": "4",
+                  "sourceNodeId": "2",
+                  "targetNodeId": "9"
+                },
+                {
+                  "id": "5",
+                  "sourceNodeId": "3",
+                  "targetNodeId": "4"
+                },
+                {
+                  "id": "6",
+                  "sourceNodeId": "4",
+                  "targetNodeId": "5"
+                },
+                {
+                  "id": "7",
+                  "sourceNodeId": "5",
+                  "targetNodeId": "7"
+                },
+                {
+                  "id": "8",
+                  "sourceNodeId": "6",
+                  "targetNodeId": "7"
+                },
+                {
+                  "id": "9",
+                  "sourceNodeId": "7",
+                  "targetNodeId": "8"
+                },
+                {
+                  "id": "10",
+                  "sourceNodeId": "8",
+                  "targetNodeId": "10"
+                },
+                {
+                  "id": "11",
+                  "sourceNodeId": "9",
+                  "targetNodeId": "10"
+                },
+                {
+                  "id": "12",
+                  "sourceNodeId": "10",
+                  "targetNodeId": "11"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "sources": [
+              {
+                "file": "file://$PROJECT_DIR$/test-module/File.php",
+                "sanitized_vulnerabilities": [],
+                "text": "$_POST['anyKey']",
+                "order": "1"
+              }
+            ],
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "sink": {
+              "text": "$param",
+              "fqn": "\\echo",
+              "vulnerabilities": [
+                "XSS"
+              ]
+            },
+            "tags": [
+              "PHP"
+            ]
+          }
+        },
+        {
+          "ruleId": "PhpVulnerablePathsInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Vulnerable code flow",
+            "markdown": "Vulnerable code flow"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/File.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 205,
+                  "snippet": {
+                    "text": " <?php\n function bar($a) {\n   baz($a);\n }\n function baz($b) {\n   foo($b);\n }\n function foo($param) {\n   echo $param;\n }\n bar($_POST['anyKey']);\n bar('safeString');\n\n function foo1($param) {\n   bar($param);"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "relationships": [
+                {
+                  "target": 1,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 2,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 3,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 4,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 5,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 6,
+                  "kinds": [
+                    "includes"
+                  ]
+                },
+                {
+                  "target": 7,
+                  "kinds": [
+                    "includes"
+                  ]
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "71a822f0480ae452",
+            "equalIndicator/v1": "504af60d7acd0dca83c6d62782ac437b23e7a145aa2d3275b76a70c8c3351a53"
+          },
+          "graphs": [
+            {
+              "nodes": [
+                {
+                  "id": "1",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 11,
+                        "startColumn": 6,
+                        "charOffset": 125,
+                        "charLength": 16,
+                        "snippet": {
+                          "text": "$_POST['anyKey']"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "2"
+                    ],
+                    "predecessors": [],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "2",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 2,
+                        "startColumn": 15,
+                        "charOffset": 21,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$a"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "3"
+                    ],
+                    "predecessors": [
+                      "1"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "3",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 3,
+                        "startColumn": 8,
+                        "charOffset": 34,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$a"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "4"
+                    ],
+                    "predecessors": [
+                      "2"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "4",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 5,
+                        "startColumn": 15,
+                        "charOffset": 56,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$b"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "5"
+                    ],
+                    "predecessors": [
+                      "3"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "5",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 6,
+                        "startColumn": 8,
+                        "charOffset": 69,
+                        "charLength": 2,
+                        "snippet": {
+                          "text": "$b"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "6"
+                    ],
+                    "predecessors": [
+                      "4"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "6",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 8,
+                        "startColumn": 15,
+                        "charOffset": 91,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [
+                      "7"
+                    ],
+                    "predecessors": [
+                      "5"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                },
+                {
+                  "id": "7",
+                  "location": {
+                    "physicalLocation": {
+                      "artifactLocation": {
+                        "uri": "test-module/File.php",
+                        "uriBaseId": "SRCROOT"
+                      },
+                      "region": {
+                        "startLine": 9,
+                        "startColumn": 9,
+                        "charOffset": 109,
+                        "charLength": 6,
+                        "snippet": {
+                          "text": "$param"
+                        },
+                        "sourceLanguage": "PHP"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "successors": [],
+                    "predecessors": [
+                      "6"
+                    ],
+                    "sanitized_vulnerabilities": []
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "id": "1",
+                  "sourceNodeId": "1",
+                  "targetNodeId": "2"
+                },
+                {
+                  "id": "2",
+                  "sourceNodeId": "2",
+                  "targetNodeId": "3"
+                },
+                {
+                  "id": "3",
+                  "sourceNodeId": "3",
+                  "targetNodeId": "4"
+                },
+                {
+                  "id": "4",
+                  "sourceNodeId": "4",
+                  "targetNodeId": "5"
+                },
+                {
+                  "id": "5",
+                  "sourceNodeId": "5",
+                  "targetNodeId": "6"
+                },
+                {
+                  "id": "6",
+                  "sourceNodeId": "6",
+                  "targetNodeId": "7"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "sources": [
+              {
+                "file": "file://$PROJECT_DIR$/test-module/File.php",
+                "sanitized_vulnerabilities": [],
+                "text": "$_POST['anyKey']",
+                "order": "1"
+              }
+            ],
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "sink": {
+              "text": "$param",
+              "fqn": "\\echo",
+              "vulnerabilities": [
+                "XSS"
+              ]
+            },
+            "tags": [
+              "PHP"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

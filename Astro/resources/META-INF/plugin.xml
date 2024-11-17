@@ -31,6 +31,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <registryKey defaultValue="false" description="Use bundled Astro service" key="astro.language.server.bundled.enabled"/>
     <registryKey defaultValue="" description="Astro service version for downloading" key="astro.language.server.default.version"/>
     <registryKey description="Limit of Astro LS completion items" key="astro.language.server.completion.serviceItemsLimit" defaultValue="2000"/>
     <dependencySupport kind="javascript" coordinate="npm:astro" displayName="Astro"/>

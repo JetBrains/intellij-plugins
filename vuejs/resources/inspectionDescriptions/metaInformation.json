@@ -1,0 +1,28 @@
+{
+  "inspections": [
+    {
+      "id": "VueMissingComponentImportInspection",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "VueDeprecatedSymbol",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "VueUnrecognizedDirective",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "VueDuplicateTag",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "VueDataFunction",
+      "codeQualityCategory": "Reliability"
+    },
+    {
+      "id": "VueUnrecognizedSlot",
+      "codeQualityCategory": "Sanity"
+    }
+  ]
+}

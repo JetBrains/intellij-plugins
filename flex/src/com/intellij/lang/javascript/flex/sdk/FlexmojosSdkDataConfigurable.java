@@ -6,6 +6,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.AdditionalDataConfigurable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.LabeledComponentNoThrow;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -64,8 +65,8 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
   private static final class FlexmojosSdkForm {
     private JComponent myMainPanel;
     private JTextArea myClasspathTextArea;
-    private LabeledComponent<TextFieldWithBrowseButton> myAdlComponent;
-    private LabeledComponent<TextFieldWithBrowseButton> myAirRuntimeComponent;
+    private LabeledComponentNoThrow<TextFieldWithBrowseButton> myAdlComponent;
+    private LabeledComponentNoThrow<TextFieldWithBrowseButton> myAirRuntimeComponent;
 
     private FlexmojosSdkForm() {
       initAdlChooser();

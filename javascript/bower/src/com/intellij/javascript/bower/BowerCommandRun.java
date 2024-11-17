@@ -22,15 +22,15 @@ public class BowerCommandRun {
   public ProcessOutput captureOutput(@Nullable ProgressIndicator indicator, long timeoutMillis) throws ExecutionException {
     ProcessOutput output = myCatcher.run(indicator, timeoutMillis);
     if (output.isTimeout()) {
-      throw new ExecutionException(BowerBundle.message("dialog.message.command.timed.out", myProcessHandler.getCommandLine()));
+      throw new ExecutionException(BowerBundle.message("dialog.message.command.timed.out", myProcessHandler.getCommandLineForLog()));
     }
     if (output.isCancelled()) {
-      throw new ExecutionException(BowerBundle.message("dialog.message.command.cancelled", myProcessHandler.getCommandLine()));
+      throw new ExecutionException(BowerBundle.message("dialog.message.command.cancelled", myProcessHandler.getCommandLineForLog()));
     }
     if (output.getExitCode() != 0) {
       throw new ExecutionException(
         BowerBundle
-          .message("dialog.message.command.finished.with.exit.code", myProcessHandler.getCommandLine(), output.getExitCode(),
+          .message("dialog.message.command.finished.with.exit.code", myProcessHandler.getCommandLineForLog(), output.getExitCode(),
                    output.getStdout(), output.getStderr()));
     }
     return output;

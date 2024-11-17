@@ -1,0 +1,19 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      Angular2Interpolation
+        JSBinaryExpression
+          JSPrefixExpression
+            PsiElement(JS:TYPEOF_KEYWORD)('typeof')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQEQEQ)('===')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''string'')
+    PsiElement(NG:INTERPOLATION_END)('}}')

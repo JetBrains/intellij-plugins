@@ -169,3 +169,18 @@ JSFile:test.comparison.action
           PsiElement(JS:LT)('<')
           JSLiteralExpression
             PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+JSFile:test.comparison.action
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSPrefixExpression
+          PsiElement(JS:TYPEOF_KEYWORD)('typeof')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('value')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQEQEQ)('===')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''string'')

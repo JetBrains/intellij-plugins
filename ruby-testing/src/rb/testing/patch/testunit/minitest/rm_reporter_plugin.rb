@@ -39,7 +39,14 @@ module Minitest
       end
     end
 
-    MINITEST_SUPERCLASSES = %w[Minitest::Spec Minitest::Test ActiveSupport::TestCase ActionController::TestCase ActionDispatch::IntegrationTest ActionMailer::TestCase ActionView::TestCase ActiveJob::TestCase ActiveModel::TestCase].to_set
+    MINITEST_SUPERCLASSES = %w[Minitest::Spec Minitest::Test
+                               ActiveSupport::TestCase ActionController::TestCase
+                               ActionDispatch::IntegrationTest
+                               ActionMailer::TestCase ActionMailbox::TestCase
+                               ActionView::TestCase ActiveJob::TestCase ActiveModel::TestCase
+                               ApplicationSystemTestCase ActionDispatch::SystemTestCase
+                               Rails::Generators::TestCase ActionCable::TestCase
+                               ActionCable::Connection::TestCase ActionCable::Channel::TestCase].to_set
     private_constant :MINITEST_SUPERCLASSES
 
     # Finds the name of the class that +klass+ is nested inside. E.g.
@@ -52,6 +59,9 @@ module Minitest
         return ""
       end
       superclass = klass
+      unless superclass.respond_to? "superclass"
+        return ""
+      end
       until MINITEST_SUPERCLASSES.include?(superclass.superclass.name) || superclass.superclass.name.end_with?("::TestCase")
         superclass = superclass.superclass
       end
@@ -286,7 +296,7 @@ module Minitest
       full_class_name = Minitest.class_nesting(klass) + class_name
       first_in_suite = @test_data[class_name].empty?
       test_data = @test_data[class_name][test_name]
-      test_data.klass = klass
+      test_data.klass = klass if klass.class <= Class
 
       if klass.nil?
         # don't split into parts if nesting cannot be obtained

@@ -60,7 +60,7 @@ public class PerforceAuthenticationException extends VcsConnectionProblem {
         catch (VcsConnectionProblem e) {
           PerforceLoginManager.getInstance(myProject).getNotifier().ensureNotify(myConnection, e);
         }
-      });
+      }, null);
 
     return false;
   }

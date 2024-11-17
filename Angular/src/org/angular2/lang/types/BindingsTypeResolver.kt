@@ -21,6 +21,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.resolve.TypeScriptCompilerEvaluationFacade
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.*
@@ -64,8 +65,9 @@ internal class BindingsTypeResolver private constructor(
   init {
     val declarationsScope = Angular2DeclarationsScope(element)
     val directives = provider.matched.filter { declarationsScope.contains(it) }
-    val service = if (TypeScriptCompilerEvaluationFacade.getInstance(element.project) != null)
+    val service = if (element.project.service<TypeScriptCompilerEvaluationFacade>().isAnyEnabled())
       TypeScriptService.getForElement(element)?.service
+        ?.takeIf { it.isTypeEvaluationEnabled() }
     else
       null
     analysisResult = when {

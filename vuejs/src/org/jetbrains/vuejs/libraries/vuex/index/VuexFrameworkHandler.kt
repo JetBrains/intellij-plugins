@@ -41,7 +41,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   )
 
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
-    if (node.elementType === JSElementTypes.CALL_EXPRESSION) {
+    if (node.elementType === JSStubElementTypes.CALL_EXPRESSION) {
       val reference = node.let { JSCallExpressionImpl.getMethodExpression(it) }
                         ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
                       ?: return false
@@ -57,7 +57,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       // new Vuex.Store call
       return node
         .takeIf {
-          it.elementType === JSElementTypes.NEW_EXPRESSION
+          it.elementType === JSStubElementTypes.NEW_EXPRESSION
           || it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION
         }
         ?.let { JSCallExpressionImpl.getMethodExpression(it) }

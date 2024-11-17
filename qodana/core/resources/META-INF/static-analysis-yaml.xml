@@ -1,0 +1,10 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <configUpdateHandler implementation="org.jetbrains.qodana.extensions.QodanaYamlConfigUpdateHandler"/>
+    <githubCiConfigHandler implementation="org.jetbrains.qodana.extensions.ci.YamlGitHubCIConfigHandler"/>
+    <gitlabCiConfigHandler implementation="org.jetbrains.qodana.extensions.ci.YamlGitLabCIConfigHandler"/>
+    <azureCiConfigUpdateHandler implementation="org.jetbrains.qodana.extensions.ci.YamlAzureCIConfigHandler"/>
+    <circleCiConfigUpdateHandler implementation="org.jetbrains.qodana.extensions.ci.YamlCircleCIConfigHandler"/>
+    <bitbucketCiConfigUpdateHandler implementation="org.jetbrains.qodana.extensions.ci.YamlBitbucketCIConfigHandler"/>
+  </extensions>
+</idea-plugin>

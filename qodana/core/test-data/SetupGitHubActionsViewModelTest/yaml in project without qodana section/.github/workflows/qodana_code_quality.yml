@@ -1,0 +1,17 @@
+name: Another
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  another:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Another Scan'
+        uses: JetBrains/anoter-action@v2022.3.4

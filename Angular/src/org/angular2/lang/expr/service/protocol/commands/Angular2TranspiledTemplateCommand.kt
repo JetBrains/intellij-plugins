@@ -5,6 +5,10 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class Angular2TranspiledTemplateCommand(val templateFile: VirtualFile) : JSLanguageServiceCommand {
 
-  override fun getCommand(): String = "ngTranspiledTemplate"
+  override val command: String
+    get() = "ngTranspiledTemplate"
+
+  override val isResponseExpected: Boolean
+    get() = false
 
 }

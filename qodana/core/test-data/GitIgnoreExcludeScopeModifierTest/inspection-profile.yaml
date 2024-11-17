@@ -1,0 +1,7 @@
+baseProfile: empty
+
+inspections:
+  - inspection: IgnoreResultOfCall
+    enabled: true
+    ignore:
+      - "scope#$gitignore"

@@ -1,0 +1,861 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always false",
+            "markdown": "Condition is always false"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 13,
+                  "charOffset": 174,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "false"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "charOffset": 123,
+                  "charLength": 116,
+                  "snippet": {
+                    "text": "        for (int i = 0; i < 5; i++) {\n\n        if (false) {\n                        System.out.println(\"String 2\");\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f3615aa46d0ab6b6",
+            "equalIndicator/v1": "719507824147638eb417b332651347bb0dce5d90cb146034bd9d4c365d460acc"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 20,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "\n            "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 122,
+                  "snippet": {
+                    "text": "public class Main {\n\n            public static void main(String[] args) {\n                System.out.println(\"String 1\");\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c2389ea7b40e520f",
+            "equalIndicator/v1": "9bc2d6e3fb23f3a253c33fdf3bc0198f6d29239bb150168588ad8b923c607694"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 74,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "                "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 20,
+                  "charLength": 140,
+                  "snippet": {
+                    "text": "\n            public static void main(String[] args) {\n                System.out.println(\"String 1\");\n\n        for (int i = 0; i < 5; i++) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "7fa1c0fed300fdbf",
+            "equalIndicator/v1": "2b6cb1faa0fcf5aaed482348403da530c73b30982072ae5c76084980eae4df3d"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 122,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "\n        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 21,
+                  "charLength": 161,
+                  "snippet": {
+                    "text": "            public static void main(String[] args) {\n                System.out.println(\"String 1\");\n\n        for (int i = 0; i < 5; i++) {\n\n        if (false) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "886f4f2b4c2504b3",
+            "equalIndicator/v1": "e29a5ba595b951da881ec7cf3b89a448a024a42c2a2b012a2f8856c5e973fc00"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 161,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "\n        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 122,
+                  "charLength": 117,
+                  "snippet": {
+                    "text": "\n        for (int i = 0; i < 5; i++) {\n\n        if (false) {\n                        System.out.println(\"String 2\");\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "54f2ae2193af86c2",
+            "equalIndicator/v1": "7973672851dd93ad4d5538208b96428d243ce2540def743637d1b1f1b91022e2"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 183,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "                        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 161,
+                  "charLength": 79,
+                  "snippet": {
+                    "text": "\n        if (false) {\n                        System.out.println(\"String 2\");\n\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "8515254e8c0f45e8",
+            "equalIndicator/v1": "0dd3a0e1475a2bfc11cb3d2289f37b7c139030af233c15424f6f96a2995fe303"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 239,
+                  "charLength": 47,
+                  "snippet": {
+                    "text": "\n\n\n\n\n\n                        \n\n\n\n\n\n\n\n\n        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 162,
+                  "charLength": 150,
+                  "snippet": {
+                    "text": "        if (false) {\n                        System.out.println(\"String 2\");\n\n\n\n\n\n\n                        \n\n\n\n\n\n\n\n\n        } \n        else \n        {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "153d26620aa2370c",
+            "equalIndicator/v1": "b15f09e2a2f11c65ab8f97d5d27a8d1f6156e345808cf222787aa5aa9507fdf4"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 10,
+                  "charOffset": 287,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": " \n        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 23,
+                  "startColumn": 1,
+                  "charOffset": 276,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "\n\n        } \n        else \n        {\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "59bb5e9ba1346121",
+            "equalIndicator/v1": "148ecbcfbfa0387f6ee98de2cd7e0b852ee8c710711948be36fb483c708e8992"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 13,
+                  "charOffset": 301,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": " \n        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 24,
+                  "startColumn": 1,
+                  "charOffset": 277,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "\n        } \n        else \n        {\n\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2945282dfff17cec",
+            "equalIndicator/v1": "e8ba6037b36b5fe03b76d36ebe62a1f43395aea472fe226721e64c371798d561"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 1,
+                  "charOffset": 313,
+                  "charLength": 32,
+                  "snippet": {
+                    "text": "\n\n\n\n                            "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 26,
+                  "startColumn": 1,
+                  "charOffset": 289,
+                  "charLength": 113,
+                  "snippet": {
+                    "text": "        else \n        {\n\n\n\n\n                            System.out.println(\"String 3\");\n            \n            "
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3e0e448ec14d9462",
+            "equalIndicator/v1": "c6a0d76110fa245f14e1b6518dc7edd6827f4760bf986d084637cc5c92c15582"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 1,
+                  "charOffset": 377,
+                  "charLength": 89,
+                  "snippet": {
+                    "text": "            \n            \n            \n            \n            \n                        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 31,
+                  "startColumn": 1,
+                  "charOffset": 316,
+                  "charLength": 231,
+                  "snippet": {
+                    "text": "\n                            System.out.println(\"String 3\");\n            \n            \n            \n            \n            \n                        System.out.println(\"String 4\");\n                        \n                        "
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "934d8ad3c5960f0e",
+            "equalIndicator/v1": "65f34655b335bc8684abe279bfbf89fb41c5b4a92e741c3ef59c0b0d85f84b1f"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 1,
+                  "charOffset": 498,
+                  "charLength": 108,
+                  "snippet": {
+                    "text": "                        \n                        \n                        \n                        \n        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 37,
+                  "startColumn": 1,
+                  "charOffset": 429,
+                  "charLength": 243,
+                  "snippet": {
+                    "text": "            \n                        System.out.println(\"String 4\");\n                        \n                        \n                        \n                        \n        }\n        }\n                System.out.println(\"String 5\");       "
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "06bfbd7d9d27ec77",
+            "equalIndicator/v1": "88dcf8b8f9ee3aaf2f0d830a52c2629ba2c9f34847d4b0d3c4b894984aa2a257"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 44,
+                  "startColumn": 1,
+                  "charOffset": 608,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "        "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 42,
+                  "startColumn": 1,
+                  "charOffset": 573,
+                  "charLength": 105,
+                  "snippet": {
+                    "text": "                        \n        }\n        }\n                System.out.println(\"String 5\");       \n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "56a69ec97967d64d",
+            "equalIndicator/v1": "6cab9c0d4a276d3df502bb132d7d1353c6c23fdabdf648ba3bf31b742fae8439"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 1,
+                  "charOffset": 618,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "                "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 43,
+                  "startColumn": 1,
+                  "charOffset": 598,
+                  "charLength": 82,
+                  "snippet": {
+                    "text": "        }\n        }\n                System.out.println(\"String 5\");       \n    }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "8339ec64ecb59579",
+            "equalIndicator/v1": "58561e9c7a552b477bbef6bffe718c83faecbccc78de45a3376e2e682e45357e"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "IncorrectFormatting",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Incorrect whitespace",
+            "markdown": "Incorrect whitespace"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 48,
+                  "charOffset": 665,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "       \n    "
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 43,
+                  "startColumn": 1,
+                  "charOffset": 598,
+                  "charLength": 83,
+                  "snippet": {
+                    "text": "        }\n        }\n                System.out.println(\"String 5\");       \n    }\n}\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5221a00b9e0fbedf",
+            "equalIndicator/v1": "0c4ff5fba1fba4a1312e3c30df55d94af05df8ad6f24fd6c768344419fc80cd8"
+          },
+          "properties": {
+            "ideaSeverity": "WEAK WARNING",
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

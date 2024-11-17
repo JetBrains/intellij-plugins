@@ -80,6 +80,46 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile("toReformat", "js");
   }
 
+  public void testSubFolderIgnoredFileInRoot() {
+    doReformatFile("package/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileInsidePackage() {
+    doReformatFile("package/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileInsideSubDir() {
+    doReformatFile("package/subdir/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileManual() {
+    PrettierConfiguration.getInstance(getProject())
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+    doReformatFile("package/toReformat", "js");
+  }
+
+  public void testSubFolderIgnoredFileManualSubDir() {
+    doReformatFile("package/toReformat", "js", () -> {
+      PrettierConfiguration.getInstance(getProject())
+        .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+
+      var ignoreFile = myFixture.findFileInTempDir(".prettierignore");
+      PrettierConfiguration.getInstance(getProject())
+        .getState().customIgnorePath = VfsUtilCore.virtualToIoFile(ignoreFile).getAbsolutePath();
+    });
+  }
+
+  public void testSubFolderIgnoredFileManualSubDirFormat() {
+    doReformatFile("package/toReformat", "js", () -> {
+      PrettierConfiguration.getInstance(getProject())
+        .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+
+      var ignoreFile = myFixture.findFileInTempDir(".prettierignore");
+      PrettierConfiguration.getInstance(getProject())
+        .getState().customIgnorePath = VfsUtilCore.virtualToIoFile(ignoreFile).getAbsolutePath();
+    });
+  }
+
   public void testInvalidConfigErrorReported() {
     assertError((s) -> s.contains("tabWidth"), () -> doReformatFile("js"));
   }
@@ -114,20 +154,11 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   private void doTestRunPrettierOnSave(@NotNull String saveActionId) {
-    PrettierConfiguration.getInstance(getProject()).getState().runOnSave = true;
-    myFixture.configureByText("foo.js", "var  a=''");
-    myFixture.type(' ');
-    myFixture.performEditorAction(saveActionId);
-    ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.getProject());
-
-    myFixture.checkResult("var a = \"\";\n");
+    configureRunOnSave(() -> doTestSaveAction(saveActionId, ""));
   }
 
   public void testRunPrettierOnCodeReformat() {
-    PrettierConfiguration.getInstance(getProject()).getState().runOnReformat = true;
-    myFixture.configureByText("foo.js", "var  a=''");
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
-    myFixture.checkResult("var a = \"\";\n");
+    configureRunOnReformat(() -> doTestEditorReformat(""));
   }
 
   public void testYarnPrettierBasicExample() throws Exception {
@@ -183,19 +214,107 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     myFixture.checkResultByFile(getTestName(true) + "/ignored_after.js");
   }
 
+  public void testMonorepoSubDirReformatAction() {
+    // file in the root without prettier but it should be formatted via reformat action
+    String dirName = getTestName(true);
+    myFixture.copyDirectoryToProject(dirName, "");
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"));
+    runReformatAction();
+    myFixture.checkResultByFile(dirName + "/toReformat_after.js");
+  }
+
+  public void testMonorepoSubDirEditorReformat() {
+    configureRunOnReformat(() -> {
+      //file in the root without prettier
+      doTestEditorReformat("");
+
+      //package with prettier in subfolder
+      doTestEditorReformat("package-a/");
+
+      //package without prettier in subfolder
+      doTestEditorReformat("package-b/");
+    });
+  }
+
+  public void testMonorepoSubDirOnSave() {
+    configureRunOnSave(() -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+
+      //package without prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+    });
+  }
+
+  public void testMonorepoOnSave() {
+    configureRunOnSave(() -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+
+      //package without prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+    });
+  }
+
+  public void testMonorepoSubDirOnSaveManualWithoutScope() {
+    configureFormatFilesOutsideDependencyScope(true, () -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+      doTestEditorReformat("");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+      doTestEditorReformat("package-a/");
+
+      //package without prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+      doTestEditorReformat("package-b/");
+    });
+  }
+
+  public void testMonorepoSubDirOnSaveManualWithScopeOnSave() {
+    configureFormatFilesOutsideDependencyScope(false, () -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+
+      //package without prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+    });
+  }
+
+  public void testMonorepoSubDirOnSaveManualWithScopeEditorReformat() {
+    configureFormatFilesOutsideDependencyScope(false, () -> {
+      //file in the root without prettier
+      doTestEditorReformat("");
+
+      //package with prettier in subfolder
+      doTestEditorReformat("package-a/");
+
+      //package without prettier in subfolder
+      doTestEditorReformat("package-b/");
+    });
+  }
+
+
   public void testCommentAfterImports() {
-    PrettierConfiguration.getInstance(getProject()).getState().runOnReformat = true;
-    myFixture.configureByText("foo.js", """
-      <selection>import  foo from 'foo'
-       // comment</selection>
-      const   bar =  'bar'
-      """);
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
-    myFixture.checkResult("""
-                            <selection>import foo from "foo";
-                            // comment</selection>
-                            const   bar =  'bar'
-                            """);
+    configureRunOnReformat(() -> doTestEditorReformat(""));
   }
 
   public void testRangeInVue() {
@@ -264,5 +383,92 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     catch (Exception e) {
       Assert.assertTrue("Expected condition to be valid for exception: " + e.getMessage(), checkException.value(e.getMessage()));
     }
+  }
+
+  private void configureRunOnReformat(Runnable runnable) {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    var origRunOnReformat = configuration.getState().runOnReformat;
+    var configurationMode = configuration.getState().configurationMode;
+
+    configuration.getState().runOnReformat = true;
+    configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC;
+
+    try {
+      String dirName = getTestName(true);
+      myFixture.copyDirectoryToProject(dirName, "");
+      myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "node_modules/prettier");
+
+      runnable.run();
+    }
+    finally {
+      configuration.getState().runOnReformat = origRunOnReformat;
+      configuration.getState().configurationMode = configurationMode;
+    }
+  }
+
+  private void configureRunOnSave(Runnable runnable) {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    var runOnSave = configuration.getState().runOnSave;
+    var runOnReformat = configuration.getState().runOnReformat;
+    var configurationMode = configuration.getState().configurationMode;
+
+    configuration.getState().runOnSave = true;
+    configuration.getState().runOnReformat = false;
+    configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC;
+
+    try {
+      String dirName = getTestName(true);
+      myFixture.copyDirectoryToProject(dirName, "");
+      myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "node_modules/prettier");
+
+      runnable.run();
+    }
+    finally {
+      configuration.getState().runOnSave = runOnSave;
+      configuration.getState().runOnReformat = runOnReformat;
+      configuration.getState().configurationMode = configurationMode;
+    }
+  }
+
+  private void configureFormatFilesOutsideDependencyScope(boolean enabled, Runnable runnable) {
+    var configuration = PrettierConfiguration.getInstance(getProject());
+    var runOnSave = configuration.getState().runOnSave;
+    var runOnReformat = configuration.getState().runOnReformat;
+    var configurationMode = configuration.getState().configurationMode;
+    var formatFilesOutsideDependencyScope = configuration.getState().formatFilesOutsideDependencyScope;
+
+    configuration.getState().runOnSave = true;
+    configuration.getState().runOnReformat = true;
+    configuration.getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
+    configuration.getState().formatFilesOutsideDependencyScope = enabled;
+
+    try {
+      String dirName = getTestName(true);
+      myFixture.copyDirectoryToProject(dirName, "");
+
+      runnable.run();
+    }
+    finally {
+      configuration.getState().runOnSave = runOnSave;
+      configuration.getState().runOnReformat = runOnReformat;
+      configuration.getState().configurationMode = configurationMode;
+      configuration.getState().formatFilesOutsideDependencyScope = formatFilesOutsideDependencyScope;
+    }
+  }
+
+  private void doTestEditorReformat(@NotNull String subDir) {
+    String dirName = getTestName(true);
+    myFixture.configureFromTempProjectFile(subDir + "toReformat.js");
+    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+    myFixture.checkResultByFile(dirName + "/" + subDir + "toReformat_after.js");
+  }
+
+  private void doTestSaveAction(@NotNull String actionId, @NotNull String subDir) {
+    String dirName = getTestName(true);
+    myFixture.configureFromTempProjectFile(subDir + "toReformat.js");
+    myFixture.type(' ');
+    myFixture.performEditorAction(actionId);
+    ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.getProject());
+    myFixture.checkResultByFile(dirName + "/" + subDir + "toReformat_after.js");
   }
 }

@@ -62,7 +62,7 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
 
 <YYINITIAL> {
   {WHITE_SPACE}               { return WHITE_SPACE; }
-  "prefetch"                  { if (shouldStartWithParameter()) return BLOCK_PARAMETER_NAME; else { yybegin(YYEXPRESSION); yypushback(yylength());} }
+  "prefetch"|"hydrate"        { if (shouldStartWithParameter()) return BLOCK_PARAMETER_NAME; else { yybegin(YYEXPRESSION); yypushback(yylength());} }
   [a-zA-Z_]+                  { yybegin(YYEXPRESSION); if (shouldStartWithParameter()) return BLOCK_PARAMETER_NAME; else yypushback(yylength()); }
   [^]                         { yypushback(1); yybegin(YYEXPRESSION); }
 }
@@ -86,6 +86,7 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
   "if"                        { return IF_KEYWORD; }
   "else"                      { return ELSE_KEYWORD; }
   "this"                      { return THIS_KEYWORD; }
+  "typeof"                    { return TYPEOF_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
   {IDENT}                     { return IDENTIFIER; }

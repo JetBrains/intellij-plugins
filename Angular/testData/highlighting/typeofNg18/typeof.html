@@ -1,0 +1,5 @@
+@if (<error descr="The typeof keyword is supported only in Angular 19 and above.">typeof</error> value === 'string') {
+  {{check(<error descr="TS2345: Argument of type 'string' is not assignable to parameter of type 'boolean'.">value</error>)}}
+} @else {
+  {{check(<error descr="TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.">value</error>)}}
+}

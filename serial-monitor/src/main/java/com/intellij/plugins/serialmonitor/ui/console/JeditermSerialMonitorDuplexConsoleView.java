@@ -13,7 +13,6 @@ import com.intellij.openapi.editor.actions.ScrollToTheEndToolbarAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsSafe;
 import com.intellij.plugins.serialmonitor.SerialMonitorException;
 import com.intellij.plugins.serialmonitor.SerialPortProfile;
 import com.intellij.plugins.serialmonitor.service.PortStatus;
@@ -21,7 +20,6 @@ import com.intellij.plugins.serialmonitor.service.SerialPortService;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitor;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.actions.ConnectDisconnectAction;
-import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction;
 import com.intellij.plugins.serialmonitor.ui.actions.SaveHistoryToFileAction;
 import com.intellij.ui.components.JBLoadingPanel;
 import icons.SerialMonitorIcons;
@@ -29,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 
 /**
@@ -41,7 +40,6 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
 
   @NotNull private final SerialPortService.SerialConnection myConnection;
   @NotNull private final SerialPortProfile myPortProfile;
-  @NotNull @NlsSafe private final String myName;
   @NotNull private final ToggleAction mySwitchConsoleAction;
   @NotNull private final JBLoadingPanel myLoadingPanel;
   private Charset myCharset = StandardCharsets.US_ASCII;
@@ -55,7 +53,6 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
 
   @NotNull
   public static JeditermSerialMonitorDuplexConsoleView create(@NotNull Project project,
-                                                              @NlsSafe @NotNull final String name,
                                                               @NotNull SerialPortProfile portProfile,
                                                               @NotNull JBLoadingPanel loadingPanel) {
     SerialPortService.SerialConnection connection =
@@ -67,7 +64,6 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
       new JeditermSerialMonitorDuplexConsoleView(connection,
                                                  textConsoleView,
                                                  hexConsoleView,
-                                                 name,
                                                  portProfile,
                                                  loadingPanel);
     connection.setDataListener(consoleView::append);
@@ -78,13 +74,11 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     SerialPortService.@NotNull SerialConnection connection,
     JeditermConsoleView textConsoleView,
     HexConsoleView hexConsoleView,
-    @NlsSafe @NotNull final String name,
     @NotNull SerialPortProfile portProfile,
     @NotNull JBLoadingPanel loadingPanel) {
     super(textConsoleView, hexConsoleView, STATE_STORAGE_KEY);
     mySwitchConsoleAction = new SwitchConsoleViewAction();
     myLoadingPanel = loadingPanel;
-    myName = name;
     myPortProfile = portProfile;
     myConnection = connection;
   }
@@ -120,8 +114,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
       getPrimaryConsoleView().getPrintTimestampsToggleAction(),
       new SerialPauseAction(),
       new SaveHistoryToFileAction(getPrimaryConsoleView().getTerminalTextBuffer(), myPortProfile),
-      new ClearAllAction(),
-      new EditSettingsAction(myName, this)};
+      new ClearAllAction()};
   }
 
   @NotNull
@@ -167,11 +160,6 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     }
   }
 
-  @NotNull
-  public SerialPortProfile getPortProfile() {
-    return myPortProfile;
-  }
-
   public void reconnect() {
     myLoadingPanel.startLoading();
     ApplicationManager.getApplication().executeOnPooledThread(
@@ -198,8 +186,16 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
 
   private class SwitchConsoleViewAction extends ToggleAction implements DumbAware {
 
+    private static Supplier<String> getDynamicText(JeditermSerialMonitorDuplexConsoleView consoleView) {
+      return () -> {
+        return consoleView.isPrimaryConsoleEnabled() ?
+          SerialMonitorBundle.message("switch.console.view.to.hex.title") :
+          SerialMonitorBundle.message("switch.console.view.off.hex.title");
+      };
+    }
+
     private SwitchConsoleViewAction() {
-      super(SerialMonitorBundle.messagePointer("switch.console.view.title"), () -> "", SerialMonitorIcons.HexSerial);
+      super(getDynamicText(JeditermSerialMonitorDuplexConsoleView.this), () -> "", SerialMonitorIcons.HexSerial);
     }
 
     @Override

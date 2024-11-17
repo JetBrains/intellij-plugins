@@ -1,0 +1,35 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "results": [
+      {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_2",
+        "guid": "REPORT_2"
+      }
+    }
+  ]
+}

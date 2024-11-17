@@ -19,11 +19,12 @@ class Angular2SyntaxHighlighter : TypeScriptHighlighter(Angular2Language.optionH
   override fun getKeywords(): TokenSet =
     Angular2TokenTypes.KEYWORDS
 
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> =
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> =
     angularKeys[tokenType]?.let { SyntaxHighlighterBase.pack(it) }
     ?: super.getTokenHighlights(tokenType)
 }
 
 private val angularKeys: Map<IElementType, TextAttributesKey> = mapOf(
-  Angular2TokenTypes.BLOCK_PARAMETER_NAME to TypeScriptHighlighter.TS_KEYWORD
+  Angular2TokenTypes.BLOCK_PARAMETER_NAME to TypeScriptHighlighter.TS_KEYWORD,
+  Angular2TokenTypes.BLOCK_PARAMETER_PREFIX to TypeScriptHighlighter.TS_KEYWORD,
 )

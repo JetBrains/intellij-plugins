@@ -12,6 +12,8 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluationStatisticsCollector
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
+import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
+import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerServiceRequest
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
@@ -22,14 +24,15 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
+import com.intellij.lang.typescript.tsc.awaitFutureShort
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
-import com.intellij.openapi.application.smartReadAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.openapi.progress.runBlockingMaybeCancellable
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -45,6 +48,7 @@ import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
 import kotlinx.coroutines.currentCoroutineContext
+import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
@@ -58,9 +62,9 @@ import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.Transpi
 import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
+import org.angular2.options.AngularSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
@@ -97,40 +101,37 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     else
       super.getQuickInfoAt(usageElement, originalFile)
 
-  override fun postprocessErrors(file: PsiFile, list: List<JSAnnotationError>): List<JSAnnotationError> =
-    runBlockingMaybeCancellable {
-      smartReadAction(file.project) {
-        val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
-                                                      ?: return@smartReadAction list
-        translateNamesInErrors(list, transpiledComponentFile, templateFile)
-      }
+  override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> =
+    readAction {
+      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
+                                                    ?: return@readAction errors
+      translateNamesInErrors(errors, transpiledComponentFile, templateFile)
     }
 
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
-  override fun getInlayHints(file: PsiFile, textRange: TextRange): CompletableFuture<TypeScriptInlayHintsResponse?>? {
-    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile ?: return null) != null
-    return super.getInlayHints(file, textRange)?.let { future ->
-      if (hasTranspiledTemplate) {
-        future.thenApply { hints ->
-          if (hints != null) {
-            computeCancellable<Array<InlayHintItem>, Throwable> {
-              repositionInlayHints(file, hints)
-            }
-          }
-          else null
-        }
-      }
-      else future
+  override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
+    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile
+                                                                             ?: return@withScopedServiceTraceSpan null) != null
+    val result = super.getInlayHints(file, textRange) ?: return@withScopedServiceTraceSpan null
+    return@withScopedServiceTraceSpan readAction {
+      if (hasTranspiledTemplate)
+        repositionInlayHints(file, result)
+      else
+        result
     }
   }
 
-  private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> {
-    val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return hints
-    return hints.map {
+  private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> = withServiceTraceSpan("repositionInlayHints") {
+    val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@withServiceTraceSpan hints
+    return@withServiceTraceSpan hints.map {
       repositionInlayHint(file, document, it)
     }.toTypedArray()
+  }
+
+  override fun isTypeEvaluationEnabled(): Boolean = project.service<AngularSettings>().let {
+    it.serviceType != AngularServiceSettings.DISABLED && it.useTypesFromServer
   }
 
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
@@ -156,18 +157,22 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun createLSCache(): TypeScriptLanguageServiceCache =
     Angular2LanguageServiceCache(myProject)
 
-  override fun beforeGetErrors(file: VirtualFile) {
-    refreshTranspiledTemplateIfNeeded(file)
+  override suspend fun beforeGetErrors(file: VirtualFile) {
+    refreshTranspiledTemplateIfNeededCancellable(file)
   }
 
   override fun isGeterrSupported(psiFile: PsiFile): Boolean {
     return psiFile.language.let { it !is Angular2Language && it !is Angular2HtmlDialect }
   }
 
-  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> {
+  override fun skipInternalErrors(element: PsiElement): Boolean {
+    return !isDeferOnReferenceExpression(element)
+  }
+
+  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> = withServiceTraceSpan("translateNamesInErrors") {
     val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
-                   ?: return emptyList()
-    return errors.map { error ->
+                   ?: return@withServiceTraceSpan emptyList()
+    return@withServiceTraceSpan errors.map { error ->
       if (error is TypeScriptLanguageServiceAnnotationResult) {
         val textRange = error.getTextRange(document)
                         ?: return@map error
@@ -215,14 +220,31 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     element is LeafPsiElement
     && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language }
 
-  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? {
-    return JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
+  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? = withServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
+    JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
+      if (DumbService.isDumb(project)) return@nonBlockingReadActionWithTimeout null
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
       // on server cache locking leading to tests instability.
       val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
-      process?.executeNoBlocking(Angular2TranspiledTemplateCommand(virtualFile), null, null)
+      runBlockingCancellable {
+        process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
+      }
+      result
+    }
+  }
+
+  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
+    readAction {
+      // Updating the cache can cause the transpiled template to be (re)built,
+      // so let's build the template first and ensure that it doesn't change
+      // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
+      // on server cache locking leading to tests instability.
+      val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+      runBlockingCancellable {
+        process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
+      }
       result
     }
   }
@@ -233,8 +255,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFileName: String?): JSType? =
-      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFileName)
+    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
+      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFile)
 
     override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       commitDocumentsWithNBRA(virtualFile)
@@ -243,11 +265,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       }
     }
 
-    override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? {
+    override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? = withServiceTraceSpan("getGeneratedElementType", myLifecycleSpan) {
       val componentVirtualFile = transpiledFile.originalFile.originalFile.virtualFile
-                                 ?: return null
+                                 ?: return@withServiceTraceSpan null
       val evaluationLocation = InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(templateFile.originalFile).virtualFile
-                               ?: return null
+                               ?: return@withServiceTraceSpan null
       commitDocumentsWithNBRA(componentVirtualFile)
       if (componentVirtualFile != evaluationLocation) {
         // If template is not inlined, we need to ensure that both component and template files are up-to-date
@@ -256,13 +278,13 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // Ensure that transpiled template is up-to-date
       refreshTranspiledTemplateIfNeeded(componentVirtualFile)
 
-      val filePath = getFilePath(componentVirtualFile) ?: return null
+      val filePath = awaitFutureShort(getFilePath(componentVirtualFile)) ?: return@withServiceTraceSpan null
 
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
       val projectFileName = TypeScriptConfigUtil.getProjectFileName(transpiledFile.originalFile.originalFile)
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
-      return sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
+      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
     }
 
     suspend fun getGeneratedElementType(args: Angular2GetGeneratedElementTypeRequestArgs): JsonObject? {
@@ -310,8 +332,9 @@ private class Angular2GetGeneratedElementTypeRequest(
   args: Angular2GetGeneratedElementTypeRequestArgs,
   service: Angular2TypeScriptService,
   coroutineContext: CoroutineContext,
-) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs>(args, service, coroutineContext) {
+) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs, JsonObject>(args, service, coroutineContext) {
   override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
+  override suspend fun processResult(answer: JsonObject): JsonObject? = answer.getAsJsonObject(TypeScriptServerServiceImpl.BODY_FIELD)
 }
 
 private fun isAngularServiceSupport(project: Project, context: VirtualFile): Boolean =

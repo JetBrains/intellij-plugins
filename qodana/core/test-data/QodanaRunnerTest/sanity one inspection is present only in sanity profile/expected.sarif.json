@@ -1,0 +1,193 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition '1 == 1' is always 'true'",
+            "markdown": "Condition `1 == 1` is always `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9,
+                  "charOffset": 87,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "1 == 1"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 10,
+                  "charLength": 129,
+                  "snippet": {
+                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testSanity one inspection is present only in sanity profile",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e7fdb30540ce102a",
+            "equalIndicator/v1": "2da1c5d0dcff14011a91209345063d4c7ebc4e95efad1a1be74a8c64b53edb38"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.sanity.results": [
+          {
+            "ruleId": "IgnoreResultOfCall",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Result of 'A.unusedResult()' is ignored",
+              "markdown": "Result of `A.unusedResult()` is ignored"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 7,
+                    "startColumn": 5,
+                    "charOffset": 144,
+                    "charLength": 12,
+                    "snippet": {
+                      "text": "unusedResult"
+                    },
+                    "sourceLanguage": "JAVA"
+                  },
+                  "contextRegion": {
+                    "startLine": 5,
+                    "startColumn": 1,
+                    "charOffset": 97,
+                    "charLength": 86,
+                    "snippet": {
+                      "text": "      System.out.println(\"Another\");\n    }\n    unusedResult();\n    unusedResult();\n  }"
+                    },
+                    "sourceLanguage": "JAVA"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testSanity one inspection is present only in sanity profile",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "363ac4b95ed68cb0",
+              "equalIndicator/v1": "d30f9b12432e26da36dedf4292c28f3365296350a073e18923f897ae9deb3000"
+            },
+            "properties": {
+              "ideaSeverity": "WARNING",
+              "qodanaSeverity": "High",
+              "tags": [
+                "JAVA"
+              ]
+            }
+          },
+          {
+            "ruleId": "IgnoreResultOfCall",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Result of 'A.unusedResult()' is ignored",
+              "markdown": "Result of `A.unusedResult()` is ignored"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 8,
+                    "startColumn": 5,
+                    "charOffset": 164,
+                    "charLength": 12,
+                    "snippet": {
+                      "text": "unusedResult"
+                    },
+                    "sourceLanguage": "JAVA"
+                  },
+                  "contextRegion": {
+                    "startLine": 6,
+                    "startColumn": 1,
+                    "charOffset": 134,
+                    "charLength": 50,
+                    "snippet": {
+                      "text": "    }\n    unusedResult();\n    unusedResult();\n  }\n"
+                    },
+                    "sourceLanguage": "JAVA"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testSanity one inspection is present only in sanity profile",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "094f2dda632055e3",
+              "equalIndicator/v1": "adfed3a01b76170f5cc8ea81c75e94c05c08c98ef6671f2b8d30d9b2a940f710"
+            },
+            "properties": {
+              "ideaSeverity": "WARNING",
+              "qodanaSeverity": "High",
+              "tags": [
+                "JAVA"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

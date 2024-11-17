@@ -1,0 +1,32 @@
+<idea-plugin package="org.jetbrains.qodana.jvm.java">
+  <dependencies>
+    <plugin id="com.intellij.java"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <projectDescriber implementation="org.jetbrains.qodana.jvm.java.JavaDescriber"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.QodanaYamlJdkItemProvider"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
+    <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.QodanaJavaConfigApplier" />
+    <cyclomaticComplexityFileVisitor
+      implementation="org.jetbrains.qodana.jvm.java.metrics.cyclomaticComplexity.JavaCyclomaticComplexityMetricFileVisitor"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="org.jetbrains.qodana.jvm.java.QodanaJdkProjectActivity"/>
+    <postStartupActivity implementation="org.jetbrains.qodana.jvm.java.SdkRootsFixActivity"/>
+    <commandLineInspectionProjectConfigurator implementation="org.jetbrains.qodana.jvm.java.JdkConfigurator"/>
+    <jarRepositoryAuthenticationDataProvider implementation="org.jetbrains.qodana.jvm.java.jps.QodanaSpaceJarRepositoryAuthenticationDataProvider"/>
+    <localInspection language="JAVA" shortName="QodanaJavaSanity"
+                     groupKey="inspection.general.tools.group.name" groupBundle="messages.InspectionsBundle"
+                     bundle="messages.QodanaBundle" key="inspection.java.sanity.inspection"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="org.jetbrains.qodana.jvm.java.QodanaJavaSanityInspection"/>
+    <localInspection language="UAST"
+                      shortName="JvmLinesOfCodeInspection"
+                      key="code.metrics.jvm.display.name"
+                      bundle="messages.QodanaBundle"
+                      groupKey="code.metrics.group.display.name"
+                      enabledByDefault="false"
+                      implementationClass="org.jetbrains.qodana.jvm.java.metrics.linesOfCode.JvmLinesOfCodeInspection"/>
+  </extensions>
+</idea-plugin>

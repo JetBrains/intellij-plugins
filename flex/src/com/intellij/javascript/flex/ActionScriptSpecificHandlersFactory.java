@@ -85,7 +85,7 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
 
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
-    return new QualifiedItemProcessor<>(sink, place.getContainingFile());
+    return new ActionScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
   }
 
   @Override

@@ -1,0 +1,252 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'method4' coverage is below the threshold 50%",
+            "markdown": "Method `method4` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/BarClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 16,
+                  "charOffset": 109,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "method4"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 94,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "    public int method4() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e184821c55c84f37",
+            "equalIndicator/v1": "52840e286669e6b426513fb55c22463606f0fcd237b9e92db082f9d76f702390"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'method5' coverage is below the threshold 50%",
+            "markdown": "Method `method5` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/BarClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 16,
+                  "charOffset": 161,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "method5"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 12,
+                  "startColumn": 1,
+                  "charOffset": 146,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "    public int method5() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "26d6726f16377ffc",
+            "equalIndicator/v1": "b6420fce4b634289f0f7d3c3aa121d54990ccdb0e35388c690b0cbd5f21e4424"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class '(anonymous class in ClassWithAnonyms)' coverage is below the threshold 50%",
+            "markdown": "Class `(anonymous class in ClassWithAnonyms)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/ClassWithAnonyms.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 36,
+                  "charOffset": 424,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "Runnable() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 14,
+                  "startColumn": 1,
+                  "charOffset": 389,
+                  "charLength": 47,
+                  "snippet": {
+                    "text": "    public Runnable runnable = new Runnable() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9616b9494efcee44",
+            "equalIndicator/v1": "a1678b532cf78599babca546e523cd5366c40fa7a923b33dc5ee559ef4440e04"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'run' coverage is below the threshold 50%",
+            "markdown": "Method `run` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/ClassWithAnonyms.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 21,
+                  "charOffset": 475,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "run"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 16,
+                  "startColumn": 1,
+                  "charOffset": 455,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "        public void run() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e98f9222bd99d4f9",
+            "equalIndicator/v1": "687408f5e4f5d64362efb80ed525e84be1a233c8bf07ab0076b4e066bac40ea7"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 37,
+          "totalLines": 27,
+          "totalCoveredLines": 10
+        }
+      }
+    }
+  ]
+}

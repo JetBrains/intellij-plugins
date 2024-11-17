@@ -49,9 +49,6 @@ class PlatformioManager :
   override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<PlatformioExecutionSettings>> =
     PlatformioProjectResolver::class.java
 
-  override fun getTaskManagerClass(): Class<out ExternalSystemTaskManager<PlatformioExecutionSettings>> =
-    PlatformioTaskManager::class.java
-
   override fun getExternalProjectDescriptor(): FileChooserDescriptor =
     FILE_CHOOSER_DESCRIPTOR
 

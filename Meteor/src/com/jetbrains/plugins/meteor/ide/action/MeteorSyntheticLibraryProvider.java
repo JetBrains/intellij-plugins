@@ -3,6 +3,7 @@ package com.jetbrains.plugins.meteor.ide.action;
 import com.intellij.lang.javascript.library.JSSyntheticLibraryProvider;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectLocator;
@@ -41,8 +42,7 @@ public final class MeteorSyntheticLibraryProvider extends AdditionalLibraryRoots
       return ContainerUtil.emptyList();
     }
 
-
-    return getLibraries(project);
+    return ReadAction.nonBlocking(() -> getLibraries(project)).executeSynchronously();
   }
 
   public static @NotNull SyntheticLibrary.ExcludeFileCondition createExcludeConditions() {

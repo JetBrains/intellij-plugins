@@ -1,0 +1,1 @@
+let someVar = `standalone-single-spa-webpack-plugin HtmlWebpackPlugin <script> contains with an HTML element that's not a with a 'src' attribute in its scripts array. Found . This usually indicates a problem with your webpack configuration`

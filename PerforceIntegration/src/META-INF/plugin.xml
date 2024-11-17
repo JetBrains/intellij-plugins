@@ -93,6 +93,21 @@
     </group>
   </actions>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="Perforce.P4ConnectionParametersProvider"
+                    interface="org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParametersProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="Perforce">
+    <P4ConnectionParametersProvider
+      implementation="org.jetbrains.idea.perforce.perforce.connections.SettingsConnectionParametersProvider" order="first"/>
+    <P4ConnectionParametersProvider
+      implementation="org.jetbrains.idea.perforce.perforce.connections.EnvConnectionParametersProvider"/>
+    <P4ConnectionParametersProvider
+      implementation="org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <vcs name="Perforce" vcsClass="org.jetbrains.idea.perforce.application.PerforceVcs" displayName="Perforce"/>
     <projectConfigurable id="vcs.Perforce" key="settings.perforce.option.group" instance="org.jetbrains.idea.perforce.perforce.PerforceConfigurable"

@@ -49,13 +49,13 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
   }
 
   @Override
-  public TextEditorHighlightingPass createHighlightingPass(final @NotNull PsiFile file, final @NotNull Editor editor) {
-    if (file instanceof XmlFile && FlexSupportLoader.isFlexMxmFile(file) ||
-        file instanceof JSFile && !(file instanceof PsiCompiledElement) && file.getLanguage().is(FlexSupportLoader.ECMA_SCRIPT_L4)
+  public TextEditorHighlightingPass createHighlightingPass(final @NotNull PsiFile psiFile, final @NotNull Editor editor) {
+    if (psiFile instanceof XmlFile && FlexSupportLoader.isFlexMxmFile(psiFile) ||
+        psiFile instanceof JSFile && !(psiFile instanceof PsiCompiledElement) && psiFile.getLanguage().is(FlexSupportLoader.ECMA_SCRIPT_L4)
        ) {
       final HighlightDisplayKey key = HighlightDisplayKey.find(JSUnusedLocalSymbolsInspection.SHORT_NAME);
-      if (InspectionProjectProfileManager.getInstance(file.getProject()).getCurrentProfile().isToolEnabled(key, file)) {
-        return new ActionScriptUnusedImportsHighlightingPass(file, editor);
+      if (InspectionProjectProfileManager.getInstance(psiFile.getProject()).getCurrentProfile().isToolEnabled(key, psiFile)) {
+        return new ActionScriptUnusedImportsHighlightingPass(psiFile, editor);
       }
     }
     return null;

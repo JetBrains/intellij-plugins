@@ -1,0 +1,357 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "LombokGetterMayBeUsed",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'FieldsWithGetter' may use Lombok @Getter",
+            "markdown": "Class 'FieldsWithGetter' may use Lombok @Getter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/FieldsWithGetter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 14,
+                  "charOffset": 135,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "FieldsWithGetter"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 173,
+                  "snippet": {
+                    "text": "// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.\n\npublic class FieldsWithGetter {\n  private int bar;\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFieldsWithGetter",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "661b480b85bb3e0c",
+            "equalIndicator/v1": "48cad1fd9e1b5c7c96774a42786e494d868c66feaefb7f87d490455e5f8e8646"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "LombokGetterMayBeUsed",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Field 'bar' may have Lombok @Getter",
+            "markdown": "Field 'bar' may have Lombok @Getter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/FieldsWithGetter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 3,
+                  "charOffset": 358,
+                  "charLength": 45,
+                  "snippet": {
+                    "text": "public int getBar() {\n      return bar;\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 13,
+                  "startColumn": 1,
+                  "charOffset": 319,
+                  "charLength": 112,
+                  "snippet": {
+                    "text": "    private int fieldWithoutGetter;\n\n  public int getBar() {\n      return bar;\n    }\n\n  public boolean isBaz() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFieldsWithGetter",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3b341862e8a6fd1f",
+            "equalIndicator/v1": "5d7bc49e23f9b091dae30520324f68bdb676b339720170ac64355281f44ac6ac"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "LombokGetterMayBeUsed",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Field 'Baz' may have Lombok @Getter",
+            "markdown": "Field 'Baz' may have Lombok @Getter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/FieldsWithGetter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 3,
+                  "charOffset": 407,
+                  "charLength": 53,
+                  "snippet": {
+                    "text": "public boolean isBaz() {\n      return this.Baz;\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 17,
+                  "startColumn": 1,
+                  "charOffset": 398,
+                  "charLength": 90,
+                  "snippet": {
+                    "text": "    }\n\n  public boolean isBaz() {\n      return this.Baz;\n    }\n\n  public int getFooBar() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFieldsWithGetter",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e7078946fe85a797",
+            "equalIndicator/v1": "8da562d4970966f9a154d95cdbb33299f87275014aba30fd646a4128a86f171e"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "LombokGetterMayBeUsed",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Field 'fooBar' may have Lombok @Getter",
+            "markdown": "Field 'fooBar' may have Lombok @Getter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/FieldsWithGetter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 3,
+                  "charOffset": 464,
+                  "charLength": 70,
+                  "snippet": {
+                    "text": "public int getFooBar() {\n      return InstanceField.this.fooBar;\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 21,
+                  "startColumn": 1,
+                  "charOffset": 455,
+                  "charLength": 118,
+                  "snippet": {
+                    "text": "    }\n\n  public int getFooBar() {\n      return InstanceField.this.fooBar;\n    }\n  }\n  public class AllInstanceFields {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFieldsWithGetter",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3aa4397c56ec812a",
+            "equalIndicator/v1": "951be80b6e485a29368aff3eedb055f3ac821008d0ee737788b21a099c7f75f8"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "LombokGetterMayBeUsed",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'AllInstanceFields' may use Lombok @Getter",
+            "markdown": "Class 'AllInstanceFields' may use Lombok @Getter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/FieldsWithGetter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 16,
+                  "charOffset": 554,
+                  "charLength": 17,
+                  "snippet": {
+                    "text": "AllInstanceFields"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 25,
+                  "startColumn": 1,
+                  "charOffset": 529,
+                  "charLength": 90,
+                  "snippet": {
+                    "text": "    }\n  }\n  public class AllInstanceFields {\n    private int bar;\n    private boolean Baz;"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFieldsWithGetter",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a36ea4714dea9fe0",
+            "equalIndicator/v1": "ede8d93acd2cd17a522d0ccef2bd396effe72ec0e080ebedfab7366d4f3d13f6"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "LombokGetterMayBeUsed",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Field 'bar' may have Lombok @Getter",
+            "markdown": "Field 'bar' may have Lombok @Getter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/FieldsWithGetter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 3,
+                  "charOffset": 983,
+                  "charLength": 52,
+                  "snippet": {
+                    "text": "public static int getBar() {\n      return bar;\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 47,
+                  "startColumn": 1,
+                  "charOffset": 944,
+                  "charLength": 97,
+                  "snippet": {
+                    "text": "    private int fieldWithoutGetter;\n\n  public static int getBar() {\n      return bar;\n    }\n  }\n}"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFieldsWithGetter",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "8f46919296f500e7",
+            "equalIndicator/v1": "ad090b4fb8f3303d25a13003307d9359cb24669097cd2a6958f5275bf9cad622"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

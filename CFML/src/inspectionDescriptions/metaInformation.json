@@ -1,0 +1,12 @@
+{
+  "inspections": [
+    {
+      "id": "CfmlFileReference",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "CfmlReferenceInspection",
+      "codeQualityCategory": "Sanity"
+    }
+  ]
+}

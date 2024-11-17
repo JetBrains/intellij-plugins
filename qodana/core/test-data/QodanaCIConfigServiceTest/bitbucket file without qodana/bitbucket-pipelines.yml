@@ -1,0 +1,18 @@
+image: atlassian/default-image:4
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Qodana
+          caches:
+            - qodana
+          image: jetbrains/qodana-<linter>
+          script:
+            - echo 1
+          artifacts:
+            - .qodana/report
+
+definitions:
+  caches:
+    qodana: .qodana/cache

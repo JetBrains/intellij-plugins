@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    stages {
+        stage('Some stage') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh "printenv"
+            }
+        }
+        stage('Qodana') {
+            environment {
+                QODANA_TOKEN = credentials('qodana-token')
+            }
+            agent {
+                docker {
+                    args '''
+                        -v "${WORKSPACE}":/data/project
+                        --entrypoint=""
+                        '''
+                    image 'jetbrains/qodana-<linter>'
+                }
+            }
+            when {
+                branch 'main'
+            }
+            steps {
+                sh '''qodana'''
+            }
+        }
+    }
+}

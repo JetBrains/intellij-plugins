@@ -2,20 +2,17 @@ package com.intellij.plugins.serialmonitor.ui.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.fileChooser.FileSaverDescriptor
+import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.plugins.serialmonitor.SerialMonitorCollector
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.jediterm.terminal.model.TerminalTextBuffer
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import kotlin.io.path.Path
 
 /**
@@ -33,25 +30,18 @@ class SaveHistoryToFileAction(val terminalTextBuffer: TerminalTextBuffer, val se
     val file = fileSaverDialog.save(serialPortProfile.defaultLogFilename())?.file
     if (file == null) return
 
-    service<SaveHistoryToFileService>().saveTerminalLogToFile(terminalTextBuffer, file)
-  }
-}
-
-@Service
-class SaveHistoryToFileService(val cs: CoroutineScope) {
-  fun saveTerminalLogToFile(terminalTextBuffer: TerminalTextBuffer, file: File) {
-    cs.launch(Dispatchers.Default) {
+    currentThreadCoroutineScope().launch(Dispatchers.Default) {
       val lines = try {
         terminalTextBuffer.lock()
-        val historyLines = terminalTextBuffer.historyBuffer.lineTexts
-        val screenLines = terminalTextBuffer.screenBuffer.lineTexts
+        val historyLines = terminalTextBuffer.historyLinesStorage
+        val screenLines = terminalTextBuffer.screenLinesStorage
         historyLines + screenLines
       }
       finally {
         terminalTextBuffer.unlock()
       }
 
-      val text = lines.joinToString(System.lineSeparator())
+      val text = lines.joinToString(separator = System.lineSeparator(), transform = { it.text} )
       withContext(Dispatchers.IO) {
         file.writeText(text)
       }

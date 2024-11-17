@@ -1,0 +1,420 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'method4' coverage is below the threshold 50%",
+            "markdown": "Method `method4` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/BarClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 16,
+                  "charOffset": 109,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "method4"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 94,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "    public int method4() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e184821c55c84f37",
+            "equalIndicator/v1": "52840e286669e6b426513fb55c22463606f0fcd237b9e92db082f9d76f702390"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'method5' coverage is below the threshold 50%",
+            "markdown": "Method `method5` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/BarClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 16,
+                  "charOffset": 161,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "method5"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 12,
+                  "startColumn": 1,
+                  "charOffset": 146,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "    public int method5() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "26d6726f16377ffc",
+            "equalIndicator/v1": "b6420fce4b634289f0f7d3c3aa121d54990ccdb0e35388c690b0cbd5f21e4424"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'UncoveredClass' coverage is below the threshold 50%",
+            "markdown": "Class `UncoveredClass` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/UncoveredClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 14,
+                  "charOffset": 31,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "UncoveredClass"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 18,
+                  "charLength": 29,
+                  "snippet": {
+                    "text": "public class UncoveredClass {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5efe1bc00291bafd",
+            "equalIndicator/v1": "6cd523fb98a9cb35db61bcee17d834c608e299918a68a21a06b49f60727472f2"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'uncoveredMethod1' coverage is below the threshold 50%",
+            "markdown": "Method `uncoveredMethod1` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/UncoveredClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 17,
+                  "charOffset": 64,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "uncoveredMethod1"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 48,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    public void uncoveredMethod1() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "eeedc790a400b396",
+            "equalIndicator/v1": "2d01d2587a8f9b9b2ebc4f8703e8c1d20910193ffc94ac8c518559e90b41e326"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'uncoveredMethod2' coverage is below the threshold 50%",
+            "markdown": "Method `uncoveredMethod2` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/UncoveredClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 17,
+                  "charOffset": 108,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "uncoveredMethod2"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "charOffset": 92,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    public void uncoveredMethod2() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9a48065441e27623",
+            "equalIndicator/v1": "c4172c87888293fd9a99c3b47ab57512bec4465a53b5a6c08f72253ecf8c6187"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'uncoveredMethod3' coverage is below the threshold 50%",
+            "markdown": "Method `uncoveredMethod3` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/UncoveredClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 17,
+                  "charOffset": 152,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "uncoveredMethod3"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "charOffset": 136,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    public void uncoveredMethod3() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4458e93175e46400",
+            "equalIndicator/v1": "1a4258d6bf8fcedfbb6ba34b935acd4d0b80e7d7300cfca986d3f306522599fa"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'uncoveredMethod4' coverage is below the threshold 50%",
+            "markdown": "Method `uncoveredMethod4` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/UncoveredClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 17,
+                  "charOffset": 196,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "uncoveredMethod4"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 13,
+                  "startColumn": 1,
+                  "charOffset": 180,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    public void uncoveredMethod4() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c26e10471c0667d1",
+            "equalIndicator/v1": "87f940107672ed80ac12604bbc1481fc5a163215561cfc8c81a34da1ea7e7ce2"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 41,
+          "totalLines": 12,
+          "totalCoveredLines": 5
+        }
+      }
+    }
+  ]
+}

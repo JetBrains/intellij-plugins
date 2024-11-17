@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.completion;
 
 import com.intellij.flex.FlexTestOption;
@@ -8,6 +8,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantDialog;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -22,7 +23,6 @@ import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureDialog;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
-import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.module.Module;
@@ -141,7 +141,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     GlobalSearchScope targetClassScope =
       module != null ? GlobalSearchScope.moduleWithDependenciesScope(module) : GlobalSearchScope.projectScope(getProject());
     PsiFile fragment =
-      JSIntroduceConstantDialog.createTargetClassField(getProject(), "", targetClassScope).getPsiFile();
+      FlexIntroduceConstantDialog.createTargetClassField(getProject(), "", targetClassScope).getPsiFile();
     String[] included = new String[]{"Z111", "Z222", "com"};
     String[] excluded = new String[]{"EventDispatcher", "int", "String", "uint", "Number", "public", "function", "while"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");

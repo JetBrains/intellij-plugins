@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinition
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.lsp.tests.checkLspHighlighting
-import org.intellij.prisma.ide.lsp.PrismaLspExecutableDownloader
+import org.intellij.prisma.ide.lsp.PrismaLspServerLoader
 import org.intellij.prisma.ide.lsp.PrismaLspServerActivationRule
 import org.intellij.prisma.ide.lsp.PrismaServiceMode
 import org.intellij.prisma.ide.lsp.PrismaServiceSettings
@@ -25,7 +25,7 @@ class PrismaHighlightingServiceTest : PrismaServiceTestBase() {
     }
     serviceSettings.serviceMode = PrismaServiceMode.ENABLED
 
-    ensureServerDownloaded(PrismaLspExecutableDownloader)
+    ensureServerDownloaded(PrismaLspServerLoader)
   }
 
   fun testCreateEnumQuickFix() {

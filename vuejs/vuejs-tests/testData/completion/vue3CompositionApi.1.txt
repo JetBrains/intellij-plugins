@@ -1,6 +1,6 @@
 foo (typeText='string'; priority=101.0; bold)
 increment (typeText='any'; priority=101.0; bold)
-state (typeText='{double: UnwrapRef<ComputedRef<unknown>>, count: UnwrapRef<number>} & SymbolExtract<{double: ComputedRef<unknown>, count: number}>'; priority=101.0; bold)
+state (typeText='{count: UnwrapRef<number>, double: UnwrapRef<ComputedRef<unknown>>} & SymbolExtract<{count: number, double: ComputedRef<unknown>}>'; priority=101.0; bold)
 $ (typeText='ComponentInternalInstance'; priority=100.0; bold)
 $attrs (typeText=null; priority=100.0; bold)
 $data (typeText=null; priority=100.0; bold)

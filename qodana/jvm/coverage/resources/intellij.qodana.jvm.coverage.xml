@@ -1,0 +1,23 @@
+<idea-plugin package="org.jetbrains.qodana.jvm.coverage">
+  <dependencies>
+    <plugin id="com.intellij.java"/>
+    <plugin id="Coverage"/>
+    <module name="intellij.qodana.coverage"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <reportMetadataArtifact implementation="org.jetbrains.qodana.jvm.coverage.ICCoverageReportMetadataArtifact"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.jvm.coverage.ICCoverageArtifactProcessor"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <globalInspection hasStaticDescription="true"
+                      language="UAST"
+                      shortName="JvmCoverageInspection"
+                      key="check.jvm.display.name"
+                      bundle="messages.QodanaBundle"
+                      groupKey="coverage.group.display.name"
+                      enabledByDefault="true"
+                      implementationClass="org.jetbrains.qodana.jvm.coverage.JvmCoverageInspection"/>
+  </extensions>
+</idea-plugin>

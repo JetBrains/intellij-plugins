@@ -1,0 +1,30 @@
+<AttrsExample.astro:(132,146):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<AttrsExample.astro:(147,181):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<AttrsExample.astro:(497,514):(1,15)>	ManyImportsUpd
+<Card.astro:(11,25):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<Card.astro:(250,267):(1,15)>	ManyImportsUpd
+<Card.astro:(26,60):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<Card.astro:(283,297):(0,14)>	import ManyImportsUpd from "./ManyImportsUpd.astro";
+<Card.astro:(298,327):(8,28)>	import ManyImportsUpd from "./ManyImportsUpd.astro";
+<Card.astro:(381,398):(1,15)>	ManyImportsUpd
+<CheckBuildComponent.astro:(12,26):(0,14)>	import ManyImportsUpd from "../temp/ManyImportsUpd.astro";
+<CheckBuildComponent.astro:(122,139):(1,15)>	ManyImportsUpd
+<CheckBuildComponent.astro:(27,62):(14,34)>	import ManyImportsUpd from "../temp/ManyImportsUpd.astro";
+<CheckSupress.astro:(11,25):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<CheckSupress.astro:(155,172):(1,15)>	ManyImportsUpd
+<CheckSupress.astro:(26,60):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<DefaultValue.astro:(11,25):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<DefaultValue.astro:(151,168):(1,15)>	ManyImportsUpd
+<DefaultValue.astro:(26,60):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<GreetingHeadline.astro:(210,224):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<GreetingHeadline.astro:(225,259):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<GreetingHeadline.astro:(377,394):(1,15)>	ManyImportsUpd
+<InterfaceAndDefault.astro:(11,25):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<InterfaceAndDefault.astro:(26,60):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<InterfaceAndDefault.astro:(295,312):(1,15)>	ManyImportsUpd
+<InterfaceComplex.astro:(11,25):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<InterfaceComplex.astro:(26,60):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<InterfaceComplex.astro:(336,353):(1,15)>	ManyImportsUpd
+<MapComponent.astro:(124,138):(0,14)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<MapComponent.astro:(139,173):(13,33)>	import ManyImportsUpd from "./temp/ManyImportsUpd.astro";
+<MapComponent.astro:(1472,1489):(1,15)>	ManyImportsUpd

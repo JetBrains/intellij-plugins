@@ -17,7 +17,7 @@ public class P4ParametersConnection extends AbstractP4Connection {
   private final ConnectionId myConnectionId;
   private final File myCwd;
 
-  public P4ParametersConnection(final P4ConnectionParameters parameters, @NotNull final ConnectionId connectionId) {
+  public P4ParametersConnection(@NotNull P4ConnectionParameters parameters, @NotNull final ConnectionId connectionId) {
     myParameters = parameters;
     myConnectionId = connectionId;
     myCwd = myConnectionId.myWorkingDir == null ? new File(".") : new File(myConnectionId.myWorkingDir);

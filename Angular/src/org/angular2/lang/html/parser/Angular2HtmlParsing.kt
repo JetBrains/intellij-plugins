@@ -4,7 +4,7 @@ package org.angular2.lang.html.parser
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.html.HtmlParsing
-import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.JavaScriptParserBundle
 import com.intellij.psi.tree.ICustomParsingType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementType
@@ -210,7 +210,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
         parameterIndex++
       }
       if (builder.eof() || builder.tokenType != Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END) {
-        parameters.errorBefore(JavaScriptBundle.message("javascript.parser.message.missing.rparen"), parametersContents)
+        parameters.errorBefore(JavaScriptParserBundle.message("javascript.parser.message.missing.rparen"), parametersContents)
         parametersContents.drop()
         parameters.precede().done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
       }
@@ -238,7 +238,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
         builder.error(Angular2Bundle.message("angular.parse.expression.expected-whitespace"))
       }
       else {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"))
       }
       startMarker.done(Angular2HtmlElementTypes.BLOCK)
       return

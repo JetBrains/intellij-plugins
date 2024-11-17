@@ -49,7 +49,7 @@ public final class PerforceBaseInfoWorker {
   private volatile boolean myInsideRefresh;
 
   public PerforceBaseInfoWorker(@NotNull Project project) {
-    myNotifier = project.getService(PerforceConnectionProblemsNotifier.class);
+    myNotifier = PerforceConnectionProblemsNotifier.getInstance(project);
     myLoginManager = PerforceLoginManager.getInstance(project);
     myLoginManager.addSuccessfulLoginListener(() -> {
       synchronized (myInfoLock) {

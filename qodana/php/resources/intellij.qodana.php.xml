@@ -1,0 +1,32 @@
+<idea-plugin package="org.jetbrains.qodana.php">
+  <dependencies>
+    <plugin id="com.intellij.modules.lang" />
+    <plugin id="com.jetbrains.php" />
+    <module name="intellij.qodana.coverage"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <projectDescriber implementation="org.jetbrains.qodana.php.PhpIncludedPathsProjectDescriber"/>
+    <projectDescriber implementation="org.jetbrains.qodana.php.PhpInterpreterProjectDescriber"/>
+    <projectDescriber implementation="org.jetbrains.qodana.php.PhpComposerProjectDescriber"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.php.PhpMigrationScriptFactory"/>
+    <workflowExtension implementation="org.jetbrains.qodana.php.QodanaPhpConfigApplier"/>
+    <globalOutputConsumer implementation="org.jetbrains.qodana.php.PhpGlobalOutputConsumer"/>
+    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.php.QodanaYamlPhpLanguageLevelItemProvider"/>
+    <reportMetadataArtifact implementation="org.jetbrains.qodana.php.PhpUnitCoverageReportMetadataArtifact"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.php.PHPCoverageArtifactProcessor"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="org.jetbrains.qodana.php.QodanaPhpProjectActivity"/>
+    <commandLineInspectionProjectConfigurator implementation="org.jetbrains.qodana.php.PhpProjectConfigurator"/>
+    <globalInspection hasStaticDescription="true"
+                      language="PHP"
+                      shortName="PhpCoverageInspection"
+                      key="check.php.display.name"
+                      bundle="messages.QodanaBundle"
+                      groupKey="coverage.group.display.name"
+                      enabledByDefault="true"
+                      implementationClass="org.jetbrains.qodana.php.PhpCoverageInspection"/>
+  </extensions>
+</idea-plugin>

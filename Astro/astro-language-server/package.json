@@ -1,0 +1,12 @@
+{
+  "name": "@astrojs/language-server",
+  "version": "2.10.0",
+  "private": true,
+  "devDependencies": {
+    "@astrojs/language-server": "2.10.0",
+    "esbuild": "^0.20.0"
+  },
+  "scripts": {
+    "build": "node build"
+  }
+}

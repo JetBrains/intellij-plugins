@@ -19,7 +19,7 @@ class PrismaServiceSettings(val project: Project) : SimplePersistentStateCompone
     }
 
   var lspServerPackageRef
-    get() = createPackageRef(state.lspServerPackageName, PrismaLspExecutableDownloader.packageDescriptor.serverPackage)
+    get() = createPackageRef(state.lspServerPackageName, PrismaLspServerLoader.packageDescriptor.serverPackage)
     set(value) {
       val refText = extractRefText(value)
       val changed = state.lspServerPackageName != refText

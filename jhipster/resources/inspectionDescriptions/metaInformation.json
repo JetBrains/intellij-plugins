@@ -1,0 +1,20 @@
+{
+  "inspections": [
+    {
+      "id": "JdlUnknownOption",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "JdlIncorrectOptionType",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "JdlDuplicatedDeclaration",
+      "codeQualityCategory": "Sanity"
+    },
+    {
+      "id": "JdlUnusedDeclaration",
+      "codeQualityCategory": "Reliability"
+    }
+  ]
+}

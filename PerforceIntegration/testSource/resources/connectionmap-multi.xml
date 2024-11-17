@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--perforce-xml-version=1.0-->
+<ConnectionMapList varName="connectionmaplist">
+  <ConnectionMap>
+    <Name>0001</Name>
+    <User>SomeFirstUser</User>
+    <ServerName>my-server-1</ServerName>
+    <P4Port>ssl:server-host-1:1666</P4Port>
+  </ConnectionMap>
+  <ConnectionMap>
+    <Name>0002</Name>
+    <User>SomeSecondUser</User>
+    <ServerName>my-server-2</ServerName>
+    <P4Port>ssl:server-host-2:1666</P4Port>
+  </ConnectionMap>
+</ConnectionMapList>

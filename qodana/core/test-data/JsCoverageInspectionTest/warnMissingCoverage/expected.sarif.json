@@ -1,0 +1,924 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'FooCls.ts' coverage is below the threshold 50%",
+            "markdown": "File `FooCls.ts` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "export class FooCls {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "export class FooCls {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cde453a784bab7e4",
+            "equalIndicator/v1": "4f67c66321ba42510bcea5068e919afd7ee886a673ae85e0d85a6af545aa4c72"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "TypeScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'baz' coverage is below the threshold 50%",
+            "markdown": "Method `baz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 3,
+                  "charOffset": 413,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "baz"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 26,
+                  "startColumn": 1,
+                  "charOffset": 411,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "  baz(i: number): number {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c1b66e8a46a6af41",
+            "equalIndicator/v1": "1d573131c72bd1ef6e55388b5b28f7175d276e44890f4067bc2857b632240933"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foobar' coverage is below the threshold 50%",
+            "markdown": "Method `foobar` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 3,
+                  "charOffset": 518,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "foobar"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 35,
+                  "startColumn": 1,
+                  "charOffset": 516,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "  foobar = (): number => {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "edb40af85f246b62",
+            "equalIndicator/v1": "372daf2de587358956ba6473f7aed829b0de0159e41482cbc5f397cfb9a7cc5f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class '(anonymous class in FooCls.ts)' coverage is below the threshold 50%",
+            "markdown": "Class `(anonymous class in FooCls.ts)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 5,
+                  "charOffset": 592,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "class {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                },
+                "contextRegion": {
+                  "startLine": 42,
+                  "startColumn": 1,
+                  "charOffset": 588,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "new class {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "ff06735a750fba36",
+            "equalIndicator/v1": "31161143fe6c97b935917b520d180ece79c37be12311ffd841dc45a8a742071a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "TypeScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo' coverage is below the threshold 50%",
+            "markdown": "Method `foo` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 3,
+                  "charOffset": 602,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "foo"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 43,
+                  "startColumn": 1,
+                  "charOffset": 600,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "  foo(i: number) {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5eddf5dd355dfb2b",
+            "equalIndicator/v1": "f9bca52e2eeee7ffc7cfa1d186d10d5c882d48bd216f6b95ff3189a8badeddca"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in foo)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in foo)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 44,
+                  "startColumn": 6,
+                  "charOffset": 624,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "() => {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                },
+                "contextRegion": {
+                  "startLine": 44,
+                  "startColumn": 1,
+                  "charOffset": 619,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "    (() => {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f559c351a04bc228",
+            "equalIndicator/v1": "b8bbfdce107f2795a20b03c064016af438996f5dfaad3f4c8c7d734ef8506243"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "TypeScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'fun1' coverage is below the threshold 50%",
+            "markdown": "Method `fun1` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 50,
+                  "startColumn": 10,
+                  "charOffset": 752,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "fun1"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 50,
+                  "startColumn": 1,
+                  "charOffset": 743,
+                  "charLength": 23,
+                  "snippet": {
+                    "text": "function fun1(): void {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "34b7392c347b2a29",
+            "equalIndicator/v1": "7a9866d16f23a0eaf0cd1e97f93132b98773d53cdf39b5cfaefafe574014c6df"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'BarCls' coverage is below the threshold 50%",
+            "markdown": "Class `BarCls` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 14,
+                  "charOffset": 884,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "BarCls"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 58,
+                  "startColumn": 1,
+                  "charOffset": 871,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "export class BarCls {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "6ffd617bf1bb1c5b",
+            "equalIndicator/v1": "622f5aef5add14fa6c294b1241fdca10d9269f708b1dc354a986ebebc5bfa020"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Constructor 'BarCls' coverage is below the threshold 50%",
+            "markdown": "Constructor `BarCls` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 63,
+                  "startColumn": 3,
+                  "charOffset": 980,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "constructor"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 63,
+                  "startColumn": 1,
+                  "charOffset": 978,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "  constructor(singleParam?: number) {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3cde715e0254d9a9",
+            "equalIndicator/v1": "c81a4c5d10306f75aab484bda6050fe969325fa66736b6b4cc8cb6de8ed517a0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'babel.config.js' coverage is below the threshold 50%",
+            "markdown": "File `babel.config.js` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "babel.config.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "module.exports = {"
+                  },
+                  "sourceLanguage": "ECMAScript 6"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "module.exports = {"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2baf56d26b5fdbf3",
+            "equalIndicator/v1": "5519c05aa2ac832bc40edb04a1d27138cee16b57457ad4eae19609c14a910671"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "ECMAScript 6"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'javascript.js' coverage is below the threshold 50%",
+            "markdown": "File `javascript.js` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "javascript.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "module.exports = {"
+                  },
+                  "sourceLanguage": "ECMAScript 6"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "module.exports = {"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e226c83780624546",
+            "equalIndicator/v1": "78c3e639087823a3879714f51c175f9f240d19c66f0a67cc4b39bb5198e7ecb9"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "ECMAScript 6"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo' coverage is below the threshold 50%",
+            "markdown": "Method `foo` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "javascript.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 5,
+                  "charOffset": 23,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "foo"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 19,
+                  "charLength": 35,
+                  "snippet": {
+                    "text": "    foo: function() { return 42; },"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b44545df46c67bf8",
+            "equalIndicator/v1": "b8ad02e37808d07776b5ed0fcd0d198a4de6bc5e0cfcacd7e001be40e16d3f30"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo2' coverage is below the threshold 50%",
+            "markdown": "Method `foo2` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "javascript.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 5,
+                  "charOffset": 59,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "foo2"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 55,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    foo2: function() { return 42; },"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "d2ce113112b50823",
+            "equalIndicator/v1": "7212b6853d8719f26f53a84043794812edd421dfa7f228811ea74f4ba3fbeec8"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo3' coverage is below the threshold 50%",
+            "markdown": "Method `foo3` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "javascript.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 5,
+                  "charOffset": 96,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "foo3"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 92,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    foo3: function() { return 42; },"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0051964d359c46a6",
+            "equalIndicator/v1": "4ceb3e647303a1e91213d819c8a983dbb8bf23a8a31207b69cfb43f2c16c42d0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'foo4' coverage is below the threshold 50%",
+            "markdown": "Method `foo4` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "javascript.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 5,
+                  "charOffset": 133,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "foo4"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 129,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "    foo4: function() { return 42; },"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "50074ca98bf0c8f6",
+            "equalIndicator/v1": "d2ccee296fc79bbaf27fab261254f98547e4c2b77abdbca38070f1577507f78f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'jest.config.js' coverage is below the threshold 50%",
+            "markdown": "File `jest.config.js` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "jest.config.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "module.exports = {"
+                  },
+                  "sourceLanguage": "ECMAScript 6"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "module.exports = {"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "19580c9ebc49d379",
+            "equalIndicator/v1": "040ebb9fb82463398e12a905d95bae3ccabf623dfad0b1e1209fa3085db23960"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "ECMAScript 6"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 37,
+          "totalLines": 27,
+          "totalCoveredLines": 10
+        }
+      }
+    }
+  ]
+}

@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.perforce.P4HaveParser;
 import org.jetbrains.idea.perforce.perforce.PathsHelper;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
@@ -52,9 +53,9 @@ public abstract class UnversionedScopeScanner {
       checkCanceled();
 
       final LocalFileSystem fs = LocalFileSystem.getInstance();
-      myRunner.haveMultiple(collectPaths(files), connection, new P4HaveParser(PerforceManager.getInstance(myProject)) {
+      myRunner.executeMultiple(collectPaths(files), connection, new P4HaveParser(PerforceManager.getInstance(myProject)) {
         @Override
-        public void consumeRevision(String path, long revision) {
+        protected void consumeRevision(@NotNull String path, long revision) {
           checkCanceled();
 
           VirtualFile vFile = findVirtualFile(path);

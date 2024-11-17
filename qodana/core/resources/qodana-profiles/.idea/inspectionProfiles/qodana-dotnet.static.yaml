@@ -1,0 +1,33 @@
+# ReSharper non-configurable inspections, that are always shown
+groups:
+  - groupId: RiderStaticSanityInspections
+    inspections:
+      - FSharpErrors
+      - T4Errors
+      - UnityErrors
+      - AsmDefErrors
+      - CppCompilerErrors
+      - CppUE4BuildErrors
+      - CSharpErrors
+      - VBErrors
+      - RazorErrors
+      - AsxxErrors
+      - AspErrors
+      - RiderSolutionErrorsInspection
+
+  - groupId: RiderStaticNonSanityInspections
+    inspections:
+      - AsmDefWarnings
+      - ShaderLabErrors
+      - ShaderLabWarnings
+      - YamlErrors
+      - BlockShadersErrors
+      - AsmCompilerErrorGroup
+      - CSharpHints
+      - XAMLErrors
+      - XMLErrors
+      - XMLWarnings
+      - RegExpErrors
+      - WebConfigErrors
+      - RazorWarnings
+      - HtmlErrors

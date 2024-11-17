@@ -1,0 +1,161 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ArraysAsListWithZeroOrOneArgument",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Call to 'asList()' with only one argument",
+            "markdown": "Call to `asList()` with only one argument"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 31,
+                  "charOffset": 146,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "asList"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 54,
+                  "charLength": 110,
+                  "snippet": {
+                    "text": "public class App {\n  public static void main(String[] args) {\n    System.out.println(Arrays.asList(args[0])\n}\n"
+                  }
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFormattingProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "922ccd6531835da2cc9bdf276125ae932913e3a3690f9e198748b399fd5b0d82"
+          },
+          "fixes": [
+            {
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "test-module/App.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 53,
+                        "charLength": 0
+                      },
+                      "insertedContent": {
+                        "text": "import java.util.Collections;\n"
+                      }
+                    },
+                    {
+                      "deletedRegion": {
+                        "charOffset": 116,
+                        "charLength": 46
+                      },
+                      "insertedContent": {
+                        "text": "      System.out.println(Collections.singletonList(args[0])\n"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "UNUSED_IMPORT",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unused import 'import java.util.ArrayList;'",
+            "markdown": "Unused import `import java.util.ArrayList;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 53,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;\nimport java.util.Arrays;\n"
+                  }
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFormattingProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "bd798b5f30a60f7daee5a513c0a787d2df823237e961b3897deb12ba4af9ae7d"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

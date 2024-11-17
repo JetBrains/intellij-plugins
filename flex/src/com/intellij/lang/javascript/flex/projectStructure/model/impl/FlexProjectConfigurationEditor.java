@@ -62,7 +62,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public interface ModulesModelChangeListener extends EventListener {
-    void modulesModelsChanged(Collection<Module> modules);
+    void modulesModelsChanged(Collection<? extends Module> modules);
   }
 
   private boolean myDisposed;

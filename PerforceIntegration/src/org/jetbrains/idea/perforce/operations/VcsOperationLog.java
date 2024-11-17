@@ -121,11 +121,18 @@ public final class VcsOperationLog implements PersistentStateComponent<VcsOperat
 
   }
   public void queueOperations(final List<? extends VcsOperation> operations, final @NlsContexts.ProgressTitle String title, final PerformInBackgroundOption option) {
+    queueOperations(operations, title, option, null);
+  }
+
+  public void queueOperations(final List<? extends VcsOperation> operations,
+                              final @NlsContexts.ProgressTitle String title,
+                              final PerformInBackgroundOption option,
+                              @Nullable Runnable edtCallback) {
     List<VcsException> exceptions = new ArrayList<>();
     Runnable runnable = enqueueOperations(operations, title, option, exceptions);
 
     if (runnable == null) return;
-    PerforceVcs.getInstance(myProject).runBackgroundTask(title, option, runnable);
+    PerforceVcs.getInstance(myProject).runBackgroundTask(title, option, runnable, edtCallback);
   }
 
   @Nullable

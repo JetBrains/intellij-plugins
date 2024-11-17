@@ -1,0 +1,30 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "incremental"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 85,
+          "totalLines": 7,
+          "totalCoveredLines": 6,
+          "freshCoverage": 100,
+          "freshLines": 0,
+          "freshCoveredLines": 0
+        }
+      }
+    }
+  ]
+}

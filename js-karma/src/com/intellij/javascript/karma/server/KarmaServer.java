@@ -77,7 +77,7 @@ public final class KarmaServer {
     myRestarter = new KarmaServerRestarter(configurationFilePath, myDisposable);
 
     final int processHashCode = System.identityHashCode(processHandler.getProcess());
-    LOG.info("Karma server " + processHashCode + " started successfully: " + processHandler.getCommandLine());
+    LOG.info("Karma server " + processHashCode + " started successfully: " + processHandler.getCommandLineForLog());
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final @NotNull ProcessEvent event) {

@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -102,9 +102,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       ?: emptyList()
   }
 
-  private class MixinsAccessor(private val propertyName: String,
-                               private val indexKey: StubIndexKey<String, JSImplicitElementProvider>)
-    : ListAccessor<VueMixin>() {
+  private class MixinsAccessor(
+    private val propertyName: String,
+    private val indexKey: StubIndexKey<String, JSImplicitElementProvider>,
+  ) : ListAccessor<VueMixin>() {
 
     override fun build(declaration: JSElement): List<VueMixin> {
       val mixinsProperty = declaration.asSafely<JSObjectLiteralExpression>()
@@ -120,7 +121,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
       val initializerMixins: List<VueMixin> =
         (mixinsProperty as? StubBasedPsiElement<*>)?.stub
-          ?.getChildrenByType(JSElementTypes.OBJECT_LITERAL_EXPRESSION, JSObjectLiteralExpression.ARRAY_FACTORY)
+          ?.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION, JSObjectLiteralExpression.ARRAY_FACTORY)
           ?.mapNotNull { VueModelManager.getMixin(it) }
         ?: (mixinsProperty.value as? JSArrayLiteralExpression)
           ?.expressions
@@ -228,9 +229,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
 
-  class VueSourceInputProperty(override val name: String,
-                               sourceElement: PsiElement,
-                               hasOuterDefault: Boolean = false) : VueInputProperty {
+  class VueSourceInputProperty(
+    override val name: String,
+    sourceElement: PsiElement,
+    hasOuterDefault: Boolean = false,
+  ) : VueInputProperty {
 
     override val required: Boolean = isRequired(hasOuterDefault, sourceElement)
 
@@ -258,11 +261,15 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required)
   }
 
-  private class VueSourceDataProperty(override val name: String,
-                                      override val source: PsiElement?) : VueDataProperty
+  private class VueSourceDataProperty(
+    override val name: String,
+    override val source: PsiElement?,
+  ) : VueDataProperty
 
-  private class VueSourceComputedProperty(override val name: String,
-                                          sourceElement: PsiElement) : VueComputedProperty {
+  private class VueSourceComputedProperty(
+    override val name: String,
+    sourceElement: PsiElement,
+  ) : VueComputedProperty {
     override val source: VueImplicitElement
     override val jsType: JSType?
 
@@ -296,13 +303,17 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   }
 
-  private class VueSourceMethod(override val name: String,
-                                override val source: PsiElement?) : VueMethod {
+  private class VueSourceMethod(
+    override val name: String,
+    override val source: PsiElement?,
+  ) : VueMethod {
     override val jsType: JSType? get() = (source as? JSProperty)?.jsType
   }
 
-  private class VueSourceEmitDefinition(override val name: String,
-                                        override val source: PsiElement?) : VueEmitCall
+  private class VueSourceEmitDefinition(
+    override val name: String,
+    override val source: PsiElement?,
+  ) : VueEmitCall
 
   private class VueSourceSlot(override val name: String, override val source: PsiElement?) : VueSlot {
     override val scope: JSType? = source.asSafely<JSTypeOwner>()?.jsType

@@ -2,7 +2,6 @@
 package org.angular2.lang.expr.parser
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSKeywordSets.IDENTIFIER_NAMES
 import com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL
 import com.intellij.lang.javascript.types.JSExpressionElementType
@@ -14,7 +13,7 @@ import org.angular2.lang.expr.psi.impl.*
 import org.jetbrains.annotations.NonNls
 import java.util.function.Function
 
-interface Angular2ElementTypes : JSElementTypes, Angular2StubElementTypes {
+interface Angular2ElementTypes: Angular2StubElementTypes {
 
   open class Angular2ElementType(@NonNls debugName: String,
                                  private val myClassConstructor: Function<Angular2ElementType, ASTNode>)

@@ -1,0 +1,26 @@
+<idea-plugin package="org.jetbrains.qodana.inspectionKts.kotlin">
+  <dependencies>
+    <plugin id="org.jetbrains.kotlin"/>
+    <module name="intellij.dev.psiViewer"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsDefaultImportsProvider"/>
+    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsTemplateProvider"/>
+    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsExampleProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij.dev">
+    <psiViewer.propertyNodeAppender implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinAnalyzeEntrypointNodeAppender"/>
+    <psiViewer.propertyNodeFactory implementation="org.jetbrains.qodana.inspectionKts.kotlin.KtLifetimeOwnerPsiViewerNode$Factory"/>
+    <psiViewer.propertyNodeFactory implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinDomainClassPsiViewerNode$Factory"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <scriptConfigurationsSource implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaScriptConfigurationSource"/>
+    <scriptDefinitionsSource implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaScriptDefinitionSource"/>
+    <scriptDefinitionsProvider
+      id="QodanaKtsInspectionsScriptDefinitionSource"
+      implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaKtsInspectionsScriptDefinitionsProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <resolveScopeProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.InspectionKtsResolveScopeProvider"/>
+  </extensions>
+</idea-plugin>

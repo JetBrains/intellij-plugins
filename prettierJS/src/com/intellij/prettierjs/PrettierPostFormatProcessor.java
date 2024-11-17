@@ -3,7 +3,6 @@ package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -49,7 +48,7 @@ public final class PrettierPostFormatProcessor implements PostFormatProcessor {
       if (template != null) return false;
     }
 
-    return GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file);
+    return PrettierUtil.isFormattingAllowedForFile(project, file);
   }
 
   private static @NotNull TextRange extendRange(@NotNull PsiFile file, @NotNull TextRange rangeToReformat) {

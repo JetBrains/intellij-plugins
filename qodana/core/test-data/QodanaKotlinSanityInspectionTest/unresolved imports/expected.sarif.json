@@ -1,0 +1,192 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.sanity.results": [
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference unknow.Classname",
+              "markdown": "Unresolved reference unknow.Classname"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 3,
+                    "startColumn": 8,
+                    "charOffset": 20,
+                    "charLength": 16,
+                    "snippet": {
+                      "text": "unknow.Classname"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 1,
+                    "startColumn": 1,
+                    "charOffset": 0,
+                    "charLength": 87,
+                    "snippet": {
+                      "text": "package org\n\nimport unknow.Classname\nimport java.lang.Runnable\nimport java.lang.Unknown"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved imports",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "cdb983774be4c6ec",
+              "equalIndicator/v1": "44cd9c03201d176eb5ccbc8853436ec44712a0af3990793f08483b0a54aeaf08"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          },
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference java.lang.Unknown",
+              "markdown": "Unresolved reference java.lang.Unknown"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 5,
+                    "startColumn": 8,
+                    "charOffset": 70,
+                    "charLength": 17,
+                    "snippet": {
+                      "text": "java.lang.Unknown"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 3,
+                    "startColumn": 1,
+                    "charOffset": 13,
+                    "charLength": 116,
+                    "snippet": {
+                      "text": "import unknow.Classname\nimport java.lang.Runnable\nimport java.lang.Unknown\nimport java.lang.Unknown2 as JavaUnknown\n"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved imports",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "62b880d00de5eb95",
+              "equalIndicator/v1": "98f9e5ea4c66199a326782738b58463bbe79dec13e4968c24cec2aa89ac94461"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          },
+          {
+            "ruleId": "QodanaKotlinSanity",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Unresolved reference java.lang.Unknown2",
+              "markdown": "Unresolved reference java.lang.Unknown2"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/org/Main.kt",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 6,
+                    "startColumn": 8,
+                    "charOffset": 95,
+                    "charLength": 18,
+                    "snippet": {
+                      "text": "java.lang.Unknown2"
+                    },
+                    "sourceLanguage": "kotlin"
+                  },
+                  "contextRegion": {
+                    "startLine": 4,
+                    "startColumn": 1,
+                    "charOffset": 37,
+                    "charLength": 104,
+                    "snippet": {
+                      "text": "import java.lang.Runnable\nimport java.lang.Unknown\nimport java.lang.Unknown2 as JavaUnknown\n\nclass Baz {"
+                    },
+                    "sourceLanguage": "kotlin"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testUnresolved imports",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "29a5fe055ca87a26",
+              "equalIndicator/v1": "789d05f72aaaaaf4c3a152761321450bf038994fc02d699dcde4054fe1cfb74f"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "tags": [
+                "kotlin"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

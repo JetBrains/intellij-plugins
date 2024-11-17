@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
 import kotlinx.coroutines.CoroutineScope;
@@ -211,6 +212,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
 
   @Override
   protected void beforeContentsChange(@NotNull List<VFileContentChangeEvent> events) {
+    List<VirtualFile> files = new ArrayList<>(events.size());
     for (VFileContentChangeEvent event : events) {
       VirtualFile file = event.getFile();
       updateLastUnchangedContent(file, myChangeListManager);
@@ -218,26 +220,38 @@ public final class PerforceVFSListener extends VcsVFSListener {
       if (!event.isFromRefresh() && myChangeListManager.getStatus(file) == FileStatus.NOT_CHANGED) {
         final P4Connection connection = PerforceConnectionManager.getInstance(myProject).getConnectionForFile(file);
         if (connection != null && PerforceChangeProvider.isAllWriteWorkspace(connection, myProject)) {
-          asyncEdit(file);
+          files.add(file);
         }
       }
     }
+
+    if (!files.isEmpty()) {
+      asyncEdit(files);
+    }
   }
 
-  private void asyncEdit(VirtualFile file) {
-    final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
-    if (vcs.getAsyncEditedFiles().contains(file)) {
+  private void asyncEdit(@NotNull List<VirtualFile> files) {
+    PerforceVcs vcs = PerforceVcs.getInstance(myProject);
+    Set<VirtualFile> exisingAsyncEditedFiles = vcs.getAsyncEditedFiles();
+    VirtualFile[] notEditedFiles = ContainerUtil.filter(files, f -> !exisingAsyncEditedFiles.contains(f)).toArray(VirtualFile[]::new);
+    if (notEditedFiles.length == 0) {
       return;
     }
 
-    vcs.startAsyncEdit(file);
+    vcs.startAsyncEdit(notEditedFiles);
 
-    P4EditOperation op = new P4EditOperation(myChangeListManager.getDefaultListName(), file);
-    op.setSuppressErrors(true);
+    List<P4EditOperation> operations = new ArrayList<>(notEditedFiles.length);
+    for (VirtualFile file : notEditedFiles) {
+      P4EditOperation op = new P4EditOperation(myChangeListManager.getDefaultListName(), file);
+      op.setSuppressErrors(true);
+      operations.add(op);
+    }
     VcsOperationLog.getInstance(myProject).queueOperations(
-      Collections.singletonList(op),
+      operations,
       PerforceBundle.message("progress.title.running.perforce.commands"),
-      PerformInBackgroundOption.ALWAYS_BACKGROUND);
+      PerformInBackgroundOption.ALWAYS_BACKGROUND,
+      () -> vcs.refreshFiles(notEditedFiles)
+    );
   }
 
   public static void updateLastUnchangedContent(VirtualFile file, final ChangeListManager changeListManager) {

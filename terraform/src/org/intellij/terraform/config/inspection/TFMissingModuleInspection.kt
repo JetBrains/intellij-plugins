@@ -1,13 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-
-
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.*
 import com.intellij.execution.ExecutionException
-import com.intellij.execution.RunManager
-import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
@@ -21,13 +17,14 @@ import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.model.ModuleDetectionUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.config.util.TFExecutorService
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.isTerraformCompatiblePsiFile
-import org.intellij.terraform.runtime.TerraformRunConfiguration
-import org.intellij.terraform.runtime.tfRunConfigurationType
 import org.jetbrains.annotations.NonNls
 
 class TFMissingModuleInspection : LocalInspectionTool() {
@@ -68,48 +65,52 @@ class TFMissingModuleInspection : LocalInspectionTool() {
 
     ProgressIndicatorProvider.checkCanceled()
 
+    val applicableToolType = getApplicableToolType(block.project, directory.virtualFile)
+
     holder.registerProblem(block, HCLBundle.message("missing.module.inspection.missing.module.error.message", err),
                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                           *listOfNotNull(RunTerraformGetFix(directory.name),
+                           *listOfNotNull(RunTFToolGetFix(directory.name, applicableToolType.executableName),
                                           TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
     )
   }
 }
 
 
-class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
+class RunTFToolGetFix(private val directoryName: String, private val executableName: String) : LocalQuickFix {
+
   companion object {
-    private val LOG = Logger.getInstance(RunTerraformGetFix::class.java)
+    private val LOG = Logger.getInstance(RunTFToolGetFix::class.java)
   }
 
-  override fun getName(): String = HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.name", directoryName)
+  override fun getName(): String = HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.name", directoryName, executableName)
 
-  override fun getFamilyName(): String = HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.family.name")
+  override fun getFamilyName(): String = HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.family.name", executableName)
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     val block = descriptor.psiElement as? HCLBlock ?: return
     val dir = block.containingFile?.containingDirectory ?: return
 
-    val manager = RunManager.getInstance(project)
-    val configurationSettings = manager.createConfiguration("terraform get in ${dir.name}", tfRunConfigurationType().baseFactory)
-    configurationSettings.isTemporary = true
-    val configuration = configurationSettings.configuration as TerraformRunConfiguration
     val vf = dir.virtualFile
     if (vf.fileSystem !is LocalFileSystem) {
       LOG.warn("Cannot run on non-local FS: $vf")
       return
     }
-    configuration.programParameters = "get"
-    configuration.workingDirectory = vf.path
-
+    val toolType = getApplicableToolType(block.project, vf)
     try {
-      ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configurationSettings).buildAndExecute()
+      project.service<TFExecutorService>().executeInBackground(
+        TFExecutor.`in`(project, toolType)
+          .withWorkDirectory(vf.path)
+          .withParameters("get")
+          .withPresentableName("${toolType.executableName} get")
+          .showOutputOnError()
+          .showNotifications(true, false)
+      )
     }
     catch (e: ExecutionException) {
-      LOG.warn("Failed to run 'terraform get': ${e.message}", e)
+      LOG.warn("Failed to run '${toolType.executableName} get': ${e.message}", e)
       Messages.showMessageDialog(project,
-                                 HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.failure.message", e.message),
-                                 HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.failure.title"),
+                                 HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.failure.message", e.message, toolType.executableName),
+                                 HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.failure.title", toolType.displayName),
                                  Messages.getErrorIcon())
     }
   }

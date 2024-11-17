@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonToken;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.openapi.application.ReadAction;
@@ -43,7 +44,7 @@ public final class PrettierUtil {
   public static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
   public static final String RC_FILE_NAME = ".prettierrc";
   public static final String CONFIG_FILE_NAME = "prettier.config";
-  private static final String IGNORE_FILE_NAME = ".prettierignore";
+  static final String IGNORE_FILE_NAME = ".prettierignore";
 
   /**
    * <a href="https://github.com/prettier/prettier/blob/main/docs/configuration.md">github.com/prettier/prettier/blob/main/docs/configuration.md</a>
@@ -97,13 +98,6 @@ public final class PrettierUtil {
     return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
   }
 
-  @Nullable
-  public static VirtualFile findIgnoreFile(@NotNull VirtualFile source, @NotNull Project project) {
-    VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(source);
-    VirtualFile rootDir = packageJson != null ? packageJson.getParent() : project.getBaseDir();
-    return rootDir == null ? null : rootDir.findChild(IGNORE_FILE_NAME);
-  }
-
   @NotNull
   public static Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
     HashSet<VirtualFile> results = new HashSet<>();
@@ -115,6 +109,27 @@ public final class PrettierUtil {
       addPossibleConfigsForFile(file, results, baseDir);
     }
     return results;
+  }
+
+  public static boolean isFormattingAllowedForFile(@NotNull Project project, @NotNull VirtualFile file) {
+    var configuration = PrettierConfiguration.getInstance(project);
+
+    if (!GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file)) {
+      return false;
+    }
+
+    if (!configuration.getFormatFilesOutsideDependencyScope()) {
+      return findPackageJsonWithPrettierUpTree(project, file) != null;
+    }
+
+    return true;
+  }
+
+  public static @Nullable PackageJsonData findPackageJsonWithPrettierUpTree(@NotNull Project project, @NotNull VirtualFile file) {
+    return PackageJsonUtil.processUpPackageJsonFilesAndFindFirst(project, file, packageJson -> {
+      var data = PackageJsonData.getOrCreate(packageJson);
+      return data.isDependencyOfAnyType(PACKAGE_NAME) ? data : null;
+    });
   }
 
   private static void addPossibleConfigsForFile(@NotNull VirtualFile from, @NotNull Set<VirtualFile> result, @NotNull VirtualFile baseDir) {

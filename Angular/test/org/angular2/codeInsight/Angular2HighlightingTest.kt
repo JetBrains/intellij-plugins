@@ -150,8 +150,15 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     myFixture.testRainbow("colors.html", FileUtil.loadFile(File("$testDataPath/$testName/colors.html")), true, true)
   }
 
-  // TODO WEB-67260 - improve error highlighting
-  fun _testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
+  fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testBlockDeferHydrateNg18() {
+    checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
+  }
+
+  fun testBlockDeferHydrateNg19() {
+    checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, extension = "ts")
+  }
 
   fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
@@ -261,6 +268,13 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testTuiLet() =
     checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testTypeofNg18() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "typeof.html")
+
+  fun testTypeofNg19() =
+    checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, dir = true, configureFileName = "typeof.html")
+
 
   override fun setUp() {
     super.setUp()

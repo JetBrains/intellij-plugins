@@ -1,0 +1,12 @@
+name: "My custom profile"
+
+baseProfile: qodana.recommended
+
+include:
+  - ".qodana/profiles/other-profile.yaml" # The included file becomes part of this profile
+
+inspections:
+  - inspection: UNUSED_IMPORT
+    enabled: true
+  - inspection: testNameeeeeeeeeeeeeeeeeeee
+    enabled: true

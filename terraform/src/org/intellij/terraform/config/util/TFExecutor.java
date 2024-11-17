@@ -17,9 +17,11 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
-import org.intellij.terraform.runtime.TerraformPathDetector;
+import org.intellij.terraform.install.TfToolType;
+import org.intellij.terraform.runtime.ToolPathDetector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,14 +46,17 @@ public final class TFExecutor {
   private @Nullable @Nls String myPresentableName;
   private OSProcessHandler myProcessHandler;
   private final Collection<ProcessListener> myProcessListeners = new ArrayList<>();
+  private final TfToolType myToolType;
 
-  private TFExecutor(@NotNull Project project) {
+  private TFExecutor(@NotNull Project project, TfToolType toolType) {
     myProject = project;
-    myExePath = TerraformPathDetector.Companion.getInstance(myProject).getActualTerraformPath();
+    myToolType = toolType;
+    ToolPathDetector pathDetector = toolType.getPathDetector(project);
+    myExePath = pathDetector.actualPath();
   }
 
-  public static @NotNull TFExecutor in(@NotNull Project project) {
-    return new TFExecutor(project);
+  public static @NotNull TFExecutor in(@NotNull Project project, TfToolType toolType) {
+    return new TFExecutor(project, toolType);
   }
 
   public @NotNull TFExecutor withPresentableName(@Nullable @Nls String presentableName) {
@@ -116,12 +121,16 @@ public final class TFExecutor {
     return this;
   }
 
+  public @Nullable String getWorkDirectory() {
+    return myWorkDirectory;
+  }
+
   public boolean execute() {
     return execute(new ExecutionModes.SameThreadMode(getPresentableName()));
   }
 
+  @RequiresBackgroundThread
   public boolean execute(ExecutionMode executionMode) {
-    ApplicationManager.getApplication().assertIsNonDispatchThread();
     Logger.getInstance(getClass()).assertTrue(myProcessHandler == null, "Process has already run with this executor instance");
     final Ref<Boolean> result = Ref.create(false);
     GeneralCommandLine commandLine = null;
@@ -228,7 +237,7 @@ public final class TFExecutor {
     return commandLine;
   }
 
-  private @NotNull @Nls String getPresentableName() {
-    return ObjectUtils.notNull(myPresentableName, HCLBundle.message("terraform.name.lowercase"));
+  @NotNull @Nls String getPresentableName() {
+    return ObjectUtils.notNull(myPresentableName, myToolType.getDisplayName());
   }
 }

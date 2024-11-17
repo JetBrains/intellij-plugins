@@ -12,14 +12,20 @@ import com.intellij.openapi.vcs.actions.commit.AbstractCommitChangesAction
 import com.intellij.openapi.vcs.changes.*
 import com.intellij.util.containers.MultiMap
 import com.intellij.vcsUtil.VcsUtil
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.*
 import org.jetbrains.idea.perforce.operations.RefreshForVcs
 import org.jetbrains.idea.perforce.perforce.P4File
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
+import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 
 class ShelveAction : AbstractCommitChangesAction() {
+
+  companion object {
+    internal const val P4SHELF_EXECUTOR_ID = "Perforce.Shelf.Executor"
+  }
 
   override fun update(e: AnActionEvent) {
     val changes = e.getData(VcsDataKeys.CHANGES)
@@ -68,7 +74,9 @@ class ShelveAction : AbstractCommitChangesAction() {
 
           runner.reopen(connection, list, p4Paths)
           runner.shelve(connection, list, p4Paths)
-          runner.revertAll(p4Paths, connection)
+          if (PerforceSettings.getSettings(project).REVERT_FILES_AFTER_SHELF) {
+            runner.revertAll(p4Paths, connection)
+          }
 
           for (file in filePaths.map { it.ioFile }) {
             if (addedChanges.contains(file)) {
@@ -112,6 +120,8 @@ class ShelveAction : AbstractCommitChangesAction() {
   }
 
   private class P4ShelveCommitExecutor(private val project: Project) : CommitExecutor {
+    override fun getId(): @NonNls String = P4SHELF_EXECUTOR_ID
+
     override fun getActionText(): String = PerforceBundle.message("shelve")
 
     override fun createCommitSession(commitContext: CommitContext): CommitSession {

@@ -1,0 +1,27 @@
+<idea-plugin package="org.jetbrains.qodana.go">
+  <dependencies>
+    <plugin id="com.intellij.modules.lang" />
+    <plugin id="org.jetbrains.plugins.go" />
+    <module name="intellij.qodana.coverage"/>
+    <module name="intellij.go.coverage" />
+    <module name="intellij.platform.collaborationTools"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <reportMetadataArtifact implementation="org.jetbrains.qodana.go.GoCoverageReportMetadataArtifact"/>
+    <workflowExtension implementation="org.jetbrains.qodana.go.GoSdkWorkflowExtension"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.go.GoCoverageArtifactProcessor"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <globalInspection hasStaticDescription="true"
+                      language="go"
+                      shortName="GoCoverageInspection"
+                      key="check.go.display.name"
+                      bundle="messages.QodanaBundle"
+                      groupKey="coverage.group.display.name"
+                      enabledByDefault="true"
+                      implementationClass="org.jetbrains.qodana.go.GoCoverageInspection"/>
+  </extensions>
+</idea-plugin>
