@@ -1,0 +1,3 @@
+- name: lib/tsr.jar
+  modules:
+  - name: intellij.tsr

@@ -1,0 +1,134 @@
+{
+  parserClass="com.intellij.tsr.parser.TslParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Tsl"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.tsr.psi"
+  psiImplPackage="com.intellij.tsr.psi.impl"
+
+  elementTypeHolderClass="com.intellij.tsr.psi.TslTokenTypes"
+  elementTypeClass="com.intellij.tsr.psi.TslElementType"
+  tokenTypeClass="com.intellij.tsr.psi.TslTokenType"
+  psiImplUtilClass="com.intellij.tsr.psi.TslPsiUtils"
+  tokens = [
+    LBRACKET='['
+    RBRACKET=']'
+    LPARENTH='('
+    RPARENTH=')'
+    LBRACE='{'
+    RBRACE='}'
+    COMMA=','
+    COLON=':'
+    TRUE='true'
+    FALSE='false'
+    NULL='null'
+    ASSIGN='='
+    DOT='.'
+    DASH='-'
+    PLUS='+'
+    STAR='*'
+    SHARP='#'
+    DOLLAR='$'
+    COLON=':'
+    SEMICOLON=';'
+    PERCENT='%'
+    SLASH='/'
+    BACKSLASH='\'
+  ]
+}
+
+root ::= value
+
+value ::= fallbackStringLiteral |
+    stringLiteral | numberLiteral | booleanLiteral | nullLiteral | objectRef |
+    objectBrace | objectParenth | objectBracket |
+    objectId | list | map |
+
+objectRef ::= IDENTIFIER STRUDEL_HEX {
+    pin = 2
+    extends = value
+}
+
+objectId ::= IDENTIFIER {
+    extends = value
+}
+
+private propertiesList ::= propertyKeyValue*
+
+propertyKeyValue ::= propertyKey ASSIGN value (COMMA|&(RPARENTH|RBRACKET|RBRACE)) {
+    pin = 2
+    recoverWhile = notRCloseOrNextValue
+}
+
+fake object ::= objectName propertiesList? {
+    extends = value
+}
+
+objectParenth ::= objectName LPARENTH propertiesList RPARENTH {
+    pin = 2
+    extends = object
+}
+
+objectBrace ::= objectName LBRACE propertiesList RBRACE {
+    pin = 2
+    extends = object
+}
+
+objectBracket ::= objectName LBRACKET propertiesList RBRACKET {
+    pin = 2
+    extends = object
+}
+
+objectName ::= IDENTIFIER
+
+propertyKey ::= IDENTIFIER
+
+list ::= LBRACKET listItem* RBRACKET {
+    pin = 1
+    extends = value
+}
+
+private listItem ::= value (COMMA|&RBRACKET) {
+    pin = 1
+    recoverWhile = notRBracketOrNextValue
+}
+
+map ::= LBRACE mapItem* RBRACE {
+    pin = 1
+}
+
+mapItem ::= mapKey ASSIGN value (COMMA|&RBRACE) {
+    pin = 2
+    recoverWhile = notRBraceOrNextValue
+}
+
+mapKey ::= nullLiteral | booleanLiteral | numberLiteral | objectRef | fallbackStringLiteral | objectId
+
+booleanLiteral ::= TRUE | FALSE {
+    extends = value
+}
+
+numberLiteral ::= NUMBER {
+    extends = value
+}
+
+stringLiteral ::= DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING {
+    extends = value
+}
+
+fallbackStringLiteral ::= fallbackItem fallbackItem+ {
+    pin = 2
+    extends = value
+}
+
+private fallbackItem ::= IDENTIFIER | NUMBER | TRUE | FALSE | NULL | DOT | DASH | PLUS | STAR | SHARP | SEMICOLON | PERCENT | SLASH | BACKSLASH
+
+nullLiteral ::= NULL {
+    extends = value
+}
+
+private notRBracketOrNextValue ::= !(RBRACKET|value)
+private notRBraceOrNextValue ::= !(RBRACE|value)
+private notRCloseOrNextValue ::= !(RPARENTH|RBRACE|RBRACKET|value)
