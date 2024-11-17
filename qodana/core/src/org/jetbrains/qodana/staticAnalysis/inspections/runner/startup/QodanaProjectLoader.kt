@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.serviceAsync
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
@@ -45,10 +46,10 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
+private const val LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES = "qodana.log.configuration.period.minutes"
 private const val REGISTRY_STARTUP_TIMEOUT_MINUTES = "batch.inspections.startup.activities.timeout"
 
 class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
-
   suspend fun openProject(config: QodanaConfig): Project {
     QodanaWorkflowExtension.callBeforeProjectOpened(config)
 
@@ -153,11 +154,14 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       }
       launch {
         while (true) {
-          delay(10.minutes)
-          reporter.reportMessage(1, buildString {
-            appendLine("Currently awaited activities:")
-            appendLine(Observation.dumpAwaitedActivitiesToString())
-          })
+          val logPeriodMinutes = System.getProperty(LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES, "10").toInt()
+          delay(logPeriodMinutes.minutes)
+          logger<QodanaProjectLoader>().info(
+            buildString {
+              appendLine("Awaited configuration activities:")
+              appendLine(Observation.dumpAwaitedActivitiesToString())
+            }
+          )
         }
       }
     }
