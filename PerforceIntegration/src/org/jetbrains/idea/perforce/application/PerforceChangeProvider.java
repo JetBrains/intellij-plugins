@@ -96,7 +96,7 @@ public class PerforceChangeProvider implements ChangeProvider {
     MultiMap<ConnectionKey, PerforceChangeList> allLists = calcChangeListMap(changeCache);
     PerforceSettings settings = PerforceSettings.getSettings(myProject);
     HashSet<String> ideaLists = new HashSet<>();
-    refreshSynchronizer(addGate, allLists, ideaLists);
+    refreshSynchronizer(settings, addGate, allLists, ideaLists);
     if (settings.FORCE_SYNC_CHANGELISTS) {
       removeUnsyncedIdeaChangelists(addGate, ideaLists);
     }
@@ -289,11 +289,12 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
   }
 
-  private void refreshSynchronizer(final ChangeListManagerGate addGate, final MultiMap<ConnectionKey, PerforceChangeList> allLists, Set<String> ideaLists) {
+  private void refreshSynchronizer(final PerforceSettings settings, final ChangeListManagerGate addGate, final MultiMap<ConnectionKey, PerforceChangeList> allLists, Set<String> ideaLists) {
     for (final ConnectionKey key : allLists.keySet()) {
       Collection<PerforceChangeList> lists = allLists.get(key);
       Set<String> disappearedLists = mySynchronizer.acceptInfo(key, lists, addGate, ideaLists);
-      tryRestoreDefaultChangelist(addGate, disappearedLists);
+      if (settings.FORCE_SYNC_CHANGELISTS)
+        tryRestoreDefaultChangelist(addGate, disappearedLists);
 
       addGate.setListsToDisappear(disappearedLists);
     }
