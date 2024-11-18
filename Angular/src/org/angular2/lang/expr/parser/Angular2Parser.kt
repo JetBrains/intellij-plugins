@@ -4,7 +4,6 @@ package org.angular2.lang.expr.parser
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.WhitespacesBinders
-import com.intellij.lang.ecmascript6.ES6StubElementTypes
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.parsing.*
 import com.intellij.openapi.util.Ref
@@ -388,7 +387,7 @@ class Angular2Parser private constructor(
         val ref = builder.mark()
         builder.advanceLexer()
         ref.done(JSElementTypes.REFERENCE_EXPRESSION)
-        property.done(ES6StubElementTypes.ES6_PROPERTY)
+        property.done(JSStubElementTypes.ES6_PROPERTY)
         return true
       }
       if (Angular2ElementTypes.PROPERTY_NAMES.contains(firstToken)) {
