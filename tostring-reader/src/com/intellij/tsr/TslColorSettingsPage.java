@@ -42,22 +42,23 @@ final class TslColorSettingsPage implements ColorSettingsPage {
 
   @Override
   public @NonNls @NotNull String getDemoText() {
-    return "[\n" +
-        "  <className>Order</className>(\n" +
-        "    <fieldName>productType</fieldName>=<const>USED</const>,\n" +
-        "    <fieldName>name</fieldName>='Some',\n" +
-        "    <fieldName>price</fieldName>=10.0,\n" +
-        "    <fieldName>required</fieldName>=true,\n" +
-        "    <fieldName>ref</fieldName>=null,\n" +
-        "    <fieldName>product</fieldName>=<className>Product</className>{\n" +
-        "      <fieldName>productType</fieldName>=<const>USED</const>,\n" +
-        "      <fieldName>name</fieldName>='Some',\n" +
-        "      <fieldName>user</fieldName>=com.example.User@12fea9,\n" +
-        "      <fieldName>price</fieldName>=10.0,\n" +
-        "      <fieldName>count</fieldName>=100\n" +
-        "    }\n" +
-        "  )\n" +
-        "]";
+    return """
+      [
+        <className>Order</className>(
+          <fieldName>productType</fieldName>=<const>USED</const>,
+          <fieldName>name</fieldName>='Some',
+          <fieldName>price</fieldName>=10.0,
+          <fieldName>required</fieldName>=true,
+          <fieldName>ref</fieldName>=null,
+          <fieldName>product</fieldName>=<className>Product</className>{
+            <fieldName>productType</fieldName>=<const>USED</const>,
+            <fieldName>name</fieldName>='Some',
+            <fieldName>user</fieldName>=com.example.User@12fea9,
+            <fieldName>price</fieldName>=10.0,
+            <fieldName>count</fieldName>=100
+          }
+        )
+      ]""";
   }
 
   @Override
