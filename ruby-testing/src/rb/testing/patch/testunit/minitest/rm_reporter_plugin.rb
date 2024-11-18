@@ -218,7 +218,7 @@ module Minitest
       debug("Starting test #{class_name}.#{test_name}")
       first_in_suite = @test_data[class_name].empty?
       test_data = @test_data[class_name][test_name]
-      test_data.klass = klass
+      test_data.klass = klass if klass.class <= Class
       suite_started(class_name, test_data.class_location) if first_in_suite
       send_service_message(Rake::TeamCity::MessageFactory.create_test_started(normalize(test_name), test_data.location, class_name, test_data.fqn))
       debug("Test started: #{test_data.fqn} from #{test_data.location}")
