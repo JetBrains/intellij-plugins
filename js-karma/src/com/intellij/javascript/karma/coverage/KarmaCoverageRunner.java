@@ -31,7 +31,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
     Path localProjectRoot = myLocalProjectRoot;
     if (localProjectRoot != null) {
       try {
-        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localProjectRoot.toFile(), myTargetRun);
+        return CoverageProjectDataLoader.readProjectData(sessionDataFile.toPath(), localProjectRoot, myTargetRun);
       }
       catch (Exception e) {
         LOG.warn("Can't read coverage data", e);
