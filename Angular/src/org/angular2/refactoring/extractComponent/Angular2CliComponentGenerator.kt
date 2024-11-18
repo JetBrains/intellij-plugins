@@ -140,7 +140,7 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: throw Exception("Node interpreter not found")
     val module = findCliPackage(cliDir) ?: throw Exception("Angular CLI package not found")
 
-    val binPath = NodePackage(module.virtualFile!!.path).findBinFile("ng", null)?.absolutePath
+    val binPath = NodePackage(module.virtualFile!!.path).findBinFilePath("ng")?.toString()
     if (binPath == null) {
       throw Exception("Executable not found")
     }

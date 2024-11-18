@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.EXCLUDED_WWW_DIRECTORY;
@@ -51,8 +51,8 @@ public final class CordovaProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   protected String[] generatorArgs(Project project, VirtualFile dir, Settings settings) {
     NodePackage aPackage = settings.myPackage;
-    File file = settings.myPackage.findBinFile(aPackage.getName(), null);
-    String path = file == null ? aPackage.getName() : file.getPath();
+    Path file = settings.myPackage.findBinFilePath(aPackage.getName());
+    String path = file == null ? aPackage.getName() : file.toString();
     PhoneGapCommandLine commandLine = new PhoneGapCommandLine(path, dir.getPath());
 
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);

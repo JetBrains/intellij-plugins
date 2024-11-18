@@ -307,7 +307,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
         ApplicationManager.getApplication().executeOnPooledThread {
           val handler = NpmPackageProjectGenerator.generate(
             interpreter, NodePackage(module.virtualFile!!.path),
-            { pkg -> pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)!!.absolutePath },
+            { pkg -> pkg.findBinFilePath(AngularCliProjectGenerator.NG_EXECUTABLE)!!.toString() },
             cli, VfsUtilCore.virtualToIoFile(cli),
             project, { GistManager.getInstance().invalidateData() },
             Angular2Bundle.message("angular.action.ng-add.installing-for", packageSpec, cli.name),

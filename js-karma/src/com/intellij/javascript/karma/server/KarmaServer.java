@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -225,11 +226,11 @@ public final class KarmaServer {
         ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
       }
       else {
-        File nxMainFile = pkg.findBinFile("nx", "./bin/nx.js");
+        Path nxMainFile = pkg.findBinFilePath("nx", "./bin/nx.js");
         if (nxMainFile == null) {
           throw new ExecutionException("Cannot find nx binary for " + pkg.getSystemDependentPath()); //NON-NLS
         }
-        commandLine.addParameter(targetRun.path(nxMainFile.toPath()));
+        commandLine.addParameter(targetRun.path(nxMainFile));
       }
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("nx", "test");
