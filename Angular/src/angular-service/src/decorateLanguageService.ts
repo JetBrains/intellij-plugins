@@ -152,7 +152,8 @@ export function decorateNgLanguageServiceExtensions(
 }
 
 function searchExternalFilesPatched(ts: typeof TS, project: TS.server.Project, exts: string[]): string[] {
-  if (project.projectKind !== ts.server.ProjectKind.Configured) {
+  if (project.projectKind !== ts.server.ProjectKind.Configured
+    || (project.getProjectReferences()?.length ?? 0) > 0) {
     return [];
   }
   const parseHost: TS.ParseConfigHost = {
