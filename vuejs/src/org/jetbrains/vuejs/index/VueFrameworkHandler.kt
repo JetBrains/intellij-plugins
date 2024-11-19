@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.index
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.ecmascript6.ES6StubElementTypes
 import com.intellij.lang.ecmascript6.psi.*
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.*
@@ -83,7 +82,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION,
                                                                 JSStubElementTypes.NEW_EXPRESSION,
                                                                 JSStubElementTypes.ASSIGNMENT_EXPRESSION,
-                                                                ES6StubElementTypes.EXPORT_DEFAULT_ASSIGNMENT)
+                                                                JSStubElementTypes.EXPORT_DEFAULT_ASSIGNMENT)
 
 
   companion object {
@@ -433,7 +432,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val statement = TreeUtil.findParent(node,
                                         expectedLiteralOwnerExpressions,
                                         JSExtendedLanguagesTokenSetProvider.STATEMENTS) ?: return false
-    if (statement.elementType == ES6StubElementTypes.EXPORT_DEFAULT_ASSIGNMENT) return true
+    if (statement.elementType == JSStubElementTypes.EXPORT_DEFAULT_ASSIGNMENT) return true
     val referenceHolder = if (statement.elementType == JSStubElementTypes.ASSIGNMENT_EXPRESSION)
       statement.findChildByType(JSStubElementTypes.DEFINITION_EXPRESSION)
     else statement
