@@ -53,6 +53,12 @@ suspend fun runQodanaConverter(input: QodanaConverterInput): QodanaConverterResu
 }
 
 private fun Path.getChildByRelativePath(childRelativePath: String): Path? {
-  val childFullPath = resolve(childRelativePath)
-  return if (childFullPath.startsWith(this)) childFullPath else null
+  try {
+    val childFullPath = resolve(childRelativePath).toAbsolutePath().normalize()
+    return if (childFullPath.startsWith(this.toAbsolutePath().normalize())) childFullPath else null
+  }
+  catch (_: IOException) {
+    LOG.warn("Failed to load child file: $childRelativePath, parent $this")
+    return null
+  }
 }

@@ -17,7 +17,10 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.file.Files
 import java.util.*
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
   private val activeWebUi: ActiveWebUi by lazy {
@@ -191,6 +194,20 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
         "Sec-Fetch-Site" to "cross-site",
+        "referer" to "http://localhost:63343/qodana.ide/index.html?_qdt=${activeWebUi.token}"
+      )
+    )
+  }
+
+  fun `test 404 file is outside results dir`() = runBlocking {
+    val fileOutsideResultsDir = Files.createTempFile("file-outside-results-dir", ".txt")
+    Assertions.assertThat(fileOutsideResultsDir.exists()).isTrue()
+
+    val relativePath = activeWebUi.qodanaConverterResults.path.relativize(fileOutsideResultsDir)
+    doRequest404(
+      "/api/qodana/resources?file=${relativePath.pathString}",
+      mapOf(
+        "Sec-Fetch-Site" to "same-origin",
         "referer" to "http://localhost:63343/qodana.ide/index.html?_qdt=${activeWebUi.token}"
       )
     )
