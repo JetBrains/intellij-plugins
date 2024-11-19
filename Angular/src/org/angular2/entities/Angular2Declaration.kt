@@ -16,7 +16,7 @@ interface Angular2Declaration : Angular2Entity {
   val isStandalone: Boolean
 
   val allDeclaringModules: Collection<Angular2Module>
-    get() = getDeclarationToModuleMap(sourceElement.project).get(this)
+    get() = getDeclarationToModuleMap(sourceElement).get(this)
       .filter { isStandalone == it.isStandalonePseudoModule }
       .let { Collections.unmodifiableCollection(it) }
 

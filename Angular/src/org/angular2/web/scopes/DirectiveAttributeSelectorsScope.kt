@@ -2,9 +2,10 @@
 package org.angular2.web.scopes
 
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
@@ -19,31 +20,34 @@ import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
 import org.angular2.web.*
 
-class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
+class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
 
   override fun createPointer(): Pointer<out WebSymbolsScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
-      listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, qualifiedName.name))
+      listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(file, qualifiedName.name))
     }
     else emptyList()
 
   override fun equals(other: Any?): Boolean =
     other is DirectiveAttributeSelectorsScope
-    && other.project == project
+    && other.file == file
 
   override fun hashCode(): Int =
-    project.hashCode()
+    file.hashCode()
 
-  class HtmlAttributeDirectiveAttributeSelectorsExtension(project: Project,
-                                                          tagName: String)
-    : WebSymbolsScopeWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
+  class HtmlAttributeDirectiveAttributeSelectorsExtension(
+    file: PsiFile,
+    tagName: String,
+  ) : WebSymbolsScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), WebSymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
       qualifiedKind in providedKinds
@@ -71,7 +75,12 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
 
     override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
       cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+      withTypeEvaluationLocation(dataHolder) {
+        initializeWithTypeLocation(consumer)
+      }
+    }
 
+    private fun initializeWithTypeLocation(consumer: (WebSymbol) -> Unit) {
       val tagName = key
       val isTemplateTag = isTemplateTag(tagName)
       val inputs = HashMap<String, Angular2Symbol>()
@@ -84,7 +93,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
         for (selector in selectors) {
           val attributeCandidates = selector.attributes
           if (attributeCandidates.size == 1) {
-            consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attributeCandidates[0]))
+            consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attributeCandidates[0], dataHolder))
           }
           else {
             CANDIDATES_LOOP@ for (attr in attributeCandidates) {
@@ -94,7 +103,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
                   break@CANDIDATES_LOOP
                 }
               }
-              consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attr))
+              consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attr, dataHolder))
             }
           }
         }
@@ -122,11 +131,11 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
               sequenceOf(inOuts, inputs, attributes, outputs)
                 .mapNotNull { it[attrName] }
                 .forEach {
-                  consumer(Angular2DirectiveSymbolWrapper.create(candidate, it))
+                  consumer(Angular2DirectiveSymbolWrapper.create(candidate, it, dataHolder))
                   addSelector = addSelector && (it !is Angular2DirectiveProperty || it.virtualProperty || (it.qualifiedKind == NG_DIRECTIVE_INPUTS && !it.required))
                 }
               if (addSelector) {
-                consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
+                consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr, dataHolder))
                 if (kind.isStructural && isTemplateTag && !inputs.containsKey(attrName)) {
                   // Add fake input
                   consumer(MappedWebSymbol.create(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
@@ -135,7 +144,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
             }
             for (notSelector in selector.notSelectors) {
               for (attr in notSelector.attributes) {
-                consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
+                consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr, dataHolder))
               }
             }
           }
@@ -155,19 +164,24 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
       val providedKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS, NG_STRUCTURAL_DIRECTIVES,
                                 NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS, NG_DIRECTIVE_ATTRIBUTES)
 
-      private fun fillNamesAndProperties(map: MutableMap<String, Angular2Symbol>,
-                                         propertiesCollection: Collection<Angular2Symbol>) {
+      private fun fillNamesAndProperties(
+        map: MutableMap<String, Angular2Symbol>,
+        propertiesCollection: Collection<Angular2Symbol>,
+      ) {
         map.clear()
         for (item in propertiesCollection) {
           map[item.name] = item
         }
       }
 
-      private fun createAngular2StructuralDirectiveSymbol(directive: Angular2Directive,
-                                                          inputs: HashMap<String, Angular2Symbol>,
-                                                          selector: Angular2DirectiveSelectorSymbol): Angular2Symbol =
-        inputs[selector.name]?.let { Angular2StructuralDirectiveSymbol.create(directive, it, true) }
-        ?: Angular2StructuralDirectiveSymbol.create(directive, selector, inputs.any { it.key.startsWith(selector.name) })
+      private fun createAngular2StructuralDirectiveSymbol(
+        directive: Angular2Directive,
+        inputs: HashMap<String, Angular2Symbol>,
+        selector: Angular2DirectiveSelectorSymbol,
+        location: PsiFile,
+      ): Angular2Symbol =
+        inputs[selector.name]?.let { Angular2StructuralDirectiveSymbol.create(directive, it, true, location) }
+        ?: Angular2StructuralDirectiveSymbol.create(directive, selector, inputs.any { it.key.startsWith(selector.name) }, location)
     }
 
   }

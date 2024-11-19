@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
@@ -132,8 +133,9 @@ object Angular2EntitiesProvider {
      && getPipe(element) != null)
 
   @JvmStatic
-  fun getExportedDeclarationToModuleMap(project: Project): MultiMap<Angular2Declaration, Angular2Module> {
-    return CachedValuesManager.getManager(project).getCachedValue(project) {
+  fun getExportedDeclarationToModuleMap(location: PsiElement): MultiMap<Angular2Declaration, Angular2Module> {
+    val project = location.project
+    return JSTypeEvaluationLocationProvider.getCachedValueOnCurrentTsConfig(location) {
       val result = MultiMap<Angular2Declaration, Angular2Module>()
       getAllModules(project).forEach { module -> module.allExportedDeclarations.forEach { decl -> result.putValue(decl, module) } }
       create(result, PsiModificationTracker.MODIFICATION_COUNT)
@@ -141,8 +143,9 @@ object Angular2EntitiesProvider {
   }
 
   @JvmStatic
-  fun getDeclarationToModuleMap(project: Project): MultiMap<Angular2Declaration, Angular2Module> {
-    return CachedValuesManager.getManager(project).getCachedValue(project) {
+  fun getDeclarationToModuleMap(location: PsiElement): MultiMap<Angular2Declaration, Angular2Module> {
+    val project = location.project
+    return JSTypeEvaluationLocationProvider.getCachedValueOnCurrentTsConfig(location) {
       val result = MultiMap<Angular2Declaration, Angular2Module>()
       getAllModules(project).forEach { module -> module.declarations.forEach { decl -> result.putValue(decl, module) } }
       create(result, PsiModificationTracker.MODIFICATION_COUNT)

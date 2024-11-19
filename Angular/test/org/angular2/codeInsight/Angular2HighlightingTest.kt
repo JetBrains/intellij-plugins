@@ -215,7 +215,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testNgNativeValidate() = checkHighlighting(ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
                                                  extension = "ts")
 
-  fun testStrictNullChecks() = checkHighlighting(dir = true, configureFileName = "src/check.ts")
+  fun testStrictNullChecks() = checkHighlighting(dir = true, configureFileName = "src/check.ts",
+                                                 configurators = listOf())
 
   fun testSetterWithGenericParameter() = checkHighlighting(ANGULAR_CORE_16_2_8,
                                                            strictTemplates = true, extension = "ts")
@@ -249,7 +250,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testPipeOverloadWithUndefined() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
                                                           dir = true, configureFileName = "apps/app.component.html",
-                                                          configurators = listOf(Angular2TsConfigFile()))
+                                                          configurators = listOf())
 
   fun testLetDeclaration() = checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
@@ -261,7 +262,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     }
 
   fun testTsconfigPriority() =
-    checkHighlighting(ANGULAR_CORE_17_3_0, extension = "html", dir = true, configureFileName = "src/component.html")
+    checkHighlighting(ANGULAR_CORE_17_3_0, extension = "html", dir = true, configureFileName = "src/component.html",
+                      configurators = listOf())
 
   fun testDirectiveInputInNgTemplate() =
     checkHighlighting(extension = "ts")

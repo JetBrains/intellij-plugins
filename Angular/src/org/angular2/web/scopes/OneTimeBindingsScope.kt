@@ -65,7 +65,9 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     for (input in queryExecutor
       .runListSymbolsQuery(NG_DIRECTIVE_INPUTS, expandPatterns = false, additionalScope = scope)) {
       if (input.pattern != null) continue
-      val isOneTimeBinding = isOneTimeBindingProperty(input)
+      val isOneTimeBinding = withTypeEvaluationLocation(dataHolder) {
+        isOneTimeBindingProperty(input)
+      }
       if (isStrictTemplates) {
         consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name), !isOneTimeBinding))
       }

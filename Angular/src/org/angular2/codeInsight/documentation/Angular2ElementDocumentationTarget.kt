@@ -109,7 +109,7 @@ class Angular2ElementDocumentationTarget private constructor(
         is Angular2DirectiveExportAs -> null
         else -> element.sourceElement.takeIf { it !is TypeScriptClass }
       }
-      return withTypeEvaluationLocation(source) {
+      return withTypeEvaluationLocation(location?.containingFile ?: source) {
         (buildDefinition() + Angular2ElementDocProvider(buildAdditionalSections()).renderDocComment(source))
           .applyIf(element is Angular2Entity) {
             // remove self links
