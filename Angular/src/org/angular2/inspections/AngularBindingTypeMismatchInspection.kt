@@ -4,7 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.javascript.webSymbols.jsType
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSEmptyExpression
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
@@ -29,7 +29,6 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
-import java.util.function.Supplier
 
 class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
@@ -96,7 +95,7 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
     holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor,
     value: String?, bindingsTypeResolver: BindingsTypeResolver, reportOnValue: Boolean,
   ) {
-    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(attribute, Supplier {
+    withTypeEvaluationLocation(attribute) {
       val valueType = if (value != null)
         JSStringLiteralTypeImpl(value, true, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
       else
@@ -115,6 +114,6 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
                                  highlightType,
                                  *getCreateInputTransformFixes(attribute, "string").toTypedArray())
         }
-    })
+    }
   }
 }

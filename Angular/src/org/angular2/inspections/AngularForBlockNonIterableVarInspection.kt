@@ -4,7 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.psi.JSTypeUtils
@@ -21,7 +21,6 @@ import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
-import java.util.function.Supplier
 
 class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
 
@@ -30,7 +29,7 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
 
       override fun visitBlock(block: Angular2HtmlBlock) {
         if (block.getName() == BLOCK_FOR) {
-          JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(block, Supplier {
+          withTypeEvaluationLocation(block) {
             val expression = block.parameters.getOrNull(0)
               ?.takeIf { it.isPrimaryExpression }
               ?.expression
@@ -39,7 +38,7 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
                                    ?.substitute()
                                    ?.let { JSTypeUtils.removeNullableComponents(it) }
                                    ?.takeIf { !JSTypeUtils.isAnyType(it) }
-                                 ?: return@Supplier
+                                 ?: return@withTypeEvaluationLocation
             val property = expressionType
               .asRecordType(block)
               .let {
@@ -61,7 +60,7 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
                 JSTooltipWithHtmlHighlighter.highlightTypeOrStmt(block.project, "[Symbol.iterator]()")),
                                      ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
             }
-          })
+          }
         }
       }
     }

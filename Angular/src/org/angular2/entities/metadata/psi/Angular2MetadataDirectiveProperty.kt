@@ -3,7 +3,7 @@ package org.angular2.entities.metadata.psi
 
 import com.intellij.javascript.web.js.WebJSTypesUtil.wrapWithUndefinedIfOptional
 import com.intellij.javascript.webSymbols.apiStatus
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
@@ -23,7 +23,6 @@ import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
-import java.util.function.Supplier
 
 class Angular2MetadataDirectiveProperty internal constructor(
   private val myOwner: Angular2MetadataClassBase<*>,
@@ -36,11 +35,11 @@ class Angular2MetadataDirectiveProperty internal constructor(
     lazyNullable { myOwner.getPropertySignature(myFieldName) }
 
   override val rawJsType: JSType?
-    get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(myOwner.typeScriptClass, Supplier {
+    get() = withTypeEvaluationLocation(myOwner.typeScriptClass) {
       mySignature.value?.let {
         Angular2LibrariesHacks.hackQueryListTypeInNgForOf(it.jsType, this)?.wrapWithUndefinedIfOptional(it)
       }
-    })
+    }
 
   override val virtualProperty: Boolean
     get() = mySignature.value == null

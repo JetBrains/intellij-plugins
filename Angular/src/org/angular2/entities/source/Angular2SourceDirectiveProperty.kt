@@ -2,7 +2,7 @@
 package org.angular2.entities.source
 
 import com.intellij.javascript.webSymbols.apiStatus
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardUtil
@@ -30,7 +30,6 @@ import org.angular2.lang.html.tcb.R3Identifiers
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import java.util.*
-import java.util.function.Supplier
 
 abstract class Angular2SourceDirectiveProperty(
   override val owner: TypeScriptClass,
@@ -87,9 +86,9 @@ abstract class Angular2SourceDirectiveProperty(
   override val rawJsType: JSType?
     get() = typeFromSignal
             ?: transformParameterType
-            ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(owner, Supplier {
+            ?: withTypeEvaluationLocation(owner) {
               signature.setterJSType ?: signature.jsType
-            })?.applyIf(signature.isOptional) {
+            }?.applyIf(signature.isOptional) {
               JSTypeGuardUtil.wrapWithUndefined(this, this.getSource())!!
             }
 
@@ -139,12 +138,12 @@ abstract class Angular2SourceDirectiveProperty(
               ?.context?.asSafely<JSObjectLiteralExpression>()
 
   val typeFromSignal: JSType?
-    get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(owner, Supplier {
+    get() = withTypeEvaluationLocation(owner) {
       signature.jsType
         ?.asRecordType()
         ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name)
         ?.jsTypeWithOptionality
-    })
+    }
 
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,

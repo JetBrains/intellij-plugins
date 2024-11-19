@@ -65,7 +65,6 @@ import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.EVENT_EMITTER
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.html.parser.Angular2AttributeType
-import java.util.function.Supplier
 
 class Angular2ExtractComponentHandler : RefactoringActionHandler {
   override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
@@ -348,9 +347,9 @@ class Angular2ExtractComponentHandlerService(
 
     for (attribute in extractedComponent.attributes) {
       val name = attribute.name
-      val type = withTypeEvaluationLocation(componentClass, Supplier {
+      val type = withTypeEvaluationLocation(componentClass) {
         attribute.jsType.getTypeText(JSType.TypeTextFormat.CODE)
-      })
+      }
       val texts = when (attribute.attributeType) {
         Angular2AttributeType.PROPERTY_BINDING -> {
           seenInput = true

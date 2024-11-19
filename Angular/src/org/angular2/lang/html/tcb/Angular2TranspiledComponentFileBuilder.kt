@@ -2,7 +2,7 @@ package org.angular2.lang.html.tcb
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.service.withServiceTraceSpan
@@ -28,7 +28,6 @@ import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
 import java.util.*
-import java.util.function.Supplier
 
 object Angular2TranspiledComponentFileBuilder {
 
@@ -76,9 +75,9 @@ object Angular2TranspiledComponentFileBuilder {
       CachedValuesManager.getCachedValue(cls) {
         val context = getComponentFileCache(cls.containingFile)!!.environment
         CachedValueProvider.Result.create(Angular2EntitiesProvider.getComponent(cls)?.let {
-          JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(cls, Supplier {
+          withTypeEvaluationLocation(cls) {
             Angular2TemplateTranspiler.transpileTemplate(context, it, (index + 1).toString())
-          })
+          }
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }

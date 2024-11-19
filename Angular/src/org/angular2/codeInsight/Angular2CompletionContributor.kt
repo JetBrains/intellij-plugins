@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRI
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.ecmascript6.types.OverloadStrictness
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
@@ -55,7 +55,6 @@ import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.NonNls
-import java.util.function.Supplier
 
 class Angular2CompletionContributor : CompletionContributor() {
   init {
@@ -118,7 +117,7 @@ class Angular2CompletionContributor : CompletionContributor() {
       context: ProcessingContext,
       result: CompletionResultSet,
     ) {
-      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(parameters.originalFile) {
+      withTypeEvaluationLocation(parameters.originalFile) {
         addCompletionsUnderEvalLocation(parameters, context, result)
       }
     }
@@ -244,7 +243,7 @@ class Angular2CompletionContributor : CompletionContributor() {
         val componentContext = componentClass?.context
         if (componentContext != null) {
           val sink = CompletionResultSink(ref, result.prefixMatcher, localNames, false, false)
-          JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(componentClass, Supplier {
+          withTypeEvaluationLocation(componentClass) {
             JSStubBasedPsiTreeUtil.processDeclarationsInScope(componentContext, { element, state ->
               if (element != componentClass)
                 sink.addResult(element, state, null)
@@ -255,7 +254,7 @@ class Angular2CompletionContributor : CompletionContributor() {
               result.addElement(
                 JSCompletionUtil.withJSLookupPriority(wrapWithImportInsertHandler(lookupElement, ref), RELEVANT_NO_SMARTNESS_PRIORITY))
             }
-          })
+          }
         }
 
         // Exports, global symbols and keywords, plus any smart code completions
@@ -267,7 +266,7 @@ class Angular2CompletionContributor : CompletionContributor() {
           }
           if (lookupElement is PrioritizedLookupElement<*> &&
               lookupElement.getUserData<CompletionContributor>(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR)
-                .let { it is JSCompletionContributor || it is JSPatternBasedCompletionContributor}) {
+                .let { it is JSCompletionContributor || it is JSPatternBasedCompletionContributor }) {
             val priority = lookupElement.priority.toInt()
             // Filter out unsupported keywords
             if (priority == NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue || priority == KEYWORDS_PRIORITY.priorityValue) {
