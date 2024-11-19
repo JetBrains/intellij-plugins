@@ -24,8 +24,8 @@ public class CfmlTagDescription {
   private String myDescription = "";
   private final Collection<CfmlAttributeDescription> myAttributes = new LinkedList<>();
   private final Set<String> myAttributesNames = new HashSet<>();
-  private boolean myIsSingle = false;
-  private boolean myIsEndTagRequired = true;
+  private final boolean myIsSingle;
+  private final boolean myIsEndTagRequired;
   private final String myName;
 
   public CfmlTagDescription(String name, boolean isSingle, boolean isEndTagRequired) {

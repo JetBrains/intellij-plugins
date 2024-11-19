@@ -80,13 +80,10 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   @Override
   protected boolean processVariantsInner(PsiScopeProcessor processor) {
     CfmlTypedElement typedOwner = CfmlPsiUtil.getTypedQualifierInner(this);
-    PsiType type = null;
-    if (typedOwner != null) {
-      type = typedOwner.getPsiType();
-    }
-    else {
+    if (typedOwner == null) {
       return processUnqualifiedVariants(processor);
     }
+    PsiType type = typedOwner.getPsiType();
     // CfmlReferenceExpression qualifier = CfmlPsiUtil.getQualifierInner(this);
     if (type instanceof PsiClassType) {
       PsiClass psiClass;

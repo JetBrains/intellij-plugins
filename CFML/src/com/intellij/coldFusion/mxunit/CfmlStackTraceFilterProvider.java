@@ -47,10 +47,6 @@ public final class CfmlStackTraceFilterProvider implements Filter {
     Pattern p = WIN_MXUNIT_PATTERN_ERROR;
     Matcher m = p.matcher(line);
 
-    int numberOfReferenceGroup = 0;
-    String fileName = "";
-    String lineNumberString = "";
-
     if (!m.find()) {
       p = UNIX_MXUNIT_PATTERN_ERROR;
       m = p.matcher(line);
@@ -58,9 +54,9 @@ public final class CfmlStackTraceFilterProvider implements Filter {
         return null;
       }
     }
-    numberOfReferenceGroup = 1;
-    fileName = m.group(2);
-    lineNumberString = m.group(3);
+    int numberOfReferenceGroup = 1;
+    String fileName = m.group(2);
+    String lineNumberString = m.group(3);
 
     if (fileName == null) {
       return null;
