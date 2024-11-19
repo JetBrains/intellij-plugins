@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.scopes
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -44,7 +45,7 @@ class MatchedDirectivesScope(tag: XmlTag)
       .matched.forEach { directive ->
         directive.exportAs.forEach { consumer(it.value) }
         collectSymbols(directive) { symbol ->
-          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, WebSymbol.Priority.HIGHEST))
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, WebSymbol.Priority.HIGHEST))
         }
       }
   }
@@ -54,11 +55,13 @@ class MatchedDirectivesScope(tag: XmlTag)
       return
     }
 
-    directive.inOuts.forEach(consumer)
-    directive.inputs.forEach(consumer)
-    directive.outputs.forEach(consumer)
-    directive.attributes.forEach(consumer)
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(dataHolder) {
+      directive.inOuts.forEach(consumer)
+      directive.inputs.forEach(consumer)
+      directive.outputs.forEach(consumer)
+      directive.attributes.forEach(consumer)
 
-    Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
+      Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
+    }
   }
 }

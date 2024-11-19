@@ -48,8 +48,8 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     else emptyList()
 
   private fun calculateHtmlScopes(element: XmlElement): MutableList<WebSymbolsScope> {
-    val result = mutableListOf(DirectiveElementSelectorsScope(element.project),
-                               DirectiveAttributeSelectorsScope(element.project))
+    val result = mutableListOf(DirectiveElementSelectorsScope(element.containingFile),
+                               DirectiveAttributeSelectorsScope(element.containingFile))
 
     if (element is XmlAttributeValue || element is XmlAttribute || element is XmlTag) {
       element.parentOfType<XmlTag>(withSelf = true)?.let {
@@ -70,8 +70,8 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   private fun calculateCssScopes(element: CssElement): List<WebSymbolsScope> =
-    listOf(DirectiveElementSelectorsScope(element.project),
-           DirectiveAttributeSelectorsScope(element.project))
+    listOf(DirectiveElementSelectorsScope(element.containingFile),
+           DirectiveAttributeSelectorsScope(element.containingFile))
 
   private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
     when (element) {

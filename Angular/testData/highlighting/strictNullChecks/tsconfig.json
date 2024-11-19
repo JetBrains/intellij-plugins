@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "strict": false
+  },
+  "include": [
+    "*.ts"
+  ]
+}

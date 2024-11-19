@@ -19,15 +19,18 @@ import org.angular2.entities.*
 class Angular2DeclarationsScope {
 
   constructor(element: PsiElement) {
+    this.location = element
     this.scope = createScope(element)
     this.fileIndex = NotNullLazyValue.createValue { ProjectRootManager.getInstance(element.project).fileIndex }
   }
 
   constructor(component: Angular2Component) {
-    this.scope = createScope(component.templateFile)
+    this.location = component.templateFile
+    this.scope = createScope(location)
     this.fileIndex = NotNullLazyValue.createValue { ProjectRootManager.getInstance(component.sourceElement.project).fileIndex }
   }
 
+  private val location: PsiElement?
   private val scope: NotNullLazyValue<ScopeResult>
   private val export2NgModuleMap: HashMap<Project, MultiMap<Angular2Declaration, Angular2Module>> = HashMap()
   private val fileIndex: NotNullLazyValue<ProjectFileIndex>
@@ -49,7 +52,9 @@ class Angular2DeclarationsScope {
 
   fun getPublicModulesExporting(declaration: Angular2Declaration): List<Angular2Module> {
     return export2NgModuleMap
-      .computeIfAbsent(declaration.sourceElement.project) { Angular2EntitiesProvider.getExportedDeclarationToModuleMap(it) }
+      .computeIfAbsent(declaration.sourceElement.project) {
+        Angular2EntitiesProvider.getExportedDeclarationToModuleMap(location ?: declaration.sourceElement)
+      }
       .get(declaration)
       .filter { it.isPublic && it.entitySource != null && it.isStandalonePseudoModule == declaration.isStandalone }
   }
@@ -64,7 +69,7 @@ class Angular2DeclarationsScope {
     }
 
     val modules = export2NgModuleMap.computeIfAbsent(declaration.sourceElement.project) {
-      Angular2EntitiesProvider.getExportedDeclarationToModuleMap(it)
+      Angular2EntitiesProvider.getExportedDeclarationToModuleMap(location ?: declaration.sourceElement)
     }.get(declaration)
     if (modules.isEmpty()) {
       if (!isInSource(declaration)) {

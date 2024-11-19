@@ -1,12 +1,15 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
@@ -19,19 +22,24 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import java.util.*
 
-open class Angular2DirectiveSymbolWrapper private constructor(val directive: Angular2Directive,
-                                                              delegate: Angular2Symbol,
-                                                              private val forcedPriority: WebSymbol.Priority? = null)
-  : Angular2SymbolDelegate<Angular2Symbol>(delegate) {
+open class Angular2DirectiveSymbolWrapper private constructor(
+  val directive: Angular2Directive,
+  delegate: Angular2Symbol,
+  private val forcedPriority: WebSymbol.Priority? = null,
+  private val location: PsiFile,
+) : Angular2SymbolDelegate<Angular2Symbol>(delegate) {
 
   companion object {
     @JvmStatic
-    fun create(directive: Angular2Directive,
-               delegate: Angular2Symbol,
-               forcedPriority: WebSymbol.Priority? = null): Angular2DirectiveSymbolWrapper =
+    fun create(
+      directive: Angular2Directive,
+      delegate: Angular2Symbol,
+      location: PsiFile,
+      forcedPriority: WebSymbol.Priority? = null,
+    ): Angular2DirectiveSymbolWrapper =
       when (delegate) {
-        is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority)
-        else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority)
+        is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location)
+        else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location)
       }
   }
 
@@ -39,10 +47,11 @@ open class Angular2DirectiveSymbolWrapper private constructor(val directive: Ang
     get() = forcedPriority ?: super.priority
 
   override val attributeValue: WebSymbolHtmlAttributeValue?
-    get() = if (delegate is Angular2DirectiveSelectorSymbol) {
+    get() = if (delegate is Angular2DirectiveSelectorSymbol)
       WebSymbolHtmlAttributeValue.create(required = false)
+    else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
+      super.attributeValue
     }
-    else super.attributeValue
 
   override fun createPointer(): Pointer<out Angular2SymbolDelegate<Angular2Symbol>> =
     createPointer(::Angular2DirectiveSymbolWrapper)
@@ -78,24 +87,31 @@ open class Angular2DirectiveSymbolWrapper private constructor(val directive: Ang
     Objects.hash(directive, delegate)
 
   protected fun <T : Angular2DirectiveSymbolWrapper> createPointer(
-    create: (directive: Angular2Directive,
-             delegate: Angular2Symbol,
-             forcedPriority: WebSymbol.Priority?) -> T
+    create: (
+      directive: Angular2Directive,
+      delegate: Angular2Symbol,
+      forcedPriority: WebSymbol.Priority?,
+      location: PsiFile,
+    ) -> T,
   ): Pointer<T> {
     val directivePtr = directive.createPointer()
     val delegatePtr = delegate.createPointer()
     val forcedPriority = this.forcedPriority
+    val locationPtr = location.createSmartPointer()
     return Pointer {
       val directive = directivePtr.dereference() ?: return@Pointer null
       val delegate = delegatePtr.dereference() ?: return@Pointer null
-      create(directive, delegate, forcedPriority)
+      val location = locationPtr.dereference() ?: return@Pointer null
+      create(directive, delegate, forcedPriority, location)
     }
   }
 
-  private class Angular2PsiSourcedDirectiveSymbolWrapper(directive: Angular2Directive,
-                                                         delegate: Angular2Symbol,
-                                                         forcedPriority: WebSymbol.Priority?)
-    : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority), PsiSourcedWebSymbol {
+  private class Angular2PsiSourcedDirectiveSymbolWrapper(
+    directive: Angular2Directive,
+    delegate: Angular2Symbol,
+    forcedPriority: WebSymbol.Priority?,
+    location: PsiFile,
+  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location), PsiSourcedWebSymbol {
 
     override val source: PsiElement?
       get() = (this.delegate as PsiSourcedWebSymbol).source

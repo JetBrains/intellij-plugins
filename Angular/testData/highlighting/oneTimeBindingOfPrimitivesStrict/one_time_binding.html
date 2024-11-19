@@ -9,7 +9,7 @@
 <my-comp [numberBinding]="12"
          [booleanBinding]="false"
          [stringBinding]="'text'"
-         [booleanBinding2]
+         <error descr="Type undefined is not assignable to type boolean">[booleanBinding2]</error>
          [nullBinding]="false"
          [anyBinding]="'test'"
          [objectBinding]="{foo: true}">

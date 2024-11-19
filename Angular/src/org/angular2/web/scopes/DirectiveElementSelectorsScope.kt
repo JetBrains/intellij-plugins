@@ -2,7 +2,7 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
@@ -12,8 +12,8 @@ import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
 
-internal class DirectiveElementSelectorsScope(project: Project)
-  : WebSymbolsScopeWithCache<Project, Unit>(Angular2Framework.ID, project, project, Unit) {
+internal class DirectiveElementSelectorsScope(file: PsiFile)
+  : WebSymbolsScopeWithCache<PsiFile, Unit>(Angular2Framework.ID, file.project, file, Unit) {
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_ELEMENT_SELECTORS
@@ -27,7 +27,7 @@ internal class DirectiveElementSelectorsScope(project: Project)
       .filter { (name, list) -> list.isNotEmpty() && name.isNotEmpty() }
       .forEach { (name, list) ->
         list.forEach { directive ->
-          consumer(Angular2DirectiveSymbolWrapper.create(directive, directive.selector.getSymbolForElement(name)))
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, directive.selector.getSymbolForElement(name), dataHolder))
         }
       }
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)

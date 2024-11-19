@@ -66,7 +66,9 @@ object Angular2TranspiledComponentFileBuilder {
   fun getTranspiledComponentFile(componentFile: PsiFile): TranspiledComponentFile? =
     CachedValuesManager.getCachedValue(componentFile) {
       CachedValueProvider.Result.create(getComponentFileCache(componentFile)?.let {
-        buildTranspiledComponentFile(componentFile, it)
+        withTypeEvaluationLocation(componentFile) {
+          buildTranspiledComponentFile(componentFile, it)
+        }
       }, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
@@ -75,9 +77,7 @@ object Angular2TranspiledComponentFileBuilder {
       CachedValuesManager.getCachedValue(cls) {
         val context = getComponentFileCache(cls.containingFile)!!.environment
         CachedValueProvider.Result.create(Angular2EntitiesProvider.getComponent(cls)?.let {
-          withTypeEvaluationLocation(cls) {
-            Angular2TemplateTranspiler.transpileTemplate(context, it, (index + 1).toString())
-          }
+          Angular2TemplateTranspiler.transpileTemplate(context, it, (index + 1).toString())
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
