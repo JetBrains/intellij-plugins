@@ -5,6 +5,7 @@ import com.intellij.javascript.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
@@ -35,11 +36,14 @@ abstract class Angular2TestCase(
     Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
   }
 
-  override fun beforeConfiguredTest() {
+  override fun beforeConfiguredTest(configuration: TestConfiguration) {
     if (useTsc) {
       configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
       TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
         it::class == expectedServerClass
+      }
+      if (configuration.configurators.any { it is Angular2TsConfigFile }) {
+        TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(testRootDisposable, myFixture.tempDirFixture.getFile("tsconfig.json")!!)
       }
       runInEdtAndWait {
         FileDocumentManager.getInstance().saveAllDocuments()
@@ -47,7 +51,7 @@ abstract class Angular2TestCase(
     }
   }
 
-  override fun afterConfiguredTest() {
+  override fun afterConfiguredTest(configuration: TestConfiguration) {
   }
 
   fun withTypeScriptServerService(clazz: KClass<out TypeScriptService>, runnable: () -> Unit) {
