@@ -1,6 +1,6 @@
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.psi.*
 
 /**
@@ -12,8 +12,8 @@ val noElseInWhenExpressionOnSealedClassInspection = localInspection { psiFile, i
         val elseExpression = ktWhenExpression.elseExpression ?: return@forEach
         val whenSubject = ktWhenExpression.subjectExpression ?: return@forEach
         analyze(whenSubject) {
-            val classType = (whenSubject.getKtType()?.expandedClassSymbol as? KaNamedClassOrObjectSymbol) ?: return@forEach
-            val isSealed = classType.modality == Modality.SEALED
+            val classType = (whenSubject.expressionType?.expandedSymbol as? KaNamedClassSymbol) ?: return@forEach
+            val isSealed = classType.modality == KaSymbolModality.SEALED
             if (isSealed) {
                 inspection.registerProblem(elseExpression, "when should be exhaustive on sealed class argument, process each exact type")
             }
@@ -27,7 +27,7 @@ val noElseInWhenExpressionOnSealedClassInspection = localInspection { psiFile, i
 val ensureActiveInLoopsOfSuspendFunctionsInspection = localInspection { psiFile, inspection ->
     fun isSuspendFunction(function: KtNamedFunction): Boolean {
         return analyze(function) {
-            (function.getFunctionLikeSymbol() as? KaNamedFunctionSymbol)?.isSuspend ?: false
+            (function.symbol as? KaNamedFunctionSymbol)?.isSuspend ?: false
         }
     }
 
