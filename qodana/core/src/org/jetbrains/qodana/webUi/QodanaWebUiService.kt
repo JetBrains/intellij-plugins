@@ -1,15 +1,13 @@
 package org.jetbrains.qodana.webUi
 
-import com.google.common.io.BaseEncoding
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.ui.JBColor
 import com.intellij.util.Urls
 import com.intellij.util.io.DigestUtil
-import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -119,9 +117,9 @@ class QodanaWebUiService(@Suppress("unused") private val project: Project, priva
 
       val url = Urls.newFromEncoded("http://localhost:$port/$sourcesHandler/idea.html")
         .addParameters(mapOf(
+          "projectKey" to projectHash, // projectKey is not sensitive, put it first to not show off sensitive _qdt param in browser
           QODANA_WEB_UI_TOKEN_PARAM to token,
           "theme" to theme,
-          "projectKey" to projectHash
         ))
 
       BrowserUtil.browse(url.toExternalForm())
