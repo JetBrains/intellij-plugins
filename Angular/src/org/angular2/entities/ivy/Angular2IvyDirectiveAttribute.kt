@@ -2,7 +2,7 @@
 package org.angular2.entities.ivy
 
 import com.intellij.javascript.webSymbols.apiStatus
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
@@ -13,13 +13,14 @@ import com.intellij.webSymbols.WebSymbolApiStatus
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
-import java.util.function.Supplier
 
-class Angular2IvyDirectiveAttribute internal constructor(override val name: String,
-                                                         private val mySource: JSTypeDeclaration) : Angular2DirectiveAttribute {
+class Angular2IvyDirectiveAttribute internal constructor(
+  override val name: String,
+  private val mySource: JSTypeDeclaration,
+) : Angular2DirectiveAttribute {
 
   override val type: JSType
-    get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(mySource, Supplier { mySource.jsType })
+    get() = withTypeEvaluationLocation(mySource) { mySource.jsType }
 
   override val sourceElement: PsiElement
     get() = mySource

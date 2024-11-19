@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.nodejs.monorepo.JSMonorepoManager
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
@@ -75,7 +74,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     val fileContext = location.containingFile?.originalFile ?: return emptyList()
 
     if (allowResolve) {
-      withTypeEvaluationLocation(fileContext, Supplier { addEntityContainers(location, fileContext, result) })
+      withTypeEvaluationLocation(fileContext) { addEntityContainers(location, fileContext, result) }
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
       tag?.takeIf { it.name == SLOT_TAG_NAME }?.let { result.add(VueSlotElementScope(it)) }
       attribute?.takeIf { it.valueElement == null }?.let { result.add(VueBindingShorthandScope(it)) }

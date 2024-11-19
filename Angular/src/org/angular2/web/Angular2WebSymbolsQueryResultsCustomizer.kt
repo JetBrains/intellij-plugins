@@ -2,14 +2,14 @@
 package org.angular2.web
 
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.createSmartPointer
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -30,18 +30,19 @@ import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import java.util.*
-import java.util.function.Supplier
 
 class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
   private val scope = Angular2DeclarationsScope(context.containingFile)
   private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
 
-  override fun apply(matches: List<WebSymbol>,
-                     strict: Boolean,
-                     qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
+  override fun apply(
+    matches: List<WebSymbol>,
+    strict: Boolean,
+    qualifiedName: WebSymbolQualifiedName,
+  ): List<WebSymbol> =
     if (kinds.contains(qualifiedName.qualifiedKind)) {
-      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(context, Supplier {
+      withTypeEvaluationLocation(context) {
         if (strict) {
           matches.filter { symbol ->
             symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
@@ -63,7 +64,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
           }
           ?: emptyList()
         }
-      })
+      }
     }
     else if (qualifiedName.namespace == NAMESPACE_HTML) {
       if (matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol })
@@ -76,8 +77,10 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     }
     else matches
 
-  override fun apply(item: WebSymbolCodeCompletionItem,
-                     qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? {
+  override fun apply(
+    item: WebSymbolCodeCompletionItem,
+    qualifiedKind: WebSymbolQualifiedKind,
+  ): WebSymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext
@@ -93,7 +96,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       null
     }
     else if (directives.isNotEmpty()) {
-      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(context, Supplier {
+      withTypeEvaluationLocation(context) {
         val proximity = scope.getDeclarationsProximity(directives)
         if (proximity == DeclarationProximity.NOT_REACHABLE) {
           null
@@ -107,7 +110,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
               else -> XmlAttribute::class.java
             })
         }
-      })
+      }
     }
     else item
   }
@@ -147,15 +150,19 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
 
   }
 
-  private open class Angular2ScopedSymbol private constructor(symbol: WebSymbol,
-                                                              private val scopeProximity: DeclarationProximity)
+  private open class Angular2ScopedSymbol private constructor(
+    symbol: WebSymbol,
+    private val scopeProximity: DeclarationProximity,
+  )
     : WebSymbolDelegate<WebSymbol>(symbol) {
 
     companion object {
 
       @JvmStatic
-      fun create(symbol: WebSymbol,
-                 scopeProximity: DeclarationProximity): Angular2ScopedSymbol =
+      fun create(
+        symbol: WebSymbol,
+        scopeProximity: DeclarationProximity,
+      ): Angular2ScopedSymbol =
         when (symbol) {
           is PsiSourcedWebSymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
           else -> Angular2ScopedSymbol(symbol, scopeProximity)
@@ -173,7 +180,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       createPointer(::Angular2ScopedSymbol)
 
     protected fun <T : Angular2ScopedSymbol> createPointer(
-      create: (symbol: WebSymbol, scopeProximity: DeclarationProximity) -> T
+      create: (symbol: WebSymbol, scopeProximity: DeclarationProximity) -> T,
     ): Pointer<T> {
       val delegatePtr = delegate.createPointer()
       val scopeProximity = this.scopeProximity
@@ -197,8 +204,10 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     override val properties: Map<String, Any>
       get() = super.properties + Pair(PROP_SCOPE_PROXIMITY, scopeProximity)
 
-    private class Angular2PsiSourcedScopedSymbol(symbol: WebSymbol,
-                                                 scopeProximity: DeclarationProximity)
+    private class Angular2PsiSourcedScopedSymbol(
+      symbol: WebSymbol,
+      scopeProximity: DeclarationProximity,
+    )
       : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
 
       override val source: PsiElement?

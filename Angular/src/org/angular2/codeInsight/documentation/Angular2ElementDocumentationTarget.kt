@@ -10,7 +10,7 @@ import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.QuickDocHighlightingHelper.getStyledCodeFragment
 import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.documentation.JSDocSimpleInfoPrinter.addSections
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSType
@@ -44,7 +44,6 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import org.jetbrains.annotations.Nls
-import java.util.function.Supplier
 
 class Angular2ElementDocumentationTarget private constructor(
   @NlsSafe val name: String,
@@ -98,9 +97,11 @@ class Angular2ElementDocumentationTarget private constructor(
     return DocumentationResult.documentation(result.toString())
   }
 
-  private data class Angular2ElementDocumentation(val element: Angular2Element,
-                                                  val location: PsiElement?,
-                                                  val directive: Angular2Directive?) {
+  private data class Angular2ElementDocumentation(
+    val element: Angular2Element,
+    val location: PsiElement?,
+    val directive: Angular2Directive?,
+  ) {
     fun build(): @Nls String {
       val source = when (element) {
         is Angular2Entity -> element.entitySource
@@ -108,14 +109,14 @@ class Angular2ElementDocumentationTarget private constructor(
         is Angular2DirectiveExportAs -> null
         else -> element.sourceElement.takeIf { it !is TypeScriptClass }
       }
-      return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(source, Supplier {
+      return withTypeEvaluationLocation(source) {
         (buildDefinition() + Angular2ElementDocProvider(buildAdditionalSections()).renderDocComment(source))
           .applyIf(element is Angular2Entity) {
             // remove self links
             val link = Regex.escape(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + (element as Angular2Entity).entitySourceName)
             replace(Regex("<span\\s+style='[^']*'><a\\s+href=['\"]$link['\"]\\s*>(.*?)</a\\s*></span>"), "$1")
           }
-      })
+      }
     }
 
     private fun buildAdditionalSections(): List<Pair<String, String>> {
@@ -304,23 +305,28 @@ class Angular2ElementDocumentationTarget private constructor(
       }
     }
 
-    override fun createSymbolInfoPrinter(target: JSDocSymbolInfoBuilder,
-                                         element: PsiElement,
-                                         contextElement: PsiElement?): JSDocSimpleInfoPrinter<*> {
+    override fun createSymbolInfoPrinter(
+      target: JSDocSymbolInfoBuilder,
+      element: PsiElement,
+      contextElement: PsiElement?,
+    ): JSDocSimpleInfoPrinter<*> {
       return Angular2SymbolInfoPrinter(target, element, contextElement, true)
     }
 
-    override fun createMethodInfoPrinter(target: JSDocMethodInfoBuilder,
-                                         functionItem: JSFunctionItem,
-                                         element: PsiElement,
-                                         contextElement: PsiElement?): JSDocSimpleInfoPrinter<*> {
+    override fun createMethodInfoPrinter(
+      target: JSDocMethodInfoBuilder,
+      functionItem: JSFunctionItem,
+      element: PsiElement,
+      contextElement: PsiElement?,
+    ): JSDocSimpleInfoPrinter<*> {
       return Angular2SymbolInfoPrinter(target, element, contextElement, true)
     }
 
   }
 
   class Angular2SymbolInfoPrinter<T : JSDocSymbolInfoBuilder>(
-    builder: T, element: PsiElement, contextElement: PsiElement?, canBeNamed: Boolean)
+    builder: T, element: PsiElement, contextElement: PsiElement?, canBeNamed: Boolean,
+  )
     : JSDocSymbolInfoPrinter<T>(builder, element, contextElement, canBeNamed) {
 
     override fun appendInnerSections(result: java.lang.StringBuilder, provider: JSDocumentationProvider, hasDefinition: Boolean) {
@@ -333,6 +339,7 @@ class Angular2ElementDocumentationTarget private constructor(
     }
 
   }
+
   companion object {
 
     private val moduleRegex = Regex("<tr><td valign='top'( colspan='2')?><icon src='JavaScriptCoreIcons\\.FileTypes\\.[^']+'/>[^<]+</td>")
