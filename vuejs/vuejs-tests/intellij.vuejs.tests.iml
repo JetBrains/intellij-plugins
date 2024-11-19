@@ -30,5 +30,6 @@
     <orderEntry type="module" module-name="intellij.webpack" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp" />
     <orderEntry type="module" module-name="intellij.platform.webSymbols" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
   </component>
 </module>
