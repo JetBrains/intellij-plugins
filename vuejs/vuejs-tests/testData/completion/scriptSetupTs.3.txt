@@ -1,4 +1,4 @@
-:foo (typeText='string | undefined')
+:foo (typeText='string')
 v-bind: (typeText=null)
 v-model: (typeText=null)
 v-on: (typeText=null)

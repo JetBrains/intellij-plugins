@@ -168,7 +168,7 @@
 [style] (tailText=null; typeText=null; priority=50.0; typeGreyed)
 [tabIndex] (tailText=null; typeText='number'; priority=50.0; typeGreyed)
 [tabindex] (tailText=null; typeText='number'; priority=50.0; typeGreyed)
-[textContent] (tailText=null; typeText='string | null'; priority=50.0; typeGreyed)
+[textContent] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
 [title] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
 [translate] (tailText=null; typeText='boolean'; priority=50.0; typeGreyed)
 i18n (tailText=null; typeText=null; priority=50.0; typeGreyed)
