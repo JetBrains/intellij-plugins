@@ -1,6 +1,6 @@
 offset (typeText='number'; priority=100.0; bold; typeGreyed)
-on-change (typeText='((fixed: boolean) => any) | undefined'; priority=100.0; bold; typeGreyed)
-on-scroll (typeText='((args_0: {scrollTop: number, fixed: boolean}) => any) | undefined'; priority=100.0; bold; typeGreyed)
+on-change (typeText='(fixed: boolean) => any'; priority=100.0; bold; typeGreyed)
+on-scroll (typeText='(args_0: {scrollTop: number, fixed: boolean}) => any'; priority=100.0; bold; typeGreyed)
 position (typeText='"top" | "bottom"'; priority=100.0; bold; typeGreyed)
 target (typeText='string'; priority=100.0; bold; typeGreyed)
 z-index (typeText='any'; priority=100.0; bold; typeGreyed)

@@ -1,5 +1,5 @@
 as (typeText='string'; priority=100.0; bold; typeGreyed)
-initial-focus (typeText='HTMLElement | null'; priority=100.0; bold; typeGreyed)
+initial-focus (typeText='HTMLElement'; priority=100.0; bold; typeGreyed)
 open (typeText='string | boolean'; priority=100.0; bold; typeGreyed)
 static (typeText='boolean'; priority=100.0; bold; typeGreyed)
 unmount (typeText='boolean'; priority=100.0; bold; typeGreyed)

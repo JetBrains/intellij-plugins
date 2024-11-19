@@ -20,6 +20,6 @@ class AstroCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer 
         framework == AstroFramework.ID &&
         location.containingFile is AstroFileImpl &&
         it.kind == ASTRO_COMPONENT_PROPS.kind
-      }?.let { item.decorateWithSymbolType(it) }
+      }?.let { item.decorateWithSymbolType(location, it) }
     ?: item
 }

@@ -42,21 +42,21 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
             ?.let { symbol ->
               val symbolKind = symbol.qualifiedKind
               when {
-                typedKinds.contains(symbolKind) -> item.decorateWithSymbolType(symbol)
+                typedKinds.contains(symbolKind) -> item.decorateWithSymbolType(location, symbol)
                 selectorKinds.contains(symbolKind) -> item.withPriority(WebSymbol.Priority.HIGH)
 
                 // One time bindings and selectors require special handling
                 // to not override standard attributes and elements
                 symbolKind == NG_DIRECTIVE_ONE_TIME_BINDINGS ->
                   item
-                    .decorateWithSymbolType(symbol)
+                    .decorateWithSymbolType(location, symbol)
                     .withPriority(
                       symbol.properties[OneTimeBindingsScope.PROP_DELEGATE_PRIORITY] as WebSymbol.Priority?
                       ?: WebSymbol.Priority.HIGH
                     )
 
                 symbolKind == NG_DIRECTIVE_EXPORTS_AS ->
-                  item.decorateWithJsType(
+                  item.decorateWithJsType(location,
                     location.parentOfType<XmlTag>()?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
                 else -> item
               }
@@ -64,7 +64,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
           ?: item
         else -> if (qualifiedKind.namespace == WebSymbol.NAMESPACE_JS
                     && typedKinds.contains(item.symbol?.qualifiedKind))
-          item.decorateWithSymbolType(item.symbol)
+          item.decorateWithSymbolType(location, item.symbol)
         else
           item
 

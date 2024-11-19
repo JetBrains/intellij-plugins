@@ -1,4 +1,4 @@
 bottom (typeText='Number'; priority=100.0; bold; typeGreyed)
-offset-top (typeText='number | undefined'; priority=100.0; bold; typeGreyed)
+offset-top (typeText='number'; priority=100.0; bold; typeGreyed)
 position (typeText='"absolute" | "fix"'; priority=100.0; bold; typeGreyed)
 trigger-bottom (typeText='Number'; priority=100.0; bold; typeGreyed)

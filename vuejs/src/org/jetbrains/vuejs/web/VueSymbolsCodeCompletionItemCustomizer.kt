@@ -29,7 +29,7 @@ class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustom
         WebSymbol.HTML_ATTRIBUTES ->
           item.symbol
             ?.takeIf { it.kind == VUE_COMPONENT_PROPS.kind || it.kind == WebSymbol.KIND_JS_EVENTS }
-            ?.let { item.decorateWithSymbolType(it) }
+            ?.let { item.decorateWithSymbolType(location, it) }
           ?: item
         WebSymbol.HTML_ELEMENTS ->
           item.takeIf { !shouldFilterOutLowerCaseScriptSetupIdentifier(it) }
