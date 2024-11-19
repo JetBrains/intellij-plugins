@@ -21,7 +21,7 @@ class TestBrowserLauncher : BrowserLauncher() {
   }
 }
 
-inline fun withUnlimitedRestApiRequests(action: () -> Unit) {
+fun withUnlimitedRestApiRequests(action: () -> Unit) {
   val key = Registry.get("ide.rest.api.requests.per.minute")
   val currentValue = key.asInteger()
   try {
