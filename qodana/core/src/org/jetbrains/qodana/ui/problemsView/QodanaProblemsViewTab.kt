@@ -24,6 +24,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.content.Content
+import com.intellij.util.PlatformUtils
 import com.intellij.util.application
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
@@ -258,7 +259,7 @@ private class QodanaTabWasEverOpenedService : PersistentStateComponent<QodanaTab
     fun getInstance(): QodanaTabWasEverOpenedService = service()
   }
 
-  private val _wasEverOpenedStateFlow = MutableStateFlow(false)
+  private val _wasEverOpenedStateFlow = MutableStateFlow(isNewDisabledByDefault())
   val wasEverOpenedStateFlow = _wasEverOpenedStateFlow.asStateFlow()
 
   fun setWasOpened(wasOpened: Boolean = true) {
@@ -276,8 +277,15 @@ private class QodanaTabWasEverOpenedService : PersistentStateComponent<QodanaTab
   }
 
   class State : BaseState() {
-    var wasOpened by property(false)
+    var wasOpened by property(isNewDisabledByDefault())
   }
+}
+
+/**
+ * Intellij IDEA has new Problem' view tab, provided by Security Analysis plugin
+ */
+private fun isNewDisabledByDefault(): Boolean {
+  return PlatformUtils.isIntelliJ()
 }
 
 class ResetQodanaTabPromoIconAction : DumbAwareAction() {
