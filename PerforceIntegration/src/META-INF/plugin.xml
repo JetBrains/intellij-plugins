@@ -94,6 +94,7 @@
   </actions>
 
   <extensionPoints>
+    <!--suppress PluginXmlValidity -->
     <extensionPoint qualifiedName="Perforce.P4ConnectionParametersProvider"
                     interface="org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParametersProvider"
                     dynamic="true"/>
