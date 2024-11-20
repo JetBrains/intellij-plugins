@@ -24,7 +24,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.DisconnectedSerial"
                 doNotActivateOnStart="false"
-                largeStripeAnchor="bottom"
                 factoryClass="com.intellij.plugins.serialmonitor.SerialMonitorToolWindowFactory"
                 canCloseContents="true" secondary="false"/>
 
