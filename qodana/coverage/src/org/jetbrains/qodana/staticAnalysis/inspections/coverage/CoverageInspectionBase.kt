@@ -111,6 +111,11 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     CoverageReport.save(data, options)
   }
 
+  protected open fun processReportData(data: ProjectData, globalContext: QodanaGlobalInspectionContext) {
+    val stat = globalContext.coverageStatisticsData
+    data.classes.forEach { x -> stat.processReportClassData(x.value) }
+  }
+
   fun computeCoverageData(globalContext: QodanaGlobalInspectionContext, engineType : KClass<out CoverageEngine>): ProjectData? {
     val coverageFiles = provideCoverageFiles(globalContext)
     logger.info("Coverage for ${engineType.java.simpleName} - provided ${coverageFiles.size} files")
@@ -118,6 +123,9 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
       val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
       val data = retrieveCoverageData(engine, coverageFiles, globalContext)
       if (data != null) {
+        if (isLocalChanges(globalContext)) {
+          processReportData(data, globalContext)
+        }
         INSPECTION_LOADED_COVERAGE.log(globalContext.project, CoverageLanguage.mapEngine(engineType.java.simpleName))
         return data
       }

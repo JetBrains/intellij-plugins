@@ -117,12 +117,7 @@ internal fun retrieveCoverageData(engine: CoverageEngine, coverageFiles: List<Fi
     // it's a file based coverage, we need to fix the
     remapCoverage(globalContext.project, bundle)
   }
-  val data = bundle.coverageData
-  if (data != null && isLocalChanges(globalContext)) {
-    val stat = globalContext.coverageStatisticsData
-    data.classes.forEach { x -> stat.processReportClassData(x.value) }
-  }
-  return data
+  return bundle.coverageData
 }
 
 fun computeSuites(engine: CoverageEngine, coverageFiles: List<File>, project: Project): List<CoverageSuite> {
