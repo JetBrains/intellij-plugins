@@ -12,6 +12,7 @@ import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.testing.AngularCliConfig
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
+import com.intellij.openapi.util.io.NioFiles
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,7 +20,7 @@ import com.intellij.util.PathUtil
 import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.text.nullize
 import org.jdom.Element
-import java.io.File
+import java.nio.file.Path
 
 class KarmaServerSettings(private val executor: Executor,
                           val nodeInterpreter: NodeJsInterpreter,
@@ -86,8 +87,10 @@ class KarmaServerSettings(private val executor: Executor,
 
     private fun detectAngularProjectName(settings: KarmaRunSettings): String? {
       if (ParametersListUtil.parse(settings.karmaOptions).contains("--project")) return null
-      val workingDir = settings.workingDirectorySystemDependent.nullize(true) ?: return null
-      val config = AngularCliConfig.findProjectConfig(File(workingDir)) ?: return null
+      val workingDir = settings.workingDirectorySystemDependent.nullize(true)?.let {
+        NioFiles.toPath(it)
+      } ?: return null
+      val config = AngularCliConfig.findProjectConfig(workingDir) ?: return null
       val contextFile = getContextFile(settings)
       return config.getProjectContainingFileOrDefault(contextFile)
     }
