@@ -8,11 +8,16 @@ import com.intellij.coverage.xml.XMLReportSuite
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.uast.UastHintedVisitorAdapter
@@ -49,6 +54,14 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       }
       data
     })
+  }
+
+  override fun processReportData(data: ProjectData, globalContext: QodanaGlobalInspectionContext) {
+    val stat = globalContext.coverageStatisticsData
+    val searchScope = GlobalSearchScope.projectScope(globalContext.project)
+    data.classes.filter {
+      JavaPsiFacade.getInstance(globalContext.project).findClass(it.value.name, searchScope) != null
+    }.forEach { x -> stat.processReportClassData(x.value) }
   }
 
   override fun checker(file: PsiFile, problemsHolder: ProblemsHolder, globalContext: QodanaGlobalInspectionContext) {
@@ -273,7 +286,19 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       }
       if (globalContext.coverageComputationState().isIncrementalAnalysis()) {
         val stat = globalContext.coverageStatisticsData
-        report.files.forEach { x -> stat.processReportXmlData(x) }
+        report.files.filter { fileInfo ->
+          val possibleFiles = ModuleManager.getInstance(globalContext.project).modules.flatMap {
+            ModuleRootManager.getInstance(it).sourceRoots.mapNotNull { root ->
+              val filePath = root.toNioPathOrNull()?.resolve(fileInfo.path)
+              filePath?.let { VirtualFileManager.getInstance().findFileByNioPath(filePath) }
+            }
+          }
+          possibleFiles.any { file ->
+            GlobalSearchScope.allScope(globalContext.project).contains(file)
+          }
+        }.forEach {
+          x -> stat.processReportXmlData(x)
+        }
       }
       return report
     }
