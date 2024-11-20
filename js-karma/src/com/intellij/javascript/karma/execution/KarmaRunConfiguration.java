@@ -23,6 +23,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,7 +35,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
                                    implements RefactoringListenerProvider,
@@ -183,10 +185,11 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     if (StringUtil.isEmptyOrSpaces(path)) {
       throw new RuntimeConfigurationError(KarmaBundle.message("run_configuration.unspecified_field.dialog.message", pathLabelName));
     }
-    File file = new File(path);
-    if (!file.isAbsolute() ||
-        (fileExpected && !file.isFile()) ||
-        (!fileExpected && !file.isDirectory())) {
+    Path nioFile = NioFiles.toPath(path);
+    if (nioFile == null ||
+        !nioFile.isAbsolute() ||
+        (fileExpected && !Files.isRegularFile(nioFile)) ||
+        (!fileExpected && !Files.isDirectory(nioFile))) {
       throw new RuntimeConfigurationError(KarmaBundle.message("run_configuration.no_such_file.dialog.message", pathLabelName));
     }
   }

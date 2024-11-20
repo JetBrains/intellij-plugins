@@ -11,12 +11,15 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.CheckedDisposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,19 +29,20 @@ public class KarmaServerRestarter {
   private final AtomicBoolean myConfigChanged = new AtomicBoolean(false);
 
   public KarmaServerRestarter(@NotNull String configurationFilePath, @NotNull Disposable parentDisposable) {
-    File configurationFile = new File(configurationFilePath);
-    if (configurationFile.exists()) {
+    Path configurationFile = NioFiles.toPath(configurationFilePath);
+    if (configurationFile != null && Files.isRegularFile(configurationFile)) {
       listenForConfigurationFileChanges(configurationFile, parentDisposable);
     }
   }
 
-  private void listenForConfigurationFileChanges(@NotNull final File configurationFile,
-                                                 @NotNull final Disposable parentDisposable) {
+  private void listenForConfigurationFileChanges(@NotNull Path configurationFile,
+                                                 @NotNull Disposable parentDisposable) {
+    CheckedDisposable checkedDisposable = Disposer.newCheckedDisposable(parentDisposable);
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(configurationFile);
+      VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByNioFile(configurationFile);
       if (virtualFile != null && virtualFile.isValid() && !virtualFile.isDirectory()) {
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-        if (document != null && !Disposer.isDisposed(parentDisposable)) {
+        if (document != null && !checkedDisposable.isDisposed()) {
           document.addDocumentListener(new DocumentListener() {
             @Override
             public void documentChanged(@NotNull DocumentEvent e) {

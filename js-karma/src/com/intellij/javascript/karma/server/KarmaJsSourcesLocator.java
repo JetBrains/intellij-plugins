@@ -8,7 +8,6 @@ import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.lang.javascript.psi.util.JSPluginPathManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,21 +59,19 @@ public final class KarmaJsSourcesLocator {
     }
   }
 
-  private File getAppFile(@NotNull String baseName) throws IOException {
-    Path file = myKarmaIntellijPackageDir.resolve("lib" + File.separatorChar + baseName);
+  private @NotNull Path getAppFile(@NotNull String baseName) throws IOException {
+    Path file = myKarmaIntellijPackageDir.resolve("lib").resolve(baseName);
     if (!Files.isRegularFile(file)) {
       throw new IOException("Cannot locate " + file);
     }
-    return file.toFile();
+    return file;
   }
 
-  @NotNull
-  public File getIntellijConfigFile() throws IOException {
+  public @NotNull Path getIntellijConfigFile() throws IOException {
     return getAppFile("intellij.conf.js");
   }
 
-  @NotNull
-  public File getClientAppFile() throws ExecutionException {
+  public @NotNull Path getClientAppFile() throws ExecutionException {
     try {
       return getAppFile("intellijRunner.js");
     }
@@ -83,8 +80,7 @@ public final class KarmaJsSourcesLocator {
     }
   }
 
-  @NotNull
-  public File getKarmaIntellijPackageDir() {
-    return myKarmaIntellijPackageDir.toFile();
+  public @NotNull Path getKarmaIntellijPackageDir() {
+    return myKarmaIntellijPackageDir;
   }
 }

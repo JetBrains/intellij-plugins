@@ -12,7 +12,6 @@ import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +82,7 @@ public class KarmaConfig {
 
   @Nullable
   public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement,
-                                          @NotNull File configurationFileDir) {
+                                          @NotNull String configurationFileDir) {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
 
@@ -103,11 +102,11 @@ public class KarmaConfig {
   @NotNull
   private static String parseBasePath(@NotNull JsonElement all,
                                       @NotNull JsonObject obj,
-                                      @NotNull File configurationFileDir) {
+                                      @NotNull String configurationFileDir) {
     String basePath = JsonUtil.getChildAsString(obj, BASE_PATH);
     if (basePath == null) {
       LOG.warn("Can not parse Karma config.basePath from " + all);
-      basePath = configurationFileDir.getAbsolutePath();
+      basePath = configurationFileDir;
     }
     return basePath;
   }

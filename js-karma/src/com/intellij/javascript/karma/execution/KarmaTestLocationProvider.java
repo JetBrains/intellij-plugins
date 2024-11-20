@@ -15,7 +15,8 @@ import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSTestFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.util.io.NioFiles;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -25,7 +26,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 public class KarmaTestLocationProvider implements SMTestLocator {
@@ -49,7 +50,8 @@ public class KarmaTestLocationProvider implements SMTestLocator {
 
   @Nullable
   private static Location<PsiFile> getConfigLocation(Project project, @NotNull String locationData) {
-    VirtualFile virtualFile = VfsUtil.findFileByIoFile(new File(locationData), false);
+    Path location = NioFiles.toPath(locationData);
+    VirtualFile virtualFile = location != null ? LocalFileSystem.getInstance().findFileByNioFile(location) : null;
     if (virtualFile != null && virtualFile.isValid()) {
       PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
       if (psiFile != null && psiFile.isValid()) {

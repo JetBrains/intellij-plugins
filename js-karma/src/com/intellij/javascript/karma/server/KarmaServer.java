@@ -14,15 +14,18 @@ import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -32,7 +35,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -183,19 +185,19 @@ public final class KarmaServer {
     String configurationFilePath = serverSettings.getConfigurationFilePath();
     String userConfigFileName = PathUtil.getFileName(configurationFilePath);
     // upload karma-intellij/ folder to the remote if needed
-    targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
+    targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
     if (angularCli) {
       if (pkg instanceof YarnPnpNodePackage) {
         ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
       }
       else {
-        commandLine.addParameter(targetRun.path(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng"));
+        Path ngBinFile = findPackageBinFile(pkg, project, targetRun.getInterpreter(), KarmaUtil.ANGULAR_CLI__PACKAGE_NAME, "ng", "./bin/ng.js");
+        commandLine.addParameter(targetRun.path(ngBinFile));
       }
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("ng", "test");
-      File configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
-      File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
+      Path configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
       SemVer version = pkg.getVersion();
       if (version == null || version.isGreaterOrEqualThan(6, 0, 0)) {
         String projectName = serverSettings.getAngularProjectName();
@@ -204,20 +206,14 @@ public final class KarmaServer {
           commandLineFolder.addPlaceholderText(projectName);
         }
         commandLine.addParameter("--karma-config");
-        commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
+        commandLine.addParameter(targetRun.path(configFile));
         commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
 
         commandLine.addParameter("--source-map");
       }
       else {
         commandLine.addParameter("--config");
-        String relativeConfigPath = FileUtil.getRelativePath(workingDir, configFile);
-        if (relativeConfigPath != null) {
-          commandLine.addParameter(TargetValue.fixed(relativeConfigPath));
-        }
-        else {
-          commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
-        }
+        commandLine.addParameter(targetRun.path(configFile));
         commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
     }
@@ -226,11 +222,8 @@ public final class KarmaServer {
         ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
       }
       else {
-        Path nxMainFile = pkg.findBinFilePath("nx", "./bin/nx.js");
-        if (nxMainFile == null) {
-          throw new ExecutionException("Cannot find nx binary for " + pkg.getSystemDependentPath()); //NON-NLS
-        }
-        commandLine.addParameter(targetRun.path(nxMainFile));
+        Path nxBinFile = findPackageBinFile(pkg, project, targetRun.getInterpreter(), "nx", "nx", "./bin/nx.js");
+        commandLine.addParameter(targetRun.path(nxBinFile));
       }
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("nx", "test");
@@ -241,18 +234,19 @@ public final class KarmaServer {
         commandLineFolder.addPlaceholderText(projectName);
       }
       commandLine.addParameter("--karmaConfig");
-      File configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
-      commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
+      Path configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
+      commandLine.addParameter(targetRun.path(configFile));
     }
     else {
       if (pkg instanceof YarnPnpNodePackage) {
         ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
       }
       else {
-        commandLine.addParameter(targetRun.path(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma"));
+        Path karmaBinFile = findPackageBinFile(pkg, project, targetRun.getInterpreter(), KarmaUtil.KARMA_PACKAGE_NAME, "karma", "./bin/karma");
+        commandLine.addParameter(targetRun.path(karmaBinFile));
       }
       commandLine.addParameter("start");
-      commandLine.addParameter(targetRun.path(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile().getAbsolutePath()));
+      commandLine.addParameter(targetRun.path(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile()));
       commandLineFolder.addPlaceholderTexts("karma", "start", userConfigFileName);
     }
     List<String> karmaOptions = ParametersListUtil.parse(serverSettings.getKarmaOptions());
@@ -261,7 +255,7 @@ public final class KarmaServer {
     setIntellijParameter(commandLine, "user_config", configurationFilePath.isEmpty() ? TargetValue.fixed("")
                                                                                      : targetRun.path(configurationFilePath));
     if (coveragePeer != null) {
-      setIntellijParameter(commandLine, "coverage_temp_dir", targetRun.path(coveragePeer.getCoverageTempDir().getAbsolutePath()));
+      setIntellijParameter(commandLine, "coverage_temp_dir", targetRun.path(coveragePeer.getCoverageTempDir()));
       if (angularCli) {
         commandLine.addParameter("--code-coverage");
         commandLineFolder.addPlaceholderText("--code-coverage");
@@ -271,6 +265,23 @@ public final class KarmaServer {
       setIntellijParameter(commandLine, "debug", TargetValue.fixed("true"));
     }
     return targetRun;
+  }
+
+  private static @NotNull Path findPackageBinFile(@NotNull NodePackage pkg,
+                                                  @NotNull Project project,
+                                                  @NotNull NodeJsInterpreter interpreter,
+                                                  @NlsSafe @NotNull String packageName,
+                                                  @NotNull String executableName,
+                                                  @Nullable String failoverBinRelativePath) throws ExecutionException {
+    String error = pkg.validateAndGetErrorMessage(packageName, project, interpreter);
+    if (error != null) {
+      throw new ExecutionException(error);
+    }
+    Path binFile = pkg.findBinFilePath(executableName, failoverBinRelativePath, interpreter);
+    if (binFile == null) {
+      throw new ExecutionException(JavaScriptBundle.message("node.package.cannot.find.bin.file.dialog.message", packageName));
+    }
+    return binFile;
   }
 
   private static void setIntellijParameter(@NotNull TargetedCommandLineBuilder commandLine,
@@ -430,7 +441,12 @@ public final class KarmaServer {
     private final Runnable myRunnable = ConcurrencyUtil.once(() -> {
       LOG.info("Disposing Karma server " + myProcessHashCode);
       if (myCoveragePeer != null) {
-        FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
+        try {
+          NioFiles.deleteRecursively(myCoveragePeer.getCoverageTempDir());
+        }
+        catch (IOException e) {
+          LOG.warn("Failed to delete " + myCoveragePeer.getCoverageTempDir(), e);
+        }
       }
       UIUtil.invokeLaterIfNeeded(() -> {
         if (myOnPortBoundCallbacks != null) {

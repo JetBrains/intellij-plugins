@@ -7,43 +7,52 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.openapi.util.io.NioFiles;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.List;
 
 public class KarmaCoveragePeer {
 
-  private final File myCoverageTempDir;
+  private final Path myCoverageTempDir;
   private volatile KarmaCoverageSession myActiveCoverageSession;
 
   public KarmaCoveragePeer() throws IOException {
-    myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
+    myCoverageTempDir = Files.createTempDirectory("karma-intellij-coverage-");
   }
 
-  @NotNull
-  public File getCoverageTempDir() {
+  public @NotNull Path getCoverageTempDir() {
     return myCoverageTempDir;
   }
 
   public void startCoverageSession(@NotNull KarmaCoverageSession coverageSession) {
     // clear directory
-    if (myCoverageTempDir.isDirectory()) {
-      File[] children = ObjectUtils.notNull(myCoverageTempDir.listFiles(), ArrayUtilRt.EMPTY_FILE_ARRAY);
-      for (File child : children) {
-        FileUtil.delete(child);
+    if (Files.isDirectory(myCoverageTempDir)) {
+      try {
+        List<Path> children = NioFiles.list(myCoverageTempDir);
+        for (Path child : children) {
+          NioFiles.deleteRecursively(child);
+        }
+      }
+      catch (IOException e) {
+        Logger.getInstance(KarmaCoveragePeer.class).warn("Failed to delete content of " + myCoverageTempDir);
       }
     }
     else {
-      FileUtil.createDirectory(myCoverageTempDir);
+      try {
+        Files.createDirectory(myCoverageTempDir);
+      }
+      catch (IOException e) {
+        Logger.getInstance(KarmaCoveragePeer.class).warn("Failed to create " + myCoverageTempDir);
+      }
     }
     myActiveCoverageSession = coverageSession;
   }
@@ -65,7 +74,7 @@ public class KarmaCoveragePeer {
           String lcovFilePath = JsonUtil.getChildAsString(coverageData, "lcovFilePath");
           String projectRoot = JsonUtil.getChildAsString(coverageData, "projectRoot");
           KarmaCoverageResultPaths coverageResultPaths = null;
-          if (lcovFilePath != null && projectRoot != null) {
+          if (StringUtil.isNotEmpty(lcovFilePath) && StringUtil.isNotEmpty(projectRoot)) {
             Path localLcovFilePath = convertTargetPathToLocal(server.getTargetRun(), lcovFilePath, "lcovFilePath");
             Path localProjectRoot = convertTargetPathToLocal(server.getTargetRun(), projectRoot, "projectRoot");
             if (localLcovFilePath != null && localProjectRoot != null) {

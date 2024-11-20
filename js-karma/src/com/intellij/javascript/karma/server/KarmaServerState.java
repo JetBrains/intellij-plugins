@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -15,11 +16,9 @@ import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -219,16 +218,18 @@ public class KarmaServerState {
 
   private class ConfigHandler implements StreamEventHandler {
 
-    private final File myConfigurationFileDir;
+    private final @NotNull String myConfigurationFileDir;
 
-    public ConfigHandler(@NotNull String configurationFilePath, @NotNull String workingDirectory) {
-      File configFile = new File(configurationFilePath);
-      if (configFile.isFile()) {
-        myConfigurationFileDir = configFile.getParentFile();
+    ConfigHandler(@NotNull String configurationFilePath, @NotNull String workingDirectory) {
+      Path configFile = NioFiles.toPath(configurationFilePath);
+      String configFileDir = null;
+      if (configFile != null && Files.isRegularFile(configFile)) {
+        Path parent = configFile.getParent();
+        if (parent != null) {
+          configFileDir = parent.toAbsolutePath().toString();
+        }
       }
-      else {
-        myConfigurationFileDir = new File(workingDirectory);
-      }
+      myConfigurationFileDir = Objects.requireNonNullElse(configFileDir, workingDirectory);
     }
 
     @NotNull

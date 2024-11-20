@@ -5,9 +5,6 @@ import com.intellij.coverage.CoverageBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
 

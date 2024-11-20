@@ -46,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.io.LocalFileFinder;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -162,9 +162,9 @@ public class KarmaExecutionSession {
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
 
     // upload karma-intellij/ folder to the remote if needed
-    targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
-    File clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
-    commandLine.addParameter(targetRun.path(clientAppFile.getAbsolutePath()));
+    targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir());
+    Path clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
+    commandLine.addParameter(targetRun.path(clientAppFile));
     if (NodeJsRemoteInterpreter.isDocker(interpreter) || NodeJsRemoteInterpreter.isDockerCompose(interpreter)) {
       // Workaround for Docker/Docker Compose: assume remove karma server port is forwarded to IDE host with the same port.
       // Need to run karma-runner and karma server in the same Docker container, but it's not possible now.

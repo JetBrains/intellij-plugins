@@ -15,7 +15,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -90,11 +90,6 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public boolean acceptedByFilters(@NotNull PsiFile psiFile, @NotNull CoverageSuitesBundle suite) {
-    return true;
-  }
-
-  @Override
   protected String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
@@ -135,7 +130,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
     return new DirectoryCoverageViewExtension(project, getCoverageAnnotator(project), suiteBundle) {
       @NotNull
       @Override
-      public AbstractTreeNode createRootNode() {
+      public AbstractTreeNode<?> createRootNode() {
         VirtualFile rootDir = findRootDir(project, suiteBundle);
         if (rootDir == null) {
           rootDir = ProjectUtil.guessProjectDir(myProject);
@@ -159,7 +154,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
         ProjectData data = suite.getCoverageData(coverageDataManager);
         if (data != null) {
           for (String path : data.getClasses().keySet()) {
-            VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
+            VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
             if (file != null && file.isValid()) {
               ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
               VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);

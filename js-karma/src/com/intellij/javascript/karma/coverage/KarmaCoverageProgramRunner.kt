@@ -25,11 +25,10 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.concurrency.Promise
-import java.io.File
-import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.copyTo
 
 class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
   override fun getRunnerId(): String = KarmaCoverageProgramRunner::class.java.simpleName
@@ -67,7 +66,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
             val project = env.project
             if (!project.isDisposed) {
               if (coverageResultPaths != null) {
-                processLcovInfoFile(coverageResultPaths, coverageFilePath, env, server, runConfiguration, targetRun)
+                processLcovInfoFile(coverageResultPaths, coverageFilePath, env, runConfiguration, targetRun)
                 return@run
               }
               ApplicationManager.getApplication().invokeLater(
@@ -91,8 +90,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
                             if (!project.isDisposed) {
                               val paths = KarmaCoverageResultPaths(it, Path.of(
                                 (runConfiguration as KarmaRunConfiguration).runSettings.workingDirectorySystemDependent))
-                              processLcovInfoFile(paths, coverageFilePath, env, server,
-                                                  runConfiguration, targetRun)
+                              processLcovInfoFile(paths, coverageFilePath, env, runConfiguration, targetRun)
                             }
                           }
                         }
@@ -111,14 +109,18 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
     private fun processLcovInfoFile(coverageResultPaths: KarmaCoverageResultPaths,
                                     toCoverageFilePath: String,
                                     env: ExecutionEnvironment,
-                                    karmaServer: KarmaServer,
                                     runConfiguration: RunConfigurationBase<*>,
                                     targetRun: NodeTargetRun) {
-      try {
-        FileUtil.copy(coverageResultPaths.localLcovFilePath.toFile(), File(toCoverageFilePath))
+      val fromLcovFile = coverageResultPaths.localLcovFilePath
+      if (!fromLcovFile.isAbsolute || !Files.isRegularFile(fromLcovFile)) {
+        logger<KarmaCoverageProgramRunner>().error("Not a file $fromLcovFile")
+        return
       }
-      catch (e: IOException) {
-        logger<KarmaCoverageProgramRunner>().error("Cannot copy " + coverageResultPaths.localLcovFilePath + " to " + toCoverageFilePath, e)
+      try {
+        fromLcovFile.copyTo(Path.of(toCoverageFilePath), true)
+      }
+      catch (e: Exception /* IOException + InvalidPathException */) {
+        logger<KarmaCoverageProgramRunner>().error("Cannot copy $fromLcovFile to $toCoverageFilePath", e)
         return
       }
       env.runnerSettings?.let {
