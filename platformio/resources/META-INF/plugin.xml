@@ -83,7 +83,7 @@
     <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioRefreshAction"
             id="PlatformioRefreshAction"/>
     <group id="platformio-group" popup="false">
-      <reference id="PlatformioRefreshAction"/>
+      <reference ref="PlatformioRefreshAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction"
               id="PlatformioCheckAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioMonitorAction"
@@ -96,13 +96,13 @@
     <group id="platformio-group-tools-popup" popup="true"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup"
            icon="ClionEmbeddedPlatformioIcons.LogoPlatformIO">
-      <reference id="platformio-group"/>
+      <reference ref="platformio-group"/>
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
     <group id="platformio-group-file-popup" popup="true"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup"
            icon="ClionEmbeddedPlatformioIcons.LogoPlatformIO">
-      <reference id="platformio-group"/>
+      <reference ref="platformio-group"/>
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
     <action id="target-platformio-upload" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadAction"/>
