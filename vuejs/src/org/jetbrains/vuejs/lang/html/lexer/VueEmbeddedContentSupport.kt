@@ -6,7 +6,7 @@ import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyle
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSModuleContentType
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
@@ -209,7 +209,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
       null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       else -> object : HtmlEmbedmentInfo {
         // JSElementTypes.toModuleContentType is significant for JSX/TSX
-        override fun getElementType(): IElementType? = JSElementTypes.toModuleContentType(elementType)
+        override fun getElementType(): IElementType? = JSModuleContentType.toModuleContentType(elementType)
         override fun createHighlightingLexer(): Lexer? = embedmentInfo.createHighlightingLexer()
       }
     }
