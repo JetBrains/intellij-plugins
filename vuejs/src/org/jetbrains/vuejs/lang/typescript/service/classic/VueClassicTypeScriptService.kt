@@ -70,17 +70,11 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
   }
 
-  override fun getInitialOpenCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
-    //commands
-    val initialCommands = super.getInitialOpenCommands()
-    val result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> = linkedMapOf()
-    addConfigureCommand(result)
-
-    result.putAll(initialCommands)
-    return result
+  override fun getInitialOpenCommands(): List<JSLanguageServiceSimpleCommand> {
+    return listOf(createConfigureCommand()) + super.getInitialOpenCommands()
   }
 
-  private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
+  private fun createConfigureCommand(): JSLanguageServiceSimpleCommand {
     val arguments = ConfigureRequestArguments("IntelliJ")
     val fileExtensionInfo = FileExtensionInfo()
     fileExtensionInfo.extension = VUE_FILE_EXTENSION
@@ -93,7 +87,7 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     fileExtensionInfo.isMixedContent = false
     arguments.extraFileExtensions = arrayOf(fileExtensionInfo)
 
-    result[ConfigureRequest(arguments)] = Consumer {}
+    return ConfigureRequest(arguments)
   }
 
   override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
