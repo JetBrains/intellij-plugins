@@ -56,13 +56,14 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
   }
 
   @NotNull
-  private FileAnnotation doAnnotate(final VirtualFile vFile, final FilePath file, final long changeNumber) throws VcsException {
-    P4Connection connection = PerforceSettings.getSettings(myProject).getConnectionForFile(vFile);
+  private FileAnnotation doAnnotate(@NotNull VirtualFile vFile, @NotNull FilePath file, long changeNumber) throws VcsException {
+    P4File p4File = P4File.create(file);
+    P4Connection connection = PerforceSettings.getSettings(myProject).getConnectionForFile(p4File);
     if (connection == null) {
       throw new VcsException(PerforceBundle.message("error.invalid.perforce.settings"));
     }
 
-    return doAnnotate(changeNumber, connection, P4File.create(file).getEscapedPath()).createAnnotation(vFile);
+    return doAnnotate(changeNumber, connection, p4File.getEscapedPath()).createAnnotation(vFile);
   }
 
   @NotNull

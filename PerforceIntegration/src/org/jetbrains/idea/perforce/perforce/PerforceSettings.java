@@ -335,12 +335,17 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   }
 
   @Nullable
-  public P4Connection getConnectionForFile(final File file) {
+  public P4Connection getConnectionForFile(@NotNull P4File file) {
     return PerforceConnectionManager.getInstance(getProject()).getConnectionForFile(file);
   }
 
   @Nullable
-  public P4Connection getConnectionForFile(final VirtualFile file) {
+  public P4Connection getConnectionForFile(@NotNull File file) {
+    return PerforceConnectionManager.getInstance(getProject()).getConnectionForFile(file);
+  }
+
+  @Nullable
+  public P4Connection getConnectionForFile(@NotNull VirtualFile file) {
     return PerforceConnectionManager.getInstance(getProject()).getConnectionForFile(file);
   }
 
