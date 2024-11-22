@@ -15,6 +15,7 @@
  */
 package org.jetbrains.idea.perforce.perforce.connections;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diff.impl.patch.formove.FilePathComparator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -39,6 +40,7 @@ import java.util.Map;
 import static java.util.function.Function.identity;
 
 public class SingletonConnection extends AbstractP4Connection implements PerforceConnectionMapper {
+  private static final Logger LOG = Logger.getInstance(SingletonConnection.class);
 
   private final static Key<SingletonConnection> KEY_IN_PROJECT = new Key<>("Connection per project");
   public static final ConnectionId SINGLETON_CONNECTION_ID = new ConnectionId();
@@ -97,6 +99,9 @@ public class SingletonConnection extends AbstractP4Connection implements Perforc
 
   @Override
   public P4Connection getConnection(@NotNull VirtualFile file) {
+    if (!file.isInLocalFileSystem()) {
+      LOG.warn("Trying to get connection for non-local file " + file.getClass() + " " + file);
+    }
     // todo check directories?
     // todo don't forget this optimization point
     return this;

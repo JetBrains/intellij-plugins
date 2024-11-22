@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vcs.util.paths.VirtualFileMapping;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PerforceMultipleConnections implements PerforceConnectionMapper {
+  private static final Logger LOG = Logger.getInstance(PerforceMultipleConnections.class);
+
   @Nullable private final String myP4ConfigValue;
 
   private final VirtualFileMapping<P4ConnectionParameters> myParametersMap = new VirtualFileMapping<>();
@@ -46,6 +49,9 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
 
   @Override
   public P4ParametersConnection getConnection(@NotNull VirtualFile file) {
+    if (!file.isInLocalFileSystem()) {
+      LOG.warn("Trying to get connection for non-local file " + file.getClass() + " " + file);
+    }
     // only caches for depot roots (see what added), but lets check first
     synchronized (myLock) {
       final P4ParametersConnection cached = myConnectionMap.get(file);
