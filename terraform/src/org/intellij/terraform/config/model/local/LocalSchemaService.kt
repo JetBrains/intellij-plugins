@@ -14,7 +14,6 @@ import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -51,9 +50,6 @@ import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
-import org.intellij.terraform.hcl.HCLLanguage
-import org.intellij.terraform.hcl.HILCompatibleLanguage
-import org.intellij.terraform.hcl.Icons.FileTypes.HCL
 import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.nio.file.Files
 import java.nio.file.Path
@@ -361,7 +357,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
-    val toolType = getApplicableToolType(project, lock)
+    val toolType = getApplicableToolType(lock)
     val success = TFExecutor.`in`(project, toolType)
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
       .withParameters("providers", "schema", "-json")

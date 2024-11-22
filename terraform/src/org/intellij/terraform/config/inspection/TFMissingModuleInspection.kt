@@ -65,7 +65,7 @@ class TFMissingModuleInspection : LocalInspectionTool() {
 
     ProgressIndicatorProvider.checkCanceled()
 
-    val applicableToolType = getApplicableToolType(block.project, directory.virtualFile)
+    val applicableToolType = getApplicableToolType(directory.virtualFile)
 
     holder.registerProblem(block, HCLBundle.message("missing.module.inspection.missing.module.error.message", err),
                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
@@ -95,7 +95,7 @@ class RunTFToolGetFix(private val directoryName: String, private val executableN
       LOG.warn("Cannot run on non-local FS: $vf")
       return
     }
-    val toolType = getApplicableToolType(block.project, vf)
+    val toolType = getApplicableToolType(vf)
     try {
       project.service<TFExecutorService>().executeInBackground(
         TFExecutor.`in`(project, toolType)

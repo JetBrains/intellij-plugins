@@ -4,7 +4,6 @@ package org.intellij.terraform.config.util
 import com.intellij.execution.ExecutionModes
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
@@ -14,7 +13,6 @@ import com.intellij.openapi.vfs.isFile
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.*
-import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.opentofu.OpenTofuFileType
 
@@ -49,11 +47,11 @@ internal suspend fun TFExecutor.executeSuspendable(): Boolean {
   }
 }
 
-internal fun getApplicableToolType(project: Project, file: VirtualFile): TfToolType {
+internal fun getApplicableToolType(file: VirtualFile): TfToolType {
   val moduleFolder = if (file.isFile) file.parent else file
   return if (moduleFolder.children.any { FileUtilRt.extensionEquals(it.name, OpenTofuFileType.DEFAULT_EXTENSION) })
     TfToolType.OPENTOFU
   else {
-      TfToolType.TERRAFORM
+    TfToolType.TERRAFORM
   }
 }

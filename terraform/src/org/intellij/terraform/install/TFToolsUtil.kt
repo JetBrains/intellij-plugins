@@ -3,8 +3,6 @@ package org.intellij.terraform.install
 
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -14,16 +12,13 @@ import kotlinx.coroutines.ensureActive
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.opentofu.runtime.OpenTofuPathDetector
-import org.intellij.terraform.runtime.TerraformPathDetector
-import org.intellij.terraform.runtime.ToolPathDetector
-import org.intellij.terraform.runtime.ToolSettings
+import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
+import org.intellij.terraform.runtime.TerraformProjectSettings
+import org.intellij.terraform.runtime.TfToolSettings
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.coroutineContext
 
-val LOG: Logger = logger<InstallTerraformAction>()
-
-enum class TfToolType(@Nls val executableName: String) {
+internal enum class TfToolType(@Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
     override fun getDownloadUrl(): String {
@@ -33,9 +28,11 @@ enum class TfToolType(@Nls val executableName: String) {
 
     override val downloadServerUrl: String
       get() = "https://releases.hashicorp.com/terraform"
-    override fun getPathDetector(project: Project): ToolPathDetector {
-      return project.service<TerraformPathDetector>()
+
+    override fun getToolSettings(project: Project): TfToolSettings {
+      return project.service<TerraformProjectSettings>()
     }
+
   },
   OPENTOFU("tofu") {
     override val displayName = "OpenTofu"
@@ -46,8 +43,8 @@ enum class TfToolType(@Nls val executableName: String) {
     override val downloadServerUrl: String
       get() = "" //"https://get.opentofu.org/tofu/api.json"
 
-    override fun getPathDetector(project: Project): ToolPathDetector {
-      return project.service<OpenTofuPathDetector>()
+    override fun getToolSettings(project: Project): TfToolSettings {
+      return project.service<OpenTofuProjectSettings>()
     }
   };
 
@@ -60,7 +57,7 @@ enum class TfToolType(@Nls val executableName: String) {
 
   abstract fun getDownloadUrl(): String
   abstract val downloadServerUrl: String
-  abstract fun getPathDetector(project: Project): ToolPathDetector
+  abstract fun getToolSettings(project: Project): TfToolSettings
   abstract val displayName: String
 
   protected fun getOSName(): String? {
@@ -89,29 +86,23 @@ enum class TfToolType(@Nls val executableName: String) {
 
 internal fun installTFTool(
   project: Project,
-  resultHandler: (Boolean) -> Unit = {},
+  resultHandler: (InstallationResult) -> Unit = {},
   progressIndicator: ProgressIndicator? = null,
   type: TfToolType,
-  toolSettings: ToolSettings,
 ) {
   BinaryInstaller.create(project)
     .withBinaryName { type.getBinaryName() }
     .withDownloadUrl { type.getDownloadUrl() }
     .withProgressIndicator(progressIndicator)
-    .withResultHandler { result ->
-      if (result is SuccessfulInstallation) {
-        // TODO - update textField
-        toolSettings.toolPath = result.binary.toAbsolutePath().toString()
-      }
-      resultHandler(result is SuccessfulInstallation)
-    }
+    .withResultHandler { result -> resultHandler(result) }
     .install()
 }
 
-internal suspend fun getToolVersion(project: Project, tool: TfToolType): @NlsSafe String {
+internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String? = tool.executableName): @NlsSafe String {
   val capturingProcessAdapter = CapturingProcessAdapter()
 
   val success = TFExecutor.`in`(project, tool)
+    .withExePath(exePath)
     .withPresentableName(HCLBundle.message("tool.executor.version", tool.displayName))
     .withParameters("version")
     .withPassParentEnvironment(true)

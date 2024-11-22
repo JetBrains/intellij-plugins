@@ -18,7 +18,7 @@ class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
     val lockFile = virtualFiles.firstOrNull()?.let { localSchemaService.findLockFile(it) }
     if (lockFile == null) {
-      val toolType = virtualFiles.firstOrNull()?.let { getApplicableToolType(project, it) }?.executableName
+      val toolType = virtualFiles.firstOrNull()?.let { getApplicableToolType(it) }?.executableName
                      ?: TfToolType.TERRAFORM.executableName
       TerraformConstants.EXECUTION_NOTIFICATION_GROUP
         .createNotification(

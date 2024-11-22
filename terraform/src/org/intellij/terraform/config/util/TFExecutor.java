@@ -21,7 +21,6 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
 import org.intellij.terraform.install.TfToolType;
-import org.intellij.terraform.runtime.ToolPathDetector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,8 +50,7 @@ public final class TFExecutor {
   private TFExecutor(@NotNull Project project, TfToolType toolType) {
     myProject = project;
     myToolType = toolType;
-    ToolPathDetector pathDetector = toolType.getPathDetector(project);
-    myExePath = pathDetector.actualPath();
+    myExePath = toolType.getToolSettings(project).getToolPath();
   }
 
   public static @NotNull TFExecutor in(@NotNull Project project, TfToolType toolType) {

@@ -3,38 +3,43 @@ package org.intellij.terraform.runtime
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.execution.wsl.WslPath
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.install.TfToolType
+import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
-interface ToolPathDetector {
-  fun detectedPath(): String?
-  fun actualPath(): String
-  suspend fun detect(): Boolean
-}
+@Service(Service.Level.PROJECT)
+internal class ToolPathDetector(val project: Project, val coroutineScope: CoroutineScope) {
 
-internal abstract class ToolPathDetectorBase(protected val project: Project, protected val coroutineScope: CoroutineScope, protected val toolType: TfToolType) : ToolPathDetector {
+  companion object {
+    fun getInstance(project: Project): ToolPathDetector = project.service<ToolPathDetector>()
+  }
 
-  private var detectedPath: String? = null
-
-  override fun detectedPath(): String? = detectedPath
-
-  override suspend fun detect(): Boolean {
+  suspend fun detect(path: String): String? {
     return withContext(Dispatchers.IO) {
       runInterruptible {
+        if (isExecutable(path)) {
+          return@runInterruptible path
+        }
         val projectFilePath = project.projectFilePath
+        val fileName = Path(path).fileName.name
         if (projectFilePath != null) {
           val wslDistribution = WslPath.getDistributionByWindowsUncPath(projectFilePath)
           if (wslDistribution != null) {
             try {
-              val out = wslDistribution.executeOnWsl(3000, "which", toolType.executableName)
+              val out = wslDistribution.executeOnWsl(3000, "which", fileName)
               if (out.exitCode == 0) {
-                detectedPath = wslDistribution.getWindowsPath(out.stdout.trim())
-                return@runInterruptible true
+                return@runInterruptible wslDistribution.getWindowsPath(out.stdout.trim())
+              } else {
+                logger<ToolPathDetector>().info("Cannot detect ${fileName} in WSL. Output stdout: ${out.stdout}")
+                return@runInterruptible null
               }
             }
             catch (e: Exception) {
@@ -42,16 +47,16 @@ internal abstract class ToolPathDetectorBase(protected val project: Project, pro
             }
           }
         }
-
-        val binaryPath = PathEnvironmentVariableUtil.findInPath(toolType.getBinaryName())
-        if (binaryPath != null && binaryPath.canExecute()) {
-          detectedPath = binaryPath.absolutePath
-          return@runInterruptible true
-        }
-        return@runInterruptible false
+        return@runInterruptible findExecutable(fileName)
       }
     }
   }
 
+  private fun findExecutable(path: String): String? {
+    return PathEnvironmentVariableUtil.findInPath(path)?.takeIf { file -> isExecutable(file.path) }?.absolutePath
+  }
 
+  fun isExecutable(path: String): Boolean {
+    return File(path).canExecute()
+  }
 }

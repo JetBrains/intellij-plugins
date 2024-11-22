@@ -7,12 +7,11 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
-import kotlinx.coroutines.CoroutineScope
 import org.intellij.terraform.install.TfToolType
 
 @Service(Service.Level.PROJECT)
 @State(name = "TerraformProjectSettings", storages = [Storage("terraform.xml")])
-class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettings>, ToolSettings {
+class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettings>, TfToolSettings {
   @Attribute
   private var ignoredTemplateCandidatePaths: MutableSet<String> = SmartHashSet()
 
@@ -39,23 +38,17 @@ class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettin
   companion object {
     fun getInstance(project: Project): TerraformProjectSettings = project.service()
   }
-}
-
-@Service(Service.Level.PROJECT)
-internal class TerraformPathDetector(project: Project, coroutineScope: CoroutineScope): ToolPathDetectorBase(project, coroutineScope, TfToolType.TERRAFORM)  {
-
-  companion object {
-    fun getInstance(project: Project): TerraformPathDetector = project.service<TerraformPathDetector>()
-  }
-
-  override fun actualPath(): String {
-    return TerraformProjectSettings.getInstance(project).toolPath.ifEmpty { detectedPath() ?: toolType.getBinaryName() }
-  }
 
   class DetectOnStart : ProjectActivity {
     override suspend fun execute(project: Project) {
-      project.serviceAsync<TerraformPathDetector>().detect()
+      val terraformProjectSettings = project.serviceAsync<TerraformProjectSettings>()
+      val toolPath = terraformProjectSettings.toolPath
+      if (toolPath.isEmpty()) {
+        val detectedPath = project.serviceAsync<ToolPathDetector>().detect(TfToolType.TERRAFORM.executableName)
+        if (!detectedPath.isNullOrEmpty()) {
+          terraformProjectSettings.toolPath = detectedPath
+        }
+      }
     }
   }
-
 }

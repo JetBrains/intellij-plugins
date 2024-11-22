@@ -3,6 +3,7 @@ package org.intellij.terraform.runtime
 
 import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
@@ -15,6 +16,7 @@ import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.ui.dsl.builder.*
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.FailedInstallation
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getToolVersion
 import org.intellij.terraform.install.installTFTool
@@ -45,11 +47,10 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
 
   private fun executableToolSettingsPanel(
     parent: Panel,
-    settings: ToolSettings,
+    settings: TfToolSettings,
     type: TfToolType,
     parentDisposable: Disposable?,
   ) = parent.apply {
-    val pathDetector = type.getPathDetector(project)
     val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.executableName)) {}
     val executorField = myRow.textFieldWithBrowseButton(
       fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false),
@@ -57,46 +58,56 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
         return@textFieldWithBrowseButton chosenFile.path
       }
     ).bindText(settings::toolPath).applyToComponent {
-      emptyText.text = pathDetector.detectedPath() ?: type.getBinaryName()
-    }.onChanged {
-      settings.toolPath = it.text
+      emptyText.text = type.getBinaryName()
     }.trimmedTextValidation(
       validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
         val wslDistribution = WslPath.getDistributionByWindowsUncPath(filePath)
         filePath.isNotBlank() && (!File(filePath).exists() || wslDistribution != null)
       }
     ).align(AlignX.FILL)
+    val testButton = testToolButton(type, project.service<ToolPathDetector>(), parentDisposable, executorField.component)
     row {
-      cell(testToolButton(type, pathDetector, settings, parentDisposable, executorField))
+      cell(testButton)
+    }
+    executorField.onChanged {
+      testButton.updateTestButton(it.text)
     }
   }
 
   private fun testToolButton(
     type: TfToolType,
     pathDetector: ToolPathDetector,
-    toolSettings: ToolSettings,
     parentDisposable: Disposable?,
-    executorPathField: Cell<TextFieldWithBrowseButton>?,
+    executorPathField: TextFieldWithBrowseButton?,
   ) = ToolExecutableTestButtonComponent(
-    pathDetector,
     type,
-    HCLBundle.message("tool.testButton.text"),
     parentDisposable,
+    executorPathField,
     { resultHandler ->
       try {
-        installTFTool(project, resultHandler, EmptyProgressIndicator(), type, toolSettings)
+        installTFTool(project, resultHandler, EmptyProgressIndicator(), type)
       }
       catch (ex: Exception) {
-        fileLogger().warn("Failed to install ${type.displayName}", ex)
-        resultHandler(false)
+        fileLogger().warnWithDebug("Failed to install ${type.displayName}", ex)
+        resultHandler(FailedInstallation { ex.message ?: HCLBundle.message("tool.executor.unknown.error") })
       }
     }
   ) {
-    if (pathDetector.detectedPath() == null && pathDetector.detect()) {
-      val detectedPath = pathDetector.detectedPath() ?: type.getBinaryName()
-      executorPathField?.component?.emptyText?.text = detectedPath
+    val executorPathText = executorPathField?.text
+    if (executorPathText.isNullOrEmpty()) { //Trying to detect tool in PATH variable
+      val detectedPath = pathDetector.detect(type.executableName)
+      if (!detectedPath.isNullOrEmpty()) {
+        executorPathField?.text = detectedPath
+      }
     }
-    val versionLine = getToolVersion(project, type).lineSequence().firstOrNull()?.trim()
-    versionLine?.split(" ")?.getOrNull(1) ?: HCLBundle.message("tool.executor.unrecognized.version", type)
+    val updatedPathText = executorPathField?.text
+    if (!updatedPathText.isNullOrEmpty() && pathDetector.isExecutable(updatedPathText)) {
+      val versionLine = getToolVersion(project, type, updatedPathText).lineSequence().firstOrNull()?.trim()
+      return@ToolExecutableTestButtonComponent versionLine?.split(" ")?.getOrNull(1)
+                                               ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", type.executableName))
+    }
+    return@ToolExecutableTestButtonComponent ""
+  }.apply {
+    updateTestButton(executorPathField?.text)
   }
 }

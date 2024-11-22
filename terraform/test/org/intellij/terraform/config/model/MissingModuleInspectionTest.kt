@@ -6,7 +6,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.TerraformTestUtils
 import org.intellij.terraform.config.inspection.TFMissingModuleInspection
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.runtime.TerraformPathDetector
 import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4

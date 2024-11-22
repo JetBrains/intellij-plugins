@@ -275,8 +275,8 @@
 
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
-    <postStartupActivity implementation="org.intellij.terraform.runtime.TerraformPathDetector$DetectOnStart" />
-    <postStartupActivity implementation="org.intellij.terraform.opentofu.runtime.OpenTofuPathDetector$DetectOnStart" />
+    <postStartupActivity implementation="org.intellij.terraform.runtime.TerraformProjectSettings$DetectOnStart" />
+    <postStartupActivity implementation="org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings$DetectOnStart" />
 
     <!-- Code Inspections -->
     <!-- HCL used instead HCL-Terraform, to apply to all psi elements. .hcl files filtered out in #buildVisito method -->

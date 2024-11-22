@@ -51,7 +51,7 @@ internal class TerraformActionService(private val project: Project, private val 
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
     val title = HCLBundle.message("progress.title.terraform.init")
     withBackgroundProgress(project, title) {
-      val applicableToolType = getApplicableToolType(project, dirFile)
+      val applicableToolType = getApplicableToolType(dirFile)
       if (!isExecutableToolFileConfigured(project, applicableToolType)) {
         return@withBackgroundProgress
       }
@@ -103,7 +103,7 @@ internal class TerraformActionService(private val project: Project, private val 
       }
     }
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
-    val success = TFExecutor.`in`(project, getApplicableToolType(project, directory))
+    val success = TFExecutor.`in`(project, getApplicableToolType(directory))
       .withPresentableName(title)
       .withParameters("init")
       .showOutputOnError()

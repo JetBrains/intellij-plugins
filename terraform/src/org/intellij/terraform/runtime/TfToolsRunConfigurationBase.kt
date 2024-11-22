@@ -22,8 +22,8 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.text.findTextRange
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TerraformActionService
-import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.config.actions.isExecutableToolFileConfigured
+import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
@@ -73,15 +73,11 @@ internal abstract class TfToolsRunConfigurationBase(
         CommonBundle.getErrorTitle()
       )
       exception.setQuickFix(Runnable {
-        val settings = TerraformProjectSettings.getInstance(project)
-        settings.toolPath = with(TerraformPathDetector.getInstance(project)) {
-           detectedPath() ?: run {
-            runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-              detect()
-            }
-             detectedPath() ?: toolType.getBinaryName()
-          }
-        }
+        val settings = toolType.getToolSettings(project)
+        settings.toolPath =
+          runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+            ToolPathDetector.getInstance(project).detect(toolType.executableName)
+          } ?: ""
       })
       throw exception
     }
@@ -107,7 +103,7 @@ internal abstract class TfToolsRunConfigurationBase(
     }
 
   private val toolPath
-    get() = toolType.getPathDetector(project).actualPath()
+    get() = toolType.getToolSettings(project).toolPath
 
   override fun setProgramParameters(value: String?): Unit = Unit
 
@@ -160,7 +156,7 @@ internal class TfToolCommandLineState(
   private val project: Project,
   private val configParams: TfToolsRunConfigurationBase,
   env: ExecutionEnvironment,
-  val toolType: TfToolType
+  val toolType: TfToolType,
 ) : CommandLineState(env) {
   @Throws(ExecutionException::class)
   override fun startProcess(): ProcessHandler {
@@ -211,7 +207,7 @@ internal class TfToolCommandLineState(
 private class TfToolInitCommandFilter(
   val project: Project,
   val directory: String,
-  toolType: TfToolType
+  toolType: TfToolType,
 ) : Filter {
 
   val command: String = "${toolType.getBinaryName()} init"

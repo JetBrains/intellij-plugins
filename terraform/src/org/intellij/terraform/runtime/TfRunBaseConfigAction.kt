@@ -37,7 +37,7 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
 
     hclBlock?.let {
       e.presentation.setText(getConfigurationName(getRootModule(hclBlock)), false)
-      toolType = getApplicableToolType(psiFile.project, psiFile.virtualFile)
+      toolType = getApplicableToolType(psiFile.virtualFile)
     }
   }
 

@@ -37,7 +37,7 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
       return null
     }
 
-    val toolType = getApplicableToolType(psiFile.project, psiFile.virtualFile)
+    val toolType = getApplicableToolType(psiFile.virtualFile)
 
     val icon: Icon
     val tooltipProvider: Function<PsiElement, String>

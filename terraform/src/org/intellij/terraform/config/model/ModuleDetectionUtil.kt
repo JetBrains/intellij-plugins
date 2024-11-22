@@ -177,7 +177,7 @@ object ModuleDetectionUtil {
   }
 
   fun getManifestForDirectory(dotTerraform: VirtualFile, file: UserDataHolder, project: Project): Result<ModulesManifest> {
-    val toolType = getApplicableToolType(project, dotTerraform.parent)
+    val toolType = getApplicableToolType(dotTerraform.parent)
 
     LOG.debug("Found .terraform directory: $dotTerraform")
     val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
@@ -200,7 +200,7 @@ object ModuleDetectionUtil {
     val directory = file.containingDirectory
                     ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.containing.directory", file.name)), moduleBlock, file)
 
-    val toolType = getApplicableToolType(moduleBlock.project, directory.virtualFile)
+    val toolType = getApplicableToolType(directory.virtualFile)
 
     val source = getModuleSourceString(file, sourceVal)
                  ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.module.source")), moduleBlock)
@@ -492,7 +492,7 @@ object ModuleDetectionUtil {
     // Check whether current dir is a module itself
     val relativeToDotTerraform = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform)
     val relativeToRoot = VfsUtilCore.getRelativePath(directory.virtualFile, dotTerraform.parent)
-    val toolType = getApplicableToolType(directory.project, directory.virtualFile)
+    val toolType = getApplicableToolType(directory.virtualFile)
     if (relativeToDotTerraform != null) {
       val currentModule = manifest.modules.find { it.full == ".terraform/$relativeToDotTerraform" }
       if (currentModule != null) {

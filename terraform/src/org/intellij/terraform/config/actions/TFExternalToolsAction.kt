@@ -120,7 +120,7 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
 }
 
 internal fun isExecutableToolFileConfigured(project: Project, applicableToolType: TfToolType): Boolean {
-  val toolPath = applicableToolType.getPathDetector(project).actualPath()
+  val toolPath = applicableToolType.getToolSettings(project).toolPath
   return if (!isPathExecutable(toolPath)) {
     TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
       HCLBundle.message("run.configuration.terraform.path.title", applicableToolType.displayName),
