@@ -2,12 +2,11 @@
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.google.gson.JsonElement
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetElementTypeRequestArgs
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetSymbolTypeRequestArgs
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetTypePropertiesRequestArgs
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCustomCommandArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
+import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspIdeTypeScriptCommandRequest
 import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilter
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -59,25 +58,13 @@ class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(proje
 
   override fun createAnnotationErrorFilter() = VueLspAnnotationErrorFilter(project)
 
-  override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
+  override suspend fun runIdeTypeScriptCommand(commandName: String, args: TypeScriptCustomCommandArguments, requiresNewEval: Boolean): JsonElement? {
     val server = getServer() ?: return null
-    if (!isNewEvalModeServer(server)) return null
+    if (requiresNewEval && !isNewEvalModeServer(server)) return null
     awaitServerRunningState(server)
-    return server.sendRequest { (it as JSFrameworkLsp4jServer).getElementType(args) }
-  }
-
-  override suspend fun getIdeSymbolType(args: TypeScriptGetSymbolTypeRequestArgs): JsonElement? {
-    val server = getServer() ?: return null
-    if (!isNewEvalModeServer(server)) return null
-    awaitServerRunningState(server)
-    return server.sendRequest { (it as JSFrameworkLsp4jServer).getSymbolType(args) }
-  }
-
-  override suspend fun getIdeTypeProperties(args: TypeScriptGetTypePropertiesRequestArgs): JsonElement? {
-    val server = getServer() ?: return null
-    if (!isNewEvalModeServer(server)) return null
-    awaitServerRunningState(server)
-    return server.sendRequest { (it as JSFrameworkLsp4jServer).getTypeProperties(args) }
+    return server.sendRequest {
+      (it as JSFrameworkLsp4jServer).ideTypeScriptCommand(LspIdeTypeScriptCommandRequest(commandName, args))
+    }
   }
 
   private fun isNewEvalModeServer(server: LspServer): Boolean {
