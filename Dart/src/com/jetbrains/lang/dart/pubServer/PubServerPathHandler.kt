@@ -13,7 +13,6 @@ import com.intellij.util.io.isRegularBrowser
 import com.intellij.util.io.origin
 import com.intellij.util.io.referrer
 import com.intellij.util.io.userAgent
-import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.util.DartUrlResolver
 import com.jetbrains.lang.dart.util.PubspecYamlUtil
 import io.netty.channel.ChannelHandlerContext
@@ -46,11 +45,6 @@ private class PubServerPathHandler : WebServerPathHandlerAdapter() {
     }
 
     if (project == null) {
-      return false
-    }
-
-    val sdk = DartSdk.getDartSdk(project)
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.version, "1.6") < 0) {
       return false
     }
 

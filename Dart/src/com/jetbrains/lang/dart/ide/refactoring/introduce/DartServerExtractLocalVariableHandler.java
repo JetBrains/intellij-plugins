@@ -28,7 +28,6 @@ import com.jetbrains.lang.dart.ide.refactoring.ServerExtractLocalVariableRefacto
 import com.jetbrains.lang.dart.ide.refactoring.ServerRefactoringDialog;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.psi.DartExpression;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,11 +44,6 @@ public class DartServerExtractLocalVariableHandler implements RefactoringActionH
 
   @Override
   public void invoke(final @NotNull Project project, final Editor editor, PsiFile file, DataContext dataContext) {
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
-      return;
-    }
-
     if (editor == null || file == null) {
       return;
     }

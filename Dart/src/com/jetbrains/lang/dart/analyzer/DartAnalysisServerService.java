@@ -79,7 +79,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public final class DartAnalysisServerService implements Disposable {
-  public static final String MIN_SDK_VERSION = "1.12";
+  public static final String MIN_SDK_VERSION = "1.24";
   private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
   private static final String COMPLETION_2_SERVER_VERSION = "1.33";
 
@@ -1956,9 +1956,7 @@ public final class DartAnalysisServerService implements Disposable {
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFileUris);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFileUris);
       subscriptions.put(AnalysisService.OUTLINE, myVisibleFileUris);
-      if (StringUtil.compareVersionNumbers(mySdkVersion, "1.13") >= 0) {
-        subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFileUris);
-      }
+      subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFileUris);
       if (DartClosingLabelManager.getInstance().getShowClosingLabels()
           && StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
         subscriptions.put(AnalysisService.CLOSING_LABELS, myVisibleFileUris);
