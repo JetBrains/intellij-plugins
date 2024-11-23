@@ -63,7 +63,6 @@ import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import java.util.*
-import java.util.function.Supplier
 import kotlin.reflect.KClass
 
 const val SETUP_ATTRIBUTE_NAME = "setup"
@@ -75,6 +74,8 @@ const val ATTR_EVENT_SHORTHAND = '@'
 const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
+
+const val FUNCTIONAL_COMPONENT_TYPE = "FunctionalComponent"
 
 const val VITE_PKG = "vite"
 
@@ -249,7 +250,10 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
 }
 
 private fun getFromType(cur: PsiElement?): PsiElement? {
-  val jsType = (cur as? JSTypeOwner)?.jsType?.substitute() ?: return null
+  val jsType = (cur as? JSTypeOwner)?.jsType
+                 // Functional components do not have source - save on substitution time
+                 ?.takeIf { it !is JSGenericTypeImpl || it.type.typeText != FUNCTIONAL_COMPONENT_TYPE }
+                 ?.substitute() ?: return null
   val sourceElement = jsType.sourceElement
   return when {
     jsType is JSFunctionType -> sourceElement
