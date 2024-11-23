@@ -212,7 +212,7 @@ public final class DartUrlResolverImpl extends DartUrlResolver {
 
     Map<String, String> packagesMap;
     if (myDartSdk == null || DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(myDartSdk)) {
-      VirtualFile packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(myPubspecYamlFile);
+      VirtualFile packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(myProject, myPubspecYamlFile);
       packagesMap = packagesFile != null ? DotPackagesFileUtil.getPackagesMapFromPackageConfigJsonFile(packagesFile) : null;
     }
     else {

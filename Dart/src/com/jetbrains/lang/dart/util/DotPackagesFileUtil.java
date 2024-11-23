@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -23,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.intellij.openapi.project.Project;
 
 public final class DotPackagesFileUtil {
 
@@ -54,13 +58,34 @@ public final class DotPackagesFileUtil {
   /**
    * Given a file Dart pub root (either the yaml pubspec {@link VirtualFile} or the parent of a yaml pubspec), return the
    * .dart_tool/package_config.json {@link VirtualFile}, if it exists.
+   * <p>
+   * After looking in the parent directory for a `.dart_tool/` directory containing a `package_config.json` file, the parent directory is
+   * also searched recursively.
+   * <p>
+   * See Dart-lang workspace issue -- https://github.com/dart-lang/sdk/issues/53875 & https://medium.com/dartlang/dart-3-5-6ca36259fa2f
    */
-  public static @Nullable VirtualFile getPackageConfigJsonFile(@NotNull VirtualFile pubspecYamlFile) {
+  public static @Nullable VirtualFile getPackageConfigJsonFile(@NotNull Project project, @NotNull VirtualFile pubspecYamlFile) {
+    VirtualFile packageConfigFile = null;
     VirtualFile dir = pubspecYamlFile.getParent();
     VirtualFile dartToolDir = dir.findChild(DART_TOOL_DIR);
     if (dartToolDir != null && dartToolDir.isDirectory()) {
-      return dartToolDir.findChild(PACKAGE_CONFIG_JSON);
+      packageConfigFile = dartToolDir.findChild(PACKAGE_CONFIG_JSON);
     }
+    if (packageConfigFile != null) {
+      return packageConfigFile;
+    }
+    else {
+      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+      VirtualFile parentDir = dir.getParent();
+      while (parentDir != null && parentDir.isDirectory() && fileIndex.isInContent(parentDir)) {
+        VirtualFile parentPubspecYamlFile = parentDir.findChild(PubspecYamlUtil.PUBSPEC_YAML);
+        if (parentPubspecYamlFile != null && parentPubspecYamlFile.isInLocalFileSystem()) {
+          return getPackageConfigJsonFile(project, parentPubspecYamlFile);
+        }
+        parentDir = parentDir.getParent();
+      }
+    }
+
     return null;
   }
 

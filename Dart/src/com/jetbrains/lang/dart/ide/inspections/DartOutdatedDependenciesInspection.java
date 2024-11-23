@@ -69,7 +69,7 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
     if (FlutterUtil.isPubspecDeclaringFlutter(pubspecFile)) return null; // 'pub get' will fail anyway
 
     VirtualFile packagesFile = DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(sdk)
-                               ? DotPackagesFileUtil.getPackageConfigJsonFile(pubspecFile)
+                               ? DotPackagesFileUtil.getPackageConfigJsonFile(project, pubspecFile)
                                : pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
     if (packagesFile == null) {
