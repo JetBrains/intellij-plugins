@@ -6,7 +6,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
-import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspIdeTypeScriptCommandRequest
+import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspCustomTypeScriptCommandRequest
 import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilter
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -58,12 +58,12 @@ class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(proje
 
   override fun createAnnotationErrorFilter() = VueLspAnnotationErrorFilter(project)
 
-  override suspend fun runIdeTypeScriptCommand(commandName: String, args: TypeScriptCustomCommandArguments, requiresNewEval: Boolean): JsonElement? {
+  override suspend fun handleCustomTsServerCommand(commandName: String, args: TypeScriptCustomCommandArguments, requiresNewEval: Boolean): JsonElement? {
     val server = getServer() ?: return null
     if (requiresNewEval && !isNewEvalModeServer(server)) return null
     awaitServerRunningState(server)
     return server.sendRequest {
-      (it as JSFrameworkLsp4jServer).ideTypeScriptCommand(LspIdeTypeScriptCommandRequest(commandName, args))
+      (it as JSFrameworkLsp4jServer).handleCustomTsServerCommand(LspCustomTypeScriptCommandRequest(commandName, args))
     }
   }
 
