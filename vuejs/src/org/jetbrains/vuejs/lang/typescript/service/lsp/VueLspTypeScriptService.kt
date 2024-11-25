@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.google.gson.JsonElement
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCustomCommandArguments
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
@@ -58,7 +58,7 @@ class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(proje
 
   override fun createAnnotationErrorFilter() = VueLspAnnotationErrorFilter(project)
 
-  override suspend fun handleCustomTsServerCommand(commandName: String, args: TypeScriptCustomCommandArguments, requiresNewEval: Boolean): JsonElement? {
+  override suspend fun handleCustomTsServerCommand(commandName: String, args: JSLanguageServiceObject, requiresNewEval: Boolean): JsonElement? {
     val server = getServer() ?: return null
     if (requiresNewEval && !isNewEvalModeServer(server)) return null
     awaitServerRunningState(server)
