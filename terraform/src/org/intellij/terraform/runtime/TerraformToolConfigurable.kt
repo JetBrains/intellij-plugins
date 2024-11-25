@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.ui.validation.validationErrorIf
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.dsl.builder.*
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.FailedInstallation
@@ -24,6 +25,8 @@ import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import java.io.File
 
 private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
+private const val PARSE_DELAY = 100L
+private val VERSION_REGEX = Regex("^v*(\\d+)(\\.\\d+)*(\\.\\d+)*$")
 
 class TerraformToolConfigurable(private val project: Project) : BoundConfigurable(
   HCLBundle.message("terraform.opentofu.settings.label"), null
@@ -94,8 +97,8 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     }
   ) {
     val executorPathText = executorPathField?.text
-    if (executorPathText.isNullOrEmpty()) { //Trying to detect tool in PATH variable
-      val detectedPath = pathDetector.detect(type.executableName)
+    if (executorPathText.isNullOrEmpty() || !pathDetector.isExecutable(executorPathText)) { //Trying to detect tool in PATH variable
+      val detectedPath = pathDetector.detect(executorPathText.orEmpty().ifBlank { type.executableName })
       if (!detectedPath.isNullOrEmpty()) {
         executorPathField?.text = detectedPath
       }
@@ -103,8 +106,9 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     val updatedPathText = executorPathField?.text
     if (!updatedPathText.isNullOrEmpty() && pathDetector.isExecutable(updatedPathText)) {
       val versionLine = getToolVersion(project, type, updatedPathText).lineSequence().firstOrNull()?.trim()
-      return@ToolExecutableTestButtonComponent versionLine?.split(" ")?.getOrNull(1)
-                                               ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", type.executableName))
+      return@ToolExecutableTestButtonComponent versionLine?.split(" ")?.firstOrNull {
+        VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
+      } ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", type.executableName))
     }
     return@ToolExecutableTestButtonComponent ""
   }.apply {

@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 
 @Service(Service.Level.PROJECT)
 internal class ToolPathDetector(val project: Project, val coroutineScope: CoroutineScope) {
@@ -28,26 +29,26 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
         if (isExecutable(path)) {
           return@runInterruptible path
         }
+        val fileName = Path(path).fileName
         val projectFilePath = project.projectFilePath
-        val fileName = Path(path).fileName.name
         if (projectFilePath != null) {
           val wslDistribution = WslPath.getDistributionByWindowsUncPath(projectFilePath)
           if (wslDistribution != null) {
             try {
-              val out = wslDistribution.executeOnWsl(3000, "which", fileName)
+              val out = wslDistribution.executeOnWsl(3000, "which", fileName.nameWithoutExtension)
               if (out.exitCode == 0) {
                 return@runInterruptible wslDistribution.getWindowsPath(out.stdout.trim())
               } else {
-                logger<ToolPathDetector>().info("Cannot detect ${fileName} in WSL. Output stdout: ${out.stdout}")
+                logger<ToolPathDetector>().info("Cannot detect ${path} in WSL. Output stdout: ${out.stdout}")
                 return@runInterruptible null
               }
             }
             catch (e: Exception) {
-              logger<ToolPathDetector>().warn(e)
+              logger<ToolPathDetector>().warnWithDebug(e)
             }
           }
         }
-        return@runInterruptible findExecutable(fileName)
+        return@runInterruptible findExecutable(fileName.name)
       }
     }
   }
