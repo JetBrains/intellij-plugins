@@ -34,8 +34,8 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
     }
   }
 
-  override fun documentationTargets(element: PsiElement, originalElement: PsiElement?): List<DocumentationTarget> {
-    return createTarget(element)?.let { listOf(it) } ?: emptyList()
+  override fun documentationTarget(element: PsiElement, originalElement: PsiElement?): DocumentationTarget? {
+    return createTarget(element)
   }
 
   private fun createTarget(element: PsiElement): DocumentationTarget? {
