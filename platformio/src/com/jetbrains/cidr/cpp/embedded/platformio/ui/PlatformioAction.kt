@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
@@ -45,7 +46,9 @@ open class PlatformioTargetAction(val target: String,
                                   icon: Icon? = ClionEmbeddedPlatformioIcons.LogoPlatformIO)
   : PlatformioAction(text, toolTip, icon) {
 
-  override fun displayTextInToolbar(): Boolean = true
+  init {
+    templatePresentation.putClientProperty(ActionUtil.SHOW_TEXT_IN_TOOLBAR, true)
+  }
 
   override fun actionPerformed(e: AnActionEvent) {
     actionPerformed(e, false, true, true, "run", "-t", target)
