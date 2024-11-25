@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.BasicInsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
@@ -11,6 +12,7 @@ import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
 import org.intellij.terraform.hcl.psi.*
 
 internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
@@ -78,9 +80,12 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
       }
     }
 
-    val provider = getProviderForBlockType(type)
-    if (provider != null && provider.tier !in tiersNotToInsert && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
-      TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
+    val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
+    if (settings.IMPORT_PROVIDERS_AUTOMATICALLY) {
+      val provider = getProviderForBlockType(type)
+      if (provider != null && provider.tier !in tiersNotToInsert && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
+        TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
+      }
     }
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)
 

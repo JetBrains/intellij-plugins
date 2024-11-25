@@ -54,7 +54,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     type: TfToolType,
     parentDisposable: Disposable?,
   ) = parent.apply {
-    val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.executableName)) {}
+    val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.displayName)) {}
     val executorField = myRow.textFieldWithBrowseButton(
       fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false),
       fileChosen = { chosenFile ->

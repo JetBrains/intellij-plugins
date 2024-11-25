@@ -23,6 +23,7 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
   private val alignmentComboBox = CollectionComboBoxModel(PropertyAlignment.entries)
   private val commentSymbolComboBox = CollectionComboBoxModel(LineCommenterPrefix.entries)
   private lateinit var reformatCheckBox: JBCheckBox
+  private lateinit var importProviders: JBCheckBox
 
   private val settingsPanel: JPanel = JPanel(BorderLayout())
 
@@ -30,6 +31,10 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
     settingsPanel.add(panel {
       group(HCLBundle.message("code.style.formatting.options.group.name")) {
         row(HCLBundle.message("code.style.align.properties.title")) { comboBox(alignmentComboBox) }
+      }
+
+      group (HCLBundle.message("code.style.completion.options")) {
+        row { importProviders = checkBox(HCLBundle.message("hcl.settings.import.providers.automatically")).component }
       }
 
       group(HCLBundle.message("code.style.code.conventions.group.name")) {
@@ -65,6 +70,7 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
     tfSettings.PROPERTY_ALIGNMENT = alignmentComboBox.selected ?: PropertyAlignment.ON_EQUALS
     tfSettings.LINE_COMMENTER_CHARACTER = commentSymbolComboBox.selected ?: LineCommenterPrefix.POUND_SIGN
     tfSettings.RUN_TF_FMT_ON_REFORMAT = reformatCheckBox.isSelected
+    tfSettings.IMPORT_PROVIDERS_AUTOMATICALLY = importProviders.isSelected
   }
 
   override fun isModified(settings: CodeStyleSettings): Boolean {
@@ -72,7 +78,8 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
 
     return reformatCheckBox.isSelected != tfSettings.RUN_TF_FMT_ON_REFORMAT ||
            alignmentComboBox.selected != tfSettings.PROPERTY_ALIGNMENT ||
-           commentSymbolComboBox.selected != tfSettings.LINE_COMMENTER_CHARACTER
+           commentSymbolComboBox.selected != tfSettings.LINE_COMMENTER_CHARACTER ||
+           importProviders.isSelected != tfSettings.IMPORT_PROVIDERS_AUTOMATICALLY
   }
 
   override fun resetImpl(settings: CodeStyleSettings) {
@@ -81,6 +88,7 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
     alignmentComboBox.selectedItem = tfSettings.PROPERTY_ALIGNMENT
     commentSymbolComboBox.selectedItem = tfSettings.LINE_COMMENTER_CHARACTER
     reformatCheckBox.isSelected = tfSettings.RUN_TF_FMT_ON_REFORMAT
+    importProviders.isSelected = tfSettings.IMPORT_PROVIDERS_AUTOMATICALLY
   }
 
   override fun getPanel(): JPanel = settingsPanel
