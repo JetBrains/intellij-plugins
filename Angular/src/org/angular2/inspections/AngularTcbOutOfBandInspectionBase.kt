@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -21,7 +21,7 @@ abstract class AngularTcbOutOfBandInspectionBase(private val kind: DiagnosticKin
 
   override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
     if (file.language !is Angular2HtmlDialect
-        || TypeScriptService.getForElement(file)?.service !is Angular2TypeScriptService)
+        || TypeScriptServiceHolder.getForElement(file)?.service !is Angular2TypeScriptService)
       return null
 
     val (transpiledFile, topLevelTemplateFile) = Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile(file)

@@ -17,7 +17,7 @@ import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.Optimize
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
-import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.resolve.TypeScriptCompilerEvaluationFacade
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.openapi.application.ApplicationManager
@@ -66,7 +66,7 @@ internal class BindingsTypeResolver private constructor(
     val declarationsScope = Angular2DeclarationsScope(element)
     val directives = provider.matched.filter { declarationsScope.contains(it) }
     val service = if (element.project.service<TypeScriptCompilerEvaluationFacade>().isAnyEnabled())
-      TypeScriptService.getForElement(element)?.service
+      TypeScriptServiceHolder.getForElement(element)?.service
         ?.takeIf { it.isTypeEvaluationEnabled() }
     else
       null

@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.service
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
-import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT
 import com.intellij.openapi.actionSystem.CommonDataKeys.PSI_ELEMENT
@@ -37,7 +37,7 @@ private const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
 
 class VueClassicTypeScriptServiceTest : TypeScriptServiceTestBase() {
   override val service: VueClassicTypeScriptService get() {
-    return TypeScriptService.getForFile(project, file.virtualFile) as VueClassicTypeScriptService
+    return TypeScriptServiceHolder.getForFile(project, file.virtualFile) as VueClassicTypeScriptService
   }
 
   override fun getExtension(): String {

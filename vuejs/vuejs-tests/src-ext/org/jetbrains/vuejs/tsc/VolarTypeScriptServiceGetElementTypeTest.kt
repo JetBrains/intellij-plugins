@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject.Companion.NULL_SERVICE_OBJECT
 import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
@@ -46,7 +47,7 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
     waitUntilFileOpenedByLspServer(project, file.virtualFile)
 
     return super.calculateType(element, useTsc).also {
-      UsefulTestCase.assertInstanceOf(TypeScriptService.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
+      UsefulTestCase.assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
     }
   }
 
