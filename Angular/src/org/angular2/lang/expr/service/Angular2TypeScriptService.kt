@@ -1,20 +1,16 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.service
 
-import com.google.gson.JsonObject
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.resolve.JSEvaluationStatisticsCollector
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
 import com.intellij.lang.javascript.service.withServiceTraceSpan
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerServiceRequest
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
@@ -41,13 +37,11 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
-import kotlinx.coroutines.currentCoroutineContext
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
@@ -67,7 +61,6 @@ import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
 import java.util.function.Consumer
-import kotlin.coroutines.CoroutineContext
 
 class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
 
@@ -284,16 +277,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // which is the transpiledFile.originalFile
       val projectFileName = TypeScriptConfigUtil.getProjectFileName(transpiledFile.originalFile.originalFile)
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
-      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeResponse(null, args, ::getGeneratedElementType)
-    }
-
-    suspend fun getGeneratedElementType(args: Angular2GetGeneratedElementTypeRequestArgs): JsonObject? {
-      val task = Angular2GetGeneratedElementTypeRequest(args, this@Angular2TypeScriptService, currentCoroutineContext())
-      val response = requestQueue.request(task)
-      if (JSEvaluationStatisticsCollector.State.isEnabled()) {
-        application.service<JSEvaluationStatisticsCollector>().responseReady(!task.wasExecuted)
-      }
-      return response
+      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeResponse(null, args, ::Angular2GetGeneratedElementTypeCommand)
     }
   }
 }
@@ -326,15 +310,6 @@ fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): B
     AngularServiceSettings.AUTO -> true
     AngularServiceSettings.DISABLED -> false
   }
-}
-
-private class Angular2GetGeneratedElementTypeRequest(
-  args: Angular2GetGeneratedElementTypeRequestArgs,
-  service: Angular2TypeScriptService,
-  coroutineContext: CoroutineContext,
-) : TypeScriptCompilerServiceRequest<Angular2GetGeneratedElementTypeRequestArgs, JsonObject>(args, service, coroutineContext) {
-  override fun createCommand(): JSLanguageServiceSimpleCommand = Angular2GetGeneratedElementTypeCommand(args)
-  override suspend fun processResult(answer: JsonObject): JsonObject? = answer.getAsJsonObject(TypeScriptServerServiceImpl.BODY_FIELD)
 }
 
 private fun isAngularServiceSupport(project: Project, context: VirtualFile): Boolean =
