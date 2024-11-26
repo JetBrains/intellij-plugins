@@ -30,6 +30,7 @@ import com.intellij.psi.util.QualifiedName;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.util.Collection;
@@ -291,7 +292,7 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
     assertWithUsages(protoUses).that(protoUses).hasSize(expectedProtoUsages);
     List<UsageInfo> javaUses = javaUsages(allUses);
     // Sort by use position to make sure they are stable.
-    javaUses.sort(
+    javaUses = ContainerUtil.sorted(javaUses,
         (u1, u2) -> {
           VirtualFile vfile1 = u1.getVirtualFile();
           VirtualFile vfile2 = u2.getVirtualFile();
@@ -305,10 +306,12 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
     return javaUses;
   }
 
+  @Unmodifiable
   private static List<UsageInfo> protoUsages(List<UsageInfo> allUsages) {
     return ContainerUtil.filter(allUsages, use -> use.getFile() instanceof PbFile);
   }
 
+  @Unmodifiable
   private static List<UsageInfo> javaUsages(List<UsageInfo> allUsages) {
     return ContainerUtil.filter(allUsages, use -> use.getFile() instanceof PsiJavaFile);
   }
