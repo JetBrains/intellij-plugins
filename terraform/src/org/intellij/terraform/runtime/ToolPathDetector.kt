@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
+import org.intellij.terraform.install.getBinaryName
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.name
@@ -48,7 +49,7 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
             }
           }
         }
-        return@runInterruptible findExecutable(fileName.name)
+        return@runInterruptible findExecutable(getBinaryName(fileName.nameWithoutExtension))
       }
     }
   }

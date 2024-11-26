@@ -48,12 +48,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
     }
   };
 
-  fun getBinaryName(): String {
-    return if (SystemInfoRt.isWindows)
-      "${executableName}.exe"
-    else
-      executableName
-  }
+  fun getBinaryName(): String = getBinaryName(executableName)
 
   abstract fun getDownloadUrl(): String
   abstract val downloadServerUrl: String
@@ -82,6 +77,13 @@ internal enum class TfToolType(@Nls val executableName: String) {
     else
       "amd64"
   }
+}
+
+internal fun getBinaryName(executableName: String): String {
+  return if (SystemInfoRt.isWindows)
+    "$executableName.exe"
+  else
+    executableName
 }
 
 internal fun installTFTool(
