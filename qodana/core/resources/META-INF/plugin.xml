@@ -148,6 +148,9 @@
 
     <activityTracker implementation="org.jetbrains.qodana.staticAnalysis.QodanaVfsRefreshEventsTracker"/>
 
+    <postStartupActivity implementation="org.jetbrains.qodana.staticAnalysis.QodanaAwaitBackgroundStartupActivity"/>
+    <backgroundPostStartupActivity implementation="org.jetbrains.qodana.staticAnalysis.QodanaLinterBackgroundStartupActivity"/>
+
   </extensions>
 
   <actions resource-bundle="messages.QodanaBundle">
