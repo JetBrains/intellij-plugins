@@ -9,37 +9,35 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.io.isRegularBrowser
-import com.intellij.util.io.origin
-import com.intellij.util.io.referrer
-import com.intellij.util.io.userAgent
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.util.DartUrlResolver
 import com.jetbrains.lang.dart.util.PubspecYamlUtil
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.EmptyHttpHeaders
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.HttpHeaders
-import org.jetbrains.builtInWebServer.*
+import org.jetbrains.builtInWebServer.PathQuery
+import org.jetbrains.builtInWebServer.WebServerPathHandler
+import org.jetbrains.builtInWebServer.WebServerPathToFileManager
 
 private val LOG = logger<PubServerPathHandler>()
 
-private class PubServerPathHandler : WebServerPathHandlerAdapter() {
-  override fun process(path: String, project: Project?, request: FullHttpRequest, context: ChannelHandlerContext): Boolean {
-    val isSignedRequest = request.isSignedRequest()
-    val validateResult = validateToken(request, context.channel(), isSignedRequest) ?: return true
-
-    if (project == null) {
-      return false
-    }
-
+private class PubServerPathHandler : WebServerPathHandler {
+  override fun process(
+    path: String,
+    project: Project,
+    request: FullHttpRequest,
+    context: ChannelHandlerContext,
+    projectName: String,
+    authHeaders: HttpHeaders,
+    isCustomHost: Boolean,
+  ): Boolean {
     val sdk = DartSdk.getDartSdk(project)
     if (sdk == null || StringUtil.compareVersionNumbers(sdk.version, "1.6") < 0) {
       return false
     }
 
     val servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path) ?: return false
-    PubServerManager.getInstance(project).send(context.channel(), request, validateResult, servedDirAndPathForPubServer.first,
+    PubServerManager.getInstance(project).send(context.channel(), request, authHeaders, servedDirAndPathForPubServer.first,
                                                servedDirAndPathForPubServer.second)
     return true
   }
