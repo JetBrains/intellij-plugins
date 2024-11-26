@@ -9,6 +9,8 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.dsl.builder.RightGap
+import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import org.intellij.terraform.config.TerraformFileType
@@ -29,21 +31,15 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
 
   init {
     settingsPanel.add(panel {
-      group(HCLBundle.message("code.style.formatting.options.group.name")) {
-        row(HCLBundle.message("code.style.align.properties.title")) { comboBox(alignmentComboBox) }
+      row(HCLBundle.message("code.style.align.properties.title")) { comboBox(alignmentComboBox) }
+      row(HCLBundle.message("code.style.line.commenter.character.title")) { comboBox(commentSymbolComboBox) }
+      row {
+        importProviders = checkBox(HCLBundle.message("code.style.import.provider.automatically")).gap(RightGap.SMALL).component
+        contextHelp(HCLBundle.message("code.style.import.provider.text"), HCLBundle.message("code.style.import.provider.header"))
       }
-
-      group (HCLBundle.message("code.style.completion.options")) {
-        row { importProviders = checkBox(HCLBundle.message("hcl.settings.import.providers.automatically")).component }
-      }
-
-      group(HCLBundle.message("code.style.code.conventions.group.name")) {
-        row(HCLBundle.message("code.style.line.commenter.character.title")) { comboBox(commentSymbolComboBox) }
-      }
-
-      group(HCLBundle.message("code.style.run.tf.fmt.group.name")) {
-        row { reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title")).component }
-        row { comment(HCLBundle.message("code.style.run.tf.fmt.comment")) }
+      row {
+        reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title")).gap(RightGap.SMALL).component
+        contextHelp(HCLBundle.message("code.style.run.tf.fmt.comment"), HCLBundle.message("code.style.run.tf.fmt.header"))
       }
     }.apply {
       border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
