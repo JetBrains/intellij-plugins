@@ -3,12 +3,14 @@ package org.intellij.terraform.runtime
 
 import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -16,12 +18,15 @@ import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.dsl.builder.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.FailedInstallation
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getToolVersion
 import org.intellij.terraform.install.installTFTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
+import org.jetbrains.concurrency.runAsync
 import java.io.File
 
 private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
@@ -96,22 +101,21 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
       }
     }
   ) {
-    val executorPathText = executorPathField?.text
+    val executorPathText = withContext(Dispatchers.EDT) { executorPathField?.text }
     if (executorPathText.isNullOrEmpty() || !pathDetector.isExecutable(executorPathText)) { //Trying to detect tool in PATH variable
       val detectedPath = pathDetector.detect(executorPathText.orEmpty().ifBlank { type.executableName })
       if (!detectedPath.isNullOrEmpty()) {
-        executorPathField?.text = detectedPath
+        withContext(Dispatchers.EDT) { executorPathField?.text = detectedPath }
       }
     }
-    val updatedPathText = executorPathField?.text
+    val updatedPathText = withContext(Dispatchers.EDT) { executorPathField?.text }
     if (!updatedPathText.isNullOrEmpty() && pathDetector.isExecutable(updatedPathText)) {
       val versionLine = getToolVersion(project, type, updatedPathText).lineSequence().firstOrNull()?.trim()
-      return@ToolExecutableTestButtonComponent versionLine?.split(" ")?.firstOrNull {
+      val version = versionLine?.split(" ")?.firstOrNull {
         VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
       } ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", type.executableName))
+      return@ToolExecutableTestButtonComponent version
     }
     return@ToolExecutableTestButtonComponent ""
-  }.apply {
-    updateTestButton(executorPathField?.text)
   }
 }

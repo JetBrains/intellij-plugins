@@ -17,6 +17,9 @@ import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.FailedInstallation
 import org.intellij.terraform.install.InstallationResult
@@ -91,6 +94,7 @@ internal class ToolExecutableTestButtonComponent(
       button.isEnabled = true
       button.requestFocus()
     }
+    updateTestButton(fieldToUpdate?.text)
   }
 
   private fun createSpinnerIcon(parentDisposable: Disposable?): AsyncProcessIcon {
@@ -141,7 +145,10 @@ internal class ToolExecutableTestButtonComponent(
   private fun runTestBlocking(title: @NlsContexts.ProgressTitle String): String = runWithModalProgressBlocking(
     owner = ModalTaskOwner.component(this),
     title = title,
-  ) { updateTestButton(validateAndTestAction()) }
+  ) {
+    val executionResult = validateAndTestAction()
+    updateTestButton(executionResult)
+  }
 
   fun updateTestButton(toolPath: String?): String {
     installButton.isVisible = false
