@@ -19,6 +19,7 @@ import jetbrains.plugins.yeoman.generators.YeomanGeneratorListProvider;
 import jetbrains.plugins.yeoman.generators.YeomanInstalledGeneratorInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.awt.*;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 public class YeomanAvailableGeneratorsMain extends YeomanGeneratorsMain {
   private final YeomanGeneratorListProvider myProvider;
+  @Unmodifiable
   private Map<String, YeomanInstalledGeneratorInfo> myInstalledGenerators;
   private boolean myBusy = false;
 
