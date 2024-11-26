@@ -192,12 +192,16 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
 
   @Override
   public void setRLMs(@NotNull Collection<RLMInfo> rlms) {
-    if (rlms.isEmpty()) myRLMs = "";
-    myRLMs = StringUtil.join(rlms, info -> info.MAIN_CLASS +
-                                       CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
-                                       info.OUTPUT_FILE +
-                                       CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
-                                       info.OPTIMIZE, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    if (rlms.isEmpty()) {
+      myRLMs = "";
+    }
+    else {
+      myRLMs = StringUtil.join(rlms, info -> info.MAIN_CLASS +
+                                             CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+                                             info.OUTPUT_FILE +
+                                             CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+                                             info.OPTIMIZE, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    }
   }
 
   @Override

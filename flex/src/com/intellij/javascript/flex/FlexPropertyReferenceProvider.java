@@ -44,7 +44,7 @@ public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
         final JSExpression[] args = ((JSArgumentList)parent).getArguments();
 
         boolean propertyRef = false;
-        boolean bundleRef = false;
+        boolean bundleRef;
 
         if (justResourceBundleRef) {
           bundleRef = args.length > 1 && args[1] == element;

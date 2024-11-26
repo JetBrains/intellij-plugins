@@ -7,8 +7,8 @@ import java.util.Collections;
 public class JpsFlexmojosSdkProperties {
 
   private final Collection<String> myFlexCompilerClasspath = new ArrayList<>();
-  private String myAdlPath = "";
-  private String myAirRuntimePath = "";
+  private final String myAdlPath;
+  private final String myAirRuntimePath;
 
   public JpsFlexmojosSdkProperties(final Collection<String> flexCompilerClasspath, final String adlPath, final String airRuntimePath) {
     myFlexCompilerClasspath.addAll(flexCompilerClasspath);
