@@ -3,6 +3,7 @@ package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.ide.highlighter.HighlighterFactory
+import com.intellij.lang.Language
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.highlighter.EditorHighlighter
 import com.intellij.openapi.fileTypes.FileType
@@ -10,10 +11,10 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.RightGap
-import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLSyntaxHighlighter
 import org.intellij.terraform.hcl.createHclLexer
@@ -21,7 +22,7 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 
-internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
+internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, language: Language) : CodeStyleAbstractPanel(settings) {
   private val alignmentComboBox = CollectionComboBoxModel(PropertyAlignment.entries)
   private val commentSymbolComboBox = CollectionComboBoxModel(LineCommenterPrefix.entries)
   private lateinit var reformatCheckBox: JBCheckBox
@@ -36,11 +37,11 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
       row {
         importProviders = checkBox(HCLBundle.message("code.style.import.provider.automatically")).gap(RightGap.SMALL).component
         contextHelp(HCLBundle.message("code.style.import.provider.text"), HCLBundle.message("code.style.import.provider.header"))
-      }
+      }.visible(language is TerraformLanguage)
       row {
         reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title")).gap(RightGap.SMALL).component
         contextHelp(HCLBundle.message("code.style.run.tf.fmt.comment"), HCLBundle.message("code.style.run.tf.fmt.header"))
-      }
+      }.visible(language is TerraformLanguage)
     }.apply {
       border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
     }, BorderLayout.WEST)
