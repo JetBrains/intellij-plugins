@@ -12,6 +12,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FileCollectionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.jps.ProjectPaths;
 import org.jetbrains.jps.builders.*;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
@@ -90,6 +91,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
+  @Unmodifiable
   public @NotNull Collection<File> getOutputRoots(@NotNull CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
       final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
