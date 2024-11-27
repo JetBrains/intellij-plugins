@@ -1,6 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -44,11 +45,12 @@ class DartPackageAwareFileReference extends FileReference {
         return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
       }
 
-      DartSdk sdk = DartSdk.getDartSdk(containingFile.getProject());
+      final Project project = containingFile.getProject();
+      DartSdk sdk = DartSdk.getDartSdk(project);
       VirtualFile packagesFile;
       if (sdk != null && pubspecYamlFile != null) {
         if (DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(sdk)) {
-          packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(pubspecYamlFile);
+          packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(project, pubspecYamlFile);
         }
         else {
           packagesFile = pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);

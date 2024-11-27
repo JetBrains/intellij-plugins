@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -69,7 +69,7 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
     if (FlutterUtil.isPubspecDeclaringFlutter(pubspecFile)) return null; // 'pub get' will fail anyway
 
     VirtualFile packagesFile = DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(sdk)
-                               ? DotPackagesFileUtil.getPackageConfigJsonFile(pubspecFile)
+                               ? DotPackagesFileUtil.getPackageConfigJsonFile(project, pubspecFile)
                                : pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
     if (packagesFile == null) {
