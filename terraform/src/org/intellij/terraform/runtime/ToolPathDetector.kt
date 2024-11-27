@@ -12,9 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.install.getBinaryName
-import java.io.File
+import java.nio.file.Files
 import kotlin.io.path.Path
-import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
 @Service(Service.Level.PROJECT)
@@ -27,10 +26,11 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
   suspend fun detect(path: String): String? {
     return withContext(Dispatchers.IO) {
       runInterruptible {
-        if (isExecutable(path)) {
+        val filePath = Path(path)
+        if (Files.isExecutable(filePath)) {
           return@runInterruptible path
         }
-        val fileName = Path(path).fileName
+        val fileName = filePath.fileName
         val projectFilePath = project.projectFilePath
         if (projectFilePath != null) {
           val wslDistribution = WslPath.getDistributionByWindowsUncPath(projectFilePath)
@@ -39,7 +39,8 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
               val out = wslDistribution.executeOnWsl(3000, "which", fileName.nameWithoutExtension)
               if (out.exitCode == 0) {
                 return@runInterruptible wslDistribution.getWindowsPath(out.stdout.trim())
-              } else {
+              }
+              else {
                 logger<ToolPathDetector>().info("Cannot detect ${path} in WSL. Output stdout: ${out.stdout}")
                 return@runInterruptible null
               }
@@ -55,10 +56,31 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
   }
 
   private fun findExecutable(path: String): String? {
-    return PathEnvironmentVariableUtil.findInPath(path)?.takeIf { file -> isExecutable(file.path) }?.absolutePath
+    return PathEnvironmentVariableUtil.findInPath(path)?.takeIf { file -> file.canExecute() }?.absolutePath
   }
 
-  fun isExecutable(path: String): Boolean {
-    return File(path).canExecute()
+  suspend fun isExecutable(path: String): Boolean {
+    return withContext(Dispatchers.IO) {
+      runInterruptible {
+        val filePath = Path(path)
+        if (Files.isExecutable(filePath)) return@runInterruptible true
+
+        val wslDistribution = WslPath.getDistributionByWindowsUncPath(path)
+        if (wslDistribution != null) {
+          try {
+            val command = wslDistribution.getWslPath(filePath)
+            val out = wslDistribution.executeOnWsl(3000, "test", "-x", command)
+            out.exitCode == 0
+          }
+          catch (e: Exception) {
+            logger<ToolPathDetector>().warnWithDebug(e)
+            false
+          }
+        }
+        else {
+          false
+        }
+      }
+    }
   }
 }

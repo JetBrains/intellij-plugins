@@ -31,7 +31,7 @@ import java.io.File
 
 private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
 private const val PARSE_DELAY = 100L
-private val VERSION_REGEX = Regex("^v*(\\d+)(\\.\\d+)*(\\.\\d+)*$")
+private val VERSION_REGEX = Regex("^v*(\\d+)(\\.\\d+)*(\\.\\d+)*-?\\S*$")
 
 class TerraformToolConfigurable(private val project: Project) : BoundConfigurable(
   HCLBundle.message("terraform.opentofu.settings.label"), null
@@ -70,7 +70,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
     }.trimmedTextValidation(
       validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
         val wslDistribution = WslPath.getDistributionByWindowsUncPath(filePath)
-        filePath.isNotBlank() && (!File(filePath).exists() || wslDistribution != null)
+        filePath.isNotBlank() && (!File(filePath).exists() && wslDistribution == null)
       }
     ).align(AlignX.FILL)
     val testButton = testToolButton(type, project.service<ToolPathDetector>(), parentDisposable, executorField.component)
