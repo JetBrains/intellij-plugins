@@ -12,14 +12,12 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.ide.progress.ModalTaskOwner
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.ui.components.ActionLink
+import com.intellij.ui.components.JBLabel
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.FailedInstallation
 import org.intellij.terraform.install.InstallationResult
@@ -27,7 +25,6 @@ import org.intellij.terraform.install.SuccessfulInstallation
 import org.intellij.terraform.install.TfToolType
 import java.awt.FlowLayout
 import javax.swing.JButton
-import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
@@ -42,7 +39,7 @@ internal class ToolExecutableTestButtonComponent(
 ) : JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)) {
 
   private val button = JButton()
-  private val resultLabel = JLabel("", AllIcons.Empty, SwingConstants.LEFT)
+  private val resultLabel = JBLabel("", AllIcons.Empty, SwingConstants.LEFT)
   private val spinnerIcon: AsyncProcessIcon = createSpinnerIcon(parentDisposable)
   private val installButton: ActionLink = createInstallButton()
 
