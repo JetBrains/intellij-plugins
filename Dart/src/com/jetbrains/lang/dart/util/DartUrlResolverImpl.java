@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -212,7 +212,7 @@ public final class DartUrlResolverImpl extends DartUrlResolver {
 
     Map<String, String> packagesMap;
     if (myDartSdk == null || DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(myDartSdk)) {
-      VirtualFile packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(myPubspecYamlFile);
+      VirtualFile packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(myProject, myPubspecYamlFile);
       packagesMap = packagesFile != null ? DotPackagesFileUtil.getPackagesMapFromPackageConfigJsonFile(packagesFile) : null;
     }
     else {
