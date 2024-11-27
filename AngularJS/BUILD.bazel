@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.angularJS` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "angularJS_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "angularJS",
   module_name = "intellij.angularJS",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/indexing-api:indexing",
     "@community//xml/xml-psi-impl:psi-impl",
@@ -50,12 +46,10 @@ jvm_library(
   runtime_deps = [":angularJS_resources"]
 )
 
-kt_jvm_test(
-  name = "angularJS_test",
+jvm_library(
+  name = "angularJS_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":angularJS"],
   deps = [
     "@community//platform/indexing-api:indexing",
@@ -68,26 +62,28 @@ kt_jvm_test(
     "//CSS/impl:css-impl",
     "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
     "//plugins/webpack",
+    "//plugins/webpack:webpack_test_lib",
     "@lib//:gson",
     "//plugins/JSIntentionPowerPack:javascript-intentions",
-    "//plugins/JSIntentionPowerPack:javascript-intentions_test",
+    "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
     "@ultimate_lib//:angular_j_s_oleaster-matcher",
     "@ultimate_lib//:angular_j_s_oleaster-runner",
     "//plugins/IntelliLang-js:javascript-langInjection",
-    "//plugins/IntelliLang-js:javascript-langInjection_test",
+    "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
     "@community//plugins/IntelliLang:xml-langInjection",
     "//plugins/sass",
-    "//plugins/sass:sass_test",
+    "//plugins/sass:sass_test_lib",
     "//plugins/less",
-    "//plugins/less:less_test",
+    "//plugins/less:less_test_lib",
     "//contrib/postcss",
-    "//contrib/postcss:postcss_test",
-    "@community//xml/tests:tests_test",
+    "//contrib/postcss:postcss_test_lib",
+    "@community//xml/tests:tests_test_lib",
     "//tests/resharper:resharper-testFramework",
     "@community//plugins/htmltools:html-tools",
     "@lib//:jackson",
     "@lib//:jackson-databind",
     "//contrib/tslint",
+    "//contrib/tslint:tslint_test_lib",
     "@lib//:stream_ex",
     "//plugins/graph:graph-impl",
     "//plugins/uml:diagram-impl",
@@ -100,12 +96,19 @@ kt_jvm_test(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//platform/webSymbols",
+    "@community//platform/webSymbols:webSymbols_test_lib",
     "@lib//:fastutil-min",
     "@community//images",
+    "@community//images:images_test_lib",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
-    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "//webcore/impl:webide-impl",
   ],
   runtime_deps = [":angularJS_resources"]
+)
+
+jvm_test(
+  name = "angularJS_test",
+  runtime_deps = [":angularJS_test_lib"]
 )
 ### auto-generated section `build intellij.angularJS` end

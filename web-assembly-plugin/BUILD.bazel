@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.webassembly` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "webassembly_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "webassembly",
   module_name = "intellij.webassembly",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/main/gen/**/*.kt", "src/main/gen/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/main/gen/**/*.kt", "src/main/gen/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
@@ -28,12 +24,10 @@ jvm_library(
   runtime_deps = [":webassembly_resources"]
 )
 
-kt_jvm_test(
-  name = "webassembly_test",
+jvm_library(
+  name = "webassembly_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True),
   associates = [":webassembly"],
   deps = [
     "@community//platform/lang-api:lang",
@@ -41,11 +35,16 @@ kt_jvm_test(
     "@community//platform/execution-impl",
     "@lib//:gson",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
   ],
   runtime_deps = [":webassembly_resources"]
+)
+
+jvm_test(
+  name = "webassembly_test",
+  runtime_deps = [":webassembly_test_lib"]
 )
 ### auto-generated section `build intellij.webassembly` end

@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.meteor` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "meteor_resources",
@@ -19,13 +17,12 @@ jvm_library(
   name = "meteor",
   module_name = "intellij.meteor",
   visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:gson",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
+    "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
     "@community//platform/core-impl",
     "@community//platform/xdebugger-api:debugger",
@@ -54,17 +51,16 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "meteor_test",
+jvm_library(
+  name = "meteor_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":meteor"],
   deps = [
     "@lib//:gson",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
+    "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
     "@community//platform/core-impl",
     "@community//platform/xdebugger-api:debugger",
@@ -74,17 +70,20 @@ kt_jvm_test(
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//xml/impl",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/handlebars",
+    "//contrib/handlebars:handlebars_test_lib",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//webcore:webide",
     "//webcore/impl:webide-impl",
     "//plugins/LiveEdit:js-liveEdit",
+    "//plugins/LiveEdit:js-liveEdit_test_lib",
     "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "//plugins/JavaScriptLanguage:javascript",
-    "//plugins/JavaScriptLanguage:javascript-tests_test",
+    "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
     "//plugins/fileWatcher",
+    "//plugins/fileWatcher:fileWatcher_test_lib",
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
@@ -95,5 +94,10 @@ kt_jvm_test(
     ":meteor_resources",
     ":meteor_resources_1",
   ]
+)
+
+jvm_test(
+  name = "meteor_test",
+  runtime_deps = [":meteor_test_lib"]
 )
 ### auto-generated section `build intellij.meteor` end

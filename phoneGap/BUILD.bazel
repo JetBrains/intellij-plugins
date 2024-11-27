@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.phoneGap` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "phoneGap_resources",
@@ -19,9 +17,7 @@ jvm_library(
   name = "phoneGap",
   module_name = "intellij.phoneGap",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
@@ -40,12 +36,10 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "phoneGap_test",
+jvm_library(
+  name = "phoneGap_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":phoneGap"],
   deps = [
     "@community//platform/lang-api:lang",
@@ -53,10 +47,11 @@ kt_jvm_test(
     "@community//platform/execution-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//RegExpSupport:regexp",
+    "@community//RegExpSupport:regexp_test_lib",
     "@community//xml/xml-psi-api:psi",
     "@lib//:gson",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
@@ -65,5 +60,10 @@ kt_jvm_test(
     ":phoneGap_resources",
     ":phoneGap_resources_1",
   ]
+)
+
+jvm_test(
+  name = "phoneGap_test",
+  runtime_deps = [":phoneGap_test_lib"]
 )
 ### auto-generated section `build intellij.phoneGap` end

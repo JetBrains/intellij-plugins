@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.qodana.jvm.coverage` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "qodana-jvm-coverage_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "qodana-jvm-coverage",
   module_name = "intellij.qodana.jvm.coverage",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/openapi:java",
@@ -34,12 +30,10 @@ jvm_library(
   runtime_deps = [":qodana-jvm-coverage_resources"]
 )
 
-kt_jvm_test(
-  name = "qodana-jvm-coverage_test",
+jvm_library(
+  name = "qodana-jvm-coverage_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":qodana-jvm-coverage"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -47,20 +41,31 @@ kt_jvm_test(
     "@community//java/openapi:java",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",
     "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
     "//contrib/qodana/coverage",
+    "//contrib/qodana/coverage:coverage_test_lib",
     "@community//java/java-analysis-api:analysis",
     "@community//plugins/coverage:java-coverage",
+    "@community//plugins/coverage:java-coverage_test_lib",
     "@community//uast/uast-java:java-uast",
     "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common:coverage_test_lib",
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
     "@community//java/testFramework",
     "//contrib/qodana-test-framework:qodana-testFramework",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
   ],
   runtime_deps = [":qodana-jvm-coverage_resources"]
+)
+
+jvm_test(
+  name = "qodana-jvm-coverage_test",
+  runtime_deps = [":qodana-jvm-coverage_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.jvm.coverage` end

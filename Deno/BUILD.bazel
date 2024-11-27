@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.deno` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "deno_resources",
@@ -13,13 +11,12 @@ jvm_library(
   name = "deno",
   module_name = "intellij.deno",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:guava",
     "@lib//:gson",
     "@ultimate_lib//:eclipse_lsp4j",
+    "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/lang-impl",
@@ -36,36 +33,41 @@ jvm_library(
   runtime_deps = [":deno_resources"]
 )
 
-kt_jvm_test(
-  name = "deno_test",
+jvm_library(
+  name = "deno_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True),
   associates = [":deno"],
   deps = [
     "@lib//:guava",
     "@lib//:gson",
     "@ultimate_lib//:eclipse_lsp4j",
+    "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/lang-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
     "//platform/lsp/testFramework",
-    "//plugins/JavaScriptLanguage:javascript-tests_test",
+    "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "@community//platform/xdebugger-api:debugger",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "//platform/lsp-impl",
+    "//platform/lsp-impl:lsp-impl_test_lib",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "@community//platform/core-impl",
   ],
   runtime_deps = [":deno_resources"]
+)
+
+jvm_test(
+  name = "deno_test",
+  runtime_deps = [":deno_test_lib"]
 )
 ### auto-generated section `build intellij.deno` end

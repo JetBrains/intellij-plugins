@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.karma` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "karma_resources",
@@ -19,9 +17,7 @@ jvm_library(
   name = "karma",
   module_name = "intellij.karma",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
@@ -51,17 +47,16 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "karma_test",
+jvm_library(
+  name = "karma_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":karma"],
   deps = [
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/smRunner",
+    "@community//platform/smRunner:smRunner_test_lib",
     "@lib//:guava",
     "//plugins/js-test-common:javascript-testing",
     "@lib//:gson",
@@ -70,6 +65,7 @@ kt_jvm_test(
     "@community//xml/impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common:coverage_test_lib",
     "//webcore/impl:webide-impl",
     "@lib//:junit4",
     "//plugins/JavaScriptDebugger/wip/backend:javascript-wip-backend",
@@ -78,14 +74,21 @@ kt_jvm_test(
     "@community//platform/script-debugger/backend:scriptDebugger-backend",
     "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
+    "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
+    "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
   ],
   runtime_deps = [
     ":karma_resources",
     ":karma_resources_1",
   ]
+)
+
+jvm_test(
+  name = "karma_test",
+  runtime_deps = [":karma_test_lib"]
 )
 ### auto-generated section `build intellij.karma` end

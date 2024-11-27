@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.clion.embedded.platformio` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "clion-embedded-platformio_resources",
@@ -13,15 +11,15 @@ jvm_library(
   name = "clion-embedded-platformio",
   module_name = "intellij.clion.embedded.platformio",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "//CIDR/clion-embedded/plugin:clion-embedded-plugin",
     "//CIDR/clion",
     "//CIDR/cidr-debugger",
     "//CIDR/clion-embedded",
     "//CIDR/clion-execution",
+    "@community//platform/ide-core-impl",
+    "//CIDR/cidr-external-system:cidr-externalSystem",
     "@community//plugins/terminal",
     "@community//platform/core-ui",
     "@community//platform/statistics",
@@ -40,24 +38,31 @@ jvm_library(
   runtime_deps = [":clion-embedded-platformio_resources"]
 )
 
-kt_jvm_test(
-  name = "clion-embedded-platformio_test",
+jvm_library(
+  name = "clion-embedded-platformio_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":clion-embedded-platformio"],
   deps = [
     "//CIDR/clion-embedded/plugin:clion-embedded-plugin",
     "//CIDR/clion",
+    "//CIDR/cidr-common-testFramework/core/nolang:cidr-common-testFramework-core-nolang",
     "//CIDR/cidr-debugger",
+    "//CIDR/cidr-debugger:cidr-debugger_test_lib",
     "//CIDR/clion-embedded",
+    "//CIDR/clion-embedded:clion-embedded_test_lib",
     "//CIDR/clion-execution",
+    "//CIDR/clion-execution:clion-execution_test_lib",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/ide-core-impl",
+    "//CIDR/cidr-external-system:cidr-externalSystem",
+    "//CIDR/cidr-external-system:cidr-externalSystem_test_lib",
     "@community//plugins/terminal",
+    "@community//plugins/terminal:terminal_test_lib",
     "@community//platform/core-ui",
     "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//platform/lang-impl",
@@ -72,5 +77,10 @@ kt_jvm_test(
     "//CIDR/clion-testFramework",
   ],
   runtime_deps = [":clion-embedded-platformio_resources"]
+)
+
+jvm_test(
+  name = "clion-embedded-platformio_test",
+  runtime_deps = [":clion-embedded-platformio_test_lib"]
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end

@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.qodana.inspectionKts.kotlin` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "qodana-inspectionKts-kotlin_resources",
@@ -12,9 +11,7 @@ jvm_library(
   name = "qodana-inspectionKts-kotlin",
   module_name = "intellij.qodana.inspectionKts.kotlin",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
     "@community//platform/analysis-api:analysis",
@@ -22,11 +19,11 @@ jvm_library(
     "@community//platform/core-impl",
     "@community//platform/analysis-impl",
     "@community//java/java-psi-api:psi",
-    "@lib//:kotlinc_analysis-api.provided",
-    "@lib//:kotlinc_kotlin-compiler-common.provided",
-    "@ultimate_lib//:kotlinc_kotlin-scripting-common.provided",
-    "@ultimate_lib//:kotlinc_kotlin-scripting-jvm.provided",
-    "@lib//:kotlinc_kotlin-scripting-compiler-impl.provided",
+    "@lib//:kotlinc_analysis-api-provided",
+    "@lib//:kotlinc_kotlin-compiler-common-provided",
+    "@lib//:kotlinc_kotlin-scripting-common-provided",
+    "@lib//:kotlinc_kotlin-scripting-jvm-provided",
+    "@lib//:kotlinc_kotlin-scripting-compiler-impl-provided",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "//contrib/qodana",
     "@community//platform/platform-api:ide",

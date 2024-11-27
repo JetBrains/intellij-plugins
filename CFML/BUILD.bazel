@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.cfml` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "cfml_resources",
@@ -19,9 +17,7 @@ jvm_library(
   name = "cfml",
   module_name = "intellij.cfml",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
@@ -45,17 +41,16 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "cfml_test",
+jvm_library(
+  name = "cfml_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":cfml"],
   deps = [
     "@community//platform/platform-api:ide",
     "//dbe/sql:database-sql-impl",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//xml/impl",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
@@ -63,12 +58,14 @@ kt_jvm_test(
     "@community//java/java-impl:impl",
     "@community//java/testFramework",
     "@community//platform/smRunner",
-    "//dbe/database:database-impl",
-    "//idea-tests:idea-ultimate-tests_test",
+    "@community//platform/smRunner:smRunner_test_lib",
+    "//dbe/database/impl",
+    "//idea-tests:idea-ultimate-tests_test_lib",
     "@community//spellchecker",
+    "@community//spellchecker:spellchecker_test_lib",
     "@community//platform/testFramework/extensions:testExtensions",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:kotlin-test",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
@@ -79,5 +76,10 @@ kt_jvm_test(
     ":cfml_resources",
     ":cfml_resources_1",
   ]
+)
+
+jvm_test(
+  name = "cfml_test",
+  runtime_deps = [":cfml_test_lib"]
 )
 ### auto-generated section `build intellij.cfml` end

@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.qodana.inspectionKts.js` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "qodana-inspectionKts-js_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "qodana-inspectionKts-js",
   module_name = "intellij.qodana.inspectionKts.js",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
@@ -30,12 +26,10 @@ jvm_library(
   runtime_deps = [":qodana-inspectionKts-js_resources"]
 )
 
-kt_jvm_test(
-  name = "qodana-inspectionKts-js_test",
+jvm_library(
+  name = "qodana-inspectionKts-js_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":qodana-inspectionKts-js"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -43,17 +37,23 @@ kt_jvm_test(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage:javascript",
     "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/platform-api:ide",
     "@community//platform/core-ui",
     "@community//java/testFramework",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/qodana-test-framework:qodana-testFramework",
-    "//idea-tests:idea-ultimate-tests_test",
+    "//idea-tests:idea-ultimate-tests_test_lib",
     "@community//plugins/dev/intellij.dev:dev",
     "@community//platform/util:util-ui",
   ],
   runtime_deps = [":qodana-inspectionKts-js_resources"]
+)
+
+jvm_test(
+  name = "qodana-inspectionKts-js_test",
+  runtime_deps = [":qodana-inspectionKts-js_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.js` end

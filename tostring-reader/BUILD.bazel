@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.tsr` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "tsr_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "tsr",
   module_name = "intellij.tsr",
   visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -26,12 +22,9 @@ jvm_library(
   runtime_deps = [":tsr_resources"]
 )
 
-kt_jvm_test(
+jvm_test(
   name = "tsr_test",
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":tsr"],
   deps = [
     "@community//platform/analysis-api:analysis",

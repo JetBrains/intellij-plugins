@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.protoeditor.jvm` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "protoeditor-jvm_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "protoeditor-jvm",
   module_name = "intellij.protoeditor.jvm",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
@@ -32,12 +28,10 @@ jvm_library(
   runtime_deps = [":protoeditor-jvm_resources"]
 )
 
-kt_jvm_test(
-  name = "protoeditor-jvm_test",
+jvm_library(
+  name = "protoeditor-jvm_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":protoeditor-jvm"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -50,10 +44,16 @@ kt_jvm_test(
     "@community//platform/indexing-api:indexing",
     "@community//platform/lang-impl",
     "//contrib/protobuf/protoeditor-core",
+    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
     "@community//java/testFramework",
     "@lib//:truth",
     "@community//java/java-indexing-api:indexing",
   ],
   runtime_deps = [":protoeditor-jvm_resources"]
+)
+
+jvm_test(
+  name = "protoeditor-jvm_test",
+  runtime_deps = [":protoeditor-jvm_test_lib"]
 )
 ### auto-generated section `build intellij.protoeditor.jvm` end

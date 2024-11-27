@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.gauge` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "gauge_resources",
@@ -13,14 +11,13 @@ jvm_library(
   name = "gauge",
   module_name = "intellij.gauge",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/core-api:core",
     "@community//java/java-psi-impl:psi-impl",
     "@community//platform/lang-api:lang",
     "@community//java/java-impl:impl",
+    "@community//platform/ide-core-impl",
     "@community//json",
     "@community//plugins/properties/properties-psi-impl:psi-impl",
     "@ultimate_lib//:gauge_com_thoughtworks_gauge_gauge-java",
@@ -48,18 +45,17 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "gauge_test",
+jvm_library(
+  name = "gauge_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":gauge"],
   deps = [
     "@community//platform/core-api:core",
     "@community//java/java-psi-impl:psi-impl",
     "@community//platform/lang-api:lang",
     "@community//java/java-impl:impl",
+    "@community//platform/ide-core-impl",
     "@community//json",
     "@community//plugins/properties/properties-psi-impl:psi-impl",
     "@ultimate_lib//:gauge_com_thoughtworks_gauge_gauge-java",
@@ -68,10 +64,11 @@ kt_jvm_test(
     "@community//java/execution/impl:java-execution-impl",
     "@lib//:kotlin-stdlib",
     "@community//platform/smRunner",
+    "@community//platform/smRunner:smRunner_test_lib",
     "@community//java/openapi:java",
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//plugins/gradle:gradle-common",
     "@community//plugins/maven",
     "@community//platform/core-ui",
@@ -82,5 +79,10 @@ kt_jvm_test(
     "@community//platform/util/jdom",
   ],
   runtime_deps = [":gauge_resources"]
+)
+
+jvm_test(
+  name = "gauge_test",
+  runtime_deps = [":gauge_test_lib"]
 )
 ### auto-generated section `build intellij.gauge` end

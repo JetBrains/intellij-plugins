@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.postcss` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "postcss_resources",
@@ -19,9 +17,7 @@ jvm_library(
   name = "postcss",
   module_name = "intellij.postcss",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
@@ -42,12 +38,10 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "postcss_test",
+jvm_library(
+  name = "postcss_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":postcss"],
   deps = [
     "@community//platform/platform-api:ide",
@@ -59,14 +53,20 @@ kt_jvm_test(
     "@community//platform/core-impl",
     "@community//xml/impl",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//CSS/impl:css-impl",
     "@community//plugins/copyright",
+    "@community//plugins/copyright:copyright_test_lib",
     "@community//platform/core-ui",
   ],
   runtime_deps = [
     ":postcss_resources",
     ":postcss_resources_1",
   ]
+)
+
+jvm_test(
+  name = "postcss_test",
+  runtime_deps = [":postcss_test_lib"]
 )
 ### auto-generated section `build intellij.postcss` end

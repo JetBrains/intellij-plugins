@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.swift.featuresTrainer` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "swift-featuresTrainer_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "swift-featuresTrainer",
   module_name = "intellij.swift.featuresTrainer",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//plugins/ide-features-trainer:featuresTrainer",
@@ -24,19 +20,18 @@ jvm_library(
   runtime_deps = [":swift-featuresTrainer_resources"]
 )
 
-kt_jvm_test(
+jvm_test(
   name = "swift-featuresTrainer_test",
-  visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":swift-featuresTrainer"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//plugins/ide-features-trainer:featuresTrainer",
+    "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
   ],
   runtime_deps = [":swift-featuresTrainer_resources"]
 )

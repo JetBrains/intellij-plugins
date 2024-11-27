@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.protoeditor.core` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "protoeditor-core_resources",
@@ -13,12 +11,11 @@ jvm_library(
   name = "protoeditor-core",
   module_name = "intellij.protoeditor.core",
   visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
+    "@community//platform/ide-core-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/core-impl",
     "@community//platform/lang-impl",
@@ -37,16 +34,15 @@ jvm_library(
   runtime_deps = [":protoeditor-core_resources"]
 )
 
-kt_jvm_test(
-  name = "protoeditor-core_test",
+jvm_library(
+  name = "protoeditor-core_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":protoeditor-core"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
+    "@community//platform/ide-core-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/core-impl",
     "@community//platform/lang-impl",
@@ -54,8 +50,9 @@ kt_jvm_test(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
     "@community//spellchecker",
+    "@community//spellchecker:spellchecker_test_lib",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:truth",
     "@community//platform/util/jdom",
     "@community//xml/dom-impl",
@@ -66,5 +63,10 @@ kt_jvm_test(
     "@lib//:google_protobuf_java_util",
   ],
   runtime_deps = [":protoeditor-core_resources"]
+)
+
+jvm_test(
+  name = "protoeditor-core_test",
+  runtime_deps = [":protoeditor-core_test_lib"]
 )
 ### auto-generated section `build intellij.protoeditor.core` end

@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.protoeditor.python` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "protoeditor-python_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "protoeditor-python",
   module_name = "intellij.protoeditor.python",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@lib//:guava",
@@ -30,12 +26,10 @@ jvm_library(
   runtime_deps = [":protoeditor-python_resources"]
 )
 
-kt_jvm_test(
-  name = "protoeditor-python_test",
+jvm_library(
+  name = "protoeditor-python_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":protoeditor-python"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -46,11 +40,17 @@ kt_jvm_test(
     "@community//platform/core-ui",
     "@community//platform/core-api:core",
     "//contrib/protobuf/protoeditor-core",
+    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
     "@community//python/python-psi-api:psi",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:truth",
   ],
   runtime_deps = [":protoeditor-python_resources"]
+)
+
+jvm_test(
+  name = "protoeditor-python_test",
+  runtime_deps = [":protoeditor-python_test_lib"]
 )
 ### auto-generated section `build intellij.protoeditor.python` end

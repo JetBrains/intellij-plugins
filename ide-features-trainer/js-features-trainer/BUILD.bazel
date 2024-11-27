@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.javascript.featuresTrainer` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "javascript-featuresTrainer_resources",
@@ -9,48 +7,59 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_provided_library(
+  name = "javascript-impl_provided",
+  lib = "//plugins/JavaScriptLanguage:javascript-impl"
+)
+
 jvm_library(
   name = "javascript-featuresTrainer",
   module_name = "intellij.javascript.featuresTrainer",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/testRunner",
     "@community//platform/smRunner",
     "@community//plugins/ide-features-trainer:featuresTrainer",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/analysis-impl",
+    "@community//platform/xdebugger-api:debugger",
+    "@community//platform/core-ui",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    ":javascript-impl_provided",
+  ],
+  runtime_deps = [":javascript-featuresTrainer_resources"]
+)
+
+jvm_library(
+  name = "javascript-featuresTrainer_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
+  associates = [":javascript-featuresTrainer"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/testRunner",
+    "@community//platform/testRunner:testRunner_test_lib",
+    "@community//platform/smRunner",
+    "@community//platform/smRunner:smRunner_test_lib",
+    "@community//plugins/ide-features-trainer:featuresTrainer",
+    "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/analysis-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
   ],
   runtime_deps = [":javascript-featuresTrainer_resources"]
 )
 
-kt_jvm_test(
+jvm_test(
   name = "javascript-featuresTrainer_test",
-  visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
-  associates = [":javascript-featuresTrainer"],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/testRunner",
-    "@community//platform/smRunner",
-    "@community//plugins/ide-features-trainer:featuresTrainer",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/analysis-impl",
-    "@community//platform/xdebugger-api:debugger",
-    "@community//platform/core-ui",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
-  ],
-  runtime_deps = [":javascript-featuresTrainer_resources"]
+  runtime_deps = [":javascript-featuresTrainer_test_lib"]
 )
 ### auto-generated section `build intellij.javascript.featuresTrainer` end

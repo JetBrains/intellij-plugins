@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.gherkin` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "gherkin_resources",
@@ -19,9 +17,7 @@ jvm_library(
   name = "gherkin",
   module_name = "intellij.gherkin",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
@@ -44,12 +40,10 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "gherkin_test",
+jvm_library(
+  name = "gherkin_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":gherkin"],
   deps = [
     "@community//platform/platform-api:ide",
@@ -57,10 +51,12 @@ kt_jvm_test(
     "@community//platform/core-impl",
     "@community//platform/lang-impl",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//spellchecker",
+    "@community//spellchecker:spellchecker_test_lib",
     "@lib//:gson",
     "@community//RegExpSupport:regexp",
+    "@community//RegExpSupport:regexp_test_lib",
     "@community//xml/impl",
     "@lib//:fastutil-min",
     "@community//platform/execution-impl",
@@ -74,5 +70,10 @@ kt_jvm_test(
     ":gherkin_resources",
     ":gherkin_resources_1",
   ]
+)
+
+jvm_test(
+  name = "gherkin_test",
+  runtime_deps = [":gherkin_test_lib"]
 )
 ### auto-generated section `build intellij.gherkin` end

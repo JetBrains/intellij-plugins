@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.appcode.reveal` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "appcode-reveal_resources",
@@ -18,12 +17,11 @@ jvm_library(
   name = "appcode-reveal",
   module_name = "intellij.appcode.reveal",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "//CIDR-appcode/appcode",
     "@community//platform/statistics",
+    "@community//platform/ide-core-impl",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
   ],

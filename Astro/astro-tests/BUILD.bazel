@@ -1,21 +1,19 @@
 ### auto-generated section `build intellij.astro.tests` start
 load("@rules_java//java:defs.bzl", "java_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_test")
 
 java_library(
   name = "astro-tests",
   visibility = ["//visibility:public"]
 )
 
-kt_jvm_test(
-  name = "astro-tests_test",
+jvm_library(
+  name = "astro-tests_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src-ext/**/*.kt", "src-ext/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src-ext/**/*.kt", "src-ext/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage:javascript",
     "//contrib/Astro:astro",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
@@ -24,19 +22,24 @@ kt_jvm_test(
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//CSS/css-psi-impl:css-psi",
     "@community//plugins/copyright",
-    "@community//plugins/copyright:copyright_test",
-    "//plugins/JavaScriptLanguage:javascript-tests_test",
-    "@community//xml/tests:tests_test",
+    "@community//plugins/copyright:copyright_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
+    "@community//xml/tests:tests_test_lib",
     "@lib//:stream_ex",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "//plugins/JavaScriptLanguage/web-platform:javascript-web_test",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test",
+    "@community//platform/webSymbols:webSymbols_test_lib",
     "//contrib/postcss",
-    "//contrib/postcss:postcss_test",
+    "//contrib/postcss:postcss_test_lib",
     "//platform/lsp",
     "//platform/lsp/testFramework",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
   ]
+)
+
+jvm_test(
+  name = "astro-tests_test",
+  runtime_deps = [":astro-tests_test_lib"]
 )
 ### auto-generated section `build intellij.astro.tests` end

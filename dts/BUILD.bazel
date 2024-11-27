@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.dts` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "dts_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "dts",
   module_name = "intellij.dts",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/dts/pp",
     "@community//platform/core-api:core",
@@ -32,15 +28,13 @@ jvm_library(
   runtime_deps = [":dts_resources"]
 )
 
-kt_jvm_test(
+jvm_test(
   name = "dts_test",
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":dts"],
   deps = [
     "//contrib/dts/pp",
+    "//contrib/dts/pp:pp_test_lib",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/lang-api:lang",
@@ -49,11 +43,11 @@ kt_jvm_test(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//xml/dom-impl",
     "@lib//:snakeyaml",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
-    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "//CIDR/clion-cmake",
     "@lib//:json-schema-validator",
     "@lib//:jackson",

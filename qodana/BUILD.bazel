@@ -1,8 +1,6 @@
 ### auto-generated section `build intellij.qodana` start
-load("@rules_jvm//:compiler-options.bzl", "create_kotlinc_options")
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 create_kotlinc_options(
   name = "custom",
@@ -23,10 +21,8 @@ jvm_library(
   name = "qodana",
   module_name = "intellij.qodana",
   visibility = ["//visibility:public"],
-  srcs = glob(["core/src/**/*.kt", "core/src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
+  srcs = glob(["core/src/**/*.kt", "core/src/**/*.java"], allow_empty = True),
   kotlinc_opts = ":custom",
-  plugins = ["@lib//:serialization_plugin"],
   deps = [
     "@community//platform/analysis-impl",
     "@community//platform/editor-ui-api:editor",
@@ -40,8 +36,10 @@ jvm_library(
     "@ultimate_lib//:flexmark",
     "@lib//:jsoup",
     "@community//platform/core-ui",
+    "@community//plugins/yaml/editing",
     "@community//json",
     "@community//platform/projectModel-api:projectModel",
+    "@community//platform/ide-core-impl",
     "@community//platform/collaboration-tools:collaborationTools",
     "@community//platform/collaboration-tools/auth:collaborationTools-auth",
     "@community//platform/collaboration-tools/auth-base:collaborationTools-auth-base",
@@ -90,14 +88,12 @@ jvm_library(
   runtime_deps = [":qodana_resources"]
 )
 
-kt_jvm_test(
-  name = "qodana_test",
+jvm_library(
+  name = "qodana_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
+  srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java"], allow_empty = True),
   kotlinc_opts = ":custom",
   associates = [":qodana"],
-  plugins = ["@lib//:serialization_plugin"],
   deps = [
     "@community//platform/analysis-impl",
     "@community//platform/editor-ui-api:editor",
@@ -111,17 +107,21 @@ kt_jvm_test(
     "@ultimate_lib//:flexmark",
     "@lib//:jsoup",
     "@community//platform/core-ui",
+    "@community//plugins/yaml/editing",
     "@community//json",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/projectModel-api:projectModel",
+    "@community//platform/ide-core-impl",
     "@community//platform/collaboration-tools:collaborationTools",
+    "@community//platform/collaboration-tools:collaborationTools_test_lib",
     "@community//platform/collaboration-tools/auth:collaborationTools-auth",
     "@community//platform/collaboration-tools/auth-base:collaborationTools-auth-base",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/built-in-server-api:builtInServer",
     "@community//platform/built-in-server:builtInServer-impl",
     "@community//plugins/git4idea:vcs-git",
+    "@community//plugins/git4idea:vcs-git_test_lib",
     "@lib//:jackson",
     "@lib//:jackson-databind",
     "@lib//:jackson-module-kotlin",
@@ -134,8 +134,10 @@ kt_jvm_test(
     "@community//platform/util/jdom",
     "@community//java/testFramework",
     "@community//platform/vcs-impl",
+    "@community//platform/vcs-impl:vcs-impl_test_lib",
     "@community//platform/vcs-tests:vcs-testFramework",
     "@community//platform/vcs-log/impl:vcs-log-impl",
+    "@community//platform/vcs-log/impl:vcs-log-impl_test_lib",
     "@community//platform/vcs-log/api:vcs-log",
     "@lib//:mockito",
     "@community//platform/util",
@@ -144,24 +146,31 @@ kt_jvm_test(
     "@ultimate_lib//:jetbrains_qodana_web_ui",
     "@ultimate_lib//:jetbrains_qodana_sarif_converter",
     "@community//platform/sqlite",
+    "@community//platform/sqlite:sqlite_test_lib",
     "@lib//:kotlinx-coroutines-test",
     "@community//plugins/yaml",
+    "@community//plugins/yaml:yaml_test_lib",
     "@community//platform/inspect",
+    "@community//platform/inspect:inspect_test_lib",
     "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
     "@community//platform/util/base",
     "@community//platform/diagnostic/telemetry",
+    "@community//platform/diagnostic/telemetry:telemetry_test_lib",
     "@lib//:opentelemetry",
     "@lib//:opentelemetry-semconv",
     "@community//plugins/lombok",
-    "@community//plugins/lombok:lombok_test",
+    "@community//plugins/lombok:lombok_test_lib",
     "@lib//:fastutil-min",
     "@community//platform/platform-impl/internal:ide-internal",
     "@lib//:jackson-dataformat-yaml",
     "@lib//:kotlin-reflect",
     "@community//platform/util/coroutines",
     "@community//platform/backend/observation",
+    "@community//platform/backend/observation:observation_test_lib",
     "@lib//:jetbrains-annotations",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@ultimate_lib//:jetbrains_qodana_cloud_kotlin_client",
     "@lib//:kotlinx-serialization-core",
     "@lib//:kotlinx-serialization-json",
@@ -169,5 +178,10 @@ kt_jvm_test(
     "@community//platform/platform-impl/ui:ide-ui",
   ],
   runtime_deps = [":qodana_resources"]
+)
+
+jvm_test(
+  name = "qodana_test",
+  runtime_deps = [":qodana_test_lib"]
 )
 ### auto-generated section `build intellij.qodana` end

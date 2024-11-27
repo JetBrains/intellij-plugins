@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.vcs.perforce.util` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "vcs-perforce-util_resources",
@@ -12,9 +11,7 @@ jvm_library(
   name = "vcs-perforce-util",
   module_name = "intellij.vcs.perforce.util",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/platform-api:ide",
     "@community//platform/platform-util-io:ide-util-io",

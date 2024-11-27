@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.qodana.go` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "go_resources",
@@ -9,44 +7,103 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_provided_library(
+  name = "ide_provided",
+  lib = "@community//platform/platform-api:ide"
+)
+
+jvm_provided_library(
+  name = "ide-impl_provided",
+  lib = "@community//platform/platform-impl:ide-impl"
+)
+
+jvm_provided_library(
+  name = "lang-impl_provided",
+  lib = "@community//platform/lang-impl"
+)
+
+jvm_provided_library(
+  name = "qodana_provided",
+  lib = "//contrib/qodana"
+)
+
+jvm_provided_library(
+  name = "go-plugin_provided",
+  lib = "//goland/intellij-go/plugin:go-plugin"
+)
+
+jvm_provided_library(
+  name = "go-coverage_provided",
+  lib = "//goland/intellij-go/go-coverage"
+)
+
+jvm_provided_library(
+  name = "jdom_provided",
+  lib = "@community//platform/util/jdom"
+)
+
+jvm_provided_library(
+  name = "coverage_provided",
+  lib = "@community//plugins/coverage-common:coverage"
+)
+
+jvm_provided_library(
+  name = "coverage-agent_provided",
+  lib = "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent"
+)
+
 jvm_library(
   name = "go",
   module_name = "intellij.qodana.go",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/lang-impl",
-    "//contrib/qodana",
     "//contrib/qodana/coverage",
-    "//goland/intellij-go/plugin:go-plugin",
-    "//goland/intellij-go/go-coverage",
-    "@community//platform/util/jdom",
-    "@community//plugins/coverage-common:coverage",
-    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+    ":ide_provided",
+    ":ide-impl_provided",
+    ":lang-impl_provided",
+    ":qodana_provided",
+    ":go-plugin_provided",
+    ":go-coverage_provided",
+    ":jdom_provided",
+    ":coverage_provided",
+    ":coverage-agent_provided",
   ],
   runtime_deps = [":go_resources"]
 )
 
-kt_jvm_test(
-  name = "go_test",
+jvm_library(
+  name = "go_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":go"],
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-impl",
+    "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
     "//contrib/qodana/coverage",
+    "//contrib/qodana/coverage:coverage_test_lib",
+    "//goland/intellij-go/plugin:go-plugin",
+    "//goland/intellij-go/go-coverage",
+    "@community//platform/util/jdom",
+    "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common:coverage_test_lib",
+    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//java/testFramework",
     "//contrib/qodana-test-framework:qodana-testFramework",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
   ],
   runtime_deps = [":go_resources"]
+)
+
+jvm_test(
+  name = "go_test",
+  runtime_deps = [":go_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.go` end

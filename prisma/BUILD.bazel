@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.prisma` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "prisma_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "prisma",
   module_name = "intellij.prisma",
   visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@lib//:jetbrains_markdown",
@@ -41,12 +37,10 @@ jvm_library(
   runtime_deps = [":prisma_resources"]
 )
 
-kt_jvm_test(
-  name = "prisma_test",
+jvm_library(
+  name = "prisma_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":prisma"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -61,6 +55,7 @@ kt_jvm_test(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/analysis-impl",
     "@community//platform/markdown-utils",
+    "@community//platform/markdown-utils:markdown-utils_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage:javascript",
@@ -69,16 +64,22 @@ kt_jvm_test(
     "//platform/lsp",
     "@community//platform/execution",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
     "//platform/lsp/testFramework",
     "//ultimate/ultimate-resources:idea-ultimate-customization",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "//plugins/JavaScriptLanguage/web-platform:javascript-web_test",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test",
+    "@community//platform/webSymbols:webSymbols_test_lib",
     "//platform/lsp-impl",
+    "//platform/lsp-impl:lsp-impl_test_lib",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
   ],
   runtime_deps = [":prisma_resources"]
+)
+
+jvm_test(
+  name = "prisma_test",
+  runtime_deps = [":prisma_test_lib"]
 )
 ### auto-generated section `build intellij.prisma` end

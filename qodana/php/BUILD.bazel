@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.qodana.php` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "php_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "php",
   module_name = "intellij.qodana.php",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/platform-api:ide",
@@ -36,39 +32,48 @@ jvm_library(
   runtime_deps = [":php_resources"]
 )
 
-kt_jvm_test(
-  name = "php_test",
+jvm_library(
+  name = "php_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":php"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",
     "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
     "//contrib/qodana/coverage",
+    "//contrib/qodana/coverage:coverage_test_lib",
     "//phpstorm/php-openapi:php",
     "//phpstorm/php:php-impl",
+    "//phpstorm/php:php-impl_test_lib",
     "//plugins/taint-analysis:taintAnalysis",
-    "//plugins/taint-analysis:taintAnalysis_test",
+    "//plugins/taint-analysis:taintAnalysis_test_lib",
     "@community//platform/util/jdom",
     "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common:coverage_test_lib",
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//java/testFramework",
     "//contrib/qodana-test-framework:qodana-testFramework",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/inspect",
-    "@community//platform/inspect:inspect_test",
+    "@community//platform/inspect:inspect_test_lib",
     "@lib//:assert_j",
     "@lib//:gson",
     "//contrib/qodana/sarif",
     "@lib//:kotlinx-coroutines-core",
     "@community//platform/backend/observation",
+    "@community//platform/backend/observation:observation_test_lib",
   ],
   runtime_deps = [":php_resources"]
+)
+
+jvm_test(
+  name = "php_test",
+  runtime_deps = [":php_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.php` end

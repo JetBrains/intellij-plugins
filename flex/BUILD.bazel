@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.flex` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "flex_resources",
@@ -12,15 +11,15 @@ jvm_library(
   name = "flex",
   module_name = "intellij.flex",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/flex/flex-shared:shared",
+    "@community//platform/ide-core-impl",
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/lang-api:lang",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//duplicatedetector:duplicatesDetector",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//java/execution/openapi:java-execution",
@@ -58,10 +57,7 @@ jvm_library(
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
     "@community//platform/util/text-matching",
   ],
-  exports = [
-    "//contrib/flex/flex-shared:shared",
-    "//CSS/css-api:css",
-  ],
+  exports = ["//contrib/flex/flex-shared:shared"],
   runtime_deps = [
     ":flex_resources",
     "//contrib/flex/jps-plugin:jps",

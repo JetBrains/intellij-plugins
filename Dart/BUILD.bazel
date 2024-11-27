@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.dart` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "dart_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "dart",
   module_name = "intellij.dart",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java", "thirdPartySrc/vmServiceDrivers/**/*.kt", "thirdPartySrc/vmServiceDrivers/**/*.java", "thirdPartySrc/analysisServer/**/*.kt", "thirdPartySrc/analysisServer/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java", "thirdPartySrc/vmServiceDrivers/**/*.kt", "thirdPartySrc/vmServiceDrivers/**/*.java", "thirdPartySrc/analysisServer/**/*.kt", "thirdPartySrc/analysisServer/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/lang-impl",
     "@community//platform/xdebugger-api:debugger",
@@ -35,13 +31,15 @@ jvm_library(
     "@lib//:snakeyaml",
     "@lib//:netty-codec-http",
     "@lib//:commons-lang3",
-    "@community//contrib/Dart/lib:weberknecht-0_1_5",
-    "@community//contrib/Dart/lib:json",
+    "//contrib/Dart/lib:weberknecht-0_1_5",
+    "//contrib/Dart/lib:json",
     "@lib//:netty-buffer",
     "@lib//:caffeine",
     "@community//platform/core-ui",
+    "@community//platform/ide-core-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@lib//:fastutil-min",
+    "@community//plugins/yaml/editing",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/platform-util-netty:ide-util-netty",
     "@community//platform/util/jdom",
@@ -53,50 +51,63 @@ jvm_library(
   runtime_deps = [":dart_resources"]
 )
 
-kt_jvm_test(
-  name = "dart_test",
+jvm_library(
+  name = "dart_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":dart"],
   deps = [
     "@community//platform/lang-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/xdebugger-impl:debugger-impl",
+    "@community//platform/xdebugger-impl:debugger-impl_test_lib",
     "@community//platform/smRunner",
+    "@community//platform/smRunner:smRunner_test_lib",
     "@community//xml/impl",
     "@community//platform/built-in-server:builtInServer-impl",
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//plugins/yaml",
+    "@community//plugins/yaml:yaml_test_lib",
     "@community//plugins/copyright",
+    "@community//plugins/copyright:copyright_test_lib",
     "@community//spellchecker",
+    "@community//spellchecker:spellchecker_test_lib",
     "@community//plugins/coverage-common:coverage",
-    "//idea-tests:idea-ultimate-tests_test",
+    "@community//plugins/coverage-common:coverage_test_lib",
+    "//idea-tests:idea-ultimate-tests_test_lib",
     "//plugins/WebComponents:webComponents",
-    "//plugins/WebComponents:webComponents_test",
+    "//plugins/WebComponents:webComponents_test_lib",
     "@lib//:guava",
     "@lib//:gson",
     "@lib//:snakeyaml",
     "@lib//:netty-codec-http",
     "@lib//:commons-lang3",
-    "@community//contrib/Dart/lib:weberknecht-0_1_5",
-    "@community//contrib/Dart/lib:json",
+    "//contrib/Dart/lib:weberknecht-0_1_5",
+    "//contrib/Dart/lib:json",
     "@lib//:netty-buffer",
     "@lib//:caffeine",
     "@community//platform/core-ui",
+    "@community//platform/ide-core-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@lib//:fastutil-min",
+    "@community//plugins/yaml/editing",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/platform-util-netty:ide-util-netty",
     "@community//platform/util/jdom",
     "@community//platform/markdown-utils",
+    "@community//platform/markdown-utils:markdown-utils_test_lib",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
+    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui_test_lib",
   ],
   runtime_deps = [":dart_resources"]
+)
+
+jvm_test(
+  name = "dart_test",
+  runtime_deps = [":dart_test_lib"]
 )
 ### auto-generated section `build intellij.dart` end

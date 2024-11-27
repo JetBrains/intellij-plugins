@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.mdx` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "mdx_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "mdx",
   module_name = "intellij.mdx",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlinx-coroutines-core",
     "@lib//:jetbrains_markdown",
@@ -35,23 +31,22 @@ jvm_library(
   runtime_deps = [":mdx_resources"]
 )
 
-kt_jvm_test(
-  name = "mdx_test",
+jvm_library(
+  name = "mdx_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True),
   associates = [":mdx"],
   deps = [
     "@lib//:kotlinx-coroutines-core",
     "@lib//:jetbrains_markdown",
     "@community//platform/markdown-utils",
+    "@community//platform/markdown-utils:markdown-utils_test_lib",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@lib//:gson",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//plugins/markdown/core:markdown",
@@ -59,7 +54,13 @@ kt_jvm_test(
     "@community//xml/impl",
     "@community//plugins/htmltools:html-tools",
     "@community//xml/relaxng",
+    "@community//xml/relaxng:relaxng_test_lib",
   ],
   runtime_deps = [":mdx_resources"]
+)
+
+jvm_test(
+  name = "mdx_test",
+  runtime_deps = [":mdx_test_lib"]
 )
 ### auto-generated section `build intellij.mdx` end

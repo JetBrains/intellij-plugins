@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.qodana.jvm.groovy` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "qodana-jvm-groovy_resources",
@@ -13,9 +11,7 @@ jvm_library(
   name = "qodana-jvm-groovy",
   module_name = "intellij.qodana.jvm.groovy",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/lang-impl",
@@ -27,12 +23,10 @@ jvm_library(
   runtime_deps = [":qodana-jvm-groovy_resources"]
 )
 
-kt_jvm_test(
-  name = "qodana-jvm-groovy_test",
+jvm_library(
+  name = "qodana-jvm-groovy_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":qodana-jvm-groovy"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -40,11 +34,18 @@ kt_jvm_test(
     "@community//java/java-psi-api:psi",
     "@community//plugins/groovy/groovy-psi:psi",
     "@community//plugins/groovy",
+    "@community//plugins/groovy:groovy_test_lib",
     "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testFramework/extensions:testExtensions",
   ],
   runtime_deps = [":qodana-jvm-groovy_resources"]
+)
+
+jvm_test(
+  name = "qodana-jvm-groovy_test",
+  runtime_deps = [":qodana-jvm-groovy_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.jvm.groovy` end

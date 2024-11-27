@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.astro` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "astro_resources",
@@ -12,14 +11,13 @@ jvm_library(
   name = "astro",
   module_name = "intellij.astro",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/platform-api:ide",
     "@lib//:kotlin-stdlib",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/lang-api:lang",
+    "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/core-impl",

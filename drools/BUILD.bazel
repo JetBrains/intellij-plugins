@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.jboss.drools` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "jboss-drools_resources",
@@ -13,12 +11,11 @@ jvm_library(
   name = "jboss-drools",
   module_name = "intellij.jboss.drools",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
+    "@community//platform/ide-core-impl",
     "@community//platform/core-impl",
     "@community//platform/lang-api:lang",
     "@community//java/java-psi-api:psi",
@@ -33,20 +30,19 @@ jvm_library(
   runtime_deps = [":jboss-drools_resources"]
 )
 
-kt_jvm_test(
-  name = "jboss-drools_test",
+jvm_library(
+  name = "jboss-drools_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/src/**/*.kt", "tests/src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["tests/src/**/*.kt", "tests/src/**/*.java"], allow_empty = True),
   associates = [":jboss-drools"],
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
+    "@community//platform/ide-core-impl",
     "@community//platform/core-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//java/java-psi-api:psi",
     "@community//java/java-psi-impl:psi-impl",
     "@community//java/java-impl:impl",
@@ -58,5 +54,10 @@ kt_jvm_test(
     "@lib//:fastutil-min",
   ],
   runtime_deps = [":jboss-drools_resources"]
+)
+
+jvm_test(
+  name = "jboss-drools_test",
+  runtime_deps = [":jboss-drools_test_lib"]
 )
 ### auto-generated section `build intellij.jboss.drools` end

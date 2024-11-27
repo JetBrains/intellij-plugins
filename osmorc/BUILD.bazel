@@ -1,7 +1,5 @@
 ### auto-generated section `build intellij.osgi` start
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
-load("@rules_jvm//:rules.bzl", "jvm_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "osgi_resources",
@@ -19,9 +17,7 @@ jvm_library(
   name = "osgi",
   module_name = "intellij.osgi",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/lang-api:lang",
     "@community//java/openapi:java",
@@ -36,7 +32,7 @@ jvm_library(
     "@community//java/manifest",
     "@community//platform/smRunner",
     "//contrib/osmorc/osmorc-jps-plugin:osgi-jps",
-    "@community//contrib/osmorc/lib:org_osgi_namespace_contract-1_0_0",
+    "//contrib/osmorc/lib:org_osgi_namespace_contract-1_0_0",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
@@ -49,12 +45,10 @@ jvm_library(
   ]
 )
 
-kt_jvm_test(
-  name = "osgi_test",
+jvm_library(
+  name = "osgi_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src_test/**/*.kt", "src_test/**/*.java"], allow_empty = True, exclude = ["**/module-info.java"]),
-  javac_opts = "@rules_jvm//:j17",
-  kotlinc_opts = "@rules_jvm//:k17",
+  srcs = glob(["src_test/**/*.kt", "src_test/**/*.java"], allow_empty = True),
   associates = [":osgi"],
   deps = [
     "@community//platform/lang-api:lang",
@@ -62,15 +56,19 @@ kt_jvm_test(
     "@community//xml/dom-openapi:dom",
     "@community//plugins/maven",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//java/java-impl:impl",
     "@community//java/compiler/openapi:java-compiler",
     "@community//java/execution/openapi:java-execution",
     "@community//java/execution/impl:java-execution-impl",
     "@community//java/debugger/impl:java-debugger-impl",
     "@community//java/manifest",
+    "@community//java/manifest:manifest_test_lib",
     "@community//platform/smRunner",
+    "@community//platform/smRunner:smRunner_test_lib",
     "//contrib/osmorc/osmorc-jps-plugin:osgi-jps",
-    "@community//contrib/osmorc/lib:org_osgi_namespace_contract-1_0_0",
+    "//contrib/osmorc/osmorc-jps-plugin:osgi-jps_test_lib",
+    "//contrib/osmorc/lib:org_osgi_namespace_contract-1_0_0",
     "@community//java/testFramework",
     "@community//jps/jps-builders:build",
     "@lib//:kotlin-stdlib",
@@ -81,12 +79,17 @@ kt_jvm_test(
     "@community//platform/util/jdom",
     "@lib//:plexus-utils",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
-    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@lib//:jgoodies-forms",
   ],
   runtime_deps = [
     ":osgi_resources",
     ":osgi_resources_1",
   ]
+)
+
+jvm_test(
+  name = "osgi_test",
+  runtime_deps = [":osgi_test_lib"]
 )
 ### auto-generated section `build intellij.osgi` end
