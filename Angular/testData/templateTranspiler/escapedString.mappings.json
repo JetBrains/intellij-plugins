@@ -4,8 +4,8 @@
     "mappings": [
       "«div» [391] => «_t1» [228]} (no diagnostics) (no semantic)",
       "«div» [391] => «_t2» [269]} (ignored)",
-      "«red» [406] => «red» [295]} (ignored)",
-      "«\\\"red\\\"» [404] => «\"red\"» [294]} (ignored)",
+      "«red» [406] => «red» [295]} (only reverse types)",
+      "«\\\"red\\\"» [404] => «\"red\"» [294]} (only reverse types)",
       "«[color]» [395] => «myInput» [307]} (no types)",
       "«[color]» [395] => «_t2.myInput» [303]} (no types)",
       "«red» [406] => «red» [318]}",

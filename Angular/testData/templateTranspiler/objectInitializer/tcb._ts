@@ -1,0 +1,20 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "./let.directive";
+/* Directives */
+const _ctor1: <PO = any>(init: Pick<_i1.LetDirective<PO>, "ngrxLet" | "suspenseTemplateRef">) => _i1.LetDirective<PO> = null!;
+
+/* TCB for objectInitializer.ts */
+
+function _tcb1(this: TestComponent) {
+var _t1 = _ctor1({"ngrxLet": { number1: this.number$, number2: this.numberOrNot$ }, "suspenseTemplateRef": 0 as any});
+_t1.ngrxLet = { number1: this.number$, number2: this.numberOrNot$ };
+var _t2 = null! as any;
+if (_i1.LetDirective.ngTemplateContextGuard(_t1, _t2)) {
+_t2;
+var _t3 = _t2.ngrxLet;
+var _t4 = document.createElement("ng-container");
+var _t5 = document.createElement("div");
+"" + _t3.number1.toFixed();
+}
+}

@@ -9,7 +9,8 @@ import {
   MAPPING_FLAG_NAVIGATION,
   MAPPING_FLAG_SEMANTIC,
   MAPPING_FLAG_STRUCTURE,
-  MAPPING_FLAG_TYPES
+  MAPPING_FLAG_TYPES,
+  MAPPING_FLAG_REVERSE_TYPES,
 } from "./mappings"
 
 export class AngularVirtualCode implements VirtualCode {
@@ -83,7 +84,8 @@ export class AngularVirtualCode implements VirtualCode {
               semantic: (flags & MAPPING_FLAG_SEMANTIC) !== 0,
               structure: (flags & MAPPING_FLAG_STRUCTURE) !== 0,
               verification: diagnosticsOffset == sourceOffset && diagnosticsLength == sourceLength,
-              types: (flags & MAPPING_FLAG_TYPES) !== 0
+              types: (flags & MAPPING_FLAG_TYPES) !== 0,
+              reverseTypes: (flags & MAPPING_FLAG_REVERSE_TYPES) !== 0,
             }
           })
           if (diagnosticsOffset >= 0 && (diagnosticsOffset != sourceOffset || diagnosticsLength != sourceLength)) {
@@ -99,7 +101,8 @@ export class AngularVirtualCode implements VirtualCode {
                 semantic: false,
                 structure: false,
                 verification: true,
-                types: false
+                types: false,
+                reverseTypes: false,
               }
             })
           }
@@ -120,6 +123,7 @@ export class AngularVirtualCode implements VirtualCode {
           structure: true,
           verification: true,
           types: true,
+          reverseTypes: true,
         }
       }]
     }

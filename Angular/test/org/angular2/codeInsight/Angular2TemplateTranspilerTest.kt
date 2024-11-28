@@ -85,6 +85,13 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4
   )
 
+  fun testObjectInitializer() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_18_2_1,
+    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+    Angular2TestModule.RXJS_7_8_1,
+    dir = true
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
@@ -118,21 +125,35 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
           mapOf("file-name" to fileInfo.sourceFile.name,
                 "mappings" to fileInfo.sourceMappings
                   .map { mapping ->
-                    (if (mapping.generatedOffset >= prefixLength)
-                      rangeToText(sourceFileText, mapping.sourceOffset, mapping.sourceLength) + " => " +
-                      rangeToText(transpiledFile.generatedCode, mapping.generatedOffset, mapping.generatedLength, prefixLength) + "}"
-                    else {
-                      "${mapping.sourceOffset}:${mapping.sourceOffset + mapping.sourceLength} => " +
-                      "${mapping.generatedOffset}:${mapping.generatedOffset + mapping.generatedLength} (source)"
-                    }) + when {
-                      mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
-                      mapping.ignored -> " (ignored)"
-                      mapping.diagnosticsOffset == null -> " (no diagnostics)"
-                      else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) + ")"
-                    } +
-                    (if (!mapping.flags.contains(SourceMappingFlag.TYPES) && !mapping.ignored) " (no types)" else "") +
-                    (if (!mapping.flags.contains(SourceMappingFlag.SEMANTIC) && !mapping.ignored) " (no semantic)" else "")
+                    val result = StringBuilder()
+                    if (mapping.generatedOffset >= prefixLength)
+                      result.append(rangeToText(sourceFileText, mapping.sourceOffset, mapping.sourceLength))
+                        .append(" => ")
+                        .append(rangeToText(transpiledFile.generatedCode, mapping.generatedOffset, mapping.generatedLength, prefixLength))
+                        .append("}")
+                    else
+                      result.append(mapping.sourceOffset).append(":").append(mapping.sourceOffset + mapping.sourceLength).append(" => ")
+                        .append(mapping.generatedOffset).append(":").append(mapping.generatedOffset + mapping.generatedLength).append(" (source)")
 
+                    if (mapping.flags.contains(SourceMappingFlag.REVERSE_TYPES) && mapping.flags.size == 1) {
+                      result.append(" (only reverse types)")
+                    }
+                    else {
+                      result.append(
+                        when {
+                          mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
+                          mapping.ignored -> " (ignored)"
+                          mapping.diagnosticsOffset == null -> " (no diagnostics)"
+                          else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) + ")"
+                        })
+                      if (!mapping.flags.contains(SourceMappingFlag.TYPES) && !mapping.ignored)
+                        result.append(" (no types)")
+                      if (!mapping.flags.contains(SourceMappingFlag.SEMANTIC) && !mapping.ignored)
+                        result.append(" (no semantic)")
+                      if (mapping.flags.contains(SourceMappingFlag.REVERSE_TYPES) && !mapping.flags.contains(SourceMappingFlag.TYPES))
+                        result.append(" (reverse types)")
+                    }
+                    result.toString()
                   })
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"
