@@ -106,7 +106,7 @@ class RunTFToolGetFix(private val directoryName: String, private val executableN
           .showNotifications(true, false)
       )
     }
-    catch (e: ExecutionException) {
+    catch (e: Exception) {
       LOG.warn("Failed to run '${toolType.executableName} get': ${e.message}", e)
       Messages.showMessageDialog(project,
                                  HCLBundle.message("missing.module.inspection.run.terraform.get.quick.fix.failure.message", e.message, toolType.executableName),
