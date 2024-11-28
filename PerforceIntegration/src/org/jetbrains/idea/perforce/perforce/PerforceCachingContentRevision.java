@@ -10,6 +10,7 @@ import com.intellij.openapi.vcs.changes.LastUnchangedContentTracker;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
+import com.intellij.openapi.vfs.newvfs.persistent.VFSAttributesStorage;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,6 +92,11 @@ public final class PerforceCachingContentRevision extends PerforceContentRevisio
   }
 
   private static void saveCachedContent(VirtualFile vFile, long revision, byte @NotNull [] content) throws IOException {
+    if (content.length > VFSAttributesStorage.MAX_ATTRIBUTE_VALUE_SIZE) {
+      LOG.warn(String.format("Trying to cache file %s with %s size but max %s allowed. Skip caching.",
+                             vFile.getPath(), content.length, VFSAttributesStorage.MAX_ATTRIBUTE_VALUE_SIZE));
+      return;
+    }
     try (DataOutputStream stream = PERFORCE_CONTENT_ATTRIBUTE.writeFileAttribute(vFile)) {
       stream.writeLong(revision);
       stream.writeInt(content.length);
