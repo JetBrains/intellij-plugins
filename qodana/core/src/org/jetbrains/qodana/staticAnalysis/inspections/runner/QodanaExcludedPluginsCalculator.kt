@@ -9,7 +9,9 @@ import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.util.PlatformUtils
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.exists
@@ -30,23 +32,28 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     val input = args[1]  //list of ids
     val output = args[2] //.dockerignore for update
     // fill disabled_plugins.txt
-    @Suppress("UNUSED_VARIABLE") val disabledPluginsPath = if (args.size == 4) { args[3] } else "" // not used anymore
+    val disabledPluginsPath = if (args.size == 4) { args[3] } else ""
     try {
       val requiredIds = File(input).readLines()
       if (requiredIds.isEmpty()) {
         printHelpAndExit()
       }
 
-      val (included, _) = calculateActual(requiredIds)
+      val (included, disabledIds) = calculateActual(requiredIds)
       val dockerIgnorePath = Paths.get(output)
       val baseFolder = dockerIgnorePath.parent.toAbsolutePath()
 
-      val includedPaths = included.mapNotNull {
+
+      val keptPlugins = included + getKeptButDisabledPlugins().map { findDescriptor(it) }
+      val includedPaths = keptPlugins.mapNotNull {
         val pathPresentation = it.pluginPath.toString()
         val path = Paths.get(pathPresentation).toAbsolutePath()
         if (path.exists()) "!${baseFolder.relativize(path)}" else null
       }
       dockerIgnorePath.toFile().appendText("\n" + includedPaths.joinToString("\n"))
+      if (disabledPluginsPath.isNotEmpty()) {
+        Files.write(Paths.get(disabledPluginsPath), disabledIds)
+      }
       ApplicationManagerEx.getApplicationEx().exit(true, true)
     }
     catch (e: Throwable) {
@@ -118,4 +125,9 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
       if (processed.contains(it.pluginId.idString) || it.isOptional) null else it.pluginId.idString
     } + required
   }
+}
+
+fun getKeptButDisabledPlugins(): List<String> {
+  if (PlatformUtils.isRider()) return listOf("intellij.rider.plugins.cwm")
+  return listOf("com.jetbrains.codeWithMe")
 }
