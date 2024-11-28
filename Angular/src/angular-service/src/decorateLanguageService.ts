@@ -14,6 +14,7 @@ volarDecorateLanguageServiceHost.searchExternalFiles = searchExternalFilesPatche
 declare module "@volar/language-core/lib/types" {
   interface CodeInformation {
     types: boolean
+    reverseTypes: boolean
   }
 }
 
@@ -55,7 +56,7 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
         let generatedRangePosStart = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.start.line, generatedRange.start.character)
         let generatedRangePosEnd = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.end.line, generatedRange.end.character)
 
-        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, it => it.types);
+        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, it => it.types || it.reverseTypes);
 
         if (sourceRange !== undefined) {
           return {

@@ -265,9 +265,9 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
             // The expression has already been checked in the type constructor invocation, so
             // it should be ignored when used within a template guard.
             Expression {
-              withIgnoreMappings {
-                append(it)
-              }
+              withIgnoreMappings({
+                                   append(it)
+                                 })
             }
           }
 
@@ -625,7 +625,9 @@ private class TcbDirectiveCtorOp(
     // instance.
     val typeCtor = Expression {
       withIgnoreMappings {
-        append(tcbCallTypeCtor(dir, tcb, genericInputs.values))
+        withSupportReverseTypes {
+          append(tcbCallTypeCtor(dir, tcb, genericInputs.values))
+        }
       }
     }
     this.scope.addStatement(tsCreateVariable(id, typeCtor, types = false, ofDir = dir.directive, ignoreDiagnostics = true))
@@ -664,7 +666,7 @@ private class TcbDirectiveInputsOp(
       val expr = widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
         .applyIf(!tcb.markAttributeExpressionAsTranspiled(attr.attribute)) {
           Expression {
-            withIgnoreMappings { append(this@applyIf) }
+            withIgnoreMappings({ append(this@applyIf) })
           }
         }
 
@@ -766,9 +768,9 @@ private class TcbDirectiveInputsOp(
       if (!tcb.env.config.checkTypeOfAttributes &&
           attr.attribute is TmplAstTextAttribute) {
         assignment = Expression {
-          withIgnoreMappings {
-            append(assignment)
-          }
+          withIgnoreMappings({
+                               append(assignment)
+                             })
         }
       }
 
@@ -1052,7 +1054,7 @@ private class TcbDirectiveOutputsOp(
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, EventParamType.Infer)
           // Make sure that expression is mapped only once
           .applyIf(output.type == ParsedEventType.TwoWay || !tcb.markAttributeExpressionAsTranspiled(output)) {
-            Expression { withIgnoreMappings { append(this@applyIf) } }
+            Expression { withIgnoreMappings({ append(this@applyIf) }) }
           }
         this.scope.addStatement {
           append(outputField).append(".subscribe(").append(handler).append(");")
@@ -1246,9 +1248,9 @@ private class TcbIfOp(
     if (branch.expressionAlias !== null) {
       expression = Expression {
         append("(")
-        withIgnoreMappings {
-          append(expression)
-        }
+        withIgnoreMappings({
+                             append(expression)
+                           })
         append(") && ")
         append(outerScope.resolve(branch.expressionAlias))
       }
@@ -1306,18 +1308,18 @@ private class TcbIfOp(
       // because it was already checked as a part of the block's condition and we don't
       // want it to produce a duplicate diagnostic.
       expression = Expression {
-        withIgnoreMappings {
-          tcbExpression(branch.expression, tcb, expressionScope)
-        }
+        withIgnoreMappings({
+                             tcbExpression(branch.expression, tcb, expressionScope)
+                           })
       }
       if (branch.expressionAlias !== null) {
         expression = Expression {
-          withIgnoreMappings {
-            append("(")
-            append(expression)
-            append(") && ")
-            append(expressionScope.resolve(branch.expressionAlias))
-          }
+          withIgnoreMappings({
+                               append("(")
+                               append(expression)
+                               append(") && ")
+                               append(expressionScope.resolve(branch.expressionAlias))
+                             })
         }
       }
 
@@ -1393,9 +1395,9 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       val expression = tcbExpression(node.expression, this.tcb, this.scope)
       return Expression {
         append(switchValue).append(" === ")
-        withIgnoreMappings {
-          append(expression)
-        }
+        withIgnoreMappings({
+                             append(expression)
+                           })
       }
     }
 
@@ -1418,7 +1420,7 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       val expression = tcbExpression(current.expression, this.tcb, this.scope)
       val comparison = Expression {
         append(switchValue).append(" !== ")
-        withIgnoreMappings { append(expression) }
+        withIgnoreMappings({ append(expression) })
       }
 
       if (guard == null) {
@@ -2271,9 +2273,9 @@ private open class TcbExpressionTranslator(
           // our own infrastructure. We can't rely on the TS reporting, because it includes
           // the name of the auto-generated TCB variable name.
           targetExpression = Expression {
-            withIgnoreMappings {
-              append(targetExpression!!)
-            }
+            withIgnoreMappings({
+                                 append(targetExpression!!)
+                               })
           }
           this.tcb.oobRecorder.illegalWriteToLetDeclaration(this.tcb.id, node, target);
         }
@@ -2488,7 +2490,8 @@ private open class TcbExpressionTranslator(
           || (text.startsWith("\\'") && text.endsWith("\\'"))) {
         result.withSourceSpan(node.textRange, supportTypes = true) {
           result.append("\"")
-          result.append(text.substring(2, text.length - 2), TextRange(textRange.startOffset + 2, textRange.endOffset - 2), supportTypes = true)
+          result.append(text.substring(2, text.length - 2), TextRange(textRange.startOffset + 2, textRange.endOffset - 2),
+                        supportTypes = true)
           result.append("\"")
         }
       }

@@ -97,6 +97,7 @@ object Angular2TemplateTranspiler {
     SEMANTIC,
     STRUCTURE,
     TYPES,
+    REVERSE_TYPES,
   }
 
   interface SourceMapping {

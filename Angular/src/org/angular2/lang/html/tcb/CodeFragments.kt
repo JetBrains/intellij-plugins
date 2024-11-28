@@ -70,6 +70,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportTypes: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
       supportSemanticHighlighting: Boolean = diagnosticsRange != null,
+      supportReversedTypes: Boolean = supportTypes,
       contextVar: Boolean = false,
       varOfDirective: Angular2Directive? = null,
       nameMap: Map<String, String>? = null,
@@ -81,6 +82,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportTypes: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
       supportSemanticHighlighting: Boolean = diagnosticsRange != null,
+      supportReversedTypes: Boolean = supportTypes,
       contextVar: Boolean = false,
       varOfDirective: Angular2Directive? = null,
     ): ExpressionBuilder
@@ -94,8 +96,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportTypes: Boolean = false,
       diagnosticsRange: TextRange? = originalRange,
       supportSemanticHighlighting: Boolean = diagnosticsRange != null,
+      supportReversedTypes: Boolean = supportTypes,
       builder: ExpressionBuilder.() -> Unit,
     )
+
+    fun withSupportReverseTypes(builder: ExpressionBuilder.() -> Unit)
 
     fun withIgnoreMappings(builder: ExpressionBuilder.() -> Unit)
 
@@ -126,6 +131,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     private var ignoreMappings = false
 
+    private var supportReversedTypes = false
+
     override val isIgnoreDiagnostics: Boolean
       get() = ignoreMappings
 
@@ -152,6 +159,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportTypes: Boolean,
       diagnosticsRange: TextRange?,
       supportSemanticHighlighting: Boolean,
+      supportReversedTypes: Boolean,
       contextVar: Boolean,
       varOfDirective: Angular2Directive?,
       nameMap: Map<String, String>?,
@@ -168,7 +176,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedLength = generatedLength,
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
-          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting)
+          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting, supportReversedTypes || this.supportReversedTypes)
         ))
         if (!ignoreMappings) {
           if (contextVar) {
@@ -203,10 +211,11 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportTypes: Boolean,
       diagnosticsRange: TextRange?,
       supportSemanticHighlighting: Boolean,
+      supportReversedTypes: Boolean,
       contextVar: Boolean,
       varOfDirective: Angular2Directive?,
     ): ExpressionBuilder =
-      append(id.toString(), originalRange, supportTypes, diagnosticsRange, supportSemanticHighlighting, contextVar, varOfDirective,
+      append(id.toString(), originalRange, supportTypes, diagnosticsRange, supportSemanticHighlighting, contextVar = contextVar, varOfDirective = varOfDirective,
              nameMap = id.sourceName?.let { mapOf(Pair(id.name, it)) })
 
     override fun append(expression: Expression): ExpressionBuilder {
@@ -216,7 +225,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedOffset = sourceMapping.generatedOffset + offset,
           diagnosticsOffset = sourceMapping.diagnosticsOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = sourceMapping.diagnosticsLength?.takeIf { !ignoreMappings },
-          flags = sourceMapping.flags.takeIf { !ignoreMappings } ?: EnumSet.noneOf(SourceMappingFlag::class.java),
+          flags = sourceMapping.flags.applyOverrideFlags()
         )
       }
       if (!ignoreMappings) {
@@ -246,6 +255,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportTypes: Boolean,
       diagnosticsRange: TextRange?,
       supportSemanticHighlighting: Boolean,
+      supportReversedTypes: Boolean,
       builder: ExpressionBuilder.() -> Unit,
     ) {
       if (originalRange != null) {
@@ -258,7 +268,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedLength = this.code.length - offset,
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
-          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting),
+          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting, supportReversedTypes || this.supportReversedTypes),
         ))
       }
       else {
@@ -266,19 +276,43 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       }
     }
 
-    private fun buildMappingFlags(ignoreMappings: Boolean, supportTypes: Boolean, supportSemanticHighlighting: Boolean): EnumSet<SourceMappingFlag> {
+    private fun buildMappingFlags(
+      ignoreMappings: Boolean,
+      supportTypes: Boolean,
+      supportSemanticHighlighting: Boolean,
+      supportReversedTypes: Boolean,
+    ): EnumSet<SourceMappingFlag> {
       if (ignoreMappings || (!supportTypes && !supportSemanticHighlighting))
-        return EnumSet.noneOf(SourceMappingFlag::class.java)
+        return EnumSet.noneOf(SourceMappingFlag::class.java).apply {
+          if (supportReversedTypes) add(SourceMappingFlag.REVERSE_TYPES)
+        }
       return EnumSet.allOf(SourceMappingFlag::class.java).apply {
         if (!supportTypes) remove(SourceMappingFlag.TYPES)
         if (!supportSemanticHighlighting) remove(SourceMappingFlag.SEMANTIC)
+        if (!supportReversedTypes) remove(SourceMappingFlag.REVERSE_TYPES)
       }
     }
+
+    private fun EnumSet<SourceMappingFlag>.applyOverrideFlags(): EnumSet<SourceMappingFlag> =
+      if (ignoreMappings)
+        EnumSet.noneOf(SourceMappingFlag::class.java).apply {
+          if (this.contains(SourceMappingFlag.REVERSE_TYPES) || supportReversedTypes) add(SourceMappingFlag.REVERSE_TYPES)
+        }
+      else
+        this.also {
+          if (supportReversedTypes) add(SourceMappingFlag.REVERSE_TYPES)
+        }
 
     override fun withIgnoreMappings(builder: ExpressionBuilder.() -> Unit) {
       ignoreMappings = true
       this.builder()
       ignoreMappings = false
+    }
+
+    override fun withSupportReverseTypes(builder: ExpressionBuilder.() -> Unit) {
+      supportReversedTypes = true
+      this.builder()
+      supportReversedTypes = false
     }
 
     override fun codeBlock(builder: BlockBuilder.() -> Unit) {
