@@ -3,6 +3,7 @@ package org.jetbrains.idea.perforce.application;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.View;
 
@@ -19,6 +20,7 @@ class ClientData {
     myData = Collections.unmodifiableMap(data);
   }
 
+  @Unmodifiable
   List<String> getAllRoots() {
     return ContainerUtil.concat(myData.getOrDefault(PerforceRunner.CLIENTSPEC_ROOT, Collections.emptyList()),
                                 myData.getOrDefault(PerforceRunner.CLIENTSPEC_ALTROOTS, Collections.emptyList()));
