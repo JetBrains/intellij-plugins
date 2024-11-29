@@ -4,6 +4,7 @@ package com.intellij.lang.actionscript.parsing;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
 import com.intellij.lang.actionscript.ActionScriptElementTypes;
+import com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes;
 import com.intellij.lang.actionscript.ActionScriptStubElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.FunctionParser;
@@ -171,7 +172,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   @Override
   public IElementType getVariableElementType() {
-    return isBlockBodyContext() ? ActionScriptStubElementTypes.LOCAL_VARIABLE : ActionScriptStubElementTypes.ACTIONSCRIPT_VARIABLE;
+    return isBlockBodyContext() ? ActionScriptSpecificStubElementTypes.LOCAL_VARIABLE : ActionScriptStubElementTypes.ACTIONSCRIPT_VARIABLE;
   }
 
   public void parseUseNamespaceDirective() {

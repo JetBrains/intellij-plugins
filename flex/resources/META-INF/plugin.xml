@@ -180,6 +180,8 @@
 
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
 
+    <stubElementTypeHolder class="com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes" externalIdPrefix="JS:"/>
+
     <indexedRootsProvider implementation="com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor"/>
 
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection"
