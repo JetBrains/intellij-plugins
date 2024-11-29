@@ -35,6 +35,7 @@ public final class ExecResult {
   private String myErrorString;
   private Charset myCharset = StandardCharsets.UTF_8;
 
+  @Override
   @SuppressWarnings({"HardCodedStringLiteral"})
   public String toString() {
     final StringBuilder buf = new StringBuilder();

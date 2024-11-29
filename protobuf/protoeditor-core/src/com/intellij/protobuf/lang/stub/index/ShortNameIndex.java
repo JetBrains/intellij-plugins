@@ -30,6 +30,7 @@ public class ShortNameIndex extends StringStubIndexExtension<PbNamedElement> {
     return INSTANCE;
   }
 
+  @Override
   @NotNull
   public StubIndexKey<String, PbNamedElement> getKey() {
     return KEY;

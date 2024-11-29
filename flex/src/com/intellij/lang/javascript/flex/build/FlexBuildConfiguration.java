@@ -66,6 +66,7 @@ public class FlexBuildConfiguration {
     public String MANIFEST_FILE_PATH = "";
     public boolean INCLUDE_IN_SWC = true;
 
+    @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
@@ -79,6 +80,7 @@ public class FlexBuildConfiguration {
       return true;
     }
 
+    @Override
     public int hashCode() {
       int result = NAMESPACE.hashCode();
       result = 31 * result + MANIFEST_FILE_PATH.hashCode();
@@ -101,6 +103,7 @@ public class FlexBuildConfiguration {
     public String NAME = "";
     public String VALUE = "";
 
+    @Override
     public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
@@ -113,6 +116,7 @@ public class FlexBuildConfiguration {
       return true;
     }
 
+    @Override
     public int hashCode() {
       int result = NAME.hashCode();
       result = 31 * result + VALUE.hashCode();

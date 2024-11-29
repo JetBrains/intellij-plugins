@@ -16,11 +16,12 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.FStat;
 import org.jetbrains.idea.perforce.perforce.P4Revision;
+
+import java.util.Objects;
 
 public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
   private final long myRevisionNumber;
@@ -83,6 +84,7 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
     return myBranched;
   }
 
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -94,6 +96,7 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
 
   }
 
+  @Override
   public int hashCode() {
     int result;
     result = java.lang.Long.hashCode(myRevisionNumber);
@@ -104,6 +107,7 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
     return result;
   }
 
+  @Override
   public String toString() {
     return java.lang.Long.toString(myChangeNumber);
   }

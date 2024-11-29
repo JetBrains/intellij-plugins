@@ -37,12 +37,14 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
     myOrderNumber = number;
   }
 
+  @Override
   public boolean equals(final Object o) {
     return o instanceof FlashBCOutputSourceItem &&
            myBc.equals(((FlashBCOutputSourceItem)o).myBc) &&
            myType.equals(((FlashBCOutputSourceItem)o).myType);
   }
 
+  @Override
   public int hashCode() {
     return myBc.hashCode() + myType.hashCode() * 239;
   }

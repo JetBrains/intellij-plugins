@@ -133,6 +133,7 @@ public class AirSigningOptions {
     return copy;
   }
 
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -153,6 +154,7 @@ public class AirSigningOptions {
     return true;
   }
 
+  @Override
   public int hashCode() {
     assert false;
     return super.hashCode();

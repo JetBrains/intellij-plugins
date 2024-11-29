@@ -22,6 +22,7 @@ public abstract class JdlEnumMixin extends ASTWrapperPsiElement implements JdlEn
     super(node);
   }
 
+  @Override
   public @NotNull String getName() {
     JdlEnumId enumId = this.getEnumId();
     if (enumId == null) return "";
@@ -63,6 +64,7 @@ public abstract class JdlEnumMixin extends ASTWrapperPsiElement implements JdlEn
     return JdlIconsMapping.getEnumIcon();
   }
 
+  @Override
   public @NotNull ItemPresentation getPresentation() {
     return new ItemPresentation() {
       @Override

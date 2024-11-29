@@ -39,6 +39,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
     private final String myPresentableName;
     private final String myFileExtension;
 
+    @Override
     public String toString() {
       return myPresentableName;
     }
@@ -59,6 +60,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
 
     private final String myPresentableName;
 
+    @Override
     public String toString() {
       return myPresentableName;
     }
@@ -79,6 +81,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
 
     private final String myPresentableName;
 
+    @Override
     public String toString() {
       return myPresentableName;
     }

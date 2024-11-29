@@ -42,10 +42,12 @@ public final class BuildConfigurationNature {
   public static final BuildConfigurationNature
     DEFAULT = new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application);
 
+  @Override
   public String toString() {
     return targetPlatform.getPresentableText() + " " + outputType.getPresentableText() + (pureAS ? " (pure ActionScript)" : "");
   }
 
+  @Override
   public boolean equals(final Object other) {
     if (this == other) return true;
     if (other == null || getClass() != other.getClass()) return false;
@@ -59,6 +61,7 @@ public final class BuildConfigurationNature {
     return true;
   }
 
+  @Override
   public int hashCode() {
     int result = targetPlatform.hashCode();
     result = 31 * result + (pureAS ? 1 : 0);

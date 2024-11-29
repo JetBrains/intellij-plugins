@@ -92,6 +92,7 @@ public final class FStat {
   @NonNls static final String CHANGE_STATUS_FIELD = "change ";
   @NonNls static final String UNRESOLVED_STATUS_FIELD = "unresolved ";
 
+  @Override
   @NonNls
   public String toString() {
     return "org.jetbrains.idea.perforce.perforce.FStat{" + "status=" + status + ", local=" + local + ", statTime=" + statTime +

@@ -44,6 +44,7 @@ public class RemoteFlashRunnerParameters extends BCBasedRunnerParameters {
     return (RemoteFlashRunnerParameters)super.clone();
   }
 
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

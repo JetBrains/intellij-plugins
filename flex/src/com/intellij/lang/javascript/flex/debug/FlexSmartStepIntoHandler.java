@@ -187,6 +187,7 @@ final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmar
       super(element);
     }
 
+    @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
@@ -198,6 +199,7 @@ final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmar
       return true;
     }
 
+    @Override
     public int hashCode() {
       return getElement().hashCode();
     }

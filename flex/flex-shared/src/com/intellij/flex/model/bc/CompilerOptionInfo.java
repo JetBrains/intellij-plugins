@@ -448,6 +448,7 @@ public final class CompilerOptionInfo {
     return result.toArray(new ListElement[0]);
   }
 
+  @Override
   public String toString() {
     return ID;
   }

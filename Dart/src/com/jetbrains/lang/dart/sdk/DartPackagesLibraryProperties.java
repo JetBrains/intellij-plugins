@@ -39,11 +39,13 @@ public class DartPackagesLibraryProperties extends LibraryProperties<DartPackage
     XmlSerializerUtil.copyBean(state, this);
   }
 
+  @Override
   public boolean equals(final Object obj) {
     return obj instanceof DartPackagesLibraryProperties &&
            myPackageNameToDirsMap.equals(((DartPackagesLibraryProperties)obj).getPackageNameToDirsMap());
   }
 
+  @Override
   public int hashCode() {
     return myPackageNameToDirsMap.hashCode();
   }

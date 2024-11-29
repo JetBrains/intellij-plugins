@@ -29,6 +29,7 @@ public class ConnectionId {
     myWorkingDir = null;
   }
 
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -45,6 +46,7 @@ public class ConnectionId {
 
   }
 
+  @Override
   public int hashCode() {
     if (!myUseP4Config) {
       return 0;

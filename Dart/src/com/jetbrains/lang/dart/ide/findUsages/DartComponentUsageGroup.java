@@ -52,6 +52,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
     return getPresentableGroupText().compareToIgnoreCase(usageGroup.getPresentableGroupText());
   }
 
+  @Override
   public boolean equals(Object object) {
     if (object instanceof DartComponentUsageGroup other) {
       return ObjectUtilities.equals(other.myFile, myFile) && ObjectUtilities.equals(other.myText, myText);
@@ -100,6 +101,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
     return myText;
   }
 
+  @Override
   public int hashCode() {
     return myText.hashCode();
   }

@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.stub.index;
 
+import com.intellij.protobuf.lang.psi.PbNamedElement;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.protobuf.lang.psi.PbNamedElement;
 import org.jetbrains.annotations.NotNull;
 
 public class QualifiedNameIndex extends StringStubIndexExtension<PbNamedElement> {
@@ -30,6 +30,7 @@ public class QualifiedNameIndex extends StringStubIndexExtension<PbNamedElement>
     return INSTANCE;
   }
 
+  @Override
   @NotNull
   public StubIndexKey<String, PbNamedElement> getKey() {
     return KEY;

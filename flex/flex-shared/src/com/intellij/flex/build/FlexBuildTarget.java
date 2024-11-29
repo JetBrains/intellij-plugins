@@ -240,10 +240,12 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> impl
     hash.putString(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)projectOptions).getState())));
   }
 
+  @Override
   public String toString() {
     return myId;
   }
 
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -255,6 +257,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> impl
     return true;
   }
 
+  @Override
   public int hashCode() {
     return myId.hashCode();
   }

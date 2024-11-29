@@ -25,6 +25,7 @@ class Traits {
   Map<Integer, MemberInfo> members = new LinkedHashMap<>();
   BidirectionalMap<String, String> usedNamespacesToNamesMap;
 
+  @Override
   public String toString() {
     return name.toString();
   }

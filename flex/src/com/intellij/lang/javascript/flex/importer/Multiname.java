@@ -21,6 +21,7 @@ class Multiname {
     this.name = name;
   }
 
+  @Override
   public String toString() {
     String s = "";
     if (hasNotEmptyNs()) s += nsset[0] + "::";

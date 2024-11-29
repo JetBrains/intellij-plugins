@@ -133,6 +133,7 @@ public class SelectedBundle {
    * Two selected bundles are equal when they point to the same URL. When the bundles are modules, they do not necessarily
    * have to point to the same URL (as the URL might be null on modules), so in this case the display name decides.
    */
+  @Override
   public boolean equals(Object o) {
     if (o == null) {
       return false;

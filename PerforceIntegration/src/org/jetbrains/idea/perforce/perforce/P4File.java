@@ -236,6 +236,7 @@ public final class P4File {
     return myLocalPath;
   }
 
+  @Override
   @NonNls
   public String toString() {
     return "org.jetbrains.idea.perforce.perforce.P4File{'" + getLocalPath() + "'}";

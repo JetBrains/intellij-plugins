@@ -699,6 +699,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
       return myUrl;
     }
 
+    @Override
     public String toString() {
       return getClass().getSimpleName() + "(" + myId + "," + myName + ")";
     }

@@ -11,6 +11,7 @@ class Swf {
     int xMin, xMax;
     int yMin, yMax;
 
+    @Override
     public @NonNls String toString() {
       return "[Rect " + xMin + " " + yMin + " " + xMax + " " + yMax + "]";
     }

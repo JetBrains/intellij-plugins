@@ -25,6 +25,7 @@ abstract class PbServiceMethodTypeMixin extends PbElementBase implements PbServi
     super(node);
   }
 
+  @Override
   public boolean isStreaming() {
     return getNode().findChildByType(ProtoTokenTypes.STREAM) != null;
   }

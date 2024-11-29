@@ -64,6 +64,7 @@ public final class View {
   }
 
 
+  @Override
   public String toString() {
     return myStringRepresentation;
   }

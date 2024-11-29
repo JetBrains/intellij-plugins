@@ -45,6 +45,7 @@ public final class IsolatesInfo {
       return myIsolateName;
     }
 
+    @Override
     public String toString() {
       return myIsolateId + ": breakpointsSet=" + breakpointsSet + ", shouldInitialResume=" + shouldInitialResume;
     }

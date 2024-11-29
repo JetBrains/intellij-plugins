@@ -103,6 +103,7 @@ public class LauncherParameters implements Cloneable {
     }
   }
 
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -116,6 +117,7 @@ public class LauncherParameters implements Cloneable {
     return true;
   }
 
+  @Override
   public int hashCode() {
     assert false;
     return super.hashCode();

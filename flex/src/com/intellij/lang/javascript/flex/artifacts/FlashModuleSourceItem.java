@@ -51,10 +51,12 @@ public class FlashModuleSourceItem extends PackagingSourceItem {
     };
   }
 
+  @Override
   public boolean equals(Object obj) {
     return obj instanceof FlashModuleSourceItem && myModule.equals(((FlashModuleSourceItem)obj).myModule);
   }
 
+  @Override
   public int hashCode() {
     return myModule.hashCode();
   }

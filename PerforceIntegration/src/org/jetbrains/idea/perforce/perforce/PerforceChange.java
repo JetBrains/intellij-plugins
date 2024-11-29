@@ -97,6 +97,7 @@ public class PerforceChange extends PerforceAbstractChange {
     return myRevision;
   }
 
+  @Override
   @NonNls
   public String toString() {
     return "PerforceChange[" + myDepotPath + "," + myType + "]";

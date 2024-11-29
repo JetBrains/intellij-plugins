@@ -92,6 +92,7 @@ public class VariableIntroduceDialog extends DialogWrapper {
     }
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myNameComboBox;
   }
