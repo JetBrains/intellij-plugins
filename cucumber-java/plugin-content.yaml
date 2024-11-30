@@ -1,15 +1,20 @@
 - name: lib/cucumber-java.jar
+  projectLibraries:
+  - name: cucumber-core-1
+    files:
+    - name: $MAVEN_REPOSITORY$/io/cucumber/cucumber-core/1/cucumber-core-1.jar
+    reason: <- intellij.cucumber.java
+  - name: gherkin
+    files:
+    - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
+    reason: <- intellij.cucumber.java
   modules:
   - name: intellij.cucumber.java
     libraries:
       cucumber-expressions:
       - name: $MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6/cucumber-expressions-6.jar
-      cucumber-core-1.2:
-      - name: $MAVEN_REPOSITORY$/info/cukes/cucumber-core/1/cucumber-core-1.jar
       cucumber-java:
       - name: $MAVEN_REPOSITORY$/info/cukes/cucumber-java/1/cucumber-java-1.jar
-      gherkin:
-      - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
 - name: lib/cucumber-jvmFormatter.jar
   modules:
   - name: intellij.cucumber.jvmFormatter

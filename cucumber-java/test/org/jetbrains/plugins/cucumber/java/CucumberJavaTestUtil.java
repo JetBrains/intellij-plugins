@@ -1,7 +1,6 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LanguageLevelModuleExtension;
@@ -106,11 +105,11 @@ public final class CucumberJavaTestUtil {
   }
 
   private static void attachCucumberCore1(@NotNull ModifiableRootModel model) {
-    PsiTestUtil.addProjectLibrary(model, "cucumber-core", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core"));
+    PsiTestUtil.addProjectLibrary(model, "cucumber-core", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core-1"));
   }
 
   private static void attachCucumberCore2(@NotNull ModifiableRootModel model) {
-    List<String> libraryClassesRootPaths = IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core:2.0.1");
+    List<String> libraryClassesRootPaths = IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core-2");
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryClassesRootPaths);
   }
 
