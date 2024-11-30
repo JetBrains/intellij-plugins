@@ -45,8 +45,12 @@ import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SystemProperties;
-import com.intellij.util.containers.*;
+import com.intellij.util.containers.CollectionFactory;
+import com.intellij.util.containers.FastUtilHashingStrategies;
+import com.intellij.util.containers.JBIterable;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -634,7 +638,10 @@ public final class PerforceRunner implements PerforceRunnerI {
     List<String> strings = form.get(FILES);
     if (strings != null) {
       for (String s : strings) {
-        ContainerUtil.addIfNotNull(result, PerforceChange.createOn(s, client, changeListNumber, getDescription(form)));
+        PerforceChange element = PerforceChange.createOn(s, client, changeListNumber, getDescription(form));
+        if (element != null) {
+          result.add(element);
+        }
       }
     }
     return result;
@@ -779,8 +786,18 @@ public final class PerforceRunner implements PerforceRunnerI {
                               PerforceChangeCache changeCache,
                               PerforceShelf shelf,
                               List<PerforceChangeList> lists) throws VcsException {
-    List<Long> numbers = ContainerUtil.map(lists, list -> list.getNumber());
-    final PerforceClient client = myPerforceManager.getClient(connection);
+    List<Long> numbers;
+    if (lists.isEmpty()) {
+      numbers = Collections.emptyList();
+    }
+    else {
+      LongArrayList list1 = new LongArrayList(lists.size());
+      for (PerforceChangeList t : lists) {
+        list1.add(t.getNumber());
+      }
+      numbers = list1;
+    }
+    PerforceClient client = myPerforceManager.getClient(connection);
 
     Map<Long, Pair<ChangeListData, List<FileChange>>> changeMap = describeAll(connection, numbers, false);
     for (PerforceChangeList list : lists) {
@@ -1271,8 +1288,9 @@ public final class PerforceRunner implements PerforceRunnerI {
   }
 
   public LinkedHashSet<VirtualFile> getResolvedWithConflicts(final P4Connection connection, @Nullable final VirtualFile root) throws VcsException {
-    return getResolvedWithConflicts(connection,
-                                    ContainerUtil.createMaybeSingletonList(root == null ? null : P4File.create(root).getRecursivePath()));
+    String element = root == null ? null : P4File.create(root).getRecursivePath();
+    //noinspection SSBasedInspection
+    return getResolvedWithConflicts(connection, element == null ? Collections.emptyList() : Collections.singletonList(element));
   }
 
   @NotNull
@@ -1291,7 +1309,10 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     LinkedHashMap<String, BaseRevision> map = processResolveOutput(execResult.getStdout());
     for (String path : map.keySet()) {
-      ContainerUtil.addIfNotNull(result, LocalFileSystem.getInstance().findFileByPath(path));
+      VirtualFile element = LocalFileSystem.getInstance().findFileByPath(path);
+      if (element != null) {
+        result.add(element);
+      }
     }
     return result;
   }
@@ -1886,7 +1907,18 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     final PerforceClient client = myPerforceManager.getClient(connection);
 
-    List<String> roots = ContainerUtil.map(client.getRoots(), root -> myPerforceManager.getRawRoot(root).replace('\\', '/'));
+    List<String> roots;
+    Collection<String> collection = client.getRoots();
+    if (collection.isEmpty()) {
+      roots = Collections.emptyList();
+    }
+    else {
+      List<String> list = new ArrayList<>(collection.size());
+      for (String t : collection) {
+        list.add(myPerforceManager.getRawRoot(t).replace('\\', '/'));
+      }
+      roots = list;
+    }
     WhereParser parser = new WhereParser(out, roots, client.getName(), escapedPath);
     parser.execute();
 
