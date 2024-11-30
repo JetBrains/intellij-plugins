@@ -82,24 +82,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="gherkin" type="repository">
-        <properties maven-id="info.cukes:gherkin:2.12.2">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.12.2/gherkin-2.12.2.jar">
-              <sha256sum>0a5ebc0506ab1e4a08af1ca150f797304ff53b953c5b1f6fcf1f81551d964aad</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.12.2/gherkin-2.12.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.12.2/gherkin-2.12.2-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="gherkin" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library name="cucumber-core-3" type="repository">
         <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:3.0.2">
