@@ -1,18 +1,23 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.execution.*
-import com.intellij.execution.actions.*
-import com.intellij.execution.impl.*
-import com.intellij.execution.runners.*
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.impl.*
-import com.intellij.openapi.project.*
-import com.intellij.psi.search.*
-import com.intellij.ui.treeStructure.*
+import com.intellij.execution.Executor
+import com.intellij.execution.Location
+import com.intellij.execution.PsiLocation
+import com.intellij.execution.RunManagerEx
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.impl.RunManagerImpl
+import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl
+import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.ui.treeStructure.Tree
 import com.jetbrains.lang.makefile.*
 
 @Suppress("DialogTitleCapitalization")
-class MakefileToolWindowRunTargetAction(private val tree: Tree, private val project: Project, private val runManager: RunManagerImpl)
+internal class MakefileToolWindowRunTargetAction(private val tree: Tree, private val project: Project, private val runManager: RunManagerImpl)
   : AnAction(MakefileLangBundle.message("action.run.target.tool.window.text"),
              MakefileLangBundle.message("action.run.target.tool.window.description"),
              MakefileTargetIcon) {

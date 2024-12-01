@@ -1,14 +1,18 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.execution.*
-import com.intellij.execution.actions.*
-import com.intellij.execution.runners.*
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.impl.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.execution.Executor
+import com.intellij.execution.Location
+import com.intellij.execution.PsiLocation
+import com.intellij.execution.RunManagerEx
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 @Suppress("DialogTitleCapitalization")
-class MakefileRunTargetAction(private val target: MakefileTarget)
+internal class MakefileRunTargetAction(private val target: MakefileTarget)
   : AnAction(MakefileLangBundle.message("action.run.target.text", target.name),
              MakefileLangBundle.message("action.run.target.description", target.name),
              MakefileTargetIcon) {
