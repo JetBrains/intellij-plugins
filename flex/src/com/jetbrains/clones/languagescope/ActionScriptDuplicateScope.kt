@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.ActionScriptFileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 
-class ActionScriptDuplicateScope : JSBaseDuplicateScope("ActionScript") {
+private class ActionScriptDuplicateScope : JSBaseDuplicateScope("ActionScript") {
   override fun isDuplicateFileAcceptable(file: VirtualFile): Boolean {
     return FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE)
   }
