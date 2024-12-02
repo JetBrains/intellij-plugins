@@ -13,7 +13,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.prettierjs.ReformatWithPrettierAction.NOOP_ERROR_HANDLER
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresReadLock
@@ -35,7 +34,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
     val prettierConfiguration = PrettierConfiguration.getInstance(project).takeIf { it.isRunOnSave } ?: return null
     val file = FileDocumentManager.getInstance().getFile(document) ?: return null
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-    if (!ReformatWithPrettierAction.checkNodeAndPackage(psiFile, null, NOOP_ERROR_HANDLER)) return null
+    if (!PrettierUtil.checkNodeAndPackage(psiFile, null, PrettierUtil.NOOP_ERROR_HANDLER)) return null
 
     if (prettierConfiguration.isRunOnReformat) {
       val onSaveOptions = FormatOnSaveOptions.getInstance(project)

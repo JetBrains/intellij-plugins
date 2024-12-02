@@ -49,6 +49,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     public @NotNull String filesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
     public @NotNull String customIgnorePath = "";
     public boolean formatFilesOutsideDependencyScope = PRETTIER_FORMAT_FILES_OUTSIDE_DEPENDENCY_SCOPE_DEFAULT;
+    public boolean codeStyleSettingsModifierEnabled = true;
   }
 
   private static final @NonNls String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
@@ -170,6 +171,10 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return isManual() && myState.formatFilesOutsideDependencyScope;
   }
 
+  public boolean getCodeStyleSettingsModifierEnabled() {
+    return !isDisabled() && myState.codeStyleSettingsModifierEnabled;
+  }
+
   public ConfigurationMode getConfigurationMode() {
     ConfigurationMode mode = myState.configurationMode;
     if (mode == null) {
@@ -181,7 +186,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return mode;
   }
 
-  private boolean isDisabled() {
+  public boolean isDisabled() {
     return getConfigurationMode() == ConfigurationMode.DISABLED;
   }
 

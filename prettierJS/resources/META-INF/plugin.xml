@@ -32,6 +32,9 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <codeStyleSettingsModifier
+      implementation="com.intellij.prettierjs.codeStyle.PrettierCodeStyleSettingsModifier"
+      order="first, before org.editorconfig.EditorConfigCodeStyleSettingsModifier"/>
     <dependencySupport kind="javascript" coordinate="npm:prettier" displayName="Prettier"/>
     <projectService serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceManager"/>
     <projectConfigurable
@@ -40,7 +43,7 @@
       bundle="messages.PrettierBundle"
       key="configurable.PrettierConfigurable.display.name"
       instance="com.intellij.prettierjs.PrettierConfigurable"/>
-    <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierProjectConfigurator" />
+    <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierProjectConfigurator"/>
     <actionOnSaveInfoProvider id="PrettierOnSaveInfoProvider"
                               implementation="com.intellij.prettierjs.PrettierConfigurable$PrettierOnSaveInfoProvider"
                               order="after FormatOnSaveInfoProvider, after EsLintOnSaveInfoProvider, before BuildOnSaveInfoProvider, before FileWatcherOnSaveInfoProvider, before UploadOnSaveInfoProvider"/>

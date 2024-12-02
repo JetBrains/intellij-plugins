@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
+import com.google.gson.JsonObject;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.javascript.formatter.JSCodeStyleUtil;
 import com.intellij.openapi.project.Project;
@@ -10,6 +11,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.util.LineSeparator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +32,10 @@ public class PrettierConfig {
 
   public static PrettierConfig createFromMap(@Nullable Map<String, Object> map) {
     return DEFAULT.mergeWith(map);
+  }
+
+  public static PrettierConfig createFromJson(@Nullable JsonObject object) {
+    return DEFAULT.mergeWith(object);
   }
 
   public static final PrettierConfig DEFAULT = new PrettierConfig(
@@ -99,6 +105,24 @@ public class PrettierConfig {
       ObjectUtils.coalesce(getBooleanValue(map, USE_TABS), useTabs),
       ObjectUtils.coalesce(parseLineSeparatorValue(ObjectUtils.tryCast(map.get(END_OF_LINE), String.class)), lineSeparator),
       ObjectUtils.coalesce(getBooleanValue(map, VUE_INDENT_SCRIPT_AND_STYLE), vueIndentScriptAndStyle)
+    );
+  }
+
+  public PrettierConfig mergeWith(@Nullable JsonObject object) {
+    if (object == null || object.isEmpty()) {
+      return this;
+    }
+    return new PrettierConfig(
+      JsonUtil.getChildAsBoolean(object, JSX_BRACKET_SAME_LINE, jsxBracketSameLine),
+      JsonUtil.getChildAsBoolean(object, BRACKET_SPACING, bracketSpacing),
+      JsonUtil.getChildAsInteger(object, PRINT_WIDTH, printWidth),
+      JsonUtil.getChildAsBoolean(object, SEMI, semi),
+      JsonUtil.getChildAsBoolean(object, SINGLE_QUOTE, singleQuote),
+      JsonUtil.getChildAsInteger(object, TAB_WIDTH, tabWidth),
+      ObjectUtils.coalesce(parseTrailingCommaValue(JsonUtil.getChildAsString(object, TRAILING_COMMA)), trailingComma),
+      JsonUtil.getChildAsBoolean(object, USE_TABS, useTabs),
+      ObjectUtils.coalesce(parseLineSeparatorValue(JsonUtil.getChildAsString(object, END_OF_LINE)), lineSeparator),
+      JsonUtil.getChildAsBoolean(object, VUE_INDENT_SCRIPT_AND_STYLE, vueIndentScriptAndStyle)
     );
   }
 

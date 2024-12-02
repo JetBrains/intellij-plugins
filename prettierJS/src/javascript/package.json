@@ -1,9 +1,12 @@
 {
   "name": "prettier-idea",
   "version": "0.0.1",
+  "scripts": {
+    "build": "tsc --build tsconfig.json"
+  },
   "devDependencies": {
-    "prettier": "^1.15.1",
-    "@types/prettier": "^1.15.1",
-    "@types/node": "^8.9.5"
+    "prettier": "latest",
+    "@types/node": "latest",
+    "typescript": "latest"
   }
 }

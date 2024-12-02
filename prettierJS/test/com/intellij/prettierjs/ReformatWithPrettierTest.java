@@ -360,7 +360,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   private void runReformatAction() {
-    myFixture.testAction(new ReformatWithPrettierAction((new ReformatWithPrettierAction.ErrorHandler() {
+    myFixture.testAction(new ReformatWithPrettierAction((new PrettierUtil.ErrorHandler() {
       @Override
       public void showError(@NotNull Project project, @Nullable Editor editor,
                             @NotNull String text, @Nullable Runnable onLinkClick) {

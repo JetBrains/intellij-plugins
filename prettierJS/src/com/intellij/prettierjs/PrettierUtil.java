@@ -5,15 +5,38 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.codeInsight.hint.HintManagerImpl;
+import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.PackageJsonData;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
+import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
+import com.intellij.javascript.nodejs.npm.NpmManager;
+import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.GlobPatternUtil;
-import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
-import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
+import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.psi.util.JSProjectUtil;
+import com.intellij.lang.javascript.service.protocol.LocalFilePath;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -21,16 +44,21 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
@@ -38,12 +66,12 @@ import java.util.*;
 import static com.intellij.prettierjs.PrettierConfig.createFromMap;
 
 public final class PrettierUtil {
-
   public static final Icon ICON = null;
   public static final String PACKAGE_NAME = "prettier";
   public static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
   public static final String RC_FILE_NAME = ".prettierrc";
   public static final String CONFIG_FILE_NAME = "prettier.config";
+  public static final String EDITOR_CONFIG_FILE_NAME = ".editorconfig";
   static final String IGNORE_FILE_NAME = ".prettierignore";
 
   /**
@@ -165,6 +193,40 @@ public final class PrettierUtil {
     return configs.size() == 1 ? configs.get(0) : null;
   }
 
+  public static @Nullable VirtualFile findFileConfig(@NotNull Project project, @NotNull VirtualFile from) {
+    Ref<VirtualFile> result = Ref.create();
+    JSProjectUtil.processDirectoriesUpToContentRoot(project, from, directory -> {
+      VirtualFile config = findChildConfigFile(directory);
+      if (config != null) {
+        result.set(config);
+        return false;
+      }
+      return true;
+    });
+
+    return result.get();
+  }
+
+  public static @Nullable VirtualFile findChildConfigFile(@Nullable VirtualFile dir) {
+    if (dir != null && dir.isValid()) {
+      for (String name : CONFIG_FILE_NAMES_WITH_PACKAGE_JSON) {
+        VirtualFile file = dir.findChild(name);
+        if (file != null && file.isValid() && !file.isDirectory()) {
+          if (PackageJsonUtil.isPackageJsonFile(file)) {
+            PackageJsonData data = PackageJsonData.getOrCreate(file);
+            if (data.getTopLevelProperties().contains(CONFIG_SECTION_NAME)) {
+              return file;
+            }
+          }
+          else {
+            return file;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   /**
    * returns config parsed from config file or package.json
    * returns null if package.json does not contain a dependency
@@ -217,6 +279,146 @@ public final class PrettierUtil {
     catch (IOException e) {
       LOG.info("Could not parse config from text", e);
       return null;
+    }
+  }
+
+  public static @NotNull Pair<LocalFilePath, LocalFilePath> createPackagePath(@NotNull Project project,
+                                                                              @NotNull NodePackage prettierPackage) {
+    String packagePath;
+    String packageJsonPath;
+    if (prettierPackage instanceof YarnPnpNodePackage pnpPkg) {
+      packagePath = pnpPkg.getName();
+      packageJsonPath = pnpPkg.getPackageJsonPath(project);
+      if (packageJsonPath == null) {
+        throw new IllegalStateException("Cannot find package.json for " + pnpPkg);
+      }
+      packageJsonPath = FileUtil.toSystemDependentName(packageJsonPath);
+    }
+    else {
+      packagePath = prettierPackage.getSystemDependentPath();
+      packageJsonPath = null;
+    }
+    return Pair.create(LocalFilePath.create(packagePath), LocalFilePath.create(packageJsonPath));
+  }
+
+  public interface ErrorHandler {
+    ErrorHandler DEFAULT = new DefaultErrorHandler();
+
+    void showError(@NotNull Project project,
+                   @Nullable Editor editor,
+                   @NotNull @Nls String text,
+                   @Nullable Runnable onLinkClick);
+
+    default void showErrorWithDetails(@NotNull Project project,
+                                      @Nullable Editor editor,
+                                      @NotNull @Nls String text,
+                                      @NotNull String details) {
+      showError(project, editor, text, () -> showErrorDetails(project, details));
+    }
+  }
+
+  public static final ErrorHandler NOOP_ERROR_HANDLER = new ErrorHandler() {
+    @Override
+    public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
+      // No need to show any notification in case of 'Prettier on save' failure.
+      // Most likely the file is simply not syntactically valid at the moment.
+    }
+  };
+
+  private static class DefaultErrorHandler implements ErrorHandler {
+    @Override
+    public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull @Nls String text, @Nullable Runnable onLinkClick) {
+      if (editor != null) {
+        HyperlinkListener listener = onLinkClick == null ? null : new HyperlinkAdapter() {
+          @Override
+          protected void hyperlinkActivated(@NotNull HyperlinkEvent e) {
+            onLinkClick.run();
+          }
+        };
+        showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, listener);
+      }
+      else {
+        Notification notification =
+          JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text,
+                                                                NotificationType.ERROR);
+        if (onLinkClick != null) {
+          notification.setListener(new NotificationListener.Adapter() {
+            @Override
+            protected void hyperlinkActivated(@NotNull Notification notification1, @NotNull HyperlinkEvent e) {
+              onLinkClick.run();
+            }
+          });
+        }
+        notification.notify(project);
+      }
+    }
+  }
+
+  private static void showErrorDetails(@NotNull Project project, @NotNull String text) {
+    ProcessOutput output = new ProcessOutput();
+    output.appendStderr(text);
+    JsqtProcessOutputViewer
+      .show(project, PrettierBundle.message("prettier.formatter.notification.title"), ICON, null, null, output);
+  }
+
+  public static void showHintLater(@NotNull Editor editor,
+                                   @NotNull @Nls String text,
+                                   boolean isError,
+                                   @Nullable HyperlinkListener hyperlinkListener) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final JComponent component = isError ? HintUtil.createErrorLabel(text, hyperlinkListener, null)
+                                           : HintUtil.createInformationLabel(text, hyperlinkListener, null, null);
+      final LightweightHint hint = new LightweightHint(component);
+      HintManagerImpl.getInstanceImpl()
+        .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
+                                                         HintManager.HIDE_BY_SCROLLING, 0, false);
+    }, ModalityState.nonModal(), o -> editor.isDisposed() || !editor.getComponent().isShowing());
+  }
+
+  public static boolean checkNodeAndPackage(@NotNull PsiFile psiFile, @Nullable Editor editor, @NotNull ErrorHandler errorHandler) {
+    Project project = psiFile.getProject();
+    NodeJsInterpreterRef interpreterRef = NodeJsInterpreterRef.createProjectRef();
+    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(psiFile);
+
+    NodeJsInterpreter nodeJsInterpreter;
+    try {
+      nodeJsInterpreter = NodeInterpreterUtil.getValidInterpreterOrThrow(interpreterRef.resolve(project));
+    }
+    catch (ExecutionException e1) {
+      errorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
+                             () -> NodeSettingsConfigurable.showSettingsDialog(project));
+      return false;
+    }
+
+    if (nodePackage.isEmptyPath()) {
+      errorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
+                             () -> editSettings(project));
+      return false;
+    }
+    if (!nodePackage.isValid(project, nodeJsInterpreter)) {
+      String message = PrettierBundle.message("error.package.is.not.installed",
+                                              NpmManager.getInstance(project).getNpmInstallPresentableText());
+      errorHandler.showError(project, editor, message, () -> installPackage(project));
+      return false;
+    }
+    SemVer nodePackageVersion = nodePackage.getVersion(project);
+    if (nodePackageVersion != null && nodePackageVersion.compareTo(MIN_VERSION) < 0) {
+      errorHandler.showError(project, editor,
+                             PrettierBundle.message("error.unsupported.version", MIN_VERSION.getRawVersion()), null);
+      return false;
+    }
+
+    return true;
+  }
+
+  private static void editSettings(@NotNull Project project) {
+    ShowSettingsUtil.getInstance().editConfigurable(project, new PrettierConfigurable(project));
+  }
+
+  private static void installPackage(@NotNull Project project) {
+    final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(project.getBaseDir());
+    if (packageJson != null) {
+      InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJson);
     }
   }
 }

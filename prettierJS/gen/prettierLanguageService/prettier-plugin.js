@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrettierPlugin = void 0;
 var PrettierPlugin = /** @class */ (function () {
     function PrettierPlugin() {
@@ -49,22 +49,32 @@ var PrettierPlugin = /** @class */ (function () {
                         r = JSON.parse(p);
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 5, , 6]);
+                        _a.trys.push([1, 7, , 8]);
                         if (!(r.command == "reformat")) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.handleReformatCommand(r.arguments)];
                     case 2:
                         response = _a.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
-                        response = { error: "Unknown command: " + r.command };
-                        _a.label = 4;
-                    case 4: return [3 /*break*/, 6];
-                    case 5:
-                        e_1 = _a.sent();
-                        msg = e_1 instanceof String ? e_1 : (e_1.stack && e_1.stack.length > 0 ? e_1.stack : e_1.message || e_1);
-                        response = { error: "".concat(msg) };
                         return [3 /*break*/, 6];
-                    case 6:
+                    case 3:
+                        if (!(r.command == "resolveConfig")) return [3 /*break*/, 5];
+                        return [4 /*yield*/, this.handleResolveConfigCommand(r.arguments)];
+                    case 4:
+                        response = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 5:
+                        response = { error: "Unknown command: " + r.command };
+                        _a.label = 6;
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        e_1 = _a.sent();
+                        msg = e_1 instanceof String
+                            ? e_1
+                            : e_1.stack && e_1.stack.length > 0
+                                ? e_1.stack
+                                : e_1.message || e_1;
+                        response = { error: "".concat(msg) };
+                        return [3 /*break*/, 8];
+                    case 8:
                         response.request_seq = r.seq;
                         writer.write(JSON.stringify(response));
                         return [2 /*return*/];
@@ -82,7 +92,12 @@ var PrettierPlugin = /** @class */ (function () {
                         return [4 /*yield*/, this.resolveConfig(prettierApi, args)];
                     case 1:
                         config = _a.sent();
-                        options = { ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins, resolveConfig: true };
+                        options = {
+                            ignorePath: args.ignoreFilePath,
+                            withNodeModules: true,
+                            plugins: config.plugins,
+                            resolveConfig: true,
+                        };
                         if (!prettierApi.getFileInfo) return [3 /*break*/, 3];
                         return [4 /*yield*/, prettierApi.getFileInfo(args.path, options)];
                     case 2:
@@ -99,12 +114,38 @@ var PrettierPlugin = /** @class */ (function () {
             });
         });
     };
+    PrettierPlugin.prototype.handleResolveConfigCommand = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var prettierApi, config;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
+                        if (!args.flushConfigCache) return [3 /*break*/, 2];
+                        return [4 /*yield*/, prettierApi.clearConfigCache()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [4 /*yield*/, prettierApi.resolveConfig(args.path, {
+                            useCache: true,
+                            editorconfig: true,
+                        })];
+                    case 3:
+                        config = _a.sent();
+                        return [2 /*return*/, { config: config }];
+                }
+            });
+        });
+    };
     PrettierPlugin.prototype.resolveConfig = function (prettierApi, args) {
         return __awaiter(this, void 0, void 0, function () {
             var config;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, prettierApi.resolveConfig(args.path, { useCache: true, editorconfig: true })];
+                    case 0: return [4 /*yield*/, prettierApi.resolveConfig(args.path, {
+                            useCache: true,
+                            editorconfig: true,
+                        })];
                     case 1:
                         config = _a.sent();
                         if (config == null) {
@@ -121,12 +162,12 @@ var PrettierPlugin = /** @class */ (function () {
         });
     };
     PrettierPlugin.prototype.requirePrettierApi = function (prettierPath, packageJsonPath) {
-        if (this._prettierApi != null
-            && this._prettierApi.prettierPath == prettierPath
-            && this._prettierApi.packageJsonPath == packageJsonPath) {
+        if (this._prettierApi != null &&
+            this._prettierApi.prettierPath == prettierPath &&
+            this._prettierApi.packageJsonPath == packageJsonPath) {
             return this._prettierApi;
         }
-        var prettier = requireInContext(prettierPath, packageJsonPath);
+        var prettier = (requireInContext(prettierPath, packageJsonPath));
         prettier.prettierPath = prettierPath;
         prettier.packageJsonPath = packageJsonPath;
         this._prettierApi = prettier;
@@ -141,12 +182,15 @@ function performFormat(api, config, args) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (args.flushConfigCache) {
-                        api.clearConfigCache();
-                    }
+                    if (!args.flushConfigCache) return [3 /*break*/, 2];
+                    return [4 /*yield*/, api.clearConfigCache()];
+                case 1:
+                    _b.sent();
+                    _b.label = 2;
+                case 2:
                     _a = {};
                     return [4 /*yield*/, api.format(args.content, config)];
-                case 1: return [2 /*return*/, (_a.formatted = _b.sent(), _a)];
+                case 3: return [2 /*return*/, (_a.formatted = _b.sent(), _a)];
             }
         });
     });
@@ -157,8 +201,8 @@ function requireInContext(modulePathToRequire, contextPath) {
 }
 function getContextRequire(modulePathToRequire, contextPath) {
     if (contextPath != null) {
-        var m = require('module');
-        if (typeof m.createRequire === 'function') {
+        var m = require("module");
+        if (typeof m.createRequire === "function") {
             // https://nodejs.org/api/modules.html#modules_module_createrequire_filename
             // Also, implemented for Yarn Pnp: https://next.yarnpkg.com/advanced/pnpapi/#requiremodule
             return m.createRequire(contextPath);

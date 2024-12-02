@@ -5,13 +5,10 @@ import com.intellij.ide.actionsOnSave.*
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.observable.properties.ObservableMutableProperty
-import com.intellij.openapi.observable.util.whenItemSelected
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
@@ -21,8 +18,8 @@ import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.ui.ContextHelpLabel
-import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.MutableProperty
@@ -36,13 +33,14 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import java.awt.event.ItemEvent
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
 import javax.swing.JCheckBox
 import javax.swing.JRadioButton
 import javax.swing.text.JTextComponent
 
-private const val CONFIGURABLE_ID = "settings.javascript.prettier"
+const val CONFIGURABLE_ID = "settings.javascript.prettier"
 
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
   PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", CONFIGURABLE_ID) {
@@ -50,6 +48,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private lateinit var packageField: NodePackageField
   private lateinit var runForFilesField: JBTextField
   private lateinit var runOnSaveCheckBox: JCheckBox
+  private lateinit var codeStyleModifierCheckBox: JCheckBox
   private lateinit var customIgnorePathField: TextFieldWithBrowseButton
 
   private lateinit var disabledConfiguration: JRadioButton
@@ -64,10 +63,17 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     return panel {
       buttonsGroup {
         row {
-          disabledConfiguration =
-            radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.disabled", displayName))
-              .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.DISABLED))
-              .component
+          disabledConfiguration = radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.disabled", displayName))
+            .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.DISABLED))
+            .component
+            .apply {
+              addItemListener { e ->
+                if (e.stateChange == ItemEvent.SELECTED) {
+                  runOnSaveCheckBox.isSelected = false
+                  codeStyleModifierCheckBox.isSelected = false
+                }
+              }
+            }
         }
         row {
           automaticConfiguration =
@@ -162,44 +168,32 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
       row {
         runOnSaveCheckBox = checkBox(PrettierBundle.message("run.on.save.label"))
-          .bindSelected(RunOnObservableProperty(
-            { prettierState.configurationMode != ConfigurationMode.DISABLED && prettierState.runOnSave },
-            { prettierState.runOnSave = it },
-            { !disabledConfiguration.isSelected && runOnSaveCheckBox.isSelected }
-          ))
+          .bindSelected({ prettierState.configurationMode != ConfigurationMode.DISABLED && prettierState.runOnSave }, { prettierState.runOnSave = it })
           .component
 
         val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
         cell(link)
       }.enabledIf(!disabledConfiguration.selected)
-    }
-  }
 
-  private inner class RunOnObservableProperty(
-    private val getter: () -> Boolean,
-    private val setter: (Boolean) -> Unit,
-    private val afterConfigModeChangeGetter: () -> Boolean,
-  ) : ObservableMutableProperty<Boolean> {
-    override fun set(value: Boolean) {
-      setter(value)
-    }
+      row {
+        codeStyleModifierCheckBox = checkBox(PrettierBundle.message("prettier.checkbox.enable.support"))
+          .bindSelected({ prettierState.configurationMode != ConfigurationMode.DISABLED && prettierState.codeStyleSettingsModifierEnabled }, { prettierState.codeStyleSettingsModifierEnabled = it })
+          .component
 
-    override fun get(): Boolean =
-      getter()
+        val helpLabel = ContextHelpLabel.create(
+          PrettierBundle.message(
+            "prettier.checkbox.enable.support.help.text",
+            ApplicationNamesInfo.getInstance().fullProductName
+          )
+        )
+        helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
+        cell(helpLabel)
+      }.enabledIf(!disabledConfiguration.selected)
 
-    override fun afterChange(parentDisposable: Disposable?, listener: (Boolean) -> Unit) {
-
-      fun emitChange(radio: JBRadioButton) {
-        if (radio.isSelected) {
-          listener(afterConfigModeChangeGetter())
-        }
+      onApply {
+        CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
       }
-
-      manualConfiguration.whenItemSelected(parentDisposable, ::emitChange)
-      automaticConfiguration.whenItemSelected(parentDisposable, ::emitChange)
-      disabledConfiguration.whenItemSelected(parentDisposable, ::emitChange)
     }
-
   }
 
   private class ConfigurationModeProperty(

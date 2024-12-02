@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.factory = void 0;
 var prettier_plugin_1 = require("./prettier-plugin");
 var PluginFactory = /** @class */ (function () {
