@@ -2,13 +2,14 @@ package org.jetbrains.qodana.jvm.java.jps
 
 import com.intellij.collaboration.auth.isSpacePrivatePackageUrl
 import com.intellij.jarRepository.JarRepositoryAuthenticationDataProvider
+import com.intellij.jarRepository.RemoteRepositoryDescription
 import com.intellij.openapi.progress.runBlockingCancellable
 
 internal class QodanaSpaceJarRepositoryAuthenticationDataProvider : JarRepositoryAuthenticationDataProvider {
-  override fun provideAuthenticationData(url: String): JarRepositoryAuthenticationDataProvider.AuthenticationData? {
+  override fun provideAuthenticationData(description: RemoteRepositoryDescription): JarRepositoryAuthenticationDataProvider.AuthenticationData? {
     val authFromEnv = provideAuthenticationFromEnv() ?: return null
     return runBlockingCancellable {
-      if (isSpacePrivatePackageUrl(url)) authFromEnv else null
+      if (isSpacePrivatePackageUrl(description.url)) authFromEnv else null
     }
   }
 
