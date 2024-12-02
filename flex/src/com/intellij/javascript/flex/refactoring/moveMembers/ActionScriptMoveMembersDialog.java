@@ -41,6 +41,7 @@ import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.components.JBBox;
 import com.intellij.usageView.UsageViewUtil;
 import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NonNls;
@@ -132,7 +133,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     JPanel panel = new JPanel(new BorderLayout());
 
     JPanel _panel;
-    Box box = Box.createVerticalBox();
+    JBBox box = JBBox.createVerticalBox();
 
     _panel = new JPanel(new BorderLayout());
     JTextField sourceClassField = new JTextField();
