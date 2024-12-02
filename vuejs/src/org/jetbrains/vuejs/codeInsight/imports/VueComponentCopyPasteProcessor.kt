@@ -7,6 +7,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.CreateImportExportInfo
 import com.intellij.lang.ecmascript6.refactoring.ES6ReferenceExpressionsInfo
+import com.intellij.lang.javascript.editor.JSCopyPasteService
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -14,14 +15,14 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.command.UndoConfirmationPolicy
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlElement
@@ -43,7 +44,6 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import java.awt.datatransfer.DataFlavor
-import kotlin.Pair
 import com.intellij.openapi.util.Pair as OpenApiPair
 
 class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImportsTransferableData>() {
@@ -140,30 +140,29 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
   override fun createTransferableData(importedElements: ArrayList<ImportedElement>): VueComponentImportsTransferableData =
     throw UnsupportedOperationException()
 
-  override fun processTransferableData(values: List<VueComponentImportsTransferableData>,
-                                       exportScope: PsiElement,
-                                       pasteContext: PsiElement,
-                                       pasteContextLanguage: Language) {
+  override fun processTransferableData(
+    values: List<VueComponentImportsTransferableData>,
+    exportScope: PsiElement,
+    pasteContext: PsiElement,
+    pasteContextLanguage: Language,
+  ) {
     val originFilePath = values.firstNotNullOfOrNull { it.originFilePath }
     if (originFilePath == null) {
       super.processTransferableData(values, exportScope, pasteContext, pasteContextLanguage)
     }
     else {
-      val pasteContextPtr = pasteContext.createSmartPointer()
-      val exportScopePtr = exportScope.createSmartPointer()
-      val project = exportScope.project
-      runInBackground(project, VueBundle.message("vue.progress.title.auto-importing-vue-components-on-paste")) {
-        processComponentsFromOriginContext(project, pasteContextPtr, exportScopePtr,
-                                           originFilePath, values.flatMapTo(HashSet()) { it.components })
-      }
+      processComponentsFromOriginContext(pasteContext, exportScope,
+                                         originFilePath, values.flatMapTo(HashSet()) { it.components })
     }
   }
 
-  override fun insertRequiredImports(pasteContext: PsiElement,
-                                     data: VueComponentImportsTransferableData,
-                                     destinationModule: PsiElement,
-                                     imports: Collection<OpenApiPair<CreateImportExportInfo, PsiElement>>,
-                                     pasteContextLanguage: Language) {
+  override fun insertRequiredImports(
+    pasteContext: PsiElement,
+    data: VueComponentImportsTransferableData,
+    destinationModule: PsiElement,
+    imports: Collection<OpenApiPair<CreateImportExportInfo, PsiElement>>,
+    pasteContextLanguage: Language,
+  ) {
     if (imports.isEmpty()) return
     val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(pasteContext)) ?: return
     val scriptScope = componentSourceEdit.getOrCreateScriptScope() ?: return
@@ -179,98 +178,92 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
   }
 
   private fun processComponentsFromOriginContext(
-    project: Project,
-    pasteContextPtr: SmartPsiElementPointer<PsiElement>,
-    exportScopePtr: SmartPsiElementPointer<PsiElement>,
+    pasteContext: PsiElement,
+    exportScope: PsiElement,
     originFilePath: String,
     fragmentComponentNames: Set<String>,
   ) {
-    val elementsToImport = ReadAction.compute<List<OpenApiPair<CreateImportExportInfo, SmartPsiElementPointer<PsiElement>>>, Throwable> {
-      val pasteContext = pasteContextPtr.dereference() ?: return@compute emptyList()
-      val exportScope = exportScopePtr.dereference() ?: return@compute emptyList()
-      val resolveScope = JSResolveUtil.getResolveScope(exportScope)
-      val sourceComponentFile = findFile(originFilePath, exportScope, resolveScope) as? VueFile ?: return@compute emptyList()
+    val pasteContextPtr = pasteContext.createSmartPointer()
+    val exportScopePtr = exportScope.createSmartPointer()
+    pasteContext.project.service<JSCopyPasteService>().scheduleOnPasteProcessing(
+      pasteContext.containingFile,
+      VueBundle.message("vue.progress.title.auto-importing-vue-components-on-paste"),
+      VueBundle.message("vue.command.name.auto-import-vue-components"),
+      {
+        val pasteContext = pasteContextPtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
+        val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
+        val resolveScope = JSResolveUtil.getResolveScope(exportScope)
+        val sourceComponentFile = findFile(originFilePath, exportScope, resolveScope) as? VueFile
+                                  ?: return@scheduleOnPasteProcessing emptyList()
 
-      val sourceComponent = VueModelManager.findEnclosingContainer(sourceComponentFile)
-      val destinationComponent = VueModelManager.findEnclosingContainer(pasteContext)
+        val sourceComponent = VueModelManager.findEnclosingContainer(sourceComponentFile)
+        val destinationComponent = VueModelManager.findEnclosingContainer(pasteContext)
 
-      val destinationComponents = mutableSetOf<String>()
-      destinationComponent.acceptEntities(object : VueModelVisitor() {
-        override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-          destinationComponents.add(toAsset(name, true))
-          return true
-        }
-      })
-
-      val toImport = mutableMapOf<String, VueComponent>()
-      sourceComponent.acceptEntities(object : VueModelVisitor() {
-        override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-          val capitalizedName = toAsset(name, true)
-          if (fragmentComponentNames.contains(capitalizedName) && !destinationComponents.contains(capitalizedName)) {
-            toImport.putIfAbsent(name, component)
+        val destinationComponents = mutableSetOf<String>()
+        destinationComponent.acceptEntities(object : VueModelVisitor() {
+          override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+            destinationComponents.add(toAsset(name, true))
+            return true
           }
-          return true
-        }
-      })
+        })
 
-      val elements = mutableListOf<OpenApiPair<String, ES6ImportExportDeclarationPart>>()
-      val result = mutableSetOf<ImportedElement>()
-      toImport.entries.forEach { (capitalizedName, component) ->
-        val source = component.rawSource
-          ?.let {
-            when (it) {
-              is JSProperty -> {
-                it.value
-                  ?.asSafely<JSReferenceExpression>()
-                  ?.let(::resolveLocally)
-                  ?.firstOrNull()
-              }
-              is JSImplicitElement -> {
-                val implicitContext = it.context
-                // Self referenced component
-                if (implicitContext is JSProperty && implicitContext.name == NAME_PROP) {
-                  JSImplicitElementImpl(capitalizedName, sourceComponentFile)
-                }
-                else null
-              }
-              else -> it
+        val toImport = mutableMapOf<String, VueComponent>()
+        sourceComponent.acceptEntities(object : VueModelVisitor() {
+          override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+            val capitalizedName = toAsset(name, true)
+            if (fragmentComponentNames.contains(capitalizedName) && !destinationComponents.contains(capitalizedName)) {
+              toImport.putIfAbsent(name, component)
             }
+            return true
           }
-        if (source is ES6ImportExportDeclarationPart) {
-          elements.add(OpenApiPair(capitalizedName, source))
-        }
-        else if (source is JSImplicitElement && source.context is VueFile) {
-          createImportedElementForComponentFile(source.context as VueFile, capitalizedName)
-            ?.let { result.add(it) }
-        }
-      }
-      result.addAll(toImportedElements(listOf(ES6ReferenceExpressionsInfo.getInfoForImportDeclarations(elements)), emptyList()))
-      result.mapNotNull {
-        resolveImportedElement(it, exportScope, resolveScope)
-          ?.let { el ->
-            OpenApiPair(el.first, el.second.createSmartPointer())
-          }
-      }
-    }
+        })
 
-    if (elementsToImport.isNotEmpty()) {
-      WriteAction.runAndWait<Throwable> {
-        val exportScope = exportScopePtr.dereference() ?: return@runAndWait
-        val pasteContext = pasteContextPtr.dereference() ?: return@runAndWait
-        CommandProcessor.getInstance().executeCommand(
-          project,
-          {
-            insertRequiredImports(pasteContext, VueComponentImportsTransferableData(ArrayList(), null, emptyList()), exportScope,
-                                  elementsToImport.mapNotNull { info -> info.second.dereference()?.let { OpenApiPair(info.first, it) } },
-                                  VueJSLanguage.INSTANCE)
-          },
-          VueBundle.message("vue.command.name.auto-import-vue-components"),
-          null,
-          UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION,
-          PsiDocumentManager.getInstance(project).getDocument(pasteContext.containingFile)
-        )
+        val elements = mutableListOf<OpenApiPair<String, ES6ImportExportDeclarationPart>>()
+        val result = mutableSetOf<ImportedElement>()
+        toImport.entries.forEach { (capitalizedName, component) ->
+          val source = component.rawSource
+            ?.let {
+              when (it) {
+                is JSProperty -> {
+                  it.value
+                    ?.asSafely<JSReferenceExpression>()
+                    ?.let(::resolveLocally)
+                    ?.firstOrNull()
+                }
+                is JSImplicitElement -> {
+                  val implicitContext = it.context
+                  // Self referenced component
+                  if (implicitContext is JSProperty && implicitContext.name == NAME_PROP) {
+                    JSImplicitElementImpl(capitalizedName, sourceComponentFile)
+                  }
+                  else null
+                }
+                else -> it
+              }
+            }
+          if (source is ES6ImportExportDeclarationPart) {
+            elements.add(OpenApiPair(capitalizedName, source))
+          }
+          else if (source is JSImplicitElement && source.context is VueFile) {
+            createImportedElementForComponentFile(source.context as VueFile, capitalizedName)
+              ?.let { result.add(it) }
+          }
+        }
+        result.addAll(toImportedElements(listOf(ES6ReferenceExpressionsInfo.getInfoForImportDeclarations(elements)), emptyList()))
+        result.mapNotNull {
+          resolveImportedElement(it, exportScope, resolveScope)
+            ?.let { el ->
+              OpenApiPair(el.first, el.second)
+            }
+        }
+      }, { elementsToImport ->
+        val pasteContext = pasteContextPtr.dereference() ?: return@scheduleOnPasteProcessing
+        val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
+        insertRequiredImports(pasteContext, VueComponentImportsTransferableData(ArrayList(), null, emptyList()), exportScope,
+                              elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
+                              VueJSLanguage.INSTANCE)
       }
-    }
+    )
   }
 
   private fun createImportedElementForComponentFile(

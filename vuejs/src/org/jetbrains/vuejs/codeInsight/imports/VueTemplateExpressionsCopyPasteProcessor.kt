@@ -8,20 +8,21 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.refactoring.ES6ReferenceExpressionsInfo
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.editor.JSCopyPasteService
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.command.UndoConfirmationPolicy
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.util.parents
@@ -103,54 +104,46 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
     return true
   }
 
-  override fun processTransferableData(values: List<VueTemplateExpressionsImportsTransferableData>,
-                                       exportScope: PsiElement,
-                                       pasteContext: PsiElement,
-                                       pasteContextLanguage: Language) {
+  override fun processTransferableData(
+    values: List<VueTemplateExpressionsImportsTransferableData>,
+    exportScope: PsiElement,
+    pasteContext: PsiElement,
+    pasteContextLanguage: Language,
+  ) {
     if (pasteContext.containingFile.asSafely<XmlFile>()?.let { findScriptTag(it, true) } != null)
       super.processTransferableData(values, exportScope, pasteContext, pasteContextLanguage)
     else {
-      val exportScopePtr = exportScope.createSmartPointer()
-      val pasteContextPtr = pasteContext.createSmartPointer()
-      val project = pasteContext.project
-      runInBackground(project, VueBundle.message("vue.progress.title.auto-importing-external-symbols-on-paste")) {
-        processTransferableDataNoScriptTag(values, exportScopePtr, pasteContextPtr, project)
-      }
+      processTransferableDataNoScriptTag(values, exportScope, pasteContext)
     }
   }
 
-  private fun processTransferableDataNoScriptTag(values: List<VueTemplateExpressionsImportsTransferableData>,
-                                                 exportScopePtr: SmartPsiElementPointer<PsiElement>,
-                                                 pasteContextPtr: SmartPsiElementPointer<PsiElement>,
-                                                 project: Project) {
-    for (data in values) {
-      val elements = ReadAction.compute<List<Pair<ES6ImportPsiUtil.CreateImportExportInfo, SmartPsiElementPointer<PsiElement>>>, Throwable> {
-        val newExportScope = exportScopePtr.dereference() ?: return@compute null
+  private fun processTransferableDataNoScriptTag(
+    values: List<VueTemplateExpressionsImportsTransferableData>,
+    exportScope: PsiElement,
+    pasteContext: PsiElement,
+  ) {
+    val exportScopePtr = exportScope.createSmartPointer()
+    pasteContext.project.service<JSCopyPasteService>().scheduleOnPasteProcessing(
+      pasteContext.containingFile,
+      VueBundle.message("vue.progress.title.auto-importing-external-symbols-on-paste"),
+      VueBundle.message("vue.command.name.auto-import-external-symbols"),
+      {
+        val newExportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
         val resolveScope = JSResolveUtil.getResolveScope(newExportScope)
-        data.importedElements
-          .mapNotNull { importedElement: ImportedElement ->
-            resolveImportedElement(importedElement, newExportScope, resolveScope)
-              ?.let { Pair(it.first, it.second.createSmartPointer()) }
-          }
-      }
-      if (elements.isNotEmpty()) {
-        WriteAction.runAndWait<Throwable> {
-          val newExportScope = exportScopePtr.dereference() ?: return@runAndWait
-          val newPasteContext = pasteContextPtr.dereference() ?: return@runAndWait
-          CommandProcessor.getInstance().executeCommand(
-            project,
-            {
-              ES6CreateImportUtil.addRequiredImports(
-                newExportScope, VueJSLanguage.INSTANCE, elements.mapNotNull { it.second.dereference()?.let { el -> Pair(it.first, el) } })
-            },
-            VueBundle.message("vue.command.name.auto-import-external-symbols"),
-            null,
-            UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION,
-            PsiDocumentManager.getInstance(project).getDocument(newPasteContext.containingFile)
-          )
+        values.flatMap { data ->
+          data.importedElements
+            .mapNotNull { importedElement ->
+              resolveImportedElement(importedElement, newExportScope, resolveScope)
+                ?.let { Pair(it.first, it.second) }
+            }
         }
+      }, { elements ->
+        val newExportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
+        ES6CreateImportUtil.addRequiredImports(
+          newExportScope, VueJSLanguage.INSTANCE, elements.mapNotNull { it.second?.let { el -> Pair(it.first, el) } })
       }
-    }
+    )
+
   }
 
   override fun alreadyHasImport(actualImportedName: String, importedElement: ImportedElement, scope: PsiElement): Boolean =

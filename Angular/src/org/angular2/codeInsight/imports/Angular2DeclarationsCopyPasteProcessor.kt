@@ -6,14 +6,12 @@ import com.intellij.lang.Language
 import com.intellij.lang.ecmascript6.editor.JSCopyPasteProcessorBase
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.editor.JSCopyPasteService
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
-import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.command.UndoConfirmationPolicy
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -103,93 +101,87 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
     return Angular2DeclarationsImportsTransferableData(originFilePath, exportName, pipes, selectors, expressionContexts != 0)
   }
 
-  override fun processTransferableData(values: List<Angular2DeclarationsImportsTransferableData>,
-                                       exportScope: PsiElement,
-                                       pasteContext: PsiElement,
-                                       pasteContextLanguage: Language) {
+  override fun processTransferableData(
+    values: List<Angular2DeclarationsImportsTransferableData>,
+    exportScope: PsiElement,
+    pasteContext: PsiElement,
+    pasteContextLanguage: Language,
+  ) {
     val isExpressionContext = Angular2ExpressionsCopyPasteProcessor.Util.isExpressionContext(pasteContext)
     val filteredValues = values.filter { it.isExpressionContext == isExpressionContext && (it.pipes.isNotEmpty() || it.directives.isNotEmpty()) }
     if (filteredValues.isEmpty())
       return
-    val exportScopePtr = exportScope.createSmartPointer()
-    val pasteContextPtr = pasteContext.createSmartPointer()
-    runInBackground(pasteContext.project, Angular2Bundle.message("angular.progress.title.auto-importing-angular-directives-on-paste")) {
-      restoreDeclarationsImports(filteredValues, exportScopePtr, pasteContextPtr)
-    }
+    restoreDeclarationsImports(filteredValues, exportScope, pasteContext)
   }
 
-  private fun restoreDeclarationsImports(values: List<Angular2DeclarationsImportsTransferableData>,
-                                         exportScopePtr: SmartPsiElementPointer<PsiElement>,
-                                         pasteContextPtr: SmartPsiElementPointer<PsiElement>) {
-    val moduleClassesToImport = ReadAction.compute<List<Pair<String, SmartPsiElementPointer<PsiElement>>>, Throwable> {
-      val exportScope = exportScopePtr.dereference() ?: return@compute emptyList()
-      val pasteContext = pasteContextPtr.dereference() ?: return@compute emptyList()
-      val resolveScope = JSResolveUtil.getResolveScope(exportScope)
+  private fun restoreDeclarationsImports(
+    values: List<Angular2DeclarationsImportsTransferableData>,
+    exportScope: PsiElement,
+    pasteContext: PsiElement,
+  ) {
+    val exportScopePtr = exportScope.createSmartPointer()
+    val pasteContextPtr = pasteContext.createSmartPointer()
+    exportScope.project.service<JSCopyPasteService>().scheduleOnPasteProcessing(
+      pasteContext.containingFile,
+      Angular2Bundle.message("angular.progress.title.auto-importing-angular-directives-on-paste"),
+      Angular2Bundle.message("angular.command.name.auto-import-angular-directives"),
+      {
+        val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
+        val pasteContext = pasteContextPtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
+        val resolveScope = JSResolveUtil.getResolveScope(exportScope)
 
-      values.flatMap { data ->
-        val sourceComponentFile = findFile(data.originFilePath, exportScope, resolveScope) as? JSFile
-                                  ?: return@flatMap emptyList()
-        val sourceComponentClass = ES6PsiUtil.resolveSymbolInModule(data.exportName, exportScope, sourceComponentFile)
-                                     .firstNotNullOfOrNull { it.element.asSafely<TypeScriptClass>() }
-                                   ?: return@flatMap emptyList()
-        val sourceComponent = Angular2EntitiesProvider.getComponent(sourceComponentClass)
-        val sourceScope = sourceComponent?.templateFile?.let { Angular2DeclarationsScope(it) }
-                          ?: return@flatMap emptyList()
+        values.flatMap { data ->
+          val sourceComponentFile = findFile(data.originFilePath, exportScope, resolveScope) as? JSFile
+                                    ?: return@flatMap emptyList()
+          val sourceComponentClass = ES6PsiUtil.resolveSymbolInModule(data.exportName, exportScope, sourceComponentFile)
+                                       .firstNotNullOfOrNull { it.element.asSafely<TypeScriptClass>() }
+                                     ?: return@flatMap emptyList()
+          val sourceComponent = Angular2EntitiesProvider.getComponent(sourceComponentClass)
+          val sourceScope = sourceComponent?.templateFile?.let { Angular2DeclarationsScope(it) }
+                            ?: return@flatMap emptyList()
 
-        val destinationScope = Angular2DeclarationsScope(pasteContext)
+          val destinationScope = Angular2DeclarationsScope(pasteContext)
 
-        val project = sourceComponentClass.project
-        val pipesToImport = data.pipes.flatMap { pipeName ->
-          Angular2EntitiesProvider.findPipes(project, pipeName)
-            .filter { it in sourceScope && it !in destinationScope }
-        }
-
-        val directivesToImport = data.directives.flatMap { directivesData ->
-          Angular2ApplicableDirectivesProvider(
-            project, directivesData.selector.elementName ?: "", false, directivesData.selector
-          )
-            .matched
-            .filter { it in sourceScope && it !in destinationScope && wasInCopyRange(it, directivesData) }
-        }
-        pipesToImport.asSequence()
-          .plus(directivesToImport.asSequence())
-          .mapNotNull {
-            ProgressManager.checkCanceled()
-            NgModuleImportAction.declarationsToModuleImports(pasteContext, listOf(it), destinationScope)
-              .firstOrNull()
+          val project = sourceComponentClass.project
+          val pipesToImport = data.pipes.flatMap { pipeName ->
+            Angular2EntitiesProvider.findPipes(project, pipeName)
+              .filter { it in sourceScope && it !in destinationScope }
           }
-          .distinct()
-          .sortedBy { it.name }
-          .mapNotNull { Pair(it.name, it.element?.createSmartPointer() ?: return@mapNotNull null) }
-          .toList()
-      }
-    }
-    if (moduleClassesToImport.isNotEmpty()) {
-      WriteAction.runAndWait<Throwable> {
+
+          val directivesToImport = data.directives.flatMap { directivesData ->
+            Angular2ApplicableDirectivesProvider(
+              project, directivesData.selector.elementName ?: "", false, directivesData.selector
+            )
+              .matched
+              .filter { it in sourceScope && it !in destinationScope && wasInCopyRange(it, directivesData) }
+          }
+          pipesToImport.asSequence()
+            .plus(directivesToImport.asSequence())
+            .mapNotNull {
+              ProgressManager.checkCanceled()
+              NgModuleImportAction.declarationsToModuleImports(pasteContext, listOf(it), destinationScope)
+                .firstOrNull()
+            }
+            .distinct()
+            .sortedBy { it.name }
+            .mapNotNull { Pair(it.name, it.element?.createSmartPointer() ?: return@mapNotNull null) }
+            .toList()
+        }
+      }, { moduleClassesToImport ->
         val pasteContext = pasteContextPtr.dereference()
-                           ?: return@runAndWait
+                           ?: return@scheduleOnPasteProcessing
         val scope = Angular2DeclarationsScope(pasteContext)
         val importsOwner = scope.importsOwner
         val destinationModuleClass = importsOwner?.asSafely<Angular2ClassBasedEntity>()?.typeScriptClass
-                                     ?: return@runAndWait
-        val project = pasteContext.project
-        CommandProcessor.getInstance().executeCommand(
-          project,
-          {
-            for ((name, elementPtr) in moduleClassesToImport) {
-              val element = elementPtr.dereference() ?: continue
-              ES6ImportPsiUtil.insertJSImport(destinationModuleClass, name, element, null)
-              Angular2FixesPsiUtil.insertEntityDecoratorMember(importsOwner, Angular2DecoratorUtil.IMPORTS_PROP, name)
-            }
-          },
-          Angular2Bundle.message("angular.command.name.auto-import-angular-directives"),
-          null,
-          UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION,
-          PsiDocumentManager.getInstance(project).getDocument(pasteContext.containingFile)
-        )
+                                     ?: return@scheduleOnPasteProcessing
 
+        for ((name, elementPtr) in moduleClassesToImport) {
+          val element = elementPtr.dereference() ?: continue
+          ES6ImportPsiUtil.insertJSImport(destinationModuleClass, name, element, null)
+          Angular2FixesPsiUtil.insertEntityDecoratorMember(importsOwner, Angular2DecoratorUtil.IMPORTS_PROP, name)
+        }
       }
-    }
+    )
   }
 
   private fun wasInCopyRange(directive: Angular2Directive, directivesData: Angular2DirectivesData): Boolean {
@@ -217,7 +209,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
   data class Angular2DirectivesData(
     val importElement: Boolean,
     val importAttributes: List<String>,
-    val selector: Angular2DirectiveSimpleSelector
+    val selector: Angular2DirectiveSimpleSelector,
   )
 
 }
