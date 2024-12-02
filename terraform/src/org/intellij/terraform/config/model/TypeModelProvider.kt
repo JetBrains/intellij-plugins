@@ -5,6 +5,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -40,7 +41,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
 
     @RequiresBackgroundThread(generateAssertion = true)
     fun getModel(psiElement: PsiElement): TypeModel {
-      val virtualFile = getContainingFile(psiElement)?.virtualFile ?: return globalModel
+      val virtualFile = getContainingFile(psiElement.createSmartPointer())?.virtualFile ?: return globalModel
       return psiElement.containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
   }
