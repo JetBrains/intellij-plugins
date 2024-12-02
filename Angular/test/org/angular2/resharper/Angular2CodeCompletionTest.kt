@@ -50,10 +50,10 @@ class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {
     super.doSingleTest(testFile, path)
   }
 
-  override fun doGetExtraFiles(): MutableList<String?>? {
+  override fun doGetExtraFiles(): List<String> {
     val extraFiles = super.doGetExtraFiles()
     if (name.startsWith("external")) {
-      extraFiles!!.add("external/module.ts")
+      return extraFiles + "external/module.ts"
     }
     return extraFiles
   }

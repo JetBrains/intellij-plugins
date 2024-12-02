@@ -4,9 +4,7 @@ package org.angular2.resharper
 import com.intellij.lang.javascript.resharper.TypeScriptReSharperCompletionTestBase
 import com.intellij.lang.resharper.ReSharperTestUtil
 import com.intellij.testFramework.TestDataPath
-import com.intellij.util.ArrayUtilRt
 import org.angular2.Angular2TestUtil
-import java.util.*
 
 @Suppress("ACCIDENTAL_OVERRIDE")
 abstract class Angular2ReSharperCompletionTestBase : TypeScriptReSharperCompletionTestBase() {
@@ -16,8 +14,8 @@ abstract class Angular2ReSharperCompletionTestBase : TypeScriptReSharperCompleti
     Angular2TestUtil.enableAstLoadingFilter(this)
   }
 
-  protected open fun doGetExtraFiles(): MutableList<String?>? {
-    val extraFiles: MutableList<String?> = ArrayList()
+  protected open fun doGetExtraFiles(): List<String> {
+    val extraFiles = mutableListOf<String>()
     val basePath = "/$name."
     for (ext in arrayOf("ts", "html")) {
       if (ReSharperTestUtil.fetchVirtualFile(testDataPath, "$basePath$ext.gold", testRootDisposable, false) == null
@@ -28,9 +26,8 @@ abstract class Angular2ReSharperCompletionTestBase : TypeScriptReSharperCompleti
     return extraFiles
   }
 
-  override fun getExtraFiles(): Map<String, Array<String>> {
-    return Collections.singletonMap(name, ArrayUtilRt.toStringArray(doGetExtraFiles()))
-  }
+  override val extraFiles: Map<String, Array<String>>
+    get() = mapOf(name to doGetExtraFiles().toTypedArray())
 
   override fun skipTestForData(expectedNames: Set<String>, realNames: Set<String>, diff: MutableSet<String>): Boolean {
     if (!super.skipTestForData(expectedNames, realNames, diff)) {

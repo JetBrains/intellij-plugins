@@ -10,10 +10,9 @@ import com.intellij.webSymbols.WebSymbol
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2Html")
 class Angular2HtmlCodeCompletionTest : Angular2ReSharperCompletionTestBase() {
-  override fun doGetExtraFiles(): MutableList<String?> {
+  override fun doGetExtraFiles(): List<String> {
     val extraFiles = super.doGetExtraFiles()
-    extraFiles!!.add("style.css")
-    return extraFiles
+    return extraFiles + "style.css"
   }
 
   override fun isExcluded(): Boolean {
