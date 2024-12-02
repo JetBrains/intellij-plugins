@@ -11,7 +11,7 @@ import com.intellij.psi.tree.ILazyParseableElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
-import com.intellij.xml.psi.XmlPsiBundle
+import com.intellij.xml.parsing.XmlParserBundle
 import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.Angular2Bundle
@@ -54,7 +54,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
           xmlText = startText(xmlText)
           val error = mark()
           advance()
-          error.error(XmlPsiBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
+          error.error(XmlParserBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
         }
         XmlTokenType.XML_END_TAG_START -> {
           val tagEndError = mark()
@@ -65,7 +65,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
               advance()
             }
           }
-          tagEndError.error(XmlPsiBundle.message("xml.parsing.closing.tag.matches.nothing"))
+          tagEndError.error(XmlParserBundle.message("xml.parsing.closing.tag.matches.nothing"))
         }
         is ICustomParsingType, is ILazyParseableElementType -> {
           xmlText = terminateText(xmlText)
@@ -328,7 +328,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
           XmlTokenType.XML_BAD_CHARACTER -> {
             val error = mark()
             advance()
-            error.error(XmlPsiBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
+            error.error(XmlParserBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
           }
           XmlTokenType.XML_ENTITY_REF_TOKEN -> {
             parseReference()
@@ -350,7 +350,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
         advance()
       }
       else {
-        error(XmlPsiBundle.message("xml.parsing.unclosed.attribute.value"))
+        error(XmlParserBundle.message("xml.parsing.unclosed.attribute.value"))
       }
     }
     else {

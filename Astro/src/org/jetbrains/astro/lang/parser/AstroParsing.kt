@@ -16,7 +16,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.Stack
-import com.intellij.xml.psi.XmlPsiBundle
+import com.intellij.xml.parsing.XmlParserBundle
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexer
@@ -80,7 +80,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
             advance()
           }
         }
-        tagEndError.error(XmlPsiBundle.message("xml.parsing.closing.tag.matches.nothing"))
+        tagEndError.error(XmlParserBundle.message("xml.parsing.closing.tag.matches.nothing"))
       }
       else if (hasCustomTopLevelContent()) {
         error = parseCustomTopLevelContent(error)
@@ -91,7 +91,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       }
     }
     flushIncompleteStackItemsWhile { it is HtmlTagInfo }
-    error?.error(XmlPsiBundle.message("xml.parsing.top.level.element.is.not.completed"))
+    error?.error(XmlParserBundle.message("xml.parsing.top.level.element.is.not.completed"))
     embeddedContent.done(AstroStubElementTypes.CONTENT_ROOT)
   }
 
@@ -114,7 +114,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     while (hasTags()) {
       val tag = peekTagInfo()
       if (isEndTagRequired(tag)) {
-        error(XmlPsiBundle.message("xml.parsing.named.element.is.not.closed", tag.originalName))
+        error(XmlParserBundle.message("xml.parsing.named.element.is.not.closed", tag.originalName))
       }
       doneTag()
     }
@@ -317,7 +317,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
               builder.advanceLexer()
               parseEndTagName()
               if (token() === XmlTokenType.XML_TAG_END) builder.advanceLexer()
-              footer.error(XmlPsiBundle.message("xml.parsing.closing.tag.matches.nothing"))
+              footer.error(XmlParserBundle.message("xml.parsing.closing.tag.matches.nothing"))
             }
             else if (!parseArgument()) {
               builder.advanceLexer()
