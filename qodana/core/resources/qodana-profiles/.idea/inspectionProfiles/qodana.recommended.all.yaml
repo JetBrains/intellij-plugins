@@ -99,6 +99,7 @@ groups:
       #Python
       - PyInterpreterInspection # Sanity
       - PyUnresolvedReferencesInspection # Sanity
+      - PyDataclassInspection # Untill PY-77817 fixed, too many critical FP
 
       #Security
       - HttpUrlsUsage # Spam
