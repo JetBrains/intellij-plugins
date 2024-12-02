@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface PbEnumBody extends PbBlockBody, PbOptionStatementOwner {
 
   @NotNull
+  @Unmodifiable
   List<PbEnumReservedStatement> getEnumReservedStatementList();
 
   @NotNull

@@ -30,6 +30,7 @@ public class PbEnumBodyImpl extends PbEnumBodyMixin implements PbEnumBody {
 
   @Override
   @NotNull
+  @Unmodifiable
   public List<PbEnumReservedStatement> getEnumReservedStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PbEnumReservedStatement.class);
   }
