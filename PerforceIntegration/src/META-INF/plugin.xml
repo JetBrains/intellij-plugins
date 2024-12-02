@@ -133,5 +133,11 @@
 
     <registryKey key="p4.use.p4.sync.for.incoming.files" defaultValue="false"
                  description="Use p4 sync to get a list of incoming files during the refresh"/>
+    <registryKey key="p4.refresh.local.changes.on.frame.activation" defaultValue="false"
+                 description="When enabled, refresh root of mapped connections and update Local Changes with changelist potentially created outside IDE"/>
   </extensions>
+  <applicationListeners>
+    <listener class="org.jetbrains.idea.perforce.application.P4LocalChangesRefresher"
+              topic="com.intellij.openapi.application.ApplicationActivationListener" />
+  </applicationListeners>
 </idea-plugin>
