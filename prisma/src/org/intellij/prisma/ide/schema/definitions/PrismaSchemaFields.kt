@@ -156,6 +156,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
         variant {
           label = it.presentation
           type = PrimitiveTypes.STRING
+          datasources = it.datasources
         }
       }
     }
