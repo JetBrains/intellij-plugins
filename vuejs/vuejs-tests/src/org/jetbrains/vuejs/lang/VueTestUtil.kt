@@ -48,10 +48,10 @@ private fun getContribPath(): String {
   else homePath
 }
 
-internal fun withRenameUsages(action: () -> Unit) {
+internal fun withRenameUsages(isEnabled: Boolean, action: () -> Unit) {
   val settings = JSRefactoringSettings.getInstance()
   val before = settings.RENAME_SEARCH_FOR_COMPONENT_USAGES
-  settings.RENAME_SEARCH_FOR_COMPONENT_USAGES = true
+  settings.RENAME_SEARCH_FOR_COMPONENT_USAGES = isEnabled
 
   try {
     action()
