@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSWidenType
 import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.getStubSafeChildren
@@ -24,6 +25,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
+import org.angular2.Angular2DecoratorUtil.INJECT_FUN
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
 import org.angular2.Angular2DecoratorUtil.MODEL_FUN
@@ -252,34 +254,62 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         if (aClass is TypeScriptClass) {
           anyNgTemplateContextGuard = anyNgTemplateContextGuard
                                       || aClass.members.any { it.name == Angular2ControlFlowBuilder.NG_TEMPLATE_CONTEXT_GUARD }
-          result = aClass.constructors
-            .mapNotNull { it.parameterList }
-            .mapNotNull { paramList ->
-              var hasElementRef = false
-              var hasTemplateRef = false
-              var hasViewContainerRef = false
-              var isTemplateRefOptional = false
-              paramList.parameters.forEach {
-                val typeText = it.getJSType(clazz)?.let { type -> if (type is TypeScriptCompilerType) type.substitute(clazz) else type }?.typeText
-                               ?: return@forEach
-                when {
-                  typeText.contains(ELEMENT_REF) -> hasElementRef = true
-                  typeText.contains(VIEW_CONTAINER_REF) -> hasViewContainerRef = true
-                  typeText.contains(TEMPLATE_REF) -> {
-                    hasTemplateRef = true
-                    isTemplateRefOptional = it is JSAttributeListOwner
-                                            && Angular2DecoratorUtil.findDecorator(it, Angular2DecoratorUtil.OPTIONAL_DEC) != null
-                  }
-                }
-              }
-              Angular2DirectiveKind.get(hasElementRef, hasTemplateRef, hasViewContainerRef, isTemplateRefOptional, anyNgTemplateContextGuard)
-            }
-            .reduceOrNull { acc, kind -> acc + kind }
+          result = getDirectiveKindFromConstructors(aClass, clazz, anyNgTemplateContextGuard) +
+                   getDirectiveKindFromFields(aClass, clazz, anyNgTemplateContextGuard)
         }
         result == null
       }
       return (result ?: Angular2DirectiveKind.REGULAR)
         .applyIf(anyNgTemplateSelector || anyNgTemplateContextGuard) { this + Angular2DirectiveKind.STRUCTURAL }
+    }
+
+    private fun getDirectiveKindFromConstructors(
+      aClass: TypeScriptClass,
+      clazz: TypeScriptClass,
+      anyNgTemplateContextGuard: Boolean,
+    ): Angular2DirectiveKind? =
+      aClass.constructors
+        .mapNotNull { it.parameterList }
+        .mapNotNull { paramList ->
+          processJSTypeOwnersList(paramList.parameters.toList(), clazz, anyNgTemplateContextGuard)
+        }
+        .reduceOrNull { acc, kind -> acc + kind }
+
+    private fun getDirectiveKindFromFields(
+      aClass: TypeScriptClass,
+      clazz: TypeScriptClass,
+      anyNgTemplateContextGuard: Boolean,
+    ): Angular2DirectiveKind? =
+      processJSTypeOwnersList(
+        aClass.fields.filter { it.initializerOrStub?.asSafely<JSCallExpression>()?.let { getFunctionNameFromIndex(it) } == INJECT_FUN },
+        clazz, anyNgTemplateContextGuard
+      )
+
+    private fun processJSTypeOwnersList(
+      list: List<JSTypeOwner>,
+      clazz: TypeScriptClass,
+      anyNgTemplateContextGuard: Boolean,
+    ): Angular2DirectiveKind? {
+      var hasElementRef = false
+      var hasTemplateRef = false
+      var hasViewContainerRef = false
+      var isTemplateRefOptional = false
+      list.forEach {
+        val typeText = it.getJSType(clazz)
+                         ?.let { type -> if (type is TypeScriptCompilerType || type is JSWidenType) type.substitute(clazz) else type }
+                         ?.typeText
+                       ?: return@forEach
+        when {
+          typeText.contains(ELEMENT_REF) -> hasElementRef = true
+          typeText.contains(VIEW_CONTAINER_REF) -> hasViewContainerRef = true
+          typeText.contains(TEMPLATE_REF) -> {
+            hasTemplateRef = true
+            isTemplateRefOptional = it is JSAttributeListOwner
+                                    && Angular2DecoratorUtil.findDecorator(it, Angular2DecoratorUtil.OPTIONAL_DEC) != null
+          }
+        }
+      }
+      return Angular2DirectiveKind.get(hasElementRef, hasTemplateRef, hasViewContainerRef, isTemplateRefOptional, anyNgTemplateContextGuard)
     }
 
     @JvmStatic

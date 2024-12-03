@@ -216,6 +216,9 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
       it.priority >= 100
     }
 
+  fun testStructuralDirectiveWithInjectedFields() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0)
+
   fun testLetBlockTemplate() {
     TemplateManagerImpl.setTemplateTesting(testRootDisposable)
     doTypingTest("le\nfoo\t12\n", Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html")
