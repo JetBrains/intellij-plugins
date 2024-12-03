@@ -218,6 +218,12 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
   }
 
+  fun testUnusedImportsInStandaloneComponentStructuralDirectives() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
+    doTest(AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-in-standalone-component-structural-directives.ts")
+  }
+
   fun testInspectionsNonAngular() {
     myFixture.enableInspections(AngularIncorrectTemplateDefinitionInspection::class.java,
                                 AngularInvalidSelectorInspection::class.java,
