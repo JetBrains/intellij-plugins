@@ -135,7 +135,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeatures() {
-    val index = PrismaPreviewFeature.FullTextIndex.presentation
+    val feature = PrismaPreviewFeature.DriverAdapters.presentation
 
     completeSelected(
       """
@@ -145,49 +145,49 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
       """.trimIndent(),
       """
           generator client {
-            previewFeatures = ["$index"]
+            previewFeatures = ["$feature"]
           }
       """.trimIndent(),
-      quoted(index),
+      quoted(feature),
     )
   }
 
   fun testGeneratorPreviewFeaturesLastItem() {
-    val search = PrismaPreviewFeature.FullTextSearch.presentation
-    val index = PrismaPreviewFeature.FullTextIndex.presentation
+    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature2 = PrismaPreviewFeature.RelationJoins.presentation
 
     val lookupElements = completeSelected(
       """
           generator client {
-            previewFeatures = ["$index", <caret>]
+            previewFeatures = ["$feature2", <caret>]
           }
       """.trimIndent(),
       """
           generator client {
-            previewFeatures = ["$index", "$search"]
+            previewFeatures = ["$feature2", "$feature1"]
           }
       """.trimIndent(),
-      quoted(search),
+      quoted(feature1),
     )
 
-    assertDoesntContain(lookupElements.strings, quoted(index))
+    assertDoesntContain(lookupElements.strings, quoted(feature2))
   }
 
   fun testGeneratorPreviewFeaturesCompleteUnquoted() {
-    val index = PrismaPreviewFeature.FullTextIndex.presentation
+    val feature = PrismaPreviewFeature.DriverAdapters.presentation
 
     completeSelected(
       """
           generator client {
-            previewFeatures = [full<caret>]
+            previewFeatures = [drive<caret>]
           }
       """.trimIndent(),
       """
           generator client {
-            previewFeatures = ["$index"]
+            previewFeatures = ["$feature"]
           }
       """.trimIndent(),
-      quoted(index),
+      quoted(feature),
     )
   }
 
@@ -202,7 +202,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesNotAfterComma() {
-    val feature1 = PrismaPreviewFeature.FullTextSearch.presentation
+    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
     val feature2 = PrismaPreviewFeature.MultiSchema.presentation
 
     noCompletion(
@@ -217,9 +217,9 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesBetweenCommaAndValue() {
-    val feature1 = PrismaPreviewFeature.FullTextSearch.presentation
+    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
     val feature2 = PrismaPreviewFeature.MultiSchema.presentation
-    val featureToComplete = PrismaPreviewFeature.FullTextIndex.presentation
+    val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
     completeSelected(
       """
@@ -241,9 +241,9 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesAtStart() {
-    val feature1 = PrismaPreviewFeature.FullTextSearch.presentation
+    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
     val feature2 = PrismaPreviewFeature.MultiSchema.presentation
-    val featureToComplete = PrismaPreviewFeature.FullTextIndex.presentation
+    val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
     val lookupElements = completeSelected(
       """

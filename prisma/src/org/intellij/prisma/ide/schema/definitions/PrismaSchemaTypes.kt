@@ -33,7 +33,7 @@ fun PrismaSchemaParameter.Builder.booleanTypeValues(elementPattern: ElementPatte
 }
 
 private fun PrismaSchemaParameter.Builder.sortOrderTypeValues() {
-  PrismaSortOrder.values().forEach {
+  PrismaSortOrder.entries.forEach {
     variant {
       label = it.name
       type = Types.SORT_ORDER
@@ -42,7 +42,7 @@ private fun PrismaSchemaParameter.Builder.sortOrderTypeValues() {
 }
 
 private fun PrismaSchemaParameter.Builder.indexingAlgorithmTypeValues() {
-  PrismaIndexAlgorithm.values().forEach {
+  PrismaIndexAlgorithm.entries.forEach {
     variant {
       label = it.name
       documentation = it.documentation
@@ -52,7 +52,7 @@ private fun PrismaSchemaParameter.Builder.indexingAlgorithmTypeValues() {
 }
 
 private fun PrismaSchemaParameter.Builder.referentialActionTypeValues() {
-  PrismaReferentialAction.values().forEach {
+  PrismaReferentialAction.entries.forEach {
     variant {
       label = it.name
       documentation = it.documentation

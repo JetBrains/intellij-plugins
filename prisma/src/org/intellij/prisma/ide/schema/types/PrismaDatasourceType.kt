@@ -15,7 +15,7 @@ enum class PrismaDatasourceType(val presentation: String) {
     val ALL: Set<PrismaDatasourceType> = EnumSet.allOf(PrismaDatasourceType::class.java)
 
     fun fromString(s: String?): PrismaDatasourceType? =
-      PrismaDatasourceType.values().find { it.presentation == s }
+      PrismaDatasourceType.entries.find { it.presentation == s }
 
     fun except(vararg types: PrismaDatasourceType): Set<PrismaDatasourceType> {
       return ALL - types.toSet()
