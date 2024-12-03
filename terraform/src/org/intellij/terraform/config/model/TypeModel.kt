@@ -293,7 +293,7 @@ class TypeModel(
     }
 
     private fun getContainingDir(psiElement: PsiElement?): PsiDirectory? {
-      val containingDir = psiElement?.let { getContainingFile(it.createSmartPointer())?.parent } ?: return null
+      val containingDir = psiElement?.let { getContainingFile(it)?.parent } ?: return null
       return if (containingDir.isDirectory) containingDir else null
     }
 

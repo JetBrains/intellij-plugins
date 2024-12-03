@@ -41,7 +41,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
 
     @RequiresBackgroundThread(generateAssertion = true)
     fun getModel(psiElement: PsiElement): TypeModel {
-      val virtualFile = getContainingFile(psiElement.createSmartPointer())?.virtualFile ?: return globalModel
+      val virtualFile = getContainingFile(psiElement)?.virtualFile ?: return globalModel
       return psiElement.containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
   }

@@ -6,6 +6,7 @@ import com.intellij.lang.Language
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.util.parentsOfType
 import org.intellij.terraform.config.documentation.TerraformWebDocUrlProvider
@@ -27,7 +28,7 @@ internal class TerraformDocumentPsi(val element: PsiElement,
     parentElement ?: return
 
     runWithModalProgressBlocking(project, HCLBundle.message("progress.title.opening.terraform.documentation")) {
-      val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement).firstOrNull()
+      val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement.createSmartPointer()).firstOrNull()
       url?.let { BrowserUtil.browse(it) }
     }
   }

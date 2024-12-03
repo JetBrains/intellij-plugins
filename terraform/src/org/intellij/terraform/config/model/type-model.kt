@@ -1,12 +1,10 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.SmartPsiElementPointer
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -655,8 +653,8 @@ internal fun withDefaults(properties: List<PropertyOrBlockType>, default: Map<St
   return result
 }
 
-internal fun getContainingFile(psiElementPointer: SmartPsiElementPointer<PsiElement>): PsiFile? {
-  val containingFile = psiElementPointer.containingFile
+internal fun getContainingFile(psiElement: PsiElement): PsiFile? {
+  val containingFile = psiElement.containingFile
   return containingFile?.getUserData<PsiFile>(PsiFileFactory.ORIGINAL_FILE) ?: containingFile?.originalFile
 }
 

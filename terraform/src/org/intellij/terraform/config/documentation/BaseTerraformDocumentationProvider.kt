@@ -50,12 +50,12 @@ internal abstract class BaseTerraformDocumentationProvider {
 
       return DocumentationResult.Companion.asyncDocumentation {
         val docText = element.let { elem ->
-          val urlString = if (shouldDownloadDocs) mdDocUrlProvider.getDocumentationUrl(elem).firstOrNull() else null
+          val urlString = if (shouldDownloadDocs) mdDocUrlProvider.getDocumentationUrl(elem.createSmartPointer()).firstOrNull() else null
           urlString?.let { remoteDocProvider.getDoc(urlString) } ?: localDescription
         }
 
         DocumentationResult.documentation(docText ?: NO_DOC).applyIf(docText != null) {
-          val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(element).firstOrNull()
+          val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(element.createSmartPointer()).firstOrNull()
           val docAnchor = externalUrl?.substringAfterLast("#", ROOT_DOC_ANCHOR)
           externalUrl(externalUrl).anchor(docAnchor)
         }
