@@ -9,6 +9,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType.XML_NAME
 import org.angular2.Angular2InjectionUtils.getElementAtCaretFromContext
+import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.entities.Angular2Directive
@@ -44,7 +45,10 @@ object Angular2EditorUtils {
           directives = descriptor.sourceDirectives
         }
       }
-      directives
+      if (directives.isNotEmpty() && element != null)
+        directives.filter(Angular2DeclarationsScope(element)::contains)
+      else
+        directives
     } ?: emptyList()
   }
 }

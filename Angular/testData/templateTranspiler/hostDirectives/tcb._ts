@@ -45,8 +45,8 @@ var _t15 = _t14;
 var _t16 = 0 as any;
 var _t17 = document.createElement("app-test");
 var _t18 = null! as BoldDirective;
-var _t19 = null! as UnderlineDirective;
-var _t20 = null! as TestComponent;
+var _t19 = null! as TestComponent;
+var _t20 = null! as UnderlineDirective;
 (12);
 _t18["hover"].subscribe(($event): any => {
 $event;

@@ -1,0 +1,14 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/forms";
+
+/* TCB for numberValueAccessor.ts */
+
+function _tcb1(this: DatepickerViewsSelectionExample) {
+var _t1 = document.createElement("input");
+var _t2 = null! as _i1.DefaultValueAccessor;
+var _t3 = null! as _i1.FormControlDirective;
+_t3.form = this.totalCountControl;
+var _t4 = null! as _i1.NgControlStatus;
+var _t5 = null! as _i1.NumberValueAccessor;
+}

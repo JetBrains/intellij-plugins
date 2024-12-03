@@ -68,7 +68,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_MATERIAL_17_3_0,
     Angular2TestModule.ANGULAR_CORE_17_3_0,
     Angular2TestModule.ANGULAR_COMMON_17_3_0,
-    Angular2TestModule.ANGULAR_FORMS_16_2_8,
+    Angular2TestModule.ANGULAR_FORMS_17_3_0,
   )
 
   fun testBlockLet() = checkTranspilation(
@@ -90,6 +90,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_COMMON_18_2_1,
     Angular2TestModule.RXJS_7_8_1,
     dir = true
+  )
+
+  fun testNumberValueAccessor() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+    Angular2TestModule.ANGULAR_FORMS_17_3_0,
   )
 
   private fun checkTranspilation(

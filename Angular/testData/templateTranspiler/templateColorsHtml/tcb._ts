@@ -31,21 +31,23 @@ this.onSelect(_t3);
 "" + this.heroes.length;
 "" + this.movieSig();
 var _t6 = document.createElement("input");
-var _t7 = null! as _i2.NgModel;
-_t7.model = this.hero.name;
-_t7["update"].subscribe(($event): any => {
+var _t7 = null! as _i2.DefaultValueAccessor;
+var _t8 = null! as _i2.NgControlStatus;
+var _t9 = null! as _i2.NgModel;
+_t9.model = this.hero.name;
+_t9["update"].subscribe(($event): any => {
 this.hero.name;
 });
-var _t8 = _t7;
-"" + _t8;
-var _t11 = null! as any;
-var _t10 = (_t11 as any as _i3.TemplateRef<any>);
-var _t9 = _ctor2({"ngIf": true, "ngIfElse": _t10, "ngIfThen": 0 as any});
-_t9.ngIf = true;
-_t9.ngIfElse = _t10;
-var _t12 = null! as any;
-if (_i1.NgIf.ngTemplateContextGuard(_t9, _t12) && true) {
-_t12;
-var _t13 = document.createElement("span");
+var _t10 = _t9;
+"" + _t10;
+var _t13 = null! as any;
+var _t12 = (_t13 as any as _i3.TemplateRef<any>);
+var _t11 = _ctor2({"ngIf": true, "ngIfElse": _t12, "ngIfThen": 0 as any});
+_t11.ngIf = true;
+_t11.ngIfElse = _t12;
+var _t14 = null! as any;
+if (_i1.NgIf.ngTemplateContextGuard(_t11, _t14) && true) {
+_t14;
+var _t15 = document.createElement("span");
 }
 }

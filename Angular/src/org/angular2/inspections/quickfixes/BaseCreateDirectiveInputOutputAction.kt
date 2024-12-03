@@ -22,9 +22,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.util.asSafely
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.tags.Angular2ElementDescriptor
+import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.lang.Angular2Bundle
 
@@ -85,21 +84,24 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
 
   abstract fun inferType(context: PsiElement?): JSType?
 
-  protected open fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> =
-    context.parent.attributes
+  protected open fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> {
+    val scope = Angular2DeclarationsScope(context)
+    return Angular2ApplicableDirectivesProvider(context.parent).matched
       .asSequence()
-      .flatMap { it.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives ?: emptyList() }
-      .plus(context.parent.descriptor.asSafely<Angular2ElementDescriptor>()?.sourceDirectives ?: emptyList())
+      .filter { scope.contains(it) }
       .filterIsInstance<Angular2ClassBasedEntity>()
       .mapNotNull { it.typeScriptClass }
       .filter { !JSProjectUtil.isInLibrary(it) }
       .distinct()
       .toList()
+  }
 
-  private fun choose(project: Project,
-                     editor: Editor?,
-                     targetClasses: List<TypeScriptClass>,
-                     processor: PsiElementProcessor<TypeScriptClass>) {
+  private fun choose(
+    project: Project,
+    editor: Editor?,
+    targetClasses: List<TypeScriptClass>,
+    processor: PsiElementProcessor<TypeScriptClass>,
+  ) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       if (targetClasses.size == 1) processor.execute(targetClasses[0]) else throw RuntimeException("Multiple choices")
     }

@@ -23,38 +23,40 @@ function _tcb1(this: DatepickerViewsSelectionExample) {
 var _t1 = document.createElement("mat-form-field");
 var _t2 = null! as _i1.MatFormField;
 var _t3 = document.createElement("input");
-var _t4 = null! as _i1.MatInput;
-_t4.placeholder = "Month and Year";
-var _t7 = _ctor1({"startView": "multi-year", "panelClass": "example-month-picker", "calendarHeaderComponent": 0 as any, "startAt": 0 as any, "color": 0 as any, "touchUi": 0 as any, "disabled": 0 as any, "xPosition": 0 as any, "yPosition": 0 as any, "restoreFocus": 0 as any, "dateClass": 0 as any, "opened": 0 as any});
-var _t6 = _t7;
-var _t5 = _ctor2({"matDatepicker": _t6, "max": this.my, "min": 0 as any, "dateFilter": 0 as any, "value": 0 as any, "disabled": 0 as any});
-_t5.matDatepicker = _t6;
-_t5.max = this.my;
-var _t8 = null! as _i2.FormControlDirective;
-_t8.form = this.date;
-var _t9 = document.createElement("mat-datepicker-toggle");
-var _t10 = null! as _i1.MatSuffix;
-var _t11 = _ctor3({"datepicker": _t6, "tabIndex": 0 as any, "ariaLabel": 0 as any, "disabled": 0 as any, "disableRipple": 0 as any});
-_t11.datepicker = _t6;
-var _t12 = document.createElement("mat-datepicker");
-_t7.startView = "multi-year";
-_t7.panelClass = "example-month-picker";
-_t7["monthSelected"].subscribe(($event): any => {
-this.setMonthAndYear($event, _t6);
+var _t4 = null! as _i2.DefaultValueAccessor;
+var _t5 = null! as _i2.FormControlDirective;
+_t5.form = this.date;
+var _t8 = _ctor1({"startView": "multi-year", "panelClass": "example-month-picker", "calendarHeaderComponent": 0 as any, "startAt": 0 as any, "color": 0 as any, "touchUi": 0 as any, "disabled": 0 as any, "xPosition": 0 as any, "yPosition": 0 as any, "restoreFocus": 0 as any, "dateClass": 0 as any, "opened": 0 as any});
+var _t7 = _t8;
+var _t6 = _ctor2({"matDatepicker": _t7, "max": this.my, "min": 0 as any, "dateFilter": 0 as any, "value": 0 as any, "disabled": 0 as any});
+_t6.matDatepicker = _t7;
+_t6.max = this.my;
+var _t9 = null! as _i1.MatInput;
+_t9.placeholder = "Month and Year";
+var _t10 = null! as _i2.NgControlStatus;
+var _t11 = document.createElement("mat-datepicker-toggle");
+var _t12 = _ctor3({"datepicker": _t7, "tabIndex": 0 as any, "ariaLabel": 0 as any, "disabled": 0 as any, "disableRipple": 0 as any});
+_t12.datepicker = _t7;
+var _t13 = null! as _i1.MatSuffix;
+var _t14 = document.createElement("mat-datepicker");
+_t8.startView = "multi-year";
+_t8.panelClass = "example-month-picker";
+_t8["monthSelected"].subscribe(($event): any => {
+this.setMonthAndYear($event, _t7);
 });
-_t7["yearSelected"].subscribe(($event): any => {
-this.acceptBoolean(_t6);
+_t8["yearSelected"].subscribe(($event): any => {
+this.acceptBoolean(_t7);
 });
-var _t13 = document.createElement("mat-datepicker");
-var _t14 = _ctor1({"startAt": 12, "startView": "multi-year", "panelClass": "example-month-picker", "calendarHeaderComponent": 0 as any, "color": 0 as any, "touchUi": 0 as any, "disabled": 0 as any, "xPosition": 0 as any, "yPosition": 0 as any, "restoreFocus": 0 as any, "dateClass": 0 as any, "opened": 0 as any});
-_t14.startAt = 12;
-_t14.startView = "multi-year";
-_t14.panelClass = "example-month-picker";
-var _t15 = _t14;
-_t14["monthSelected"].subscribe(($event): any => {
-this.setMonthAndYear($event, _t15);
+var _t15 = document.createElement("mat-datepicker");
+var _t16 = _ctor1({"startAt": 12, "startView": "multi-year", "panelClass": "example-month-picker", "calendarHeaderComponent": 0 as any, "color": 0 as any, "touchUi": 0 as any, "disabled": 0 as any, "xPosition": 0 as any, "yPosition": 0 as any, "restoreFocus": 0 as any, "dateClass": 0 as any, "opened": 0 as any});
+_t16.startAt = 12;
+_t16.startView = "multi-year";
+_t16.panelClass = "example-month-picker";
+var _t17 = _t16;
+_t16["monthSelected"].subscribe(($event): any => {
+this.setMonthAndYear($event, _t17);
 });
-_t14["yearSelected"].subscribe(($event): any => {
-this.acceptBoolean(_t15);
+_t16["yearSelected"].subscribe(($event): any => {
+this.acceptBoolean(_t17);
 });
 }
