@@ -8,24 +8,22 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.childrenOfType
-import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
-import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.blocks.*
-import org.angular2.codeInsight.tags.Angular2ElementDescriptor
-import org.angular2.codeInsight.template.*
+import org.angular2.codeInsight.template.Angular2TemplateScope
+import org.angular2.codeInsight.template.getTemplateElementsScopeFor
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.*
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
-import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.Angular2HtmlFile
@@ -545,16 +543,15 @@ private fun XmlTag.toTmplAstDirectiveContainer(
     .groupBy { it.second.type }
 
   val isTemplateTag = isTemplateTag(this)
+  val scope = Angular2DeclarationsScope(this)
 
   val templateBindingAttribute = attributesByKind[TEMPLATE_BINDINGS]?.firstOrNull()?.first
-  val templateBindings = buildInfo(templateBindingAttribute, referenceResolver)
+  val templateBindings = buildInfo(scope, templateBindingAttribute, referenceResolver)
 
-  val directives = attributes.asSequence()
-    .flatMap { attr ->
-      attr.descriptor.asSafely<Angular2AttributeDescriptor>()?.takeIf { it.info.type != TEMPLATE_BINDINGS }?.sourceDirectives
-      ?: emptyList()
-    }.plus(descriptor.asSafely<Angular2ElementDescriptor>()?.sourceDirectives ?: emptyList())
-    .distinct()
+  val directives = Angular2ApplicableDirectivesProvider(this)
+    .matched
+    .asSequence()
+    .filter { scope.contains(it) }
     .flatMap { directive -> buildMetadata(directive) }
     .toSet()
 
@@ -747,17 +744,23 @@ private fun Angular2Directive.toDirectiveMetadata(
 )
 
 private fun buildInfo(
+  scope: Angular2DeclarationsScope,
   attribute: XmlAttribute?,
   referenceResolver: ReferenceResolver,
 ): TemplateBindingsInfo? {
   if (attribute == null) return null
+  val template = Angular2TemplateBindings.get(attribute)
   val templateBindings = Angular2TemplateBindings.get(attribute).bindings
   val templateName = attribute.name.removePrefix("*")
   val hasDefaultBinding = templateBindings.any { !it.keyIsVar() && it.key == templateName }
   val attributeNameRange = attribute.nameElement?.textRange ?: return null
   return TemplateBindingsInfo(
-    directives = attribute.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives?.asSequence()
-                   ?.flatMap { buildMetadata(it) }?.toSet() ?: emptySet(),
+    directives = Angular2ApplicableDirectivesProvider(template)
+      .matched
+      .asSequence()
+      .filter { scope.contains(it) }
+      .flatMap { buildMetadata(it) }
+      .toSet(),
     inputs = templateBindings.asSequence()
       .filter { !it.keyIsVar() }
       .map {

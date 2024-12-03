@@ -1,0 +1,18 @@
+[
+  {
+    "file-name": "numberValueAccessor.ts",
+    "mappings": [
+      "«input» [206] => «_t1» [185]} (no diagnostics) (no semantic)",
+      "«input» [206] => «_t2» [228]} (ignored)",
+      "«input» [206] => «_t3» [273]} (ignored)",
+      "«[formControl]» [226] => «form» [318]} (no types)",
+      "«[formControl]» [226] => «_t3.form» [314]} (no types)",
+      "«totalCountControl» [241] => «totalCountControl» [330]} (no types)",
+      "«totalCountControl» [241] => «this.totalCountControl» [325]}",
+      "«input» [206] => «_t4» [353]} (ignored)",
+      "«input» [206] => «_t5» [393]} (ignored)",
+      "0:199 => 0:199 (source)",
+      "264:399 => 264:399 (source)"
+    ]
+  }
+]

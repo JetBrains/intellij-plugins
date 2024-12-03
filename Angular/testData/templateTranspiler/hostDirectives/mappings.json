@@ -39,7 +39,7 @@
       "«app-test» [309] => «_t17» [1048]} (no diagnostics) (no semantic)",
       "«app-test» [309] => «_t18» [1095]} (ignored)",
       "«app-test» [309] => «_t19» [1130]} (ignored)",
-      "«app-test» [309] => «_t20» [1170]} (ignored)",
+      "«app-test» [309] => «_t20» [1165]} (ignored)",
       "«12» [338] => «12» [1202]}",
       "«(hover)» [344] => «[\"hover\"]» [1211]} (no types)",
       "«$event» [353] => «$event» [1250]}",

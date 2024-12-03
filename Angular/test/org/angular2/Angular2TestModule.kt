@@ -34,6 +34,7 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
   ANGULAR_FORMS_4_0_0("@angular/forms", "4.0.0"),
   ANGULAR_FORMS_8_2_14("@angular/forms", "8.2.14"),
   ANGULAR_FORMS_16_2_8("@angular/forms", "16.2.8"),
+  ANGULAR_FORMS_17_3_0("@angular/forms", "17.3.0"),
 
   ANGULAR_MATERIAL_7_2_1("@angular/material", "7.2.1"),
   ANGULAR_MATERIAL_8_2_3_MIXED("@angular/material", "8.2.3-mixed"),

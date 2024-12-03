@@ -30,8 +30,7 @@ import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlLabel
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.tags.Angular2ElementDescriptor
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.*
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
 import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
@@ -40,6 +39,7 @@ import org.angular2.inspections.quickfixes.RemoveEntityImportQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 
 abstract class AngularImportsExportsOwnerConfigurationInspection protected constructor(private val myProblemType: ProblemType) : LocalInspectionTool() {
@@ -280,15 +280,19 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
       component.templateFile?.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
         override fun visitXmlTag(tag: XmlTag) {
-          (tag.descriptor as? Angular2ElementDescriptor)?.sourceDirectives?.forEach(result::add)
+          Angular2ApplicableDirectivesProvider(tag).matched.forEach(result::add)
           super.visitXmlTag(tag)
         }
 
         override fun visitXmlAttribute(attribute: XmlAttribute) {
-          (attribute.descriptor as? Angular2AttributeDescriptor)?.sourceDirectives?.forEach(result::add)
           if (attribute !is Angular2HtmlBoundAttribute) {
             Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2EmbeddedExpression::class.java)
               ?.accept(expressionVisitor)
+          }
+          if (attribute.name.startsWith("*")) {
+            Angular2TemplateBindings.get(attribute).let {
+              Angular2ApplicableDirectivesProvider(it).matched.forEach(result::add)
+            }
           }
           super.visitXmlAttribute(attribute)
         }
