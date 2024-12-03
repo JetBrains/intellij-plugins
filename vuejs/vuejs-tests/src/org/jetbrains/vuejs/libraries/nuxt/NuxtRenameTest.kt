@@ -29,12 +29,11 @@ class NuxtRenameTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NUXT_2_15_6)
     myFixture.configureFromTempProjectFile(fileName)
 
-    val performRefactoring = {
+    withRenameUsages(renameUsages) {
       myFixture.renameElement(myFixture.file, newName)
       WriteCommandAction.runWriteCommandAction(project) { PostprocessReformattingAspect.getInstance(project).doPostponedFormatting() }
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    if (renameUsages) withRenameUsages(performRefactoring) else performRefactoring()
 
     checkResultByDir(listOf(".", ".nuxt", "components"))
   }

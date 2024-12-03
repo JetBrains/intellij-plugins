@@ -239,12 +239,11 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject(dirName, "")
     myFixture.configureFromTempProjectFile(fileName)
 
-    val performRefactoring = {
+    withRenameUsages(renameUsages) {
       myFixture.renameElement(myFixture.file, newName)
       WriteCommandAction.runWriteCommandAction(project) { PostprocessReformattingAspect.getInstance(project).doPostponedFormatting() }
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    if (renameUsages) withRenameUsages(performRefactoring) else performRefactoring()
 
     checkResultByDir()
   }
