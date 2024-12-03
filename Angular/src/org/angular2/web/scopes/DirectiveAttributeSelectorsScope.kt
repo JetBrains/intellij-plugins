@@ -7,8 +7,11 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.MappedWebSymbol
 import com.intellij.webSymbols.utils.qualifiedName
@@ -80,6 +83,10 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
       }
     }
 
+    override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+      super<WebSymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
+        .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
+
     private fun initializeWithTypeLocation(consumer: (WebSymbol) -> Unit) {
       val tagName = key
       val isTemplateTag = isTemplateTag(tagName)
@@ -117,7 +124,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
         fillNamesAndProperties(inputs, candidate.inputs)
         val kind = candidate.directiveKind
 
-        if (!isTemplateTag && kind.isStructural) {
+        if (!isTemplateTag) {
           processStructuralDirective(candidate)
         }
         if (isTemplateTag || kind.isRegular) {
@@ -152,9 +159,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
       }
       if (!isTemplateTag) {
         for (candidate in findElementDirectivesCandidates(project, ELEMENT_NG_TEMPLATE)) {
-          if (candidate.directiveKind.isStructural) {
-            processStructuralDirective(candidate)
-          }
+          processStructuralDirective(candidate)
         }
       }
     }

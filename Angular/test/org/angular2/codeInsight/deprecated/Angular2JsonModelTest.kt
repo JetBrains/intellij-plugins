@@ -241,7 +241,6 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("noTemplate.html")
     val resolve = resolveToWebSymbolSourceContext("myHover<caret>List")
     assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName())
-    Angular2TestUtil.assertUnresolvedReference("*myHover<caret>List", myFixture)
   }
 
   fun testTemplate20NoMetadata() {
@@ -255,7 +254,6 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("noTemplate.html", "package.json", "noTemplate.ts")
     val resolve = resolveToWebSymbolSourceContext("myHover<caret>List")
     assertEquals("noTemplate.ts", resolve.getContainingFile().getName())
-    Angular2TestUtil.assertUnresolvedReference("*myHover<caret>List", myFixture)
   }
 
   fun testSelectorListSpacesCompiled() {

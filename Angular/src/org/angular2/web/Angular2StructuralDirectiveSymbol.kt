@@ -17,7 +17,7 @@ import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
 
 open class Angular2StructuralDirectiveSymbol private constructor(
-  private val directive: Angular2Directive,
+  val directive: Angular2Directive,
   sourceSymbol: Angular2Symbol,
   private val hasInputsToBind: Boolean,
   private val location: PsiFile,
