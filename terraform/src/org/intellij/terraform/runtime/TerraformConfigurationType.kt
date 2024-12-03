@@ -13,11 +13,11 @@ internal class TerraformConfigurationType : TfToolConfigurationTypeBase() {
   private val TF_RUN_CONFIGURATION_ID = "TerraformConfigurationType"
 
   override val baseFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.CUSTOM)
-  override val initFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM,TfCommand.INIT)
-  override val validateFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM,TfCommand.VALIDATE)
-  override val planFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM,TfCommand.PLAN)
-  override val applyFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM,TfCommand.APPLY)
-  override val destroyFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM,TfCommand.DESTROY)
+  override val initFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.INIT)
+  override val validateFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.VALIDATE)
+  override val planFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.PLAN)
+  override val applyFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.APPLY)
+  override val destroyFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.DESTROY)
 
   override val actionGroupId: String = "TerraformRunConfigurationActions"
 
