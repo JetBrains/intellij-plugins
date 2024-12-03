@@ -35,6 +35,7 @@ object Angular2DecoratorUtil {
   const val OUTPUT_FROM_OBSERVABLE_FUN = "outputFromObservable"
   const val MODEL_FUN = "model"
   const val FORWARD_REF_FUN = "forwardRef"
+  const val INJECT_FUN = "inject"
   const val ATTRIBUTE_DEC = "Attribute"
   const val VIEW_CHILD_DEC = "ViewChild"
   const val VIEW_CHILDREN_DEC = "ViewChildren"

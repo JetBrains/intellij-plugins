@@ -33,6 +33,7 @@ import org.angular2.Angular2DecoratorUtil.ATTRIBUTE_DEC
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.FORWARD_REF_FUN
+import org.angular2.Angular2DecoratorUtil.INJECT_FUN
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
@@ -66,7 +67,9 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean =
     isDecoratorCallStringArgStubbed(node)
     || (isDecoratorLikeFunctionCall(node) && isDirectiveField(node.treeParent))
-    || STUBBED_FUNCTIONS.contains(getFunctionReferenceName(node))
+    || getFunctionReferenceName(node)?.let {
+      STUBBED_FUNCTIONS.contains(it) || (it == INJECT_FUN && isDirectiveField(node.treeParent))
+    } == true
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     val parent = node.treeParent ?: return false
@@ -115,7 +118,10 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     }
     else {
       val name = getFunctionReferenceName(callExpression.node)
-      if (name != null && STUBBED_FUNCTIONS.contains(name)) {
+      if (name != null && (
+          STUBBED_FUNCTIONS.contains(name)
+          || (name == INJECT_FUN && isDirectiveField(callExpression.node.treeParent)))
+      ) {
         recordFunctionName(callExpression, outData, name)
       }
     }
@@ -214,10 +220,12 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     return emptyList()
   }
 
-  private fun addComponentExternalFilesRefs(decorator: ES6Decorator,
-                                            namePrefix: String,
-                                            processor: Consumer<in JSImplicitElement>,
-                                            fileUrls: List<String>) {
+  private fun addComponentExternalFilesRefs(
+    decorator: ES6Decorator,
+    namePrefix: String,
+    processor: Consumer<in JSImplicitElement>,
+    fileUrls: List<String>,
+  ) {
     for (fileUrl in fileUrls) {
       val lastSlash = fileUrl.lastIndexOf('/')
       val name = fileUrl.substring(lastSlash + 1)
@@ -232,9 +240,11 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     }
   }
 
-  private fun addDirective(directiveClass: TypeScriptClass,
-                           processor: Consumer<in JSImplicitElement>,
-                           @NonNls selector: String?) {
+  private fun addDirective(
+    directiveClass: TypeScriptClass,
+    processor: Consumer<in JSImplicitElement>,
+    @NonNls selector: String?,
+  ) {
     val indexNames: Set<String>
     if (selector == null) {
       indexNames = emptySet()
@@ -250,9 +260,11 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     processor.consume(directive)
   }
 
-  private fun addPipe(pipeClass: TypeScriptClass,
-                      processor: Consumer<in JSImplicitElement>,
-                      @NonNls pipe: String?) {
+  private fun addPipe(
+    pipeClass: TypeScriptClass,
+    processor: Consumer<in JSImplicitElement>,
+    @NonNls pipe: String?,
+  ) {
     val pipeName = pipe ?: Angular2Bundle.message("angular.description.unnamed")
     val pipeElement = JSImplicitElementImpl.Builder(pipeName, pipeClass)
       .setUserStringWithData(this, ANGULAR2_PIPE_INDEX_USER_STRING, PIPE_TYPE)
@@ -332,9 +344,11 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     recordFunctionName(callExpression, outData, referenceName ?: return)
   }
 
-  private fun recordFunctionName(callExpression: JSCallExpression,
-                                 outData: JSElementIndexingData,
-                                 referenceName: String) {
+  private fun recordFunctionName(
+    callExpression: JSCallExpression,
+    outData: JSElementIndexingData,
+    referenceName: String,
+  ) {
     outData.addImplicitElement(
       JSImplicitElementImpl.Builder(referenceName, callExpression)
         .setUserStringWithData(
