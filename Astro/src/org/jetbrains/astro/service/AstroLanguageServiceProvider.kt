@@ -3,7 +3,7 @@ package org.jetbrains.astro.service
 
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
-import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceProvider
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -21,7 +21,7 @@ internal class AstroLanguageServiceProvider(project: Project) : JSLanguageServic
   override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean =
-    TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(file.fileType)
+    TypeScriptLanguageServiceUtil.isJavaScriptOrTypeScriptFileType(file.fileType)
     || file.fileType == AstroFileType
 }
 
