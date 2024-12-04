@@ -45,4 +45,19 @@ class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting", fals
 
   fun testModelSignalAliasedFromUsage3() = checkUsageHighlighting()
 
+  fun testInputAndSelectorFromSelector() = checkUsageHighlighting()
+
+  fun testInputAndSelectorFromInput() = checkUsageHighlighting()
+
+  fun testInputAndSelectorFromUsage() = checkUsageHighlighting()
+
+  fun testInputAndSelectorSeparateDirectivesFromInputField() = checkUsageHighlighting()
+
+  fun testInputAndSelectorSeparateDirectivesFromInputDecorator() = checkUsageHighlighting()
+
+  fun testInputAndSelectorSeparateDirectivesFromSelector1() = checkUsageHighlighting()
+
+  fun testInputAndSelectorSeparateDirectivesFromSelector2() = checkUsageHighlighting()
+
+  fun testInputAndSelectorNotImportedDirective() = checkUsageHighlighting()
 }

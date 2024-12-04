@@ -5,6 +5,7 @@ import com.intellij.html.webSymbols.HtmlDescriptorUtils.getHtmlNSDescriptor
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
+import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
@@ -33,11 +34,12 @@ class Angular2DirectiveSelectorSymbol(
   override val textRangeInSourceElement: TextRange,
   override val name: @NlsSafe String,
   private val myElementSelector: String?,
-  private val isElementSelector: Boolean
+  private val isElementSelector: Boolean,
 ) : Angular2Symbol, WebSymbolDeclaredInPsi {
 
   override val priority: WebSymbol.Priority
-    get() = WebSymbol.Priority.LOWEST
+    // Match HTML elements and attributes priority
+    get() = WebSymbol.Priority.LOW
 
   override val psiContext: PsiElement
     get() = myParent.psiParent
@@ -52,42 +54,15 @@ class Angular2DirectiveSelectorSymbol(
     get() = if (isElementSelector) NG_DIRECTIVE_ELEMENT_SELECTORS else NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
   override val declaration: WebSymbolDeclaration?
-    get() = super.declaration.takeIf { isDeclaration }
+    get() = if (referencedSymbol == null) super.declaration else null
 
-  val isDeclaration: Boolean
-    get() = referencedSymbols.all { it is Angular2Symbol }
-
-  val referencedSymbols: List<WebSymbol>
-    get() {
-      val psiElement = sourceElement
-      val nsDescriptor = getHtmlNSDescriptor(psiElement.project)
-      if (nsDescriptor != null) {
-        if (isElementSelector) {
-          val elementDescriptor = nsDescriptor.getElementDescriptorByName(name)
-          if (elementDescriptor != null) {
-            return listOf<WebSymbol>(WebSymbolsHtmlQueryConfigurator.HtmlElementDescriptorBasedSymbol(elementDescriptor, null))
-          }
-        }
-        else {
-          var elementDescriptor: XmlElementDescriptor? = null
-          var tagName = myElementSelector
-          if (myElementSelector != null) {
-            elementDescriptor = nsDescriptor.getElementDescriptorByName(myElementSelector)
-          }
-          if (elementDescriptor == null) {
-            elementDescriptor = nsDescriptor.getElementDescriptorByName("div")
-            tagName = "div"
-          }
-          if (elementDescriptor != null) {
-            val attributeDescriptor = elementDescriptor.getAttributeDescriptor(name, null)
-            if (attributeDescriptor != null) {
-              return listOf<WebSymbol>(WebSymbolsHtmlQueryConfigurator.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName!!))
-            }
-          }
-        }
-      }
-      return listOf<WebSymbol>(this)
-    }
+  /**
+   * Selectors should yield to HTML symbols and directive properties
+   */
+  val referencedSymbol: WebSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    getReferencedHtmlSymbol(name, sourceElement, isElementSelector, myElementSelector)
+    ?: if (!isElementSelector) getReferencedDirectiveProperty(name, myParent) else null
+  }
 
   override val presentation: TargetPresentation
     get() {
@@ -105,6 +80,10 @@ class Angular2DirectiveSelectorSymbol(
       name, location,
       Angular2EntitiesProvider.getEntity(sourceElement.contextOfType<TypeScriptClass>(true)))
     ?: super<Angular2Symbol>.getDocumentationTarget(location)
+
+  override fun isEquivalentTo(symbol: Symbol): Boolean =
+    referencedSymbol == symbol
+    || super<WebSymbolDeclaredInPsi>.isEquivalentTo(symbol)
 
   override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {
     val parent = myParent.createPointer()
@@ -141,6 +120,46 @@ class Angular2DirectiveSelectorSymbol(
     return MyRenameValidator(isElementSelector)
   }
 
+  private fun getReferencedHtmlSymbol(name: String, sourceElement: PsiElement, isElementSelector: Boolean, elementSelector: String?):
+    WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol? {
+
+    val psiElement = sourceElement
+    val nsDescriptor = getHtmlNSDescriptor(psiElement.project)
+    if (nsDescriptor != null) {
+      if (isElementSelector) {
+        val elementDescriptor = nsDescriptor.getElementDescriptorByName(name)
+        if (elementDescriptor != null) {
+          return WebSymbolsHtmlQueryConfigurator.HtmlElementDescriptorBasedSymbol(elementDescriptor, null)
+        }
+      }
+      else {
+        var elementDescriptor: XmlElementDescriptor? = null
+        var tagName = elementSelector
+        if (elementSelector != null) {
+          elementDescriptor = nsDescriptor.getElementDescriptorByName(elementSelector)
+        }
+        if (elementDescriptor == null) {
+          elementDescriptor = nsDescriptor.getElementDescriptorByName("div")
+          tagName = "div"
+        }
+        if (elementDescriptor != null) {
+          val attributeDescriptor = elementDescriptor.getAttributeDescriptor(name, null)
+          if (attributeDescriptor != null) {
+            return WebSymbolsHtmlQueryConfigurator.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName!!)
+          }
+        }
+      }
+    }
+    return null
+  }
+
+  private fun getReferencedDirectiveProperty(name: @NlsSafe String, parent: Angular2DirectiveSelectorImpl): WebSymbol? {
+    val directive = getClassForDecoratorElement(parent.psiParent)
+                      ?.let { Angular2EntitiesProvider.getDirective(it) }
+                    ?: return null
+    return directive.inputs.find { it.name == name }
+  }
+
   private class MyRenameValidator(private val myIsElement: Boolean) : RenameValidator {
 
     override fun validate(newName: String): RenameValidationResult {
@@ -160,7 +179,6 @@ class Angular2DirectiveSelectorSymbol(
   }
 
   companion object {
-
     private val TAG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*")
     private val ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\\s\"'>/=\\p{Cntrl}]+")
   }
