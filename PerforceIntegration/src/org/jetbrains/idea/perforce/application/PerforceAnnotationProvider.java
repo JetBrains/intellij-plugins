@@ -23,7 +23,6 @@ import com.intellij.openapi.vcs.annotate.FileAnnotation;
 import com.intellij.openapi.vcs.changes.ChangesUtil;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
-import com.intellij.openapi.vcs.vfs.VcsFileSystem;
 import com.intellij.openapi.vcs.vfs.VcsVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -121,6 +120,6 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     }
 
     PerforceFileRevision revision = new PerforceFileRevision(precursor.p4Revision, connection, myProject);
-    return precursor.createAnnotation(new VcsVirtualFile(path.getPath(), revision, VcsFileSystem.getInstance()));
+    return precursor.createAnnotation(new VcsVirtualFile(path.getPath(), revision));
   }
 }
