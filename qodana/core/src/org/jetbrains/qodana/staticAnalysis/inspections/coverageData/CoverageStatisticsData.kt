@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverageData
 
-import com.intellij.codeInsight.actions.VcsFacadeImpl
+import com.intellij.codeInsight.actions.VcsFacade
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -75,7 +75,7 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
       .mapNotNull { psiManager.findFile(it.virtualFile!!) } }
     for (changedFile in changedFiles) {
       val lines = mutableSetOf<Int>()
-      val ranges = ReadAction.compute<ChangedRangesInfo?, Throwable> { VcsFacadeImpl.getInstance().getChangedRangesInfo(changedFile) } ?: continue
+      val ranges = ReadAction.compute<ChangedRangesInfo?, Throwable> { VcsFacade.getInstance().getChangedRangesInfo(changedFile) } ?: continue
       val document = PsiDocumentManager.getInstance(project).getDocument(changedFile) ?: continue
       for (range in ranges.allChangedRanges) {
         val startLine = document.getLineNumber(range.startOffset) + 1
