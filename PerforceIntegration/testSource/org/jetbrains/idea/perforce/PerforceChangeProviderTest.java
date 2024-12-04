@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.IoTestUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vcs.changes.committed.CommittedChangesCache;
@@ -30,13 +31,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.intellij.testFramework.UsefulTestCase.*;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertNull;
 import static com.intellij.testFramework.UsefulTestCase.fail;
-import static com.intellij.testFramework.UsefulTestCase.*;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class PerforceChangeProviderTest extends PerforceTestCase {
   private DuringChangeListManagerUpdateTestScheme myScheme;
@@ -982,6 +985,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
   @Test
   public void testIncomingChanges() throws VcsException {
+    assumeTrue(Registry.is("p4.use.p4.sync.for.incoming.files"));
+
     createFileInCommand("a.txt", "");
     addFile("a.txt");
     submitDefaultList("initial");
@@ -1199,6 +1204,9 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     VirtualFile file = createFileInCommand(myWorkingCopyDir, "a.txt", "");
     VirtualFile file2 = createFileInCommand(myWorkingCopyDir, "b.txt", "");
+
+    refreshChanges();
+
     submitFile("//depot/" + file.getName());
     submitFile("//depot/" + file2.getName());
     discardUnversionedCache();
@@ -1234,6 +1242,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     addFile("link.txt");
 
     renameFileInCommand(file, "b.txt");
+
+    refreshChanges();
 
     submitDefaultList("initial");
 

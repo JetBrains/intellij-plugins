@@ -46,6 +46,7 @@ public class PerforceOverlaysTest extends PerforceTestCase {
   @Test
   public void fileFromOverlaidMapping() throws VcsException {
     VirtualFile file = createFileInCommand(createDirInCommand(myWorkingCopyDir, "src"), "a.txt", "src");
+    refreshChanges();
     submitDefaultList("initial");
 
     setupClient(buildTestClientSpec() + "\t+//depot/src2/...\t//test/src/...");
@@ -61,9 +62,9 @@ public class PerforceOverlaysTest extends PerforceTestCase {
     openForEdit(file);
     deleteFileInCommand(file);
 
-    getChangeListManager().waitUntilRefreshed();
+    refreshChanges();
     rollbackChange(getSingleChange());
-    getChangeListManager().waitUntilRefreshed();
+    refreshChanges();
 
     assertChangesViewEmpty();
   }
@@ -71,6 +72,7 @@ public class PerforceOverlaysTest extends PerforceTestCase {
   private VirtualFile setupOverlays() {
     VirtualFile file = createFileInCommand(createDirInCommand(myWorkingCopyDir, "src"), "a.txt", "src");
     createFileInCommand(createDirInCommand(myWorkingCopyDir, "src2"), "a.txt", "src2");
+    refreshChanges();
     submitDefaultList("initial");
 
     setupClient(buildTestClientSpec() + "\t+//depot/src2/...\t//test/src/...");

@@ -4,7 +4,6 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vcs.*;
-import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vcs.annotate.FileAnnotation;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
@@ -15,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.vcs.DuringChangeListManagerUpdateTestScheme;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.idea.perforce.actions.ActionEdit;
 import org.jetbrains.idea.perforce.actions.RevertAllUnchangedFilesAction;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
@@ -58,6 +58,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
   public void testEditOperation() throws Exception {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     VirtualFile fileToEdit = createFileInCommand("a.txt", null);
+    refreshChanges();
     submitFile("//depot/a.txt");
     new P4EditOperation("Default", fileToEdit).execute(myProject);
     verifyOpened("a.txt", "edit");
@@ -68,7 +69,8 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     enableSilentOperation(VcsConfiguration.StandardConfirmation.REMOVE);
     VirtualFile fileToEdit = createFileInCommand("a.txt", null);
-    FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(fileToEdit);
+    FilePath filePath = VcsUtil.getFilePath(fileToEdit);
+    refreshChanges();
     submitFile("//depot/a.txt");
     new P4DeleteOperation("Default", filePath).execute(myProject);
     verifyOpened("a.txt", "delete");
@@ -81,9 +83,11 @@ public class PerforceOperationsTest extends PerforceTestCase {
   private void doTestRenameAddedFile() {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     final VirtualFile fileToAdd = createFileInCommand("a.txt", null);
+    refreshChanges();
     verifyOpened("a.txt", "add");
 
     renameFileInCommand(fileToAdd, "b.txt");
+    refreshChanges();
 
     final List<String> files = getFilesInDefaultChangelist();
     Assert.assertEquals(1, files.size());
@@ -117,6 +121,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     VirtualFile dir = createDirInCommand(myWorkingCopyDir, "child");
     final VirtualFile child = createFileInCommand(dir, "a.txt", "test");
+    refreshChanges();
     submitFile("//depot/child/a.txt");
 
     new P4EditOperation("Default", child).execute(myProject);
@@ -126,11 +131,9 @@ public class PerforceOperationsTest extends PerforceTestCase {
     final File newChildDir = new File(myWorkingCopyDir.getPath(), "newchild");
     Assert.assertTrue(newChildDir.exists());
     Assert.assertTrue(new File(newChildDir, "a.txt").canWrite());                 // IDEADEV-18783
-    ChangeListManagerImpl changeListManager = ChangeListManagerImpl.getInstanceImpl(myProject);
-    changeListManager.ensureUpToDate();
-    final List<Change> changes = new ArrayList<>(changeListManager.getDefaultChangeList().getChanges());
-    Assert.assertEquals(1, changes.size());
-    verifyChange(changes.get(0), "child\\a.txt", "newchild\\a.txt");
+    refreshVfs();
+    refreshChanges();
+    verifyChange(getSingleChange(), "child\\a.txt", "newchild\\a.txt");
   }
 
   @Test
@@ -138,9 +141,11 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     enableSilentOperation(VcsConfiguration.StandardConfirmation.REMOVE);
     VirtualFile fileToEdit = createFileInCommand("a.txt", null);
+    refreshChanges();
     Assert.assertEquals(1, getFilesInDefaultChangelist().size());
     deleteFileInCommand(fileToEdit);
-    final List<String> files = getFilesInDefaultChangelist();
+    refreshChanges();
+    List<String> files = getFilesInDefaultChangelist();
     Assert.assertEquals(0, files.size());
   }
 
@@ -150,8 +155,10 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.REMOVE);
     VirtualFile dir = createDirInCommand(myWorkingCopyDir, "test");
     createFileInCommand(dir, "a.txt", null);
+    refreshChanges();
     Assert.assertEquals(1, getFilesInDefaultChangelist().size());
     deleteFileInCommand(dir);
+    refreshChanges();
     Assert.assertEquals(0, getFilesInDefaultChangelist().size());
   }
 
@@ -159,6 +166,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
   public void testAnnotate() throws Exception {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     final VirtualFile file = createFileInCommand("a.txt", "foo: foo\nbar: bar");
+    refreshChanges();
     submitDefaultList("initial");
     final FileAnnotation annotation = createTestAnnotation(file);
     assertEquals("1", annotation.getLineRevisionNumber(0).toString());
@@ -195,6 +203,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     VirtualFile dir2 = createDirInCommand(myWorkingCopyDir, "dir2");
     VirtualFile file1 = createFileInCommand(dir1, "a.txt", "");
     VirtualFile file2 = createFileInCommand(dir2, "b.txt", "");
+    refreshChanges();
     submitDefaultList("initial");
 
     setP4ConfigRoots(dir1, dir2);
@@ -267,7 +276,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     assertEmpty(getChangeListManager().getAllChanges());
 
     moveFileInCommand(file, createDirInCommand(myWorkingCopyDir, "dir"));
-    refreshChanges();
+    discardUnversionedCacheAndWaitFullRefresh();
 
     rollbackChange(getSingleChange());
     refreshChanges();
@@ -286,6 +295,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY);
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.REMOVE, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY);
     VirtualFile file = createFileInCommand("a.txt", "");
+    refreshChanges();
     submitDefaultList("initial");
     refreshVfs();
     refreshChanges();
@@ -295,13 +305,13 @@ public class PerforceOperationsTest extends PerforceTestCase {
     assertFalse(VfsUtilCore.virtualToIoFile(file).exists());
 
     getChangeListManager().waitUntilRefreshed();
+    refreshChanges();
     assertEquals(Change.Type.DELETED, getSingleChange().getType());
 
     createFileInCommand("a.txt", "new content");
-    getChangeListManager().waitUntilRefreshed();
+    refreshChanges();
 
     assertEquals(Change.Type.MODIFICATION, getSingleChange().getType());
-
   }
 
   @Test
@@ -309,6 +319,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY);
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.REMOVE, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY);
     VirtualFile file = createFileInCommand("a.txt", "");
+    refreshChanges();
     submitDefaultList("initial");
     refreshVfs();
     refreshChanges();
@@ -380,6 +391,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     setupClient(buildTestClientSpec() + "Options:\tallwrite");
 
     VirtualFile file = createFileInCommand(myWorkingCopyDir, "a.txt", "");
+    refreshChanges();
     submitFile("//depot/" + file.getName());
 
     refreshVfs();

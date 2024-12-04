@@ -14,6 +14,7 @@ public class PerforceListenerTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     VirtualFile a = createFileInCommand("a.txt", "a");
     copyFileInCommand(a, "b.txt");
+    refreshChanges();
     verifyOpened("b.txt", "add");
   }
 
@@ -33,7 +34,7 @@ public class PerforceListenerTest extends PerforceTestCase {
     refreshChanges();
 
     VirtualFile file2 = VcsTestUtil.copyFileInCommand(myProject, file, dir2, "b.txt");
-    getChangeListManager().waitUntilRefreshed();
+    refreshChanges();
     assertEquals(file2, getSingleChange().getVirtualFile());
     assertEmpty(getChangeListManager().getUnversionedFiles());
   }

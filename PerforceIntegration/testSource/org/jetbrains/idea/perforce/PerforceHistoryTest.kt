@@ -72,6 +72,8 @@ class PerforceHistoryTest : PerforceTestCase() {
   @Test
   fun `test history from another branch`() {
     val file = createFileInCommand(createDirInCommand(workingCopyDir, "subdir"), "a.txt", "aaa")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     verify(runP4WithClient("edit", file.path))
@@ -109,6 +111,8 @@ class PerforceHistoryTest : PerforceTestCase() {
   @Test
   fun `test ignore whitespace`() {
     val file = createFileInCommand(createDirInCommand(workingCopyDir, "subdir"), "a.txt", "aaa")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     verify(runP4WithClient("edit", file.path))
@@ -123,6 +127,8 @@ class PerforceHistoryTest : PerforceTestCase() {
   @Test
   fun `test annotate FilePath`() {
     var file = createFileInCommand(myWorkingCopyDir, "a.txt", "aaa")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     val filePath = VcsUtil.getFilePath(file)
@@ -150,6 +156,8 @@ class PerforceHistoryTest : PerforceTestCase() {
 
     val dir = createDirInCommand(workingCopyDir, "subdir")
     var file = createFileInCommand(dir!!, "a.txt", tail)
+    refreshChanges()
+
     submitDefaultList("initial")
 
     verify(runP4WithClient("edit", file.path))
@@ -184,6 +192,8 @@ class PerforceHistoryTest : PerforceTestCase() {
   fun `test show affected changes after copy`() {
     val dir1 = createDirInCommand(workingCopyDir, "dir1")
     val file1 = createFileInCommand(dir1!!, "a.txt", "foo")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     // modify a.txt
@@ -282,9 +292,13 @@ class PerforceHistoryTest : PerforceTestCase() {
     Disposer.register(myTestRootDisposable, Disposable { settings.SHOW_BRANCHES_HISTORY = old })
 
     val file1 = createFileInCommand("a.txt", "aaa")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     createFileInCommand("b.txt", "bbb")
+    refreshChanges()
+
     submitDefaultList("add file2")
 
     verify(runP4WithClient("edit", file1.path))
@@ -310,23 +324,28 @@ class PerforceHistoryTest : PerforceTestCase() {
   @Test
   fun `correct revision content after rename and change`() {
     val file = createFileInCommand("a.txt", "aaa")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     openForEdit(file)
     editFileInCommand(file, "aaa bbb")
-    changeListManager.waitUntilRefreshed()
+
+    refreshChanges()
 
     assertEquals("aaa", singleChange.beforeRevision!!.content)
 
     renameFileInCommand(file, "b.txt")
-    changeListManager.waitUntilRefreshed()
+
+    refreshChanges()
 
     assertEquals("aaa", singleChange.beforeRevision!!.content)
 
     submitDefaultList("renamed")
     openForEdit(file)
     editFileInCommand(file, "aaa bbb ccc")
-    changeListManager.waitUntilRefreshed()
+
+    refreshChanges()
 
     assertEquals("aaa bbb", singleChange.beforeRevision!!.content)
   }
@@ -360,6 +379,8 @@ class PerforceHistoryTest : PerforceTestCase() {
   fun `test diff for older revisions on file which now is utf16`() {
     val file = createFileInCommand("a.txt", "")
     setFileText(file, "first")
+    refreshChanges()
+
     submitDefaultList("first")
 
     openForEdit(file)

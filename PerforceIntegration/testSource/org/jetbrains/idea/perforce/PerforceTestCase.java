@@ -10,7 +10,10 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.*;
-import com.intellij.openapi.vcs.changes.*;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
+import com.intellij.openapi.vcs.changes.LocallyDeletedChange;
+import com.intellij.openapi.vcs.changes.VcsAnnotationLocalChangesListenerImpl;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.rollback.RollbackProgressListener;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -37,7 +40,10 @@ import org.jetbrains.idea.perforce.perforce.FormParser;
 import org.jetbrains.idea.perforce.perforce.PerforceChangeListHelper;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
-import org.jetbrains.idea.perforce.perforce.connections.*;
+import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection;
+import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields;
+import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
+import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -257,6 +263,11 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     ((PerforceChangeProvider)PerforceVcs.getInstance(myProject).getChangeProvider()).discardCache();
   }
 
+  protected void discardUnversionedCacheAndWaitFullRefresh() {
+    discardUnversionedCache();
+    getChangeListManager().waitUntilRefreshed();
+  }
+
   protected ChangeListManagerImpl getChangeListManager() {
     return ChangeListManagerImpl.getInstanceImpl(myProject);
   }
@@ -357,14 +368,14 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void openForEdit(final VirtualFile fileToEdit) {
     final VcsException[] exc = new VcsException[1];
     try {
-      ApplicationManager.getApplication().invokeAndWait(() -> {
-          try {
-            PerforceVcs.getInstance(myProject).getEditFileProvider().editFiles(new VirtualFile[]{fileToEdit});
-          }
-          catch (VcsException e) {
-            exc[0] = e;
-          }
-        });
+      EdtTestUtil.runInEdtAndWait(() -> {
+        try {
+          PerforceVcs.getInstance(myProject).getEditFileProvider().editFiles(new VirtualFile[]{fileToEdit});
+        }
+        catch (VcsException e) {
+          exc[0] = e;
+        }
+      });
     }
     catch (Exception e) {
       throw new RuntimeException(e);
@@ -710,7 +721,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected void refreshChanges() {
-    VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
+    discardUnversionedCache();
     getChangeListManager().ensureUpToDate();
     VcsException exception = getChangeListManager().getUpdateException();
     if (exception != null) {

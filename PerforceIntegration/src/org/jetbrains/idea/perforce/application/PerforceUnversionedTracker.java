@@ -2,6 +2,7 @@ package org.jetbrains.idea.perforce.application;
 
 import com.google.common.base.Stopwatch;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.advanced.AdvancedSettings;
 import com.intellij.openapi.progress.util.BackgroundTaskUtil;
@@ -120,7 +121,12 @@ public final class PerforceUnversionedTracker {
       myInUpdate = true;
     }
     BackgroundTaskUtil.syncPublisher(myProject, VcsManagedFilesHolder.TOPIC).updatingModeChanged();
-    myQueue.queue(DisposableUpdate.createDisposable(myParentDisposable, new ComparableObject.Impl(this, "update"), this::update));
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      update();
+    }
+    else {
+      myQueue.queue(DisposableUpdate.createDisposable(myParentDisposable, new ComparableObject.Impl(this, "update"), this::update));
+    }
   }
 
   private void update() {

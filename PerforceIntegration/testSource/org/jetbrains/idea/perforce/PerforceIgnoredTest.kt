@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce
 
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vcs.FileStatus
 import com.intellij.openapi.vcs.FileStatusManager
 import com.intellij.openapi.vcs.VcsConfiguration
@@ -11,6 +12,7 @@ import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection
 import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -48,7 +50,7 @@ abstract class PerforceIgnoredTest : PerforceTestCase() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
 
     val file = createFileInCommand("some...file.txt", "content")
-    changeListManager.waitUntilRefreshed()
+    refreshChanges()
 
     assertTrue(changeListManager.allChanges.isEmpty())
     assertTrue(changeListManager.unversionedFiles.toSet() == setOf(file))
@@ -74,12 +76,14 @@ abstract class PerforceIgnoredTest : PerforceTestCase() {
     assertEquals(FileStatus.IGNORED, FileStatusManager.getInstance(myProject).getStatus(a))
 
     editFileInCommand(p4ignore, P4_IGNORE_NAME)
-    refreshChanges()
+    discardUnversionedCache()
+    changeListManager.waitUntilRefreshed()
     assertSameElements(changeListManager.unversionedFiles, a, b, p4ignore, p4config)
   }
 
   @Test
   fun `test no incoming changes from ignored directory`() {
+    assumeTrue(Registry.`is`("p4.use.p4.sync.for.incoming.files"))
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
 
     val idea = createDirInCommand(myWorkingCopyDir, ".idea")

@@ -117,7 +117,9 @@ public final class PerforceLoginManager implements LoginSupport {
   }
 
   public boolean check(final P4Connection connection, boolean forceCheck) throws VcsConnectionProblem {
-    ApplicationManager.getApplication().assertIsNonDispatchThread();
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      ApplicationManager.getApplication().assertIsNonDispatchThread();
+    }
 
     if (!loginPingAllowed()) return false;
 

@@ -33,6 +33,7 @@ import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParameters
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class SingletonConnection extends AbstractP4Connection implements Perforc
   public Map<VirtualFile, P4Connection> getAllConnections() {
     final Project project = mySettings.getProject();
     final List<VirtualFile> files = ProjectLevelVcsManager.getInstance(project).getRootsUnderVcsWithoutFiltering(PerforceVcs.getInstance(project));
-    new FilterDescendantVirtualFileConvertible<>(identity(), FilePathComparator.getInstance()).doFilter(files);
+    new FilterDescendantVirtualFileConvertible<>(identity(), FilePathComparator.getInstance()).doFilter(new ArrayList<>(files));
     final HashMap<VirtualFile, P4Connection> map = new HashMap<>();
     for (VirtualFile file : files) {
       map.put(file, this);

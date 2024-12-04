@@ -41,8 +41,8 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     submitDefaultList("comment1")
 
     renameFileInCommand(dir, "bar")
-
-    getChangeListManager().waitUntilRefreshed()
+    refreshVfs()
+    refreshChanges()
 
     assertEmpty(changeListManager.unversionedFiles)
 
@@ -113,9 +113,10 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     }
     else {
       moveFileInCommand(file, createDirInCommand(myWorkingCopyDir, "newParent"))
+      refreshChanges()
     }
 
-    getChangeListManager().waitUntilRefreshed()
+    changeListManager.waitUntilRefreshed()
 
     val change = getSingleChange()
     Assert.assertEquals(Change.Type.MOVED, change.type)
@@ -143,6 +144,8 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
   private fun doTestCurrentRevisionAfterRename() {
     val file = createFileInCommand("a.txt", "")
     addFile("a.txt")
+    refreshChanges()
+
     submitDefaultList("comment1")
     refreshChanges()
 
@@ -152,6 +155,9 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     refreshChanges()
 
     renameFileInCommand(file, "b.txt")
+    refreshVfs()
+    refreshChanges()
+
     submitDefaultList("comment3")
     refreshChanges()
 
@@ -186,27 +192,27 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     val foo = createDirectoryWithFiveFiles("foo")
     val bar = createDirectoryWithFiveFiles("bar")
     refreshChanges()
-    assertEquals(10, assertOneElement(getChangeListManager().changeLists).changes.size)
-    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
+    assertEquals(10, assertOneElement(changeListManager.changeLists).changes.size)
+    assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
 
     submitDefaultList("initial")
     refreshChanges()
-    assertTrue(assertOneElement(getChangeListManager().changeLists).changes.isEmpty())
-    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
+    assertTrue(assertOneElement(changeListManager.changeLists).changes.isEmpty())
+    assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
 
     renameFileInCommand(foo, "foo1")
     renameFileInCommand(bar, "bar1")
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
 
-    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
-    val changes = assertOneElement(getChangeListManager().changeLists).changes
+    assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
+    val changes = assertOneElement(changeListManager.changeLists).changes
     assertEquals(10, changes.size)
 
-    rollbackChanges(changes as List<Change>)
-    getChangeListManager().waitUntilRefreshed()
+    rollbackChanges(changes.toMutableList())
+    refreshChanges()
 
-    assertTrue(assertOneElement(getChangeListManager().changeLists).changes.isEmpty())
-    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
+    assertTrue(assertOneElement(changeListManager.changeLists).changes.isEmpty())
+    assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
   }
 
   @Test
@@ -228,7 +234,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
 
     openForEdit(file)
     renameFileInCommand(file, "b.txt")
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
 
     editFileInCommand(file, "bar")
     refreshChanges()
@@ -257,13 +263,15 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     val dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
     val dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
     val file = createFileInCommand(dir1, "a.txt", "")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     setP4ConfigRoots(dir1, dir2)
 
     openForEdit(file)
     moveFileInCommand(file, dir2)
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
 
     assertEquals(Change.Type.MOVED, getSingleChange().type)
     submitDefaultList("moved")
@@ -307,6 +315,8 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     AbstractVcsHelperImpl.setCustomExceptionHandler(myProject) { t -> hadException = t }
     val file1 = createFileInCommand("foo.txt", "")
     val file2 = createFileInCommand("bar.txt", "")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     VfsUtil.markDirty(true, true, myWorkingCopyDir)
@@ -314,7 +324,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertNotNull(file1)
     assertNotNull(file2)
     refreshChanges()
-    assertTrue(getChangeListManager().allChanges.isEmpty())
+    assertTrue(changeListManager.allChanges.isEmpty())
 
     openForEdit(file1)
     openForEdit(file2)
@@ -332,9 +342,9 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     renameFileInCommand(file1, "bar.txt")
     assertTrue(hadException?.message?.contains(PerforceBundle.message("exception.text.cannot.assure.no.file.being.on.server", barPath)) == true)
     hadException = null
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
 
-    val changes = getChangeListManager().allChanges
+    val changes = changeListManager.allChanges
 
     if (doubleRename) {
       assertNotNull(changes.find { it.type == Change.Type.DELETED && it.beforeRevision!!.file.path.endsWith("foo.txt") })
@@ -344,20 +354,20 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
       it.type == Change.Type.MOVED && it.beforeRevision!!.file.path.endsWith("bar.txt") && it.afterRevision!!.file.path.endsWith("bar1.txt")
     })
     assertEquals((if (doubleRename) 3 else 1), changes.size)
-    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
-    assertTrue(getChangeListManager().modifiedWithoutEditing.isEmpty())
-    assertNotNull(assertOneElement(getChangeListManager ().deletedFiles).path.path.endsWith(if (doubleRename) "foo1.txt" else "foo.txt"))
+    assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
+    assertTrue(changeListManager.modifiedWithoutEditing.isEmpty())
+    assertNotNull(assertOneElement(changeListManager.deletedFiles).path.path.endsWith(if (doubleRename) "foo1.txt" else "foo.txt"))
 
     EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
       UndoManager.getInstance(myProject).undo(null)
     })
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
 
     //assert getChangeListManager().getAllChanges().size() == (old ? 3 : 2)
 
-    assertEmpty(getChangeListManager().getUnversionedFiles())
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing())
-    assertEmpty(getChangeListManager().getDeletedFiles())
+    assertEmpty(changeListManager.unversionedFilesPaths)
+    assertEmpty(changeListManager.modifiedWithoutEditing)
+    assertEmpty(changeListManager.deletedFiles)
 
     TestLoggerFactory.enableDebugLogging(myTestRootDisposable, PersistentFS::class.java, VfsData::class.java)
 
@@ -384,7 +394,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertChangesViewEmpty()
 
     renameFileInCommand(file1, "bar.txt")
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
     getSingleChange()
 
     assertNull(hadException)
@@ -406,7 +416,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
 
     val dir = createDirInCommand(myWorkingCopyDir, "dir")
     createFileInCommand(dir, "a.txt", "asdf")
-    getChangeListManager().waitUntilRefreshed()
+    refreshChanges()
     assertNotNull(getSingleChange())
 
     renameFileInCommand(dir, "Dir")

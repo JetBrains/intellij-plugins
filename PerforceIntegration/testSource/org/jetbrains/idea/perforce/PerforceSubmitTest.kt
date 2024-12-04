@@ -7,7 +7,6 @@ import org.jetbrains.idea.perforce.application.PerforceCheckinEnvironment
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.PerforceChange
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -21,10 +20,12 @@ class PerforceSubmitTest : PerforceTestCase() {
   @Test
   fun testIncludeStdoutDiagnosticsOnSubmitFailure() {
     val file = createFileInCommand("a.txt", "aaa")
+    refreshChanges()
+
     submitDefaultList("initial")
 
     renameFileInCommand(file, "b.txt")
-    changeListManager.waitUntilRefreshed()
+    discardUnversionedCacheAndWaitFullRefresh()
     assertNotNull(singleChange)
 
     try {

@@ -33,6 +33,7 @@ class PerforceUpdateTest : PerforceTestCase() {
     setupTwoClients(dir1, dir2)
 
     createFileInCommand(dir1, "a.txt", "hello1")
+    refreshChanges()
     submitFileWithClient("test", "//depot/a.txt")
     createFileInCommand(dir2, "a.txt", "hello2")
 
