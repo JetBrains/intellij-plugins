@@ -4,7 +4,6 @@ package org.intellij.terraform.config.model
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants

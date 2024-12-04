@@ -29,7 +29,7 @@ internal abstract class BaseTerraformDocUrlProvider {
   }
 
   internal suspend fun getDocumentationUrl(pointer: SmartPsiElementPointer<PsiElement>): List<String?> {
-    val blockData = pointer.element?.let{buildBlockData(it) } ?: return emptyList()
+    val blockData = readAction { pointer.element }?.let { buildBlockData(it) } ?: return emptyList()
     return when (blockData.type) {
       HCL_RESOURCE_IDENTIFIER -> listOf(getDocUrl(blockData, RESOURCES))
       HCL_DATASOURCE_IDENTIFIER -> listOf(getDocUrl(blockData, DATASOURCES))
