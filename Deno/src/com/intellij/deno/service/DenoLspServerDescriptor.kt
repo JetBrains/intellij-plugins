@@ -14,7 +14,7 @@ import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.execution.withBackgroundProgress
-import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptServiceRestarter
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PathMacroManager
@@ -191,7 +191,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
 
             ApplicationManager.getApplication().invokeLater(Runnable {
               DenoSettings.getService(project).updateLibraries()
-              TypeScriptService.restartServices(project)
+              TypeScriptServiceRestarter.restartServices(project)
               DaemonCodeAnalyzer.getInstance(project).restart()
             }, project.disposed)
           }
