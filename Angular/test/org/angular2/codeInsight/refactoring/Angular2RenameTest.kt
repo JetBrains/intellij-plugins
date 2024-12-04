@@ -213,4 +213,13 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
   fun testSignalModelAliasedRequiredFromUsage() =
     checkSymbolRename("newAliasedModel", dir = false)
 
+  fun testInputAndSelectorFromSelector() =
+    checkSymbolRename("my-foo", dir = false)
+
+  fun testInputAndSelectorFromInput() =
+    checkSymbolRename("my-foo", dir = false)
+
+  fun testInputAndSelectorFromUsage() =
+    checkSymbolRename("my-foo", dir = false)
+
 }

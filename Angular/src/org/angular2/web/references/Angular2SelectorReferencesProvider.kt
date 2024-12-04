@@ -23,7 +23,6 @@ import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
-import org.angular2.web.Angular2Symbol
 
 abstract class Angular2SelectorReferencesProvider : PsiSymbolReferenceProvider {
 
@@ -57,8 +56,8 @@ abstract class Angular2SelectorReferencesProvider : PsiSymbolReferenceProvider {
     val directiveSelector = getDirectiveSelector(element) ?: return emptyList()
     val result = SmartList<PsiSymbolReference>()
     val add = { selector: Angular2DirectiveSelectorSymbol ->
-      if (!selector.isDeclaration) {
-        result.add(HtmlSelectorReference(selector))
+      if (selector.referencedSymbol != null) {
+        result.add(SelectorSymbolReference(selector))
       }
     }
     val offsetInTheElement = hints.offsetInElement
@@ -89,7 +88,7 @@ abstract class Angular2SelectorReferencesProvider : PsiSymbolReferenceProvider {
 
   protected abstract fun getDirectiveSelector(element: PsiExternalReferenceHost): Angular2DirectiveSelector?
 
-  private class HtmlSelectorReference(private val mySelectorSymbol: Angular2DirectiveSelectorSymbol) : WebSymbolReference {
+  private class SelectorSymbolReference(private val mySelectorSymbol: Angular2DirectiveSelectorSymbol) : WebSymbolReference {
 
     override fun getElement(): PsiElement {
       return mySelectorSymbol.sourceElement
@@ -100,14 +99,7 @@ abstract class Angular2SelectorReferencesProvider : PsiSymbolReferenceProvider {
     }
 
     override fun resolveReference(): Collection<WebSymbol> {
-      val symbols = mySelectorSymbol.referencedSymbols
-      val nonSelectorSymbols = symbols.filter { it !is Angular2Symbol }
-      return if (!nonSelectorSymbols.isEmpty()) {
-        nonSelectorSymbols
-      }
-      else {
-        symbols
-      }
+      return listOf(mySelectorSymbol.referencedSymbol ?: mySelectorSymbol)
     }
   }
 }

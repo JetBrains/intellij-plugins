@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web
 
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
+import com.intellij.html.webSymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
@@ -14,13 +14,18 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
+import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.query.WebSymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.webSymbols.utils.withSegments
+import com.intellij.webSymbols.utils.withSymbols
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
@@ -41,41 +46,22 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     strict: Boolean,
     qualifiedName: WebSymbolQualifiedName,
   ): List<WebSymbol> =
-    if (kinds.contains(qualifiedName.qualifiedKind)) {
-      withTypeEvaluationLocation(context) {
-        if (strict) {
-          matches.filter { symbol ->
-            symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
-            && symbol.properties[PROP_ERROR_SYMBOL] != true
-          }
+    when {
+      kinds.contains(qualifiedName.qualifiedKind) ->
+        withTypeEvaluationLocation(context) {
+          if (strict)
+            matches.filterOutOfScopeOrErrorSymbols(scope)
+          else
+            matches.wrapWithScopedSymbols(scope)
         }
-        else {
-          val proximityMap = matches.groupBy {
-            val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
-            if (directive != null)
-              scope.getDeclarationProximity(directive)
-            else if (it.properties[PROP_ERROR_SYMBOL] == true)
-              DeclarationProximity.NOT_REACHABLE
-            else
-              DeclarationProximity.IN_SCOPE
-          }
-          DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
-            proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
-          }
-          ?: emptyList()
-        }
-      }
-    }
-    else if (qualifiedName.namespace == NAMESPACE_HTML) {
-      if (matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol })
-        matches.filter { match ->
-          match.properties[PROP_SCOPE_PROXIMITY].asSafely<DeclarationProximity>()
-            .let { it == null || it == DeclarationProximity.IN_SCOPE }
-        }
-      else
+      qualifiedName.namespace == NAMESPACE_HTML ->
         matches
+          .filter { !it.extension }
+          .filterByNearestProximity()
+          .filterOutSelectorSymbolsIfNeeded()
+          .plus(matches.filter { it.extension })
+      else -> matches
     }
-    else matches
 
   override fun apply(
     item: WebSymbolCodeCompletionItem,
@@ -115,6 +101,101 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     else item
   }
 
+  private fun List<WebSymbol>.wrapWithScopedSymbols(scope: Angular2DeclarationsScope): List<WebSymbol> {
+    val proximityMap = groupBy {
+      val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
+      if (directive != null)
+        scope.getDeclarationProximity(directive)
+      else if (it.properties[PROP_ERROR_SYMBOL] == true)
+        DeclarationProximity.NOT_REACHABLE
+      else
+        DeclarationProximity.IN_SCOPE
+    }
+    return DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
+      proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
+    } ?: emptyList()
+  }
+
+  private fun List<WebSymbol>.filterOutOfScopeOrErrorSymbols(scope: Angular2DeclarationsScope): List<WebSymbol> =
+    filter { symbol ->
+      symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
+      && symbol.properties[PROP_ERROR_SYMBOL] != true
+    }
+
+  private fun List<WebSymbol>.filterByNearestProximity(): List<WebSymbol> {
+    if (size <= 1) return this
+    val proximityMap = groupBy { match ->
+      match.properties[PROP_SCOPE_PROXIMITY].asSafely<DeclarationProximity>()
+      ?: DeclarationProximity.NOT_REACHABLE.takeIf { match.properties[PROP_ERROR_SYMBOL] == true }
+      ?: DeclarationProximity.IN_SCOPE
+    }
+    return DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
+      proximityMap[proximity]?.takeIf { it.isNotEmpty() }
+    } ?: emptyList()
+  }
+
+  private fun List<WebSymbol>.filterOutSelectorSymbolsIfNeeded(): List<WebSymbol> =
+    if (size <= 1)
+      this
+    // If we have an HTML symbol, filter out all ng selectors
+    else if (any { it.hasOnlyStandardHtmlSymbolsOrExtensions() })
+      filter { !it.hasSelectorSymbols() }
+    else {
+      // If no HTML symbols, group by directive and prefer non-selector symbols for a particular directive.
+      // We want to avoid resolving to selectors if there is an input with the same name,
+      // but only within the same directive. So we need some complicated logic here to achieve that.
+      val candidates = MultiMap<Angular2Directive, WebSymbol>()
+      flatMap {
+        if (it is WebSymbolMatch)
+          it.nameSegments.flatMap { it.symbols }
+        else
+          listOf(it)
+      }.forEach { symbol ->
+        (symbol.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive)?.let { candidates.putValue(it, symbol) }
+      }
+
+      val filteredSymbols = candidates.toHashMap()
+        .flatMap { (_, list) ->
+          list
+            ?.takeIf { it.size > 1 }
+            ?.groupBy { it.hasSelectorSymbols() }[false]
+            ?.takeIf { it.isNotEmpty() }
+          ?: list
+        }
+
+      // We need to remap matches within WebSymbolMatch, as the selector symbols are nested at this point
+      mapNotNull {
+        if (it is WebSymbolMatch) {
+          val newSegments = it.nameSegments.mapNotNull { segment ->
+            val newSymbols = segment.symbols.mapNotNull {
+              it.takeIf {
+                filteredSymbols.contains(it) || it.properties[PROP_SYMBOL_DIRECTIVE] == null
+              }
+            }
+            when {
+              // Remove the match completely if we filtered out all the symbols
+              newSymbols.isEmpty() -> null
+              newSymbols != segment.symbols -> segment.withSymbols(newSymbols)
+              else -> segment
+            }
+          }
+          when {
+            newSegments.size != it.nameSegments.size -> null
+            newSegments != it.nameSegments -> it.withSegments(newSegments)
+            else -> it
+          }
+        }
+        else
+          it.takeIf {
+            filteredSymbols.contains(it) || it.properties[PROP_SYMBOL_DIRECTIVE] == null
+          }
+      }
+    }
+
+  private fun WebSymbol.hasSelectorSymbols() =
+    unwrapMatchedSymbols()
+      .any { it.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS || it.qualifiedKind == NG_DIRECTIVE_ELEMENT_SELECTORS }
+
   companion object {
     private val svgAllowedElements = setOf(ELEMENT_NG_CONTAINER, ELEMENT_NG_TEMPLATE)
 
@@ -153,8 +234,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
   private open class Angular2ScopedSymbol private constructor(
     symbol: WebSymbol,
     private val scopeProximity: DeclarationProximity,
-  )
-    : WebSymbolDelegate<WebSymbol>(symbol) {
+  ) : WebSymbolDelegate<WebSymbol>(symbol) {
 
     companion object {
 
@@ -179,7 +259,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     override fun createPointer(): Pointer<out Angular2ScopedSymbol> =
       createPointer(::Angular2ScopedSymbol)
 
-    protected fun <T : Angular2ScopedSymbol> createPointer(
+    fun <T : Angular2ScopedSymbol> createPointer(
       create: (symbol: WebSymbol, scopeProximity: DeclarationProximity) -> T,
     ): Pointer<T> {
       val delegatePtr = delegate.createPointer()
@@ -207,8 +287,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     private class Angular2PsiSourcedScopedSymbol(
       symbol: WebSymbol,
       scopeProximity: DeclarationProximity,
-    )
-      : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
+    ) : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
 
       override val source: PsiElement?
         get() = (delegate as PsiSourcedWebSymbol).source

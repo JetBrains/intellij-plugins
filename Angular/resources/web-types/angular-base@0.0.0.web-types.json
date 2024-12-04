@@ -67,7 +67,6 @@
         {
           "name": "Angular directive element selector",
           "ng-binding-pattern": true,
-          "priority": "lowest",
           "pattern": {
             "items": "/js/ng-directive-element-selectors"
           }
@@ -105,7 +104,6 @@
         {
           "name": "Angular directive attribute selector",
           "ng-binding-pattern": true,
-          "priority": "lowest",
           "value": {
             "required": false
           },
