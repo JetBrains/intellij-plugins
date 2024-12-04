@@ -62,8 +62,8 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (qualifiedName.matches(WebSymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
-      listOf(WebSymbolMatch.create(qualifiedName.name, listOf(WebSymbolNameSegment.create(0, qualifiedName.name.length)),
-                                   WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, this.origin))
+      listOf(WebSymbolMatch.create(qualifiedName.name, WebSymbol.HTML_SLOTS, this.origin,
+                                   WebSymbolNameSegment.create(0, qualifiedName.name.length)))
     else
       super.getMatchingSymbols(qualifiedName, params, scope)
 
