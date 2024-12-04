@@ -120,6 +120,6 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     }
 
     PerforceFileRevision revision = new PerforceFileRevision(precursor.p4Revision, connection, myProject);
-    return precursor.createAnnotation(new VcsVirtualFile(path.getPath(), revision));
+    return precursor.createAnnotation(new VcsVirtualFile(path, revision));
   }
 }
