@@ -36,7 +36,7 @@ public final class FlexMoveFileHandler extends MoveFileHandler {
   }
 
   @Override
-  public @Nullable @Unmodifiable List<UsageInfo> findUsages(PsiFile psiFile, PsiDirectory newParent, boolean searchInComments, boolean searchInNonJavaFiles) {
+  public @Nullable @Unmodifiable List<UsageInfo> findUsages(@NotNull PsiFile psiFile, @NotNull PsiDirectory newParent, boolean searchInComments, boolean searchInNonJavaFiles) {
     return null;
   }
 
