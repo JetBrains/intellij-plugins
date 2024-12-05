@@ -284,7 +284,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
       component.templateFile?.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
         override fun visitXmlTag(tag: XmlTag) {
-          Angular2ApplicableDirectivesProvider(tag).matched.forEach(result::add)
+          Angular2ApplicableDirectivesProvider(tag, scope = scope).matched.forEach(result::add)
           super.visitXmlTag(tag)
         }
 
@@ -295,7 +295,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
           }
           if (attribute.name.startsWith("*")) {
             Angular2TemplateBindings.get(attribute).let {
-              Angular2ApplicableDirectivesProvider(it).matched.forEach(result::add)
+              Angular2ApplicableDirectivesProvider(it, scope = scope).matched.forEach(result::add)
             }
           }
           super.visitXmlAttribute(attribute)

@@ -110,9 +110,9 @@ object Angular2CodeInsightUtils {
   fun getAvailableNgContentSelectorsSequence(xmlTag: XmlTag,
                                              scope: Angular2DeclarationsScope): Sequence<Angular2DirectiveSelector.SimpleSelectorWithPsi> {
     return xmlTag.parentTag
-             ?.let { Angular2ApplicableDirectivesProvider(it).matched }
+             ?.let { Angular2ApplicableDirectivesProvider(it, scope = scope).matched }
              ?.asSequence()
-             ?.filter { it is Angular2Component && scope.contains(it) }
+             ?.filter { it is Angular2Component }
              ?.flatMap { (it as Angular2Component).ngContentSelectors }
              ?.flatMap { it.simpleSelectorsWithPsi }
            ?: emptySequence()

@@ -29,8 +29,8 @@ class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTem
     if (scope.importsOwner == null) {
       return
     }
-    val inputsToMatch = Angular2ApplicableDirectivesProvider(tag).matched
-      .flatMap { d -> if (scope.contains(d)) d.inputs.filter { it.required }.map { Pair(it, d) } else emptyList() }
+    val inputsToMatch = Angular2ApplicableDirectivesProvider(tag, scope = scope).matched
+      .flatMap { d -> d.inputs.filter { it.required }.map { Pair(it, d) } }
       .ifEmpty { return }
 
     val startTag = XmlTagUtil.getStartTagNameElement(tag)?.textRangeInParent ?: TextRange.EMPTY_RANGE
@@ -61,14 +61,16 @@ class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTem
 
   }
 
-  override fun visitAngularAttribute(holder: ProblemsHolder,
-                                     attribute: XmlAttribute,
-                                     descriptor: Angular2AttributeDescriptor) {
+  override fun visitAngularAttribute(
+    holder: ProblemsHolder,
+    attribute: XmlAttribute,
+    descriptor: Angular2AttributeDescriptor,
+  ) {
     if (descriptor.info.type == Angular2AttributeType.TEMPLATE_BINDINGS && !isTemplateTag(attribute.parent)) {
       val scope = Angular2DeclarationsScope(attribute)
       val templateBindings = Angular2TemplateBindings.get(attribute)
-      val inputsToMatch = Angular2ApplicableDirectivesProvider(templateBindings).matched
-        .flatMap { d -> if (scope.contains(d)) d.inputs.filter { it.required }.map { Pair(it, d) } else emptyList() }
+      val inputsToMatch = Angular2ApplicableDirectivesProvider(templateBindings, scope = scope).matched
+        .flatMap { d -> d.inputs.filter { it.required }.map { Pair(it, d) } }
         .ifEmpty { return }
       val provided = templateBindings.bindings.mapNotNullTo(HashSet()) {
         it.takeIf { !it.keyIsVar() && it.expression != null }

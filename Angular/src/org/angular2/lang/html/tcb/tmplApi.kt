@@ -548,10 +548,9 @@ private fun XmlTag.toTmplAstDirectiveContainer(
   val templateBindingAttribute = attributesByKind[TEMPLATE_BINDINGS]?.firstOrNull()?.first
   val templateBindings = buildInfo(scope, templateBindingAttribute, referenceResolver)
 
-  val directives = Angular2ApplicableDirectivesProvider(this)
+  val directives = Angular2ApplicableDirectivesProvider(this, scope = scope)
     .matched
     .asSequence()
-    .filter { scope.contains(it) }
     .flatMap { directive -> buildMetadata(directive) }
     .toSet()
 
@@ -755,10 +754,9 @@ private fun buildInfo(
   val hasDefaultBinding = templateBindings.any { !it.keyIsVar() && it.key == templateName }
   val attributeNameRange = attribute.nameElement?.textRange ?: return null
   return TemplateBindingsInfo(
-    directives = Angular2ApplicableDirectivesProvider(template)
+    directives = Angular2ApplicableDirectivesProvider(template, scope = scope)
       .matched
       .asSequence()
-      .filter { scope.contains(it) }
       .flatMap { buildMetadata(it) }
       .toSet(),
     inputs = templateBindings.asSequence()

@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.ContainerUtil
+import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
@@ -17,10 +18,13 @@ import org.angular2.web.ELEMENT_NG_TEMPLATE
 /**
  * @see Angular2EntitiesProvider
  */
-class Angular2ApplicableDirectivesProvider internal constructor(project: Project,
-                                                                tagName: String,
-                                                                onlyMatchingTagName: Boolean,
-                                                                cssSelector: Angular2DirectiveSimpleSelector) {
+class Angular2ApplicableDirectivesProvider internal constructor(
+  project: Project,
+  tagName: String,
+  onlyMatchingTagName: Boolean,
+  cssSelector: Angular2DirectiveSimpleSelector,
+  scope: Angular2DeclarationsScope?,
+) {
 
   private val myDirectiveCandidates: NotNullLazyValue<List<Angular2Directive>>
   val matched: List<Angular2Directive>
@@ -29,18 +33,22 @@ class Angular2ApplicableDirectivesProvider internal constructor(project: Project
     get() = myDirectiveCandidates.value
 
   @JvmOverloads
-  constructor(xmlTag: XmlTag, onlyMatchingTagName: Boolean = false)
+  constructor(xmlTag: XmlTag, onlyMatchingTagName: Boolean = false, scope: Angular2DeclarationsScope? = null)
     : this(xmlTag.project, xmlTag.localName, onlyMatchingTagName,
-           Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag))
+           Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag), scope)
 
-  constructor(bindings: Angular2TemplateBindings)
+  constructor(bindings: Angular2TemplateBindings, scope: Angular2DeclarationsScope? = null)
     : this(bindings.project, ELEMENT_NG_TEMPLATE, false,
-           Angular2DirectiveSimpleSelector.createTemplateBindingsCssSelector(bindings))
+           Angular2DirectiveSimpleSelector.createTemplateBindingsCssSelector(bindings), scope)
 
   init {
-    val directiveCandidates = HashSet(findElementDirectivesCandidates(project, tagName))
+    val directiveCandidates = HashSet<Angular2Directive>()
+    val filter = if (scope != null) { it: Angular2Directive -> scope.contains(it) } else { _ -> true }
+    findElementDirectivesCandidates(project, tagName)
+      .filterTo(directiveCandidates, filter)
     if (!onlyMatchingTagName && tagName != "") {
-      directiveCandidates.addAll(findElementDirectivesCandidates(project, ""))
+      findElementDirectivesCandidates(project, "")
+        .filterTo(directiveCandidates, filter)
     }
 
     val matcher = Angular2SelectorMatcher<Angular2Directive>()

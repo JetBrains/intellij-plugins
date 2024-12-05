@@ -22,8 +22,8 @@ class AngularAmbiguousComponentTagInspection : AngularHtmlLikeTemplateLocalInspe
     if (scope.importsOwner == null) {
       return
     }
-    val components = Angular2ApplicableDirectivesProvider(tag).matched
-      .filter { d -> d.isComponent && scope.contains(d) }
+    val components = Angular2ApplicableDirectivesProvider(tag, scope = scope).matched
+      .filter { d -> d.isComponent }
     val startTag = ObjectUtils.notNull(XmlTagUtil.getStartTagRange(tag)) { tag.textRange }
       .shiftLeft(tag.textOffset)
     if (isTemplateTag(tag)) {
@@ -47,8 +47,8 @@ class AngularAmbiguousComponentTagInspection : AngularHtmlLikeTemplateLocalInspe
                                      descriptor: Angular2AttributeDescriptor) {
     if (descriptor.info.type == Angular2AttributeType.TEMPLATE_BINDINGS && !isTemplateTag(attribute.parent)) {
       val scope = Angular2DeclarationsScope(attribute)
-      val components = Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute)).matched
-        .filter { d -> d.isComponent && scope.contains(d) }
+      val components = Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute), scope = scope).matched
+        .filter { d -> d.isComponent }
       if (!components.isEmpty()) {
         holder.registerProblem(attribute, Angular2Bundle.htmlMessage(
           "angular.inspection.ambiguous-component-tag.message.embedded",
