@@ -50,9 +50,9 @@ abstract class PerforceIgnoredTest : PerforceTestCase() {
     val file = createFileInCommand("some...file.txt", "content")
     changeListManager.waitUntilRefreshed()
 
-    assertTrue(changeListManager.allChanges.isNotEmpty())
+    assertTrue(changeListManager.allChanges.isEmpty())
     assertTrue(changeListManager.unversionedFiles.toSet() == setOf(file))
-    assertTrue(changeListManager.modifiedWithoutEditing.isNotEmpty())
+    assertTrue(changeListManager.modifiedWithoutEditing.isEmpty())
   }
 
   @Test
