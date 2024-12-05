@@ -32,10 +32,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,8 +52,8 @@ public class OutputMessageParser {
   private String myBranch = null;
   private final ProgressIndicator myProgressIndicator;
 
-  public static final DateTimeFormatter NEW_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US).withZone(ZoneId.systemDefault());
-  public static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US).withZone(ZoneId.systemDefault());
+  public static final DateTimeFormatter NEW_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US);
+  public static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US);
 
   @NonNls private static final String CLIENT_PREFIX = "Client";
   private static final String FILE_PREFIX = "...";
@@ -175,12 +178,17 @@ public class OutputMessageParser {
   }
 
   private static Date parseDate(boolean newDateFormat, String dateString) throws DateTimeParseException {
+    TemporalAccessor parsed;
     try {
-      return Date.from(Instant.from((newDateFormat ? NEW_DATE_FORMAT : OLD_DATE_FORMAT).parse(dateString)));
+      parsed = (newDateFormat ? NEW_DATE_FORMAT : OLD_DATE_FORMAT).parse(dateString);
     }
     catch (DateTimeParseException e) {
-      return Date.from(Instant.from(OLD_DATE_FORMAT.parse(dateString)));
+      parsed = OLD_DATE_FORMAT.parse(dateString);
     }
+    if (!parsed.isSupported(ChronoField.HOUR_OF_DAY)) {
+      parsed = LocalDate.from(parsed).atStartOfDay();
+    }
+    return Date.from(LocalDateTime.from(parsed).atZone(ZoneId.systemDefault()).toInstant());
   }
 
   private void readMessages(final StringBuffer result) {
