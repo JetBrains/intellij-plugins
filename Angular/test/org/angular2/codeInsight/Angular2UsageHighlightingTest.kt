@@ -60,4 +60,6 @@ class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting", fals
   fun testInputAndSelectorSeparateDirectivesFromSelector2() = checkUsageHighlighting()
 
   fun testInputAndSelectorNotImportedDirective() = checkUsageHighlighting()
+
+  fun testNgClass() = checkUsageHighlighting()
 }
