@@ -27,6 +27,7 @@ import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.Angular2InjectionUtils
+import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlLabel
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
@@ -267,12 +268,15 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     private fun collectUsedDeclarations(component: Angular2Component): Set<Angular2Declaration> {
       val result = mutableSetOf<Angular2Declaration>()
+      val scope = Angular2DeclarationsScope(component)
+      val pipesByName = Angular2EntitiesProvider.getAllPipes(component.sourceElement.project)
+        .mapValues { it.value.filter { pipe -> scope.contains(pipe) } }
+
       val expressionVisitor = object : JSRecursiveWalkingElementVisitor() {
+
         override fun visitJSReferenceExpression(node: JSReferenceExpression) {
           if (node is Angular2PipeReferenceExpression) {
-            val pipeMethodOrClass = node.resolve()
-            Angular2EntitiesProvider.getPipe(pipeMethodOrClass)
-              ?.let { result.add(it) }
+            pipesByName[node.referenceName]?.let { result.addAll(it) }
           }
           super.visitJSReferenceExpression(node)
         }
