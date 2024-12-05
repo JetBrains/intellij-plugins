@@ -278,6 +278,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, dir = true, configureFileName = "typeof.html")
 
 
+  fun testComponentWithParenthesis() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

@@ -146,7 +146,7 @@ object Angular2DecoratorUtil {
           }
         }
         else {
-          return child.arguments.firstOrNull() as? JSObjectLiteralExpression
+          return child.arguments.asSequence().map { it.unwrapParenthesis() }.firstOrNull() as? JSObjectLiteralExpression
         }
         break
       }
@@ -169,6 +169,7 @@ object Angular2DecoratorUtil {
         ?.resolve()
         ?.asSafely<JSVariable>()
         ?.initializerOrStub
+        ?.unwrapParenthesis()
         ?.asSafely<JSObjectLiteralExpression>()
     }
   }
@@ -211,4 +212,7 @@ object Angular2DecoratorUtil {
            ?: JSStubBasedPsiTreeUtil.getChildrenByType(context, TS_CLASS_TOKENS)
              .firstOrNull() as? TypeScriptClass
   }
+
+  private fun JSExpression.unwrapParenthesis(): JSExpression? =
+    if (this is JSParenthesizedExpression) this.innerExpression?.unwrapParenthesis() else this
 }
