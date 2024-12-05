@@ -86,9 +86,8 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
 
   protected open fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> {
     val scope = Angular2DeclarationsScope(context)
-    return Angular2ApplicableDirectivesProvider(context.parent).matched
+    return Angular2ApplicableDirectivesProvider(context.parent, scope = scope).matched
       .asSequence()
-      .filter { scope.contains(it) }
       .filterIsInstance<Angular2ClassBasedEntity>()
       .mapNotNull { it.typeScriptClass }
       .filter { !JSProjectUtil.isInLibrary(it) }
