@@ -412,7 +412,7 @@ final class JDOMResult extends SAXResult {
       nodes = resultlist;
     }
     else {
-      if (resultdoc != null && queried == false) {
+      if (resultdoc != null && !queried) {
         List<Content> content = resultdoc.getContent();
         nodes = new ArrayList<>(content.size());
 
@@ -478,7 +478,7 @@ final class JDOMResult extends SAXResult {
       doc = resultdoc;
     }
     else {
-      if (resultlist != null && (queried == false)) {
+      if (resultlist != null && !queried) {
         // Try to create a document from the result nodes
         try {
           JDOMFactory f = this.getFactory();

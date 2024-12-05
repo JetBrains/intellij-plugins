@@ -60,7 +60,7 @@ public final class PerforceManager  {
 
   private final Map<P4Connection, PerforceClient> myClientMap = new HashMap<>();
 
-  private final static boolean ourTraceCalls = Boolean.TRUE.equals(Boolean.getBoolean("perforce.trace.calls"));
+  private final static boolean ourTraceCalls = Boolean.getBoolean("perforce.trace.calls");
   private final static String ourTracerProperties = System.getProperty("perforce.trace.calls.properties");
   private TracerManager<P4Command> myTracer;
 
@@ -117,7 +117,7 @@ public final class PerforceManager  {
       try {
         properties.load(new FileInputStream(ourTracerProperties));
 
-        final boolean logAverageTimes = Boolean.TRUE.equals(Boolean.parseBoolean(properties.getProperty(TracerProperties.GATHER_AVERAGE_TIMES)));
+        final boolean logAverageTimes = Boolean.parseBoolean(properties.getProperty(TracerProperties.GATHER_AVERAGE_TIMES));
         final TracerParameters averageParameters;
         if (logAverageTimes) {
           averageParameters = new TracerParameters(TracerProperties.averageTimesInterval.getValue(properties),
@@ -125,7 +125,7 @@ public final class PerforceManager  {
         } else {
           averageParameters = null;
         }
-        final boolean logConcurrentThreads = Boolean.TRUE.equals(Boolean.parseBoolean(properties.getProperty(TracerProperties.GATHER_CONCURRENT_THREADS)));
+        final boolean logConcurrentThreads = Boolean.parseBoolean(properties.getProperty(TracerProperties.GATHER_CONCURRENT_THREADS));
         final TracerParameters concurrentThreadsParameters;
         if (logConcurrentThreads) {
           concurrentThreadsParameters = new TracerParameters(TracerProperties.numberConcurrentThreadsInterval.getValue(properties),
@@ -133,7 +133,7 @@ public final class PerforceManager  {
         } else {
           concurrentThreadsParameters = null;
         }
-        final boolean logLongCalls = Boolean.TRUE.equals(Boolean.parseBoolean(properties.getProperty(TracerProperties.GATHER_LONG_CALLS)));
+        final boolean logLongCalls = Boolean.parseBoolean(properties.getProperty(TracerProperties.GATHER_LONG_CALLS));
         final LongCallsParameters longCallsParameters;
         if (logLongCalls) {
           longCallsParameters = new LongCallsParameters(TracerProperties.longCallsInterval.getValue(properties),
