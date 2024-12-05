@@ -30,10 +30,19 @@
       "attributes": [
         {
           "name": "ngCspNonce",
-          "doc-url": "https://angular.io/guide/security#content-security-policy",
+          "doc-url": "https://angular.dev/best-practices/security#content-security-policy",
           "description": "Use the ngCspNonce attribute on the root application element as `<app ngCspNonce=\"randomNonceGoesHere\"></app>`. The attribute should be used if you have access to server-side templating that can add the nonce both to the header and the index.html when constructing the response.",
-          "attribute-value": {
+          "value": {
+            "required": true,
             "kind": "plain"
+          }
+        },
+        {
+          "name": "ngSkipHydration",
+          "doc-url": "https://angular.dev/guide/hydration#how-to-skip-hydration-for-particular-components",
+          "description": "You can add the `ngSkipHydration` attribute to a component's tag in order to skip hydrating the entire component. This is useful for component, which may not work properly with hydration enabled due to issues, like [Direct DOM Manipulation](https://angular.dev/guide/hydration#direct-dom-manipulation).",
+          "value": {
+            "kind": "no-value"
           }
         }
       ],

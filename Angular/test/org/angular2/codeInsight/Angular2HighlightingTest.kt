@@ -121,6 +121,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testNgCspNonceNg16() = checkHighlighting(ANGULAR_CORE_16_2_8)
 
+  fun testNgSkipHydrationNg15() = checkHighlighting(ANGULAR_CORE_15_1_5)
+
+  fun testNgSkipHydrationNg16() = checkHighlighting(ANGULAR_CORE_16_2_8)
+
   fun testUndefinedInterpolationBinding() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_ROUTER_16_2_8, dir = true,
                                                               configureFileName = "hero-search.component.html")
 
