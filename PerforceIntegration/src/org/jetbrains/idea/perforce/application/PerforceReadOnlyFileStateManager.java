@@ -170,6 +170,9 @@ public final class PerforceReadOnlyFileStateManager {
   }
 
   public void discardUnversioned() {
+    synchronized (myWritableFiles) {
+      myWritableFiles.clear();
+    }
     myDirtyFilesHandler.scheduleTotalRescan();
   }
 
