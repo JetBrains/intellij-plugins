@@ -1,64 +1,16 @@
 package org.jetbrains.astro.lang
 
-import com.intellij.html.HtmlParsingTest
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
-import com.intellij.injected.editor.DocumentWindow
-import com.intellij.javascript.JSHtmlEmbeddedContentSupport
-import com.intellij.lang.LanguageASTFactory
-import com.intellij.lang.LanguageHtmlScriptContentProvider
+import com.intellij.javascript.web.JSHtmlParsingTest
 import com.intellij.lang.LanguageParserDefinitions
-import com.intellij.lang.css.CSSLanguage
-import com.intellij.lang.css.CSSParserDefinition
-import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
-import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.html.HTMLParserDefinition
-import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.injection.MultiHostInjector
-import com.intellij.lang.javascript.JavaScriptSupportLoader
-import com.intellij.lang.javascript.JavascriptASTFactory
-import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.lang.javascript.JavascriptParserDefinition
-import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
-import com.intellij.lang.javascript.index.FrameworkIndexingHandler
-import com.intellij.lang.javascript.index.FrameworkIndexingHandlerEP
-import com.intellij.lang.javascript.settings.JSRootConfiguration
-import com.intellij.lang.javascript.settings.JSRootConfigurationBase
-import com.intellij.lang.typescript.TypeScriptContentProvider
-import com.intellij.lexer.EmbeddedTokenTypesProvider
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Pair
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.FileViewProvider
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.css.CssElementDescriptorProvider
-import com.intellij.psi.css.CssEmbeddedTokenTypesProvider
-import com.intellij.psi.css.CssHtmlEmbeddedContentSupport
-import com.intellij.psi.css.impl.CssTreeElementFactory
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
-import com.intellij.psi.impl.BlockSupportImpl
-import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
-import com.intellij.psi.stubs.StubElementTypeHolderEP
-import com.intellij.util.ObjectUtils
 import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport
 import org.jetbrains.astro.lang.parser.AstroParserDefinition
 import org.junit.AssumptionViolatedException
 
-class AstroParserTest : HtmlParsingTest("", "astro",
-                                        AstroParserDefinition(),
-                                        HTMLParserDefinition(),
-                                        JavascriptParserDefinition(),
-                                        CSSParserDefinition()) {
+class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
 
   override fun testUnclosedTag() {
     throw AssumptionViolatedException("disable")
@@ -534,54 +486,8 @@ class AstroParserTest : HtmlParsingTest("", "astro",
 
   override fun setUp() {
     super.setUp()
-
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroFrontmatterLanguage.INSTANCE, TypeScriptParserDefinition())
-
-    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
-                       listOf(CssEmbeddedTokenTypesProvider()))
-
-    addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, CssTreeElementFactory())
-    addExplicitExtension(LanguageASTFactory.INSTANCE, JavascriptLanguage.INSTANCE, JavascriptASTFactory())
-
-    registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
-    registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
-    application.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2("css-parsing-tests.xml"))
-
-    // Update parser definition if version is changed
-    assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6ParserDefinition())
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptParserDefinition())
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ES6ScriptContentProvider())
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, HTMLLanguage.INSTANCE, TemplateHtmlScriptContentProvider())
-
-    registerExtensionPoint(FrameworkIndexingHandler.EP_NAME, FrameworkIndexingHandlerEP::class.java)
-
-    project.registerService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
-
-    HtmlEmbeddedContentSupport.register(application, testRootDisposable,
-                                        CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java,
-                                        AstroEmbeddedContentSupport::class.java)
-
-    registerExtensionPoint(StubElementTypeHolderEP.EP_NAME, StubElementTypeHolderEP::class.java)
-
-    project.registerService(InjectedLanguageManager::class.java, MockInjectedLanguageManager())
-
-  }
-
-  override fun checkResult(targetDataName: String, file: PsiFile) {
-    super.checkResult(targetDataName, file)
-    ensureReparsingConsistent(file)
-  }
-
-  private fun ensureReparsingConsistent(file: PsiFile) {
-    DebugUtil.performPsiModification<RuntimeException>("ensureReparsingConsistent") {
-      val fileText = file.text
-      val diffLog = BlockSupportImpl().reparseRange(
-        file, file.node, TextRange.allOf(fileText), fileText, EmptyProgressIndicator(), fileText)
-      val event = diffLog.performActualPsiChange(file)
-      assertEmpty(event.changedElements)
-    }
+    HtmlEmbeddedContentSupport.register(application, testRootDisposable, AstroEmbeddedContentSupport::class.java)
   }
 
   override fun getTestDataPath(): String = getAstroTestDataPath() + "/lang/parser"
@@ -597,42 +503,6 @@ class AstroParserTest : HtmlParsingTest("", "astro",
       else
         "------\n$text",
       "${fileName.substring(0, fileName.lastIndexOf('.'))}.astro")
-  }
-
-  private class MockJSRootConfiguration(project: Project) : JSRootConfigurationBase(project) {
-
-    override fun storeLanguageLevelAndUpdateCaches(languageLevel: JSLanguageLevel?) {
-      if (myState == null) myState = State()
-      myState.languageLevel = ObjectUtils.coalesce(languageLevel, JSLanguageLevel.DEFAULT).id
-    }
-  }
-
-  class MockInjectedLanguageManager internal constructor() : InjectedLanguageManager() {
-    override fun getInjectionHost(injectedProvider: FileViewProvider): PsiLanguageInjectionHost? = null
-    override fun getInjectionHost(injectedElement: PsiElement): PsiLanguageInjectionHost? = null
-    override fun injectedToHost(injectedContext: PsiElement, injectedTextRange: TextRange): TextRange = injectedTextRange
-    override fun injectedToHost(injectedContext: PsiElement, injectedOffset: Int): Int = 0
-    override fun injectedToHost(injectedContext: PsiElement, injectedOffset: Int, minHostOffset: Boolean): Int = 0
-    override fun registerMultiHostInjector(injector: MultiHostInjector, parentDisposable: Disposable) {}
-    override fun getUnescapedText(injectedNode: PsiElement): String = injectedNode.text
-    override fun intersectWithAllEditableFragments(injectedPsi: PsiFile, rangeToEdit: TextRange): List<TextRange> = listOf(rangeToEdit)
-    override fun isInjectedFragment(injectedFile: PsiFile): Boolean = false
-    override fun isInjectedViewProvider(viewProvider: FileViewProvider) = false
-    override fun findInjectedElementAt(hostFile: PsiFile, hostDocumentOffset: Int): PsiElement? = null
-    override fun getInjectedPsiFiles(host: PsiElement): List<Pair<PsiElement, TextRange>>? = null
-    override fun dropFileCaches(file: PsiFile) {}
-    override fun getTopLevelFile(element: PsiElement): PsiFile = element.containingFile
-    override fun getCachedInjectedDocumentsInRange(hostPsiFile: PsiFile, range: TextRange): List<DocumentWindow> = emptyList()
-    override fun enumerate(host: PsiElement, visitor: PsiLanguageInjectionHost.InjectedPsiVisitor) {}
-    override fun enumerateEx(host: PsiElement,
-                             containingFile: PsiFile,
-                             probeUp: Boolean,
-                             visitor: PsiLanguageInjectionHost.InjectedPsiVisitor) {
-    }
-
-    override fun getNonEditableFragments(window: DocumentWindow): List<TextRange> = emptyList()
-    override fun mightHaveInjectedFragmentAtOffset(hostDocument: Document, hostOffset: Int): Boolean = false
-    override fun freezeWindow(document: DocumentWindow): DocumentWindow = document
   }
 
 }

@@ -1,44 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html
 
-import com.intellij.html.HtmlParsingTest
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
-import com.intellij.javascript.JSHtmlEmbeddedContentSupport
+import com.intellij.javascript.web.JSHtmlParsingTest
 import com.intellij.lang.LanguageASTFactory
-import com.intellij.lang.LanguageHtmlScriptContentProvider
-import com.intellij.lang.LanguageParserDefinitions
-import com.intellij.lang.css.CSSLanguage
-import com.intellij.lang.css.CSSParserDefinition
-import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
-import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.html.HTMLParserDefinition
-import com.intellij.lang.javascript.JavaScriptSupportLoader
-import com.intellij.lang.javascript.JavascriptParserDefinition
-import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
-import com.intellij.lang.javascript.index.FrameworkIndexingHandler
-import com.intellij.lang.javascript.index.FrameworkIndexingHandlerEP
-import com.intellij.lang.javascript.settings.JSRootConfiguration
-import com.intellij.lang.javascript.settings.JSRootConfigurationBase
-import com.intellij.lang.typescript.TypeScriptContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.CssElementDescriptorProvider
-import com.intellij.psi.css.CssEmbeddedTokenTypesProvider
-import com.intellij.psi.css.CssHtmlEmbeddedContentSupport
-import com.intellij.psi.css.impl.CssTreeElementFactory
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.psi.tree.CustomLanguageASTComparator
-import com.intellij.util.ObjectUtils
 import org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider
 import org.intellij.plugins.postcss.PostCssLanguage
 import org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider
@@ -49,43 +23,23 @@ import org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport
 import org.jetbrains.vuejs.lang.html.parser.VueASTComparator
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
-class VueParserTest : HtmlParsingTest("", "vue",
-                                      VueParserDefinition(),
-                                      VueJSParserDefinition(),
-                                      HTMLParserDefinition(),
-                                      JavascriptParserDefinition(),
-                                      CSSParserDefinition(),
-                                      PostCssParserDefinition()) {
+class VueParserTest : JSHtmlParsingTest(
+  "vue",
+  VueParserDefinition(),
+  VueJSParserDefinition(),
+  PostCssParserDefinition()
+) {
 
   override fun setUp() {
     super.setUp()
+
     addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, VueLanguage.INSTANCE, VueASTComparator())
+    HtmlEmbeddedContentSupport.register(application, testRootDisposable, VueEmbeddedContentSupport::class.java)
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
-                       listOf(CssEmbeddedTokenTypesProvider(), PostCssEmbeddedTokenTypesProvider()))
-
-    addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, CssTreeElementFactory())
+                       listOf(PostCssEmbeddedTokenTypesProvider()))
     addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, PostCssTreeElementFactory())
-
-    registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
-    registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
     registerExtension(CssElementDescriptorProvider.EP_NAME, PostCssElementDescriptorProvider())
-    application.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2("css-parsing-tests.xml"))
-
-    // Update parser definition if version is changed
-    assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6ParserDefinition())
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptParserDefinition())
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ES6ScriptContentProvider())
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, HTMLLanguage.INSTANCE, TemplateHtmlScriptContentProvider())
-
-    registerExtensionPoint(FrameworkIndexingHandler.EP_NAME, FrameworkIndexingHandlerEP::class.java)
-
-    project.registerService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
-
-    HtmlEmbeddedContentSupport.register(application, testRootDisposable, VueEmbeddedContentSupport::class.java,
-                                        CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java)
   }
 
   override fun checkResult(targetDataName: String, file: PsiFile) {
@@ -488,13 +442,5 @@ class VueParserTest : HtmlParsingTest("", "vue",
       }
       </style>
     """.trimIndent())
-  }
-
-  private class MockJSRootConfiguration(project: Project) : JSRootConfigurationBase(project) {
-
-    override fun storeLanguageLevelAndUpdateCaches(languageLevel: JSLanguageLevel?) {
-      if (myState == null) myState = State()
-      myState.languageLevel = ObjectUtils.coalesce(languageLevel, JSLanguageLevel.DEFAULT).id
-    }
   }
 }

@@ -26,5 +26,6 @@
     <orderEntry type="module" module-name="intellij.postcss" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.web.tests" scope="TEST" />
   </component>
 </module>
