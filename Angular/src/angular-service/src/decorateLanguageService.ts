@@ -18,8 +18,8 @@ declare module "@volar/language-core/lib/types" {
   }
 }
 
-function toSourceRange(sourceScript: SourceScript<string> | undefined, language: Language<string>, serviceScript: TypeScriptServiceScript, start: number, end: number, filter: (data: CodeInformation) => boolean): [fileName: string, start: number, end: number] | undefined {
-  for (const result of toSourceRanges(sourceScript, language, serviceScript, start, end, filter)) {
+function toSourceRange(sourceScript: SourceScript<string> | undefined, language: Language<string>, serviceScript: TypeScriptServiceScript, start: number, end: number, fallbackToAnyMatch: boolean, filter: (data: CodeInformation) => boolean): [fileName: string, start: number, end: number] | undefined {
+  for (const result of toSourceRanges(sourceScript, language, serviceScript, start, end, fallbackToAnyMatch, filter)) {
     return result
   }
   return undefined
@@ -56,7 +56,7 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
         let generatedRangePosStart = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.start.line, generatedRange.start.character)
         let generatedRangePosEnd = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.end.line, generatedRange.end.character)
 
-        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, it => it.types || it.reverseTypes);
+        const sourceRange = toSourceRange(sourceScript, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, false, it => it.types || it.reverseTypes);
 
         if (sourceRange !== undefined) {
           return {
