@@ -21,6 +21,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.*
 import org.angular2.Angular2TsConfigFile
+import org.angular2.Angular2TsExpectedConfigFiles
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import java.io.File
 import java.io.IOException
@@ -281,6 +282,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testTypeofNg19() =
     checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, dir = true, configureFileName = "typeof.html")
 
+  fun testConfigWithMapping() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "projects/frontend/src/app/app.component.html",
+                      configurators = listOf(Angular2TsExpectedConfigFiles("projects/frontend/tsconfig.app.json")))
 
   fun testComponentWithParenthesis() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")

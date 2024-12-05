@@ -1,0 +1,17 @@
+<<error descr="Component or directive matching app-frontend element is out of scope of the current template">app-frontend</error>
+  <warning descr="Directive that provides attribute name is out of scope of the current template">name</warning>="Frontend"
+  <error descr="Property childContainer is not provided by any applicable directives nor by <app-frontend> element">[childContainer]</error>="{
+    contents: [
+      { id: '1', named: 'Frontend', type: 'app' }
+    ]
+  }"
+/>
+
+<lib-shared
+  name="Shared"
+  [childContainer]="{
+    contents: [
+      { id: '1', name: 'Shared', <error descr="TS2561: Object literal may only specify known properties, but 'types' does not exist in type 'ChildEntity'. Did you mean to write 'type'?">types</error>: 'lib' }
+    ]
+  }"
+/>
