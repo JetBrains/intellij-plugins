@@ -1,5 +1,7 @@
 package org.jetbrains.idea.perforce.perforce.login;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -90,27 +92,30 @@ public class AuthNotifier {
     @NotNull
     @Override
     @NlsContexts.NotificationContent
-    protected String getNotificationContent(final P4Connection connection) {
+    protected String getNotificationContent(@NotNull P4Connection connection) {
       HtmlBuilder builder = new HtmlBuilder();
       builder.append(
         HtmlChunk.raw(PerforceBundle.message("login.error.notification", connection.getWorkingDirectory()))
       );
-      builder.append(HtmlChunk.br());
-      builder.append(HtmlChunk.link(FIX, PerforceBundle.message("login.fix")));
-      builder.append(HtmlChunk.br());
-      builder.append(HtmlChunk.link(INSPECT, PerforceBundle.message("login.inspect")));
       return builder.toString();
     }
 
     @Override
+    protected void configureNotification(@NotNull Notification notification, @NotNull P4Connection connection) {
+
+      NotificationAction fixAction = NotificationAction.createSimple(PerforceBundle.message("login.fix"), FIX,
+                                                               () -> {
+                                                                 if (myLoginManager.checkAndRepair(connection)) notification.expire();
+                                                               });
+      notification.addAction(fixAction);
+      NotificationAction inspectAction =
+        NotificationAction.createSimple(PerforceBundle.message("login.inspect"), INSPECT,
+                                        () -> PerforceConnectionProblemsNotifier.showConnectionState(myProject, true));
+      notification.addAction(inspectAction);
+    }
+
+    @Override
     protected boolean ask(final P4Connection obj, String description) {
-      if (FIX.equals(description)) {
-        return myLoginManager.checkAndRepair(obj);
-      }
-      if (INSPECT.equals(description)) {
-        PerforceConnectionProblemsNotifier.showConnectionState(myProject, true);
-        return false;
-      }
       return false;
     }
 
