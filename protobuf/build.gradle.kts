@@ -5,7 +5,7 @@ apply(from = "../contrib-configuration/common.gradle.kts")
  * that is different for various compatible IDEs
  */
 //val defaultPluginRunMode = ProtobufPluginLayout.ProtobufInIdeaUltimateWithGoAndPython("2024.1", "241.14494.240")
-val defaultPluginRunMode = ProtobufPluginLayout.ProtobufCoreTestsInIdeaCommunity("2024.1")
+val defaultPluginRunMode = ProtobufPluginLayout.ProtobufCoreTestsInIdeaCommunity("2024.3")
 
 plugins {
   id("java")
