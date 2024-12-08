@@ -7,22 +7,19 @@ import org.jetbrains.qodana.publisher.PublisherParameters
 import org.jetbrains.qodana.publisher.QDCloudAwsClient
 import org.jetbrains.qodana.publisher.schemas.PublisherReportType
 import org.jetbrains.qodana.publisher.schemas.UploadedReport
-import org.jetbrains.qodana.run.QodanaConverterInput
-import org.jetbrains.qodana.run.runQodanaConverter
 import java.net.http.HttpClient
+import java.nio.file.Path
 
 
-suspend fun runConverterAndPublishToCloud(
+suspend fun publishToCloud(
   projectApi: QDCloudProjectApiV1,
-  qodanaOutput: QodanaConverterInput.FullQodanaOutput
+  reportPath: Path
 ): PublishResult {
-  // TODO – is converter needed?
-  val converterOutput = runQodanaConverter(qodanaOutput)
 
   val awsClient = QDCloudAwsClient(HttpClient.newHttpClient())
   return Publisher(projectApi, awsClient).publish(
     PublisherParameters(
-      reportPath = converterOutput.path,
+      reportPath = reportPath,
       reportType = PublisherReportType.SARIF
     )
   )

@@ -180,7 +180,7 @@ class QodanaInspectionApplication(
 
     return coroutineScope {
       val uploadedReportDeferred: Deferred<UploadedReport?> = async {
-        when (val result = runConverterAndPublishToCloud(projectApi.api, QodanaConverterInput.FullQodanaOutput(config.outPath))) {
+        when (val result = publishToCloud(projectApi.api, config.outPath)) {
           is PublishResult.Success -> return@async result.uploadedReport
           is PublishResult.Error -> {
             reporter.reportError(result.message)
