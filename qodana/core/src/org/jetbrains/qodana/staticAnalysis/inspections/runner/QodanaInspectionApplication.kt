@@ -28,7 +28,6 @@ import org.jetbrains.qodana.license.checkLicense
 import org.jetbrains.qodana.license.printLicenseInfo
 import org.jetbrains.qodana.publisher.PublishResult
 import org.jetbrains.qodana.publisher.schemas.UploadedReport
-import org.jetbrains.qodana.run.QodanaConverterInput
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
