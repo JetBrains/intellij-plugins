@@ -23,7 +23,7 @@ import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.notifications.QodanaNotifications
 import org.jetbrains.qodana.publisher.PublishResult
 import org.jetbrains.qodana.run.*
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.runConverterAndPublishToCloud
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.publishToCloud
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
 import org.jetbrains.qodana.stats.RunDialogYamlState
 import org.jetbrains.qodana.ui.ProjectVcsDataProvider
@@ -206,7 +206,7 @@ class LocalRunQodanaViewModel(
             return@async null
           }
         }
-        val uploadedReport = runConverterAndPublishToCloud(projectApi, QodanaConverterInput.FullQodanaOutput(qodanaInIdeOutput.path))
+        val uploadedReport = publishToCloud(projectApi, qodanaInIdeOutput.path)
         val reportLink = when(uploadedReport) {
           is PublishResult.Success -> {
             uploadedReport.uploadedReport.reportLink
