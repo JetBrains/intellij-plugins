@@ -8,6 +8,7 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.ConcurrencyUtil
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.lang.Angular2Bundle
@@ -39,8 +40,7 @@ abstract class Angular2SourceEntityBase protected constructor(override val typeS
    * Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents.
    */
   protected fun <T : Any> getLazyValue(key: Key<T>, provider: () -> T): T {
-    val result = getUserData(key)
-    return result ?: putUserDataIfAbsent(key, provider())
+    return ConcurrencyUtil.computeIfAbsent<T>(this, key) { provider.invoke() }
   }
 
   /**

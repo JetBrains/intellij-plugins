@@ -10,7 +10,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,6 +18,7 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,10 +74,8 @@ public class BundleManifestCache {
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet == null) return null;
 
-    CachedValue<BundleManifest> value = facet.getUserData(MANIFEST_CACHE_KEY);
-
-    if (value == null) {
-      value = facet.putUserDataIfAbsent(MANIFEST_CACHE_KEY, CachedValuesManager.getManager(module.getProject()).createCachedValue(() -> {
+    CachedValue<BundleManifest> value = ConcurrencyUtil.computeIfAbsent(facet, MANIFEST_CACHE_KEY, () ->
+      CachedValuesManager.getManager(module.getProject()).createCachedValue(() -> {
         OsmorcFacetConfiguration configuration = facet.getConfiguration();
         BundleManifest manifest = null;
         List<Object> dependencies = new SmartList<>(configuration);
@@ -117,7 +115,6 @@ public class BundleManifestCache {
 
         return CachedValueProvider.Result.create(manifest, dependencies);
       }, false));
-    }
 
     return value.getValue();
   }
@@ -126,15 +123,14 @@ public class BundleManifestCache {
     PsiDirectory psiRoot = manager.findDirectory(libRoot);
     if (psiRoot == null) return null;
 
-    CachedValue<BundleManifest> value = libRoot.getUserData(MANIFEST_CACHE_KEY);
-    if (value == null) {
-      value = ((UserDataHolderEx)psiRoot).putUserDataIfAbsent(MANIFEST_CACHE_KEY, CachedValuesManager.getManager(manager.getProject()).createCachedValue(() -> {
+    CachedValue<BundleManifest> value = ConcurrencyUtil.computeIfAbsent(psiRoot, MANIFEST_CACHE_KEY, () ->
+    CachedValuesManager.getManager(manager.getProject()).createCachedValue(() -> {
         PsiDirectory metaInfDir = psiRoot.findSubdirectory("META-INF");
         PsiFile psiFile = metaInfDir != null ? metaInfDir.findFile("MANIFEST.MF") : null;
         BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;
         return CachedValueProvider.Result.createSingleDependency(manifest, Objects.requireNonNullElse(psiFile, libRoot));
       }, false));
-    }
+
     return value.getValue();
   }
 

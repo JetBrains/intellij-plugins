@@ -37,7 +37,7 @@ public final class CfmlScriptNodeSuppressor implements TreeStructureProvider, Du
 
   public static void suppress(VirtualFile file) {
     ApplicationManager.getApplication().assertWriteAccessAllowed();
-    file.putUserDataIfAbsent(MARKER, "");
+    file.putUserData(MARKER, "");
   }
 
   private static boolean hasMarker(VirtualFile file) {
