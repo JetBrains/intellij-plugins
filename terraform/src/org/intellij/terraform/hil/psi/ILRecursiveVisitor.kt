@@ -2,8 +2,9 @@
 package org.intellij.terraform.hil.psi
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveVisitor
 
-open class ILRecursiveVisitor : ILElementVisitor() {
+open class ILRecursiveVisitor : ILElementVisitor(),PsiRecursiveVisitor {
   override fun visitElement(element: PsiElement) {
     element.acceptChildren(this)
   }

@@ -12,10 +12,7 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptTypeArgumentListStub
 import com.intellij.lang.javascript.psi.stubs.TypeScriptUnionOrIntersectionTypeStub
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.stubs.Stub
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
@@ -56,7 +53,7 @@ object VueTypedEntitiesProvider {
           visit(typeStub)
         }
         else {
-          typeElement.accept(object : JSElementVisitor() {
+          typeElement.accept(object : JSElementVisitor(),PsiRecursiveVisitor {
             override fun visitJSElement(node: JSElement) {
               if (node is TypeScriptSingleType
                   && checkTypeName(node.qualifiedTypeName)) {

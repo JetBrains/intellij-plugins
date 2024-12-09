@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveVisitor
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import org.intellij.terraform.hil.psi.ILTemplateForBlockExpression
@@ -19,7 +20,7 @@ internal class TerraformTemplateFoldingBuilder : FoldingBuilder, DumbAware {
   override fun buildFoldRegions(node: ASTNode, document: Document): Array<FoldingDescriptor> {
     val result = mutableListOf<FoldingDescriptor>()
 
-    node.psi.accept(object : TftplVisitor() {
+    node.psi.accept(object : TftplVisitor(),PsiRecursiveVisitor {
       override fun visitElement(element: PsiElement) {
         super.visitElement(element)
         element.acceptChildren(this)

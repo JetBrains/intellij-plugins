@@ -3,6 +3,7 @@ package org.intellij.terraform.hcl
 
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiRecursiveVisitor
 import com.intellij.util.indexing.*
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
@@ -36,7 +37,7 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
       if (inputData.fileType === HCLFileType || inputData.fileType === TerraformFileType || inputData.fileType === OpenTofuFileType) {
         val file = inputData.psiFile
         if (file is HCLFile) {
-          file.acceptChildren(object : HCLElementVisitor() {
+          file.acceptChildren(object : HCLElementVisitor(),PsiRecursiveVisitor {
 
             override fun visitElement(element: HCLElement) {
               ProgressIndicatorProvider.checkCanceled()

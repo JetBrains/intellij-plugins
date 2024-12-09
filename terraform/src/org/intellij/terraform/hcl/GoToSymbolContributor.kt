@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiRecursiveVisitor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Processor
 import com.intellij.util.indexing.DumbModeAccessType
@@ -44,7 +45,7 @@ private class SymbolCollector(private val name: String, project: Project, privat
     val psiFile = psiManager.findFile(file)
     if (psiFile is HCLFile) {
 
-      psiFile.acceptChildren(object : HCLElementVisitor() {
+      psiFile.acceptChildren(object : HCLElementVisitor(),PsiRecursiveVisitor {
         private var stop = false
 
         override fun visitElement(element: HCLElement) {

@@ -4,6 +4,7 @@ package org.intellij.terraform.hil.refactoring
 import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILRecursiveVisitor
@@ -33,7 +34,7 @@ object ILRefactoringUtil {
       return emptyList()
     }
     val occurrences = ArrayList<PsiElement>()
-    context.acceptChildren(object : ILRecursiveVisitor() {
+    context.acceptChildren(object : ILRecursiveVisitor(),PsiRecursiveVisitor {
       override fun visitElement(element: PsiElement) {
         if (PsiEquivalenceUtil.areElementsEquivalent(element, pattern)) {
           occurrences.add(element)
