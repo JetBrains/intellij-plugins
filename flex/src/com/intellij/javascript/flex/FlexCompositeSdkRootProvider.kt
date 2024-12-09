@@ -2,7 +2,6 @@
 package com.intellij.javascript.flex
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
@@ -13,9 +12,8 @@ class FlexCompositeSdkRootProvider : AdditionalLibraryRootsProvider() {
   override fun getAdditionalProjectLibraries(project: Project): @Unmodifiable Collection<SyntheticLibrary> {
     val result = mutableListOf<SyntheticLibrary>()
     for (module in ModuleManager.getInstance(project).modules) {
-      val model = ReadAction
-        .compute<ModifiableRootModel, RuntimeException> { ModuleRootManager.getInstance(module).getModifiableModel() }
-      val sdk = model.sdk
+      val rootManager = ModuleRootManager.getInstance(module)
+      val sdk = rootManager.sdk
       if (sdk != null && sdk is FlexCompositeSdk) {
         val rootProvider = sdk.rootProvider
         val sourceRoots = rootProvider.getFiles(OrderRootType.SOURCES).toList()
