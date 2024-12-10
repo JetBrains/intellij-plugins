@@ -8,7 +8,6 @@ import com.intellij.util.awaitCancellationAndInvoke
 import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.idea.perforce.application.PerforceManager
 import java.io.File
 import java.io.IOException
 import java.nio.file.*
@@ -38,7 +37,6 @@ class PerforceExternalConfigTracker(private val project: Project, private val cs
       }
 
       watchService = createWatchService()
-      project.messageBus.connect(cs).subscribe(P4ConfigListener.TOPIC, PerforceConnectionUpdater(project))
 
       trackJob = cs.launch(Dispatchers.IO) {
         trackConfigs()
@@ -157,13 +155,5 @@ interface P4ConfigListener {
     @Topic.ProjectLevel
     val TOPIC: Topic<P4ConfigListener> =
       Topic(P4ConfigListener::class.java, Topic.BroadcastDirection.NONE, true)
-  }
-}
-
-private class PerforceConnectionUpdater(private val project: Project) : P4ConfigListener {
-  override fun notifyConfigChanged(configPath: String) {
-    if (PerforceManager.getInstance(project).isActive) {
-      PerforceConnectionManager.getInstance(project).updateConnections()
-    }
   }
 }
