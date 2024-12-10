@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
   public int expansionFormNestingLevel;
   public int interpolationStartPos;
+  private boolean inInterpolationComment;
+  private Character interpolationQuote;
 
   public String blockName;
   public int parameterIndex;
@@ -84,6 +86,47 @@ import org.jetbrains.annotations.NotNull;
       interpolationStartPos = -1;
     } else {
       yypushback(yylength());
+    }
+  }
+
+  private void processInterpolationEntity() {
+    CharSequence entity = yytext();
+    char ch;
+    if (StringUtil.equals(entity, "&quot;") || StringUtil.equals(entity, "&#34;") || StringUtil.equals(entity, "&#x22;")) {
+      ch = '\"';
+    } else if (StringUtil.equals(entity, "&apos;") || StringUtil.equals(entity, "&#39;") || StringUtil.equals(entity, "&#x27;")) {
+      ch = '\'';
+    } else {
+      return;
+    }
+    processQuoteWithinInterpolation(ch);
+  }
+
+  private boolean processInterpolationChar(int nextStateIfEnd) {
+    if (interpolationQuote == null && inBuffer(interpolationEnd, 0)) {
+      yybegin(nextStateIfEnd);
+      yypushback(1);
+      return true;
+    }
+    if (interpolationStartPos <= 0) {
+      interpolationStartPos = zzStartRead;
+      inInterpolationComment = false;
+    }
+    if (inInterpolationComment) return false;
+
+    processQuoteWithinInterpolation(zzBuffer.charAt(zzMarkedPos - 1));
+    return false;
+  }
+
+  private void processQuoteWithinInterpolation(char ch) {
+    if (interpolationQuote != null) {
+      if (interpolationQuote == ch) {
+        interpolationQuote = null;
+      }
+    } else {
+      if (ch == '\"' || ch == '\'' || ch =='`') {
+        interpolationQuote = ch;
+      }
     }
   }
 
@@ -313,14 +356,9 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   yybegin(UNTERMINATED_INTERPOLATION_SQ);
 }
 
-<INTERPOLATION_DQ, INTERPOLATION_SQ>   [^] {
-  if (inBuffer(interpolationEnd, 0)) {
-    yybegin(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ);
-    yypushback(1);
+<INTERPOLATION_DQ, INTERPOLATION_SQ> [^] {
+  if (processInterpolationChar(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ)) {
     return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
-  }
-  if (interpolationStartPos <= 0) {
-    interpolationStartPos = zzStartRead;
   }
 }
 
@@ -356,17 +394,12 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 "&nbsp;" |
 "&amp;" |
 "&#"{DIGIT}+";" |
-"&#"(x|X)({DIGIT}|[a-fA-F])+";" { if (!isWithinInterpolation()) return XmlTokenType.XML_CHAR_ENTITY_REF; }
-"&"{TAG_NAME}";" { if (!isWithinInterpolation()) return XmlTokenType.XML_ENTITY_REF_TOKEN; }
+"&#"(x|X)({DIGIT}|[a-fA-F])+";" { if (!isWithinInterpolation()) return XmlTokenType.XML_CHAR_ENTITY_REF; else processInterpolationEntity(); }
+"&"{TAG_NAME}";" { if (!isWithinInterpolation()) return XmlTokenType.XML_ENTITY_REF_TOKEN; else processInterpolationEntity(); }
 
 <INTERPOLATION> [^] {
-  if (inBuffer(interpolationEnd, 0)) {
-    yybegin(INTERPOLATION_END);
-    yypushback(1);
+  if (processInterpolationChar(INTERPOLATION_END)) {
     return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
-  }
-  if (interpolationStartPos <= 0) {
-    interpolationStartPos = zzStartRead;
   }
 }
 <INTERPOLATION_END> [^] {
@@ -375,6 +408,13 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
     return Angular2HtmlTokenTypes.INTERPOLATION_END;
   }
   return XmlTokenType.XML_BAD_CHARACTER;
+}
+<INTERPOLATION, INTERPOLATION_SQ, INTERPOLATION_DQ> \\[^] {
+  // consume escaped char
+}
+<INTERPOLATION, INTERPOLATION_SQ, INTERPOLATION_DQ> \/\/ {
+  // comment start
+  inInterpolationComment = true;
 }
 <UNTERMINATED_INTERPOLATION> ([^<&\$# \n\r\t\f]|(\\#)) { return XmlTokenType.XML_DATA_CHARACTERS; }
 

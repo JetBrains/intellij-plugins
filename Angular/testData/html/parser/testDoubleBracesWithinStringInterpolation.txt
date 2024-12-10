@@ -1,0 +1,40 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:label
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('label')
+      XmlToken:XML_TAG_END('>')
+      PsiElement(NG:INTERPOLATION_START)('{{')
+      ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+        PsiWhiteSpace(' ')
+        Angular2Interpolation
+          Angular2PipeExpression
+            Angular2PipeLeftSideArgument
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''Version: {{version}}'')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            Angular2PipeReferenceExpression
+              PsiElement(JS:IDENTIFIER)('translate')
+          PsiErrorElement:Unexpected token '{'
+            <empty list>
+          PsiWhiteSpace(' ')
+          JSObjectLiteralExpression
+            PsiElement(JS:LBRACE)('{')
+            PsiWhiteSpace(' ')
+            JSProperty
+              PsiElement(JS:IDENTIFIER)('version')
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''13}}'')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:RBRACE)('}')
+        PsiWhiteSpace(' ')
+      PsiElement(NG:INTERPOLATION_END)('}}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('label')
+      XmlToken:XML_TAG_END('>')
