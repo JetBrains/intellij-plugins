@@ -455,6 +455,24 @@ open class Angular2HtmlParsingTest : HtmlParsingTest("", "html") {
     """.trimIndent())
   }
 
+  fun testDoubleBracesWithinStringInterpolation() {
+    doTestHtml("""
+      <label>{{ 'Version: {{version}}' | translate { version: '13}}' } }}</label>
+    """.trimIndent())
+  }
+
+  fun testInterpolationEscape() {
+    doTestHtml("""
+      <label>{{ 'Version: \<a>' }}</label>
+    """.trimIndent())
+  }
+
+  fun testInterpolationComment() {
+    doTestHtml("""
+      <label>{{ 'Version:' // ' }}</label>
+    """.trimIndent())
+  }
+
   companion object {
     private fun ensureReparsingConsistent(file: PsiFile) {
       DebugUtil.performPsiModification<RuntimeException>("ensureReparsingConsistent") {

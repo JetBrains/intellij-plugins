@@ -1,0 +1,20 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:label
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('label')
+      XmlToken:XML_TAG_END('>')
+      PsiElement(NG:INTERPOLATION_START)('{{')
+      ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+        PsiWhiteSpace(' ')
+        Angular2Interpolation
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''Version:'')
+        PsiWhiteSpace(' ')
+        PsiComment(JS:C_STYLE_COMMENT)('// ' ')
+      PsiElement(NG:INTERPOLATION_END)('}}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('label')
+      XmlToken:XML_TAG_END('>')
