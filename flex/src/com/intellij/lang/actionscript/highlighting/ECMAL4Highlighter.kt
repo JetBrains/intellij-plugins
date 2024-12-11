@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.highlighting
 
-import com.intellij.lang.javascript.JSDocElementType
 import com.intellij.lang.javascript.JSDocTokenTypes
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
@@ -277,7 +276,7 @@ class ECMAL4Highlighter : JSHighlighter(ECMAL4LanguageDialect.DIALECT_OPTION_HOL
       ourAttributeMap[JSTokenTypes.END_OF_LINE_COMMENT] = ECMAL4_LINE_COMMENT
       ourAttributeMap[JSTokenTypes.BAD_CHARACTER] = ECMAL4_BAD_CHARACTER
 
-      val javadoc = IElementType.enumerate { type -> type is JSDocElementType }
+      val javadoc = JSDocTokenTypes.enumerateJSDocElementTypes()
 
       for (type in javadoc) {
         ourAttributeMap[type] = ECMAL4_DOC_COMMENT
