@@ -214,7 +214,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     initRLMControls();
     initCSSControls();
 
-    myOptimizeForCombo.setModel(new CollectionComboBoxModel(Collections.singletonList(""), ""));
+    myOptimizeForCombo.setModel(new CollectionComboBoxModel(new ArrayList<>(Collections.singletonList("")), ""));
     myOptimizeForCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
       if ("".equals(value)) {
         label.setText("<no optimization>");

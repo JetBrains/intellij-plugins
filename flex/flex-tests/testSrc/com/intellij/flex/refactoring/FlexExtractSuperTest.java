@@ -105,8 +105,8 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
                              String[] members,
                              String[] conflicts) {
     JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(getModule()));
-    final List<JSMemberInfo> memberInfos = FlexPullUpTest.getMemberInfos(members, sourceClass, false);
-    JSMemberInfo.sortByOffset(memberInfos);
+    final List<JSMemberInfo> memberInfos = JSMemberInfo.sortByOffset(FlexPullUpTest.getMemberInfos(members, sourceClass, false));
+
     JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
     try {
       final PsiElement finalSourceClass = sourceClass;

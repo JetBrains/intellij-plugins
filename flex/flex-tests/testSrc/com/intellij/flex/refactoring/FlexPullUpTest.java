@@ -139,8 +139,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
         memberInfo.setToAbstract(true);
       }
     }
-    JSMemberInfo.sortByOffset(memberInfos);
-    return memberInfos;
+    return JSMemberInfo.sortByOffset(memberInfos);
   }
 
   public void testMethod() {

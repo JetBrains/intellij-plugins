@@ -25,6 +25,7 @@ import com.intellij.refactoring.util.DocCommentPolicy;
 import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -39,7 +40,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
 
   private JRadioButton myExtractAndTurnRefsRB;
 
-  public FlexExtractSuperBaseDialog(@NotNull JSClass sourceClass, @NotNull List<JSMemberInfo> members, String refactoringName) {
+  public FlexExtractSuperBaseDialog(@NotNull JSClass sourceClass, @NotNull @Unmodifiable List<JSMemberInfo> members, String refactoringName) {
     super(sourceClass.getProject(), sourceClass, members, refactoringName);
   }
 
