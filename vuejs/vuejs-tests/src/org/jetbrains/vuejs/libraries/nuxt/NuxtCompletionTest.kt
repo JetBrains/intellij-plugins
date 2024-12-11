@@ -16,6 +16,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtExtensionsBasic() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_8_1, VueTestModule.VUE_2_6_10)
+    myFixture.addFileToProject("index.ts", "import \"@nuxt/vue-app\"")
     myFixture.configureByText("test.vue", "<script>export default {<caret>}</script>")
     myFixture.completeBasic()
     assertContainsElements(
@@ -27,6 +28,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtApp() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_8_1, VueTestModule.VUE_2_6_10)
+    myFixture.addFileToProject("index.ts", "import \"@nuxt/vue-app\"")
     myFixture.configureByText("test.vue", "<template>{{\$nuxt.<caret>}}</template>")
     myFixture.completeBasic()
     assertContainsElements(
@@ -37,6 +39,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtExtensionsBasic2_13() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
+    myFixture.addFileToProject("index.ts", "import \"@nuxt/types/app\"")
     myFixture.configureByText("test.vue", "<script>export default {<caret>}</script>")
     myFixture.completeBasic()
     assertContainsElements(
@@ -48,6 +51,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtApp2_13() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
+    myFixture.addFileToProject("index.ts", "import \"@nuxt/types/app\"")
     myFixture.configureByText("test.vue", "<template>{{\$nuxt.<caret>}}</template>")
     myFixture.completeBasic()
     assertContainsElements(

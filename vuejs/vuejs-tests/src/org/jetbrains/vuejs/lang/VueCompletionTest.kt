@@ -1582,6 +1582,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testComplexThisContext() {
+    myFixture.addFileToProject("index.ts", "import \"vuex\"")
     doLookupTest(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_5_3,
                  renderTypeText = false, renderPriority = false)
   }

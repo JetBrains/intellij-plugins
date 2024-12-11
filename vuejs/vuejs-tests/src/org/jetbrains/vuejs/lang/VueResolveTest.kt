@@ -2382,7 +2382,7 @@ export default class UsageComponent extends Vue {
     myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("globalComponentsWithTypeofImport", "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("ButtonS<caret>FC", "eComponent({\n  <caret>props: {\n", "ButtonSFC.vue")
+    myFixture.checkGotoDeclaration("ButtonS<caret>FC", "eComponent(<caret>{\n  props: {\n", "ButtonSFC.vue")
   }
 
   fun testResolveGlobalAppComponent() {

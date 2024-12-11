@@ -18,6 +18,7 @@ class VuelidateTest : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.VUELIDATE_0_7_13)
+    myFixture.createFile("imports.ts", "import 'vuelidate/vue'")
   }
 
   fun testCompletion() {

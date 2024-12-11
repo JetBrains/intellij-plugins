@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
+import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil.calculateAugmentationScope
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -27,7 +28,8 @@ class VueTypedGlobal(override val delegate: VueGlobal,
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
       val file = source.containingFile
-      val map = TypeScriptUtil.getAllAugmentationModules(source.project, file)
+      val scope = calculateAugmentationScope(file) ?: file
+      val map = TypeScriptUtil.getAllAugmentationModules(source.project, scope)
         .asSequence()
         .filter { module -> module.name?.removePrefix(MODULE_PREFIX)?.let { it.startsWith("@$VUE_MODULE") || it.startsWith(VUE_MODULE) } == true }
         .flatMap { it.stubSafeChildren }

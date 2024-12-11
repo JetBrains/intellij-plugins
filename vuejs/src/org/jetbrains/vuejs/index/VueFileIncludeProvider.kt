@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
  */
 class VueFileIncludeProvider : JSFrameworkFileIncludeProvider(VueFileType) {
   override fun getIncludeInfos(content: FileContent): Array<FileIncludeInfo> {
-    if (!ES6FileIncludeProvider.checkTextHasFromKeyword(content)) return emptyArray()
+    if (!ES6FileIncludeProvider.checkTextHasImportKeyword(content)) return emptyArray()
 
     val psiFile = content.psiFile
     val importDeclarations = (findModule(psiFile, false)?.let { ES6ImportPsiUtil.getImportDeclarations(it) } ?: emptyList()) +
