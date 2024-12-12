@@ -1,0 +1,13 @@
+{
+  "name": "karma-run-configuration-qunit-navigate-from-tree",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "karma start"
+  },
+  "private": true,
+  "devDependencies": {
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-qunit": "^4.2.1"
+  }
+}
