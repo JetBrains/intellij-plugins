@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
-interface Angular2TokenTypes : JSTokenTypes {
+interface Angular2TokenTypes {
   companion object {
     @JvmField
     val ESCAPE_SEQUENCE: IElementType = Angular2TokenType("NG:ESCAPE_SEQUENCE")
