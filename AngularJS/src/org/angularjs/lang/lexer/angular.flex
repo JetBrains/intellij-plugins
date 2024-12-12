@@ -3,9 +3,11 @@ package org.angularjs.lang.lexer;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 
-import static org.angularjs.lang.lexer.AngularJSTokenTypes.*;
+import static com.intellij.lang.javascript.JSTokenTypes.*;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
+import static org.angularjs.lang.lexer.AngularJSTokenTypes.ELVIS;
+import static org.angularjs.lang.lexer.AngularJSTokenTypes.*;
 
 %%
 
