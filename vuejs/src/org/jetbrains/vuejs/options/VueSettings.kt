@@ -38,7 +38,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     set(value) {
       val prevServiceType = state.innerServiceType
       state.innerServiceType = value
-      if (prevServiceType != value) {
+      if (prevServiceType != value && !project.isDisposed) {
         project.service<TypeScriptServiceRestartService>().restartServices(
           isEffectiveUseTypesFromServer(prevServiceType.isEnabled(), state.useTypesFromServer)
             != isEffectiveUseTypesFromServer(serviceType.isEnabled(), state.useTypesFromServer))
