@@ -36,7 +36,7 @@ private const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
 
 
 class VueClassicTypeScriptServiceTest : TypeScriptServiceTestBase() {
-  override fun getService(): VueClassicTypeScriptService {
+  override val service: VueClassicTypeScriptService get() {
     return TypeScriptService.getForFile(project, file.virtualFile) as VueClassicTypeScriptService
   }
 

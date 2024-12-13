@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.service
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightingByText
-import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.assertHasServiceItems
+import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.Companion.assertHasServiceItems
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.Disposable
 import com.intellij.platform.lsp.tests.checkLspHighlighting
