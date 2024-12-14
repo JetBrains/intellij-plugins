@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Konstantin.Ulitin
  */
-public final class ActionScriptParser extends JavaScriptParser<ExpressionParser, ActionScriptStatementParser, ActionScriptFunctionParser, JSPsiTypeParser> {
+public final class ActionScriptParser extends JavaScriptParser<ExpressionParser<?>, ActionScriptStatementParser, ActionScriptFunctionParser, JSPsiTypeParser<?>> {
   public ActionScriptParser(PsiBuilder builder) {
     super(FlexSupportLoader.ECMA_SCRIPT_L4, builder);
     myStatementParser = new ActionScriptStatementParser(this);

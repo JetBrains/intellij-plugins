@@ -12,7 +12,7 @@ import org.angularjs.lang.lexer.AngularJSTokenTypes;
  * @author Dennis.Ushakov
  */
 public class AngularJSParser
-  extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
+  extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser<?>, FunctionParser<?>, JSPsiTypeParser<?>> {
 
   public AngularJSParser(PsiBuilder builder) {
     super(JavascriptLanguage.INSTANCE, builder);

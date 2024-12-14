@@ -46,10 +46,11 @@ class VueTSParser(builder: PsiBuilder) : TypeScriptParser(builder), VueExprParse
     typeArgumentList.done(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
   }
 
-  override fun getExpressionParser(): VueTSExpressionParser {
-    // Let's hack around TypeScriptParser type parameters
-    return super.getExpressionParser() as VueTSExpressionParser
-  }
+  override val expressionParser: VueTSExpressionParser
+    get() {
+      // Let's hack around TypeScriptParser type parameters
+      return super.expressionParser as VueTSExpressionParser
+    }
 
   class VueTSExpressionParser(parser: VueTSParser, private val extraParser: VueJSExtraParser) : TypeScriptExpressionParser(parser) {
     fun parseFilterArgumentList() {

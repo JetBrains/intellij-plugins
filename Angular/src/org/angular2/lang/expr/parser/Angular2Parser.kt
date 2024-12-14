@@ -719,7 +719,7 @@ class Angular2Parser private constructor(
       rootMarker.done(root)
     }
 
-    fun parseJS(builder: PsiBuilder, root: IElementType?) {
+    fun parseJS(builder: PsiBuilder, root: IElementType) {
       Angular2Parser(builder).parseJS(root)
     }
 
