@@ -1,34 +1,38 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angularjs.lang.parser;
+package org.angularjs.lang.parser
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.parsing.*;
-import com.intellij.psi.tree.IElementType;
-import org.angularjs.lang.lexer.AngularJSTokenTypes;
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.parsing.FunctionParser
+import com.intellij.lang.javascript.parsing.JSPsiTypeParser
+import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.lang.javascript.parsing.StatementParser
+import com.intellij.psi.tree.IElementType
+import org.angularjs.lang.lexer.AngularJSTokenTypes
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSParser
-  extends JavaScriptParser<AngularJSExpressionParser, StatementParser<?>, FunctionParser<?>, JSPsiTypeParser<?>> {
-
-  public AngularJSParser(PsiBuilder builder) {
-    super(JavascriptLanguage.INSTANCE, builder);
-    myExpressionParser = new AngularJSExpressionParser(this);
-    myStatementParser = new AngularJSStatementParser(this);
+class AngularJSParser(
+  builder: PsiBuilder,
+) : JavaScriptParser<AngularJSExpressionParser, StatementParser<*>, FunctionParser<*>, JSPsiTypeParser<*>>(
+  JavascriptLanguage.INSTANCE,
+  builder,
+) {
+  init {
+    myExpressionParser = AngularJSExpressionParser(this)
+    myStatementParser = AngularJSStatementParser(this)
   }
 
-  @Override
-  public boolean isIdentifierName(IElementType firstToken) {
-    return super.isIdentifierName(firstToken) || firstToken == AngularJSTokenTypes.THEN;
+  override fun isIdentifierName(firstToken: IElementType?): Boolean {
+    return super.isIdentifierName(firstToken) || firstToken === AngularJSTokenTypes.THEN
   }
 
-  public void parseAngular(IElementType root) {
-    final PsiBuilder.Marker rootMarker = builder.mark();
+  fun parseAngular(root: IElementType) {
+    val rootMarker = builder.mark()
     while (!builder.eof()) {
-      getStatementParser().parseStatement();
+      statementParser.parseStatement()
     }
-    rootMarker.done(root);
+    rootMarker.done(root)
   }
 }

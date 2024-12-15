@@ -11,7 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import org.angularjs.AngularJSBundle;
 import org.angularjs.lang.lexer.AngularJSTokenTypes;
 
-class AngularJSExpressionParser extends ExpressionParser<AngularJSParser> {
+public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser> {
   private final AngularJSParser myParser;
   private final AngularJSMessageFormatParser myAngularJSMessageFormatParser;
 
