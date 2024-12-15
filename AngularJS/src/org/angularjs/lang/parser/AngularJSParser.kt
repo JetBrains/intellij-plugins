@@ -19,10 +19,11 @@ class AngularJSParser(
   JavascriptLanguage.INSTANCE,
   builder,
 ) {
-  init {
-    myExpressionParser = AngularJSExpressionParser(this)
-    myStatementParser = AngularJSStatementParser(this)
-  }
+  override val expressionParser: AngularJSExpressionParser =
+    AngularJSExpressionParser(this)
+
+  override val statementParser: StatementParser<*>
+    get() = AngularJSStatementParser(this)
 
   override fun isIdentifierName(firstToken: IElementType?): Boolean {
     return super.isIdentifierName(firstToken) || firstToken === AngularJSTokenTypes.THEN

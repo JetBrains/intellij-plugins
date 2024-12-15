@@ -14,9 +14,8 @@ class VueTSParser(builder: PsiBuilder) : TypeScriptParser(builder), VueExprParse
 
   private val extraParser = VueJSExtraParser(this, ::parseExpressionOptional, ::parseFilterArgumentList, ::parseScriptGeneric)
 
-  init {
-    myExpressionParser = VueTSExpressionParser(this, extraParser)
-  }
+  override val expressionParser: VueTSExpressionParser =
+    VueTSExpressionParser(this, extraParser)
 
   override fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
     extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_TS)
@@ -45,12 +44,6 @@ class VueTSParser(builder: PsiBuilder) : TypeScriptParser(builder), VueExprParse
     }
     typeArgumentList.done(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
   }
-
-  override val expressionParser: VueTSExpressionParser
-    get() {
-      // Let's hack around TypeScriptParser type parameters
-      return super.expressionParser as VueTSExpressionParser
-    }
 
   class VueTSExpressionParser(parser: VueTSParser, private val extraParser: VueJSExtraParser) : TypeScriptExpressionParser(parser) {
     fun parseFilterArgumentList() {

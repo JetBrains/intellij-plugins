@@ -32,10 +32,11 @@ class Angular2Parser private constructor(
 ) {
   constructor(builder: PsiBuilder) : this(builder, false, false, true)
 
-  init {
-    myExpressionParser = Angular2ExpressionParser()
-    myStatementParser = Angular2StatementParser(this)
-  }
+  override val expressionParser: Angular2ExpressionParser =
+    Angular2ExpressionParser()
+
+  override val statementParser: Angular2StatementParser =
+    Angular2StatementParser(this)
 
   override fun isIdentifierToken(tokenType: IElementType?): Boolean {
     return JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(tokenType)
@@ -51,7 +52,7 @@ class Angular2Parser private constructor(
       while (!builder.eof()) {
         count++
         val expression = builder.mark()
-        if (!expressionParser!!.parseExpressionOptional(false)) {
+        if (!expressionParser.parseExpressionOptional(false)) {
           builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
           builder.advanceLexer()
           expression.drop()
@@ -175,7 +176,7 @@ class Angular2Parser private constructor(
           isVar = true
         }
         else if (builder.tokenType !== JSTokenTypes.LET_KEYWORD
-                 && !expressionParser!!.parsePipe()) {
+                 && !expressionParser.parsePipe()) {
           builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
         binding.done(createTemplateBindingStatement(key, isVar, name))

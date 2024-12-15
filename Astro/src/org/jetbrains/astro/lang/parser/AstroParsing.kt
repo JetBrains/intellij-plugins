@@ -279,10 +279,11 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   inner class AstroJsxParser internal constructor() : TypeScriptParser(AstroLanguage.INSTANCE, builder) {
-    init {
-      myXmlParser = this@AstroParsing
-      myExpressionParser = AstroTypeScriptExpressionParser(this)
-      myStatementParser = object : TypeScriptStatementParser(this) {
+    override val expressionParser: TypeScriptExpressionParser =
+      AstroTypeScriptExpressionParser(this)
+
+    override val statementParser: TypeScriptStatementParser =
+      object : TypeScriptStatementParser(this) {
         override fun parseBlock(): Boolean {
           val mark = builder.mark()
           parseBlockAndAttachStatementsDirectly()
@@ -290,7 +291,9 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
           return true
         }
       }
-    }
+
+    override val xmlParser: JSXmlParser =
+      this@AstroParsing
   }
 
   private inner class AstroTypeScriptExpressionParser(parser: TypeScriptParser) : TypeScriptExpressionParser(parser) {

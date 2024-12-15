@@ -35,8 +35,9 @@ class MdxJSLanguageParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*
   ES6StatementParser<*>,
   ES6FunctionParser<*>,
   JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(ECMA_SCRIPT_6, builder) {
-  init {
-    myStatementParser = object : ES6StatementParser<MdxJSLanguageParser>(this) {
+
+  override val statementParser: ES6StatementParser<*> =
+    object : ES6StatementParser<MdxJSLanguageParser>(this) {
       override fun parseStatement() {
         if (builder.tokenType == JSTokenTypes.XML_START_TAG_START) {
           val exprStatement = this.builder.mark()
@@ -53,8 +54,5 @@ class MdxJSLanguageParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*
           super.parseStatement()
         }
       }
-
     }
-  }
-
 }

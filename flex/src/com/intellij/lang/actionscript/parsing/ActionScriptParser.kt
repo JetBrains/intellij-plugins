@@ -19,11 +19,14 @@ class ActionScriptParser(
   FlexSupportLoader.ECMA_SCRIPT_L4,
   builder,
 ) {
-  init {
-    myStatementParser = ActionScriptStatementParser(this)
-    myFunctionParser = ActionScriptFunctionParser(this)
-    myExpressionParser = ActionScriptExpressionParser(this)
-  }
+  override val expressionParser: ActionScriptExpressionParser =
+    ActionScriptExpressionParser(this)
+
+  override val statementParser: ActionScriptStatementParser =
+    ActionScriptStatementParser(this)
+
+  override val functionParser: ActionScriptFunctionParser =
+    ActionScriptFunctionParser(this)
 
   override fun isIdentifierToken(tokenType: IElementType?): Boolean {
     return JSKeywordSets.AS_IDENTIFIER_TOKENS_SET.contains(tokenType)
@@ -33,7 +36,7 @@ class ActionScriptParser(
     val marker = builder.mark()
     builder.advanceLexer()
     if (builder.tokenType === JSTokenTypes.GENERIC_SIGNATURE_START) {
-      myTypeParser.parseECMA4GenericSignature()
+      typeParser.parseECMA4GenericSignature()
     }
     marker.done(type)
   }

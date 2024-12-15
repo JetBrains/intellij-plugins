@@ -19,9 +19,8 @@ class VueJSParser(builder: PsiBuilder)
 
   private val extraParser = VueJSExtraParser(this, ::parseExpressionOptional, ::parseFilterArgumentList, ::parseScriptGeneric)
 
-  init {
-    myExpressionParser = VueJSExpressionParser(this, extraParser)
-  }
+  override val expressionParser: VueJSExpressionParser =
+    VueJSExpressionParser(this, extraParser)
 
   override fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
     extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_JS)
