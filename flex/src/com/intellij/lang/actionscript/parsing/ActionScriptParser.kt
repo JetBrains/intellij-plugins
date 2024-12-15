@@ -1,49 +1,51 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.intellij.lang.actionscript.parsing;
+package com.intellij.lang.actionscript.parsing
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.javascript.JSKeywordSets;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
-import com.intellij.lang.javascript.parsing.*;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.javascript.JSKeywordSets
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.flex.FlexSupportLoader
+import com.intellij.lang.javascript.parsing.ExpressionParser
+import com.intellij.lang.javascript.parsing.JSPsiTypeParser
+import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.psi.tree.IElementType
 
 /**
  * @author Konstantin.Ulitin
  */
-public final class ActionScriptParser extends JavaScriptParser<ExpressionParser<?>, ActionScriptStatementParser, ActionScriptFunctionParser, JSPsiTypeParser<?>> {
-  public ActionScriptParser(PsiBuilder builder) {
-    super(FlexSupportLoader.ECMA_SCRIPT_L4, builder);
-    myStatementParser = new ActionScriptStatementParser(this);
-    myFunctionParser = new ActionScriptFunctionParser(this);
-    myExpressionParser = new ActionScriptExpressionParser(this);
+class ActionScriptParser(
+  builder: PsiBuilder,
+) : JavaScriptParser<ExpressionParser<*>, ActionScriptStatementParser, ActionScriptFunctionParser, JSPsiTypeParser<*>>(
+  FlexSupportLoader.ECMA_SCRIPT_L4,
+  builder,
+) {
+  init {
+    myStatementParser = ActionScriptStatementParser(this)
+    myFunctionParser = ActionScriptFunctionParser(this)
+    myExpressionParser = ActionScriptExpressionParser(this)
   }
 
-  @Override
-  public boolean isIdentifierToken(IElementType tokenType) {
-    return JSKeywordSets.AS_IDENTIFIER_TOKENS_SET.contains(tokenType);
+  override fun isIdentifierToken(tokenType: IElementType?): Boolean {
+    return JSKeywordSets.AS_IDENTIFIER_TOKENS_SET.contains(tokenType)
   }
 
-  @Override
-  public void buildTokenElement(@NotNull IElementType type) {
-    final PsiBuilder.Marker marker = builder.mark();
-    builder.advanceLexer();
-    if (builder.getTokenType() == JSTokenTypes.GENERIC_SIGNATURE_START) {
-      myTypeParser.parseECMA4GenericSignature();
+  override fun buildTokenElement(type: IElementType) {
+    val marker = builder.mark()
+    builder.advanceLexer()
+    if (builder.tokenType === JSTokenTypes.GENERIC_SIGNATURE_START) {
+      myTypeParser.parseECMA4GenericSignature()
     }
-    marker.done(type);
+    marker.done(type)
   }
 
-  @Override
-  protected void doParseJS() {
+  override fun doParseJS() {
     while (!builder.eof()) {
-      if (builder.getTokenType() == JSTokenTypes.AT) {
-        builder.advanceLexer();
-        getStatementParser().parseAttributeBody();
+      if (builder.tokenType === JSTokenTypes.AT) {
+        builder.advanceLexer()
+        statementParser.parseAttributeBody()
       }
       else {
-        getStatementParser().parseStatement();
+        statementParser.parseStatement()
       }
     }
   }
