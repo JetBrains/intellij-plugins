@@ -25,7 +25,7 @@ class Angular2ParserDefinition : JavascriptParserDefinition() {
     return Angular2PsiParser()
   }
 
-  override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
+  override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
     return Angular2Parser(builder)
   }
 

@@ -27,7 +27,7 @@ public class ECMAL4ParserDefinition extends JavascriptParserDefinition {
   }
 
   @Override
-  public @NotNull JavaScriptParser<?, ?, ?, ?> createJSParser(@NotNull PsiBuilder builder) {
+  public @NotNull JavaScriptParser createJSParser(@NotNull PsiBuilder builder) {
     return new ActionScriptParser(builder);
   }
 }

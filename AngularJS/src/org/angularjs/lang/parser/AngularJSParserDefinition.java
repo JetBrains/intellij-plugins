@@ -30,7 +30,7 @@ public final class AngularJSParserDefinition extends JavascriptParserDefinition 
   }
 
   @Override
-  public @NotNull JavaScriptParser<?, ?, ?, ?> createJSParser(@NotNull PsiBuilder builder) {
+  public @NotNull JavaScriptParser createJSParser(@NotNull PsiBuilder builder) {
     return new AngularJSParser(builder);
   }
 

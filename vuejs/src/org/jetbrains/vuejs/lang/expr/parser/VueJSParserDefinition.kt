@@ -32,7 +32,7 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
     }
   }
 
-  override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
+  override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
     return VueJSParser(builder)
   }
 

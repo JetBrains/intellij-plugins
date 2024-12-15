@@ -37,7 +37,7 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
     return AstroParser()
   }
 
-  override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
+  override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
     return AstroParsing(builder).tsxParser
   }
 

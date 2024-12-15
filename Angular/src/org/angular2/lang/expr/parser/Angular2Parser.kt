@@ -5,7 +5,10 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.WhitespacesBinders
 import com.intellij.lang.javascript.*
-import com.intellij.lang.javascript.parsing.*
+import com.intellij.lang.javascript.parsing.AdvancesLexer
+import com.intellij.lang.javascript.parsing.ExpressionParser
+import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.lang.javascript.parsing.StatementParser
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.TokenType
@@ -18,8 +21,6 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingStatement
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingsStatement
-import org.angular2.lang.expr.parser.Angular2Parser.Angular2ExpressionParser
-import org.angular2.lang.expr.parser.Angular2Parser.Angular2StatementParser
 import org.jetbrains.annotations.NonNls
 
 class Angular2Parser private constructor(
@@ -27,7 +28,7 @@ class Angular2Parser private constructor(
   private val myIsAction: Boolean,
   private val myIsSimpleBinding: Boolean,
   private val myIsJavaScript: Boolean,
-) : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(
+) : JavaScriptParser(
   Angular2Language, builder
 ) {
   constructor(builder: PsiBuilder) : this(builder, false, false, true)

@@ -3,19 +3,16 @@ package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ecmascript6.parsing.ES6ExpressionParser
-import com.intellij.lang.ecmascript6.parsing.ES6FunctionParser
 import com.intellij.lang.ecmascript6.parsing.ES6Parser
-import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.parsing.JSPsiTypeParser
-import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 
-class VueJSParser(builder: PsiBuilder)
-  : ES6Parser<VueJSParser.VueJSExpressionParser, ES6StatementParser<*>, ES6FunctionParser<*>,
-  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder), VueExprParser {
+class VueJSParser(
+  builder: PsiBuilder,
+) : ES6Parser(builder),
+    VueExprParser {
 
   private val extraParser = VueJSExtraParser(this, ::parseExpressionOptional, ::parseFilterArgumentList, ::parseScriptGeneric)
 

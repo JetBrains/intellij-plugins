@@ -5,8 +5,6 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.flex.FlexSupportLoader
-import com.intellij.lang.javascript.parsing.ExpressionParser
-import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.tree.IElementType
 
@@ -15,7 +13,7 @@ import com.intellij.psi.tree.IElementType
  */
 class ActionScriptParser(
   builder: PsiBuilder,
-) : JavaScriptParser<ExpressionParser<*>, ActionScriptStatementParser, ActionScriptFunctionParser, JSPsiTypeParser<*>>(
+) : JavaScriptParser(
   FlexSupportLoader.ECMA_SCRIPT_L4,
   builder,
 ) {

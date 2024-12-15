@@ -2,15 +2,12 @@ package org.intellij.plugin.mdx.js
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.WhitespacesBinders
-import com.intellij.lang.ecmascript6.parsing.ES6ExpressionParser
-import com.intellij.lang.ecmascript6.parsing.ES6FunctionParser
 import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
-import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.lang.javascript.types.JSFileElementType
@@ -25,16 +22,18 @@ class MdxJSParserDefinition : ECMA6ParserDefinition() {
     return FILE
   }
 
-  override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
+  override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
     return MdxJSLanguageParser(builder)
   }
 }
 
 
-class MdxJSLanguageParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>,
-  ES6StatementParser<*>,
-  ES6FunctionParser<*>,
-  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(ECMA_SCRIPT_6, builder) {
+class MdxJSLanguageParser(
+  builder: PsiBuilder,
+) : ES6Parser(
+  ECMA_SCRIPT_6,
+  builder,
+) {
 
   override val statementParser: ES6StatementParser<*> =
     object : ES6StatementParser<MdxJSLanguageParser>(this) {

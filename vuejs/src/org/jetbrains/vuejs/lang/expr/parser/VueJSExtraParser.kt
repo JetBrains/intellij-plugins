@@ -15,11 +15,11 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 
 class VueJSExtraParser(
-  parser: ES6Parser<*, *, *, *>,
+  parser: ES6Parser,
   private val parseExpressionOptional: () -> Boolean,
   private val parseArgumentListNoMarker: () -> Unit,
   private val parseScriptGeneric: () -> Unit,
-) : JavaScriptParserBase<ES6Parser<*, *, *, *>>(parser) {
+) : JavaScriptParserBase<ES6Parser>(parser) {
   private val statementParser get() = myJavaScriptParser.statementParser
 
   fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?, expressionContent: IElementType) {
@@ -114,7 +114,7 @@ class VueJSExtraParser(
 
   private fun parseParametersExpression(exprType: IElementType, @Suppress("SameParameterValue") paramType: IElementType) {
     val parametersList = builder.mark()
-    val functionParser = object : ES6FunctionParser<ES6Parser<*, *, *, *>>(myJavaScriptParser) {
+    val functionParser = object : ES6FunctionParser<ES6Parser>(myJavaScriptParser) {
       override fun getParameterType(): IElementType = paramType
     }
     var first = true

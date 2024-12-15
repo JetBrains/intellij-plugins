@@ -3,8 +3,6 @@ package org.angularjs.lang.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.lang.javascript.parsing.FunctionParser
-import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.parsing.StatementParser
 import com.intellij.psi.tree.IElementType
@@ -15,7 +13,7 @@ import org.angularjs.lang.lexer.AngularJSTokenTypes
  */
 class AngularJSParser(
   builder: PsiBuilder,
-) : JavaScriptParser<AngularJSExpressionParser, StatementParser<*>, FunctionParser<*>, JSPsiTypeParser<*>>(
+) : JavaScriptParser(
   JavascriptLanguage.INSTANCE,
   builder,
 ) {
