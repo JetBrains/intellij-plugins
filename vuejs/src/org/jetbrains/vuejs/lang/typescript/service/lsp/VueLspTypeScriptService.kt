@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.lang.typescript.service.lsp
 import com.google.gson.JsonElement
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
-import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspCustomTypeScriptCommandRequest
+import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilter
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -26,13 +26,12 @@ import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.VueSettings
 
-class VueLspTypeScriptService(project: Project) : BaseLspTypeScriptService(project, VueLspServerSupportProvider::class.java) {
+class VueLspTypeScriptService(project: Project)
+  : JSFrameworkLspTypeScriptService(project, VueLspServerSupportProvider::class.java, VueServiceSetActivationRule) {
   override val name: String
     get() = VueBundle.message("vue.service.name")
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
-
-  override fun isAcceptable(file: VirtualFile) = VueServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     // Feel free to replace with the longer version
