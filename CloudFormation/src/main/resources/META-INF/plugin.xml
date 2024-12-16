@@ -16,7 +16,7 @@
       </li>
       <li>File structure (aka Go to member) (Ctrl-F12 on Windows): fast jump to any entity in the file</li>
       <li>Completion in Ref clause</li>
-      <li>Completion of resource types and properties</li>
+      <li>Completion of resources types and properties</li>
       <li>Live template for Ref clause: type "ref" and press Tab</li>
       <li>Ctrl-Click on any reference to jump to its definition</li>
       <li>Quick Documentation for resource types and properties</li>
@@ -35,7 +35,7 @@
   <actions resource-bundle="messages.CloudFormationBundle">
     <action id="NewCloudFormationFile" class="com.intellij.aws.cloudformation.NewCloudFormationFile"
             icon="com.intellij.aws.cloudformation.CloudFormationIcons.AwsFile">
-      <add-to-group group-id="NewMicroservices"/>
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFromTemplate"/>
     </action>
   </actions>
 
