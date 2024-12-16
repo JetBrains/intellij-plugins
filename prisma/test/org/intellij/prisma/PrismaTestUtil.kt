@@ -10,7 +10,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import java.io.File
 
-private const val PRISMA_TEST_DATA_PATH = "/prisma/test/testData"
+private const val PRISMA_TEST_DATA_PATH = "/prisma/testData"
 
 fun getPrismaTestDataPath(): String =
   getContribPath() + PRISMA_TEST_DATA_PATH

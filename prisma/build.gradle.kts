@@ -26,7 +26,7 @@ java {
 
     test {
       java.srcDirs("test")
-      resources.srcDir("test/testData")
+      resources.srcDir("testData")
     }
   }
 }
@@ -40,7 +40,7 @@ kotlin {
 
     test {
       kotlin.srcDir("test")
-      resources.srcDir("test/testData")
+      resources.srcDir("testData")
     }
   }
 }
