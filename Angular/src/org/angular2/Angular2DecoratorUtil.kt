@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -214,5 +215,5 @@ object Angular2DecoratorUtil {
   }
 
   private fun JSExpression.unwrapParenthesis(): JSExpression? =
-    if (this is JSParenthesizedExpression) this.innerExpression?.unwrapParenthesis() else this
+    JSUtils.unparenthesize(this)
 }
