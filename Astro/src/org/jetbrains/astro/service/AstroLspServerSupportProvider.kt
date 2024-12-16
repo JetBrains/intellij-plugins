@@ -2,23 +2,18 @@
 package org.jetbrains.astro.service
 
 import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
+import com.intellij.lang.typescript.lsp.JSFrameworkLspServerSupportProvider
 import com.intellij.lang.typescript.lsp.JSLspServerWidgetItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.LspServerSupportProvider
-import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 
 
-class AstroLspServerSupportProvider : LspServerSupportProvider {
-  override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
-    if (AstroServiceSetActivationRule.isLspServerEnabledAndAvailable(project, file)) {
-      serverStarter.ensureServerStarted(AstroLspServerDescriptor(project))
-    }
-  }
+class AstroLspServerSupportProvider : JSFrameworkLspServerSupportProvider(AstroServiceSetActivationRule) {
+  override fun createLspServerDescriptor(project: Project): JSFrameworkLspServerDescriptor = AstroLspServerDescriptor(project)
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     JSLspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, AstroIcons.Astro, AstroServiceConfigurable::class.java)
