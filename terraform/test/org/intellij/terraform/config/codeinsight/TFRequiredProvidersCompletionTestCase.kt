@@ -60,11 +60,11 @@ internal class TFRequiredProvidersCompletionTestCase : TFBaseCompletionTestCase(
                   """.trimIndent(), false)
   }
 
-  fun performBlockCompletionRequiredProviders(fileName: String, initialText: String, finalText: String, completionEnabled: Boolean) {
+  fun performBlockCompletionRequiredProviders(fileName: String, initialText: String, finalText: String, importProvidersAutomatically: Boolean) {
     val file = myFixture.configureByText(fileName, initialText)
 
     val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
-    settings.IMPORT_PROVIDERS_AUTOMATICALLY = completionEnabled
+    settings.IMPORT_PROVIDERS_AUTOMATICALLY = importProvidersAutomatically
 
     val element = myFixture.complete(CompletionType.BASIC, 2).first { el: LookupElement? ->
       val resourceType = el!!.getObject() as ResourceType
