@@ -22,7 +22,7 @@ public final class TslFileType extends LanguageFileType {
 
   @Override
   public @NotNull String getDescription() {
-    return "Java toString output";
+    return ToStringReaderBundle.message("label.java.toString.output");
   }
 
   @Override

@@ -16,18 +16,18 @@ import static com.intellij.tsr.TslSyntaxHighlighter.TSL_CLASSNAME;
 
 final class TslColorSettingsPage implements ColorSettingsPage {
   private final AttributesDescriptor[] attributesDescriptors = new AttributesDescriptor[]{
-      new AttributesDescriptor("Keyword", TslSyntaxHighlighter.TSL_KEYWORD),
-      new AttributesDescriptor("Class name", TSL_CLASSNAME),
-      new AttributesDescriptor("String", TslSyntaxHighlighter.TSL_STRING),
-      new AttributesDescriptor("Number", TslSyntaxHighlighter.TSL_NUMBER),
-      new AttributesDescriptor("Boolean", TslSyntaxHighlighter.TSL_BOOLEAN),
-      new AttributesDescriptor("Field name", TslSyntaxHighlighter.TSL_FIELD_NAME),
-      new AttributesDescriptor("Constant", TslSyntaxHighlighter.TSL_CONSTANT),
-      new AttributesDescriptor("Hashcode", TslSyntaxHighlighter.TSL_HASHCODE),
-      new AttributesDescriptor("Braces and Operators//Brackets", TslSyntaxHighlighter.TSL_BRACKETS),
-      new AttributesDescriptor("Braces and Operators//Braces", TslSyntaxHighlighter.TSL_BRACES),
-      new AttributesDescriptor("Braces and Operators//Parentheses", TslSyntaxHighlighter.TSL_PARENTHESES),
-      new AttributesDescriptor("Braces and Operators//Comma", TslSyntaxHighlighter.TSL_COMMA)
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.keyword"), TslSyntaxHighlighter.TSL_KEYWORD),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.class.name"), TSL_CLASSNAME),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.string"), TslSyntaxHighlighter.TSL_STRING),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.number"), TslSyntaxHighlighter.TSL_NUMBER),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.boolean"), TslSyntaxHighlighter.TSL_BOOLEAN),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.field.name"), TslSyntaxHighlighter.TSL_FIELD_NAME),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.constant"), TslSyntaxHighlighter.TSL_CONSTANT),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.hashcode"), TslSyntaxHighlighter.TSL_HASHCODE),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.braces.operators.brackets"), TslSyntaxHighlighter.TSL_BRACKETS),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.braces.operators.braces"), TslSyntaxHighlighter.TSL_BRACES),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.braces.operators.parentheses"), TslSyntaxHighlighter.TSL_PARENTHESES),
+      new AttributesDescriptor(ToStringReaderBundle.messagePointer("attribute.descriptor.braces.operators.comma"), TslSyntaxHighlighter.TSL_COMMA)
   };
 
   @Override
