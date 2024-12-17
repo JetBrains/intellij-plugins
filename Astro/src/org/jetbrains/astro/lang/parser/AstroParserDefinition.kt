@@ -29,11 +29,11 @@ import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.psi.AstroHtmlTag
 
 open class AstroParserDefinition : JavascriptParserDefinition() {
-  override fun createLexer(project: Project): Lexer {
+  override fun createLexer(project: Project?): Lexer {
     return AstroLexer(project, false, false)
   }
 
-  override fun createParser(project: Project): PsiParser {
+  override fun createParser(project: Project?): PsiParser {
     return AstroParser()
   }
 
@@ -57,7 +57,7 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
     return TokenSet.orSet(super.getCommentTokens(), XmlTokenType.COMMENTS)
   }
 
-  override fun spaceExistenceTypeBetweenTokens(left: ASTNode?, right: ASTNode?): ParserDefinition.SpaceRequirements {
+  override fun spaceExistenceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements {
     return XMLParserDefinition.canStickTokensTogether(left, right)
              .takeIf { it != ParserDefinition.SpaceRequirements.MAY }
            ?: super.spaceExistenceTypeBetweenTokens(left, right)
