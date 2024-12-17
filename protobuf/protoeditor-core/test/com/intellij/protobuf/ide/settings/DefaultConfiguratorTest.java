@@ -33,7 +33,6 @@ import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.io.File;
-import java.nio.file.Paths;
 
 import static com.intellij.protobuf.TestUtils.notNull;
 
@@ -110,9 +109,10 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
       VirtualFileManager.getInstance().findFileByUrl(includeEntry.getLocation());
     assertNotNull(descriptorDir);
 
-    File extractedDescriptor = Paths.get(descriptorDir.getPath(), "google/protobuf/descriptor.proto").toFile();
-    assertTrue(extractedDescriptor.exists());
-    VirtualFile file = VfsUtil.findFileByIoFile(extractedDescriptor, true);
+    String extractedDescriptorPath = includeEntry.getLocation() + "/google/protobuf/descriptor.proto";
+    VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(extractedDescriptorPath);
+    assertNotNull(file);
+    assertTrue(file.exists());
     String text = LoadTextUtil.loadText(file).toString();
     // Simple check to make sure it's a descriptor.
     assertTrue(text.contains("FileOptions"));
