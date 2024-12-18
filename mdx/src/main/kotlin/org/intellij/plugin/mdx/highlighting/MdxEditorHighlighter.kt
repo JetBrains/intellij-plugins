@@ -1,6 +1,6 @@
 package org.intellij.plugin.mdx.highlighting
 
-import com.intellij.lang.javascript.DialectOptionHolder.JS_WITH_JSX
+import com.intellij.lang.javascript.DialectOptionHolder.Companion.JS_WITH_JSX
 import com.intellij.lang.javascript.dialects.ECMA6SyntaxHighlighterFactory
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.ex.util.LayerDescriptor

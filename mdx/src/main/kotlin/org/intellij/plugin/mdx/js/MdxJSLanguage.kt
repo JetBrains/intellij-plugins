@@ -1,6 +1,6 @@
 package org.intellij.plugin.mdx.js
 
-import com.intellij.lang.javascript.DialectOptionHolder.JS_WITH_JSX
+import com.intellij.lang.javascript.DialectOptionHolder.Companion.JS_WITH_JSX
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
 import com.intellij.openapi.fileTypes.LanguageFileType

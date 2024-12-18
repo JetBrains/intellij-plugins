@@ -13,9 +13,7 @@ class AstroLanguage private constructor()
     DependentLanguage {
 
   private object AstroDialectOptionHolder : DialectOptionHolder("TSX", true) {
-    override fun isJSX(): Boolean {
-      return false
-    }
+    override val isJSX: Boolean = false
   }
 
   companion object {
