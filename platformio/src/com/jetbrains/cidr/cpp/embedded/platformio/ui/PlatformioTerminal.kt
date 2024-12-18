@@ -16,6 +16,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.currentThreadCoroutineScope
@@ -132,7 +133,9 @@ fun doRun(service: PlatformioService,
 
     RunContentManager.getInstance(project).showRunContent(executor, descriptor)
 
-    FileDocumentManager.getInstance().saveAllDocuments()
+    WriteIntentReadAction.run {
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
 
     console.attachToProcess(processHandler)
 
