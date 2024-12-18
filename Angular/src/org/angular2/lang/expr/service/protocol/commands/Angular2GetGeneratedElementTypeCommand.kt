@@ -14,7 +14,7 @@ class Angular2GetGeneratedElementTypeCommand(args: Angular2GetGeneratedElementTy
   override fun processResult(answer: JsonElement): JsonObject? =
     answer as? JsonObject
 
-  override fun onServiceTaskCompleted(task: TypeScriptServiceRequest<Angular2GetGeneratedElementTypeRequestArgs, JsonObject>) {
+  override fun onServiceTaskCompleted(task: TypeScriptServiceRequest<Angular2GetGeneratedElementTypeRequestArgs, JsonObject, *>) {
     if (JSEvaluationStatisticsCollector.State.isEnabled()) {
       application.service<JSEvaluationStatisticsCollector>().responseReady(!task.wasExecuted)
     }
