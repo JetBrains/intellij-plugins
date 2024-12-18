@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -44,20 +44,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
+public final class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
   private static final Logger LOG = Logger.getInstance(FlexBuilder.class.getName());
   private JpsBuiltInFlexCompilerHandler myBuiltInCompilerHandler;
 
   private enum Status {Ok, Failed, Cancelled}
 
-  protected FlexBuilder() {
+  FlexBuilder() {
     super(Collections.singletonList(FlexBuildTargetType.INSTANCE));
   }
 
   @Override
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return "Flash Compiler";
   }
 
@@ -80,10 +79,10 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   }
 
   @Override
-  public void build(@NotNull final FlexBuildTarget buildTarget,
-                    @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexBuildTarget> holder,
-                    @NotNull final BuildOutputConsumer outputConsumer,
-                    @NotNull final CompileContext context) throws ProjectBuildException, IOException {
+  public void build(final @NotNull FlexBuildTarget buildTarget,
+                    final @NotNull DirtyFilesHolder<BuildRootDescriptor, FlexBuildTarget> holder,
+                    final @NotNull BuildOutputConsumer outputConsumer,
+                    final @NotNull CompileContext context) throws ProjectBuildException, IOException {
     final Collection<String> dirtyFilePaths = new ArrayList<>();
 
     holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexBuildTarget>() {

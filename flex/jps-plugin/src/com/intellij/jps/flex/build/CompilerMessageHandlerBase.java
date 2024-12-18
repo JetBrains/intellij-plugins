@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -192,7 +193,7 @@ public abstract class CompilerMessageHandlerBase {
   }
 
   private void checkCancelled() {
-    if (!myCompilationCancelled && myContext.getCancelStatus().isCanceled()) {
+    if (!myCompilationCancelled && myContext.isCanceled()) {
       myCompilationCancelled = true;
       onCancelled();
     }
