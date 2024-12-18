@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 
-public class RefreshRevealAction extends DumbAwareAction {
+public final class RefreshRevealAction extends DumbAwareAction {
   public static final Icon ICON = AppcodeRevealIcons.RunWithReveal;
 
   @NotNull private final AppCodeRunConfiguration myConfiguration;
