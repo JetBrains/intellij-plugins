@@ -24,7 +24,7 @@ class NuxtTypeScriptTypePatcher : TypeScriptCompilerTypePatcher {
 
   private fun isAdjustableType(type: JSType): Boolean =
     if (type is TypeScriptCompilerObjectTypeImpl)
-      isVueFilePath(type.tscType.symbol?.escapedName)
+      isVueFilePath(type.tscType.value.symbol?.escapedName)
     else
       type is JSAnyType
 

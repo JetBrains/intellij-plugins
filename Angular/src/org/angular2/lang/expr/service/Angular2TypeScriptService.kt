@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.service.JSLanguageServiceQueue
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
@@ -277,7 +278,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // which is the transpiledFile.originalFile
       val projectFileName = TypeScriptConfigUtil.getProjectFileName(transpiledFile.originalFile.originalFile)
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
-      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeResponse(null, args, ::Angular2GetGeneratedElementTypeCommand)
+      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeToJSType(
+        transpiledFile.originalFile, null, args, ::Angular2GetGeneratedElementTypeCommand)
     }
   }
 }
