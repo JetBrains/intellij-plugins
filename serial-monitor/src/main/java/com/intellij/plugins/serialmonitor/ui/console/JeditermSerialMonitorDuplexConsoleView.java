@@ -59,6 +59,12 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
         .newConnection(portProfile.getPortName());
     JeditermConsoleView textConsoleView = new JeditermConsoleView(project, connection);
     HexConsoleView hexConsoleView = new HexConsoleView(project, true);
+
+    // Set primary console as default
+    if (!PropertiesComponent.getInstance().isValueSet(STATE_STORAGE_KEY)) {
+      PropertiesComponent.getInstance().setValue(STATE_STORAGE_KEY, true);
+    }
+
     JeditermSerialMonitorDuplexConsoleView consoleView =
       new JeditermSerialMonitorDuplexConsoleView(connection,
                                                  textConsoleView,
