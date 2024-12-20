@@ -13,7 +13,7 @@ interface VueScopeElement : VueDocumentedItem {
 
   val global: VueGlobal?
     get() {
-      return source?.let { VueModelManager.getGlobal(it) }
+      return source?.takeIf { it.isValid }?.let { VueModelManager.getGlobal(it) }
     }
 
   fun acceptEntities(visitor: VueModelVisitor,
