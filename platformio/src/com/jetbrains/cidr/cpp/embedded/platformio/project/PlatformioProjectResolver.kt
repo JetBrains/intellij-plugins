@@ -468,7 +468,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         if (logStdout || outputType != ProcessOutputType.STDOUT) {
-          listener.onTaskOutput(id, event.text, outputType == ProcessOutputType.STDOUT)
+          listener.onTaskOutput(id, event.text, !ProcessOutputType.isStderr(outputType))
         }
       }
     })

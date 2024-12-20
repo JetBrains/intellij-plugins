@@ -106,7 +106,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
       val processHandler = CapturingProcessHandler(compilerCommandLine.build())
       processHandler.addProcessListener(object : ProcessListener {
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-          buildProgress.output(event.text, outputType != ProcessOutputTypes.STDERR)
+          buildProgress.output(event.text, !ProcessOutputType.isStderr(outputType))
         }
       })
 
