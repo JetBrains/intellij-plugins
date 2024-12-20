@@ -47,7 +47,7 @@ class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGen
 
   override fun presentablePackageName(): String = "create-&next-app:"
 
-  override fun createPeer(): ProjectGeneratorPeer<Settings?> {
+  override fun createPeer(): ProjectGeneratorPeer<Settings> {
     return object : NpmPackageGeneratorPeer() {
       private lateinit var typescript: JBCheckBox
 

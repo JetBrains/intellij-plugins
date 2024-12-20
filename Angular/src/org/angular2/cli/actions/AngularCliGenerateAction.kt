@@ -213,11 +213,13 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val module = modules.firstOrNull() ?: return
 
     val filter = AngularCliFilter(project, cli.path)
+    val title = schematic.name
+    requireNotNull(title)
     NpmPackageProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
                                         Function { pkg -> pkg.findBinFilePath("ng")?.toString() },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, JavaScriptBundle.message("generating.0", cli.name),
-                                        arrayOf(filter), "generate", schematic.name, *arguments)
+                                        arrayOf(filter), "generate", title, *arguments)
   }
 
   override fun update(e: AnActionEvent) {

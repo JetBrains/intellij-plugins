@@ -42,9 +42,9 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
   }
 
 
-  override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry) {}
+  override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {}
 
-  override fun generatorArgs(project: Project?, dir: VirtualFile, settings: Settings): Array<String> {
+  override fun generatorArgs(project: Project, dir: VirtualFile, settings: Settings): Array<String> {
     val workingDir = dir.name
     return arrayOf(CREATE_COMMAND, workingDir, "--no-install")
   }

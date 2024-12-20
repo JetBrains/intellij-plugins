@@ -79,9 +79,9 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     }
   }
 
-  override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry) {}
+  override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {}
 
-  override fun generatorArgs(project: Project?, dir: VirtualFile, settings: Settings): Array<String> {
+  override fun generatorArgs(project: Project, dir: VirtualFile, settings: Settings): Array<String> {
     val default = settings.getUserData(DEFAULT_PROJECT_SETUP_KEY) ?: DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED
     val workingDir = if (generateInTemp()) dir.name else "."
 
