@@ -1,241 +1,162 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.prettierjs;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.intellij.prettierjs
 
-import com.google.gson.JsonObject;
-import com.intellij.javascript.nodejs.execution.NodeTargetRun;
-import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
-import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.service.*;
-import com.intellij.lang.javascript.service.protocol.*;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.webcore.util.JsonUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun
+import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
+import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
+import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.service.*
+import com.intellij.lang.javascript.service.protocol.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.webcore.util.JsonUtil
+import java.io.File
+import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
+class PrettierLanguageServiceImpl(
+  project: Project,
+  private val workDir: VirtualFile,
+) : JSLanguageServiceBase(project), PrettierLanguageService {
+  @Volatile
+  private var flushConfigCache = false
 
-import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.Holder.LOGGER;
-
-public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implements PrettierLanguageService {
-  private final VirtualFile myWorkingDirectory;
-  private volatile boolean myFlushConfigCache;
-
-  public PrettierLanguageServiceImpl(@NotNull Project project,
-                                     @NotNull VirtualFile workingDirectory) {
-    super(project);
-    myWorkingDirectory = workingDirectory;
-    project.getMessageBus().connect(this).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-      @Override
-      public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
-        for (VFileEvent event : events) {
-          if (!(event instanceof VFileContentChangeEvent) || PrettierUtil.isConfigFileOrPackageJson(event.getFile())) {
-            myFlushConfigCache = true;
-            break;
-          }
+  init {
+    project.getMessageBus().connect(this).subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
+      override fun after(events: List<VFileEvent>) {
+        if (events.any { it !is VFileContentChangeEvent || PrettierUtil.isConfigFileOrPackageJson(it.file) }) {
+          flushConfigCache = true
         }
       }
-    });
+    })
   }
 
-  @Nullable
-  @Override
-  public CompletableFuture<FormatResult> format(@NotNull String filePath,
-                                                @Nullable String ignoreFilePath,
-                                                @NotNull String text,
-                                                @NotNull NodePackage prettierPackage,
-                                                @Nullable TextRange range) {
-    filePath = JSLanguageServiceUtil.normalizeNameAndPath(filePath);
-    ignoreFilePath = JSLanguageServiceUtil.normalizeNameAndPath(ignoreFilePath);
-    JSLanguageServiceQueue process = getProcess();
-    if (process == null || !process.isValid()) {
-      return CompletableFuture.completedFuture(FormatResult.error(PrettierBundle.message("service.not.started.message")));
+  override fun format(
+    filePath: String,
+    ignoreFilePath: String?,
+    text: String,
+    prettierPackage: NodePackage,
+    range: TextRange?,
+  ): CompletableFuture<PrettierLanguageService.FormatResult?>? {
+    val process = process
+    if (process == null || !process.isValid) {
+      return CompletableFuture.completedFuture(
+        PrettierLanguageService.FormatResult.error(PrettierBundle.message("service.not.started.message")))
     }
 
-    // Prettier may remove trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
+    // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
     // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
-    boolean forceLineBreakAtEof = range != null && range.getEndOffset() < text.length() && text.endsWith("\n");
-    ReformatFileCommand command =
-      new ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, myFlushConfigCache);
-    return process.execute(command, (ignored, response) -> {
-      myFlushConfigCache = false;
-      return parseReformatResponse(response, forceLineBreakAtEof);
-    });
+    val forceLineBreakAtEof = range != null && range.endOffset < text.length && text.endsWith("\n")
+    val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, flushConfigCache)
+    return process.execute(command) { _, response: JSLanguageServiceAnswer ->
+      flushConfigCache = false
+      parseReformatResponse(response, forceLineBreakAtEof)
+    }
   }
 
-
-  private static @NotNull FormatResult parseReformatResponse(@NotNull JSLanguageServiceAnswer response, boolean forceLineBreakAtEof) {
-    JsonObject jsonObject = response.getElement();
-    final String error = JsonUtil.getChildAsString(jsonObject, "error");
-    if (!StringUtil.isEmpty(error)) {
-      return FormatResult.error(error);
+  private fun parseReformatResponse(response: JSLanguageServiceAnswer, forceLineBreakAtEof: Boolean): PrettierLanguageService.FormatResult {
+    val jsonObject = response.element
+    val error = JsonUtil.getChildAsString(jsonObject, "error")
+    if (error?.isNotEmpty() == true) {
+      return PrettierLanguageService.FormatResult.error(error)
     }
     if (JsonUtil.getChildAsBoolean(jsonObject, "ignored", false)) {
-      return FormatResult.IGNORED;
+      return PrettierLanguageService.FormatResult.IGNORED
     }
     if (JsonUtil.getChildAsBoolean(jsonObject, "unsupported", false)) {
-      return FormatResult.UNSUPPORTED;
+      return PrettierLanguageService.FormatResult.UNSUPPORTED
     }
 
-    String formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted");
-    LOGGER.assertTrue(formattedResult != null);
+    var formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted")!!
     if (forceLineBreakAtEof && !formattedResult.endsWith("\n")) {
-      // Prettier may remove trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
+      // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
       // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
-      formattedResult += '\n';
+      formattedResult += '\n'
     }
-    return FormatResult.formatted(formattedResult);
+    return PrettierLanguageService.FormatResult.formatted(formattedResult)
   }
 
-  @Nullable
-  @Override
-  protected JSLanguageServiceQueue createLanguageServiceQueue() {
-    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myProject, o -> {}),
-                                          myProcessConnector, myDefaultReporter, new JSLanguageServiceDefaultCacheData());
-  }
+  override fun createLanguageServiceQueue(): JSLanguageServiceQueue =
+    JSLanguageServiceQueueImpl(myProject,
+                               Protocol(myProject, Consumer { o: Any? -> }),
+                               myProcessConnector,
+                               myDefaultReporter,
+                               JSLanguageServiceDefaultCacheData())
 
-  @Override
-  protected boolean needInitToolWindow() {
-    return false;
-  }
+  override fun needInitToolWindow(): Boolean = false
 
-  private class Protocol extends JSLanguageServiceNodeStdProtocolBase {
-    Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
-      super("prettier", project, readyConsumer);
+
+  private inner class Protocol(
+    project: Project,
+    readyConsumer: Consumer<*>,
+  ) : JSLanguageServiceNodeStdProtocolBase("prettier", project, readyConsumer) {
+    override fun addNodeProcessAdditionalArguments(targetRun: NodeTargetRun) {
+      super.addNodeProcessAdditionalArguments(targetRun)
+      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService")!!.absolutePath)
     }
 
-    @Override
-    protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
-      super.addNodeProcessAdditionalArguments(targetRun);
-      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService").getAbsolutePath());
-    }
-
-    @Override
-    protected String getWorkingDirectory() {
-      Application application = ApplicationManager.getApplication();
-      if (application != null && application.isUnitTestMode()) {
-        // `myProject.getBasePath()` returns a non-existent directory in unit test mode
-        // The problem is that Yarn Pnp can't detect .pnp.cjs when process is started in a non-existent directory.
-        VirtualFile file = ProjectUtil.guessProjectDir(myProject);
-        if (file != null) {
-          return file.getPath();
+    override val workingDirectory: String?
+      get() {
+        if (ApplicationManager.getApplication()?.isUnitTestMode() == true) {
+          // `myProject.getBasePath()` returns a non-existent directory in unit test mode
+          // The problem is that Yarn PnP can't detect .pnp.cjs when the process is started in a non-existent directory.
+          myProject.guessProjectDir()?.let { return it.path }
         }
+        return FileUtil.toSystemDependentName(workDir.getPath())
       }
-      return FileUtil.toSystemDependentName(myWorkingDirectory.getPath());
-    }
 
-    @Override
-    protected boolean needReadActionToCreateState() {
-      // PrettierPostFormatProcessor runs under write action. Read action here is not needed and it would block the service startup
-      return false;
-    }
+    // PrettierPostFormatProcessor runs under write action. Read action here is not needed and it would block the service startup
+    override fun needReadActionToCreateState(): Boolean = false
 
-    @Override
-    protected JSLanguageServiceInitialState createState() {
-      JSLanguageServiceInitialState state = new JSLanguageServiceInitialState();
-      final File service = new File(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService"),
-                                    "prettier-plugin-provider.js");
+    override fun createState(): JSLanguageServiceInitialState {
+      val service = File(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService"), "prettier-plugin-provider.js")
       if (!service.exists()) {
-        LOGGER.error("prettier language service plugin not found");
+        thisLogger().error("prettier language service plugin not found")
       }
-      state.pluginName = "prettier";
-      state.pluginPath = LocalFilePath.create(service.getAbsolutePath());
-      return state;
+      return JSLanguageServiceInitialState().also {
+        it.pluginName = "prettier"
+        it.pluginPath = LocalFilePath.create(service.absolutePath)
+      }
     }
 
-    @Override
-    public void dispose() {
+    override fun dispose() {}
 
-    }
-
-    @NotNull
-    @Override
-    protected NodeCommandLineConfigurator.Options getNodeCommandLineConfiguratorOptions(@NotNull Project project) {
-      return NodeCommandLineConfigurator.defaultOptions(myProject);
-    }
+    override fun getNodeCommandLineConfiguratorOptions(project: Project): NodeCommandLineConfigurator.Options =
+      NodeCommandLineConfigurator.defaultOptions(myProject)
   }
 
-  private static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
-    public final LocalFilePath path;
-    public final LocalFilePath prettierPath;
-    @Nullable public final LocalFilePath packageJsonPath;
-    @Nullable public final String ignoreFilePath;
-    public final String content;
-    public Integer start;
-    public Integer end;
-    public final boolean flushConfigCache;
 
-    ReformatFileCommand(@NotNull Project project,
-                        @NotNull String filePath,
-                        @NotNull NodePackage prettierPackage,
-                        @Nullable String ignoreFilePath,
-                        @NotNull String content,
-                        @Nullable TextRange range,
-                        boolean flushConfigCache) {
-      this.path = LocalFilePath.create(filePath);
-      Pair<LocalFilePath, LocalFilePath> pair = createPackagePath(project, prettierPackage);
-      this.prettierPath = pair.first;
-      this.packageJsonPath = pair.second;
-      this.ignoreFilePath = ignoreFilePath;
-      this.content = content;
-      this.flushConfigCache = flushConfigCache;
-      if (range != null) {
-        start = range.getStartOffset();
-        end = range.getEndOffset();
-      }
-    }
+  @Suppress("unused")
+  private class ReformatFileCommand(
+    project: Project,
+    filePath: String,
+    prettierPackage: NodePackage,
+    ignoreFilePath: String?,
+    val content: String,
+    range: TextRange?,
+    val flushConfigCache: Boolean,
+  ) : JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
+    val path: LocalFilePath = LocalFilePath.create(FileUtil.toSystemDependentName(filePath))
+    val prettierPath: LocalFilePath =
+      LocalFilePath.create((prettierPackage as? YarnPnpNodePackage)?.name ?: prettierPackage.systemDependentPath)
+    val packageJsonPath: LocalFilePath? = LocalFilePath.create((prettierPackage as? YarnPnpNodePackage)?.let {
+      FileUtil.toSystemDependentName(it.getPackageJsonPath(project)!!)
+    })
+    val ignoreFilePath: String? = ignoreFilePath?.let { FileUtil.toSystemDependentName(it) }
+    val start: Int? = range?.startOffset
+    val end: Int? = range?.endOffset
 
-    @NotNull
-    private static Pair<LocalFilePath, LocalFilePath> createPackagePath(@NotNull Project project,
-                                                                        @NotNull NodePackage prettierPackage) {
-      String packagePath;
-      String packageJsonPath;
-      if (prettierPackage instanceof YarnPnpNodePackage pnpPkg) {
-        packagePath = pnpPkg.getName();
-        packageJsonPath = pnpPkg.getPackageJsonPath(project);
-        if (packageJsonPath == null) {
-          throw new IllegalStateException("Cannot find package.json for " + pnpPkg);
-        }
-        packageJsonPath = FileUtil.toSystemDependentName(packageJsonPath);
-      }
-      else {
-        packagePath = prettierPackage.getSystemDependentPath();
-        packageJsonPath = null;
-      }
-      return Pair.create(LocalFilePath.create(packagePath), LocalFilePath.create(packageJsonPath));
-    }
-
-    @NotNull
-    @Override
-    public JSLanguageServiceObject toSerializableObject() {
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public String getCommand() {
-      return "reformat";
-    }
-
-    @Nullable
-    @Override
-    public String getPresentableText(@NotNull Project project) {
-      return PrettierBundle.message("progress.title");
-    }
+    override fun toSerializableObject(): JSLanguageServiceObject = this
+    override val command: String = "reformat"
+    override fun getPresentableText(project: Project): String = PrettierBundle.message("progress.title")
   }
 }

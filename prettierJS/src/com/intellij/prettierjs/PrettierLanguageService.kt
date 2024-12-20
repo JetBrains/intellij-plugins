@@ -1,62 +1,58 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.prettierjs;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.intellij.prettierjs
 
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.javascript.nodejs.util.NodePackageRef;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.openapi.project.BaseProjectDirectories;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.BaseProjectDirectories
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VirtualFile
+import java.util.concurrent.CompletableFuture
 
-import java.util.concurrent.CompletableFuture;
+interface PrettierLanguageService {
+  fun format(
+    filePath: String,
+    ignoreFilePath: String?,
+    text: String,
+    prettierPackage: NodePackage,
+    range: TextRange?,
+  ): CompletableFuture<FormatResult?>?
 
-public interface PrettierLanguageService {
-  @Nullable
-  CompletableFuture<FormatResult> format(@NotNull String filePath,
-                                         String ignoreFilePath, @NotNull String text,
-                                         @NotNull NodePackage prettierPackage,
-                                         @Nullable TextRange range);
-
-  @NotNull
-  static PrettierLanguageServiceImpl getInstance(@NotNull Project project,
-                                                 @NotNull VirtualFile contextVirtualFile,
-                                                 @NotNull NodePackage prettierPackage) {
-    VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(contextVirtualFile);
-    VirtualFile workingDirectory = packageJson != null ? packageJson.getParent() : null;
-    if (workingDirectory == null) {
-      workingDirectory = BaseProjectDirectories.getInstance(project).getBaseDirectoryFor(contextVirtualFile);
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project, contextFile: VirtualFile, prettierPackage: NodePackage): PrettierLanguageService {
+      val packageJson = PackageJsonUtil.findUpPackageJson(contextFile)
+      var workingDirectory = packageJson?.getParent()
+      if (workingDirectory == null) {
+        workingDirectory = BaseProjectDirectories.getInstance(project).getBaseDirectoryFor(contextFile)
+      }
+      if (workingDirectory == null) {
+        workingDirectory = contextFile.getParent()
+      }
+      return project.service<PrettierLanguageServiceManager>()
+        .useService<PrettierLanguageService, Throwable>(workingDirectory, NodePackageRef.create(prettierPackage)) { it }
     }
-    if (workingDirectory == null) {
-      workingDirectory = contextVirtualFile.getParent();
-    }
-    return project.getService(PrettierLanguageServiceManager.class)
-      .useService(workingDirectory, NodePackageRef.create(prettierPackage), service -> service);
   }
 
-  final class FormatResult {
-    public static final FormatResult IGNORED = new FormatResult(null, null, true, false);
-    public static final FormatResult UNSUPPORTED = new FormatResult(null, null, false, true);
-    public final String result;
-    public final String error;
-    public final boolean ignored;
-    public final boolean unsupported;
 
-    private FormatResult(String result, String error, boolean ignored, boolean unsupported) {
-      this.result = result;
-      this.error = error;
-      this.ignored = ignored;
-      this.unsupported = unsupported;
-    }
+  class FormatResult private constructor(
+    @JvmField val result: String?,
+    @JvmField val error: String?,
+    @JvmField val ignored: Boolean,
+    @JvmField val unsupported: Boolean,
+  ) {
+    companion object {
+      val IGNORED: FormatResult = FormatResult(null, null, true, false)
 
-    public static FormatResult error(String error) {
-      return new FormatResult(null, error, false, false);
-    }
+      @JvmField
+      val UNSUPPORTED: FormatResult = FormatResult(null, null, false, true)
 
-    public static FormatResult formatted(String result) {
-      return new FormatResult(result, null, false, false);
+      @JvmStatic
+      fun error(error: String): FormatResult = FormatResult(null, error, false, false)
+
+      fun formatted(result: String): FormatResult = FormatResult(result, null, false, false)
     }
   }
 }
