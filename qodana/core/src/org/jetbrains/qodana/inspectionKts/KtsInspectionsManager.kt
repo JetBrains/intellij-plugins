@@ -11,11 +11,17 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.PlatformUtils
 import com.intellij.util.application
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runInterruptible
 import org.jetbrains.annotations.ApiStatus.Internal
-import org.jetbrains.qodana.coroutines.*
+import org.jetbrains.qodana.coroutines.appearedFilePath
+import org.jetbrains.qodana.coroutines.disappearedFilePath
+import org.jetbrains.qodana.coroutines.documentChangesFlow
+import org.jetbrains.qodana.coroutines.vfsChangesMapFlow
 import org.jetbrains.qodana.license.QodanaLicenseChecker
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
@@ -26,6 +32,12 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 
 internal const val FORCE_DISABLE_INSPECTION_KTS = "inspection.kts.disabled"
+
+private val QODANA_FLEXINSPECT_SUPPORTED_PLANS = setOf(
+  QodanaLicenseType.ULTIMATE,
+  QodanaLicenseType.ULTIMATE_PLUS,
+  QodanaLicenseType.PREMIUM,
+)
 
 fun isInspectionKtsEnabled(): Boolean {
   val forceDisabled = java.lang.Boolean.getBoolean(FORCE_DISABLE_INSPECTION_KTS)
@@ -41,7 +53,7 @@ fun isInspectionKtsEnabled(): Boolean {
     isHeadless ->  {
       try {
         val qodanaLicenseType = QodanaLicenseChecker.getLicenseType().type
-        qodanaLicenseType == QodanaLicenseType.ULTIMATE_PLUS || qodanaLicenseType == QodanaLicenseType.PREMIUM
+        qodanaLicenseType in QODANA_FLEXINSPECT_SUPPORTED_PLANS
       }
       catch (_ : QodanaException) {
         false
