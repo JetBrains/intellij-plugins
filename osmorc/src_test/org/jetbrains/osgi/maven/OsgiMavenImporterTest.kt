@@ -23,7 +23,8 @@ import org.junit.Test
 import org.osmorc.facet.OsmorcFacet
 import org.osmorc.facet.OsmorcFacetConfiguration
 import org.osmorc.facet.OsmorcFacetType
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet, OsmorcFacetConfiguration>() {
   override fun getFacetTypeId(): FacetTypeId<OsmorcFacet> = OsmorcFacetType.ID
@@ -129,10 +130,11 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet, OsmorcFacetConf
 
   @Test 
   fun testImplicitResources() {
-    val resource1 = File(dir, "project/src/main/resources/file1.txt")
-    val resource2 = File(dir, "project/src/main/resources/file2.txt")
-    FileUtil.createIfDoesntExist(resource1)
-    FileUtil.createIfDoesntExist(resource2)
+    val resource1 = dir.resolve("project/src/main/resources/file1.txt")
+    val resource2 = dir.resolve("project/src/main/resources/file2.txt")
+    Files.createDirectories(resource1.parent)
+    Files.createFile(resource1)
+    Files.createFile(resource2)
     importProject(pomContents("simple"))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
@@ -142,10 +144,11 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet, OsmorcFacetConf
 
   @Test 
   fun testExplicitResources() {
-    val included = File(dir, "project/src/main/resources/included.txt")
-    val excluded = File(dir, "project/src/main/resources/excluded.txt")
-    FileUtil.createIfDoesntExist(included)
-    FileUtil.createIfDoesntExist(excluded)
+    val included = dir.resolve("project/src/main/resources/included.txt")
+    val excluded = dir.resolve("project/src/main/resources/excluded.txt")
+    Files.createDirectories(included.parent)
+    Files.createFile(included)
+    Files.createFile(excluded)
     val instructions =
         "<configuration><instructions>" +
         "<Include-Resource>included.txt = src/main/resources/included.txt</Include-Resource>" +
@@ -189,8 +192,8 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet, OsmorcFacetConf
     return configuration
   }
 
-  private fun assertResources(configuration: OsmorcFacetConfiguration, vararg files: File) {
-    val expected = files.map { "${it.name}=${FileUtil.toSystemIndependentName(it.path)}" }.toSet()
+  private fun assertResources(configuration: OsmorcFacetConfiguration, vararg paths: Path) {
+    val expected = paths.map { "${it.fileName}=${FileUtil.toSystemIndependentName(it.toString())}" }.toSet()
     val actual = (configuration.additionalPropertiesAsMap[Constants.INCLUDE_RESOURCE] ?: "").split(',').toSet()
     assertEquals(expected, actual)
   }
