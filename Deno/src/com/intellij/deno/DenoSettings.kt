@@ -265,5 +265,5 @@ fun setUseDenoLibrary(project: Project, value: Boolean = true, updateLib: Boolea
 }
 
 fun isDenoFileTypeAcceptable(file: VirtualFile) =
-  file.fileType in arrayOf(TypeScriptFileType, TypeScriptJSXFileType.INSTANCE)
+  file.fileType in arrayOf(TypeScriptFileType, TypeScriptJSXFileType)
 
