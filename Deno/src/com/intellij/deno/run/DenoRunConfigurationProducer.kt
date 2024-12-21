@@ -59,7 +59,7 @@ class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfigu
 
   private fun isAcceptableFileType(virtualFile: VirtualFile): Boolean {
     val fileType = virtualFile.fileType
-    return TypeScriptUtil.isTypeScriptFile(virtualFile) || fileType == JavaScriptFileType.INSTANCE
+    return TypeScriptUtil.isTypeScriptFile(virtualFile) || fileType == JavaScriptFileType
   }
 
   override fun isConfigurationFromContext(configuration: DenoRunConfiguration, context: ConfigurationContext): Boolean {
