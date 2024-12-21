@@ -21,7 +21,7 @@ object Angular2EditorUtils {
     val file = context.getData(CommonDataKeys.PSI_FILE) ?: return emptyList()
     if (!file.fileType
         .let {
-          it == TypeScriptFileType.INSTANCE
+          it == TypeScriptFileType
           || Angular2LangUtil.isAngular2HtmlFileType(it)
           || Angular2LangUtil.isAngular2SvgFileType(it)
         }

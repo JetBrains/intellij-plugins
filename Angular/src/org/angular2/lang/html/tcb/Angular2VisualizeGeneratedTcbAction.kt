@@ -31,7 +31,7 @@ class Angular2VisualizeGeneratedTcbAction : AnAction() {
     val file = e.getData(CommonDataKeys.PSI_FILE)
     if (file != null
         && file.fileType.let {
-        it == TypeScriptFileType.INSTANCE
+        it == TypeScriptFileType
         || Angular2LangUtil.isAngular2HtmlFileType(it)
         || Angular2LangUtil.isAngular2SvgFileType(it)
       } && Angular2LangUtil.isAngular2Context(file)) {
