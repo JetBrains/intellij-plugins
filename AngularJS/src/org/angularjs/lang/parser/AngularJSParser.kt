@@ -14,7 +14,7 @@ import org.angularjs.lang.lexer.AngularJSTokenTypes
 class AngularJSParser(
   builder: PsiBuilder,
 ) : JavaScriptParser(
-  JavascriptLanguage.INSTANCE,
+  JavascriptLanguage,
   builder,
 ) {
   override val expressionParser: AngularJSExpressionParser =

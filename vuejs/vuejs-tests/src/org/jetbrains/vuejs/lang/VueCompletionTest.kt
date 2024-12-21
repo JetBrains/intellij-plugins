@@ -115,7 +115,7 @@ export default {
 
 
   fun testCompleteWithImportNoExtension() {
-    JavaScriptFormatterTestBase.setTempSettings<JSCodeStyleSettings>(project, JavascriptLanguage.INSTANCE) {
+    JavaScriptFormatterTestBase.setTempSettings<JSCodeStyleSettings>(project, JavascriptLanguage) {
       it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.NEVER
     }
     configureTextsForCompleteLocalComponent()

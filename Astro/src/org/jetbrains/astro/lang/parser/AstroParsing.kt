@@ -379,7 +379,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   companion object {
     private fun PsiBuilder.hasJSToken() =
-      tokenType?.language?.isKindOf(JavascriptLanguage.INSTANCE) == true
+      tokenType?.language?.isKindOf(JavascriptLanguage) == true
 
   }
 }

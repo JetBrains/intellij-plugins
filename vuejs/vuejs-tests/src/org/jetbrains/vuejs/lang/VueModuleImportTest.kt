@@ -51,7 +51,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportFromVueWithJs() {
-    JavaScriptFormatterTestBase.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
+    JavaScriptFormatterTestBase.setTempSettings(project, JavascriptLanguage, Consumer<JSCodeStyleSettings> {
       it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.ALWAYS_JS
     })
 

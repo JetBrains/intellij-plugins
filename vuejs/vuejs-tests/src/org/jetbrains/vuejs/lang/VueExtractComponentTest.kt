@@ -1076,7 +1076,7 @@ export default {
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "NewComponent") {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).let {
+      styleSettings.getCommonSettings(JavascriptLanguage).let {
         it.BLANK_LINES_BEFORE_IMPORTS = 0
         it.BLANK_LINES_AFTER_IMPORTS = 0
       }

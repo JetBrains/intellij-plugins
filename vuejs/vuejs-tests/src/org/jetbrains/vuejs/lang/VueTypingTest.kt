@@ -63,7 +63,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
-      styleSettings.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 2
+      styleSettings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 6
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
       doTest("\n")
@@ -141,7 +141,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
-      styleSettings.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 2
+      styleSettings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\b")

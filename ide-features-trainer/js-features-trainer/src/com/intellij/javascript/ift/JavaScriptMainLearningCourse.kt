@@ -9,7 +9,7 @@ import training.learn.course.LearningCourseBase
 import training.learn.course.LearningModule
 import training.learn.course.LessonType
 
-class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTANCE.id) {
+class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.id) {
   override fun modules() = listOf(
     LearningModule(id = "JS.EditorBasics",
                    name = JsLessonsBundle.message("js.editor.basics.module.name"),

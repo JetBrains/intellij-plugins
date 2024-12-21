@@ -105,7 +105,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = true
       it.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
       it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
-      it.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
+      it.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 4
       doTestFromFile("html")
     }
   }
@@ -117,7 +117,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = false
       it.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
       it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
-      it.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
+      it.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 4
       doTestFromFile("html")
     }
   }
@@ -183,7 +183,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
         it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
       }
-      styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_ADDITIVE_OPERATORS = false
+      styleSettings.getCommonSettings(JavascriptLanguage).SPACE_AROUND_ADDITIVE_OPERATORS = false
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
       doTestFromFile("vue")
     }
@@ -209,8 +209,8 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
         it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = false
       }
-      styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_MULTIPLICATIVE_OPERATORS = false
-      styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_ADDITIVE_OPERATORS = true
+      styleSettings.getCommonSettings(JavascriptLanguage).SPACE_AROUND_MULTIPLICATIVE_OPERATORS = false
+      styleSettings.getCommonSettings(JavascriptLanguage).SPACE_AROUND_ADDITIVE_OPERATORS = true
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
       doTestFromFile("vue")
     }
@@ -273,7 +273,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     settings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
     settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
     settings.getLanguageIndentOptions(CSSLanguage.INSTANCE).INDENT_SIZE = 3
-    settings.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
+    settings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 4
     //settings.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE = 5 // impossible to have TS and JS in single file
     settings.getLanguageIndentOptions(SCSSLanguage.INSTANCE).INDENT_SIZE = 6
     settings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 7

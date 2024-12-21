@@ -53,7 +53,7 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
                             ?: JSFileElementType.getByLanguage(dialect)
                             ?: run {
                               thisLogger().error("No JSFileElementType registered for language $dialect of element $element, using plain JavaScript")
-                              JSFileElementType.getByLanguage(JavascriptLanguage.INSTANCE)
+                              JSFileElementType.getByLanguage(JavascriptLanguage)
                             }
 
       // Wrap with a composite block to add indentation

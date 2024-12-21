@@ -38,8 +38,8 @@ class AstroCommentProvider : MultipleLangCommentProvider {
           element?.language?.isKindOf(CSSLanguage.INSTANCE) == true ->
             CssCommenter()
           lineStartLanguage == AstroFrontmatterLanguage.INSTANCE ||
-          lineStartLanguage.baseLanguage == JavascriptLanguage.INSTANCE ||
-          element?.language == JavascriptLanguage.INSTANCE ||
+          lineStartLanguage.baseLanguage == JavascriptLanguage ||
+          element?.language == JavascriptLanguage ||
           element?.parent is JSEmbeddedContent &&
           element.parent !is AstroContentRoot ||
           // Used for block comments because their language suddenly changes to Astro

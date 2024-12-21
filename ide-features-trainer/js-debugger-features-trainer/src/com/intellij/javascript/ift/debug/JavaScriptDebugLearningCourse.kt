@@ -10,7 +10,7 @@ import training.learn.course.LearningCourseBase
 import training.learn.course.LearningModule
 import training.learn.course.LessonType
 
-class JavaScriptDebugLearningCourse : LearningCourseBase(JavascriptLanguage.INSTANCE.id) {
+class JavaScriptDebugLearningCourse : LearningCourseBase(JavascriptLanguage.id) {
   override fun modules() = listOf(
     LearningModule(id = "JS.Debugger",
                    name = JsDebugLessonsBundle.message("js.debugger.module.name", LessonUtil.productName),
