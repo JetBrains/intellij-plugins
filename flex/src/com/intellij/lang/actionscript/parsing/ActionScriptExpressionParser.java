@@ -79,7 +79,7 @@ public final class ActionScriptExpressionParser extends ExpressionParser<ActionS
           checkMatches(builder, JSTokenTypes.RBRACKET, "javascript.parser.message.expected.rbracket");
         }
         else {
-          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
+          builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
         }
       }
 

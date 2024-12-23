@@ -3,7 +3,7 @@ package org.angularjs.lang.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptParserBundle;
+import com.intellij.lang.javascript.JavaScriptCoreBundle;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.codeInsight.AngularJSPluralCategories;
@@ -135,7 +135,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
       if (builder.lookAhead(1) != JSTokenTypes.COLON) {
         builder.advanceLexer();
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.colon"));
+        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.colon"));
         return false;
       }
       final IElementType value = builder.lookAhead(2);

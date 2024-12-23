@@ -4,7 +4,7 @@ package org.angularjs.lang.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptParserBundle;
+import com.intellij.lang.javascript.JavaScriptCoreBundle;
 import com.intellij.lang.javascript.parsing.StatementParser;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.lang.lexer.AngularJSTokenTypes;
@@ -108,7 +108,7 @@ class AngularJSStatementParser extends StatementParser<AngularJSParser> {
         myParser.buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
       }
       else {
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
+        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
       }
     }
   }
