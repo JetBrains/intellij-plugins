@@ -37,7 +37,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 
-class DownloadedReportInfo {
+internal class DownloadedReportInfo {
   @get:Attribute
   var reportId: String? = null
 
@@ -72,14 +72,14 @@ private sealed interface DownloaderRequest {
   }
 }
 
-class ReportDownloaderState : BaseState() {
+internal class ReportDownloaderState : BaseState() {
   @get:XCollection(style = XCollection.Style.v2)
   var loadedReportsPaths: MutableMap<String, DownloadedReportInfo> by property(HashMap()) { it.isEmpty() }
 }
 
 @State(name = "QodanaReportDownloader", storages = [Storage(value = StoragePathMacros.CACHE_FILE)])
 @Service(Service.Level.PROJECT)
-class QodanaReportDownloader(private val project: Project, private val scope: CoroutineScope): PersistentStateComponent<ReportDownloaderState> {
+internal class QodanaReportDownloader(private val project: Project, private val scope: CoroutineScope): PersistentStateComponent<ReportDownloaderState> {
   companion object {
     fun getInstance(project: Project): QodanaReportDownloader = project.service()
   }

@@ -8,10 +8,7 @@ import com.intellij.lang.javascript.parsing.StatementParser
 import com.intellij.psi.tree.IElementType
 import org.angularjs.lang.lexer.AngularJSTokenTypes
 
-/**
- * @author Dennis.Ushakov
- */
-class AngularJSParser(
+internal class AngularJSParser(
   builder: PsiBuilder,
 ) : JavaScriptParser(
   JavascriptLanguage,

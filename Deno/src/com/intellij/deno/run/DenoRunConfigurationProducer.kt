@@ -14,7 +14,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 
-class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfiguration>() {
+internal class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfiguration>() {
 
   private val ConfigurationContext?.isAcceptable: Boolean
     get() {

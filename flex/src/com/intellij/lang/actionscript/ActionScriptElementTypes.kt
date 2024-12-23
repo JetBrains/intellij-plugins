@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.JSCompositeElementType
 import com.intellij.lang.javascript.types.JSBlockStatementEagerElementType
 import com.intellij.psi.tree.IElementType
 
-object ActionScriptElementTypes {
+internal object ActionScriptElementTypes {
   @JvmField
   val GOTO_STATEMENT: IElementType =
     JSCompositeElementType.build("GOTO_STATEMENT", ::ActionScriptGotoStatementImpl)

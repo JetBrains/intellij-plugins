@@ -50,8 +50,7 @@ private data class FileModification(
 private val jsonEncoder
   get() = Json { prettyPrint = true }
 
-class FixesLogger {
-
+internal class FixesLogger {
   companion object {
     const val TEXT_NOT_CAPTURED_MESSAGE = "Text was not captured"
     const val FILE_NOT_CAPTURED_MESSAGE = "File was not captured"

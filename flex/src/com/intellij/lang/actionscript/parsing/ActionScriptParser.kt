@@ -11,7 +11,7 @@ import com.intellij.psi.tree.IElementType
 /**
  * @author Konstantin.Ulitin
  */
-class ActionScriptParser(
+internal class ActionScriptParser(
   builder: PsiBuilder,
 ) : JavaScriptParser(
   FlexSupportLoader.ECMA_SCRIPT_L4,

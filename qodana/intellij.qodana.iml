@@ -41,6 +41,7 @@
     <orderEntry type="library" name="snakeyaml-engine" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="commons-cli" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
     <orderEntry type="library" name="flexmark" level="project" />
     <orderEntry type="library" name="jsoup" level="project" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
@@ -49,6 +50,7 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="module" module-name="intellij.platform.collaborationTools" />
     <orderEntry type="module" module-name="intellij.platform.collaborationTools.auth" />
     <orderEntry type="module" module-name="intellij.platform.collaborationTools.auth.base" />
@@ -84,6 +86,7 @@
     <orderEntry type="module" module-name="intellij.platform.inspect" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="module" module-name="intellij.platform.util.base" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
     <orderEntry type="module" module-name="intellij.platform.diagnostic.telemetry" />
     <orderEntry type="library" name="opentelemetry" level="project" />
     <orderEntry type="library" name="opentelemetry-semconv" level="project" />

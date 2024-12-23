@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="intellij.javascript" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vuejs" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.frontback" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" scope="TEST" />

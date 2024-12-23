@@ -16,8 +16,10 @@
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.javascript.frontback" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.javascript.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="module" module-name="intellij.platform.duplicatesDetector" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />

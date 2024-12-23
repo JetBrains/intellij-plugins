@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
 import com.intellij.openapi.fileTypes.LanguageFileType
 import org.intellij.plugin.mdx.lang.MdxFileType
 
-class MdxJSLanguage private constructor() : JSLanguageDialect("MdxJS", JS_WITH_JSX, ECMA_SCRIPT_6) {
+internal class MdxJSLanguage private constructor() : JSLanguageDialect("MdxJS", JS_WITH_JSX, ECMA_SCRIPT_6) {
   companion object {
     val INSTANCE = MdxJSLanguage()
   }

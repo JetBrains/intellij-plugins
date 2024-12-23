@@ -15,7 +15,7 @@ import com.intellij.util.diff.Diff
 import org.jetbrains.qodana.problem.SarifProblem
 import kotlin.math.min
 
-class QodanaRangeCalculator(
+internal class QodanaRangeCalculator(
   private val project: Project,
   private val file: PsiFile,
   private val document: Document,

@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.math.max
 
-class Flexmojos3GenerateConfigTask(private val myModule: Module,
+internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
                                    mavenProject: MavenProject?,
                                    mavenTree: MavenProjectsTree?,
                                    private val myConfigFilePath: String,

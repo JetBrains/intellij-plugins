@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="intellij.vcs.perforce.util" />
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
     <orderEntry type="module" module-name="intellij.platform.util.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.vcs.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />

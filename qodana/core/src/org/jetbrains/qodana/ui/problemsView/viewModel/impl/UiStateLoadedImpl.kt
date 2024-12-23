@@ -24,10 +24,9 @@ import org.jetbrains.qodana.stats.toSelectedNodeType
 import org.jetbrains.qodana.ui.problemsView.tree.model.*
 import org.jetbrains.qodana.ui.problemsView.tree.model.impl.QodanaTreeRootBuilder
 import org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewModel
-import javax.swing.JComponent
 import kotlin.coroutines.coroutineContext
 
-class UiStateLoadedImpl(
+internal class UiStateLoadedImpl(
   private val viewModel: QodanaProblemsViewModel,
   private val project: Project,
   private val viewModelScope: CoroutineScope,

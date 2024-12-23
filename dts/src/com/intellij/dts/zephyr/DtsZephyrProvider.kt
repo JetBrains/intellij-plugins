@@ -12,10 +12,11 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.progress.SequentialProgressReporter
 import com.intellij.platform.util.progress.reportSequentialProgress
 import com.intellij.util.containers.MultiMap
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 
 private fun settings(project: Project): Flow<DtsSettings.State> = channelFlow {
@@ -29,7 +30,7 @@ private fun settings(project: Project): Flow<DtsSettings.State> = channelFlow {
 }.buffer(CONFLATED)
 
 @Service(Service.Level.PROJECT)
-class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
+internal class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
   companion object {
     fun of(project: Project): DtsZephyrProvider = project.service()
   }

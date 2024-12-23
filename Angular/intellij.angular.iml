@@ -12,10 +12,12 @@
       <sourceFolder url="file://$MODULE_DIR$/testResources" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.indexing" />
     <orderEntry type="module" module-name="intellij.xml.psi.impl" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.javascript.frontback" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />

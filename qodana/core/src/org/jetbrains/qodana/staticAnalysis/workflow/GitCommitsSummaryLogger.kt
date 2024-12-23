@@ -16,7 +16,7 @@ import java.time.Period
  * Numbers are obtained with 'git shortlog -s --since "%since%"' command.
  * Since syntax https://github.com/git/git/blob/master/date.c#L131
  */
-class GitCommitsSummaryLogger : QodanaWorkflowExtension {
+private class GitCommitsSummaryLogger : QodanaWorkflowExtension {
   override suspend fun beforeLaunch(context: QodanaRunContext) {
     val project = context.project
     val repos = GitRepositoryManager.getInstance(project).repositories
