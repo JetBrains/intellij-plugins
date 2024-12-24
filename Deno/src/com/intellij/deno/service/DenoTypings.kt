@@ -13,9 +13,12 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.URLUtil
 import java.io.IOException
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -72,23 +75,32 @@ class DenoTypings(val project: Project) : Disposable {
     return true
   }
 
+  /** path to the file on a local file system */
   private fun getDenoTypings(): String {
     return FileUtil.toSystemIndependentName(getGeneratedDenoTypings())
   }
 
-  private fun getBundledTypings(): String {
-    return FileUtil.toSystemIndependentName(DenoUtil.getDenoTypings())
+  /** url to the file either on a local file system or in a jar */
+  private fun getBundledTypings(): URL {
+    return DenoUtil.getDenoTypings()
   }
 
   fun isDenoTypings(virtualFile: VirtualFile): Boolean {
     val path = virtualFile.path
-    return path == getDenoTypings() || path == getBundledTypings()
+    return path == getDenoTypings() || path == getBundledTypings().path.removePrefix("file:") // removing prefix in case of 'jar:file:...'
   }
 
   fun getDenoTypingsVirtualFile(): VirtualFile? {
     val typings = LocalFileSystem.getInstance().findFileByPath(getDenoTypings())
     if (typings != null && typings.isValid) return typings
-    return LocalFileSystem.getInstance().findFileByPath(getBundledTypings())
+    val bundled = getBundledTypings()
+    return when (bundled.protocol) {
+      URLUtil.JAR_PROTOCOL -> JarFileSystem.getInstance().findFileByPath(URL(bundled.path).path)
+      URLUtil.FILE_PROTOCOL -> LocalFileSystem.getInstance().findFileByPath(bundled.path)
+      else -> error("Unsupported protocol '${bundled.protocol}' for bundled Deno typings file '$bundled'")
+    }?.also {
+      require(isDenoTypings(it))
+    }
   }
 
   private fun getGeneratedDenoTypings() =

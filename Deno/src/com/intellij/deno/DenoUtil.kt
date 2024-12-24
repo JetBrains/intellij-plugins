@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.IconUtil
 import com.intellij.util.SystemProperties
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.swing.Icon
@@ -18,9 +19,14 @@ import javax.swing.Icon
 object DenoUtil {
   const val HASH_FILE_NAME_LENGTH = 64
 
-  fun getDenoTypings(): String {
-    return JSLanguageServiceUtil.getPluginDirectory(this::class.java,
-                                                    "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts")!!.path
+  fun getDenoTypings(): URL {
+    val file = JSLanguageServiceUtil.getPluginDirectory(this::class.java,
+                                                        "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts")
+    if (file != null && file.isFile) {
+      return file.toURI().toURL()
+    }
+    return this::class.java.classLoader.getResource("deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts")
+           ?: error("Cannot locate bundled 'lib.deno.d.ts'")
   }
 
   fun getDefaultDenoExecutable() = detectDenoPaths().firstOrNull()
