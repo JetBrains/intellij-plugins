@@ -362,11 +362,12 @@ public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseBut
     }
 
     @Override
-    public void createAddActions(@NotNull DefaultActionGroup group,
+    public void createAddActions(@Nullable Project project,
+                                 @NotNull DefaultActionGroup group,
                                  @NotNull JComponent parent,
                                  @NotNull java.util.function.Consumer<? super Sdk> updateTree,
                                  @Nullable Predicate<? super SdkTypeId> filter) {
-      myOriginal.createAddActions(group, parent, updateTree, filter);
+      myOriginal.createAddActions(project, group, parent, updateTree, filter);
     }
 
     @Override
