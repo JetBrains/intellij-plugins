@@ -251,8 +251,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
       if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFile)
 
-    override fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
-      commitDocumentsWithNBRA(virtualFile)
+    override suspend fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
+      super.commitDocumentsBeforeGetElementType(element, virtualFile)
       if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
         refreshTranspiledTemplateIfNeeded(virtualFile)
       }
@@ -280,6 +280,13 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeToJSType(
         transpiledFile.originalFile, null, args, Angular2GetGeneratedElementTypeCommand(args))
     }
+  }
+
+  private fun commitDocumentsWithNBRA(virtualFile: VirtualFile) {
+    val updateContext = JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
+      createUpdateContext(virtualFile)
+    }
+    update(updateContext)
   }
 }
 
