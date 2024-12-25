@@ -1,9 +1,11 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.openapi.options.colors.*
+import com.intellij.openapi.options.colors.AttributesDescriptor
+import com.intellij.openapi.options.colors.ColorDescriptor
+import com.intellij.openapi.options.colors.ColorSettingsPage
 import icons.MakefileIcons
 
-class MakefileColorSettingsPage : ColorSettingsPage {
+private class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDisplayName() = MakefileLanguage.displayName
   override fun getIcon() = MakefileIcons.Makefile
 
