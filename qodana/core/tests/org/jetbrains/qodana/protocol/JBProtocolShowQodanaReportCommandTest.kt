@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.util.Urls
 import com.intellij.util.application
+import com.intellij.util.io.DigestUtil
 import com.jetbrains.qodana.sarif.model.Result
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
@@ -28,7 +29,8 @@ import org.jetbrains.qodana.QodanaPluginHeavyTestBase
 import org.jetbrains.qodana.cloud.QodanaCloudDefaultUrls
 import org.jetbrains.qodana.cloud.QodanaCloudStateService
 import org.jetbrains.qodana.cloud.UserState
-import org.jetbrains.qodana.cloud.api.*
+import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
+import org.jetbrains.qodana.cloud.api.respond
 import org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthService
 import org.jetbrains.qodana.cloud.project.*
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
@@ -455,6 +457,95 @@ class JBProtocolShowQodanaReportCommandTest: QodanaPluginHeavyTestBase() {
         assertThat(problem.qodanaSeverity).isEqualTo(severity)
       }
     }
+  }
+
+  fun `test showMarker by region hash`(): Unit = runBlocking {
+    val fileOpened = subscribeToFileOpenedEvent()
+
+    val (path, message, revision) = listOf("Main.java", "qodana", "latest")
+    val (line, column, length) = listOf(8, 5, 6)
+
+    val (severity) = listOf(QodanaSeverity.HIGH)
+
+    val hash = sha256("//code")
+    executeProtocolCommand(
+      "idea/qodana/showMarker?" +
+      "path=$path:$line:$column&length=$length&message=$message&marker_revision=$revision&severity=$severity" +
+      "&hashed_region=$path:$line:$column:$length&region_hash_method=sha256&region_hash=$hash"
+    )
+
+    withTimeout(15.seconds) {
+      fileOpened.join()
+    }
+    checkCaretAndSelection("MainCaretAtSpaceIndent.java")
+    checkHighlightedReportData {
+      assertSingleSarifProblem(it) { problem ->
+        assertThat(problem.relativePathToFile).isEqualTo(path)
+        assertThat(problem.startLine).isEqualTo(line - 1)
+        assertThat(problem.startColumn).isEqualTo(column - 1)
+        assertThat(problem.charLength).isEqualTo(length)
+        assertThat(problem.message).isEqualTo(message)
+        assertThat(problem.revisionId).isEqualTo(revision)
+        assertThat(problem.inspectionId).isEqualTo("")
+        assertThat(problem.qodanaSeverity).isEqualTo(severity)
+      }
+    }
+  }
+
+  fun `test showMarker by region only file`(): Unit = runBlocking {
+    val fileOpened = subscribeToFileOpenedEvent()
+
+    val (path, message, revision) = listOf("Main.java", "qodana", "latest")
+    val (line, column, length) = listOf(8, 5, 6)
+
+    val (severity) = listOf(QodanaSeverity.HIGH)
+
+    executeProtocolCommand(
+      "idea/qodana/showMarker?" +
+      "path=$path:$line:$column&length=$length&message=$message&marker_revision=$revision&severity=$severity" +
+      "&hashed_region=$path"
+    )
+
+    withTimeout(15.seconds) {
+      fileOpened.join()
+    }
+    checkCaretAndSelection("MainCaretAtSpaceIndent.java")
+    checkHighlightedReportData {
+      assertSingleSarifProblem(it) { problem ->
+        assertThat(problem.relativePathToFile).isEqualTo(path)
+        assertThat(problem.startLine).isEqualTo(line - 1)
+        assertThat(problem.startColumn).isEqualTo(column - 1)
+        assertThat(problem.charLength).isEqualTo(length)
+        assertThat(problem.message).isEqualTo(message)
+        assertThat(problem.revisionId).isEqualTo(revision)
+        assertThat(problem.inspectionId).isEqualTo("")
+        assertThat(problem.qodanaSeverity).isEqualTo(severity)
+      }
+    }
+  }
+
+  fun `test showMarker region hash wrong hash`(): Unit = runBlocking {
+    val fileOpened = subscribeToFileOpenedEvent()
+
+    val (path, message, revision) = listOf("Main.java", "qodana", "latest")
+    val (line, column, length) = listOf(8, 5, 6)
+
+    val (severity) = listOf(QodanaSeverity.HIGH)
+
+    val hash = sha256("wrong hash")
+    executeProtocolCommand(
+      "idea/qodana/showMarker?" +
+      "path=$path:$line:$column&length=$length&message=$message&marker_revision=$revision&severity=$severity" +
+      "&hashed_region=$path:$line:$column:$length&region_hash_method=sha256&region_hash=$hash"
+    )
+
+    val isTimeout = withTimeoutOrNull(5.seconds) {
+      fileOpened.join()
+    } == null
+
+    assertThat(isTimeout).isTrue
+
+    fileOpened.cancel()
   }
 
   fun `test showMarker only cloudReportId`(): Unit = runBlocking {
@@ -1153,4 +1244,10 @@ class JBProtocolShowQodanaReportCommandTest: QodanaPluginHeavyTestBase() {
     )
     return setOf(problemAtSpaceIndent, problemAtTabulationIndent)
   }
+}
+
+private fun sha256(region: String): String {
+  val sha256 = DigestUtil.sha256()
+  sha256.update(region.toByteArray())
+  return DigestUtil.digestToHash(sha256)
 }
