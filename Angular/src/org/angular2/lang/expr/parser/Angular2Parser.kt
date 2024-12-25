@@ -43,7 +43,7 @@ class Angular2Parser private constructor(
     return JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(tokenType)
   }
 
-  inner class Angular2StatementParser(parser: Angular2Parser?) : StatementParser<Angular2Parser?>(parser) {
+  inner class Angular2StatementParser(parser: Angular2Parser) : StatementParser<Angular2Parser>(parser) {
     fun parseChain(openParens: Int = 0, allowEmpty: Boolean = true) {
       assert(!myIsJavaScript)
       val chain = builder.mark()
@@ -227,7 +227,7 @@ class Angular2Parser private constructor(
     }
   }
 
-  inner class Angular2ExpressionParser : ExpressionParser<Angular2Parser?>(this@Angular2Parser) {
+  inner class Angular2ExpressionParser : ExpressionParser<Angular2Parser>(this@Angular2Parser) {
     override fun parseAssignmentExpression(allowIn: Boolean): Boolean {
       //In Angular EL Pipe is the top level expression instead of Assignment
       return parsePipe()
@@ -384,7 +384,7 @@ class Angular2Parser private constructor(
     override fun parsePropertyNoMarker(property: Marker): Boolean {
       val firstToken = builder.tokenType
       val secondToken = builder.lookAhead(1)
-      if (parser!!.isIdentifierName(firstToken) &&  // Angular, in contrast to ECMAScript, accepts Reserved Words here
+      if (parser.isIdentifierName(firstToken) &&  // Angular, in contrast to ECMAScript, accepts Reserved Words here
           (secondToken === JSTokenTypes.COMMA || secondToken === JSTokenTypes.RBRACE)) {
         val ref = builder.mark()
         builder.advanceLexer()
