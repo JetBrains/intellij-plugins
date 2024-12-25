@@ -283,7 +283,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       AstroTypeScriptExpressionParser(this)
 
     override val statementParser: TypeScriptStatementParser =
-      object : TypeScriptStatementParser(this) {
+      object : TypeScriptStatementParser(this@AstroJsxParser) {
         override fun parseBlock(): Boolean {
           val mark = builder.mark()
           parseBlockAndAttachStatementsDirectly()

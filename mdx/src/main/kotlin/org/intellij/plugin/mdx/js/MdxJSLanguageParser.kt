@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
-import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.tree.IFileElementType
 
@@ -36,13 +35,13 @@ class MdxJSLanguageParser(
 ) {
 
   override val statementParser: ES6StatementParser<*> =
-    object : ES6StatementParser<MdxJSLanguageParser>(this) {
+    object : ES6StatementParser<MdxJSLanguageParser>(this@MdxJSLanguageParser) {
       override fun parseStatement() {
         if (builder.tokenType == JSTokenTypes.XML_START_TAG_START) {
           val exprStatement = this.builder.mark()
           if (myJavaScriptParser.expressionParser.parseExpressionOptional()) {
             exprStatement.done(JSElementTypes.EXPRESSION_STATEMENT)
-            exprStatement.setCustomEdgeTokenBinders(JavaScriptParserBase.INCLUDE_DOC_COMMENT_AT_LEFT_NO_EXTRA_LINEBREAK,
+            exprStatement.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT_NO_EXTRA_LINEBREAK,
                                                     WhitespacesBinders.DEFAULT_RIGHT_BINDER)
           }
           else {
