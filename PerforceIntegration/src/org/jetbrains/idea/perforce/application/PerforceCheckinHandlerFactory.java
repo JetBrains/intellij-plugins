@@ -28,9 +28,8 @@ public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
     super(PerforceVcs.getKey());
   }
 
-  @NotNull
   @Override
-  protected CheckinHandler createVcsHandler(@NotNull CheckinProjectPanel panel, @NotNull CommitContext commitContext) {
+  protected @NotNull CheckinHandler createVcsHandler(@NotNull CheckinProjectPanel panel, @NotNull CommitContext commitContext) {
     final Project project = panel.getProject();
     return new CheckinHandler() {
       @Override

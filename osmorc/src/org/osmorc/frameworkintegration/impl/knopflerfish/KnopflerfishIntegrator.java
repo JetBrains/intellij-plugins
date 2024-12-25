@@ -42,15 +42,13 @@ public final class KnopflerfishIntegrator extends AbstractFrameworkIntegrator {
     super(new KnopflerfishInstanceManager());
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
-  @NotNull
   @Override
-  public FrameworkRunner createFrameworkRunner() {
+  public @NotNull FrameworkRunner createFrameworkRunner() {
     return new KnopflerfishRunner();
   }
 

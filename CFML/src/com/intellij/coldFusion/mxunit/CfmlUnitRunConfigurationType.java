@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.coldFusion.model.files.CfmlFileType;
@@ -20,8 +20,7 @@ public final class CfmlUnitRunConfigurationType implements ConfigurationType {
   public CfmlUnitRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
       @Override
-      @NotNull
-      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+      public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CfmlUnitRunConfiguration(project, this, "");
       }
 
@@ -37,9 +36,8 @@ public final class CfmlUnitRunConfigurationType implements ConfigurationType {
     };
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return "MXUnit"; //NON-NLS
   }
 
@@ -54,8 +52,7 @@ public final class CfmlUnitRunConfigurationType implements ConfigurationType {
   }
 
   @Override
-  @NotNull
-  public String getId() {
+  public @NotNull String getId() {
     return "CfmlUnitRunConfigurationType";
   }
 
@@ -69,8 +66,7 @@ public final class CfmlUnitRunConfigurationType implements ConfigurationType {
     return "reference.dialogs.rundebug.CfmlUnitRunConfigurationType";
   }
 
-  @NotNull
-  public static CfmlUnitRunConfigurationType getInstance() {
+  public static @NotNull CfmlUnitRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(CfmlUnitRunConfigurationType.class);
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -41,16 +42,15 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
   }
 
   @Override
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return BUILDER_NAME;
   }
 
   @Override
-  public void build(@NotNull final FlexResourceBuildTarget target,
-                    @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
-                    @NotNull final BuildOutputConsumer outputConsumer,
-                    @NotNull final CompileContext context) throws ProjectBuildException, IOException {
+  public void build(final @NotNull FlexResourceBuildTarget target,
+                    final @NotNull DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
+                    final @NotNull BuildOutputConsumer outputConsumer,
+                    final @NotNull CompileContext context) throws ProjectBuildException, IOException {
 
     final JpsJavaCompilerConfiguration configuration =
       JpsJavaExtensionService.getInstance().getCompilerConfiguration(target.getModule().getProject());

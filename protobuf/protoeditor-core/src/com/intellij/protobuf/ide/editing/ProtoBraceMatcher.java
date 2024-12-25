@@ -17,9 +17,9 @@ package com.intellij.protobuf.ide.editing;
 
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,9 +32,8 @@ public class ProtoBraceMatcher implements PairedBraceMatcher {
     new BracePair(ProtoTokenTypes.LT, ProtoTokenTypes.GT, true),
   };
 
-  @NotNull
   @Override
-  public BracePair[] getPairs() {
+  public @NotNull BracePair[] getPairs() {
     return PAIRS;
   }
 

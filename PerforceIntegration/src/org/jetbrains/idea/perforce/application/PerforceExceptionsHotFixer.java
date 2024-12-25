@@ -87,7 +87,7 @@ public final class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
     }
   }
 
-  private static abstract class MyChecker {
+  private abstract static class MyChecker {
     private final HotfixData myKey;
 
     MyChecker(HotfixData key) {
@@ -213,7 +213,7 @@ public final class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
   }
 
     private static final class MyClobberWriteableChecker extends MyChecker {
-      private final static String ourClobberWriteable = "Can't clobber writable file";
+      private static final String ourClobberWriteable = "Can't clobber writable file";
       private final Project myProject;
 
       private MyClobberWriteableChecker(final Project project) {

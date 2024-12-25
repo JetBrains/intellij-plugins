@@ -105,18 +105,15 @@ public class Proto2DefinitionClassNames {
     return defaultName;
   }
 
-  @Nullable
-  public String messageClassName(PbMessageType messageType) {
+  public @Nullable String messageClassName(PbMessageType messageType) {
     return typeClassName(messageType);
   }
 
-  @Nullable
-  public String enumClassName(PbEnumDefinition enumDefinition) {
+  public @Nullable String enumClassName(PbEnumDefinition enumDefinition) {
     return typeClassName(enumDefinition);
   }
 
-  @Nullable
-  public String oneofEnumClassName(PbOneofDefinition oneof) {
+  public @Nullable String oneofEnumClassName(PbOneofDefinition oneof) {
     QualifiedName typeName = oneof.getQualifiedName();
     if (typeName == null) {
       return null;
@@ -130,8 +127,7 @@ public class Proto2DefinitionClassNames {
     return typeClassName(fileLocalQualifiers.toString());
   }
 
-  @Nullable
-  private String typeClassName(PbNamedTypeElement typeElement) {
+  private @Nullable String typeClassName(PbNamedTypeElement typeElement) {
     QualifiedName typeName = typeElement.getQualifiedName();
     if (typeName == null) {
       return null;

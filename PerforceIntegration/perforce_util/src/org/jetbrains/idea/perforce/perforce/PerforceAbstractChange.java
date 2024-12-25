@@ -38,8 +38,7 @@ public class PerforceAbstractChange {
   public PerforceAbstractChange() {
   }
 
-  @Nullable
-  public final File getFile() {
+  public final @Nullable File getFile() {
     return myFile;
   }
 

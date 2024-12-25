@@ -58,53 +58,45 @@ public final class ResolveFilters {
   }
 
   /** Matches any PbSymbol. */
-  @NotNull
-  public static Condition<PbSymbol> anySymbol() {
+  public static @NotNull Condition<PbSymbol> anySymbol() {
     return anySymbol;
   }
 
   /** Matches any PbPackageName or PbMessageType. */
-  @NotNull
-  public static Condition<PbSymbol> packageOrMessage() {
+  public static @NotNull Condition<PbSymbol> packageOrMessage() {
     return packageOrMessage;
   }
 
   /** Matches any PbPackageName or a PbMessageType the contains an extension. */
-  @NotNull
-  public static Condition<PbSymbol> packageOrMessageWithExtension() {
+  public static @NotNull Condition<PbSymbol> packageOrMessageWithExtension() {
     return packageOrMessageWithExtension;
   }
 
   /** Matches any PbPackageName or PbNamedTypeElement. */
-  @NotNull
-  public static Condition<PbSymbol> packageOrType() {
+  public static @NotNull Condition<PbSymbol> packageOrType() {
     return packageOrType;
   }
 
   /** Matches any PbSymbolOwner. */
-  @NotNull
-  public static Condition<PbSymbol> symbolOwner() {
+  public static @NotNull Condition<PbSymbol> symbolOwner() {
     return symbolOwner;
   }
 
   /** Matches fields that extend the given type. */
-  @NotNull
-  public static Condition<PbSymbol> extendedFromType(PbNamedTypeElement typeElement) {
+  public static @NotNull Condition<PbSymbol> extendedFromType(PbNamedTypeElement typeElement) {
     return (element) ->
         element instanceof PbField && PbPsiUtil.fieldIsExtension((PbField) element, typeElement);
   }
 
   /** Matches fields of the given type, or fields that extend it. */
-  @NotNull
-  public static Condition<PbSymbol> extendedFromTypeOrMember(PbNamedTypeElement typeElement) {
+  public static @NotNull Condition<PbSymbol> extendedFromTypeOrMember(PbNamedTypeElement typeElement) {
     return (element) ->
         element instanceof PbField
             && PbPsiUtil.fieldIsExtensionOrMember((PbField) element, typeElement);
   }
 
   /** Returns the base filter with additional filtering of unsuggestable items. */
-  @Nullable
-  public static Condition<PbSymbol> withUnsuggestableFilter(@Nullable Condition<PbSymbol> base) {
+  public static @Nullable Condition<PbSymbol> withUnsuggestableFilter(@Nullable Condition<PbSymbol> base) {
     if (base == null) {
       return null;
     }

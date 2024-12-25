@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.openapi.module.Module;
@@ -18,23 +18,21 @@ import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
 
 final class DartPostFormatProcessor implements PostFormatProcessor {
-  @NotNull
   @Override
-  public PsiElement processElement(@NotNull final PsiElement source, @NotNull final CodeStyleSettings settings) {
+  public @NotNull PsiElement processElement(final @NotNull PsiElement source, final @NotNull CodeStyleSettings settings) {
     return source;
   }
 
-  @NotNull
   @Override
-  public TextRange processText(@NotNull final PsiFile psiFile,
-                               @NotNull final TextRange rangeToReformat,
-                               @NotNull final CodeStyleSettings settings) {
+  public @NotNull TextRange processText(final @NotNull PsiFile psiFile,
+                                        final @NotNull TextRange rangeToReformat,
+                                        final @NotNull CodeStyleSettings settings) {
     if (!isApplicable(psiFile)) return rangeToReformat;
 
     return DartStyleAction.reformatRangeAsPostFormatProcessor(psiFile, rangeToReformat);
   }
 
-  private static boolean isApplicable(@NotNull final PsiFile psiFile) {
+  private static boolean isApplicable(final @NotNull PsiFile psiFile) {
     if (!(psiFile instanceof DartFile)) return false;
     final Project project = psiFile.getProject();
     final VirtualFile vFile = psiFile.getVirtualFile();

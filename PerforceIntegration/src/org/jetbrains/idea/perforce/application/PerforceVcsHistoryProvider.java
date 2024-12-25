@@ -107,8 +107,7 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
   }
 
   @Override
-  @Nullable
-  public String getHelpId() {
+  public @Nullable String getHelpId() {
     return null;
   }
 
@@ -135,8 +134,7 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
                                                   final VcsRevisionNumber currentRevisionNumber) {
     return new VcsAbstractHistorySession(revisions, currentRevisionNumber) {
       @Override
-      @Nullable
-      public VcsRevisionNumber calcCurrentRevisionNumber() {
+      public @Nullable VcsRevisionNumber calcCurrentRevisionNumber() {
         return myRunner.getCurrentRevision(p4File);
       }
 

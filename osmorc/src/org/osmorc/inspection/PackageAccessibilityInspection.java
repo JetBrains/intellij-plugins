@@ -72,7 +72,7 @@ public final class PackageAccessibilityInspection extends AbstractBaseJavaLocalI
   }
 
   @Override
-  public ProblemDescriptor @Nullable [] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull PsiFile file, final @NotNull InspectionManager manager, final boolean isOnTheFly) {
     if (!(file instanceof PsiClassOwner) || !checkTests && ProjectRootsUtil.isInTestSource(file)) {
       return null;
     }

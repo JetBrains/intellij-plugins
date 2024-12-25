@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.*;
@@ -213,7 +213,7 @@ public interface DartTokenTypesSets {
     }
 
     @Override
-    public ASTNode parseContents(@NotNull final ASTNode chameleon) {
+    public ASTNode parseContents(final @NotNull ASTNode chameleon) {
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(chameleon.getTreeParent().getPsi().getProject(),
                                                                                chameleon,
                                                                                new DartDocLexer(),
@@ -240,13 +240,12 @@ public interface DartTokenTypesSets {
     }
 
     @Override
-    public boolean isParsable(@NotNull final CharSequence buffer, @NotNull final Language fileLanguage, @NotNull final Project project) {
+    public boolean isParsable(final @NotNull CharSequence buffer, final @NotNull Language fileLanguage, final @NotNull Project project) {
       return PsiBuilderUtil.hasProperBraceBalance(buffer, new DartLexer(), LBRACE, RBRACE);
     }
 
-    @Nullable
     @Override
-    public ASTNode createNode(@NotNull final CharSequence text) {
+    public @Nullable ASTNode createNode(final @NotNull CharSequence text) {
       return new DartLazyParseableBlockImpl(this, text);
     }
 
@@ -264,7 +263,7 @@ public interface DartTokenTypesSets {
       return result;
     }
 
-    private static boolean isSyncOrAsync(@NotNull final ASTNode newBlock) {
+    private static boolean isSyncOrAsync(final @NotNull ASTNode newBlock) {
       final ASTNode oldBlock = Pair.getFirst(newBlock.getUserData(BlockSupport.TREE_TO_BE_REPARSED));
       final IElementType type = (oldBlock != null ? oldBlock : newBlock).getTreeParent().getFirstChildNode().getElementType();
       return type == SYNC || type == ASYNC;

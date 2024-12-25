@@ -91,8 +91,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
-  @Unmodifiable
-  public @NotNull Collection<File> getOutputRoots(@NotNull CompileContext context) {
+  public @Unmodifiable @NotNull Collection<File> getOutputRoots(@NotNull CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
       final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
       return ContainerUtil.createMaybeSingletonList(outputDir);

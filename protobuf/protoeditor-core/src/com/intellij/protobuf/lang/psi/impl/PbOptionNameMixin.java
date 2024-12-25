@@ -43,21 +43,18 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     super(node);
   }
 
-  @Nullable
   @Override
-  public PbOptionName getQualifier() {
+  public @Nullable PbOptionName getQualifier() {
     return PsiTreeUtil.getChildOfType(this, PbOptionName.class);
   }
 
-  @Nullable
   @Override
-  public PbExtensionName getExtensionName() {
+  public @Nullable PbExtensionName getExtensionName() {
     return PsiTreeUtil.getChildOfType(this, PbExtensionName.class);
   }
 
-  @Nullable
   @Override
-  public PsiElement getSymbol() {
+  public @Nullable PsiElement getSymbol() {
     return findChildByType(ProtoTokenTypes.IDENTIFIER_LITERAL);
   }
 
@@ -71,9 +68,8 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     return new PbOptionNameReference(this);
   }
 
-  @Nullable
   @Override
-  public PsiReference getEffectiveReference() {
+  public @Nullable PsiReference getEffectiveReference() {
     // Return a reference if this is not a special built-in option. If this option is an extension,
     // return the reference from getExtensionName().getEffectiveReference().
     PbExtensionName extensionName = getExtensionName();
@@ -84,15 +80,13 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
   }
 
   @Override
-  @Nullable
-  public PbMessageType getQualifierType() {
+  public @Nullable PbMessageType getQualifierType() {
     return CachedValuesManager.getCachedValue(
         this,
         () -> Result.create(getQualifierTypeNoCache(), PbCompositeModificationTracker.byElement(this)));
   }
 
-  @Nullable
-  private PbMessageType getQualifierTypeNoCache() {
+  private @Nullable PbMessageType getQualifierTypeNoCache() {
     PbOptionName qualifier = getQualifier();
     if (qualifier != null) {
       return getFieldType(getQualifierField(qualifier));
@@ -120,9 +114,8 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     return null;
   }
 
-  @Nullable
   @Override
-  public ValueTester getBuiltInValueTester() {
+  public @Nullable ValueTester getBuiltInValueTester() {
     BuiltInType type = getBuiltInType();
     if (type == null) {
       return null;
@@ -135,9 +128,8 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     }
   }
 
-  @Nullable
   @Override
-  public BuiltInType getBuiltInType() {
+  public @Nullable BuiltInType getBuiltInType() {
     SpecialOptionType specialType = getSpecialType();
     if (specialType == SpecialOptionType.FIELD_DEFAULT) {
       PbOptionOwner owner = getOwner();
@@ -169,9 +161,8 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     return typeName.getBuiltInType();
   }
 
-  @Nullable
   @Override
-  public PbNamedTypeElement getNamedType() {
+  public @Nullable PbNamedTypeElement getNamedType() {
     PbTypeName typeName = null;
 
     SpecialOptionType specialType = getSpecialType();
@@ -207,8 +198,7 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     return null;
   }
 
-  @Nullable
-  private static PbMessageType getFieldType(PbField field) {
+  private static @Nullable PbMessageType getFieldType(PbField field) {
     if (field == null) {
       return null;
     }
@@ -219,8 +209,7 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     return PbPsiUtil.resolveRefToType(type.getEffectiveReference(), PbMessageType.class);
   }
 
-  @Nullable
-  private PbMessageType getDescriptorType() {
+  private @Nullable PbMessageType getDescriptorType() {
     PbOptionOwner owner = getOwner();
     if (owner == null) {
       // This shouldn't be possible with the proto BNF.
@@ -242,8 +231,7 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
         .orElse(null);
   }
 
-  @Nullable
-  private static PbField getQualifierField(PbOptionName qualifier) {
+  private static @Nullable PbField getQualifierField(PbOptionName qualifier) {
     PsiReference ref = qualifier.getEffectiveReference();
     if (ref != null) {
       return PbPsiUtil.resolveRefToType(ref, PbField.class);
@@ -251,8 +239,7 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
     return null;
   }
 
-  @Nullable
-  private PbOptionOwner getOwner() {
+  private @Nullable PbOptionOwner getOwner() {
     return PbPsiImplUtil.getOptionOwner(this);
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.google.common.collect.ImmutableList;
@@ -40,68 +41,55 @@ public class KarmaRunSettings {
     myTestNames = ImmutableList.copyOf(builder.myTestNames);
   }
 
-  @NotNull
-  public String getConfigPathSystemDependent() {
+  public @NotNull String getConfigPathSystemDependent() {
     return myConfigPath;
   }
 
-  @NotNull
-  public String getConfigPathSystemIndependent() {
+  public @NotNull String getConfigPathSystemIndependent() {
     return FileUtil.toSystemIndependentName(myConfigPath);
   }
 
-  @Nullable
-  public NodePackage getKarmaPackage() {
+  public @Nullable NodePackage getKarmaPackage() {
     return myKarmaPackage;
   }
 
-  @NotNull
-  public String getKarmaOptions() {
+  public @NotNull String getKarmaOptions() {
     return myKarmaOptions;
   }
 
-  @NotNull
-  public NodeJsInterpreterRef getInterpreterRef() {
+  public @NotNull NodeJsInterpreterRef getInterpreterRef() {
     return myInterpreterRef;
   }
 
-  @NotNull
-  public String getNodeOptions() {
+  public @NotNull String getNodeOptions() {
     return myNodeOptions;
   }
 
-  @NotNull
-  public String getWorkingDirectorySystemDependent() {
+  public @NotNull String getWorkingDirectorySystemDependent() {
     return myWorkingDirectory;
   }
 
-  @NotNull
-  public String getWorkingDirectorySystemIndependent() {
+  public @NotNull String getWorkingDirectorySystemIndependent() {
     return FileUtil.toSystemIndependentName(myWorkingDirectory);
   }
 
-  @NotNull
-  public EnvironmentVariablesData getEnvData() {
+  public @NotNull EnvironmentVariablesData getEnvData() {
     return myEnvData;
   }
 
-  @NotNull
-  public KarmaScopeKind getScopeKind() {
+  public @NotNull KarmaScopeKind getScopeKind() {
     return myScopeKind;
   }
 
-  @NotNull
-  public String getTestFileSystemDependentPath() {
+  public @NotNull String getTestFileSystemDependentPath() {
     return myTestFilePath;
   }
 
-  @NotNull
-  public String getTestFileSystemIndependentPath() {
+  public @NotNull String getTestFileSystemIndependentPath() {
     return FileUtil.toSystemIndependentName(myTestFilePath);
   }
 
-  @NotNull
-  public List<String> getTestNames() {
+  public @NotNull List<String> getTestNames() {
     return myTestNames;
   }
 
@@ -139,8 +127,7 @@ public class KarmaRunSettings {
     return result;
   }
 
-  @NotNull
-  public Builder toBuilder() {
+  public @NotNull Builder toBuilder() {
     return new Builder(this);
   }
 
@@ -172,68 +159,57 @@ public class KarmaRunSettings {
       myTestNames = settings.myTestNames;
     }
 
-    @NotNull
-    public Builder setConfigPath(@Nullable String configPath) {
+    public @NotNull Builder setConfigPath(@Nullable String configPath) {
       myConfigPath = StringUtil.notNullize(configPath);
       return this;
     }
 
-    @NotNull
-    public Builder setKarmaPackage(@Nullable NodePackage karmaPackage) {
+    public @NotNull Builder setKarmaPackage(@Nullable NodePackage karmaPackage) {
       myKarmaPackage = karmaPackage;
       return this;
     }
 
-    @NotNull
-    public Builder setKarmaOptions(@Nullable String karmaOptions) {
+    public @NotNull Builder setKarmaOptions(@Nullable String karmaOptions) {
       myKarmaOptions = StringUtil.notNullize(karmaOptions);
       return this;
     }
 
-    @NotNull
-    public Builder setInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
+    public @NotNull Builder setInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
       myInterpreterRef = interpreterRef;
       return this;
     }
 
-    @NotNull
-    public Builder setNodeOptions(@NotNull String nodeOptions) {
+    public @NotNull Builder setNodeOptions(@NotNull String nodeOptions) {
       myNodeOptions = nodeOptions;
       return this;
     }
 
-    @NotNull
-    public Builder setWorkingDirectory(@Nullable String workingDirectory) {
+    public @NotNull Builder setWorkingDirectory(@Nullable String workingDirectory) {
       myWorkingDirectory = StringUtil.notNullize(workingDirectory);
       return this;
     }
 
-    @NotNull
-    public Builder setEnvData(@NotNull EnvironmentVariablesData envData) {
+    public @NotNull Builder setEnvData(@NotNull EnvironmentVariablesData envData) {
       myEnvData = envData;
       return this;
     }
 
-    @NotNull
-    public Builder setScopeKind(@NotNull KarmaScopeKind scopeKind) {
+    public @NotNull Builder setScopeKind(@NotNull KarmaScopeKind scopeKind) {
       myScopeKind = scopeKind;
       return this;
     }
 
-    @NotNull
-    public Builder setTestFilePath(@Nullable String testFilePath) {
+    public @NotNull Builder setTestFilePath(@Nullable String testFilePath) {
       myTestFilePath = StringUtil.notNullize(testFilePath);
       return this;
     }
 
-    @NotNull
-    public Builder setTestNames(@NotNull List<String> testNames) {
+    public @NotNull Builder setTestNames(@NotNull List<String> testNames) {
       myTestNames = testNames;
       return this;
     }
 
-    @NotNull
-    public KarmaRunSettings build() {
+    public @NotNull KarmaRunSettings build() {
       return new KarmaRunSettings(this);
     }
   }

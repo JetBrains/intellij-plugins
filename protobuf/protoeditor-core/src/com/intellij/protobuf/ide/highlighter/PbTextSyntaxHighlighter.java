@@ -20,10 +20,10 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.StringEscapesTokenTypes;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -120,15 +120,13 @@ public class PbTextSyntaxHighlighter extends SyntaxHighlighterBase {
     return attributesKeyMap.get(token);
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new PbTextHighlightingLexer();
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public @NotNull TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(attributesKeyMap.get(tokenType));
   }
 }

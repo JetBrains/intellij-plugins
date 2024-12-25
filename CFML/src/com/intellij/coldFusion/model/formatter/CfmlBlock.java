@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.formatter;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -63,9 +63,8 @@ public class CfmlBlock extends TemplateLanguageBlock {
     return null;
   }
 
-  @Nullable
   @Override
-  protected Indent getChildIndent() {
+  protected @Nullable Indent getChildIndent() {
     return myIndentProcessor.getChildIndent(myNode);
   }
 
@@ -113,8 +112,7 @@ public class CfmlBlock extends TemplateLanguageBlock {
     return defaultRange;
   }
 
-  @Nullable
-  private static PsiElement findCommonHtmlParent(@Nullable PsiElement start, @Nullable PsiElement end) {
+  private static @Nullable PsiElement findCommonHtmlParent(@Nullable PsiElement start, @Nullable PsiElement end) {
     if (start == null || end == null || start == end) {
       return start;
     }
@@ -127,8 +125,7 @@ public class CfmlBlock extends TemplateLanguageBlock {
   }
 
   @Override
-  @NotNull
-  public TextRange getTextRange() {
+  public @NotNull TextRange getTextRange() {
     return myTextRange;
   }
 
@@ -161,8 +158,7 @@ public class CfmlBlock extends TemplateLanguageBlock {
   }
 
   @Override
-  @Nullable
-  protected Alignment createChildAlignment(ASTNode child) {
+  protected @Nullable Alignment createChildAlignment(ASTNode child) {
     if (child.getElementType() != CfscriptTokenTypes.FOR_KEYWORD &&
         child.getElementType() != CfscriptTokenTypes.L_BRACKET && child.getElementType() != CfmlElementTypes.BLOCK_OF_STATEMENTS) {
       return myAlignmentProcessor.createChildAlignment();
@@ -170,9 +166,8 @@ public class CfmlBlock extends TemplateLanguageBlock {
     return null;
   }
 
-  @NotNull
   @Override
-  public ChildAttributes getChildAttributes(int newChildIndex) {
+  public @NotNull ChildAttributes getChildAttributes(int newChildIndex) {
     List<Block> childBlockList = getSubBlocks();
     if (newChildIndex > 0 && newChildIndex - 1 < childBlockList.size()) {
       ASTBlock prevBlock = (ASTBlock)childBlockList.get(newChildIndex - 1);

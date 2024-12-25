@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -47,16 +47,15 @@ public final class DartSdkLibUtil {
     return PlatformUtils.isIntelliJ() || "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
   }
 
-  public static void ensureDartSdkConfigured(@NotNull final Project project, @NotNull final String sdkHomePath) {
+  public static void ensureDartSdkConfigured(final @NotNull Project project, final @NotNull String sdkHomePath) {
     configureDartSdkAndReturnUndoingDisposable(project, sdkHomePath);
   }
 
   /**
    * @return Disposable which undoes configuration
    */
-  @NotNull
   @VisibleForTesting
-  public static Disposable configureDartSdkAndReturnUndoingDisposable(@NotNull final Project project, @NotNull final String sdkHomePath) {
+  public static @NotNull Disposable configureDartSdkAndReturnUndoingDisposable(final @NotNull Project project, final @NotNull String sdkHomePath) {
     final LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
     final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
@@ -80,9 +79,9 @@ public final class DartSdkLibUtil {
     return ()->{};
   }
 
-  public static void ensureDartSdkConfigured(@NotNull final Project project,
-                                             @NotNull final LibraryTable.ModifiableModel libraryTableModel,
-                                             @NotNull final String sdkHomePath) {
+  public static void ensureDartSdkConfigured(final @NotNull Project project,
+                                             final @NotNull LibraryTable.ModifiableModel libraryTableModel,
+                                             final @NotNull String sdkHomePath) {
     final Library library = libraryTableModel.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
       createDartSdkLib(project, libraryTableModel, sdkHomePath);
@@ -95,10 +94,9 @@ public final class DartSdkLibUtil {
     }
   }
 
-  @NotNull
-  private static Library createDartSdkLib(@NotNull final Project project,
-                                          @NotNull final LibraryTable.ModifiableModel libraryTableModel,
-                                          @NotNull final String sdkHomePath) {
+  private static @NotNull Library createDartSdkLib(final @NotNull Project project,
+                                                   final @NotNull LibraryTable.ModifiableModel libraryTableModel,
+                                                   final @NotNull String sdkHomePath) {
     final Library existingLib = libraryTableModel.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (existingLib != null) {
       setupDartSdkRoots(project, existingLib, sdkHomePath);
@@ -114,8 +112,7 @@ public final class DartSdkLibUtil {
   /**
    * @return Disposable which undoes configuration
    */
-  @NotNull
-  private static Disposable setupDartSdkRoots(@NotNull final Project project, @NotNull final Library library, @NotNull final String sdkHomePath) {
+  private static @NotNull Disposable setupDartSdkRoots(final @NotNull Project project, final @NotNull Library library, final @NotNull String sdkHomePath) {
     LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkHomePath + "/lib");
 
     final SortedSet<String> roots = getRootUrls(project, sdkHomePath);
@@ -156,8 +153,7 @@ public final class DartSdkLibUtil {
     return ()->{};
   }
 
-  @NotNull
-  private static SortedSet<String> getRootUrls(@NotNull final Project project, @NotNull final String sdkHomePath) {
+  private static @NotNull SortedSet<String> getRootUrls(final @NotNull Project project, final @NotNull String sdkHomePath) {
     final SortedSet<String> result = getRootUrlsFromLibrariesFile(project, sdkHomePath);
 
     if (result.isEmpty() || !result.contains(VfsUtilCore.pathToUrl(sdkHomePath + "/lib/core"))) {
@@ -168,9 +164,8 @@ public final class DartSdkLibUtil {
     return result;
   }
 
-  @NotNull
   @VisibleForTesting
-  public static SortedSet<String> getRootUrlsFromLibrariesFile(@NotNull Project project, @NotNull String sdkHomePath) {
+  public static @NotNull SortedSet<String> getRootUrlsFromLibrariesFile(@NotNull Project project, @NotNull String sdkHomePath) {
     final Map<String, String> map = DartLibraryIndex.getSdkLibUriToRelativePathMap(project, sdkHomePath);
     final SortedSet<String> result = new TreeSet<>();
 
@@ -189,9 +184,8 @@ public final class DartSdkLibUtil {
     return result;
   }
 
-  @NotNull
   @VisibleForTesting
-  public static SortedSet<String> getRootUrlsFailover(@NotNull final String sdkHomePath) {
+  public static @NotNull SortedSet<String> getRootUrlsFailover(final @NotNull String sdkHomePath) {
     final SortedSet<String> result = new TreeSet<>();
 
     final File lib = new File(sdkHomePath + "/lib");
@@ -212,7 +206,7 @@ public final class DartSdkLibUtil {
     return result;
   }
 
-  public static boolean isDartSdkEnabled(@NotNull final Module module) {
+  public static boolean isDartSdkEnabled(final @NotNull Module module) {
     for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (isDartSdkOrderEntry(orderEntry)) {
         return true;
@@ -231,16 +225,15 @@ public final class DartSdkLibUtil {
     return false;
   }
 
-  public static void enableDartSdk(@NotNull final Module module) {
+  public static void enableDartSdk(final @NotNull Module module) {
     enableDartSdkAndReturnUndoingDisposable(module);
   }
 
   /**
    * @return Disposable which undoes configuration
    */
-  @NotNull
   @VisibleForTesting
-  public static Disposable enableDartSdkAndReturnUndoingDisposable(@NotNull final Module module) {
+  public static @NotNull Disposable enableDartSdkAndReturnUndoingDisposable(final @NotNull Module module) {
     if (isDartSdkEnabled(module)) return Disposer.newDisposable();
 
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
@@ -268,7 +261,7 @@ public final class DartSdkLibUtil {
     return Disposer.newDisposable();
   }
 
-  public static void disableDartSdk(@NotNull final Collection<? extends Module> modules) {
+  public static void disableDartSdk(final @NotNull Collection<? extends Module> modules) {
     if (modules.isEmpty()) return;
 
     final List<ModifiableRootModel> models = new SmartList<>();
@@ -286,7 +279,7 @@ public final class DartSdkLibUtil {
     commitModifiableModels(modules.iterator().next().getProject(), models);
   }
 
-  public static Collection<Module> getModulesWithDartSdkEnabled(@NotNull final Project project) {
+  public static Collection<Module> getModulesWithDartSdkEnabled(final @NotNull Project project) {
     final Collection<Module> result = new SmartList<>();
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
@@ -298,7 +291,7 @@ public final class DartSdkLibUtil {
     return result;
   }
 
-  public static void enableDartSdkForSpecifiedModulesAndDisableForOthers(@NotNull final Project project,
+  public static void enableDartSdkForSpecifiedModulesAndDisableForOthers(final @NotNull Project project,
                                                                          final Module @NotNull [] modulesWithDart) {
     final List<ModifiableRootModel> modelsToCommit = new SmartList<>();
 
@@ -332,7 +325,7 @@ public final class DartSdkLibUtil {
     commitModifiableModels(project, modelsToCommit);
   }
 
-  public static boolean isDartSdkOrderEntry(@NotNull final OrderEntry orderEntry) {
+  public static boolean isDartSdkOrderEntry(final @NotNull OrderEntry orderEntry) {
     return orderEntry instanceof LibraryOrderEntry &&
            LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
            DartSdk.DART_SDK_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
@@ -347,8 +340,8 @@ public final class DartSdkLibUtil {
     return false;
   }
 
-  private static void commitModifiableModels(@NotNull final Project project,
-                                             @NotNull final Collection<ModifiableRootModel> modelsToCommit) {
+  private static void commitModifiableModels(final @NotNull Project project,
+                                             final @NotNull Collection<ModifiableRootModel> modelsToCommit) {
     if (!modelsToCommit.isEmpty()) {
       try {
         ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(project).getModifiableModel());

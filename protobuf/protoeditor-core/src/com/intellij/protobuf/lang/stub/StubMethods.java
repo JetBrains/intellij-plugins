@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 
 public final class StubMethods {
 
-  @Nullable
-  static QualifiedName getQualifiedName(PbNamedElementStub<?> stub) {
+  static @Nullable QualifiedName getQualifiedName(PbNamedElementStub<?> stub) {
     String name = stub.getName();
     if (name == null) {
       return null;
@@ -43,8 +42,7 @@ public final class StubMethods {
     return scope.append(name);
   }
 
-  @Nullable
-  static PbStatementOwnerStub<?> getOwner(PbStatementStub<?> stub) {
+  static @Nullable PbStatementOwnerStub<?> getOwner(PbStatementStub<?> stub) {
     Stub parent = stub.getParentStub();
     if (parent instanceof PbStatementOwnerStub) {
       return (PbStatementOwnerStub<?>) parent;
@@ -52,8 +50,7 @@ public final class StubMethods {
     return null;
   }
 
-  @NotNull
-  static List<PbStatementStub<?>> getStatements(PbStatementOwnerStub<?> stub) {
+  static @NotNull List<PbStatementStub<?>> getStatements(PbStatementOwnerStub<?> stub) {
     List<StubElement<?>> children = stub.getChildrenStubs();
 
     return children

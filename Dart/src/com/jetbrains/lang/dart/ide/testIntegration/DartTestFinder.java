@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.testIntegration;
 
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
@@ -25,15 +25,13 @@ import java.util.Collections;
 public final class DartTestFinder implements TestFinder {
   private static final String TEST_DART_SUFFIX = "_test.dart";
 
-  @Nullable
   @Override
-  public PsiElement findSourceElement(@NotNull final PsiElement from) {
+  public @Nullable PsiElement findSourceElement(final @NotNull PsiElement from) {
     return from.getContainingFile();
   }
 
-  @NotNull
   @Override
-  public Collection<PsiElement> findTestsForClass(@NotNull final PsiElement element) {
+  public @NotNull Collection<PsiElement> findTestsForClass(final @NotNull PsiElement element) {
     Project project = element.getProject();
     VirtualFile vFile = element.getContainingFile().getVirtualFile();
     String topLevelDirName = getTopLevelDirNameForDartFile(project, vFile);
@@ -45,9 +43,8 @@ public final class DartTestFinder implements TestFinder {
     return ContainerUtil.mapNotNull(testFiles, file -> element.getManager().findFile(file));
   }
 
-  @NotNull
   @Override
-  public Collection<PsiElement> findClassesForTest(@NotNull final PsiElement element) {
+  public @NotNull Collection<PsiElement> findClassesForTest(final @NotNull PsiElement element) {
     if (!isTest(element)) return Collections.emptyList();
 
     VirtualFile vFile = element.getContainingFile().getVirtualFile();
@@ -59,7 +56,7 @@ public final class DartTestFinder implements TestFinder {
   }
 
   @Override
-  public boolean isTest(@NotNull final PsiElement element) {
+  public boolean isTest(final @NotNull PsiElement element) {
     return element.getContainingFile().getName().endsWith(TEST_DART_SUFFIX) &&
            "test".equals(getTopLevelDirNameForDartFile(element.getProject(), element.getContainingFile().getVirtualFile()));
   }
@@ -83,8 +80,7 @@ public final class DartTestFinder implements TestFinder {
     return relPath.substring(0, slashIndex);
   }
 
-  @NotNull
-  private static GlobalSearchScope getDirScope(@NotNull Project project, @NotNull VirtualFile contextFile, String... topLevelDirNames) {
+  private static @NotNull GlobalSearchScope getDirScope(@NotNull Project project, @NotNull VirtualFile contextFile, String... topLevelDirNames) {
     VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
                           ? DartBuildFileUtil.findPackageRootBuildFile(project, contextFile)
                           : PubspecYamlUtil.findPubspecYamlFile(project, contextFile);

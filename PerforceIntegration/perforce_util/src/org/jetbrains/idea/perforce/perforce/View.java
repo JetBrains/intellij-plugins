@@ -32,8 +32,7 @@ public final class View {
   private final Mapping myDepotToLocalMapping;
   private final Mapping myLocalToDepotMapping;
 
-  @Nullable
-  public static View create(String viewString) {
+  public static @Nullable View create(String viewString) {
 
     final String[] params = ParametersList.parse(viewString);
 
@@ -69,8 +68,7 @@ public final class View {
     return myStringRepresentation;
   }
 
-  @Nullable
-  public String match(final String filePath, String clientName) {
+  public @Nullable String match(final String filePath, String clientName) {
     String result = myDepotToLocalMapping.replaceSrcPathWithDest(filePath);
     if (result == null) return null;
     String clientPrefix = "//" + clientName + "/";
@@ -81,8 +79,7 @@ public final class View {
     return getDepotPath().startsWith("-");
   }
 
-  @Nullable
-  public static String getRelativePath(String filePath, String clientName, List<? extends View> views) {
+  public static @Nullable String getRelativePath(String filePath, String clientName, List<? extends View> views) {
     String result = null;
     for (View view : views) {
       if (clientName != null) {
@@ -201,8 +198,7 @@ public final class View {
       myDestMask = destMask;
     }
 
-    @Nullable
-    private synchronized String replaceSrcPathWithDest(String filePath) {
+    private synchronized @Nullable String replaceSrcPathWithDest(String filePath) {
       final Matcher matcher = getMatcher(filePath);
       if (matcher.matches()) {
         return matcher.replaceFirst(convertDestMaskToReplacement(mySrcPatternBackReferences));

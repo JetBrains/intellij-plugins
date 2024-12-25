@@ -18,8 +18,8 @@ package com.thoughtworks.gauge.language;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.GaugeConstants;
 import icons.GaugeIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,21 +32,18 @@ public final class ConceptFileType extends LanguageFileType {
     super(Concept.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "Concept";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return GaugeBundle.message("filetype.gauge.concept.description");
   }
 
-  @NotNull
   @Override
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return GaugeConstants.CONCEPT_EXTENSION;
   }
 

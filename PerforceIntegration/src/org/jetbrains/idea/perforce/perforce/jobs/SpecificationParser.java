@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecificationParser {
-  private final static String PARSE_ERROR = "Perforce Job Specification parse error.";
+  private static final String PARSE_ERROR = "Perforce Job Specification parse error.";
   private static final ParserLogger LOG = new ParserLogger("#org.jetbrains.idea.perforce.perforce.jobs.SpecificationParser", PARSE_ERROR);
 
   private final List<String> myLines;
@@ -102,7 +102,7 @@ public class SpecificationParser {
     },
   };
 
-  private static abstract class FieldParser {
+  private abstract static class FieldParser {
     // for debug
     private final String myName;
 

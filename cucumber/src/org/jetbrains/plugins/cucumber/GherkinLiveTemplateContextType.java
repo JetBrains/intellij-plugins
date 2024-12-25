@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.codeInsight.template.TemplateContextType;
@@ -17,7 +18,7 @@ public final class GherkinLiveTemplateContextType extends TemplateContextType {
   }
 
   @Override
-  public boolean isInContext(@NotNull final PsiFile file, final int offset) {
+  public boolean isInContext(final @NotNull PsiFile file, final int offset) {
     return file instanceof GherkinFileImpl;
   }
 

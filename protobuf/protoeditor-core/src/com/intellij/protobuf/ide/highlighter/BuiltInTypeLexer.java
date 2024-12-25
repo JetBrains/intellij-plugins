@@ -17,9 +17,9 @@ package com.intellij.protobuf.ide.highlighter;
 
 import com.intellij.lexer.DelegateLexer;
 import com.intellij.lexer.Lexer;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.protobuf.lang.util.BuiltInType;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,9 +29,8 @@ public class BuiltInTypeLexer extends DelegateLexer {
     super(delegate);
   }
 
-  @Nullable
   @Override
-  public IElementType getTokenType() {
+  public @Nullable IElementType getTokenType() {
     if (BuiltInType.isBuiltInType(getTokenText())) {
       return ProtoTokenTypes.BUILT_IN_TYPE;
     }

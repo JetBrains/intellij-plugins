@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.getExcludedFolderNames;
@@ -25,9 +24,8 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupAc
 
 public final class PhoneGapFileListener implements AsyncFileListener {
 
-  @Nullable
   @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
+  public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     List<Pair<VFileEvent, VirtualFile>> acceptableEvents = null;
     
     for (VFileEvent event : events) {

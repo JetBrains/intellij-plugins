@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.ASTNode;
@@ -20,7 +21,7 @@ import org.jetbrains.plugins.cucumber.psi.impl.GherkinSimpleReference;
  * @author Roman.Chernyatchik
  */
 public class GherkinTableCellImpl extends GherkinPsiElementBase implements GherkinTableCell  {
-  public GherkinTableCellImpl(@NotNull final ASTNode node) {
+  public GherkinTableCellImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -59,9 +60,8 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
     return PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
   }
 
-  @NotNull
   @Override
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     return new LocalSearchScope(getContainingFile());
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.pages;
 
 import com.intellij.openapi.options.Configurable;
@@ -15,16 +15,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class HbConfigurationProvider extends ConfigurableProvider {
 
-  @NotNull
-  private final Project myProject;
+  private final @NotNull Project myProject;
 
   public HbConfigurationProvider(@NotNull Project project) {
     myProject = project;
   }
 
-  @Nullable
   @Override
-  public Configurable createConfigurable() {
+  public @Nullable Configurable createConfigurable() {
     return new HbConfigurationPage(myProject);
   }
 

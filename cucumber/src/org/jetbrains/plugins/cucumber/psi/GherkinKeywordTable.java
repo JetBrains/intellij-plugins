@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.psi.tree.IElementType;
@@ -64,8 +65,7 @@ public class GherkinKeywordTable {
     return keywords;
   }
   
-  @NotNull
-  public Collection<String> getRuleKeywords() {
+  public @NotNull Collection<String> getRuleKeywords() {
     Collection<String> result = getKeywords(GherkinTokenTypes.RULE_KEYWORD);
     return result == null ? Collections.emptyList() : result;
   }
@@ -113,8 +113,7 @@ public class GherkinKeywordTable {
     return myType2KeywordsTable.keySet();
   }
 
-  @Nullable
-  public Collection<String> getKeywords(final IElementType type) {
+  public @Nullable Collection<String> getKeywords(final IElementType type) {
     return myType2KeywordsTable.get(type);
   }
 

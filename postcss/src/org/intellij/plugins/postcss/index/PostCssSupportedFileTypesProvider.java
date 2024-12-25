@@ -13,27 +13,23 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssSupportedFileTypesProvider extends CssSupportedFileTypesProvider {
 
-  @NotNull
   @Override
-  public LanguageFileType getSupportedFileType() {
+  public @NotNull LanguageFileType getSupportedFileType() {
     return PostCssFileType.POST_CSS;
   }
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return PostCssLanguage.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public Lexer getIndexingLexer() {
+  public @NotNull Lexer getIndexingLexer() {
     return new PostCssHighlightingLexer(CssElementDescriptorFactory2.getInstance().getValueIdentifiers());
   }
 
-  @NotNull
   @Override
-  public Class<? extends CssCodeStyleSettings> getCustomCodeStyleSettingsClass() {
+  public @NotNull Class<? extends CssCodeStyleSettings> getCustomCodeStyleSettingsClass() {
     return CssCodeStyleSettings.class;
   }
 }

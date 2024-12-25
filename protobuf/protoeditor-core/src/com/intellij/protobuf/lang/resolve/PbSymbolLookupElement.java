@@ -19,9 +19,9 @@ import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.ui.JBColor;
 import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
 import com.intellij.protobuf.lang.psi.*;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -86,15 +86,13 @@ public class PbSymbolLookupElement extends LookupElement {
     this.highlightColor = JBColor.RED;
   }
 
-  @NotNull
   @Override
-  public String getLookupString() {
+  public @NotNull String getLookupString() {
     return symbol instanceof PbPackageName ? name + "." : name;
   }
 
-  @NotNull
   @Override
-  public Object getObject() {
+  public @NotNull Object getObject() {
     return symbol;
   }
 

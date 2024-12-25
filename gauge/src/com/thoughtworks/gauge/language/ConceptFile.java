@@ -26,9 +26,8 @@ public final class ConceptFile extends PsiFileBase {
     super(viewProvider, Concept.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return ConceptFileType.INSTANCE;
   }
 

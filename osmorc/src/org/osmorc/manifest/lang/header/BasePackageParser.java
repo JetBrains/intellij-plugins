@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.codeInsight.daemon.JavaErrorBundle;
@@ -67,9 +67,8 @@ public class BasePackageParser extends OsgiHeaderParser {
     return annotated;
   }
 
-  @Nullable
   @Override
-  public Object getConvertedValue(@NotNull Header header) {
+  public @Nullable Object getConvertedValue(@NotNull Header header) {
     List<HeaderValue> headerValues = header.getHeaderValues();
     if (!headerValues.isEmpty()) {
       List<String> packages = new ArrayList<>(headerValues.size());

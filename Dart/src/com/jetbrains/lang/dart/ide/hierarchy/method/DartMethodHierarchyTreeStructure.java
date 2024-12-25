@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
@@ -47,11 +47,11 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
     return descriptor.getCachedChildren();
   }
 
-  private void addAllVisibleSubclasses(@NotNull final Set<TypeHierarchyItem> stackItems,
-                                       @NotNull final Project project,
-                                       @NotNull final List<TypeHierarchyItem> items,
-                                       @NotNull final TypeHierarchyItem item,
-                                       @NotNull final DartMethodHierarchyNodeDescriptor descriptor) {
+  private void addAllVisibleSubclasses(final @NotNull Set<TypeHierarchyItem> stackItems,
+                                       final @NotNull Project project,
+                                       final @NotNull List<TypeHierarchyItem> items,
+                                       final @NotNull TypeHierarchyItem item,
+                                       final @NotNull DartMethodHierarchyNodeDescriptor descriptor) {
     if (!stackItems.add(item)) {
       descriptor.setCachedChildren(ArrayUtilRt.EMPTY_OBJECT_ARRAY);
       return;

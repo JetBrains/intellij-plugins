@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
@@ -77,7 +77,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final DartCommandLineRunConfiguration configuration) {
+  protected void resetEditorFrom(final @NotNull DartCommandLineRunConfiguration configuration) {
     final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
 
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
@@ -90,7 +90,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartCommandLineRunConfiguration configuration) {
+  protected void applyEditorTo(final @NotNull DartCommandLineRunConfiguration configuration) {
     final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
 
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
@@ -102,9 +102,8 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 }

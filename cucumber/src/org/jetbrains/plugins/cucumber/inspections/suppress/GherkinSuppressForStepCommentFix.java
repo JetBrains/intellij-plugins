@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections.suppress;
 
 import com.intellij.codeInsight.daemon.impl.actions.AbstractBatchSuppressByNoInspectionCommentFix;
@@ -8,13 +9,12 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 public class GherkinSuppressForStepCommentFix extends AbstractBatchSuppressByNoInspectionCommentFix {
-  GherkinSuppressForStepCommentFix(@NotNull final String toolId) {
+  GherkinSuppressForStepCommentFix(final @NotNull String toolId) {
     super(toolId, false);
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     return CucumberBundle.message("cucumber.inspection.suppress.step");
   }
 

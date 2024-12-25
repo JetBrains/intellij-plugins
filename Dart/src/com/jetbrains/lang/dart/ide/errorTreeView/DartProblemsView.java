@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.execution.runners.ExecutionUtil;
@@ -48,7 +48,7 @@ import java.util.Map;
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
 public final class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
-  @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
+  public static final @NonNls String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
@@ -59,8 +59,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new HashMap<>();
   private final Alarm myAlarm;
 
-  @NotNull
-  private Icon myCurrentIcon = DartIcons.Dart_13;
+  private @NotNull Icon myCurrentIcon = DartIcons.Dart_13;
   private boolean myAnalysisIsBusy;
 
   private int myFilesWithErrorsHash;
@@ -145,13 +144,11 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
     return myPresentationHelper;
   }
 
-  @Nullable
-  private ToolWindow getDartAnalysisToolWindow() {
+  private @Nullable ToolWindow getDartAnalysisToolWindow() {
     return ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID);
   }
 
-  @Nullable
-  private DartProblemsViewPanel getProblemsViewPanel() {
+  private @Nullable DartProblemsViewPanel getProblemsViewPanel() {
     ToolWindow toolWindow = getDartAnalysisToolWindow();
     Content content = toolWindow != null ? toolWindow.getContentManager().getContent(0) : null;
     return content != null ? (DartProblemsViewPanel)content.getComponent() : null;
@@ -182,11 +179,11 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
     }
   }
 
-  public static @NotNull DartProblemsView getInstance(@NotNull final Project project) {
+  public static @NotNull DartProblemsView getInstance(final @NotNull Project project) {
     return project.getService(DartProblemsView.class);
   }
 
-  public static DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode(@NotNull final Project project) {
+  public static DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode(final @NotNull Project project) {
     if (!DartAnalysisServerService.getInstance(project).isServerProcessActive()) {
       return DartProblemsViewSettings.SCOPED_ANALYSIS_MODE_DEFAULT;
     }
@@ -245,7 +242,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
     myNotification = NotificationGroupManager.getInstance().getNotificationGroup("Dart Analysis")
       .createNotification(title, content, notificationType).setListener(new NotificationListener.Adapter() {
       @Override
-      protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+      protected void hyperlinkActivated(final @NotNull Notification notification, final @NotNull HyperlinkEvent e) {
         notification.expire();
 
         if (OPEN_DART_ANALYSIS_LINK.equals(e.getDescription())) {
@@ -296,11 +293,11 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   /**
    * Unlike {@link #setCurrentFile(VirtualFile)} this method may be called not from the EDT
    */
-  public void setInitialCurrentFileBeforeServerStart(@Nullable final VirtualFile file) {
+  public void setInitialCurrentFileBeforeServerStart(final @Nullable VirtualFile file) {
     myPresentationHelper.setCurrentFile(file);
   }
 
-  public void setCurrentFile(@Nullable final VirtualFile file) {
+  public void setCurrentFile(final @Nullable VirtualFile file) {
     ThreadingAssertions.assertEventDispatchThread();
 
     // Calling getProblemsViewPanel() here also ensures that the tool window contents becomes visible when Analysis server starts
@@ -316,7 +313,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
     }
   }
 
-  public void updateErrorsForFile(@NotNull final String filePath, @NotNull List<? extends AnalysisError> errors) {
+  public void updateErrorsForFile(final @NotNull String filePath, @NotNull List<? extends AnalysisError> errors) {
     synchronized (myLock) {
       if (myScheduledFilePathToErrors.isEmpty()) {
         myAlarm.addRequest(myUpdateRunnable, TABLE_REFRESH_PERIOD, ModalityState.nonModal());

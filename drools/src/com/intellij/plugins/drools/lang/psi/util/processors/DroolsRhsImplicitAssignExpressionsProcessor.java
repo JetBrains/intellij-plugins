@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -10,10 +10,10 @@ import com.intellij.plugins.drools.lang.psi.util.DroolsLightVariable;
 import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public final class DroolsRhsImplicitAssignExpressionsProcessor implements DroolsDeclarationsProcessor {
@@ -40,14 +40,12 @@ public final class DroolsRhsImplicitAssignExpressionsProcessor implements Drools
     return true;
   }
 
-  @NotNull
-  public static Set<DroolsLightVariable> getLocalVariables(final PsiElement place) {
+  public static @NotNull Set<DroolsLightVariable> getLocalVariables(final PsiElement place) {
     final PsiFile file = place.getContainingFile();
     return file instanceof  DroolsFile ? getLocalVariables(place, (DroolsFile)file) : Collections.emptySet();
   }
 
-  @NotNull
-  public static Set<DroolsLightVariable> getLocalVariables(final PsiElement place, final DroolsFile droolsFile) {
+  public static @NotNull Set<DroolsLightVariable> getLocalVariables(final PsiElement place, final DroolsFile droolsFile) {
     final Set<DroolsLightVariable> psiVariables = new HashSet<>();
     DroolsSimpleRhsStatement rhsStatement = PsiTreeUtil.getParentOfType(place, DroolsSimpleRhsStatement.class, false);
     if (rhsStatement != null) {

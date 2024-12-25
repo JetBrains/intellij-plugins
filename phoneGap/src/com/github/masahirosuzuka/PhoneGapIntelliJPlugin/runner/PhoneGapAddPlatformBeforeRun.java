@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -65,9 +65,8 @@ public final class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<Ph
     return PhoneGapIcons.PhonegapIntegration;
   }
 
-  @Nullable
   @Override
-  public PhoneGapAddPlatformTask createTask(@NotNull RunConfiguration runConfiguration) {
+  public @Nullable PhoneGapAddPlatformTask createTask(@NotNull RunConfiguration runConfiguration) {
     return runConfiguration instanceof PhoneGapRunConfiguration ? new PhoneGapAddPlatformTask(ID) : null;
   }
 
@@ -78,7 +77,7 @@ public final class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<Ph
 
   @Override
   public boolean executeTask(@NotNull DataContext context,
-                             @NotNull final RunConfiguration configuration,
+                             final @NotNull RunConfiguration configuration,
                              @NotNull ExecutionEnvironment env,
                              @NotNull PhoneGapAddPlatformTask task) {
 
@@ -109,7 +108,7 @@ public final class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<Ph
       new Task.Backgroundable(project, tabText, true) {
 
         @Override
-        public void run(@NotNull final ProgressIndicator indicator) {
+        public void run(final @NotNull ProgressIndicator indicator) {
           try {
             String platform = phoneGapRunConfiguration.getPlatform();
             assert platform != null;
@@ -162,9 +161,9 @@ public final class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<Ph
 
 
   private static void createViewForOutput(ConsoleViewImpl console,
-                                          @NotNull final JComponent component,
-                                          @NotNull final Project myProject,
-                                          @NotNull @NlsContexts.TabTitle final String tabDisplayName) {
+                                          final @NotNull JComponent component,
+                                          final @NotNull Project myProject,
+                                          final @NotNull @NlsContexts.TabTitle String tabDisplayName) {
     CommandProcessor commandProcessor = CommandProcessor.getInstance();
     commandProcessor.executeCommand(myProject, () -> {
       final MessageView messageView = MessageView.getInstance(myProject);
@@ -177,8 +176,8 @@ public final class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<Ph
   }
 
   private static void removeContents(@NotNull MessageView messageView,
-                                     @Nullable final Content skip,
-                                     @NotNull final String tabDisplayName) {
+                                     final @Nullable Content skip,
+                                     final @NotNull String tabDisplayName) {
     Content[] contents = messageView.getContentManager().getContents();
     for (Content content : contents) {
       if (content.isPinned()) continue;

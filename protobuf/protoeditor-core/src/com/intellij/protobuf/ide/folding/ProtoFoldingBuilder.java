@@ -60,9 +60,8 @@ public class ProtoFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
-  @Nullable
   @Override
-  public String getPlaceholderText(@NotNull ASTNode node) {
+  public @Nullable String getPlaceholderText(@NotNull ASTNode node) {
     if (ProtoTokenTypes.BLOCK_COMMENT.equals(node.getElementType())) {
       return "/*...*/";
     } else if (ProtoTokenTypes.LINE_COMMENT.equals(node.getElementType())) {

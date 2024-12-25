@@ -35,9 +35,8 @@ public class BowerSettingsManager implements PersistentStateComponent<Element> {
     myProject = project;
   }
 
-  @Nullable
   @Override
-  public Element getState() {
+  public @Nullable Element getState() {
     BowerSettings settings = mySettings;
     if (settings == null) {
       return null;
@@ -54,9 +53,8 @@ public class BowerSettingsManager implements PersistentStateComponent<Element> {
                                 JDOMExternalizerUtil.readCustomField(state, TAG_BOWER_JSON));
   }
 
-  @NotNull
-  private BowerSettings createSettings(@Nullable String bowerPkgPath,
-                                       @Nullable String bowerJsonPath) {
+  private @NotNull BowerSettings createSettings(@Nullable String bowerPkgPath,
+                                                @Nullable String bowerJsonPath) {
     BowerSettings.Builder builder = new BowerSettings.Builder(myProject);
     NodePackage bowerPkg;
     if (bowerPkgPath != null) {
@@ -73,14 +71,12 @@ public class BowerSettingsManager implements PersistentStateComponent<Element> {
     return builder.build();
   }
 
-  @NotNull
-  private NodePackage guessBowerPackage() {
+  private @NotNull NodePackage guessBowerPackage() {
     return PKG_DESCRIPTOR
       .findFirstDirectDependencyPackage(myProject, NodeJsInterpreterManager.getInstance(myProject).getInterpreter(), null);
   }
 
-  @NotNull
-  private String guessBowerConfig() {
+  private @NotNull String guessBowerConfig() {
     VirtualFile baseDir = myProject.getBaseDir();
     if (baseDir != null && baseDir.isValid()) {
       VirtualFile bowerJson = baseDir.findChild("bower.json");
@@ -91,8 +87,7 @@ public class BowerSettingsManager implements PersistentStateComponent<Element> {
     return "";
   }
 
-  @NotNull
-  public BowerSettings getSettings() {
+  public @NotNull BowerSettings getSettings() {
     BowerSettings settings = mySettings;
     if (settings == null) {
       settings = createSettings(null, null);
@@ -105,8 +100,7 @@ public class BowerSettingsManager implements PersistentStateComponent<Element> {
     mySettings = settings;
   }
 
-  @NotNull
-  public static BowerSettingsManager getInstance(@NotNull Project project) {
+  public static @NotNull BowerSettingsManager getInstance(@NotNull Project project) {
     return project.getService(BowerSettingsManager.class);
   }
 }

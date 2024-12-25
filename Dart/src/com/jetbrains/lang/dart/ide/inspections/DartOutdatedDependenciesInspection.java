@@ -39,8 +39,8 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
   private final Set<String> myIgnoredPubspecPaths = new HashSet<>(); // remember for the current session only, do not serialize
 
   @Override
-  public ProblemDescriptor @Nullable [] checkFile(@NotNull final PsiFile psiFile,
-                                                  @NotNull final InspectionManager manager,
+  public ProblemDescriptor @Nullable [] checkFile(final @NotNull PsiFile psiFile,
+                                                  final @NotNull InspectionManager manager,
                                                   final boolean isOnTheFly) {
     if (!isOnTheFly) return null;
 
@@ -107,14 +107,12 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return myFixName;
     }
 
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return getName();
     }
 
@@ -124,7 +122,7 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
     }
 
     @Override
-    public void applyFix(@NotNull final Project project, @NotNull final PsiFile psiFile, @Nullable final Editor editor) {
+    public void applyFix(final @NotNull Project project, final @NotNull PsiFile psiFile, final @Nullable Editor editor) {
       final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
       if (file == null || !file.isInLocalFileSystem()) return;
 
@@ -143,14 +141,12 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
 
   private static class OpenPubspecFix extends IntentionAndQuickFixAction {
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return DartBundle.message("open.pubspec");
     }
 
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return getName();
     }
 
@@ -160,7 +156,7 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
     }
 
     @Override
-    public void applyFix(@NotNull final Project project, @NotNull final PsiFile psiFile, @Nullable final Editor editor) {
+    public void applyFix(final @NotNull Project project, final @NotNull PsiFile psiFile, final @Nullable Editor editor) {
       final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
       if (file == null || !file.isInLocalFileSystem()) return;
 
@@ -172,23 +168,21 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
   }
 
   private static class IgnoreWarningFix extends IntentionAndQuickFixAction {
-    @NotNull private final Set<? super String> myIgnoredPubspecPaths;
-    @NotNull private final String myPubspecPath;
+    private final @NotNull Set<? super String> myIgnoredPubspecPaths;
+    private final @NotNull String myPubspecPath;
 
-    IgnoreWarningFix(@NotNull final Set<? super String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
+    IgnoreWarningFix(final @NotNull Set<? super String> ignoredPubspecPaths, final @NotNull String pubspecPath) {
       myIgnoredPubspecPaths = ignoredPubspecPaths;
       myPubspecPath = pubspecPath;
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return DartBundle.message("ignore.warning");
     }
 
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return getName();
     }
 
@@ -198,7 +192,7 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
     }
 
     @Override
-    public void applyFix(@NotNull final Project project, @NotNull final PsiFile psiFile, @Nullable final Editor editor) {
+    public void applyFix(final @NotNull Project project, final @NotNull PsiFile psiFile, final @Nullable Editor editor) {
       myIgnoredPubspecPaths.add(myPubspecPath);
       DaemonCodeAnalyzer.getInstance(project).restart();
     }

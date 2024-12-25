@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
@@ -88,7 +88,7 @@ public final class DartResolveUtil {
     return true;
   }
 
-  private static boolean canAssign(@Nullable final DartClass baseClass, @Nullable DartClass aClass) {
+  private static boolean canAssign(final @Nullable DartClass baseClass, @Nullable DartClass aClass) {
     if (baseClass == null || aClass == null) {
       return true;
     }
@@ -103,8 +103,7 @@ public final class DartResolveUtil {
     return result.getValue();
   }
 
-  @Nullable
-  public static DartType findType(@Nullable PsiElement element) {
+  public static @Nullable DartType findType(@Nullable PsiElement element) {
     if (element instanceof DartDefaultFormalNamedParameter) {
       return findType(((DartDefaultFormalNamedParameter)element).getNormalFormalParameter());
     }
@@ -122,8 +121,7 @@ public final class DartResolveUtil {
     return null;
   }
 
-  @NotNull
-  public static DartClassResolveResult findCoreClass(PsiElement context, String className) {
+  public static @NotNull DartClassResolveResult findCoreClass(PsiElement context, String className) {
     final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DART_CORE_URI);
     final List<DartComponentName> result = new ArrayList<>();
     processTopLevelDeclarations(context, new DartResolveProcessor(result, className), dartCoreLib, className);
@@ -131,8 +129,7 @@ public final class DartResolveUtil {
     return DartClassResolveResult.create(parent instanceof DartClass ? (DartClass)parent : null);
   }
 
-  @NotNull
-  public static String getLibraryName(@NotNull final PsiFile psiFile) {
+  public static @NotNull String getLibraryName(final @NotNull PsiFile psiFile) {
     if (psiFile instanceof DartFile) {
       final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(psiFile, DartLibraryStatement.class);
       DartLibraryNameElement nameElement = libraryStatement != null ? libraryStatement.getLibraryNameElement() : null;
@@ -149,8 +146,7 @@ public final class DartResolveUtil {
     return psiFile.getName();
   }
 
-  @NotNull
-  public static Collection<DartClass> getClassDeclarations(@NotNull final PsiElement root) {
+  public static @NotNull Collection<DartClass> getClassDeclarations(final @NotNull PsiElement root) {
     final List<DartClass> result = new SmartList<>();
     for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof DartClass) {
@@ -275,10 +271,9 @@ public final class DartResolveUtil {
     return true;
   }
 
-  @Nullable
-  public static VirtualFile getImportedFile(final @NotNull Project project,
-                                            final @NotNull VirtualFile contextFile,
-                                            final @NotNull String importText) {
+  public static @Nullable VirtualFile getImportedFile(final @NotNull Project project,
+                                                      final @NotNull VirtualFile contextFile,
+                                                      final @NotNull String importText) {
     if (importText.startsWith(DartUrlResolver.DART_PREFIX) ||
         importText.startsWith(DartUrlResolver.PACKAGE_PREFIX) ||
         importText.startsWith(DartUrlResolver.FILE_PREFIX)) {
@@ -289,8 +284,7 @@ public final class DartResolveUtil {
     return parent == null ? null : VfsUtilCore.findRelativeFile(importText, parent);
   }
 
-  @Nullable
-  public static VirtualFile getRealVirtualFile(PsiFile psiFile) {
+  public static @Nullable VirtualFile getRealVirtualFile(PsiFile psiFile) {
     return psiFile != null ? psiFile.getOriginalFile().getVirtualFile() : null;
   }
 
@@ -303,8 +297,7 @@ public final class DartResolveUtil {
     return ContainerUtil.find(librariesForContext2, librariesSetForContext1::contains) != null;
   }
 
-  @NotNull
-  public static List<VirtualFile> findLibrary(@NotNull final PsiFile context) {
+  public static @NotNull List<VirtualFile> findLibrary(final @NotNull PsiFile context) {
     final VirtualFile contextVirtualFile = getRealVirtualFile(context);
     if (contextVirtualFile == null) return Collections.emptyList();
 
@@ -322,8 +315,7 @@ public final class DartResolveUtil {
     });
   }
 
-  @NotNull
-  public static List<VirtualFile> findLibraryByName(@NotNull final PsiElement context, @NotNull final String libraryName) {
+  public static @NotNull List<VirtualFile> findLibraryByName(final @NotNull PsiElement context, final @NotNull String libraryName) {
     return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context.getResolveScope(), libraryName), mainLibFile -> {
       for (String partUrl : DartPartUriIndex.getPartUris(context.getProject(), mainLibFile)) {
         final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
@@ -339,8 +331,7 @@ public final class DartResolveUtil {
   }
 
   // todo this method must look for main function in library parts as well
-  @Nullable
-  public static DartFunctionDeclarationWithBodyOrNative getMainFunction(final @Nullable PsiFile file) {
+  public static @Nullable DartFunctionDeclarationWithBodyOrNative getMainFunction(final @Nullable PsiFile file) {
     if (!(file instanceof DartFile)) return null;
 
     final ArrayList<DartComponentName> result = new ArrayList<>();
@@ -355,8 +346,7 @@ public final class DartResolveUtil {
     return null;
   }
 
-  @Nullable
-  public static DartReference getLeftReference(@Nullable final PsiElement node) {
+  public static @Nullable DartReference getLeftReference(final @Nullable PsiElement node) {
     if (node == null) return null;
     for (PsiElement sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node, true);
          sibling != null;
@@ -397,13 +387,11 @@ public final class DartResolveUtil {
     return null;
   }
 
-  @NotNull
-  public static List<DartComponent> findNamedSubComponents(DartClass @NotNull ... rootDartClasses) {
+  public static @NotNull List<DartComponent> findNamedSubComponents(DartClass @NotNull ... rootDartClasses) {
     return findNamedSubComponents(true, rootDartClasses);
   }
 
-  @NotNull
-  public static List<DartComponent> findNamedSubComponents(boolean unique, DartClass @NotNull ... rootDartClasses) {
+  public static @NotNull List<DartComponent> findNamedSubComponents(boolean unique, DartClass @NotNull ... rootDartClasses) {
     final List<DartComponent> unfilteredResult = findSubComponents(dartClass -> {
       final List<DartComponent> result = new ArrayList<>();
       for (DartComponent namedComponent : getNamedSubComponents(dartClass)) {
@@ -434,9 +422,8 @@ public final class DartResolveUtil {
     }, dartPsiClass);
   }
 
-  @NotNull
-  public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun,
-                                              DartClass @NotNull ... rootDartClasses) {
+  public static @NotNull <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun,
+                                                       DartClass @NotNull ... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
     processSuperClasses(dartClass -> {
       unfilteredResult.addAll(fun.fun(dartClass));
@@ -468,8 +455,8 @@ public final class DartResolveUtil {
     return true;
   }
 
-  public static void collectSupers(@NotNull final List<? super DartClass> superClasses,
-                                   @NotNull final List<? super DartClass> superInterfaces,
+  public static void collectSupers(final @NotNull List<? super DartClass> superClasses,
+                                   final @NotNull List<? super DartClass> superInterfaces,
                                    @Nullable DartClass rootDartClass) {
     processSupers(dartClass -> {
       superClasses.add(dartClass);
@@ -547,8 +534,7 @@ public final class DartResolveUtil {
     return names.toArray(new DartComponentName[0]);
   }
 
-  @NotNull
-  public static List<DartComponent> getNamedSubComponents(DartClass dartClass) {
+  public static @NotNull List<DartComponent> getNamedSubComponents(DartClass dartClass) {
     if (dartClass.isEnum()) {
       final List<DartEnumConstantDeclaration> enumConstants = dartClass.getEnumConstantDeclarationList();
       final List<DartComponent> result = new ArrayList<>(enumConstants.size());
@@ -577,8 +563,7 @@ public final class DartResolveUtil {
     return result;
   }
 
-  @Nullable
-  public static DartClassMembers getBody(@Nullable final DartClass dartClass) {
+  public static @Nullable DartClassMembers getBody(final @Nullable DartClass dartClass) {
     final DartClassBody body;
     if (dartClass instanceof DartClassDefinition) {
       body = ((DartClassDefinition)dartClass).getClassBody();
@@ -603,8 +588,7 @@ public final class DartResolveUtil {
     return typeList.getTypeList();
   }
 
-  @NotNull
-  public static DartClassResolveResult resolveClassByType(@Nullable DartType dartType) {
+  public static @NotNull DartClassResolveResult resolveClassByType(@Nullable DartType dartType) {
     return resolveClassByType(dartType, DartClassResolveResult.EMPTY);
   }
 
@@ -631,14 +615,12 @@ public final class DartResolveUtil {
     return DartClassResolveResult.EMPTY;
   }
 
-  @NotNull
-  public static DartClassResolveResult getDartClassResolveResult(@Nullable PsiElement element) {
+  public static @NotNull DartClassResolveResult getDartClassResolveResult(@Nullable PsiElement element) {
     return getDartClassResolveResult(element, new DartGenericSpecialization());
   }
 
-  @NotNull
-  public static DartClassResolveResult getDartClassResolveResult(@Nullable PsiElement element,
-                                                                 @NotNull DartGenericSpecialization specialization) {
+  public static @NotNull DartClassResolveResult getDartClassResolveResult(@Nullable PsiElement element,
+                                                                          @NotNull DartGenericSpecialization specialization) {
     if (element == null) {
       return DartClassResolveResult.create(null);
     }
@@ -725,16 +707,14 @@ public final class DartResolveUtil {
    * <p/>
    * TODO(scheglov) Add non-named constructor declarations (they're methods now).
    */
-  @Nullable
-  public static DartComponent findConstructorDeclaration(DartNewExpression newExpression) {
+  public static @Nullable DartComponent findConstructorDeclaration(DartNewExpression newExpression) {
     DartType type = newExpression.getType();
     PsiElement psiElement = type != null ? type.getReferenceExpression() : null;
     PsiElement target = psiElement != null ? ((DartReference)psiElement).resolve() : null;
     return target != null ? (DartComponent)target.getParent() : null;
   }
 
-  @Nullable
-  private static PsiElement findParameter(@Nullable PsiElement element, int index) {
+  private static @Nullable PsiElement findParameter(@Nullable PsiElement element, int index) {
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
       return null;
@@ -749,8 +729,7 @@ public final class DartResolveUtil {
            : optionalFormalParameters.getDefaultFormalNamedParameterList().get(index - normalParameterSize);
   }
 
-  @Nullable
-  private static DartType findParameterType(@Nullable PsiElement element, int index) {
+  private static @Nullable DartType findParameterType(@Nullable PsiElement element, int index) {
     final PsiElement target = findParameter(element, index);
     return findType(target);
   }
@@ -831,8 +810,7 @@ public final class DartResolveUtil {
     return parameterIndex;
   }
 
-  @NotNull
-  private static DartClassResolveResult tryFindTypeAndResolveClass(@Nullable PsiElement element, DartGenericSpecialization specialization) {
+  private static @NotNull DartClassResolveResult tryFindTypeAndResolveClass(@Nullable PsiElement element, DartGenericSpecialization specialization) {
     DartType type = PsiTreeUtil.getChildOfType(element, DartType.class);
     if (type == null && element instanceof DartType) {
       type = (DartType)element;
@@ -863,8 +841,7 @@ public final class DartResolveUtil {
     return DartClassResolveResult.EMPTY;
   }
 
-  @NotNull
-  public static String getOperatorString(@Nullable PsiElement element) {
+  public static @NotNull String getOperatorString(@Nullable PsiElement element) {
     if (element == null) {
       return "";
     }
@@ -881,8 +858,7 @@ public final class DartResolveUtil {
     return result.toString();
   }
 
-  @Nullable
-  public static DartComponent findReferenceAndComponentTarget(@Nullable PsiElement element) {
+  public static @Nullable DartComponent findReferenceAndComponentTarget(@Nullable PsiElement element) {
     DartReference reference = PsiTreeUtil.getNonStrictParentOfType(element, DartReference.class);
     PsiElement target = reference == null ? null : reference.resolve();
     PsiElement targetParent = target != null ? target.getParent() : null;

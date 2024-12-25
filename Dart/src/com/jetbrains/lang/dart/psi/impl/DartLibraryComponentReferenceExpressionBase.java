@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -24,9 +25,8 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return this;
   }
 
@@ -35,16 +35,14 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
     return this;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();
     return new TextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getText();
   }
 
@@ -88,9 +86,8 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
     return DartResolveUtil.toCandidateInfoArray(elements);
   }
 
-  @NotNull
   @Override
-  public DartClassResolveResult resolveDartClass() {
+  public @NotNull DartClassResolveResult resolveDartClass() {
     return DartClassResolveResult.EMPTY;
   }
 }

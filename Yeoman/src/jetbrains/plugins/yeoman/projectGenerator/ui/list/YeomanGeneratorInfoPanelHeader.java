@@ -73,8 +73,7 @@ public class YeomanGeneratorInfoPanelHeader {
     final JButton actionButton = new RoundedActionButton(5, 8) {
 
       @Override
-      @NotNull
-      protected Color getButtonForeground() {
+      protected @NotNull Color getButtonForeground() {
         return switch (myState) {
           case AVAILABLE -> new JBColor(Gray._240, Gray._210);
           case GLOBAL_INSTALLED, LOCAL_INSTALLED -> new JBColor(Gray._0, Gray._210);
@@ -83,8 +82,7 @@ public class YeomanGeneratorInfoPanelHeader {
       }
 
       @Override
-      @NotNull
-      protected Paint getBackgroundPaint() {
+      protected @NotNull Paint getBackgroundPaint() {
         return switch (myState) {
           case AVAILABLE ->
             new JBGradientPaint(this,
@@ -101,8 +99,7 @@ public class YeomanGeneratorInfoPanelHeader {
       }
 
       @Override
-      @NotNull
-      protected Paint getBackgroundBorderPaint() {
+      protected @NotNull Paint getBackgroundBorderPaint() {
         return switch (myState) {
           case AVAILABLE -> new JBColor(new Color(201, 223, 201), Gray._70);
           case GLOBAL_INSTALLED, LOCAL_INSTALLED -> new JBColor(Gray._220, Gray._100.withAlpha(180));
@@ -201,8 +198,7 @@ public class YeomanGeneratorInfoPanelHeader {
     }
   }
 
-  @NotNull
-  private State getState(YeomanGeneratorInfo info) {
+  private @NotNull State getState(YeomanGeneratorInfo info) {
     if (YeomanGlobalSettings.getInstance().getInterpreter() == null) {
       return State.INCORRECT;
     }
@@ -213,8 +209,7 @@ public class YeomanGeneratorInfoPanelHeader {
     return installInfo.isGlobal() ? State.GLOBAL_INSTALLED : State.LOCAL_INSTALLED;
   }
 
-  @Nullable
-  private static JComponent createStarsLabel(@NotNull YeomanGeneratorFullInfo fullInfo) {
+  private static @Nullable JComponent createStarsLabel(@NotNull YeomanGeneratorFullInfo fullInfo) {
     final int stars = fullInfo.getStars();
     if (stars > 0) {
       final JBLabel label = new JBLabel(String.valueOf(stars), AllIcons.Ide.Rating, SwingConstants.LEFT);
@@ -226,8 +221,7 @@ public class YeomanGeneratorInfoPanelHeader {
     return null;
   }
 
-  @Nullable
-  private static JComponent createOnGithub(@NotNull YeomanGeneratorFullInfo fullInfo) {
+  private static @Nullable JComponent createOnGithub(@NotNull YeomanGeneratorFullInfo fullInfo) {
     String text = fullInfo.getWebsite();
     if (!StringUtil.isEmpty(text)) {
       final JEditorPane pane = new JEditorPane(UIUtil.HTML_MIME, "");

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -67,19 +67,15 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
   public static final String ANDROID_HOME_VARIABLE = "ANDROID_HOME";
 
   //public for serializer
-  @Nullable
-  public String myExecutable;
+  public @Nullable String myExecutable;
 
-  @Nullable
-  public String myWorkDir;
+  public @Nullable String myWorkDir;
 
-  @Nullable
-  public String myCommand;
+  public @Nullable String myCommand;
 
   public boolean myPassParent = true;
 
-  @NotNull
-  public Map<String, String> myEnvs = new LinkedHashMap<>();
+  public @NotNull Map<String, String> myEnvs = new LinkedHashMap<>();
 
   public boolean isPassParent() {
     return myPassParent;
@@ -89,8 +85,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     myPassParent = passParent;
   }
 
-  @NotNull
-  public Map<String, String> getEnvs() {
+  public @NotNull Map<String, String> getEnvs() {
     return myEnvs;
   }
 
@@ -98,15 +93,11 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     myEnvs = envs;
   }
 
-  @NlsSafe
-  @Nullable
-  public String getCommand() {
+  public @NlsSafe @Nullable String getCommand() {
     return myCommand;
   }
 
-  @NlsSafe
-  @Nullable
-  public String myPlatform;
+  public @NlsSafe @Nullable String myPlatform;
   
   public String getExtraArgs() {
     return myExtraArgs;
@@ -126,8 +117,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     this.hasTarget = hasTarget;
   }
 
-  @Nullable
-  public String getTarget() {
+  public @Nullable String getTarget() {
     return target;
   }
 
@@ -137,13 +127,11 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
 
   public boolean hasTarget;
 
-  @Nullable
-  public String target;
+  public @Nullable String target;
 
   private volatile PhoneGapCommandLine myCommandLine;
 
-  @Nullable
-  public String getWorkDir() {
+  public @Nullable String getWorkDir() {
     return myWorkDir;
   }
 
@@ -151,8 +139,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     this.myWorkDir = workDir;
   }
 
-  @Nullable
-  public String getExecutable() {
+  public @Nullable String getExecutable() {
     return myExecutable;
   }
 
@@ -164,15 +151,11 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     this.myCommand = myCommand;
   }
 
-  @NlsSafe
-  @Nullable
-  public String getPlatform() {
+  public @NlsSafe @Nullable String getPlatform() {
     return myPlatform;
   }
 
-  @NlsSafe
-  @Nullable
-  public String getNormalizedPlatform() {
+  public @NlsSafe @Nullable String getNormalizedPlatform() {
     return StringUtil.toLowerCase(getPlatform());
   }
 
@@ -208,9 +191,8 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     DefaultJDOMExternalizer.writeExternal(this, element);
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new PhoneGapRunConfigurationEditor(getProject());
   }
 
@@ -313,10 +295,9 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     }
   }
 
-  @Nullable
   @Override
-  public RunProfileState getState(@NotNull Executor executor,
-                                  @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
+  public @Nullable RunProfileState getState(@NotNull Executor executor,
+                                            @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
 
     return new PhoneGapRunProfileState(getProject(), executionEnvironment, this);
   }

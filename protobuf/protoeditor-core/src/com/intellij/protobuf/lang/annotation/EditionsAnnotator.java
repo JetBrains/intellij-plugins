@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /** Annotations specific to editions >= 2023. */
 public class EditionsAnnotator implements Annotator {
   @Override
-  public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
+  public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     // Only operate on editions files.
     if (!(element instanceof PbElement pbElement)
         || !(pbElement.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {

@@ -10,9 +10,8 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ErrorProneModelSerializerExtension extends JpsModelSerializerExtension {
-  @NotNull
   @Override
-  public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
+  public @NotNull List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
     return Collections.singletonList(new JpsJavaCompilerOptionsSerializer("ErrorProneCompilerSettings", ErrorProneJavaCompilingTool.COMPILER_ID));
   }
 }

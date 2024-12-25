@@ -34,9 +34,8 @@ public class PbLanguageSettingsConfigurable
     this.project = project;
   }
 
-  @NotNull
   @Override
-  protected PbProjectSettings getSettings() {
+  protected @NotNull PbProjectSettings getSettings() {
     return PbProjectSettings.getInstance(project);
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster.run;
 
@@ -43,9 +43,8 @@ final class JdlRunConfiguration extends RunConfigurationBase<JdlRunConfiguration
   @Override
   public @NotNull RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) {
     return new CommandLineState(executionEnvironment) {
-      @NotNull
       @Override
-      protected ProcessHandler startProcess() throws ExecutionException {
+      protected @NotNull ProcessHandler startProcess() throws ExecutionException {
         var options = getOptions();
 
         var jdlFile = new File(options.getJdlLocation());

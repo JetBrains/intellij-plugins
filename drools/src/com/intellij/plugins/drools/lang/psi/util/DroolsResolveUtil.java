@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.module.Module;
@@ -215,8 +215,7 @@ public final class DroolsResolveUtil {
     return true;
   }
 
-  @NotNull
-  private static Set<PsiVariable> getLocalVariables(PsiElement rhsStatement) {
+  private static @NotNull Set<PsiVariable> getLocalVariables(PsiElement rhsStatement) {
     Set<PsiVariable> variables = new HashSet<>();
 
     variables.addAll(DroolsLocalVariablesProcessor.getLocalVariables(rhsStatement));
@@ -314,16 +313,14 @@ public final class DroolsResolveUtil {
     return true;
   }
 
-  @Nullable
-  public static PsiClass getUnitClass(@NotNull DroolsFile droolsFile) {
+  public static @Nullable PsiClass getUnitClass(@NotNull DroolsFile droolsFile) {
     return CachedValuesManager.getCachedValue(droolsFile, () -> {
       return CachedValueProvider.Result.create(getUnitPsiClass(droolsFile), droolsFile,
                                                ProjectRootManager.getInstance(droolsFile.getProject()));
     });
   }
 
-  @Nullable
-  private static PsiClass getUnitPsiClass(@NotNull DroolsFile droolsFile) {
+  private static @Nullable PsiClass getUnitPsiClass(@NotNull DroolsFile droolsFile) {
     final DroolsUnitStatement unitStatement = droolsFile.getUnitStatement();
     if (unitStatement != null) {
       final String name = unitStatement.getUnitName().getText();
@@ -349,14 +346,12 @@ public final class DroolsResolveUtil {
     return true;
   }
 
-  @NotNull
-  private static Set<PsiClass> resolveBoundVariableType(DroolsLhsPattern lhsPattern) {
+  private static @NotNull Set<PsiClass> resolveBoundVariableType(DroolsLhsPattern lhsPattern) {
     DroolsQualifiedIdentifier qi = lhsPattern.getLhsPatternType().getQualifiedIdentifier();
     return resolveQualifiedIdentifier(qi);
   }
 
-  @NotNull
-  private static Set<PsiClass> resolveOOPathBoundVariableType(DroolsLhsOOPSegment lhsPattern) {
+  private static @NotNull Set<PsiClass> resolveOOPathBoundVariableType(DroolsLhsOOPSegment lhsPattern) {
     final String name = lhsPattern.getLhsOOPathSegmentId().getText();
     final PsiClass unitClass = getUnitClass((DroolsFile)lhsPattern.getContainingFile());
     if (unitClass != null) {
@@ -379,8 +374,7 @@ public final class DroolsResolveUtil {
     return Collections.emptySet();
   }
 
-  @NotNull
-  public static Set<PsiClass> resolveQualifiedIdentifier(@NotNull DroolsQualifiedIdentifier qi) {
+  public static @NotNull Set<PsiClass> resolveQualifiedIdentifier(@NotNull DroolsQualifiedIdentifier qi) {
     Set<PsiClass> psiClasses = new HashSet<>();
     DroolsReference[] identifiers = PsiTreeUtil.getChildrenOfType(qi, DroolsReference.class);
     if (identifiers != null) {
@@ -498,8 +492,7 @@ public final class DroolsResolveUtil {
   }
 
 
-  @Nullable
-  public static DroolsReference getLeftReference(@Nullable final PsiElement node) {
+  public static @Nullable DroolsReference getLeftReference(final @Nullable PsiElement node) {
     if (node == null) return null;
     for (PsiElement sibling = getPrevSiblingSkipWhiteSpaces(node, true);
          sibling != null;
@@ -511,15 +504,13 @@ public final class DroolsResolveUtil {
   }
 
 
-  @Nullable
-  public static PsiElement getPrevSiblingSkipWhiteSpaces(@Nullable PsiElement sibling, boolean strictly) {
+  public static @Nullable PsiElement getPrevSiblingSkipWhiteSpaces(@Nullable PsiElement sibling, boolean strictly) {
     return getPrevSiblingSkipingCondition(sibling, element -> element instanceof PsiWhiteSpace, strictly);
   }
 
-  @Nullable
-  public static PsiElement getPrevSiblingSkipingCondition(@Nullable PsiElement sibling,
-                                                          Condition<? super PsiElement> condition,
-                                                          boolean strictly) {
+  public static @Nullable PsiElement getPrevSiblingSkipingCondition(@Nullable PsiElement sibling,
+                                                                    Condition<? super PsiElement> condition,
+                                                                    boolean strictly) {
     if (sibling == null) return null;
     PsiElement result = strictly ? sibling.getPrevSibling() : sibling;
     while (result != null && condition.value(result)) {
@@ -571,8 +562,7 @@ public final class DroolsResolveUtil {
     return true;
   }
 
-  @NotNull
-  public static Set<PsiClass> getPatternBindType(@NotNull Collection<? extends DroolsLhsPattern> patternBinds) {
+  public static @NotNull Set<PsiClass> getPatternBindType(@NotNull Collection<? extends DroolsLhsPattern> patternBinds) {
     Set<PsiClass> psiClasses = new HashSet<>();
     for (DroolsLhsPattern lhsPattern : patternBinds) {
       psiClasses.addAll(resolveBoundVariableType(lhsPattern));
@@ -580,8 +570,7 @@ public final class DroolsResolveUtil {
     return psiClasses;
   }
 
-  @NotNull
-  public static Set<PsiClass> getPatternOOPathBindType(@NotNull List<DroolsLhsOOPSegment> oopSegments) {
+  public static @NotNull Set<PsiClass> getPatternOOPathBindType(@NotNull List<DroolsLhsOOPSegment> oopSegments) {
     Set<PsiClass> psiClasses = new HashSet<>();
     for (DroolsLhsOOPSegment lhsPattern : oopSegments) {
       ContainerUtil.addAllNotNull(psiClasses, resolveOOPathBoundVariableType(lhsPattern));
@@ -589,8 +578,7 @@ public final class DroolsResolveUtil {
     return psiClasses;
   }
 
-  @Nullable
-  public static PsiClass getModifyStatementType(@NotNull DroolsModifyRhsStatement modifyRhsStatement) {
+  public static @Nullable PsiClass getModifyStatementType(@NotNull DroolsModifyRhsStatement modifyRhsStatement) {
     final DroolsExpression expression = ContainerUtil.getFirstItem(modifyRhsStatement.getExpressionList());
 
     final Ref<PsiClass> ref = new Ref<>(null);
@@ -610,8 +598,7 @@ public final class DroolsResolveUtil {
     return ref.get();
   }
 
-  @Nullable
-  private static PsiClass getPrimaryExprType(@NotNull DroolsPrimaryExpr droolsPrimary) {
+  private static @Nullable PsiClass getPrimaryExprType(@NotNull DroolsPrimaryExpr droolsPrimary) {
     DroolsReference[] references = PsiTreeUtil.getChildrenOfType(droolsPrimary, DroolsReference.class);
     if (references != null && references.length > 0) {
 
@@ -637,8 +624,7 @@ public final class DroolsResolveUtil {
     return null;
   }
 
-  @Nullable
-  public static PsiType resolveType(@Nullable DroolsType droolsType) {
+  public static @Nullable PsiType resolveType(@Nullable DroolsType droolsType) {
     if (droolsType != null) {
       final PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(droolsType.getProject());
       PsiType psiType = elementFactory.createTypeFromText(droolsType.getText(), droolsType);
@@ -655,8 +641,7 @@ public final class DroolsResolveUtil {
     return null;
   }
 
-  @Nullable
-  private static PsiType resolveIdentifiers(@NotNull final DroolsType type) {
+  private static @Nullable PsiType resolveIdentifiers(final @NotNull DroolsType type) {
     return RecursionManager.doPreventingRecursion(type, false, () -> {
       List<DroolsIdentifier> identifierList = type.getQualifiedIdentifier().getIdentifierList();
       final DroolsIdentifier identifier = identifierList.get(identifierList.size() - 1);
@@ -685,8 +670,7 @@ public final class DroolsResolveUtil {
     return imported;
   }
 
-  @NotNull
-  public static Set<PsiPackage> getExplicitlyImportedPackages(DroolsFile droolsFile) {
+  public static @NotNull Set<PsiPackage> getExplicitlyImportedPackages(DroolsFile droolsFile) {
     Set<PsiPackage> imported = new HashSet<>();
     JavaPsiFacade facade = JavaPsiFacade.getInstance(droolsFile.getProject());
     for (DroolsImport droolsImport : droolsFile.getImports()) {
@@ -698,24 +682,20 @@ public final class DroolsResolveUtil {
     return imported;
   }
 
-  @Nullable
-  public static PsiPackage getCurrentPsiPackage(DroolsFile droolsFile) {
+  public static @Nullable PsiPackage getCurrentPsiPackage(DroolsFile droolsFile) {
     String packageName = getCurrentPackage(droolsFile);
     return !StringUtil.isEmptyOrSpaces(packageName) ? JavaPsiFacade.getInstance(droolsFile.getProject()).findPackage(packageName) : null;
   }
 
-  @Nullable
-  public static PsiPackage getJavaLangPackage(@NotNull Project project) {
+  public static @Nullable PsiPackage getJavaLangPackage(@NotNull Project project) {
     return JavaPsiFacade.getInstance(project).findPackage("java.lang");
   }
 
-  @Nullable
-  public static PsiPackage getTopPackage(@NotNull Project project) {
+  public static @Nullable PsiPackage getTopPackage(@NotNull Project project) {
     return JavaPsiFacade.getInstance(project).findPackage("");
   }
 
-  @NotNull
-  public static String getCurrentPackage(@Nullable DroolsFile droolsFile) {
+  public static @NotNull String getCurrentPackage(@Nullable DroolsFile droolsFile) {
     if (droolsFile == null) return "";
     DroolsPackageStatement packageStatement = droolsFile.getPackage();
     return packageStatement != null ? packageStatement.getNamespace().getText() : "";
@@ -727,8 +707,7 @@ public final class DroolsResolveUtil {
     }
   }
 
-  @NotNull
-  public static Set<PsiVariable> getVariables(@NotNull PsiElement place) {
+  public static @NotNull Set<PsiVariable> getVariables(@NotNull PsiElement place) {
     Set<PsiVariable> variables = new HashSet<>();
     final PsiFile file = place.getContainingFile();
     if (file instanceof DroolsFile) {
@@ -740,8 +719,7 @@ public final class DroolsResolveUtil {
     return variables;
   }
 
-  @NotNull
-  public static GlobalSearchScope getSearchScope(@NotNull DroolsFile droolsFile) {
+  public static @NotNull GlobalSearchScope getSearchScope(@NotNull DroolsFile droolsFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(droolsFile);
     return module != null ? module.getModuleRuntimeScope(false) : GlobalSearchScope.allScope(droolsFile.getProject());
   }

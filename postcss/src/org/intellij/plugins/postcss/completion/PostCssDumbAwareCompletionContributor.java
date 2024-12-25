@@ -49,7 +49,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
   }
 
   @Override
-  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
+  public void fillCompletionVariants(final @NotNull CompletionParameters parameters, final @NotNull CompletionResultSet result) {
     final CompletionResultSet resultSet = CssCompletionUtil.fixPrefixForVendorPrefixes(parameters, result);
     super.fillCompletionVariants(parameters, resultSet);
     if (!resultSet.isStopped()) {

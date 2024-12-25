@@ -13,13 +13,11 @@ public class BowerPackageBasicInfo {
     myDescription = description;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
-  public String getDescription() {
+  public @Nullable String getDescription() {
     return myDescription;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart;
 
 import com.intellij.icons.AllIcons;
@@ -79,13 +79,11 @@ public enum DartComponentType {
     return myUsageTypeSupplier.get();
   }
 
-  @Nullable
-  public static DartComponentType valueOf(int key) {
+  public static @Nullable DartComponentType valueOf(int key) {
     return key >= 0 && key < values().length ? values()[key] : null;
   }
 
-  @Nullable
-  public static DartComponentType typeOf(@Nullable PsiElement element) {
+  public static @Nullable DartComponentType typeOf(@Nullable PsiElement element) {
     if (element instanceof DartComponentName) {
       return typeOf(element.getParent());
     }

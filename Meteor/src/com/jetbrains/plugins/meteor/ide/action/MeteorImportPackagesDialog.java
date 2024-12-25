@@ -22,8 +22,7 @@ import java.util.Collection;
 public class MeteorImportPackagesDialog extends DialogWrapper {
 
   private final Project myProject;
-  @NlsSafe
-  private final String myDefaultPath;
+  private final @NlsSafe String myDefaultPath;
   private final Collection<? extends CodeType> myDefaultCodes;
   private JBCheckBox myImportServer;
   private JBCheckBox myImportClient;
@@ -44,9 +43,8 @@ public class MeteorImportPackagesDialog extends DialogWrapper {
     init();
   }
 
-  @Nullable
   @Override
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     myPathField = MeteorUIUtil.createPackagesField(myProject);
     myImportClient = new JBCheckBox(MeteorBundle.message("checkbox.import.client"));
     myImportServer = new JBCheckBox(MeteorBundle.message("checkbox.import.server"));
@@ -100,8 +98,7 @@ public class MeteorImportPackagesDialog extends DialogWrapper {
 
 
   @Override
-  @Nullable
-  protected ValidationInfo doValidate() {
+  protected @Nullable ValidationInfo doValidate() {
     if (StringUtil.isEmptyOrSpaces(myPathField.getText())) {
       return new ValidationInfo(MeteorBundle.message("dialog.message.meteor.packages.folder.empty"));
     }

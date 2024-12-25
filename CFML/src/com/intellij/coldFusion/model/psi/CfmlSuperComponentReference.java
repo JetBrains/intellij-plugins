@@ -1,7 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
-import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -28,16 +27,14 @@ public class CfmlSuperComponentReference extends CfmlCompositeElement implements
     return new ResolveResult[]{new PsiElementResolveResult(resolveResult, false)};
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return this;
   }
 
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     return new TextRange(0, getTextLength());
   }
 
@@ -53,9 +50,8 @@ public class CfmlSuperComponentReference extends CfmlCompositeElement implements
     return null;
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getText();
   }
 
@@ -87,8 +83,7 @@ public class CfmlSuperComponentReference extends CfmlCompositeElement implements
     return false;
   }
 
-  @Nullable
-  private CfmlComponent getComponentDefinition() {
+  private @Nullable CfmlComponent getComponentDefinition() {
     return getContainingFile().getComponentDefinition();
   }
 

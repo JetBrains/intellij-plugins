@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.editor.Document;
@@ -41,13 +41,12 @@ public final class PubspecYamlUtil {
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
 
-  public static boolean isPubspecFile(@NotNull final VirtualFile file) {
+  public static boolean isPubspecFile(final @NotNull VirtualFile file) {
     // https://dart.dev/tools/pub/pubspec
     return !file.isDirectory() && file.getName().equals(PUBSPEC_YAML);
   }
 
-  @Nullable
-  public static VirtualFile findPubspecYamlFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+  public static @Nullable VirtualFile findPubspecYamlFile(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     VirtualFile current = contextFile;
     VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
@@ -67,23 +66,22 @@ public final class PubspecYamlUtil {
     return null;
   }
 
-  @Nullable
-  public static String getDartProjectName(@NotNull final VirtualFile pubspecYamlFile) {
+  public static @Nullable String getDartProjectName(final @NotNull VirtualFile pubspecYamlFile) {
     final Map<String, Object> yamlInfo = getPubspecYamlInfo(pubspecYamlFile);
     final Object name = yamlInfo == null ? null : yamlInfo.get(NAME);
     return name instanceof String ? (String)name : null;
   }
 
-  public static void processInProjectPathPackagesRecursively(@NotNull final Project project,
-                                                             @NotNull final VirtualFile pubspecYamlFile,
-                                                             @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
+  public static void processInProjectPathPackagesRecursively(final @NotNull Project project,
+                                                             final @NotNull VirtualFile pubspecYamlFile,
+                                                             final @NotNull PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
     processInProjectPathPackagesRecursively(project, pubspecYamlFile, new HashSet<>(), pathPackageNameAndDirConsumer);
   }
 
-  private static void processInProjectPathPackagesRecursively(@NotNull final Project project,
-                                                              @NotNull final VirtualFile pubspecYamlFile,
-                                                              @NotNull final Set<VirtualFile> processedPubspecs,
-                                                              @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
+  private static void processInProjectPathPackagesRecursively(final @NotNull Project project,
+                                                              final @NotNull VirtualFile pubspecYamlFile,
+                                                              final @NotNull Set<VirtualFile> processedPubspecs,
+                                                              final @NotNull PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
     if (!processedPubspecs.add(pubspecYamlFile)) return;
 
     final VirtualFile baseDir = pubspecYamlFile.getParent();
@@ -96,11 +94,11 @@ public final class PubspecYamlUtil {
   }
 
   // Path packages: https://dart.dev/tools/pub/dependencies#path-packages
-  private static void processYamlDepsRecursively(@NotNull final Project project,
-                                                 @NotNull final Set<VirtualFile> processedPubspecs,
-                                                 @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
-                                                 @NotNull final VirtualFile baseDir,
-                                                 @Nullable final Object yamlDep) {
+  private static void processYamlDepsRecursively(final @NotNull Project project,
+                                                 final @NotNull Set<VirtualFile> processedPubspecs,
+                                                 final @NotNull PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
+                                                 final @NotNull VirtualFile baseDir,
+                                                 final @Nullable Object yamlDep) {
     // see com.google.dart.tools.core.pub.PubspecModel#processDependencies
     if (!(yamlDep instanceof Map)) return;
 
@@ -128,8 +126,7 @@ public final class PubspecYamlUtil {
     }
   }
 
-  @Nullable
-  private static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
+  private static @Nullable Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
     // do not use Yaml plugin here - IntelliJ IDEA Community Edition doesn't contain it.
     Pair<Long, Map<String, Object>> data = pubspecYamlFile.getUserData(MOD_STAMP_TO_PUBSPEC_NAME);
 
@@ -161,8 +158,7 @@ public final class PubspecYamlUtil {
     return Pair.getSecond(data);
   }
 
-  @Nullable
-  private static Map<String, Object> loadPubspecYamlInfo(final @NotNull String pubspecYamlFileContents) {
+  private static @Nullable Map<String, Object> loadPubspecYamlInfo(final @NotNull String pubspecYamlFileContents) {
     // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap() [https://github.com/dart-lang/eclipse3]
     DumperOptions dumperOptions = new DumperOptions();
     final Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()), new Representer(dumperOptions), dumperOptions, new Resolver() {

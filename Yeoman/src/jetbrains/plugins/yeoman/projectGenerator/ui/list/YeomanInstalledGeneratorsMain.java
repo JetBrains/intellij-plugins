@@ -121,8 +121,7 @@ public class YeomanInstalledGeneratorsMain extends YeomanGeneratorsMain {
   }
 
   @Override
-  @Nullable
-  public YeomanGeneratorFullInfo getFullGeneratorInfo(@Nullable YeomanGeneratorInfo info) {
+  public @Nullable YeomanGeneratorFullInfo getFullGeneratorInfo(@Nullable YeomanGeneratorInfo info) {
     if (info instanceof YeomanGeneratorFullInfo || info == null) return (YeomanGeneratorFullInfo)info;
 
     if (myProvider.isAvailableGeneratorListExists()) {

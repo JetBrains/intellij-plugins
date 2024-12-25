@@ -34,7 +34,7 @@ final class StepAnnotator implements Annotator {
   }
 
   @Override
-  public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
+  public void annotate(final @NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (!helper.isGaugeModule(element)) return;
     if (element instanceof SpecStep) {
       createWarning(element, holder, (SpecStep)element);

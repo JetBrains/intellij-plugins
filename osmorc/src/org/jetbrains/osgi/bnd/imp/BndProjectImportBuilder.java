@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Project;
@@ -26,9 +26,8 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   private Set<Project> myChosenProjects = null;
   private boolean myOpenProjectSettings = false;
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return OsmorcBundle.message("bnd.importer.name");
   }
 
@@ -71,12 +70,11 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
     myOpenProjectSettings = openProjectSettings;
   }
 
-  @NotNull
   @Override
-  public List<Module> commit(com.intellij.openapi.project.Project project,
-                             ModifiableModuleModel model,
-                             ModulesProvider modulesProvider,
-                             ModifiableArtifactModel artifactModel) {
+  public @NotNull List<Module> commit(com.intellij.openapi.project.Project project,
+                                      ModifiableModuleModel model,
+                                      ModulesProvider modulesProvider,
+                                      ModifiableArtifactModel artifactModel) {
     if (model == null) {
       model = ModuleManager.getInstance(project).getModifiableModel();
       try {

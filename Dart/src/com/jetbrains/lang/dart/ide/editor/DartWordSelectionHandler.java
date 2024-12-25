@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.editorActions.wordSelection.AbstractWordSelectioner;
@@ -12,15 +13,15 @@ import java.util.List;
 public final class DartWordSelectionHandler extends AbstractWordSelectioner {
 
   @Override
-  public boolean canSelect(@NotNull final PsiElement e) {
+  public boolean canSelect(final @NotNull PsiElement e) {
     return e.getLanguage() == DartLanguage.INSTANCE;
   }
 
   @Override
-  public List<TextRange> select(@NotNull final PsiElement psiElement,
-                                @NotNull final CharSequence editorText,
+  public List<TextRange> select(final @NotNull PsiElement psiElement,
+                                final @NotNull CharSequence editorText,
                                 final int cursorOffset,
-                                @NotNull final Editor editor) {
+                                final @NotNull Editor editor) {
     final List<TextRange> ranges = super.select(psiElement, editorText, cursorOffset, editor);
 
     final PsiElement semicolon = DartSelectionFilter.getSiblingSemicolonIfExpression(psiElement);
@@ -31,8 +32,8 @@ public final class DartWordSelectionHandler extends AbstractWordSelectioner {
     return ranges;
   }
 
-  private static void includeSemicolonInRanges(@NotNull final List<TextRange> ranges,
-                                               @NotNull final TextRange elementWithoutSemicolonRange,
+  private static void includeSemicolonInRanges(final @NotNull List<TextRange> ranges,
+                                               final @NotNull TextRange elementWithoutSemicolonRange,
                                                final int semicolonEndOffset) {
     for (int i = 0; i < ranges.size(); i++) {
       final TextRange range = ranges.get(i);

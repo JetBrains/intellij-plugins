@@ -97,9 +97,8 @@ abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
   }
 
   @Override
-  @NotNull
-  public UpdateSession updateDirectories(FilePath @NotNull [] contentRoots, UpdatedFiles updatedFiles, ProgressIndicator progressIndicator,
-                                         @NotNull final Ref<SequentialUpdatesContext> context)
+  public @NotNull UpdateSession updateDirectories(FilePath @NotNull [] contentRoots, UpdatedFiles updatedFiles, ProgressIndicator progressIndicator,
+                                                  final @NotNull Ref<SequentialUpdatesContext> context)
     throws ProcessCanceledException {
     PerforceSettings settings = getSettings();
     if (!settings.ENABLED) {

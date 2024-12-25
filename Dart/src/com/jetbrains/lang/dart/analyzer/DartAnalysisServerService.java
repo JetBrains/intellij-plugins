@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
@@ -45,8 +45,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.Consumer;
 import com.intellij.util.*;
+import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -133,19 +133,19 @@ public final class DartAnalysisServerService implements Disposable {
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
 
-  @NotNull private final Project myProject;
-  @NotNull private final CoroutineScope myServiceScope;
+  private final @NotNull Project myProject;
+  private final @NotNull CoroutineScope myServiceScope;
   private boolean myInitializationOnServerStartupDone;
   private boolean mySubscribeToServerLog;
 
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
-  @Nullable private RemoteAnalysisServerImpl myServer;
-  @Nullable private StdioServerSocket myServerSocket;
+  private @Nullable RemoteAnalysisServerImpl myServer;
+  private @Nullable StdioServerSocket myServerSocket;
 
-  @NotNull private String myServerVersion = "";
-  @NotNull private String mySdkVersion = "";
-  @Nullable private String mySdkHome;
+  private @NotNull String myServerVersion = "";
+  private @NotNull String mySdkVersion = "";
+  private @Nullable String mySdkHome;
 
   private final DartServerRootsHandler myRootsHandler;
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = Collections.synchronizedMap(new HashMap<>());
@@ -153,29 +153,29 @@ public final class DartAnalysisServerService implements Disposable {
   private final Set<Document> myChangedDocuments = new HashSet<>();
   private final Alarm myUpdateFilesAlarm;
 
-  @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
-  @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<>();
+  private final @NotNull Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
+  private final @NotNull Queue<SearchResultsSet> mySearchResultSets = new LinkedList<>();
 
-  @NotNull private final DartServerData myServerData;
+  private final @NotNull DartServerData myServerData;
 
   private volatile boolean myAnalysisInProgress;
   private volatile boolean myPubListInProgress;
-  @NotNull private final Alarm myShowServerProgressAlarm;
-  @NotNull private final DartAnalysisServerErrorHandler myServerErrorHandler;
-  @Nullable private ProgressIndicator myProgressIndicator;
+  private final @NotNull Alarm myShowServerProgressAlarm;
+  private final @NotNull DartAnalysisServerErrorHandler myServerErrorHandler;
+  private @Nullable ProgressIndicator myProgressIndicator;
   private final Object myProgressLock = new Object();
 
   private boolean myHaveShownInitialProgress;
   private boolean mySentAnalysisBusy;
 
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
-  @NotNull private final Set<String> myFilePathsWithErrors = new HashSet<>();
+  private final @NotNull Set<String> myFilePathsWithErrors = new HashSet<>();
   // how many files with errors are in this folder (recursively)
-  @NotNull private final Object2IntMap<String> myFolderPathsWithErrors = new Object2IntOpenHashMap<>();
+  private final @NotNull Object2IntMap<String> myFolderPathsWithErrors = new Object2IntOpenHashMap<>();
   // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
-  @NotNull private final Object2IntMap<String> myFilePathToErrorsHash = new Object2IntOpenHashMap<>();
+  private final @NotNull Object2IntMap<String> myFilePathToErrorsHash = new Object2IntOpenHashMap<>();
 
-  @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
+  private final @NotNull EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
   private boolean myDisposed;
   private final @NotNull Condition<?> myDisposedCondition = o -> myDisposed;
@@ -188,11 +188,11 @@ public final class DartAnalysisServerService implements Disposable {
     return ApplicationInfo.getInstance().getApiVersion();
   }
 
-  @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
-  @NotNull private final List<RequestListener> myRequestListeners = new SmartList<>();
-  @NotNull private final List<ResponseListener> myResponseListeners = new SmartList<>();
-  @NotNull private final List<DartQuickAssistIntentionListener> myQuickAssistIntentionListeners = new SmartList<>();
-  @NotNull private final List<DartQuickFixListener> myQuickFixListeners = new SmartList<>();
+  private final @NotNull List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
+  private final @NotNull List<RequestListener> myRequestListeners = new SmartList<>();
+  private final @NotNull List<ResponseListener> myResponseListeners = new SmartList<>();
+  private final @NotNull List<DartQuickAssistIntentionListener> myQuickAssistIntentionListeners = new SmartList<>();
+  private final @NotNull List<DartQuickFixListener> myQuickFixListeners = new SmartList<>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
     @Override
@@ -304,15 +304,15 @@ public final class DartAnalysisServerService implements Disposable {
     }
 
     @Override
-    public void computedCompletion(@NotNull final String completionId,
+    public void computedCompletion(final @NotNull String completionId,
                                    final int replacementOffset,
                                    final int replacementLength,
-                                   @NotNull final List<CompletionSuggestion> completions,
-                                   @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
-                                   @NotNull final List<String> includedElementKinds,
-                                   @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
+                                   final @NotNull List<CompletionSuggestion> completions,
+                                   final @NotNull List<IncludedSuggestionSet> includedSuggestionSets,
+                                   final @NotNull List<String> includedElementKinds,
+                                   final @NotNull List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                    final boolean isLast,
-                                   @Nullable final String libraryFilePathSD) {
+                                   final @Nullable String libraryFilePathSD) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
                                                  includedElementKinds, includedSuggestionRelevanceTags, isLast, libraryFilePathSD));
@@ -371,7 +371,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
 
     @Override
-    public void serverStatus(@Nullable final AnalysisStatus analysisStatus, @Nullable final PubStatus pubStatus) {
+    public void serverStatus(final @Nullable AnalysisStatus analysisStatus, final @Nullable PubStatus pubStatus) {
       final boolean wasBusy = myAnalysisInProgress || myPubListInProgress;
 
       if (analysisStatus != null) myAnalysisInProgress = analysisStatus.isAnalyzing();
@@ -412,7 +412,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       final Task.Backgroundable task = new Task.Backgroundable(myProject, DartBundle.message("dart.analysis.progress.title"), false) {
         @Override
-        public void run(@NotNull final ProgressIndicator indicator) {
+        public void run(final @NotNull ProgressIndicator indicator) {
           if (DartAnalysisServerService.this.myProject.isDisposed()) return;
           if (!myAnalysisInProgress && !myPubListInProgress) return;
 
@@ -445,7 +445,7 @@ public final class DartAnalysisServerService implements Disposable {
   /**
    * Must use it each time right after reading any offset or length from any class from org.dartlang.analysis.server.protocol package
    */
-  public int getConvertedOffset(@Nullable final VirtualFile file, final int originalOffset) {
+  public int getConvertedOffset(final @Nullable VirtualFile file, final int originalOffset) {
     if (originalOffset <= 0 || file == null || !file.isInLocalFileSystem()) return originalOffset;
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
            ? originalOffset
@@ -455,7 +455,7 @@ public final class DartAnalysisServerService implements Disposable {
   /**
    * Must use it right before sending any offsets and lengths to the AnalysisServer
    */
-  public int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
+  public int getOriginalOffset(final @Nullable VirtualFile file, final int convertedOffset) {
     if (file == null || !file.isInLocalFileSystem()) return convertedOffset;
 
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
@@ -463,7 +463,7 @@ public final class DartAnalysisServerService implements Disposable {
            : FileOffsetsManager.getInstance().getOriginalOffset(file, convertedOffset);
   }
 
-  public int[] getConvertedOffsets(@NotNull final VirtualFile file, final int[] _offsets) {
+  public int[] getConvertedOffsets(final @NotNull VirtualFile file, final int[] _offsets) {
     final int[] offsets = new int[_offsets.length];
     for (int i = 0; i < _offsets.length; i++) {
       offsets[i] = getConvertedOffset(file, _offsets[i]);
@@ -471,7 +471,7 @@ public final class DartAnalysisServerService implements Disposable {
     return offsets;
   }
 
-  public int[] getConvertedLengths(@NotNull final VirtualFile file, final int[] _offsets, final int[] _lengths) {
+  public int[] getConvertedLengths(final @NotNull VirtualFile file, final int[] _offsets, final int[] _lengths) {
     final int[] offsets = getConvertedOffsets(file, _offsets);
     final int[] lengths = new int[_lengths.length];
     for (int i = 0; i < _lengths.length; i++) {
@@ -480,23 +480,23 @@ public final class DartAnalysisServerService implements Disposable {
     return lengths;
   }
 
-  public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
+  public static boolean isDartSdkVersionSufficient(final @NotNull DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
 
-  public static boolean isDartSdkVersionSufficientForMoveFileRefactoring(@NotNull final DartSdk sdk) {
+  public static boolean isDartSdkVersionSufficientForMoveFileRefactoring(final @NotNull DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_MOVE_FILE_SDK_VERSION) >= 0;
   }
 
-  public static boolean isDartSdkVersionSufficientForWebdev(@NotNull final DartSdk sdk) {
+  public static boolean isDartSdkVersionSufficientForWebdev(final @NotNull DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_WEBDEV_SDK_VERSION) >= 0;
   }
 
-  public static boolean isDartSdkVersionSufficientForPackageConfigJson(@NotNull final DartSdk sdk) {
+  public static boolean isDartSdkVersionSufficientForPackageConfigJson(final @NotNull DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_PACKAGE_CONFIG_JSON_SDK_VERSION) >= 0;
   }
 
-  public static boolean isDartSdkVersionSufficientForDartLangServer(@NotNull final DartSdk sdk) {
+  public static boolean isDartSdkVersionSufficientForDartLangServer(final @NotNull DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_DART_LANG_SERVER_SDK_VERSION) >= 0;
   }
 
@@ -508,10 +508,10 @@ public final class DartAnalysisServerService implements Disposable {
     return StringUtil.compareVersionNumbers(getServerVersion(), COMPLETION_2_SERVER_VERSION) >= 0;
   }
 
-  public void addCompletions(@NotNull final VirtualFile file,
-                             @NotNull final String completionId,
-                             @NotNull final CompletionSuggestionConsumer consumer,
-                             @NotNull final CompletionLibraryRefConsumer libraryRefConsumer) {
+  public void addCompletions(final @NotNull VirtualFile file,
+                             final @NotNull String completionId,
+                             final @NotNull CompletionSuggestionConsumer consumer,
+                             final @NotNull CompletionLibraryRefConsumer libraryRefConsumer) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -552,11 +552,11 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   public static class FormatResult {
-    @Nullable private final List<SourceEdit> myEdits;
+    private final @Nullable List<SourceEdit> myEdits;
     private final int myOffset;
     private final int myLength;
 
-    public FormatResult(@Nullable final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
+    public FormatResult(final @Nullable List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
       myEdits = edits;
       myOffset = selectionOffset;
       myLength = selectionLength;
@@ -570,8 +570,7 @@ public final class DartAnalysisServerService implements Disposable {
       return myOffset;
     }
 
-    @Nullable
-    public List<SourceEdit> getEdits() {
+    public @Nullable List<SourceEdit> getEdits() {
       return myEdits;
     }
   }
@@ -593,7 +592,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
-  public void addAnalysisServerListener(@NotNull final AnalysisServerListener serverListener) {
+  public void addAnalysisServerListener(final @NotNull AnalysisServerListener serverListener) {
     if (!myAdditionalServerListeners.contains(serverListener)) {
       myAdditionalServerListeners.add(serverListener);
       if (myServer != null && isServerProcessActive()) {
@@ -603,7 +602,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
-  public void removeAnalysisServerListener(@NotNull final AnalysisServerListener serverListener) {
+  public void removeAnalysisServerListener(final @NotNull AnalysisServerListener serverListener) {
     myAdditionalServerListeners.remove(serverListener);
     if (myServer != null) {
       myServer.removeAnalysisServerListener(serverListener);
@@ -611,7 +610,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
-  public void addRequestListener(@NotNull final RequestListener requestListener) {
+  public void addRequestListener(final @NotNull RequestListener requestListener) {
     if (!myRequestListeners.contains(requestListener)) {
       myRequestListeners.add(requestListener);
       if (myServer != null && isServerProcessActive()) {
@@ -621,7 +620,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
-  public void removeRequestListener(@NotNull final RequestListener requestListener) {
+  public void removeRequestListener(final @NotNull RequestListener requestListener) {
     myRequestListeners.remove(requestListener);
     if (myServer != null) {
       myServer.removeRequestListener(requestListener);
@@ -629,7 +628,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
-  public void addResponseListener(@NotNull final ResponseListener responseListener) {
+  public void addResponseListener(final @NotNull ResponseListener responseListener) {
     if (!myResponseListeners.contains(responseListener)) {
       myResponseListeners.add(responseListener);
       if (myServer != null && isServerProcessActive()) {
@@ -639,7 +638,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
-  public void removeResponseListener(@NotNull final ResponseListener responseListener) {
+  public void removeResponseListener(final @NotNull ResponseListener responseListener) {
     myResponseListeners.remove(responseListener);
     if (myServer != null) {
       myServer.removeResponseListener(responseListener);
@@ -721,7 +720,7 @@ public final class DartAnalysisServerService implements Disposable {
   private void registerFileEditorManagerListener() {
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
-      public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+      public void fileOpened(final @NotNull FileEditorManager source, final @NotNull VirtualFile file) {
         if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) ||
             FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
           DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
@@ -744,7 +743,7 @@ public final class DartAnalysisServerService implements Disposable {
       }
 
       @Override
-      public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+      public void fileClosed(final @NotNull FileEditorManager source, final @NotNull VirtualFile file) {
         updateCurrentFile();
 
         if (isLocalAnalyzableFile(file)) {
@@ -787,23 +786,19 @@ public final class DartAnalysisServerService implements Disposable {
     EditorFactory.getInstance().getEventMulticaster().addDocumentListener(documentListener, this);
   }
 
-  @NotNull
-  public static DartAnalysisServerService getInstance(@NotNull final Project project) {
+  public static @NotNull DartAnalysisServerService getInstance(final @NotNull Project project) {
     return project.getService(DartAnalysisServerService.class);
   }
 
-  @NotNull
-  public String getSdkVersion() {
+  public @NotNull String getSdkVersion() {
     return mySdkVersion;
   }
 
-  @NotNull
-  public String getServerVersion() {
+  public @NotNull String getServerVersion() {
     return myServerVersion;
   }
 
-  @NotNull
-  public Project getProject() {
+  public @NotNull Project getProject() {
     return myProject;
   }
 
@@ -821,53 +816,44 @@ public final class DartAnalysisServerService implements Disposable {
     analysis_setSubscriptions();
   }
 
-  @Nullable
-  public AvailableSuggestionSet getAvailableSuggestionSet(int id) {
+  public @Nullable AvailableSuggestionSet getAvailableSuggestionSet(int id) {
     return myServerData.getAvailableSuggestionSet(id);
   }
 
-  @Nullable
-  public Map<String, Map<String, Set<String>>> getExistingImports(@Nullable String filePathSD) {
+  public @Nullable Map<String, Map<String, Set<String>>> getExistingImports(@Nullable String filePathSD) {
     return myServerData.getExistingImports(filePathSD);
   }
 
-  @NotNull
-  public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
+  public @NotNull List<DartServerData.DartError> getErrors(final @NotNull VirtualFile file) {
     return myServerData.getErrors(file);
   }
 
-  public List<DartServerData.DartError> getErrors(@NotNull final SearchScope scope) {
+  public List<DartServerData.DartError> getErrors(final @NotNull SearchScope scope) {
     return myServerData.getErrors(scope);
   }
 
-  @NotNull
-  public List<DartServerData.DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
+  public @NotNull List<DartServerData.DartHighlightRegion> getHighlight(final @NotNull VirtualFile file) {
     return myServerData.getHighlight(file);
   }
 
-  @NotNull
-  public List<DartServerData.DartNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
+  public @NotNull List<DartServerData.DartNavigationRegion> getNavigation(final @NotNull VirtualFile file) {
     return myServerData.getNavigation(file);
   }
 
-  @NotNull
-  public List<DartServerData.DartOverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
+  public @NotNull List<DartServerData.DartOverrideMember> getOverrideMembers(final @NotNull VirtualFile file) {
     return myServerData.getOverrideMembers(file);
   }
 
-  @NotNull
-  public List<DartServerData.DartRegion> getImplementedClasses(@NotNull final VirtualFile file) {
+  public @NotNull List<DartServerData.DartRegion> getImplementedClasses(final @NotNull VirtualFile file) {
     return myServerData.getImplementedClasses(file);
   }
 
-  @NotNull
-  public List<DartServerData.DartRegion> getImplementedMembers(@NotNull final VirtualFile file) {
+  public @NotNull List<DartServerData.DartRegion> getImplementedMembers(final @NotNull VirtualFile file) {
     return myServerData.getImplementedMembers(file);
   }
 
-  @Nullable
   @Contract("null -> null")
-  public Outline getOutline(@Nullable final VirtualFile file) {
+  public @Nullable Outline getOutline(final @Nullable VirtualFile file) {
     if (file == null) return null;
     return myServerData.getOutline(file);
   }
@@ -883,12 +869,11 @@ public final class DartAnalysisServerService implements Disposable {
     );
   }
 
-  public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
+  public boolean isInIncludedRoots(final @Nullable VirtualFile vFile) {
     return myRootsHandler.isInIncludedRoots(vFile);
   }
 
-  @Nullable
-  private VirtualFile getCurrentOpenFile() {
+  private @Nullable VirtualFile getCurrentOpenFile() {
     final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
     if (files.length > 0 && files[0].isInLocalFileSystem()) {
       return files[0];
@@ -921,7 +906,7 @@ public final class DartAnalysisServerService implements Disposable {
    * Return true if the given file can be analyzed by Dart Analysis Server.
    */
   @Contract("null->false")
-  public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
+  public static boolean isLocalAnalyzableFile(final @Nullable VirtualFile file) {
     if (file == null) return false;
 
     return file.getUserData(DartFileInfoKt.DART_NOT_LOCAL_FILE_URI_KEY) != null ||
@@ -1049,7 +1034,7 @@ public final class DartAnalysisServerService implements Disposable {
     DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, errors);
   }
 
-  private void updateFilesWithErrorsSet(@NotNull final String filePath, final boolean hasSevereProblems, final int errorsHash) {
+  private void updateFilesWithErrorsSet(final @NotNull String filePath, final boolean hasSevereProblems, final int errorsHash) {
     synchronized (myFilePathsWithErrors) {
       if (errorsHash == 0) {
         // no errors
@@ -1096,8 +1081,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  @NotNull
-  public List<HoverInformation> analysis_getHover(@NotNull final VirtualFile file, final int _offset) {
+  public @NotNull List<HoverInformation> analysis_getHover(final @NotNull VirtualFile file, final int _offset) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return HoverInformation.EMPTY_LIST;
@@ -1130,10 +1114,9 @@ public final class DartAnalysisServerService implements Disposable {
     return result;
   }
 
-  @Nullable
-  public List<DartServerData.DartNavigationRegion> analysis_getNavigation(@NotNull final VirtualFile file,
-                                                                          final int _offset,
-                                                                          final int length) {
+  public @Nullable List<DartServerData.DartNavigationRegion> analysis_getNavigation(final @NotNull VirtualFile file,
+                                                                                    final int _offset,
+                                                                                    final int length) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
@@ -1182,8 +1165,7 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @NotNull
-  public List<SourceChange> edit_getAssists(@NotNull final VirtualFile file, final int _offset, final int _length) {
+  public @NotNull List<SourceChange> edit_getAssists(final @NotNull VirtualFile file, final int _offset, final int _length) {
     if (!file.isInLocalFileSystem()) return Collections.emptyList();
 
     final AnalysisServer server = myServer;
@@ -1285,8 +1267,7 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public SourceChange edit_getPostfixCompletion(@NotNull final VirtualFile file, final int _offset, final String key) {
+  public @Nullable SourceChange edit_getPostfixCompletion(final @NotNull VirtualFile file, final int _offset, final String key) {
     if (!file.isInLocalFileSystem()) return null;
 
     final AnalysisServer server = myServer;
@@ -1320,8 +1301,7 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public SourceChange edit_getStatementCompletion(@NotNull final VirtualFile file, final int _offset) {
+  public @Nullable SourceChange edit_getStatementCompletion(final @NotNull VirtualFile file, final int _offset) {
     if (!file.isInLocalFileSystem()) return null;
 
     final AnalysisServer server = myServer;
@@ -1370,9 +1350,9 @@ public final class DartAnalysisServerService implements Disposable {
    * If server responds in less than {@code GET_FIXES_TIMEOUT_EDT} / {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
    * {@code consumer} is already notified. Otherwise, this method is async.
    */
-  public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
+  public void askForFixesAndWaitABitIfReceivedQuickly(final @NotNull VirtualFile file,
                                                       final int _offset,
-                                                      @NotNull final Consumer<? super List<AnalysisErrorFixes>> consumer) {
+                                                      final @NotNull Consumer<? super List<AnalysisErrorFixes>> consumer) {
     if (!file.isInLocalFileSystem()) {
       consumer.consume(Collections.emptyList());
       return;
@@ -1410,9 +1390,9 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public void search_findElementReferences(@NotNull final VirtualFile file,
+  public void search_findElementReferences(final @NotNull VirtualFile file,
                                            final int _offset,
-                                           @NotNull final Consumer<? super SearchResult> consumer) {
+                                           final @NotNull Consumer<? super SearchResult> consumer) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return;
@@ -1472,8 +1452,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  @NotNull
-  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int _offset, final boolean superOnly) {
+  public @NotNull List<TypeHierarchyItem> search_getTypeHierarchy(final @NotNull VirtualFile file, final int _offset, final boolean superOnly) {
     final List<TypeHierarchyItem> results = new ArrayList<>();
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -1505,11 +1484,10 @@ public final class DartAnalysisServerService implements Disposable {
     return results;
   }
 
-  @Nullable
-  public Pair<String, SourceChange> completion_getSuggestionDetails(@NotNull VirtualFile file,
-                                                                    int id,
-                                                                    String label,
-                                                                    int _offset) {
+  public @Nullable Pair<String, SourceChange> completion_getSuggestionDetails(@NotNull VirtualFile file,
+                                                                              int id,
+                                                                              String label,
+                                                                              int _offset) {
     if (!file.isInLocalFileSystem()) return null;
 
     final AnalysisServer server = myServer;
@@ -1579,8 +1557,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
 
-  @Nullable
-  public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {
+  public @Nullable String completion_getSuggestions(final @NotNull VirtualFile file, final int _offset) {
     if (!file.isInLocalFileSystem()) return null;
 
     final AnalysisServer server = myServer;
@@ -1598,13 +1575,13 @@ public final class DartAnalysisServerService implements Disposable {
     final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestions(fileUri, offset, new GetSuggestionsConsumer() {
       @Override
-      public void computedCompletionId(@NotNull final String completionId) {
+      public void computedCompletionId(final @NotNull String completionId) {
         resultRef.set(completionId);
         latch.countDown();
       }
 
       @Override
-      public void onError(@NotNull final RequestError error) {
+      public void onError(final @NotNull RequestError error) {
         for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
           extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
                                         StringUtil.notNullize(error.getStackTrace()));
@@ -1623,12 +1600,11 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public CompletionInfo2 completion_getSuggestions2(@NotNull final VirtualFile file,
-                                                    final int _offset,
-                                                    final int maxResults,
-                                                    final String completionMode,
-                                                    final int invocationCount) {
+  public @Nullable CompletionInfo2 completion_getSuggestions2(final @NotNull VirtualFile file,
+                                                              final int _offset,
+                                                              final int maxResults,
+                                                              final String completionMode,
+                                                              final int invocationCount) {
     if (!file.isInLocalFileSystem()) return null;
 
     final AnalysisServer server = myServer;
@@ -1674,7 +1650,7 @@ public final class DartAnalysisServerService implements Disposable {
                                         }
 
                                         @Override
-                                        public void onError(@NotNull final RequestError error) {
+                                        public void onError(final @NotNull RequestError error) {
                                           // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
                                           latch.countDown();
 
@@ -1699,11 +1675,10 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public FormatResult edit_format(@NotNull final VirtualFile file,
-                                  final int _selectionOffset,
-                                  final int _selectionLength,
-                                  final int lineLength) {
+  public @Nullable FormatResult edit_format(final @NotNull VirtualFile file,
+                                            final int _selectionOffset,
+                                            final int _selectionLength,
+                                            final int lineLength) {
     if (!file.isInLocalFileSystem()) return null;
 
     final AnalysisServer server = myServer;
@@ -1746,10 +1721,9 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public List<ImportedElements> analysis_getImportedElements(@NotNull final VirtualFile file,
-                                                             final int _selectionOffset,
-                                                             final int _selectionLength) {
+  public @Nullable List<ImportedElements> analysis_getImportedElements(final @NotNull VirtualFile file,
+                                                                       final int _selectionOffset,
+                                                                       final int _selectionLength) {
     final AnalysisServer server = myServer;
     if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
       return null;
@@ -1786,10 +1760,9 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public SourceFileEdit edit_importElements(@NotNull final VirtualFile file,
-                                            @NotNull final List<ImportedElements> importedElements,
-                                            final int _offset) {
+  public @Nullable SourceFileEdit edit_importElements(final @NotNull VirtualFile file,
+                                                      final @NotNull List<ImportedElements> importedElements,
+                                                      final int _offset) {
     final AnalysisServer server = myServer;
     if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
       return null;
@@ -2003,20 +1976,19 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  public void execution_deleteContext(@NotNull final String contextId) {
+  public void execution_deleteContext(final @NotNull String contextId) {
     final AnalysisServer server = myServer;
     if (server != null) {
       server.execution_deleteContext(contextId);
     }
   }
 
-  @Nullable
-  public Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>> execution_getSuggestions(@NotNull String code,
-                                                                                                      int offset,
-                                                                                                      @NotNull VirtualFile contextFile,
-                                                                                                      int contextOffset,
-                                                                                                      @NotNull List<RuntimeCompletionVariable> variables,
-                                                                                                      @NotNull List<RuntimeCompletionExpression> expressions) {
+  public @Nullable Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>> execution_getSuggestions(@NotNull String code,
+                                                                                                                int offset,
+                                                                                                                @NotNull VirtualFile contextFile,
+                                                                                                                int contextOffset,
+                                                                                                                @NotNull List<RuntimeCompletionVariable> variables,
+                                                                                                                @NotNull List<RuntimeCompletionExpression> expressions) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return new Pair<>(new ArrayList<>(), new ArrayList<>());
@@ -2149,7 +2121,7 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  private void startServer(@NotNull final DartSdk sdk) {
+  private void startServer(final @NotNull DartSdk sdk) {
     if (DartPubActionBase.isInProgress()) return; // DartPubActionBase will start the server itself when finished
 
     synchronized (myLock) {
@@ -2390,7 +2362,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public void waitForAnalysisToComplete_TESTS_ONLY(@NotNull final VirtualFile file) {
+  public void waitForAnalysisToComplete_TESTS_ONLY(final @NotNull VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
 
     long startTime = System.currentTimeMillis();
@@ -2426,7 +2398,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public boolean isFileWithErrors(@NotNull final VirtualFile file) {
+  public boolean isFileWithErrors(final @NotNull VirtualFile file) {
     synchronized (myFilePathsWithErrors) {
       return file.isDirectory() ? myFolderPathsWithErrors.getInt(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
     }
@@ -2438,7 +2410,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  private void logError(@NonNls @NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
+  private void logError(final @NonNls @NotNull String methodName, final @Nullable String filePath, final @NotNull RequestError error) {
     if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode())) {
       LOG.info(getShortErrorMessage(methodName, filePath, error));
       return;
@@ -2450,9 +2422,7 @@ public final class DartAnalysisServerService implements Disposable {
     LOG.error(message);
   }
 
-  @NonNls
-  @NotNull
-  private String getShortErrorMessage(@NonNls @NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
+  private @NonNls @NotNull String getShortErrorMessage(@NonNls @NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
     return "Error from " + methodName +
            (filePath == null ? "" : (", file = " + filePath)) +
            ", SDK version = " + mySdkVersion +
@@ -2460,7 +2430,7 @@ public final class DartAnalysisServerService implements Disposable {
            ", error code = " + error.getCode() + ": " + error.getMessage();
   }
 
-  private void logTookTooLongMessage(@NonNls @NotNull final String methodName, final long timeout, @Nullable String filePath) {
+  private void logTookTooLongMessage(final @NonNls @NotNull String methodName, final long timeout, @Nullable String filePath) {
     @NonNls StringBuilder builder = new StringBuilder();
     builder.append(methodName).append("() took longer than ").append(timeout).append("ms");
     if (filePath != null) {
@@ -2470,8 +2440,8 @@ public final class DartAnalysisServerService implements Disposable {
     LOG.info(builder.toString());
   }
 
-  private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
-                                                       @NotNull final CountDownLatch latch,
+  private static boolean awaitForLatchCheckingCanceled(final @NotNull AnalysisServer server,
+                                                       final @NotNull CountDownLatch latch,
                                                        long timeoutInMillis) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       timeoutInMillis *= TESTS_TIMEOUT_COEFF;
@@ -2510,26 +2480,26 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   private static class CompletionInfo {
-    @NotNull private final String myCompletionId;
+    private final @NotNull String myCompletionId;
     /**
      * must be converted before any usage
      */
     private final int myOriginalReplacementOffset;
     private final int myReplacementLength;
-    @NotNull private final List<CompletionSuggestion> myCompletions;
-    @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
-    @NotNull private final List<String> myIncludedElementKinds;
-    @NotNull private final List<IncludedSuggestionRelevanceTag> myIncludedSuggestionRelevanceTags;
+    private final @NotNull List<CompletionSuggestion> myCompletions;
+    private final @NotNull List<IncludedSuggestionSet> myIncludedSuggestionSets;
+    private final @NotNull List<String> myIncludedElementKinds;
+    private final @NotNull List<IncludedSuggestionRelevanceTag> myIncludedSuggestionRelevanceTags;
     private final boolean isLast;
-    @Nullable private final String myLibraryFilePathSD;
+    private final @Nullable String myLibraryFilePathSD;
 
-    CompletionInfo(@NotNull final String completionId,
+    CompletionInfo(final @NotNull String completionId,
                    int replacementOffset,
                    int replacementLength,
-                   @NotNull final List<CompletionSuggestion> completions,
-                   @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
-                   @NotNull final List<String> includedElementKinds,
-                   @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
+                   final @NotNull List<CompletionSuggestion> completions,
+                   final @NotNull List<IncludedSuggestionSet> includedSuggestionSets,
+                   final @NotNull List<String> includedElementKinds,
+                   final @NotNull List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                    boolean isLast,
                    @Nullable String libraryFilePathSD) {
       this.myCompletionId = completionId;
@@ -2565,8 +2535,8 @@ public final class DartAnalysisServerService implements Disposable {
    * A set of {@link SearchResult}s.
    */
   private static class SearchResultsSet {
-    @NotNull final String id;
-    @NotNull final List<SearchResult> results;
+    final @NotNull String id;
+    final @NotNull List<SearchResult> results;
     final boolean isLast;
 
     SearchResultsSet(@NotNull String id, @NotNull List<SearchResult> results, boolean isLast) {
@@ -2576,11 +2546,11 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public void addOutlineListener(@NotNull final DartServerData.OutlineListener listener) {
+  public void addOutlineListener(final @NotNull DartServerData.OutlineListener listener) {
     myServerData.addOutlineListener(listener);
   }
 
-  public void removeOutlineListener(@NotNull final DartServerData.OutlineListener listener) {
+  public void removeOutlineListener(final @NotNull DartServerData.OutlineListener listener) {
     myServerData.removeOutlineListener(listener);
   }
 

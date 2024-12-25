@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
@@ -21,8 +21,7 @@ public final class DartBuildFileUtil {
    * This may be not the closest BUILD file.
    * For example it will ignore "examples/BUILD" file, because the enclosing folder contains a "lib" folder and another BUILD file.
    */
-  @Nullable
-  public static VirtualFile findPackageRootBuildFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+  public static @Nullable VirtualFile findPackageRootBuildFile(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
 
@@ -42,8 +41,7 @@ public final class DartBuildFileUtil {
     return null;
   }
 
-  @NotNull
-  public static String getDartProjectName(@NotNull final VirtualFile buildFile) {
+  public static @NotNull String getDartProjectName(final @NotNull VirtualFile buildFile) {
     return buildFile.getParent().getName();
   }
 }

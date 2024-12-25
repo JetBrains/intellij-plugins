@@ -16,11 +16,11 @@
 package com.intellij.protobuf.lang.stub.type;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
 import com.intellij.protobuf.lang.psi.PbExtendDefinition;
 import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.psi.impl.PbExtendDefinitionImpl;
 import com.intellij.protobuf.lang.stub.PbExtendDefinitionStub;
+import com.intellij.psi.stubs.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -37,9 +37,8 @@ public class PbExtendDefinitionType
     return new PbExtendDefinitionImpl(stub, this);
   }
 
-  @NotNull
   @Override
-  public PbExtendDefinitionStub createStub(
+  public @NotNull PbExtendDefinitionStub createStub(
       @NotNull PbExtendDefinition psi, StubElement parentStub) {
     // TODO(volkman): Handle extended type better
     String typeString = null;
@@ -51,9 +50,8 @@ public class PbExtendDefinitionType
     return new PbExtendDefinitionStub(parentStub, this, typeString == null ? "" : typeString);
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "protobuf.EXTEND_DEFINITION";
   }
 
@@ -63,9 +61,8 @@ public class PbExtendDefinitionType
     dataStream.writeUTF(stub.getExtendedType());
   }
 
-  @NotNull
   @Override
-  public PbExtendDefinitionStub deserialize(
+  public @NotNull PbExtendDefinitionStub deserialize(
       @NotNull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     String extendedType = dataStream.readUTF();

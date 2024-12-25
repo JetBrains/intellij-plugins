@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.inspections;
 
 import com.intellij.codeInsight.daemon.quickFix.CreateFileFix;
@@ -20,11 +20,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CfmlFileReferenceInspection extends LocalInspectionTool {
   @Override
-  @NotNull
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, final boolean isOnTheFly) {
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(@NotNull final PsiElement element) {
+      public void visitElement(final @NotNull PsiElement element) {
         CfmlTag tagParent = PsiTreeUtil.getParentOfType((element), CfmlTag.class);
         if ((element.getNode().getElementType() == CfmlTokenTypes.STRING_TEXT)) {
           if ((tagParent == null ||

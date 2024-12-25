@@ -210,7 +210,7 @@ public final class PerforceReadOnlyFileStateManager {
     }
 
     @Override
-    public void fileCreated(@NotNull final VirtualFileEvent event) {
+    public void fileCreated(final @NotNull VirtualFileEvent event) {
       VirtualFile file = event.getFile();
       FilePath path = VcsUtil.getFilePath(file);
       if (!fileIsUnderP4Root(path)) return;

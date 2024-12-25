@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.CoverageEngine;
@@ -21,8 +21,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
   private NodeTargetRun myTargetRun;
   private Path myLocalProjectRoot;
 
-  @NotNull
-  public static KarmaCoverageRunner getInstance() {
+  public static @NotNull KarmaCoverageRunner getInstance() {
     return Objects.requireNonNull(CoverageRunner.getInstance(KarmaCoverageRunner.class));
   }
 
@@ -49,20 +48,17 @@ public class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @Override
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return "KarmaPresentableName";
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return KarmaCoverageEngine.ID;
   }
 
   @Override
-  @NotNull
-  public String getDataFileExtension() {
+  public @NotNull String getDataFileExtension() {
     return "dat";
   }
 

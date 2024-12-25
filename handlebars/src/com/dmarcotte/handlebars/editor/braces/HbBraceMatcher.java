@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor.braces;
 
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
@@ -109,9 +110,8 @@ public final class HbBraceMatcher implements BraceMatcher {
     return false;
   }
 
-  @Nullable
   @Override
-  public IElementType getOppositeBraceTokenType(@NotNull IElementType type) {
+  public @Nullable IElementType getOppositeBraceTokenType(@NotNull IElementType type) {
     return null;
   }
 

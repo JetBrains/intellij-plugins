@@ -15,9 +15,8 @@ public final class MeteorConfigurationType extends ConfigurationTypeBase impleme
           MeteorBundle.message("meteor.name"), 
           MeteorBundle.message("meteor.run.description"), MeteorIcons.Meteor2);
     addFactory(new ConfigurationFactory(this) {
-      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+      public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new MeteorRunConfiguration(project, this, "Meteor");
       }
 

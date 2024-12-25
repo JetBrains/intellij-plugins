@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.config;
 
 import com.intellij.openapi.module.Module;
@@ -23,26 +23,19 @@ import java.util.regex.Pattern;
  * @author Max Medvedev
  */
 public final class CucumberConfigUtil {
-  @NonNls
-  private static final Pattern CUCUMBER_PATTERN = Pattern.compile("cucumber-core-(.*)\\.jar");
+  private static final @NonNls Pattern CUCUMBER_PATTERN = Pattern.compile("cucumber-core-(.*)\\.jar");
 
-  @NonNls
-  private static final String CUCUMBER_CLI_MAIN_1_0 = "cucumber.cli.Main";
+  private static final @NonNls String CUCUMBER_CLI_MAIN_1_0 = "cucumber.cli.Main";
 
-  @NonNls
-  private static final String CUCUMBER_API_CLI_MAIN_1_1 = "cucumber.api.cli.Main";
+  private static final @NonNls String CUCUMBER_API_CLI_MAIN_1_1 = "cucumber.api.cli.Main";
 
-  @NonNls
-  public static final String CUCUMBER_VERSION_1_0 = "1.0";
+  public static final @NonNls String CUCUMBER_VERSION_1_0 = "1.0";
 
-  @NonNls
-  public static final String CUCUMBER_VERSION_1_1 = "1.1";
+  public static final @NonNls String CUCUMBER_VERSION_1_1 = "1.1";
 
-  @NonNls
-  public static final String CUCUMBER_VERSION_4_5 = "4.5";
+  public static final @NonNls String CUCUMBER_VERSION_4_5 = "4.5";
 
-  @Nullable
-  public static String getCucumberCoreVersion(@NotNull PsiElement place) {
+  public static @Nullable String getCucumberCoreVersion(@NotNull PsiElement place) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(place);
     if (module == null) return null;
 
@@ -51,8 +44,7 @@ public final class CucumberConfigUtil {
                                                                                 .create(getCucumberCoreVersionImpl(module), ProjectRootManager.getInstance(module.getProject())));
   }
 
-  @Nullable
-  private static String getCucumberCoreVersionImpl(Module module) {
+  private static @Nullable String getCucumberCoreVersionImpl(Module module) {
     for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (orderEntry instanceof LibraryOrderEntry) {
         final String libraryName = ((LibraryOrderEntry)orderEntry).getLibraryName();
@@ -84,8 +76,7 @@ public final class CucumberConfigUtil {
     return null;
   }
 
-  @Nullable
-  private static String getVersionByFile(VirtualFile file) {
+  private static @Nullable String getVersionByFile(VirtualFile file) {
     final String name = file.getName();
     final Matcher matcher = CUCUMBER_PATTERN.matcher(name);
     if (matcher.matches() && matcher.groupCount() == 1) {

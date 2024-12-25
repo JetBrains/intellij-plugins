@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -49,11 +49,10 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   private static final String FILE_TEMPLATE_CUCUMBER_JAVA_STEP_DEFINITION_JAVA = "Cucumber Java Step Definition.java";
   private static final String DEFAULT_STEP_KEYWORD = "Given";
 
-  private final static Logger LOG = Logger.getInstance(JavaStepDefinitionCreator.class);
+  private static final Logger LOG = Logger.getInstance(JavaStepDefinitionCreator.class);
 
-  @NotNull
   @Override
-  public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
+  public @NotNull PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
     PsiClass newClass = CreateClassUtil.createClassNamed(name, CreateClassUtil.DEFAULT_CLASS_TEMPLATE, dir);
     assert newClass != null;
     return newClass.getContainingFile();
@@ -159,7 +158,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   }
 
   @Override
-  public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String name) {
+  public boolean validateNewStepDefinitionFileName(final @NotNull Project project, final @NotNull String name) {
     if (name.length() == 0) return false;
     if (!Character.isJavaIdentifierStart(name.charAt(0))) return false;
     for (int i = 1; i < name.length(); i++) {
@@ -168,9 +167,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return true;
   }
 
-  @NotNull
   @Override
-  public String getDefaultStepDefinitionFolderPath(@NotNull final GherkinStep step) {
+  public @NotNull String getDefaultStepDefinitionFolderPath(final @NotNull GherkinStep step) {
     PsiFile featureFile = step.getContainingFile();
     if (featureFile != null) {
       PsiDirectory psiDirectory = featureFile.getContainingDirectory();
@@ -214,9 +212,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return Objects.requireNonNull(featureFile.getContainingDirectory()).getVirtualFile().getPath();
   }
 
-  @NotNull
   @Override
-  public String getStepDefinitionFilePath(@NotNull final PsiFile file) {
+  public @NotNull String getStepDefinitionFilePath(final @NotNull PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
     if (file instanceof PsiClassOwner && vFile != null) {
       String packageName = ((PsiClassOwner)file).getPackageName();
@@ -234,13 +231,12 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return stepDefinition.replace("PendingException", CucumberJavaUtil.getCucumberPendingExceptionFqn(context));
   }
 
-  @NotNull
   @Override
-  public String getDefaultStepFileName(@NotNull final GherkinStep step) {
+  public @NotNull String getDefaultStepFileName(final @NotNull GherkinStep step) {
     return STEP_DEFINITION_SUFFIX;
   }
 
-  private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step, Language language) {
+  private static PsiMethod buildStepDefinitionByStep(final @NotNull GherkinStep step, Language language) {
     String annotationPackage = new AnnotationPackageProvider().getAnnotationPackageFor(step);
     String methodAnnotation = String.format("@%s.", annotationPackage);
 

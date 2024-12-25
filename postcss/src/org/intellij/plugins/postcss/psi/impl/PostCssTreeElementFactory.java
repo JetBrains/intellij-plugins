@@ -15,8 +15,7 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
   }
 
   @Override
-  @NotNull
-  public CompositeElement createComposite(@NotNull final IElementType type) {
+  public @NotNull CompositeElement createComposite(final @NotNull IElementType type) {
     if (type == PostCssElementTypes.POST_CSS_NEST) {
       return new PostCssNestImpl();
     }

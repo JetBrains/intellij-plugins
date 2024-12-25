@@ -29,7 +29,7 @@ public class PostCssCustomMediaStubElementType extends CssSimpleNamedStubElement
   }
 
   @Override
-  public void indexStub(@NotNull final CssNamedStub<PostCssCustomMedia> stub, @NotNull final IndexSink sink) {
+  public void indexStub(final @NotNull CssNamedStub<PostCssCustomMedia> stub, final @NotNull IndexSink sink) {
     sink.occurrence(PostCssCustomMediaIndex.KEY, stub.getName());
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -39,7 +40,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   private boolean mySkipCompile = false;
   private boolean myTempBCForCompilation = false;
 
-  JpsFlexBuildConfigurationImpl(@NotNull final String name) {
+  JpsFlexBuildConfigurationImpl(final @NotNull String name) {
     super(name);
     myContainer.setChild(JpsFlexDependenciesImpl.ROLE);
     myContainer.setChild(JpsFlexCompilerOptionsRole.INSTANCE);
@@ -66,13 +67,11 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @NotNull
-  public JpsFlexBuildConfigurationImpl createCopy() {
+  public @NotNull JpsFlexBuildConfigurationImpl createCopy() {
     return new JpsFlexBuildConfigurationImpl(this);
   }
   
-  @NotNull
-  public JpsFlexBuildConfigurationImpl createConfigurationCopy() {
+  public @NotNull JpsFlexBuildConfigurationImpl createConfigurationCopy() {
     return new JpsFlexBuildConfigurationImpl(this);
   }
 
@@ -84,15 +83,13 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @NotNull
-  public JpsFlexBCReference createReference() {
+  public @NotNull JpsFlexBCReference createReference() {
     return new JpsFlexBCReferenceImpl(getName(), getModule().createReference());
   }
 
 
   @Override
-  @NotNull
-  public TargetPlatform getTargetPlatform() {
+  public @NotNull TargetPlatform getTargetPlatform() {
     return myTargetPlatform;
   }
 
@@ -102,57 +99,52 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @NotNull
-  public OutputType getOutputType() {
+  public @NotNull OutputType getOutputType() {
     return myOutputType;
   }
 
   @Override
-  public void setOutputType(@NotNull final OutputType outputType) {
+  public void setOutputType(final @NotNull OutputType outputType) {
     myOutputType = outputType;
   }
 
   @Override
-  @NotNull
-  public String getOptimizeFor() {
+  public @NotNull String getOptimizeFor() {
     return myOptimizeFor;
   }
 
   @Override
-  public void setOptimizeFor(@NotNull final String optimizeFor) {
+  public void setOptimizeFor(final @NotNull String optimizeFor) {
     myOptimizeFor = optimizeFor;
   }
 
   @Override
-  @NotNull
-  public String getMainClass() {
+  public @NotNull String getMainClass() {
     return myMainClass;
   }
 
   @Override
-  public void setMainClass(@NotNull final String mainClass) {
+  public void setMainClass(final @NotNull String mainClass) {
     myMainClass = mainClass;
   }
 
   @Override
-  @NotNull
-  public String getOutputFileName() {
+  public @NotNull String getOutputFileName() {
     return myOutputFileName;
   }
 
   @Override
-  public void setOutputFileName(@NotNull final String outputFileName) {
+  public void setOutputFileName(final @NotNull String outputFileName) {
     myOutputFileName = outputFileName;
   }
 
   @Override
-  @NotNull
-  public String getOutputFolder() {
+  public @NotNull String getOutputFolder() {
     return myOutputFolder;
   }
 
   @Override
-  public void setOutputFolder(@NotNull final String outputFolder) {
+  public void setOutputFolder(final @NotNull String outputFolder) {
     myOutputFolder = outputFolder;
   }
 
@@ -167,14 +159,12 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @NotNull
-  public String getWrapperTemplatePath() {
+  public @NotNull String getWrapperTemplatePath() {
     return myWrapperTemplatePath;
   }
 
   @Override
-  @NotNull
-  public Collection<RLMInfo> getRLMs() {
+  public @NotNull Collection<RLMInfo> getRLMs() {
     if (myRLMs.isEmpty()) return Collections.emptyList();
 
     final List<String> entries = StringUtil.split(myRLMs, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
@@ -201,8 +191,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @NotNull
-  public Collection<String> getCssFilesToCompile() {
+  public @NotNull Collection<String> getCssFilesToCompile() {
     if (myCssFilesToCompile.isEmpty()) return Collections.emptyList();
     return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
@@ -223,32 +212,27 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @NotNull
-  public JpsFlexDependencies getDependencies() {
+  public @NotNull JpsFlexDependencies getDependencies() {
     return myContainer.getChild(JpsFlexDependenciesImpl.ROLE);
   }
 
   @Override
-  @NotNull
-  public JpsFlexCompilerOptions getCompilerOptions() {
+  public @NotNull JpsFlexCompilerOptions getCompilerOptions() {
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public JpsAirDesktopPackagingOptions getAirDesktopPackagingOptions() {
+  public @NotNull JpsAirDesktopPackagingOptions getAirDesktopPackagingOptions() {
     return myContainer.getChild(JpsAirDesktopPackagingOptionsImpl.ROLE);
   }
 
-  @NotNull
   @Override
-  public JpsAndroidPackagingOptions getAndroidPackagingOptions() {
+  public @NotNull JpsAndroidPackagingOptions getAndroidPackagingOptions() {
     return myContainer.getChild(JpsAndroidPackagingOptionsImpl.ROLE);
   }
 
-  @NotNull
   @Override
-  public JpsIosPackagingOptions getIosPackagingOptions() {
+  public @NotNull JpsIosPackagingOptions getIosPackagingOptions() {
     return myContainer.getChild(JpsIosPackagingOptionsImpl.ROLE);
   }
 
@@ -308,8 +292,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  @Nullable
-  public JpsSdk<?> getSdk() {
+  public @Nullable JpsSdk<?> getSdk() {
     return getDependencies().getSdk();
   }
 

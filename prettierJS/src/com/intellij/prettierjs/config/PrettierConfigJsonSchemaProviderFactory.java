@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs.config;
 
 import com.intellij.lang.javascript.EmbeddedJsonSchemaFileProvider;
@@ -17,9 +17,8 @@ import java.util.List;
 public final class PrettierConfigJsonSchemaProviderFactory implements JsonSchemaProviderFactory, DumbAware {
   static final String SCHEMA_FILE_NAME = "prettierrc-schema.json";
 
-  @NotNull
   @Override
-  public List<JsonSchemaFileProvider> getProviders(@NotNull final Project project) {
+  public @NotNull List<JsonSchemaFileProvider> getProviders(final @NotNull Project project) {
     @NlsSafe String prettier = "Prettier";
     EmbeddedJsonSchemaFileProvider provider = new EmbeddedJsonSchemaFileProvider(SCHEMA_FILE_NAME, prettier,
                                                                                  "http://json.schemastore.org/prettierrc",

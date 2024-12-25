@@ -51,7 +51,7 @@ public abstract class AbstractDependencyFilter {
     m_dependencyArtifacts = dependencyArtifacts;
   }
 
-  private static abstract class DependencyFilter {
+  private abstract static class DependencyFilter {
     private final Instruction m_instruction;
     private final String m_defaultValue;
 

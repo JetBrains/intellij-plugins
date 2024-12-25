@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
@@ -16,14 +16,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DartElementGenerator {
-  @Nullable
-  public static DartReference createReferenceFromText(Project myProject, String text) {
+  public static @Nullable DartReference createReferenceFromText(Project myProject, String text) {
     final DartExpression expression = createExpressionFromText(myProject, text);
     return expression instanceof DartReference ? (DartReference)expression : null;
   }
 
-  @Nullable
-  public static DartExpression createExpressionFromText(Project myProject, String text) {
+  public static @Nullable DartExpression createExpressionFromText(Project myProject, String text) {
     final PsiFile file = createDummyFile(myProject, "var dummy = " + text + ";");
     final PsiElement child = file.getFirstChild();
     if (child instanceof DartVarDeclarationList) {
@@ -40,8 +38,7 @@ public final class DartElementGenerator {
     return codeFragment;
   }
 
-  @Nullable
-  public static PsiElement createStatementFromText(Project myProject, String text) {
+  public static @Nullable PsiElement createStatementFromText(Project myProject, String text) {
     final PsiFile file = createDummyFile(myProject, "dummy(){" + text + "}");
     final PsiElement child = file.getFirstChild();
     if (child instanceof DartFunctionDeclarationWithBodyOrNative) {
@@ -54,16 +51,14 @@ public final class DartElementGenerator {
   }
 
 
-  @Nullable
-  public static DartId createIdentifierFromText(Project myProject, String name) {
+  public static @Nullable DartId createIdentifierFromText(Project myProject, String name) {
     final PsiFile dummyFile = createDummyFile(myProject, name + "(){}");
     final DartComponent dartComponent = PsiTreeUtil.getChildOfType(dummyFile, DartComponent.class);
     final DartComponentName componentName = dartComponent == null ? null : dartComponent.getComponentName();
     return componentName == null ? null : componentName.getId();
   }
 
-  @Nullable
-  public static DartLibraryNameElement createLibraryNameElementFromText(@NotNull final Project project, @NotNull final String libraryName) {
+  public static @Nullable DartLibraryNameElement createLibraryNameElementFromText(final @NotNull Project project, final @NotNull String libraryName) {
     final PsiFile dummyFile = createDummyFile(project, "library " + libraryName + ";");
     final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(dummyFile, DartLibraryStatement.class);
     return libraryStatement == null ? null : libraryStatement.getLibraryNameElement();

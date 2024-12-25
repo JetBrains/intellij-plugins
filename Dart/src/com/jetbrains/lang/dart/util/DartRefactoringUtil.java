@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
@@ -31,11 +31,10 @@ public final class DartRefactoringUtil {
     return usedComponentNames;
   }
 
-  @Nullable
-  public static DartExpression getSelectedExpression(@NotNull final Project project,
-                                                     @NotNull PsiFile file,
-                                                     @NotNull final PsiElement element1,
-                                                     @NotNull final PsiElement element2) {
+  public static @Nullable DartExpression getSelectedExpression(final @NotNull Project project,
+                                                               @NotNull PsiFile file,
+                                                               final @NotNull PsiElement element1,
+                                                               final @NotNull PsiElement element2) {
     PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
     if (parent == null) {
       return null;
@@ -46,15 +45,14 @@ public final class DartRefactoringUtil {
     return PsiTreeUtil.getParentOfType(parent, DartExpression.class);
   }
 
-  @NotNull
-  public static List<PsiElement> getOccurrences(@NotNull final PsiElement pattern, @Nullable final PsiElement context) {
+  public static @NotNull List<PsiElement> getOccurrences(final @NotNull PsiElement pattern, final @Nullable PsiElement context) {
     if (context == null) {
       return Collections.emptyList();
     }
     final List<PsiElement> occurrences = new ArrayList<>();
     context.acceptChildren(new DartRecursiveVisitor() {
       @Override
-      public void visitElement(@NotNull final PsiElement element) {
+      public void visitElement(final @NotNull PsiElement element) {
         if (DartComponentType.typeOf(element) == DartComponentType.PARAMETER) {
           return;
         }
@@ -97,8 +95,7 @@ public final class DartRefactoringUtil {
     return ContainerUtil.map2Array(astResult, PsiElement.class, ASTNode::getPsi);
   }
 
-  @Nullable
-  public static DartExpression findExpressionInRange(PsiFile file, int startOffset, int endOffset) {
+  public static @Nullable DartExpression findExpressionInRange(PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
     if (element1 instanceof PsiWhiteSpace) {

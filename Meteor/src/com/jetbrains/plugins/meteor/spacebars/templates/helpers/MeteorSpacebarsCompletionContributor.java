@@ -71,8 +71,7 @@ public final class MeteorSpacebarsCompletionContributor extends CompletionContri
     }));
   }
 
-  @NotNull
-  private static CompletionProvider<CompletionParameters> getTagProvider() {
+  private static @NotNull CompletionProvider<CompletionParameters> getTagProvider() {
     return new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
@@ -114,8 +113,7 @@ public final class MeteorSpacebarsCompletionContributor extends CompletionContri
   }
 
 
-  @NotNull
-  private static CompletionProvider<CompletionParameters> getPartialTagProvider() {
+  private static @NotNull CompletionProvider<CompletionParameters> getPartialTagProvider() {
     return new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
@@ -126,8 +124,7 @@ public final class MeteorSpacebarsCompletionContributor extends CompletionContri
     };
   }
 
-  @NotNull
-  private static List<LookupElement> getIndexedElements(@NotNull PsiElement element) {
+  private static @NotNull List<LookupElement> getIndexedElements(@NotNull PsiElement element) {
     Collection<String> keys = MeteorTemplateIndex.getKeys(element.getProject());
     List<LookupElement> result = new ArrayList<>(keys.size());
     for (String s : keys) {
@@ -137,8 +134,7 @@ public final class MeteorSpacebarsCompletionContributor extends CompletionContri
     return result;
   }
 
-  @NotNull
-  private static List<LookupElement> getLookupElements(@NotNull Collection<JSElement> elements, @NotNull String namespace) {
+  private static @NotNull List<LookupElement> getLookupElements(@NotNull Collection<JSElement> elements, @NotNull String namespace) {
     List<LookupElement> result = new ArrayList<>(elements.size());
     for (JSElement element : elements) {
       String name = element.getName();

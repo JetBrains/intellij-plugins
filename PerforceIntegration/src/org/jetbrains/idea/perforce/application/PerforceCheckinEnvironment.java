@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -64,9 +63,8 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
     myVcs = perforceVcs;
   }
 
-  @Nullable
   @Override
-  public RefreshableOnComponent createCommitOptions(@NotNull CheckinProjectPanel commitPanel, @NotNull CommitContext commitContext) {
+  public @Nullable RefreshableOnComponent createCommitOptions(@NotNull CheckinProjectPanel commitPanel, @NotNull CommitContext commitContext) {
     return PerforceSettings.getSettings(myProject).USE_PERFORCE_JOBS ? new PerforceCheckinComponent(myProject, commitContext) : null;
   }
 
@@ -80,12 +78,11 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
     return PerforceBundle.message("operation.name.submit");
   }
 
-  @NotNull
   @Override
-  public List<VcsException> commit(@NotNull List<? extends Change> changes,
-                                   @NotNull String commitMessage,
-                                   @NotNull CommitContext commitContext,
-                                   @NotNull Set<? super String> feedback) {
+  public @NotNull List<VcsException> commit(@NotNull List<? extends Change> changes,
+                                            @NotNull String commitMessage,
+                                            @NotNull CommitContext commitContext,
+                                            @NotNull Set<? super String> feedback) {
     ArrayList<VcsException> vcsExceptions = new ArrayList<>();
     try (AccessToken ignored = myVcs.writeLockP4()) {
       final List<SubmitJob> map = getSubmitJobs(changes);
@@ -108,8 +105,7 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
     return vcsExceptions;
   }
 
-  @Nullable
-  private static List<PerforceJob> getLinkedJobs(@NotNull CommitContext commitContext) {
+  private static @Nullable List<PerforceJob> getLinkedJobs(@NotNull CommitContext commitContext) {
     return commitContext.getUserData(LINKED_JOBS_KEY);
   }
 
@@ -130,7 +126,7 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
     private final P4Connection myConnection;
     private final List<PerforceChange> myChanges = new ArrayList<>();
 
-    public SubmitJob(@NotNull final P4Connection connection) {
+    public SubmitJob(final @NotNull P4Connection connection) {
       myConnection = connection;
     }
 
@@ -185,8 +181,7 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
   }
 
   @Override
-  @NotNull
-  public List<VcsException> scheduleUnversionedFilesForAddition(final @NotNull List<? extends VirtualFile> files) {
+  public @NotNull List<VcsException> scheduleUnversionedFilesForAddition(final @NotNull List<? extends VirtualFile> files) {
     String activeChangeList = ChangeListManager.getInstance(myProject).getDefaultChangeList().getName();
     final List<VcsOperation> ops = new ArrayList<>();
     for(VirtualFile file: files) {

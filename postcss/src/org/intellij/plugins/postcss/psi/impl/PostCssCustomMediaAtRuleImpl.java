@@ -17,16 +17,14 @@ public class PostCssCustomMediaAtRuleImpl extends CssAtRuleImpl implements PostC
     super(CssContextType.ANY, PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE);
   }
 
-  @NotNull
   @Override
-  public ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     PostCssCustomMedia customMedia = getCustomMedia();
     return new AtRulePresentation(this, customMedia == null ? "custom-media" : "custom-media " + customMedia.getText());
   }
 
-  @Nullable
   @Override
-  public PostCssCustomMedia getCustomMedia() {
+  public @Nullable PostCssCustomMedia getCustomMedia() {
     return PsiTreeUtil.getChildOfType(this, PostCssCustomMedia.class);
   }
 

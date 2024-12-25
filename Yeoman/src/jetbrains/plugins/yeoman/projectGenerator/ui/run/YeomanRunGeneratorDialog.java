@@ -18,8 +18,7 @@ import java.awt.event.ActionEvent;
 public class YeomanRunGeneratorDialog extends DialogWrapper {
 
   private final VirtualFile myToProcess;
-  @Nullable
-  private final YeomanInstalledGeneratorInfo myInfo;
+  private final @Nullable YeomanInstalledGeneratorInfo myInfo;
 
 
   //access only from EDT
@@ -45,9 +44,8 @@ public class YeomanRunGeneratorDialog extends DialogWrapper {
     init();
   }
 
-  @Nullable
   @Override
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     ThreadingAssertions.assertEventDispatchThread();
     final YeomanRunGeneratorForm.EventHandler close = new YeomanRunGeneratorForm.EventHandler() {
       @Override

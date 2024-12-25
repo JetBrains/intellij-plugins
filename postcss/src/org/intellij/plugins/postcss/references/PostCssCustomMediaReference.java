@@ -34,8 +34,7 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
     return name != null && element instanceof PostCssCustomMedia && name.equals(((PostCssCustomMedia)element).getName());
   }
 
-  @Nullable
-  private String getCustomMediaName() {
+  private @Nullable String getCustomMediaName() {
     return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
   }
 }

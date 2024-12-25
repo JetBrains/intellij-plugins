@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.tree;
 
 import com.intellij.execution.filters.AbstractFileHyperlinkFilter;
@@ -22,9 +23,8 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
     myKarmaServer = karmaServer;
   }
 
-  @Nullable
   @Override
-  public Filter getFilter(@NotNull String nodeType, @NotNull String nodeName, @Nullable String nodeArguments) {
+  public @Nullable Filter getFilter(@NotNull String nodeType, @NotNull String nodeName, @Nullable String nodeArguments) {
     if ("browser".equals(nodeType)) {
       String baseDir = myKarmaServer == null ? null : myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent();
       AbstractFileHyperlinkFilter browserFilter = BrowserStacktraceFilters.createFilter(nodeName, myProject, baseDir);
@@ -38,8 +38,7 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
     return null;
   }
 
-  @Nullable
-  private String getBasePath() {
+  private @Nullable String getBasePath() {
     if (myKarmaServer != null) {
       KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
       if (karmaConfig != null) {
@@ -50,8 +49,7 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
     return null;
   }
 
-  @Nullable
-  private Filter getBrowserErrorFilter() {
+  private @Nullable Filter getBrowserErrorFilter() {
     String basePath = getBasePath();
     return basePath != null ? new KarmaBrowserErrorFilter(myProject, basePath) : null;
   }

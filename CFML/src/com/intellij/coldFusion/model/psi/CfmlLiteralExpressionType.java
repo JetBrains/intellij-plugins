@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.lang.ASTNode;
@@ -32,13 +32,12 @@ public class CfmlLiteralExpressionType extends CfmlCompositeElementType {
   }
 
   class CfmlLiteralExpression extends CfmlCompositeElement implements CfmlExpression {
-    CfmlLiteralExpression(@NotNull final ASTNode node) {
+    CfmlLiteralExpression(final @NotNull ASTNode node) {
       super(node);
     }
 
     @Override
-    @Nullable
-    public PsiType getPsiType() {
+    public @Nullable PsiType getPsiType() {
       if (myPrimitiveType != null) {
         return myPrimitiveType;
       }

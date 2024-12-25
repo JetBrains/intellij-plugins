@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
@@ -17,7 +17,7 @@ public final class DartLineBreakpointType extends XLineBreakpointTypeBase {
   }
 
   @Override
-  public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull final Project project) {
+  public boolean canPutAt(final @NotNull VirtualFile file, final int line, final @NotNull Project project) {
     return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE);
   }
 }

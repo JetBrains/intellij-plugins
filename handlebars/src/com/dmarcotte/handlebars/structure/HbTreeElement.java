@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.structure;
 
 import com.dmarcotte.handlebars.psi.HbPsiElement;
@@ -24,9 +24,8 @@ final class HbTreeElement extends PsiTreeElementBase<HbPsiElement> {
     myElement = psiElement;
   }
 
-  @NotNull
   @Override
-  public Collection<StructureViewTreeElement> getChildrenBase() {
+  public @NotNull Collection<StructureViewTreeElement> getChildrenBase() {
     return getStructureViewTreeElements(myElement);
   }
 
@@ -53,9 +52,8 @@ final class HbTreeElement extends PsiTreeElementBase<HbPsiElement> {
     return children;
   }
 
-  @Nullable
   @Override
-  public String getPresentableText() {
+  public @Nullable String getPresentableText() {
     return myElement.getName();
   }
 

@@ -63,8 +63,7 @@ public final class CachingBundleInfoProvider {
     return path.endsWith(".jar") && new File(path).isFile() && !isBundle(path);
   }
 
-  @Nullable
-  public static String getBundleSymbolicName(@NotNull String path) {
+  public static @Nullable String getBundleSymbolicName(@NotNull String path) {
     String symbolicName = getBundleAttribute(path, Constants.BUNDLE_SYMBOLICNAME);
     if (symbolicName != null) {
       int p = symbolicName.indexOf(';');
@@ -73,8 +72,7 @@ public final class CachingBundleInfoProvider {
     return symbolicName;
   }
 
-  @Nullable
-  public static String getBundleVersion(@NotNull String path) {
+  public static @Nullable String getBundleVersion(@NotNull String path) {
     return getBundleAttribute(path, Constants.BUNDLE_VERSION);
   }
 
@@ -85,8 +83,7 @@ public final class CachingBundleInfoProvider {
     return getBundleAttribute(path, Constants.FRAGMENT_HOST) != null;
   }
 
-  @Nullable
-  public synchronized static String getBundleAttribute(@NotNull String path, @NotNull String attribute) {
+  public static synchronized @Nullable String getBundleAttribute(@NotNull String path, @NotNull String attribute) {
     Pair<Long, Manifest> pair = ourCache.remove(path);
 
     try {

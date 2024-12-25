@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.injector;
 
 import com.intellij.lang.Language;
@@ -18,14 +18,13 @@ import java.util.Optional;
 import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
 
 public final class GherkinLanguageInjector implements MultiHostInjector {
-    @NotNull
     @Override
-    public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+    public @NotNull List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
         return Collections.singletonList(GherkinPystring.class);
     }
 
     @Override
-    public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
+    public void getLanguagesToInject(final @NotNull MultiHostRegistrar registrar, final @NotNull PsiElement context) {
         if (!(context instanceof GherkinPystring host)) {
             return;
         }

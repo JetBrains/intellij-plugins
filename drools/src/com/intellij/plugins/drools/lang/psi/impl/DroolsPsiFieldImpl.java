@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -26,8 +26,7 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return getFieldName().getText();
   }
 
@@ -35,15 +34,13 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
 
   }
-  @NotNull
   @Override
-  public PsiIdentifier getNameIdentifier() {
+  public @NotNull PsiIdentifier getNameIdentifier() {
     return new JavaIdentifier(getManager(), getFieldName());
   }
 
-  @Nullable
   @Override
-  public PsiDocComment getDocComment() {
+  public @Nullable PsiDocComment getDocComment() {
     return null;
   }
 
@@ -52,15 +49,13 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiClass getContainingClass() {
+  public @Nullable PsiClass getContainingClass() {
     return PsiTreeUtil.getParentOfType(this, DroolsPsiClass.class);
   }
 
-  @NotNull
   @Override
-  public PsiType getType() {
+  public @NotNull PsiType getType() {
     final DroolsFieldType droolsFieldType = getFieldType();
     if (droolsFieldType != null) {
       DroolsType type = droolsFieldType.getType();
@@ -77,15 +72,13 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
     return PsiType.getJavaLangObject(getManager(), getResolveScope());
   }
 
-  @Nullable
   @Override
-  public PsiTypeElement getTypeElement() {
+  public @Nullable PsiTypeElement getTypeElement() {
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiExpression getInitializer() {
+  public @Nullable PsiExpression getInitializer() {
     return null;
   }
 
@@ -99,9 +92,8 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
 
   }
 
-  @Nullable
   @Override
-  public Object computeConstantValue() {
+  public @Nullable Object computeConstantValue() {
     return null;
   }
 
@@ -116,9 +108,8 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
     return this;
   }
 
-  @Nullable
   @Override
-  public PsiModifierList getModifierList() {
+  public @Nullable PsiModifierList getModifierList() {
     return null;
   }
 
@@ -128,26 +119,22 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   }
 
   @Override
-  @NotNull
-  public List<DroolsAnnotation> getAnnotationList() {
+  public @NotNull List<DroolsAnnotation> getAnnotationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsAnnotation.class);
   }
 
   @Override
-  @Nullable
-  public DroolsConditionalExpr getConditionalExpr() {
+  public @Nullable DroolsConditionalExpr getConditionalExpr() {
     return findChildByClass(DroolsConditionalExpr.class);
   }
 
   @Override
-  @NotNull
-  public DroolsFieldName getFieldName() {
+  public @NotNull DroolsFieldName getFieldName() {
     return findNotNullChildByClass(DroolsFieldName.class);
   }
 
   @Override
-  @Nullable
-  public DroolsFieldType getFieldType() {
+  public @Nullable DroolsFieldType getFieldType() {
     return findChildByClass(DroolsFieldType.class);
   }
 }

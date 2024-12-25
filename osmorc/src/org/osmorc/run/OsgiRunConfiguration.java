@@ -103,8 +103,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
   }
 
   @Override
-  @Nullable
-  public RunConfiguration clone() {
+  public @Nullable RunConfiguration clone() {
     OsgiRunConfiguration conf = (OsgiRunConfiguration)super.clone();
     if (conf == null) return null;
 
@@ -114,7 +113,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
   }
 
   @Override
-  public void readExternal(@NotNull final Element element) throws InvalidDataException {
+  public void readExternal(final @NotNull Element element) throws InvalidDataException {
     workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
     vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
     programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
@@ -203,7 +202,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
   }
 
   @Override
-  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
+  public void writeExternal(final @NotNull Element element) throws WriteExternalException {
     // store the vm parameters
     element.setAttribute(VM_PARAMETERS_ATTRIBUTE, vmParameters == null ? "" : vmParameters);
     element.setAttribute(PROGRAM_PARAMETERS_ATTRIBUTE, programParameters == null ? "" : programParameters);
@@ -243,9 +242,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     super.writeExternal(element);
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new OsgiRunConfigurationEditor(getProject());
   }
 
@@ -287,8 +285,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     return modules.toArray(Module.EMPTY_ARRAY);
   }
 
-  @NotNull
-  public Map<String, String> getAdditionalProperties() {
+  public @NotNull Map<String, String> getAdditionalProperties() {
     return Collections.unmodifiableMap(additionalProperties);
   }
 
@@ -296,8 +293,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     return alternativeJrePath;
   }
 
-  @NotNull
-  public List<SelectedBundle> getBundlesToDeploy() {
+  public @NotNull List<SelectedBundle> getBundlesToDeploy() {
     return bundlesToDeploy;
   }
 
@@ -305,8 +301,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     return frameworkStartLevel;
   }
 
-  @Nullable
-  public FrameworkInstanceDefinition getInstanceToUse() {
+  public @Nullable FrameworkInstanceDefinition getInstanceToUse() {
     if (instanceToUse != null) return instanceToUse;
 
     String projectInstanceName = ProjectSettings.getInstance(getProject()).getFrameworkInstanceName();
@@ -320,8 +315,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     return programParameters != null ? programParameters : "";
   }
 
-  @NotNull
-  public String getVmParameters() {
+  public @NotNull String getVmParameters() {
     return vmParameters != null ? vmParameters : "";
   }
 

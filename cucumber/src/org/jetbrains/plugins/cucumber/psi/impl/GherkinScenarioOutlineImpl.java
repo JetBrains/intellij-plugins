@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implements GherkinScenarioOutline {
   private static final TokenSet EXAMPLES_BLOCK_FILTER = TokenSet.create(GherkinElementTypes.EXAMPLES_BLOCK);
 
-  public GherkinScenarioOutlineImpl(@NotNull final ASTNode node) {
+  public GherkinScenarioOutlineImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -37,8 +38,7 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
   }
 
   @Override
-  @NotNull
-  public List<GherkinExamplesBlock> getExamplesBlocks() {
+  public @NotNull List<GherkinExamplesBlock> getExamplesBlocks() {
     List<GherkinExamplesBlock> result = new ArrayList<>();
     final ASTNode[] nodes = getNode().getChildren(EXAMPLES_BLOCK_FILTER);
     for (ASTNode node : nodes) {
@@ -48,14 +48,12 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
   }
 
   @Override
-  @Nullable
-  public Map<String, String> getOutlineTableMap() {
+  public @Nullable Map<String, String> getOutlineTableMap() {
     return CachedValuesManager
       .getCachedValue(this, () -> CachedValueProvider.Result.create(buildOutlineTableMap(this), PsiModificationTracker.MODIFICATION_COUNT));
   }
   
-  @Nullable
-  private static Map<String, String> buildOutlineTableMap(@Nullable GherkinScenarioOutline scenarioOutline) {
+  private static @Nullable Map<String, String> buildOutlineTableMap(@Nullable GherkinScenarioOutline scenarioOutline) {
     if (scenarioOutline == null) {
       return null;
     }

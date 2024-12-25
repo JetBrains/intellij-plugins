@@ -5,15 +5,13 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssEmbeddedTokenTypesProvider implements EmbeddedTokenTypesProvider {
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "postcss";
   }
 
-  @NotNull
   @Override
-  public IElementType getElementType() {
+  public @NotNull IElementType getElementType() {
     return PostCssElementTypes.POST_CSS_LAZY_STYLESHEET;
   }
 }

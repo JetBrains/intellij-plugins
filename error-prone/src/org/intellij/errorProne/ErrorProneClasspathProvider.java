@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.errorProne;
 
 import com.intellij.ReviseWhenPortedToJDK;
@@ -43,8 +43,7 @@ public final class ErrorProneClasspathProvider extends BuildProcessParametersPro
     return new File(getDownloadCacheDir(), version);
   }
 
-  @NotNull
-  private static File getDownloadCacheDir() {
+  private static @NotNull File getDownloadCacheDir() {
     return new File(PathManager.getSystemPath(), "download-cache/error-prone");
   }
 
@@ -64,9 +63,8 @@ public final class ErrorProneClasspathProvider extends BuildProcessParametersPro
     return ObjectUtils.notNull(dir.listFiles(FileFilters.filesWithExtension("jar")), ArrayUtilRt.EMPTY_FILE_ARRAY);
   }
 
-  @NotNull
   @Override
-  public List<String> getVMArguments() {
+  public @NotNull List<String> getVMArguments() {
     if (isErrorProneCompilerSelected(myProject)) {
       File[] jars = getLatestCompilerJars();
       LOG.assertTrue(jars.length > 0, "error-prone compiler jars not found in directory: " + getDownloadCacheDir());

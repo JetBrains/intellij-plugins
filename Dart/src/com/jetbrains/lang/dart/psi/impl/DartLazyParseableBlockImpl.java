@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartLazyParseableBlockImpl extends LazyParseablePsiElement implements DartLazyParseableBlock {
-  public DartLazyParseableBlockImpl(@NotNull final IElementType type, @Nullable final CharSequence buffer) {
+  public DartLazyParseableBlockImpl(final @NotNull IElementType type, final @Nullable CharSequence buffer) {
     super(type, buffer);
   }
 
@@ -18,8 +19,7 @@ public class DartLazyParseableBlockImpl extends LazyParseablePsiElement implemen
   }
 
   @Override
-  @Nullable
-  public DartStatements getStatements() {
+  public @Nullable DartStatements getStatements() {
     return findChildByClass(DartStatements.class);
   }
 

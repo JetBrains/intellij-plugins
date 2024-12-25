@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
 import com.intellij.ide.hierarchy.HierarchyBrowser;
@@ -17,9 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DartTypeHierarchyProvider implements HierarchyProvider {
-  @Nullable
   @Override
-  public DartClass getTarget(@NotNull final DataContext dataContext) {
+  public @Nullable DartClass getTarget(final @NotNull DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (project == null || editor == null) return null;
@@ -33,14 +33,13 @@ public final class DartTypeHierarchyProvider implements HierarchyProvider {
     return PsiTreeUtil.getParentOfType(psiElement, DartClass.class);
   }
 
-  @NotNull
   @Override
-  public HierarchyBrowser createHierarchyBrowser(@NotNull PsiElement target) {
+  public @NotNull HierarchyBrowser createHierarchyBrowser(@NotNull PsiElement target) {
     return new DartTypeHierarchyBrowser(target.getProject(), (DartClass)target);
   }
 
   @Override
-  public void browserActivated(@NotNull final HierarchyBrowser hierarchyBrowser) {
+  public void browserActivated(final @NotNull HierarchyBrowser hierarchyBrowser) {
     ((DartTypeHierarchyBrowser)hierarchyBrowser).changeView(TypeHierarchyBrowserBase.getTypeHierarchyType());
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlScopesInfo;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlParameter, CfmlVariable {
-  public final static String TAG_NAME = "cfargument";
+  public static final String TAG_NAME = "cfargument";
 
   public CfmlTagFunctionParameterImpl(ASTNode astNode) {
     super(astNode);
@@ -33,9 +33,8 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     return this;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     final CfmlAttributeNameImpl attribute = findChildByClass(CfmlAttributeNameImpl.class);
     if (attribute != null) {
       return attribute.getName();
@@ -64,8 +63,7 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
   }
 
   @Override
-  @NotNull
-  public String getTagName() {
+  public @NotNull String getTagName() {
     return TAG_NAME;
   }
 
@@ -74,9 +72,8 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     return getNavigationElement();
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     final CfmlAttributeNameImpl parameterName = findChildByClass(CfmlAttributeNameImpl.class);
     if (parameterName != null) {
       return parameterName.getNavigationElement();
@@ -102,9 +99,8 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     return true;
   }
 
-  @NotNull
   @Override
-  public String getlookUpString() {
+  public @NotNull String getlookUpString() {
     return getName();
   }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.formatter;
 
 import com.intellij.application.options.CodeStyleAbstractConfigurable;
@@ -9,9 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 
 public final class GherkinCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-  @NotNull
   @Override
-  public Configurable createSettingsPage(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
+  public @NotNull Configurable createSettingsPage(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, CucumberBundle.message("configurable.name.gherkin")) {
       @Override
       protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.*;
@@ -86,7 +86,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
 
   private static final Gson GSON = new Gson();
 
-  @NotNull private final DartUrlResolver myUrlResolver;
+  private final @NotNull DartUrlResolver myUrlResolver;
 
   private String myLocation;
   private Key myCurrentOutputType;
@@ -96,9 +96,9 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   private final Map<Integer, Group> myGroupData;
   private final Map<Integer, Suite> mySuiteData;
 
-  public DartTestEventsConverter(@NotNull final String testFrameworkName,
-                                 @NotNull final TestConsoleProperties consoleProperties,
-                                 @NotNull final DartUrlResolver urlResolver) {
+  public DartTestEventsConverter(final @NotNull String testFrameworkName,
+                                 final @NotNull TestConsoleProperties consoleProperties,
+                                 final @NotNull DartUrlResolver urlResolver) {
     super(testFrameworkName, consoleProperties);
     myUrlResolver = urlResolver;
     myTestIdToTimestamp = new Int2LongOpenHashMap();
@@ -138,7 +138,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return process(elem.getAsJsonObject());
   }
 
-  private boolean doProcessServiceMessages(@NotNull final String text) throws ParseException {
+  private boolean doProcessServiceMessages(final @NotNull String text) throws ParseException {
     LOG.debug(">>> " + text);
     return super.processServiceMessages(text, myCurrentOutputType, myCurrentVisitor);
   }
@@ -218,7 +218,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return result;
   }
 
-  private static boolean shouldTestBeHiddenIfPassed(@NotNull final Test test) {
+  private static boolean shouldTestBeHiddenIfPassed(final @NotNull Test test) {
     // There are so called 'virtual' tests that are created for loading test suites, setUpAll(), and tearDownAll().
     // They shouldn't be visible when they do not cause problems. But if any error occurs, we'll report it later as a normal test.
     // See lib/src/runner/loader.dart -> Loader.loadFile() and lib/src/backend/declarer.dart -> Declarer._setUpAll and Declarer._tearDownAll in pkg/test source code
@@ -251,7 +251,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return finishMessage(testFinished, test.getId(), test.getValidParentId()) && checkGroupDone(test.getParent());
   }
 
-  private boolean checkGroupDone(@Nullable final Group group) throws ParseException {
+  private boolean checkGroupDone(final @Nullable Group group) throws ParseException {
     if (group != null && group.getTestCount() > 0 && group.getDoneTestsCount() == group.getTestCount()) {
       return processGroupDone(group) && checkGroupDone(group.getParent());
     }
@@ -338,8 +338,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return result;
   }
 
-  @NotNull
-  private static String appendLineBreakIfNeeded(@NotNull final String message) {
+  private static @NotNull String appendLineBreakIfNeeded(final @NotNull String message) {
     return message.endsWith("\n") ? message : message + "\n";
   }
 
@@ -408,7 +407,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     mySuiteData.clear();
   }
 
-  private boolean processGroupDone(@NotNull final Group group) throws ParseException {
+  private boolean processGroupDone(final @NotNull Group group) throws ParseException {
     if (group.isArtificial()) return true;
 
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getBaseName());
@@ -467,23 +466,19 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return val.getAsBoolean();
   }
 
-  @NotNull
-  private Test getTest(JsonObject obj) throws ParseException {
+  private @NotNull Test getTest(JsonObject obj) throws ParseException {
     return getItem(obj, myTestData);
   }
 
-  @NotNull
-  private Group getGroup(JsonObject obj) throws ParseException {
+  private @NotNull Group getGroup(JsonObject obj) throws ParseException {
     return getItem(obj, myGroupData);
   }
 
-  @NotNull
-  private Suite getSuite(JsonObject obj) throws ParseException {
+  private @NotNull Suite getSuite(JsonObject obj) throws ParseException {
     return getItem(obj, mySuiteData);
   }
 
-  @NotNull
-  private <T extends Item> T getItem(JsonObject obj, Map<Integer, T> items) throws ParseException {
+  private @NotNull <T extends Item> T getItem(JsonObject obj, Map<Integer, T> items) throws ParseException {
     if (obj == null) throw new ParseException("Unexpected null json object", 0);
     T item;
     JsonElement id = obj.get(JSON_ID);
@@ -521,28 +516,23 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return item;
   }
 
-  @NotNull
-  private static String getErrorMessage(JsonObject obj) {
+  private static @NotNull String getErrorMessage(JsonObject obj) {
     return nonNullJsonValue(obj, JSON_ERROR_MESSAGE, "<no error message>");
   }
 
-  @NotNull
-  private static String getMessage(JsonObject obj) {
+  private static @NotNull String getMessage(JsonObject obj) {
     return nonNullJsonValue(obj, JSON_MESSAGE, "<no message>");
   }
 
-  @NotNull
-  private static String getStackTrace(JsonObject obj) {
+  private static @NotNull String getStackTrace(JsonObject obj) {
     return nonNullJsonValue(obj, JSON_STACK_TRACE, "<no stack trace>");
   }
 
-  @NotNull
-  private static String getResult(JsonObject obj) {
+  private static @NotNull String getResult(JsonObject obj) {
     return nonNullJsonValue(obj, JSON_RESULT, "<no result>");
   }
 
-  @NotNull
-  private static String nonNullJsonValue(JsonObject obj, @NotNull String id, @NotNull String def) {
+  private static @NotNull String nonNullJsonValue(JsonObject obj, @NotNull String id, @NotNull String def) {
     JsonElement val = obj == null ? null : obj.get(id);
     if (val == null || !val.isJsonPrimitive()) return def;
     return val.getAsString();

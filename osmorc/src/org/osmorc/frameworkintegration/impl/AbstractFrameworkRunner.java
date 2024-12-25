@@ -211,8 +211,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     }
   }
 
-  @NotNull
-  protected String toFileUri(@NotNull String path) {
+  protected @NotNull String toFileUri(@NotNull String path) {
     return new File(path).toURI().toString();
   }
 }

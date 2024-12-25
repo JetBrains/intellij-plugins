@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.spelling;
 
 import com.intellij.openapi.project.DumbAware;
@@ -20,8 +20,7 @@ public final class DartSpellcheckingStrategy extends SpellcheckingStrategy imple
   private final Tokenizer<PsiElement> myStringLiteralTokenizer = new DartStringLiteralTokenizer();
 
   @Override
-  @NotNull
-  public Tokenizer getTokenizer(final PsiElement element) {
+  public @NotNull Tokenizer getTokenizer(final PsiElement element) {
     if (element instanceof PsiNameIdentifierOwner && !(element instanceof DartComponentName)) {
       return EMPTY_TOKENIZER;
     }

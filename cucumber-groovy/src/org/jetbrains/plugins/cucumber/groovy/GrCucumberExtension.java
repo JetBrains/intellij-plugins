@@ -1,8 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -36,15 +35,13 @@ public final class GrCucumberExtension extends AbstractCucumberJavaExtension {
     return isStepLikeFile(child, parent);
   }
 
-  @NotNull
   @Override
-  public BDDFrameworkType getStepFileType() {
+  public @NotNull BDDFrameworkType getStepFileType() {
     return new BDDFrameworkType(GroovyFileType.GROOVY_FILE_TYPE);
   }
 
-  @NotNull
   @Override
-  public StepDefinitionCreator getStepDefinitionCreator() {
+  public @NotNull StepDefinitionCreator getStepDefinitionCreator() {
     return new GrStepDefinitionCreator();
   }
 

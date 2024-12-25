@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ public final class DartFileIndexData {
   private final List<String> myClassNames = new ArrayList<>();
   private final List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<>();
   private final Map<String, DartComponentInfo> myComponentInfoMap = new HashMap<>();
-  @Nullable private String myLibraryName;
+  private @Nullable String myLibraryName;
   private final List<String> myPartUris = new ArrayList<>();
   private final List<String> mySymbols = new ArrayList<>();
   private boolean myIsPart;
@@ -46,8 +46,7 @@ public final class DartFileIndexData {
     myImportAndExportInfos.add(importInfo);
   }
 
-  @Nullable
-  public String getLibraryName() {
+  public @Nullable String getLibraryName() {
     return myLibraryName;
   }
 
@@ -59,7 +58,7 @@ public final class DartFileIndexData {
     return myPartUris;
   }
 
-  public void addPartUri(@NotNull final String partUri) {
+  public void addPartUri(final @NotNull String partUri) {
     myPartUris.add(partUri);
   }
 

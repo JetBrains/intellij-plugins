@@ -33,8 +33,7 @@ public class ProtoComment extends PsiCommentImpl {
   }
 
   @Override
-  @NotNull
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     final PsiElement master = getParent();
     return master != null ? master.getLanguage() : Language.ANY;
   }

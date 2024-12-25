@@ -16,14 +16,14 @@
 package com.intellij.protobuf.lang.stub.type;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.io.StringRef;
 import com.intellij.protobuf.lang.psi.PbOneofDefinition;
 import com.intellij.protobuf.lang.psi.impl.PbOneofDefinitionImpl;
 import com.intellij.protobuf.lang.stub.PbOneofDefinitionStub;
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex;
 import com.intellij.protobuf.lang.stub.index.ShortNameIndex;
+import com.intellij.psi.stubs.*;
+import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -40,16 +40,14 @@ public class PbOneofDefinitionType
     return new PbOneofDefinitionImpl(stub, this);
   }
 
-  @NotNull
   @Override
-  public PbOneofDefinitionStub createStub(
+  public @NotNull PbOneofDefinitionStub createStub(
       @NotNull PbOneofDefinition psi, StubElement parentStub) {
     return new PbOneofDefinitionStub(parentStub, this, psi.getName());
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "protobuf.ONEOF_DEFINITION";
   }
 
@@ -59,9 +57,8 @@ public class PbOneofDefinitionType
     dataStream.writeName(stub.getName());
   }
 
-  @NotNull
   @Override
-  public PbOneofDefinitionStub deserialize(
+  public @NotNull PbOneofDefinitionStub deserialize(
       @NotNull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     String name = null;

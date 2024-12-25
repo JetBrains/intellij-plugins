@@ -16,10 +16,10 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.lang.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +34,8 @@ abstract class PbTextMessageValueMixin extends PbTextElementBase implements PbTe
     super(node);
   }
 
-  @Nullable
   @Override
-  public PbMessageType getDeclaredMessage() {
+  public @Nullable PbMessageType getDeclaredMessage() {
     PbTextField parentField = PsiTreeUtil.getParentOfType(this, PbTextField.class);
     if (parentField == null) {
       return null;
@@ -48,15 +47,13 @@ abstract class PbTextMessageValueMixin extends PbTextElementBase implements PbTe
     return (PbMessageType) namedType;
   }
 
-  @NotNull
   @Override
-  public PsiElement getStart() {
+  public @NotNull PsiElement getStart() {
     return findNotNullChildByType(START_TOKENS);
   }
 
-  @Nullable
   @Override
-  public PsiElement getEnd() {
+  public @Nullable PsiElement getEnd() {
     return findChildByType(END_TOKENS);
   }
 }

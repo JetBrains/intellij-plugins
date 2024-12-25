@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class PerforceDiffProvider extends DiffProviderEx implements DiffMixin {
   private final Project myProject;
-  @NonNls private static final String REVISION_NONE = "none";
+  private static final @NonNls String REVISION_NONE = "none";
 
   public PerforceDiffProvider(final Project project) {
     myProject = project;

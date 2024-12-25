@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.sdk;
 
 import org.jdom.Element;
@@ -20,8 +21,7 @@ public class JpsFlexSdkType extends JpsSdkType<JpsDummyElement> {
   public static JpsSdkPropertiesSerializer<JpsDummyElement> createJpsSdkPropertiesSerializer() {
     return new JpsSdkPropertiesSerializer<JpsDummyElement>(ID, INSTANCE) {
       @Override
-      @NotNull
-      public JpsDummyElement loadProperties(@Nullable final Element propertiesElement) {
+      public @NotNull JpsDummyElement loadProperties(final @Nullable Element propertiesElement) {
         return JpsElementFactory.getInstance().createDummyElement();
       }
     };

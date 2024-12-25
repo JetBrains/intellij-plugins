@@ -42,8 +42,7 @@ public class P4DeleteOperation extends VcsOperationOnPath {
   }
 
   @Override
-  @Nullable
-  public VcsOperation checkMerge(final VcsOperation oldOp) {
+  public @Nullable VcsOperation checkMerge(final VcsOperation oldOp) {
     if (oldOp instanceof VcsOperationOnPath) {
       final boolean pathsEqual = FileUtil.pathsEqual(((VcsOperationOnPath)oldOp).getPath(), myPath);
       if (oldOp instanceof P4AddOperation && pathsEqual) {

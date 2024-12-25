@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.test;
 
 import com.intellij.openapi.project.BaseProjectDirectories;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DartTestSourcesFilter extends TestSourcesFilter {
   @Override
-  public boolean isTestSource(@NotNull final VirtualFile file, @NotNull final Project project) {
+  public boolean isTestSource(final @NotNull VirtualFile file, final @NotNull Project project) {
     if (!file.isInLocalFileSystem()) return false;
 
     VirtualFile baseDir = BaseProjectDirectories.getInstance(project).getBaseDirectoryFor(file);

@@ -34,8 +34,7 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
     return name != null && element instanceof PostCssCustomSelector && name.equals(((PostCssCustomSelector)element).getName());
   }
 
-  @Nullable
-  private String getCustomSelectorName() {
+  private @Nullable String getCustomSelectorName() {
     return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
   }
 }

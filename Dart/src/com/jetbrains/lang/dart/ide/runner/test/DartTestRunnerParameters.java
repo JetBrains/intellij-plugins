@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -15,13 +15,12 @@ import java.util.function.Supplier;
 
 public class DartTestRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
 
-  @NotNull private Scope myScope = Scope.FILE;
-  @Nullable private String myTestName = null;
-  @Nullable private String myTargetName = null;
-  @Nullable private String myTestRunnerOptions = null;
+  private @NotNull Scope myScope = Scope.FILE;
+  private @Nullable String myTestName = null;
+  private @Nullable String myTargetName = null;
+  private @Nullable String myTestRunnerOptions = null;
 
-  @NotNull
-  public Scope getScope() {
+  public @NotNull Scope getScope() {
     return myScope;
   }
 
@@ -40,8 +39,7 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
   /**
    * @return Test group name or individual test name
    */
-  @Nullable
-  public String getTestName() {
+  public @Nullable String getTestName() {
     return myTestName;
   }
 
@@ -49,8 +47,7 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     myTestName = name;
   }
 
-  @Nullable
-  public String getTargetName() {
+  public @Nullable String getTargetName() {
     return myTargetName;
   }
 
@@ -58,8 +55,7 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     myTargetName = name;
   }
 
-  @Nullable
-  public String getTestRunnerOptions() {
+  public @Nullable String getTestRunnerOptions() {
     return myTestRunnerOptions;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -18,9 +18,8 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return this;
   }
 
@@ -29,16 +28,14 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     return this;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();
     return new TextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getText();
   }
 
@@ -67,9 +64,8 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     return null;
   }
 
-  @NotNull
   @Override
-  public DartClassResolveResult resolveDartClass() {
+  public @NotNull DartClassResolveResult resolveDartClass() {
     final DartReference childReference = PsiTreeUtil.getChildOfType(this, DartReference.class);
     if (this instanceof DartParenthesizedExpression) {
       return childReference == null ? DartClassResolveResult.EMPTY : childReference.resolveDartClass();

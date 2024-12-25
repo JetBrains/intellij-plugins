@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.psi.PsiElement;
@@ -25,9 +25,8 @@ public class MapParameterTypeManager implements ParameterTypeManager {
     myParameterTypeDeclarations = parameterTypeDeclarations;
   }
 
-  @Nullable
   @Override
-  public String getParameterTypeValue(@NotNull String name) {
+  public @Nullable String getParameterTypeValue(@NotNull String name) {
     return myParameterTypes.get(name);
   }
 

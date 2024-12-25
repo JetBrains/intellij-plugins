@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -258,14 +258,12 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   }
 
   @Override
-  @NotNull
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return myParent != null ? myParent : this;
   }
 
   @Override
-  @NotNull
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     int offset = 0;
     if (myParent != null) {
       final int parentOffset = myParent.getTextRange().getStartOffset();
@@ -292,8 +290,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   }
 
   @Override
-  @NotNull
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getText();
   }
 

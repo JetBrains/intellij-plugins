@@ -16,10 +16,10 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.psi.PbOneofDefinition;
 import com.intellij.protobuf.lang.stub.PbOneofDefinitionStub;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -35,9 +35,8 @@ abstract class PbOneofDefinitionMixin extends PbStubbedNamedDefinitionBase<PbOne
     super(stub, nodeType);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return PbIcons.ONEOF;
   }
 }

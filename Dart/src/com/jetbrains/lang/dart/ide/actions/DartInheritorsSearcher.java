@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,10 +32,10 @@ import java.util.Set;
 
 public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, DefinitionsScopedSearch.SearchParameters> {
   private static final class HierarchyInfo {
-    @NotNull final String filePath;
+    final @NotNull String filePath;
     final int offset;
     final long modCount;
-    @NotNull final List<TypeHierarchyItem> hierarchyItems;
+    final @NotNull List<TypeHierarchyItem> hierarchyItems;
 
     private HierarchyInfo(@NotNull String filePath, int offset, long modCount, @NotNull List<TypeHierarchyItem> hierarchyItems) {
       this.filePath = filePath;
@@ -46,11 +46,11 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
   }
 
   // This short-living cache helps not to call Analysis Server twice for the same info on a single 'Go To Implementations' action.
-  @Nullable private WeakReference<HierarchyInfo> myLastResult;
+  private @Nullable WeakReference<HierarchyInfo> myLastResult;
 
   @Override
-  public void processQuery(@NotNull final DefinitionsScopedSearch.SearchParameters parameters,
-                           @NotNull final Processor<? super PsiElement> consumer) {
+  public void processQuery(final @NotNull DefinitionsScopedSearch.SearchParameters parameters,
+                           final @NotNull Processor<? super PsiElement> consumer) {
     final Ref<VirtualFile> fileRef = Ref.create();
     final Ref<Integer> offsetRef = Ref.create();
     final Ref<DartComponentType> componentTypeRef = Ref.create();
@@ -72,8 +72,7 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     });
   }
 
-  @NotNull
-  private List<TypeHierarchyItem> getHierarchyItems(Project project, VirtualFile file, int offset) {
+  private @NotNull List<TypeHierarchyItem> getHierarchyItems(Project project, VirtualFile file, int offset) {
     long modCount = PsiModificationTracker.getInstance(project).getModificationCount();
     if (myLastResult != null) {
       HierarchyInfo info = myLastResult.get();
@@ -90,10 +89,10 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     return items;
   }
 
-  private static void prepare(@NotNull final DefinitionsScopedSearch.SearchParameters parameters,
-                              @NotNull final Ref<VirtualFile> fileRef,
-                              @NotNull final Ref<Integer> offsetRef,
-                              @NotNull final Ref<DartComponentType> componentTypeRef) {
+  private static void prepare(final @NotNull DefinitionsScopedSearch.SearchParameters parameters,
+                              final @NotNull Ref<VirtualFile> fileRef,
+                              final @NotNull Ref<Integer> offsetRef,
+                              final @NotNull Ref<DartComponentType> componentTypeRef) {
     ApplicationManager.getApplication().runReadAction(() -> {
       final PsiElement element = parameters.getElement();
       if (element.getLanguage() != DartLanguage.INSTANCE) return;
@@ -119,10 +118,9 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     });
   }
 
-  @NotNull
-  public static Set<DartComponent> getSubClasses(@NotNull final Project project,
-                                                 @NotNull final SearchScope scope,
-                                                 @NotNull final List<TypeHierarchyItem> hierarchyItems) {
+  public static @NotNull Set<DartComponent> getSubClasses(final @NotNull Project project,
+                                                          final @NotNull SearchScope scope,
+                                                          final @NotNull List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
     final Set<DartComponent> result = new HashSet<>(hierarchyItems.size());
@@ -130,10 +128,9 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     return result;
   }
 
-  @NotNull
-  public static Set<DartComponent> getSubMembers(@NotNull final Project project,
-                                                 @NotNull final SearchScope scope,
-                                                 @NotNull final List<TypeHierarchyItem> hierarchyItems) {
+  public static @NotNull Set<DartComponent> getSubMembers(final @NotNull Project project,
+                                                          final @NotNull SearchScope scope,
+                                                          final @NotNull List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
     final Set<DartComponent> result = new HashSet<>(hierarchyItems.size());
@@ -141,12 +138,12 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     return result;
   }
 
-  private static void addSubClasses(@NotNull final Project project,
-                                    @NotNull final SearchScope scope,
-                                    @NotNull final Set<TypeHierarchyItem> visited,
-                                    @NotNull final List<TypeHierarchyItem> hierarchyItems,
-                                    @NotNull final Set<DartComponent> components,
-                                    @NotNull final TypeHierarchyItem currentItem,
+  private static void addSubClasses(final @NotNull Project project,
+                                    final @NotNull SearchScope scope,
+                                    final @NotNull Set<TypeHierarchyItem> visited,
+                                    final @NotNull List<TypeHierarchyItem> hierarchyItems,
+                                    final @NotNull Set<DartComponent> components,
+                                    final @NotNull TypeHierarchyItem currentItem,
                                     final boolean addItem) {
     if (!visited.add(currentItem)) {
       return;
@@ -165,12 +162,12 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     }
   }
 
-  private static void addSubMembers(@NotNull final Project project,
-                                    @NotNull final SearchScope scope,
-                                    @NotNull final Set<TypeHierarchyItem> visited,
-                                    @NotNull final List<TypeHierarchyItem> hierarchyItems,
-                                    @NotNull final Set<DartComponent> components,
-                                    @NotNull final TypeHierarchyItem currentItem,
+  private static void addSubMembers(final @NotNull Project project,
+                                    final @NotNull SearchScope scope,
+                                    final @NotNull Set<TypeHierarchyItem> visited,
+                                    final @NotNull List<TypeHierarchyItem> hierarchyItems,
+                                    final @NotNull Set<DartComponent> components,
+                                    final @NotNull TypeHierarchyItem currentItem,
                                     final boolean addItem) {
     if (!visited.add(currentItem)) {
       return;
@@ -191,7 +188,7 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
     }
   }
 
-  private static boolean isInScope(@NotNull final SearchScope scope, @NotNull final PsiElement element) {
+  private static boolean isInScope(final @NotNull SearchScope scope, final @NotNull PsiElement element) {
     final VirtualFile file = element.getContainingFile().getVirtualFile();
     if (file == null) return false;
     return scope.contains(file);

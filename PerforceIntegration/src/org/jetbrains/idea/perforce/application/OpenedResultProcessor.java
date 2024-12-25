@@ -31,7 +31,7 @@ public class OpenedResultProcessor {
   private final PerforceChangeListCalculator myChangelistCalculator;
   private final LocalFileSystem myLocalFileSystem;
 
-  public OpenedResultProcessor(@NotNull final P4Connection connection, final ChangeCreator changeCreator, final ChangelistBuilder builder,
+  public OpenedResultProcessor(final @NotNull P4Connection connection, final ChangeCreator changeCreator, final ChangelistBuilder builder,
                                final LocalPathsSet resolvedWithConflicts, final ResolvedFilesWrapper resolvedFiles,
                                final PerforceChangeListCalculator changelistCalculator) {
     myConnection = connection;
@@ -159,8 +159,7 @@ public class OpenedResultProcessor {
    * which stores file paths case-sensitively ({@link com.intellij.openapi.vcs.changes.ChangeListsIndexes} internals).
    * So, to ensure a virtual file can be found in that structure later, we should use the VFS version of a (case-insensitive) path.
    */
-  @NotNull
-  private static FilePath toCanonicalFilePath(File file) {
+  private static @NotNull FilePath toCanonicalFilePath(File file) {
     if (!SystemInfo.isFileSystemCaseSensitive) {
       VirtualFile vFile = VfsUtil.findFileByIoFile(file, false);
       if (vFile != null) return VcsUtil.getFilePath(vFile);

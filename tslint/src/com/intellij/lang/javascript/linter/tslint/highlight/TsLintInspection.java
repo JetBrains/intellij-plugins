@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInspection.SuppressQuickFix;
@@ -17,15 +18,13 @@ public final class TsLintInspection extends JSLinterInspection {
 
   public boolean useSeverityFromConfigFile = true;
 
-  @NotNull
   @Override
-  protected TsLintExternalAnnotator getExternalAnnotatorForBatchInspection() {
+  protected @NotNull TsLintExternalAnnotator getExternalAnnotatorForBatchInspection() {
     return TsLintExternalAnnotator.getInstanceForBatchInspection();
   }
 
-  @NotNull
   @Override
-  protected HighlightSeverity chooseSeverity(@NotNull HighlightSeverity fromError, @NotNull HighlightSeverity inspectionSeverity) {
+  protected @NotNull HighlightSeverity chooseSeverity(@NotNull HighlightSeverity fromError, @NotNull HighlightSeverity inspectionSeverity) {
     return useSeverityFromConfigFile ? fromError : inspectionSeverity;
   }
 
@@ -44,15 +43,13 @@ public final class TsLintInspection extends JSLinterInspection {
     return SuppressQuickFix.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getGroupDisplayName() {
+  public @NotNull String getGroupDisplayName() {
     return JavaScriptBundle.message("typescript.inspection.group.name");
   }
 
-  @NotNull
   @Override
-  protected List<String> getSettingsPath() {
+  protected @NotNull List<String> getSettingsPath() {
     return List.of(
       JavaScriptBundle.message("typescript.compiler.configurable.name"),
       getDisplayName()

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring.extract;
 
 import com.intellij.openapi.actionSystem.DataContext;
@@ -62,8 +62,7 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
     new DartServerExtractMethodDialog(project, editor, refactoring).show();
   }
 
-  @Nullable
-  private static TextRange findRangeContainingCaret(int caretOffset, int[] offsets, int[] lengths) {
+  private static @Nullable TextRange findRangeContainingCaret(int caretOffset, int[] offsets, int[] lengths) {
     for (int i = 0; i < offsets.length; i++) {
       int offset1 = offsets[i];
       int length1 = lengths[i];
@@ -193,9 +192,8 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
     return panel;
   }
 
-  @Nullable
   @Override
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return myMethodNameField;
   }
 }

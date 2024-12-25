@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.CommonBundle;
@@ -24,13 +24,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public abstract class ServerRefactoringDialog<T extends ServerRefactoring> extends RefactoringDialog {
-  @Nullable protected final Editor myEditor;
-  @NotNull protected final T myRefactoring;
+  protected final @Nullable Editor myEditor;
+  protected final @NotNull T myRefactoring;
 
   private boolean myHasPendingRequests;
   private RefactoringStatus myOptionsStatus;
 
-  public ServerRefactoringDialog(@NotNull final Project project, @Nullable final Editor editor, @NotNull final T refactoring) {
+  public ServerRefactoringDialog(final @NotNull Project project, final @Nullable Editor editor, final @NotNull T refactoring) {
     super(project, true);
     myEditor = editor;
     myRefactoring = refactoring;
@@ -103,7 +103,7 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
     return getHelpId() != null;
   }
 
-  protected final void doRefactoring(@NotNull final Set<String> excludedIds) {
+  protected final void doRefactoring(final @NotNull Set<String> excludedIds) {
     final SourceChange change = myRefactoring.getChange();
     if (change == null) {
       Logger.getInstance(ServerRefactoringDialog.class)

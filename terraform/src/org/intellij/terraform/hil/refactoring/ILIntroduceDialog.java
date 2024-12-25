@@ -34,8 +34,8 @@ public class ILIntroduceDialog extends DialogWrapper {
   private final IntroduceValidator myValidator;
   private final ILExpression myExpression;
 
-  public ILIntroduceDialog(@NotNull final Project project,
-                           @NotNull @Nls final String caption,
+  public ILIntroduceDialog(final @NotNull Project project,
+                           final @NotNull @Nls String caption,
                            @NotNull IntroduceValidator validator,
                            final IntroduceOperation operation) {
     super(project, true);
@@ -102,8 +102,7 @@ public class ILIntroduceDialog extends DialogWrapper {
     return myContentPane;
   }
 
-  @Nullable
-  public String getName() {
+  public @Nullable String getName() {
     final Object item = myNameComboBox.getEditor().getItem();
     if ((item instanceof String) && ((String) item).length() > 0) {
       return ((String) item).trim();

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -37,12 +37,12 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
 
   private final SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
-  public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
+  public DartRemoteDebugConfigurationEditor(final @NotNull Project project) {
     initDartProjectsCombo(project);
     myHintLabel.setCopyable(true);
   }
 
-  private void initDartProjectsCombo(@NotNull final Project project) {
+  private void initDartProjectsCombo(final @NotNull Project project) {
     myDartProjectCombo.getComboBox().setRenderer(SimpleListCellRenderer.create("", NameAndPath::getPresentableText));
 
     if (!project.isDefault()) {
@@ -72,25 +72,24 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
         }
 
         @Override
-        public void setText(final JComboBox combo, @NotNull final String path) {
+        public void setText(final JComboBox combo, final @NotNull String path) {
           setSelectedProjectPath(FileUtil.toSystemIndependentName(path));
         }
       });
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final DartRemoteDebugConfiguration config) {
+  protected void resetEditorFrom(final @NotNull DartRemoteDebugConfiguration config) {
     final DartRemoteDebugParameters params = config.getParameters();
     setSelectedProjectPath(params.getDartProjectPath());
   }
 
-  private void setSelectedProjectPath(@NotNull final String projectPath) {
+  private void setSelectedProjectPath(final @NotNull String projectPath) {
     if (projectPath.isEmpty()) return;
 
     final VirtualFile pubspecFile = LocalFileSystem.getInstance().findFileByPath(projectPath + "/" + PUBSPEC_YAML);
@@ -106,17 +105,17 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartRemoteDebugConfiguration config) {
+  protected void applyEditorTo(final @NotNull DartRemoteDebugConfiguration config) {
     final DartRemoteDebugParameters params = config.getParameters();
     final Object selectedItem = myDartProjectCombo.getComboBox().getSelectedItem();
     params.setDartProjectPath(selectedItem instanceof NameAndPath ? ((NameAndPath)selectedItem).myPath : "");
   }
 
   private static class NameAndPath implements Comparable<NameAndPath> {
-    @Nullable private final String myName;
-    @NotNull private final String myPath;
+    private final @Nullable String myName;
+    private final @NotNull String myPath;
 
-    NameAndPath(@Nullable final String name, @NotNull final String path) {
+    NameAndPath(final @Nullable String name, final @NotNull String path) {
       myName = name;
       myPath = path;
     }

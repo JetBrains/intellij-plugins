@@ -41,22 +41,19 @@ public final class ConceptStepFindUsagesProvider implements FindUsagesProvider {
     return HelpID.FIND_OTHER_USAGES;
   }
 
-  @NotNull
   @Override
-  public String getType(@NotNull PsiElement psiElement) {
+  public @NotNull String getType(@NotNull PsiElement psiElement) {
     if (psiElement instanceof ConceptStepImpl) return GaugeBundle.message("gauge.step");
     return "";
   }
 
-  @NotNull
   @Override
-  public String getDescriptiveName(@NotNull PsiElement psiElement) {
+  public @NotNull String getDescriptiveName(@NotNull PsiElement psiElement) {
     return psiElement.getText();
   }
 
-  @NotNull
   @Override
-  public String getNodeText(@NotNull PsiElement psiElement, boolean b) {
+  public @NotNull String getNodeText(@NotNull PsiElement psiElement, boolean b) {
     return getDescriptiveName(psiElement);
   }
 }

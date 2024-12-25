@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -13,8 +13,7 @@ import java.util.List;
 public class DartCompletionExtension {
   private static final ExtensionPointName<DartCompletionExtension> EP_NAME = ExtensionPointName.create("Dart.completionExtension");
 
-  @NotNull
-  static List<DartCompletionExtension> getExtensions() {
+  static @NotNull List<DartCompletionExtension> getExtensions() {
     return EP_NAME.getExtensionList();
   }
 
@@ -24,8 +23,7 @@ public class DartCompletionExtension {
    * if <code>null</code> is returned then the Dart plugin defaults to
    * {@link DartServerCompletionContributor#createLookupElement(Project, CompletionSuggestion, String, DartServerCompletionContributor.SuggestionDetailsInsertHandlerBase)}
    */
-  @Nullable
-  public LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
+  public @Nullable LookupElementBuilder createLookupElement(final @NotNull Project project, final @NotNull CompletionSuggestion suggestion) {
     return null;
   }
 }

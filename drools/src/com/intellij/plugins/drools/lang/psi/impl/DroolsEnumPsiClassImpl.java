@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -26,9 +26,8 @@ public abstract class DroolsEnumPsiClassImpl extends DroolsPsiClassImpl implemen
     return getTypeName().getText();
   }
 
-  @Nullable
   @Override
-  public String getQualifiedName() {
+  public @Nullable String getQualifiedName() {
     String typeName = getTypeName().getText();
     if (StringUtil.getPackageName(typeName).isEmpty()) {
       String aPackage = DroolsResolveUtil.getCurrentPackage(PsiTreeUtil.getParentOfType(this, DroolsFile.class));
@@ -57,9 +56,8 @@ public abstract class DroolsEnumPsiClassImpl extends DroolsPsiClassImpl implemen
     return PsiClassType.EMPTY_ARRAY;
   }
 
-  @Nullable
   @Override
-  public PsiClass getSuperClass() {
+  public @Nullable PsiClass getSuperClass() {
     return null;
   }
 
@@ -78,32 +76,27 @@ public abstract class DroolsEnumPsiClassImpl extends DroolsPsiClassImpl implemen
   }
 
   @Override
-  @NotNull
-  public List<DroolsAnnotation> getAnnotationList() {
+  public @NotNull List<DroolsAnnotation> getAnnotationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsAnnotation.class);
   }
 
   @Override
-  @NotNull
-  public List<DroolsField> getFieldList() {
+  public @NotNull List<DroolsField> getFieldList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsField.class);
   }
 
   @Override
-  @Nullable
-  public DroolsSuperType getSuperType() {
+  public @Nullable DroolsSuperType getSuperType() {
     return findChildByClass(DroolsSuperType.class);
   }
 
   @Override
-  @Nullable
-  public DroolsTraitable getTraitable() {
+  public @Nullable DroolsTraitable getTraitable() {
     return findChildByClass(DroolsTraitable.class);
   }
 
   @Override
-  @NotNull
-  public DroolsTypeName getTypeName() {
+  public @NotNull DroolsTypeName getTypeName() {
     return findNotNullChildByClass(DroolsTypeName.class);
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -13,7 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DroolsCompositeBlockExpressionElement extends ASTWrapperPsiElement {
-  public DroolsCompositeBlockExpressionElement(@NotNull final ASTNode node) {
+  public DroolsCompositeBlockExpressionElement(final @NotNull ASTNode node) {
     super(node);
   }
 

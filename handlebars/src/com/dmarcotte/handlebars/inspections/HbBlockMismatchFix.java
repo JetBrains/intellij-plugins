@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.inspections;
 
 import com.dmarcotte.handlebars.HbBundle;
@@ -34,15 +35,13 @@ class HbBlockMismatchFix implements IntentionAction {
     myOriginalName = originalName;
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     return getName();
   }
 
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return getName();
   }
 
@@ -88,8 +87,7 @@ class HbBlockMismatchFix implements IntentionAction {
     return true;
   }
 
-  @Nls
-  private String getName() {
+  private @Nls String getName() {
     return myUpdateOpenMustache
            ? HbBundle.message("hb.block.mismatch.intention.rename.open", myOriginalName, myCorrectedName)
            : HbBundle.message("hb.block.mismatch.intention.rename.close", myOriginalName, myCorrectedName);

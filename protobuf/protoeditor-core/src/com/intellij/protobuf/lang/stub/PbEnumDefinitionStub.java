@@ -15,11 +15,11 @@
  */
 package com.intellij.protobuf.lang.stub;
 
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.stub.type.PbEnumDefinitionType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.PbEnumDefinition;
-import com.intellij.protobuf.lang.stub.type.PbEnumDefinitionType;
 import org.jetbrains.annotations.Nullable;
 
 public class PbEnumDefinitionStub extends StubBase<PbEnumDefinition>
@@ -35,21 +35,18 @@ public class PbEnumDefinitionStub extends StubBase<PbEnumDefinition>
     this.name = name;
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return this.name;
   }
 
-  @Nullable
   @Override
-  public QualifiedName getQualifiedName() {
+  public @Nullable QualifiedName getQualifiedName() {
     return StubMethods.getQualifiedName(this);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     return StubMethods.getQualifiedName(this);
   }
 

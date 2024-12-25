@@ -176,9 +176,8 @@ public class PbSyntaxHighlighter extends SyntaxHighlighterBase {
     return attributesKeyMap.get(token);
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     if (highlightKeywords) {
       return new PbFullHighlightingLexer();
     } else {
@@ -186,9 +185,8 @@ public class PbSyntaxHighlighter extends SyntaxHighlighterBase {
     }
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public @NotNull TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(attributesKeyMap.get(tokenType));
   }
 }

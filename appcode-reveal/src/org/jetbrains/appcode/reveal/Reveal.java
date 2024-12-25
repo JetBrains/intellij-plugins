@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -39,8 +39,7 @@ public final class Reveal {
 
   private static final List<String> APPLICATION_BUNDLE_IDENTIFIERS = List.of("com.ittybittyapps.Reveal2", "com.ittybittyapps.Reveal");
 
-  @Nullable
-  public static File getDefaultRevealApplicationBundle() {
+  public static @Nullable File getDefaultRevealApplicationBundle() {
     for (String identifier : APPLICATION_BUNDLE_IDENTIFIERS) {
       String path = NSWorkspace.absolutePathForAppBundleWithIdentifier(identifier);
       if (path != null) {
@@ -54,8 +53,7 @@ public final class Reveal {
     return null;
   }
 
-  @Nullable
-  private static File getRevealInspectionScript(@NotNull File bundle) {
+  private static @Nullable File getRevealInspectionScript(@NotNull File bundle) {
     File result = new File(bundle, "/Contents/Resources/InspectApplication.scpt");
     return result.exists() ? result : null;
   }
@@ -138,8 +136,7 @@ public final class Reveal {
     return version != null && version.isOrGreaterThan(13901);
   }
 
-  @Nullable
-  public static Version getRevealVersion(@NotNull File bundle) {
+  public static @Nullable Version getRevealVersion(@NotNull File bundle) {
     Plist plist = PlistDriver.readAnyFormatSafe(new File(bundle, "Contents/Info.plist"));
     if (plist == null) return null;
 

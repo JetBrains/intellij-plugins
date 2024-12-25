@@ -23,24 +23,21 @@ public class BaseRevision {
   private final String mySourceRevision;
   private final String myDepotPath;
 
-  public BaseRevision(@Nullable final String revisionNum, @Nullable final String sourceRevision, @NotNull final String depotPath) {
+  public BaseRevision(final @Nullable String revisionNum, final @Nullable String sourceRevision, final @NotNull String depotPath) {
     myDepotPath = depotPath;
     mySourceRevision = sourceRevision;
     myRevisionNum = revisionNum;
   }
 
-  @Nullable
-  public String getRevisionNum() {
+  public @Nullable String getRevisionNum() {
     return myRevisionNum;
   }
 
-  @Nullable
-  public String getSourceRevision() {
+  public @Nullable String getSourceRevision() {
     return mySourceRevision;
   }
 
-  @NotNull
-  public String getDepotPath() {
+  public @NotNull String getDepotPath() {
     return myDepotPath;
   }
 }

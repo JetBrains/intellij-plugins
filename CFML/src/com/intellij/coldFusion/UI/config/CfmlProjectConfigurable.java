@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.config;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -32,8 +32,7 @@ public final class CfmlProjectConfigurable implements SearchableConfigurable, Co
   }
 
   @Override
-  @NotNull
-  public String getId() {
+  public @NotNull String getId() {
     return getHelpTopic();
   }
 
@@ -43,8 +42,7 @@ public final class CfmlProjectConfigurable implements SearchableConfigurable, Co
   }
 
   @Override
-  @NotNull
-  public String getHelpTopic() {
+  public @NotNull String getHelpTopic() {
     return "reference.plugin.settings.project.settings.cfml";
   }
 

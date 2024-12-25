@@ -17,12 +17,12 @@ package com.intellij.protobuf.lang.resolve;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UseScopeEnlarger;
-import com.intellij.protobuf.lang.psi.PbElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,9 +35,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PbUseScopeEnlarger extends UseScopeEnlarger {
 
-  @Nullable
   @Override
-  public SearchScope getAdditionalUseScope(@NotNull PsiElement element) {
+  public @Nullable SearchScope getAdditionalUseScope(@NotNull PsiElement element) {
     if (!(element instanceof PbElement) || !element.isValid()) {
       return null;
     }

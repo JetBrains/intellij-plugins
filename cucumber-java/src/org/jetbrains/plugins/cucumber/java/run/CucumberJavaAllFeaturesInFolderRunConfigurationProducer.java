@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -11,7 +11,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 
 public final class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected CucumberGlueProvider getGlueProvider(@NotNull final PsiElement element) {
+  protected CucumberGlueProvider getGlueProvider(final @NotNull PsiElement element) {
     if (element instanceof PsiDirectory) {
       return new CucumberJavaAllFeaturesInFolderGlueProvider((PsiDirectory) element);
     }
@@ -19,14 +19,13 @@ public final class CucumberJavaAllFeaturesInFolderRunConfigurationProducer exten
   }
 
   @Override
-  protected String getConfigurationName(@NotNull final ConfigurationContext context) {
+  protected String getConfigurationName(final @NotNull ConfigurationContext context) {
     final PsiElement element = context.getPsiLocation();
     return CucumberBundle.message("cucumber.run.all.features", ((PsiDirectory)element).getVirtualFile().getName());
   }
 
-  @Nullable
   @Override
-  protected VirtualFile getFileToRun(ConfigurationContext context) {
+  protected @Nullable VirtualFile getFileToRun(ConfigurationContext context) {
     final PsiElement element = context.getPsiLocation();
     if (element instanceof PsiDirectory) {
       return ((PsiDirectory) element).getVirtualFile();

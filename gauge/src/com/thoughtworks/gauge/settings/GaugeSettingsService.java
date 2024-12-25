@@ -34,9 +34,8 @@ import static com.intellij.openapi.components.RoamingType.DISABLED;
 public final class GaugeSettingsService implements PersistentStateComponent<GaugeSettingsModel> {
   private GaugeSettingsModel state = new GaugeSettingsModel();
 
-  @Nullable
   @Override
-  public GaugeSettingsModel getState() {
+  public @Nullable GaugeSettingsModel getState() {
     return state;
   }
 

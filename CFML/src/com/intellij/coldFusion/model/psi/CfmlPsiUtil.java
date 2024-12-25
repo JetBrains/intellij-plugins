@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -26,8 +26,7 @@ import java.util.function.Function;
  * Created by Lera Nikolaenko
  */
 public final class CfmlPsiUtil {
-  @NotNull
-  public static Collection<String> findBetween(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
+  public static @NotNull Collection<String> findBetween(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
     int fromIndex = 0;
     Collection<String> collection = new LinkedList<>();
     while (fromIndex < source.length() && fromIndex >= 0) {
@@ -46,8 +45,7 @@ public final class CfmlPsiUtil {
     return collection;
   }
 
-  @Nullable
-  public static TextRange findRange(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
+  public static @Nullable TextRange findRange(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
     int start = source.indexOf(startMarker);
     if (start < 0) {
       return null;
@@ -60,7 +58,7 @@ public final class CfmlPsiUtil {
     return new TextRange(start, end);
   }
 
-  private final static Set<String> OUR_TRANSPARENT_FUNCTIONS = new HashSet<>();
+  private static final Set<String> OUR_TRANSPARENT_FUNCTIONS = new HashSet<>();
 
   static {
     OUR_TRANSPARENT_FUNCTIONS.add("cfsilent");
@@ -70,10 +68,10 @@ public final class CfmlPsiUtil {
     OUR_TRANSPARENT_FUNCTIONS.add("cflock");
   }
 
-  public static boolean processDeclarations(@NotNull final PsiScopeProcessor processor,
-                                            @NotNull final ResolveState state,
-                                            @Nullable final PsiElement lastParent,
-                                            @NotNull final PsiElement currentElement) {
+  public static boolean processDeclarations(final @NotNull PsiScopeProcessor processor,
+                                            final @NotNull ResolveState state,
+                                            final @Nullable PsiElement lastParent,
+                                            final @NotNull PsiElement currentElement) {
     PsiElement element = (lastParent == null ? currentElement.getLastChild() : lastParent.getPrevSibling());
     do {
       if (element instanceof PsiNamedElement && !(element instanceof CfmlFunction)) { // functions are processed separately
@@ -111,8 +109,7 @@ public final class CfmlPsiUtil {
     return true;
   }
 
-  @Nullable
-  public static CfmlTypedElement getTypedQualifierInner(PsiElement element) {
+  public static @Nullable CfmlTypedElement getTypedQualifierInner(PsiElement element) {
     if (element == null) {
       return null;
     }
@@ -126,8 +123,7 @@ public final class CfmlPsiUtil {
     return null;
   }
 
-  @Nullable
-  public static CfmlReference getQualifierInner(PsiElement element) {
+  public static @Nullable CfmlReference getQualifierInner(PsiElement element) {
     if (element == null) {
       return null;
     }
@@ -144,8 +140,7 @@ public final class CfmlPsiUtil {
     return null;
   }
 
-  @Nullable
-  public static PsiType getTypeByName(String typeName, Project project) {
+  public static @Nullable PsiType getTypeByName(String typeName, Project project) {
     return JavaPsiFacade.getInstance(project).getElementFactory().createTypeByFQClassName(typeName, GlobalSearchScope.allScope(project));
   }
 
@@ -154,8 +149,7 @@ public final class CfmlPsiUtil {
     return (CfmlFile)PsiFileFactory.getInstance(project).createFileFromText(fileName, CfmlLanguage.INSTANCE, text);
   }
 
-  @NotNull
-  public static CfmlReferenceExpression createReferenceExpression(final String text, final Project project) {
+  public static @NotNull CfmlReferenceExpression createReferenceExpression(final String text, final Project project) {
     final CfmlFile dummyFile = createDummyFile(project, "<cfset " + text + " = 0>");
     final PsiElement tag = dummyFile.getFirstChild();
     assert tag != null;
@@ -166,8 +160,7 @@ public final class CfmlPsiUtil {
     return expression;
   }
 
-  @NotNull
-  public static PsiElement createIdentifier(final String text, final Project project) {
+  public static @NotNull PsiElement createIdentifier(final String text, final Project project) {
     final CfmlReferenceExpression reference = createReferenceExpression(text, project);
     final PsiElement identifier = reference.getFirstChild();
     assert identifier != null;
@@ -177,8 +170,7 @@ public final class CfmlPsiUtil {
     return identifier;
   }
 
-  @NotNull
-  public static PsiElement createConstantString(final String text, final Project project) {
+  public static @NotNull PsiElement createConstantString(final String text, final Project project) {
     final CfmlFile dummyFile = createDummyFile(project, "<cffunction name=\"" + text + "\"></cffunction>");
     final PsiElement tag = dummyFile.getFirstChild();
     assert tag != null;
@@ -189,8 +181,7 @@ public final class CfmlPsiUtil {
     return element;
   }
 
-  @Nullable
-  public static String getPureAttributeValue(CfmlTag tag, String attributeName) {
+  public static @Nullable String getPureAttributeValue(CfmlTag tag, String attributeName) {
     final CfmlAttributeImpl[] attributes = PsiTreeUtil.getChildrenOfType(tag, CfmlAttributeImpl.class);
     if (attributes == null) {
       return null;
@@ -218,8 +209,7 @@ public final class CfmlPsiUtil {
     return null;
   }
 
-  @Nullable
-  public static PsiElement getAttributeValueElement(PsiElement element, @NotNull String attributeName) {
+  public static @Nullable PsiElement getAttributeValueElement(PsiElement element, @NotNull String attributeName) {
     final CfmlAttributeImpl[] attributes = PsiTreeUtil.getChildrenOfType(element, CfmlAttributeImpl.class);
     if (attributes == null) {
       return null;
@@ -253,8 +243,7 @@ public final class CfmlPsiUtil {
     return PsiReference.EMPTY_ARRAY;
   }
 
-  @Nullable
-  private static ASTNode getSuperComponentNode(PsiElement element) {
+  private static @Nullable ASTNode getSuperComponentNode(PsiElement element) {
     final PsiElement rEx = getAttributeValueElement(element, "extends");
 
     if (rEx != null) {
@@ -264,8 +253,7 @@ public final class CfmlPsiUtil {
     return null;
   }
 
-  @NotNull
-  public static String getSuperComponentName(PsiElement element) {
+  public static @NotNull String getSuperComponentName(PsiElement element) {
     ASTNode superComponentNode = getSuperComponentNode(element);
     if (superComponentNode != null) {
       return superComponentNode.getText();
@@ -273,8 +261,7 @@ public final class CfmlPsiUtil {
     return "";
   }
 
-  @Nullable
-  public static CfmlComponentReference getSuperComponentReference(PsiElement element) {
+  public static @Nullable CfmlComponentReference getSuperComponentReference(PsiElement element) {
     ASTNode node = getSuperComponentNode(element);
     if (node != null) {
       return new CfmlComponentReference(node, element);
@@ -282,8 +269,7 @@ public final class CfmlPsiUtil {
     return null;
   }
 
-  @Nullable
-  public static CfmlComponent getSuperComponent(PsiElement element) {
+  public static @Nullable CfmlComponent getSuperComponent(PsiElement element) {
     CfmlComponentReference referenceToSuperComponent = getSuperComponentReference(element);
     if (referenceToSuperComponent != null) {
       PsiElement resolve = referenceToSuperComponent.resolve();

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
@@ -12,7 +12,7 @@ public class CfmlOperatorExpression extends CfmlCompositeElement implements Cfml
 
   private final boolean myBinary;
 
-  public CfmlOperatorExpression(@NotNull final ASTNode node, boolean binary) {
+  public CfmlOperatorExpression(final @NotNull ASTNode node, boolean binary) {
     super(node);
     myBinary = binary;
   }
@@ -34,8 +34,7 @@ public class CfmlOperatorExpression extends CfmlCompositeElement implements Cfml
     return typeCalculator.calculateBinary(operand1, operand2);
   }
 
-  @NotNull
-  private CfmlOperatorTokenType getOperationSign() {
+  private @NotNull CfmlOperatorTokenType getOperationSign() {
     final ASTNode operationNode = getNode().findChildByType(CfscriptTokenTypes.OPERATIONS);
     assert operationNode != null : getText();
     IElementType tokenType = operationNode.getElementType();

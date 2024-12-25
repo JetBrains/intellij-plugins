@@ -30,9 +30,9 @@ public class HCLStatementMover extends LineMover {
   private static final Logger LOG = Logger.getInstance(HCLStatementMover.class);
 
   @Override
-  public boolean checkAvailable(@NotNull final Editor editor,
-                                @NotNull final PsiFile file,
-                                @NotNull final MoveInfo info,
+  public boolean checkAvailable(final @NotNull Editor editor,
+                                final @NotNull PsiFile file,
+                                final @NotNull MoveInfo info,
                                 final boolean down) {
     final boolean available = super.checkAvailable(editor, file, info, down);
     if (!available) return false;
@@ -100,8 +100,7 @@ public class HCLStatementMover extends LineMover {
     return new LineRange(startLine, endLine);
   }
 
-  @Nullable
-  private static Language findHCLOrLikeLanguage(@NotNull final PsiFile file) {
+  private static @Nullable Language findHCLOrLikeLanguage(final @NotNull PsiFile file) {
     final Set<Language> languages = file.getViewProvider().getLanguages();
     for (final Language language : languages) {
       if (language == HCLLanguage.INSTANCE) return language;

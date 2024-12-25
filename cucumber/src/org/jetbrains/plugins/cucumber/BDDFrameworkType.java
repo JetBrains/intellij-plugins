@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.fileTypes.FileType;
@@ -10,15 +11,13 @@ import org.jetbrains.annotations.Nullable;
  * @author Ilya.Kazakevich
  */
 public class BDDFrameworkType {
-  @NotNull
-  private final FileType myFileType;
-  @Nullable
-  private final String myAdditionalInfo;
+  private final @NotNull FileType myFileType;
+  private final @Nullable String myAdditionalInfo;
 
   /**
    * @param fileType file type to be used as step definitions for this framework
    */
-  public BDDFrameworkType(@NotNull final FileType fileType) {
+  public BDDFrameworkType(final @NotNull FileType fileType) {
     this(fileType, null);
   }
 
@@ -26,8 +25,8 @@ public class BDDFrameworkType {
    * @param fileType       file type to be used as step definitions for this framework
    * @param additionalInfo additional information about this framework to be displayed to user (when filetype is not enough)
    */
-  public BDDFrameworkType(@NotNull final FileType fileType,
-                          @Nullable final String additionalInfo) {
+  public BDDFrameworkType(final @NotNull FileType fileType,
+                          final @Nullable String additionalInfo) {
     myFileType = fileType;
     myAdditionalInfo = additionalInfo;
   }
@@ -36,16 +35,14 @@ public class BDDFrameworkType {
   /**
    * @return file type to be used as step definitions for this framework
    */
-  @NotNull
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return myFileType;
   }
 
   /**
    * @return additional information about this framework to be displayed to user (when filetype is not enough)
    */
-  @Nullable
-  public String getAdditionalInfo() {
+  public @Nullable String getAdditionalInfo() {
     return myAdditionalInfo;
   }
 

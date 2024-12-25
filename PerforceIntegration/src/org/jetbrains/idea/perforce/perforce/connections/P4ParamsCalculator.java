@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 public class P4ParamsCalculator {
-  private final static String ourInConfig = "(config";
-  private final static String ourNoConfig = "'noconfig'";
-  private final static String ourInEnvironment = "(set";
-  private final static String ourInEnvironment2 = "(env";
+  private static final String ourInConfig = "(config";
+  private static final String ourNoConfig = "'noconfig'";
+  private static final String ourInEnvironment = "(set";
+  private static final String ourInEnvironment2 = "(env";
 
   private static final Logger LOG = Logger.getInstance(P4ParamsCalculator.class);
   private final Project myProject;
@@ -105,7 +105,7 @@ public class P4ParamsCalculator {
     }
   }
 
-  public static P4ConnectionParameters getParametersFromConfig(final File configParentDir, @NotNull final String name) {
+  public static P4ConnectionParameters getParametersFromConfig(final File configParentDir, final @NotNull String name) {
     final P4ConnectionParameters parameters = new P4ConnectionParameters();
     JBIterable<File> allConfigs = JBIterable.generate(configParentDir, File::getParentFile).map(dir -> new File(dir, name)).filter(File::exists);
     try {

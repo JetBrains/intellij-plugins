@@ -48,8 +48,7 @@ class AdditionalJARContentsTableModel extends AbstractTableModel {
     fireTableDataChanged();
   }
 
-  @NotNull
-  public List<Pair<String, String>> getAdditionalContents() {
+  public @NotNull List<Pair<String, String>> getAdditionalContents() {
     return new ArrayList<>(myAdditionalContents);
   }
 

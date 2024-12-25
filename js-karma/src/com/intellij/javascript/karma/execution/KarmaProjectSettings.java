@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -19,8 +19,7 @@ public final class KarmaProjectSettings {
   private KarmaProjectSettings() {
   }
 
-  @NotNull
-  public static NodePackage getKarmaPackage(@NotNull Project project) {
+  public static @NotNull NodePackage getKarmaPackage(@NotNull Project project) {
     String path = StringUtil.notNullize(PropertiesComponent.getInstance(project).getValue(KARMA_PACKAGE_DIR__KEY));
     return KarmaUtil.PKG_DESCRIPTOR.createPackage(path);
   }

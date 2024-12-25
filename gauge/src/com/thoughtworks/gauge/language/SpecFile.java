@@ -28,9 +28,8 @@ public final class SpecFile extends PsiFileBase {
     super(viewProvider, Specification.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return SpecFileType.INSTANCE;
   }
 

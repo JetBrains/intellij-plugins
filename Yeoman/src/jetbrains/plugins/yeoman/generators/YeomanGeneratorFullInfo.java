@@ -21,30 +21,21 @@ public final class YeomanGeneratorFullInfo implements YeomanGeneratorInfo {
   /**
    * all fields from json
    */
-  @Nullable
-  private String name;
+  private @Nullable String name;
 
-  @Nullable
-  private String description;
+  private @Nullable String description;
 
-  @Nullable
-  private Object owner;
+  private @Nullable Object owner;
 
-  @Nullable
-  private String ownerWebsite;
+  private @Nullable String ownerWebsite;
 
-  @Nullable
-  private String website;
+  private @Nullable String website;
 
-  @Nullable
-  private String site;
+  private @Nullable String site;
 
-  @Nullable
-  private Object forks;
-  @Nullable
-  private Object created;
-  @Nullable
-  private Object updated;
+  private @Nullable Object forks;
+  private @Nullable Object created;
+  private @Nullable Object updated;
   public int getStars() {
     return stars;
   }
@@ -55,26 +46,21 @@ public final class YeomanGeneratorFullInfo implements YeomanGeneratorInfo {
   }
 
 
-  @Nullable
-  public String getWebsite() {
+  public @Nullable String getWebsite() {
     return website == null ? site : website;
   }
 
-  @NlsSafe
-  @NotNull
-  public String getDescription() {
+  public @NlsSafe @NotNull String getDescription() {
     return StringUtil.notNullize(description);
   }
 
   @Override
-  @Nullable
-  public String getName() {
+  public @Nullable String getName() {
     return YeomanGeneratorInfo.Util.getName(name);
   }
 
   @Override
-  @Nullable
-  public String getYoName() {
+  public @Nullable String getYoName() {
     return YeomanGeneratorInfo.Util.getYoName(name);
   }
 

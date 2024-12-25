@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.filters.Filter;
@@ -45,8 +45,7 @@ public class DartConsoleFilter implements Filter {
   }
 
   @Override
-  @Nullable
-  public Result applyFilter(@NotNull final String line, final int entireLength) {
+  public @Nullable Result applyFilter(final @NotNull String line, final int entireLength) {
     if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://") || line.startsWith(DART_VM_LISTENING_ON + "http://")) {
       return getObservatoryUrlResult(line, entireLength - line.length());
     }
@@ -91,8 +90,7 @@ public class DartConsoleFilter implements Filter {
     return null;
   }
 
-  @Nullable
-  private static Result getObservatoryUrlResult(final String line, final int lineStartOffset) {
+  private static @Nullable Result getObservatoryUrlResult(final String line, final int lineStartOffset) {
     assert line.startsWith(OBSERVATORY_LISTENING_ON + "http://") || line.startsWith(DART_VM_LISTENING_ON + "http://") : line;
 
     final int prefixLength =
@@ -116,7 +114,7 @@ public class DartConsoleFilter implements Filter {
   private static class ObservatoryHyperlinkInfo implements HyperlinkInfo {
     private final String myUrl;
 
-    ObservatoryHyperlinkInfo(@NotNull final String url) {
+    ObservatoryHyperlinkInfo(final @NotNull String url) {
       myUrl = StringUtil.replace(url, "http://0.0.0.0:", "http://localhost:");
     }
 

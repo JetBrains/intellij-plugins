@@ -43,8 +43,7 @@ public class Descriptor {
    *
    * @return the descriptor {@link PbFile} object.
    */
-  @NotNull
-  public PbFile getFile() {
+  public @NotNull PbFile getFile() {
     return file;
   }
 
@@ -61,8 +60,7 @@ public class Descriptor {
    * @param module The module whose child is performing the lookup. Possibly <code>null</code>.
    * @return A {@link Descriptor} object wrapping the proto descriptor file, or <code>null</code>.
    */
-  @Nullable
-  private static Descriptor locate(@NotNull Project project, @Nullable Module module) {
+  private static @Nullable Descriptor locate(@NotNull Project project, @Nullable Module module) {
     for (FileResolveProvider provider : FileResolveProvider.EP_NAME.getExtensionList(project)) {
       VirtualFile file =
           module != null ? provider.getDescriptorFile(module) : provider.getDescriptorFile(project);
@@ -77,8 +75,7 @@ public class Descriptor {
   }
 
   /** Finds the descriptor for the given file. */
-  @Nullable
-  public static Descriptor locate(@NotNull PbFile file) {
+  public static @Nullable Descriptor locate(@NotNull PbFile file) {
     return CachedValuesManager.getCachedValue(
         file,
         () ->

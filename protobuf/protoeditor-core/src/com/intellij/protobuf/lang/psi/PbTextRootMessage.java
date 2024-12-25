@@ -33,9 +33,8 @@ public interface PbTextRootMessage extends PbTextMessage {
   @Nullable
   SchemaInfo getSchemaInfo();
 
-  @Nullable
   @Override
-  default PbMessageType getDeclaredMessage() {
+  default @Nullable PbMessageType getDeclaredMessage() {
     SchemaInfo schema = getSchemaInfo();
     return schema != null ? schema.getRootMessageType() : null;
   }

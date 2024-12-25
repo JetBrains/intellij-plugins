@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma;
 
 import com.google.common.collect.ImmutableList;
@@ -48,28 +48,23 @@ public class KarmaConfig {
     myRemoteDebuggingPort = remoteDebuggingPort;
   }
 
-  @NotNull
-  public String getBasePath() {
+  public @NotNull String getBasePath() {
     return myBasePath;
   }
 
-  @NotNull
-  public List<String> getBrowsers() {
+  public @NotNull List<String> getBrowsers() {
     return myBrowsers;
   }
 
-  @NotNull
-  public String getProtocol() {
+  public @NotNull String getProtocol() {
     return myProtocol;
   }
 
-  @NotNull
-  public String getHostname() {
+  public @NotNull String getHostname() {
     return myHostname;
   }
 
-  @NotNull
-  public String getUrlRoot() {
+  public @NotNull String getUrlRoot() {
     return myUrlRoot;
   }
 
@@ -80,9 +75,8 @@ public class KarmaConfig {
     return myRemoteDebuggingPort;
   }
 
-  @Nullable
-  public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement,
-                                          @NotNull String configurationFileDir) {
+  public static @Nullable KarmaConfig parseFromJson(@NotNull JsonElement jsonElement,
+                                                    @NotNull String configurationFileDir) {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
 
@@ -99,10 +93,9 @@ public class KarmaConfig {
     return null;
   }
 
-  @NotNull
-  private static String parseBasePath(@NotNull JsonElement all,
-                                      @NotNull JsonObject obj,
-                                      @NotNull String configurationFileDir) {
+  private static @NotNull String parseBasePath(@NotNull JsonElement all,
+                                               @NotNull JsonObject obj,
+                                               @NotNull String configurationFileDir) {
     String basePath = JsonUtil.getChildAsString(obj, BASE_PATH);
     if (basePath == null) {
       LOG.warn("Can not parse Karma config.basePath from " + all);
@@ -136,8 +129,7 @@ public class KarmaConfig {
     return hostname;
   }
 
-  @NotNull
-  private static List<String> parseBrowsers(@NotNull JsonObject obj) {
+  private static @NotNull List<String> parseBrowsers(@NotNull JsonObject obj) {
     JsonElement browsersElement = obj.get(BROWSERS);
     if (browsersElement != null && browsersElement.isJsonArray()) {
       JsonArray browsersArray = browsersElement.getAsJsonArray();

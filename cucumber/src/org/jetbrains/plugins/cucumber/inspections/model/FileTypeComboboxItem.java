@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections.model;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -10,7 +11,7 @@ public class FileTypeComboboxItem {
 
   private final String myDefaultFileName;
 
-  public FileTypeComboboxItem(@NotNull final BDDFrameworkType frameworkType, @NotNull final String defaultFileName) {
+  public FileTypeComboboxItem(final @NotNull BDDFrameworkType frameworkType, final @NotNull String defaultFileName) {
     myFrameworkType = frameworkType;
     myDefaultFileName = defaultFileName;
   }

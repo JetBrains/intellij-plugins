@@ -32,12 +32,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PerforceUpdateEnvironment extends AbstractUpdateEnvironment{
-  @NonNls private static final String DELETED_MESSAGE = " - deleted as ";
-  @NonNls private static final String UPDATING_MESSAGE = " - updating ";
-  @NonNls private static final String ADDED_MESSAGE = " - added as ";
-  @NonNls private static final String MERGE_MESSAGE = " - is opened and not being changed";
+  private static final @NonNls String DELETED_MESSAGE = " - deleted as ";
+  private static final @NonNls String UPDATING_MESSAGE = " - updating ";
+  private static final @NonNls String ADDED_MESSAGE = " - added as ";
+  private static final @NonNls String MERGE_MESSAGE = " - is opened and not being changed";
 
-  private final static Map<String, String> ourPatternToGroupId = new HashMap<>();
+  private static final Map<String, String> ourPatternToGroupId = new HashMap<>();
 
   static {
     ourPatternToGroupId.put(DELETED_MESSAGE, FileGroup.REMOVED_FROM_REPOSITORY_ID);

@@ -152,8 +152,7 @@ public class RevisionGraphAction extends DumbAwareAction {
     }
   }
 
-  @NonNls
-  protected String getCommandName() {
+  protected @NonNls String getCommandName() {
     return "revgraph";
   }
 
@@ -163,7 +162,7 @@ public class RevisionGraphAction extends DumbAwareAction {
   }
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     final VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
     if (project == null || virtualFile == null || !virtualFile.isInLocalFileSystem() || virtualFile.isDirectory() ||

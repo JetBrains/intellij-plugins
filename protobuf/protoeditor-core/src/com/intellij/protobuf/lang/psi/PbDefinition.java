@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-import com.intellij.psi.PsiComment;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
+import com.intellij.psi.PsiComment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,9 +31,8 @@ public interface PbDefinition extends PbElement, PbStatement, PbStatementOwner {
   PbBlockBody getBody();
 
   /** Returns trailing comments for this definition, which follow the body's opening brace. */
-  @NotNull
   @Override
-  default List<PsiComment> getTrailingComments() {
+  default @NotNull List<PsiComment> getTrailingComments() {
     PbBlockBody body = getBody();
     if (body == null) {
       return Collections.emptyList();

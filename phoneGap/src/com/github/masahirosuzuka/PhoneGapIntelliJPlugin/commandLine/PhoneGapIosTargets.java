@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.openapi.project.Project;
@@ -23,21 +24,18 @@ public class PhoneGapIosTargets extends PhoneGapTargets {
     super(project);
   }
 
-  @NotNull
   @Override
-  protected List<String> listDevicesNonCached() {
+  protected @NotNull List<String> listDevicesNonCached() {
     return list(IOS_DEPLOY, PARSER_DEVICE_LINE, true, "-c", "-t", "1");
   }
 
-  @NotNull
   @Override
-  protected List<String> listVirtualDevicesNonCached() {
+  protected @NotNull List<String> listVirtualDevicesNonCached() {
     return list(IOS_SIM, PARSER_VIRTUAL_DEVICE_LINE, true, "showdevicetypes");
   }
 
-  @NotNull
   @Override
-  public String platform() {
+  public @NotNull String platform() {
     return PLATFORM_IOS;
   }
 
@@ -54,8 +52,7 @@ public class PhoneGapIosTargets extends PhoneGapTargets {
    * like 2e7c1f7dbedfe54fc7ded3451974f8007e177639 in
    * 'Found iPhone 4S 'Andrey's iPhone' (2e7c1f7dbedfe54fc7ded3451974f8007e177639) connected through USB.'
    */
-  @Nullable
-  private static String parseDevice(@Nullable String inputLine) {
+  private static @Nullable String parseDevice(@Nullable String inputLine) {
     if (inputLine == null) return null;
 
     int start = inputLine.indexOf('(');

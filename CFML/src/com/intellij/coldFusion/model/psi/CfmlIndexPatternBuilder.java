@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 /*
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class CfmlIndexPatternBuilder implements IndexPatternBuilder {
   @Override
-  public Lexer getIndexingLexer(@NotNull final PsiFile file) {
+  public Lexer getIndexingLexer(final @NotNull PsiFile file) {
     if (file instanceof CfmlFile) {
       Project project = file.getProject();
       LayeredLexer cfmlLayeredLexer = new LayeredLexer(new CfmlLexer(true, project));
@@ -39,7 +39,7 @@ public final class CfmlIndexPatternBuilder implements IndexPatternBuilder {
   private static final TokenSet tsCOMMENTS = TokenSet.create(CfmlTokenTypes.COMMENT, CfscriptTokenTypes.COMMENT);
 
   @Override
-  public TokenSet getCommentTokenSet(@NotNull final PsiFile file) {
+  public TokenSet getCommentTokenSet(final @NotNull PsiFile file) {
     if (file instanceof CfmlFile) {
       return tsCOMMENTS;
     }

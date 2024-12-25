@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirPackageEntry;
@@ -45,8 +46,7 @@ abstract class JpsAirPackagingOptionsBase<Self extends JpsAirPackagingOptionsBas
     myUseGeneratedDescriptor = useGeneratedDescriptor;
   }
 
-  @NotNull
-  public String getCustomDescriptorPath() {
+  public @NotNull String getCustomDescriptorPath() {
     return myCustomDescriptorPath;
   }
 
@@ -54,8 +54,7 @@ abstract class JpsAirPackagingOptionsBase<Self extends JpsAirPackagingOptionsBas
     myCustomDescriptorPath = customDescriptorPath;
   }
 
-  @NotNull
-  public String getPackageFileName() {
+  public @NotNull String getPackageFileName() {
     return myPackageFileName;
   }
 
@@ -63,13 +62,11 @@ abstract class JpsAirPackagingOptionsBase<Self extends JpsAirPackagingOptionsBas
     myPackageFileName = packageFileName;
   }
 
-  @NotNull
-  public List<JpsAirPackageEntry> getFilesToPackage() {
+  public @NotNull List<JpsAirPackageEntry> getFilesToPackage() {
     return myContainer.getChild(JpsAirPackageEntryImpl.COLLECTION_ROLE).getElements();
   }
 
-  @NotNull
-  public JpsAirSigningOptions getSigningOptions() {
+  public @NotNull JpsAirSigningOptions getSigningOptions() {
     return myContainer.getChild(JpsAirSigningOptionsImpl.ROLE);
   }
 }

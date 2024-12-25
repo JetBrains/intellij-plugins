@@ -18,12 +18,12 @@ package com.intellij.protobuf.lang.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.resolve.*;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,13 +56,11 @@ abstract class PbTextExtensionNameMixin extends PbTextElementBase implements PbT
     return owner != null ? owner.getChildScope() : null;
   }
 
-  @NotNull
   @Override
-  public ProtoSymbolPathDelegate getDefaultPathDelegate() {
+  public @NotNull ProtoSymbolPathDelegate getDefaultPathDelegate() {
     return new ProtoSymbolPathDelegate() {
-      @Nullable
       @Override
-      public PsiReference getReference(ProtoSymbolPath path) {
+      public @Nullable PsiReference getReference(ProtoSymbolPath path) {
         QualifiedName scope = getRelativeScope(path);
         PbTextRootMessage rootMessage = getRootMessage();
         if (rootMessage == null) {
@@ -112,9 +110,8 @@ abstract class PbTextExtensionNameMixin extends PbTextElementBase implements PbT
     return Conditions.or(base, ResolveFilters.extendedFromType(declaredMessage));
   }
 
-  @Nullable
   @Override
-  public PsiReference getEffectiveReference() {
+  public @Nullable PsiReference getEffectiveReference() {
     PbTextSymbolPath symbolPath = getSymbolPath();
     if (symbolPath == null) {
       return null;

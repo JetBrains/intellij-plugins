@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DartNodeDecorator implements ProjectViewNodeDecorator {
   @Override
-  public void decorate(@NotNull final ProjectViewNode node, @NotNull final PresentationData presentation) {
+  public void decorate(final @NotNull ProjectViewNode node, final @NotNull PresentationData presentation) {
     if (node instanceof PsiFileNode || node instanceof PsiDirectoryNode) {
       final VirtualFile nodeFile = node.getVirtualFile();
       final Project project = node.getProject();

@@ -37,21 +37,18 @@ public final class GaugeModuleType extends ModuleType<JavaModuleBuilder> {
     return (GaugeModuleType)ModuleTypeManager.getInstance().findByID(MODULE_TYPE_ID);
   }
 
-  @NotNull
   @Override
-  public JavaModuleBuilder createModuleBuilder() {
+  public @NotNull JavaModuleBuilder createModuleBuilder() {
     return new JavaModuleBuilder();
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return GaugeBundle.message("gauge.module.type.name");
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return GaugeBundle.message("module.supported.for.writing.gauge.tests");
   }
 

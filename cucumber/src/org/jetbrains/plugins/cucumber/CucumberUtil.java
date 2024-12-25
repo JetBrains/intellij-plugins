@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.application.ReadAction;
@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class CucumberUtil {
-  @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
+  public static final @NonNls String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
 
   public static final String[][] ARR = {
     {"\\\\", "\\\\\\\\"},
@@ -89,10 +89,10 @@ public final class CucumberUtil {
    * @return whether reference was found and reported to consumer
    * @see #findPossibleGherkinElementUsages(PsiElement, String, TextOccurenceProcessor, SearchScope)
    */
-  public static boolean findGherkinReferencesToElement(@NotNull final PsiElement stepDefinitionElement,
-                                                       @NotNull final String regexp,
-                                                       @NotNull final Processor<? super PsiReference> consumer,
-                                                       @NotNull final SearchScope effectiveSearchScope) {
+  public static boolean findGherkinReferencesToElement(final @NotNull PsiElement stepDefinitionElement,
+                                                       final @NotNull String regexp,
+                                                       final @NotNull Processor<? super PsiReference> consumer,
+                                                       final @NotNull SearchScope effectiveSearchScope) {
     return findPossibleGherkinElementUsages(stepDefinitionElement, regexp,
                                             new MyReferenceCheckingProcessor(stepDefinitionElement, consumer),
                                             effectiveSearchScope);
@@ -110,10 +110,10 @@ public final class CucumberUtil {
    * @return whether reference was found and passed to processor
    * @see #findGherkinReferencesToElement(PsiElement, String, Processor, SearchScope)
    */
-  public static boolean findPossibleGherkinElementUsages(@NotNull final PsiElement stepDefinitionElement,
-                                                         @NotNull final String regexp,
-                                                         @NotNull final TextOccurenceProcessor processor,
-                                                         @NotNull final SearchScope effectiveSearchScope) {
+  public static boolean findPossibleGherkinElementUsages(final @NotNull PsiElement stepDefinitionElement,
+                                                         final @NotNull String regexp,
+                                                         final @NotNull TextOccurenceProcessor processor,
+                                                         final @NotNull SearchScope effectiveSearchScope) {
     final String word = getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmptyOrSpaces(word)) {
       return true;
@@ -127,10 +127,10 @@ public final class CucumberUtil {
     return instance.processElementsWithWord(processor, searchScope, word, context, true);
   }
 
-  public static void findPossibleGherkinElementUsages(@NotNull final PsiElement stepDefinitionElement,
-                                                      @NotNull final String regexp,
-                                                      @NotNull final ReferencesSearch.SearchParameters params,
-                                                      @NotNull final RequestResultProcessor processor) {
+  public static void findPossibleGherkinElementUsages(final @NotNull PsiElement stepDefinitionElement,
+                                                      final @NotNull String regexp,
+                                                      final @NotNull ReferencesSearch.SearchParameters params,
+                                                      final @NotNull RequestResultProcessor processor) {
     final String word = getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmptyOrSpaces(word)) {
       return;
@@ -242,8 +242,7 @@ public final class CucumberUtil {
    * @param parameterTypeManager provides mapping from ParameterTypes name to its value
    * @return regular expression defined by Cucumber Expression and ParameterTypes value
    */
-  @NotNull
-  public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
+  public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
     cucumberExpression = escapeCucumberExpression(cucumberExpression);
     cucumberExpression = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
@@ -367,19 +366,17 @@ public final class CucumberUtil {
    * Accepts each element and checks if it has reference to some other element
    */
   private static final class MyReferenceCheckingProcessor implements TextOccurenceProcessor {
-    @NotNull
-    private final PsiElement myElementToFind;
-    @NotNull
-    private final Processor<? super PsiReference> myConsumer;
+    private final @NotNull PsiElement myElementToFind;
+    private final @NotNull Processor<? super PsiReference> myConsumer;
 
-    private MyReferenceCheckingProcessor(@NotNull final PsiElement elementToFind,
-                                         @NotNull final Processor<? super PsiReference> consumer) {
+    private MyReferenceCheckingProcessor(final @NotNull PsiElement elementToFind,
+                                         final @NotNull Processor<? super PsiReference> consumer) {
       myElementToFind = elementToFind;
       myConsumer = consumer;
     }
 
     @Override
-    public boolean execute(@NotNull final PsiElement element, final int offsetInElement) {
+    public boolean execute(final @NotNull PsiElement element, final int offsetInElement) {
       final PsiElement parent = element.getParent();
       final boolean result = executeInternal(element);
       // We check element and its parent (StringLiteral is probably child of GherkinStep that has reference)
@@ -396,7 +393,7 @@ public final class CucumberUtil {
      * @param referenceOwner element with injected references
      * @return true if element found and consumed
      */
-    private boolean executeInternal(@NotNull final PsiElement referenceOwner) {
+    private boolean executeInternal(final @NotNull PsiElement referenceOwner) {
       for (final PsiReference ref : referenceOwner.getReferences()) {
         if ((ref != null) && ref.isReferenceTo(myElementToFind)) {
           if (!myConsumer.process(ref)) {
@@ -422,8 +419,7 @@ public final class CucumberUtil {
    * @param outlineTableMap mapping from header to the first data row
    * @return OutlineStepSubstitution that contains result step name and can calculate offsets
    */
-  @NotNull
-  public static OutlineStepSubstitution substituteTableReferences(String stepName, @Nullable Map<String, String> outlineTableMap) {
+  public static @NotNull OutlineStepSubstitution substituteTableReferences(String stepName, @Nullable Map<String, String> outlineTableMap) {
     if (outlineTableMap == null) {
       return new OutlineStepSubstitution(stepName, Collections.emptyList());
     }
@@ -465,8 +461,7 @@ public final class CucumberUtil {
     return ESCAPE_PATTERN.matcher(stepPattern).replaceAll("\\\\$1");
   }
 
-  @Nullable
-  public static PsiElement resolveSep(@NotNull GherkinStep step) {
+  public static @Nullable PsiElement resolveSep(@NotNull GherkinStep step) {
     PsiReference reference = Arrays.stream(step.getReferences()).filter(r -> r instanceof CucumberStepReference).findFirst().orElse(null);
     return reference != null ? reference.resolve() : null;
   }
@@ -495,8 +490,7 @@ public final class CucumberUtil {
     return null;
   }
 
-  @NotNull
-  public static List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework, @Nullable PsiFile featureFile, @NotNull Module module) {
+  public static @NotNull List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework, @Nullable PsiFile featureFile, @NotNull Module module) {
     List<AbstractStepDefinition> result = framework.loadStepsFor(featureFile, module);
     return result != null ? result : Collections.emptyList();
   }

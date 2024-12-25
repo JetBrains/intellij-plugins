@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.run;
 
 import com.intellij.execution.TestStateStorage;
@@ -13,16 +13,16 @@ import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 public final class CucumberRunLineMarkerContributor extends RunLineMarkerContributor {
   private static final TokenSet RUN_LINE_MARKER_ELEMENTS = TokenSet
     .create(GherkinTokenTypes.FEATURE_KEYWORD, GherkinTokenTypes.SCENARIO_KEYWORD, GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD,
             GherkinTokenTypes.RULE_KEYWORD, GherkinTokenTypes.EXAMPLE_KEYWORD);
 
-  @Nullable
   @Override
-  public Info getInfo(@NotNull PsiElement element) {
+  public @Nullable Info getInfo(@NotNull PsiElement element) {
     if (!(element instanceof LeafElement)) {
       return null;
     }

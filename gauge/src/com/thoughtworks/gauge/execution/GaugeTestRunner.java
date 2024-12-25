@@ -29,8 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 final class GaugeTestRunner extends DefaultProgramRunner { // todo
   @Override
-  @NotNull
-  public String getRunnerId() {
+  public @NotNull String getRunnerId() {
     return "GaugeApplicationRunner";
   }
 

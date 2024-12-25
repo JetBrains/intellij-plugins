@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsFlexBCDependencyEntry;
@@ -24,16 +25,14 @@ class JpsFlexBCDependencyEntryImpl extends JpsFlexDependencyEntryBase<JpsFlexBCD
   }
 
   @Override
-  @NotNull
-  public JpsFlexBCDependencyEntryImpl createCopy() {
+  public @NotNull JpsFlexBCDependencyEntryImpl createCopy() {
     return new JpsFlexBCDependencyEntryImpl(this);
   }
 
 // ------------------------------------
 
   @Override
-  @Nullable
-  public JpsFlexBuildConfiguration getBC() {
+  public @Nullable JpsFlexBuildConfiguration getBC() {
     final JpsFlexBCReference bcRef = myContainer.getChild(JpsFlexBCReferenceImpl.ROLE);
     return bcRef == null ? null : bcRef.resolve();
   }

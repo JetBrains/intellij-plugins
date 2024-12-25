@@ -15,7 +15,7 @@ public class PerforceLocalConnection extends AbstractP4Connection {
   private final ConnectionId myConnectionId;
   private final File myCwd;
 
-  public PerforceLocalConnection(@NotNull final String workingDir) {
+  public PerforceLocalConnection(final @NotNull String workingDir) {
     myCwd = new File(workingDir);
     myConnectionId = new ConnectionId(null, workingDir);
   }
@@ -28,15 +28,13 @@ public class PerforceLocalConnection extends AbstractP4Connection {
     runP4CommandImpl(parameters, ArrayUtilRt.EMPTY_STRING_ARRAY, p4args, retVal, inputStream);
   }
 
-  @NotNull
   @Override
-  public File getWorkingDirectory() {
+  public @NotNull File getWorkingDirectory() {
     return myCwd;
   }
 
-  @NotNull
   @Override
-  public ConnectionKey getConnectionKey() {
+  public @NotNull ConnectionKey getConnectionKey() {
     throw new UnsupportedOperationException();
   }
 

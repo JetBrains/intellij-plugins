@@ -16,9 +16,9 @@
 package com.intellij.protobuf.ide.editing;
 
 import com.intellij.lang.CodeDocumentationAwareCommenter;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -28,39 +28,33 @@ import org.jetbrains.annotations.Nullable;
 public class PbCommenter implements CodeDocumentationAwareCommenter {
   public static final PbCommenter INSTANCE = new PbCommenter();
 
-  @Nullable
   @Override
-  public IElementType getLineCommentTokenType() {
+  public @Nullable IElementType getLineCommentTokenType() {
     return ProtoTokenTypes.LINE_COMMENT;
   }
 
-  @Nullable
   @Override
-  public IElementType getBlockCommentTokenType() {
+  public @Nullable IElementType getBlockCommentTokenType() {
     return ProtoTokenTypes.BLOCK_COMMENT;
   }
 
-  @Nullable
   @Override
-  public IElementType getDocumentationCommentTokenType() {
+  public @Nullable IElementType getDocumentationCommentTokenType() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDocumentationCommentPrefix() {
+  public @Nullable String getDocumentationCommentPrefix() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDocumentationCommentLinePrefix() {
+  public @Nullable String getDocumentationCommentLinePrefix() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDocumentationCommentSuffix() {
+  public @Nullable String getDocumentationCommentSuffix() {
     return null;
   }
 
@@ -69,33 +63,28 @@ public class PbCommenter implements CodeDocumentationAwareCommenter {
     return false;
   }
 
-  @Nullable
   @Override
-  public String getLineCommentPrefix() {
+  public @Nullable String getLineCommentPrefix() {
     return "//";
   }
 
-  @Nullable
   @Override
-  public String getBlockCommentPrefix() {
+  public @Nullable String getBlockCommentPrefix() {
     return "/*";
   }
 
-  @Nullable
   @Override
-  public String getBlockCommentSuffix() {
+  public @Nullable String getBlockCommentSuffix() {
     return "*/";
   }
 
-  @Nullable
   @Override
-  public String getCommentedBlockCommentPrefix() {
+  public @Nullable String getCommentedBlockCommentPrefix() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getCommentedBlockCommentSuffix() {
+  public @Nullable String getCommentedBlockCommentSuffix() {
     return null;
   }
 }

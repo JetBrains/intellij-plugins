@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
@@ -56,8 +56,7 @@ public final class PhoneGapStartupActivity implements StartupActivity, DumbAware
     return isIonic2WwwDirectory(candidateParent);
   }
 
-  @Nullable
-  public static VirtualFile getEventParent(@NotNull VFileEvent event) {
+  public static @Nullable VirtualFile getEventParent(@NotNull VFileEvent event) {
     VirtualFile candidateParent;
     if (event instanceof VFileCreateEvent) {
       candidateParent = ((VFileCreateEvent)event).getParent();
@@ -84,16 +83,14 @@ public final class PhoneGapStartupActivity implements StartupActivity, DumbAware
     return parent.findChild(IONIC_CONFIG) != null && parent.findChild("tsconfig.json") != null;
   }
 
-  @NotNull
-  public static Set<String> getExcludedFolderNames(@NotNull VFileEvent event) {
+  public static @NotNull Set<String> getExcludedFolderNames(@NotNull VFileEvent event) {
     return Collections.singleton(VirtualFileManager.constructUrl(event.getFileSystem().getProtocol(), event.getPath()));
   }
 
-  @Nullable
-  public static Runnable getUpdateModuleExcludeByFSEventRunnable(@NotNull Project project,
-                                                                  @NotNull VirtualFile parent,
-                                                                  @NotNull Set<String> oldToUpdateFolders,
-                                                                  @NotNull Set<String> newToUpdateFolders) {
+  public static @Nullable Runnable getUpdateModuleExcludeByFSEventRunnable(@NotNull Project project,
+                                                                           @NotNull VirtualFile parent,
+                                                                           @NotNull Set<String> oldToUpdateFolders,
+                                                                           @NotNull Set<String> newToUpdateFolders) {
     Module module = ModuleUtilCore.findModuleForFile(parent, project);
     if (module == null) {
       return null;
@@ -142,7 +139,7 @@ public final class PhoneGapStartupActivity implements StartupActivity, DumbAware
     updateExcludedFolders(module, contentRoot, oldExcludedFolders, ContainerUtil.newHashSet(directoryToExclude.getUrl()));
   }
 
-  private static Collection<String> getOldExcludedFolders(@NotNull Module module, @NotNull final VirtualFile root) {
+  private static Collection<String> getOldExcludedFolders(@NotNull Module module, final @NotNull VirtualFile root) {
     return ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), url -> url.startsWith(root.getUrl()));
   }
 

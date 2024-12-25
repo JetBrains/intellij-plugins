@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementImpl implements DartComponent {
+public abstract class AbstractDartComponentImpl extends DartPsiCompositeElementImpl implements DartComponent {
   public AbstractDartComponentImpl(@NotNull ASTNode node) {
     super(node);
   }
@@ -42,9 +42,8 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
     return this;
   }
 
-  @Nullable
   @Override
-  public PsiElement getNameIdentifier() {
+  public @Nullable PsiElement getNameIdentifier() {
     // getComponentName returns composite of composite WTF?
     DartComponentName name = getComponentName();
     PsiElement id = name == null ? null : name.getFirstChild();
@@ -136,8 +135,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   }
 
   @Override
-  @Nullable
-  public DartMetadata getMetadataByName(@NotNull final String name) {
+  public @Nullable DartMetadata getMetadataByName(final @NotNull String name) {
     for (DartMetadata metadata : PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class)) {
       if (name.equals(metadata.getReferenceExpression().getText())) {
         return metadata;
@@ -179,8 +177,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
         return result.toString();
       }
 
-      @Nullable
-      private String getComponentName() {
+      private @Nullable String getComponentName() {
         String name = getName();
         if (DartComponentType.typeOf(AbstractDartComponentImpl.this) == DartComponentType.CONSTRUCTOR) {
           DartClass dartClass = PsiTreeUtil.getParentOfType(AbstractDartComponentImpl.this, DartClass.class);

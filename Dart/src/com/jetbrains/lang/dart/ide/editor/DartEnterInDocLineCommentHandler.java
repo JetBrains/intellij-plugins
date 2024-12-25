@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
@@ -23,11 +23,11 @@ public final class DartEnterInDocLineCommentHandler extends EnterHandlerDelegate
 
   // EnterInLineCommentHandler doesn't work well enough for Dart doc comments
   @Override
-  public Result preprocessEnter(@NotNull final PsiFile file,
-                                @NotNull final Editor editor,
-                                @NotNull final Ref<Integer> caretOffsetRef,
+  public Result preprocessEnter(final @NotNull PsiFile file,
+                                final @NotNull Editor editor,
+                                final @NotNull Ref<Integer> caretOffsetRef,
                                 final @NotNull Ref<Integer> caretAdvance,
-                                @NotNull final DataContext dataContext,
+                                final @NotNull DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
     if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;
 

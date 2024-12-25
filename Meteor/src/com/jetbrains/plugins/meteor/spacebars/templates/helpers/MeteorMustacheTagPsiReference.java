@@ -60,8 +60,7 @@ public class MeteorMustacheTagPsiReference extends PsiPolyVariantReferenceBase<H
     return super.isReferenceTo(element);
   }
 
-  @Nullable
-  public static String getTemplateName(PsiElement myElement) {
+  public static @Nullable String getTemplateName(PsiElement myElement) {
     if (!myElement.isValid()) return null;
 
     PsiElement parent = getTagForPlace(myElement);
@@ -80,8 +79,7 @@ public class MeteorMustacheTagPsiReference extends PsiPolyVariantReferenceBase<H
     return name.getValue();
   }
 
-  @Nullable
-  public static PsiElement getTagForPlace(PsiElement myElement) {
+  public static @Nullable PsiElement getTagForPlace(PsiElement myElement) {
     PsiFile file = myElement.getContainingFile();
     if (file == null) return null;
     FileViewProvider provider = file.getViewProvider();

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.lang.html.HTMLLanguage;
@@ -31,7 +31,7 @@ public final class DartReferenceContributor extends PsiReferenceContributor {
   private static final Logger LOG = Logger.getInstance(DartReferenceContributor.class);
 
   @Override
-  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(
       or(psiElement(DartTokenTypesSets.MULTI_LINE_DOC_COMMENT),
          psiElement(DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT),
@@ -44,7 +44,7 @@ public final class DartReferenceContributor extends PsiReferenceContributor {
 
   private static class DartReferenceProvider extends PsiReferenceProvider {
     @Override
-    public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, final @NotNull ProcessingContext context) {
       if (element.getText().contains(DartMultiHostInjector.STRING_TEMPLATE_PLACEHOLDER)) {
         return PsiReference.EMPTY_ARRAY;
       }

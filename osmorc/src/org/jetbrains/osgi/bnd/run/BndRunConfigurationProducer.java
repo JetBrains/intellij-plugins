@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.Location;
@@ -49,18 +49,16 @@ abstract class BndRunConfigurationProducer extends LazyRunConfigurationProducer<
     return false;
   }
 
-  final static class Launch extends BndRunConfigurationProducer {
-    @NotNull
+  static final class Launch extends BndRunConfigurationProducer {
     @Override
-    public ConfigurationFactory getConfigurationFactory() {
+    public @NotNull ConfigurationFactory getConfigurationFactory() {
       return BndRunConfigurationType.getInstance().getConfigurationFactories()[0];
     }
   }
 
-  final static class Test extends BndRunConfigurationProducer {
-    @NotNull
+  static final class Test extends BndRunConfigurationProducer {
     @Override
-    public ConfigurationFactory getConfigurationFactory() {
+    public @NotNull ConfigurationFactory getConfigurationFactory() {
       return BndRunConfigurationType.getInstance().getConfigurationFactories()[1];
     }
   }

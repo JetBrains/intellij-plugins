@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.parser;
 
 import com.intellij.lang.ASTNode;
@@ -22,8 +22,7 @@ public final class DroolsParserDefinition implements ParserDefinition {
   private static final IFileElementType DROOLS_FILE = new IFileElementType("DROOLS_FILE", DroolsLanguage.INSTANCE);
 
   @Override
-  @NotNull
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new DroolsLexer();
   }
 
@@ -38,20 +37,17 @@ public final class DroolsParserDefinition implements ParserDefinition {
   }
 
   @Override
-  @NotNull
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return DroolsTokenTypeSets.COMMENTS;
   }
 
   @Override
-  @NotNull
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return DroolsTokenTypeSets.STRINGS;
   }
 
   @Override
-  @NotNull
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     if (node.getElementType() instanceof DroolsJavaStatementLazyParseableElementType) {
       return new DroolsCompositeJavaStatementElement(node);
     }

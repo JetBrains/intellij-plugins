@@ -4,9 +4,9 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.impl.LiveTemplateWeigher;
 import com.intellij.codeInsight.lookup.*;
 import com.intellij.execution.ExecutionException;
+import com.intellij.javascript.bower.browsePackages.BowerPackageSearcher;
 import com.intellij.json.codeinsight.JsonStringPropertyInsertHandler;
 import com.intellij.json.psi.*;
-import com.intellij.javascript.bower.browsePackages.BowerPackageSearcher;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationUtil;
@@ -44,8 +44,7 @@ public class BowerCompletionContributor extends CompletionContributor {
     }
   }
 
-  @Nullable
-  private static JsonProperty findEnclosingDependenciesProperty(@NotNull PsiElement element) {
+  private static @Nullable JsonProperty findEnclosingDependenciesProperty(@NotNull PsiElement element) {
     JsonObject obj = PsiTreeUtil.getParentOfType(element, JsonObject.class, false);
     if (obj != null) {
       JsonProperty dependenciesProperty = ObjectUtils.tryCast(obj.getParent(), JsonProperty.class);
@@ -65,9 +64,8 @@ public class BowerCompletionContributor extends CompletionContributor {
       CompletionSorter sorter = CompletionSorter.emptySorter()
         .weigh(new LiveTemplateWeigher())
         .weigh(new LookupElementWeigher("priority") {
-          @NotNull
           @Override
-          public Double weigh(@NotNull LookupElement element) {
+          public @NotNull Double weigh(@NotNull LookupElement element) {
             PrioritizedLookupElement<?> ple = ObjectUtils.tryCast(element, PrioritizedLookupElement.class);
             return ple != null ? ple.getPriority() : 0.0;
           }
@@ -198,8 +196,7 @@ public class BowerCompletionContributor extends CompletionContributor {
     }
   }
 
-  @NotNull
-  private static List<String> getOrFetchVersions(@NotNull String packageName, @NotNull BowerSettings settings) {
+  private static @NotNull List<String> getOrFetchVersions(@NotNull String packageName, @NotNull BowerSettings settings) {
     List<String> versions = ourVersionCache.get(packageName);
     if (versions != null) {
       return versions;
@@ -237,8 +234,7 @@ public class BowerCompletionContributor extends CompletionContributor {
       order));
   }
 
-  @NotNull
-  private static String getVersion(@NotNull CompletionParameters parameters, @NotNull String version) {
+  private static @NotNull String getVersion(@NotNull CompletionParameters parameters, @NotNull String version) {
     PsiElement position = parameters.getOriginalPosition();
     if (position != null) {
       String text = StringUtil.unquoteString(position.getText());

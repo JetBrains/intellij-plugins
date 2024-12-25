@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.stub.index;
 
+import com.intellij.protobuf.lang.psi.PbNamedElement;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.protobuf.lang.psi.PbNamedElement;
 import org.jetbrains.annotations.NotNull;
 
 public class ShortNameIndex extends StringStubIndexExtension<PbNamedElement> {
@@ -31,8 +31,7 @@ public class ShortNameIndex extends StringStubIndexExtension<PbNamedElement> {
   }
 
   @Override
-  @NotNull
-  public StubIndexKey<String, PbNamedElement> getKey() {
+  public @NotNull StubIndexKey<String, PbNamedElement> getKey() {
     return KEY;
   }
 

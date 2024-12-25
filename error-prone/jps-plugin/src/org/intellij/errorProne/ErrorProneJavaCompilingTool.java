@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.errorProne;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,22 +21,19 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
   private static final String VERSION_PROPERTY = "idea.error.prone.version";//duplicates ErrorProneClasspathProvider.VERSION_PROPERTY
   private static final String COMPILER_PATH_PROPERTY = "idea.error.prone.compiler.path";//duplicates ErrorProneClasspathProvider.COMPILER_PATH_PROPERTY
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return COMPILER_ID;
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     String version = System.getProperty(VERSION_PROPERTY);
     return "error-prone compiler " + (version != null ? version : "(unknown version)");
   }
 
-  @NotNull
   @Override
-  public JavaCompiler createCompiler() throws CannotCreateJavaCompilerException {
+  public @NotNull JavaCompiler createCompiler() throws CannotCreateJavaCompilerException {
     return new JavacCompilerTool().createCompiler();
   }
 
@@ -44,9 +42,8 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
     return true;
   }
 
-  @NotNull
   @Override
-  public List<File> getAdditionalClasspath() {
+  public @NotNull List<File> getAdditionalClasspath() {
     return Collections.emptyList();
   }
 
@@ -79,8 +76,7 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
     options.add(("-Xplugin:ErrorProne " + StringUtil.join(errorProneOptions, " ")).trim());
   }
 
-  @NotNull
-  protected String getCompilerPath(String processorPathOption) {
+  protected @NotNull String getCompilerPath(String processorPathOption) {
     String compilerPathProperty = System.getProperty(COMPILER_PATH_PROPERTY);
     LOG.assertTrue(compilerPathProperty != null);
     if (processorPathOption == null || processorPathOption.isEmpty()) {

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.run;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
@@ -11,8 +12,8 @@ import org.jetbrains.jps.model.module.JpsTypedModule;
 
 public abstract class JpsBCBasedRunnerParameters<Self extends JpsBCBasedRunnerParameters<Self>> extends JpsElementBase<Self> {
 
-  @NotNull protected String myModuleName = "";
-  @NotNull protected String myBCName = "";
+  protected @NotNull String myModuleName = "";
+  protected @NotNull String myBCName = "";
 
   protected JpsBCBasedRunnerParameters() {
   }
@@ -22,26 +23,23 @@ public abstract class JpsBCBasedRunnerParameters<Self extends JpsBCBasedRunnerPa
     myBCName = original.myBCName;
   }
 
-  @NotNull
-  public String getModuleName() {
+  public @NotNull String getModuleName() {
     return myModuleName;
   }
 
-  public void setModuleName(@NotNull final String moduleName) {
+  public void setModuleName(final @NotNull String moduleName) {
     myModuleName = moduleName;
   }
 
-  @NotNull
-  public String getBCName() {
+  public @NotNull String getBCName() {
     return myBCName;
   }
 
-  public void setBCName(@NotNull final String BCName) {
+  public void setBCName(final @NotNull String BCName) {
     myBCName = BCName;
   }
 
-  @Nullable
-  public JpsFlexBuildConfiguration getBC(final JpsProject project) {
+  public @Nullable JpsFlexBuildConfiguration getBC(final JpsProject project) {
     if (!myModuleName.isEmpty() && !myBCName.isEmpty()) {
       for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : project.getModules(JpsFlexModuleType.INSTANCE)) {
         if (module.getName().equals(myModuleName)) {

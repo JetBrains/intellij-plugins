@@ -20,8 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 interface PbOptionExpressionBase extends PbElement {
   /** Returns the {@link ProtoBooleanValue} value, or <code>null</code> if one does not exist. */
-  @Nullable
-  default ProtoBooleanValue getBooleanValue() {
+  default @Nullable ProtoBooleanValue getBooleanValue() {
     return PsiTreeUtil.getChildOfType(this, ProtoBooleanValue.class);
   }
 }

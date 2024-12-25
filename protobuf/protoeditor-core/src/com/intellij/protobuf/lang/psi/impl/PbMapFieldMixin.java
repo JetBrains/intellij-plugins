@@ -36,9 +36,8 @@ abstract class PbMapFieldMixin extends PbFieldBase implements PbMapField {
     super(node);
   }
 
-  @NotNull
   @Override
-  public List<PbSymbol> getAdditionalSiblings() {
+  public @NotNull List<PbSymbol> getAdditionalSiblings() {
     PbMessageType mapEntry = createMapEntry(mapEntryName(getName()), getKeyType(), getValueType());
     if (mapEntry != null) {
       return Collections.singletonList(mapEntry);
@@ -46,9 +45,8 @@ abstract class PbMapFieldMixin extends PbFieldBase implements PbMapField {
     return Collections.emptyList();
   }
 
-  @Nullable
   @Override
-  public PbTypeName getTypeName() {
+  public @Nullable PbTypeName getTypeName() {
     // A map field's type is its associated generated map entry message.
     String name = getName();
     if (name == null) {

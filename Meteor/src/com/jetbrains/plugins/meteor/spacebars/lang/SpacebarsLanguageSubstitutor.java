@@ -13,9 +13,8 @@ public final class SpacebarsLanguageSubstitutor extends HbLanguageSubstitutor {
 
   public static final String METEOR_ANGULAR_EXTENSION = ".ng.html";
 
-  @Nullable
   @Override
-  public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
+  public @Nullable Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
     Language language = super.getLanguage(file, project);
     if (null != language && MeteorFacade.getInstance().isMeteorProject(project)) {
       return file.getName().endsWith(METEOR_ANGULAR_EXTENSION) ? HTMLLanguage.INSTANCE : SpacebarsLanguageDialect.INSTANCE;

@@ -1,24 +1,23 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.jetbrains.lang.dart.DartComponentType;
 import org.jetbrains.annotations.Nullable;
 
 public class DartComponentInfo {
-  @Nullable private final DartComponentType myComponentType;
-  @Nullable private final String myLibraryName;
+  private final @Nullable DartComponentType myComponentType;
+  private final @Nullable String myLibraryName;
 
-  public DartComponentInfo(@Nullable final DartComponentType componentType, @Nullable final String libraryName) {
+  public DartComponentInfo(final @Nullable DartComponentType componentType, final @Nullable String libraryName) {
     myComponentType = componentType;
     myLibraryName = libraryName;
   }
 
-  @Nullable
-  public DartComponentType getComponentType() {
+  public @Nullable DartComponentType getComponentType() {
     return myComponentType;
   }
 
-  @Nullable
-  public String getLibraryName() {
+  public @Nullable String getLibraryName() {
     return myLibraryName;
   }
 

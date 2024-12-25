@@ -26,8 +26,7 @@ public class ShelvedChange extends PerforceAbstractChange {
     setFile(localFile);
   }
 
-  @NotNull 
-  public String getDepotPath() {
+  public @NotNull String getDepotPath() {
     return myDepotPath;
   }
 

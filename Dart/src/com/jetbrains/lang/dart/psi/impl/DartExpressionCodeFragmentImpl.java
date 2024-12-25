@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -57,8 +58,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
   }
 
   @Override
-  @NotNull
-  public FileViewProvider getViewProvider() {
+  public @NotNull FileViewProvider getViewProvider() {
     if (myViewProvider != null) return myViewProvider;
     return super.getViewProvider();
   }
@@ -101,9 +101,8 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
       super("DART_CODE_FRAGMENT", DartLanguage.INSTANCE);
     }
 
-    @Nullable
     @Override
-    public ASTNode parseContents(@NotNull final ASTNode chameleon) {
+    public @Nullable ASTNode parseContents(final @NotNull ASTNode chameleon) {
       final PsiElement psi = new DartPsiCompositeElementImpl(chameleon);
       return doParseContents(chameleon, psi);
     }

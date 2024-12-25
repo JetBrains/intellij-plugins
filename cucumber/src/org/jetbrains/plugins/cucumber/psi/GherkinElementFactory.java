@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,7 +17,7 @@ public final class GherkinElementFactory {
   private GherkinElementFactory() {
   }
 
-  public static GherkinFeature createFeatureFromText(final Project project, @NotNull final String text) {
+  public static GherkinFeature createFeatureFromText(final Project project, final @NotNull String text) {
     final PsiElement[] list = getTopLevelElements(project, text);
     for (PsiElement psiElement : list) {
       if (psiElement instanceof GherkinFeature) {
@@ -29,7 +29,7 @@ public final class GherkinElementFactory {
     return null;
   }
 
-  public static GherkinStepsHolder createScenarioFromText(final Project project, final String language, @NotNull final String text) {
+  public static GherkinStepsHolder createScenarioFromText(final Project project, final String language, final @NotNull String text) {
     final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
     final GherkinKeywordTable keywordsTable = provider.getKeywordsTable(language);
     String featureText = "# language: " + language + "\n" + keywordsTable.getFeatureSectionKeyword() + ": Dummy\n" + text;
@@ -37,7 +37,7 @@ public final class GherkinElementFactory {
     return feature.getScenarios() [0];
   }
 
-  public static PsiElement[] getTopLevelElements(final Project project, @NotNull final String text) {
+  public static PsiElement[] getTopLevelElements(final Project project, final @NotNull String text) {
     return CucumberElementFactory.createTempPsiFile(project, text).getChildren();
   }
 }

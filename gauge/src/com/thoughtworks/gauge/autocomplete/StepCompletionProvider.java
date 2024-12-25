@@ -62,7 +62,7 @@ public final class StepCompletionProvider extends CompletionProvider<CompletionP
   }
 
   @Override
-  public void addCompletions(@NotNull final CompletionParameters parameters, @NotNull ProcessingContext context,
+  public void addCompletions(final @NotNull CompletionParameters parameters, @NotNull ProcessingContext context,
                              @NotNull CompletionResultSet resultSet) {
     resultSet.stopHere();
     final String prefix = getPrefix(parameters);
@@ -157,8 +157,7 @@ public final class StepCompletionProvider extends CompletionProvider<CompletionP
     return steps.values();
   }
 
-  @NotNull
-  private static Map<String, Type> getImplementedSteps(Module module) {
+  private static @NotNull Map<String, Type> getImplementedSteps(Module module) {
     Map<String, Type> steps = new HashMap<>();
     Collection<PsiMethod> methods = StepUtil.getStepMethods(module);
     for (PsiMethod m : methods) {

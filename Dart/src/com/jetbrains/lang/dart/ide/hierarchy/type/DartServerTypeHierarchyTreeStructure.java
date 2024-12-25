@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -35,8 +35,7 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
     return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
-  @NotNull
-  private static HierarchyNodeDescriptor buildHierarchyElement(@NotNull final Project project, @NotNull final DartClass dartClass) {
+  private static @NotNull HierarchyNodeDescriptor buildHierarchyElement(final @NotNull Project project, final @NotNull DartClass dartClass) {
     if (DartResolveUtil.OBJECT.equals(dartClass.getName())) {
       return new DartTypeHierarchyNodeDescriptor(project, null, dartClass, true);
     }
@@ -54,9 +53,8 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
     return baseDescriptor;
   }
 
-  @Nullable
-  private static HierarchyNodeDescriptor buildSuperClassHierarchy(@NotNull final Project project,
-                                                                  @NotNull final List<? extends TypeHierarchyItem> items) {
+  private static @Nullable HierarchyNodeDescriptor buildSuperClassHierarchy(final @NotNull Project project,
+                                                                            final @NotNull List<? extends TypeHierarchyItem> items) {
     HierarchyNodeDescriptor descriptor = null;
     final DartClass[] superClasses = filterSuperClasses(project, items);
     for (int i = superClasses.length - 1; i >= 0; i--) {
@@ -70,7 +68,7 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
     return descriptor;
   }
 
-  public static DartClass @NotNull [] filterSuperClasses(@NotNull final Project project, @NotNull final List<? extends TypeHierarchyItem> items) {
+  public static DartClass @NotNull [] filterSuperClasses(final @NotNull Project project, final @NotNull List<? extends TypeHierarchyItem> items) {
     if (items.isEmpty()) return new DartClass[]{};
 
     final Set<TypeHierarchyItem> seenItems = new HashSet<>();

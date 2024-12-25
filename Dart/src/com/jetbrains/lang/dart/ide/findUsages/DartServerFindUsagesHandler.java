@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
@@ -27,12 +27,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartServerFindUsagesHandler extends FindUsagesHandler {
-  public DartServerFindUsagesHandler(@NotNull final PsiElement element) {
+  public DartServerFindUsagesHandler(final @NotNull PsiElement element) {
     super(mayBeChangeToNameIdentifier(element));
   }
 
-  @NotNull
-  private static PsiElement mayBeChangeToNameIdentifier(@NotNull final PsiElement element) {
+  private static @NotNull PsiElement mayBeChangeToNameIdentifier(final @NotNull PsiElement element) {
     if (element instanceof PsiNameIdentifierOwner) {
       final PsiElement nameIdentifier = ((PsiNameIdentifierOwner)element).getNameIdentifier();
       if (nameIdentifier != null) return nameIdentifier;
@@ -41,9 +40,9 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   }
 
   @Override
-  public boolean processElementUsages(@NotNull final PsiElement elementToSearch,
-                                      @NotNull final Processor<? super UsageInfo> processor,
-                                      @NotNull final FindUsagesOptions options) {
+  public boolean processElementUsages(final @NotNull PsiElement elementToSearch,
+                                      final @NotNull Processor<? super UsageInfo> processor,
+                                      final @NotNull FindUsagesOptions options) {
     final SearchScope scope = options.searchScope;
     final Project project = ReadAction.compute(this::getProject);
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
@@ -88,10 +87,9 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
     return true;
   }
 
-  @Nullable
-  public static UsageInfo getUsageInfo(@NotNull final PsiElement usageElement,
-                                       @NotNull final TextRange range,
-                                       final boolean potentialUsage) {
+  public static @Nullable UsageInfo getUsageInfo(final @NotNull PsiElement usageElement,
+                                                 final @NotNull TextRange range,
+                                                 final boolean potentialUsage) {
     final int offset = range.getStartOffset() - usageElement.getTextRange().getStartOffset();
     boolean nonCodeUsage = usageElement instanceof PsiComment || usageElement.getParent() instanceof PsiComment;
 
@@ -101,8 +99,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
     return usageInfo;
   }
 
-  @Nullable
-  public static PsiElement getUsagePsiElement(@NotNull final PsiFile psiFile, @NotNull final TextRange textRange) {
+  public static @Nullable PsiElement getUsagePsiElement(final @NotNull PsiFile psiFile, final @NotNull TextRange textRange) {
     // try to find DartReference matching textRange. If not possible then return the topmost element matching textRange.
     // If neither found then return minimal element that includes the textRange.
     PsiElement element = psiFile.findElementAt(textRange.getStartOffset());

@@ -25,9 +25,8 @@ abstract class PbStatementBase extends PbElementBase implements PbStatement {
     super(node);
   }
 
-  @NotNull
   @Override
-  public String getPresentableText() {
+  public @NotNull String getPresentableText() {
     String name = getName();
     return name != null ? name : getText();
   }

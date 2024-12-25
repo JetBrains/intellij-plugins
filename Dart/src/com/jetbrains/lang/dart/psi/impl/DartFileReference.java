@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.openapi.project.Project;
@@ -31,11 +31,11 @@ import java.util.List;
 public class DartFileReference implements PsiPolyVariantReference {
   private static final Resolver RESOLVER = new Resolver();
 
-  @NotNull private final DartUriElement myUriElement;
-  @NotNull private final String myUri;
-  @NotNull private final TextRange myRange;
+  private final @NotNull DartUriElement myUriElement;
+  private final @NotNull String myUri;
+  private final @NotNull TextRange myRange;
 
-  public DartFileReference(@NotNull final DartUriElement uriElement, @NotNull final String uri) {
+  public DartFileReference(final @NotNull DartUriElement uriElement, final @NotNull String uri) {
     final int offset = uriElement.getText().indexOf(uri);
     assert offset >= 0 : uriElement.getText() + " doesn't contain " + uri;
 
@@ -44,15 +44,13 @@ public class DartFileReference implements PsiPolyVariantReference {
     myRange = TextRange.create(offset, offset + uri.length());
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return myUriElement;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     return myRange;
   }
 
@@ -61,29 +59,27 @@ public class DartFileReference implements PsiPolyVariantReference {
     return ResolveCache.getInstance(myUriElement.getProject()).resolveWithCaching(this, RESOLVER, true, incompleteCode);
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     final ResolveResult[] resolveResults = multiResolve(false);
     return resolveResults.length != 1 ||
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return myUri;
   }
 
   @Override
-  public PsiElement handleElementRename(@NotNull final String newFileName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(final @NotNull String newFileName) throws IncorrectOperationException {
     final int index = Math.max(myUri.lastIndexOf('/'), myUri.lastIndexOf("\\\\"));
     final String newUri = index < 0 ? newFileName : myUri.substring(0, index) + "/" + newFileName;
     return updateUri(newUri);
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
+  public PsiElement bindToElement(final @NotNull PsiElement element) throws IncorrectOperationException {
     if (element instanceof PsiFile) {
       final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(myUriElement.getContainingFile());
       final VirtualFile targetFile = DartResolveUtil.getRealVirtualFile(((PsiFile)element));
@@ -107,7 +103,7 @@ public class DartFileReference implements PsiPolyVariantReference {
     return myUriElement;
   }
 
-  private PsiElement updateUri(@NotNull final String newUri) {
+  private PsiElement updateUri(final @NotNull String newUri) {
     final String uriElementText = myUriElement.getText();
     final String startQuote = uriElementText.substring(0, myRange.getStartOffset());
     final String endQuote = uriElementText.substring(myRange.getEndOffset());
@@ -121,7 +117,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   }
 
   @Override
-  public boolean isReferenceTo(@NotNull final PsiElement element) {
+  public boolean isReferenceTo(final @NotNull PsiElement element) {
     return element instanceof DartFile && element.equals(resolve());
   }
 
@@ -132,7 +128,7 @@ public class DartFileReference implements PsiPolyVariantReference {
 
   private static class Resolver implements ResolveCache.PolyVariantResolver<DartFileReference> {
     @Override
-    public ResolveResult @NotNull [] resolve(@NotNull final DartFileReference reference, final boolean incompleteCode) {
+    public ResolveResult @NotNull [] resolve(final @NotNull DartFileReference reference, final boolean incompleteCode) {
       final PsiFile refPsiFile = reference.getElement().getContainingFile();
       final int refOffset = reference.getElement().getTextRange().getStartOffset();
       final int refLength = reference.getElement().getTextRange().getLength();

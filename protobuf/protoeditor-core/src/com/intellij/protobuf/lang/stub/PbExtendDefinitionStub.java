@@ -15,11 +15,11 @@
  */
 package com.intellij.protobuf.lang.stub;
 
+import com.intellij.protobuf.lang.psi.PbExtendDefinition;
+import com.intellij.protobuf.lang.stub.type.PbExtendDefinitionType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.PbExtendDefinition;
-import com.intellij.protobuf.lang.stub.type.PbExtendDefinitionType;
 import org.jetbrains.annotations.Nullable;
 
 public class PbExtendDefinitionStub extends StubBase<PbExtendDefinition>
@@ -40,9 +40,8 @@ public class PbExtendDefinitionStub extends StubBase<PbExtendDefinition>
     return this.extendedType;
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     PbStatementOwnerStub<?> owner = getOwner();
     if (owner != null) {
       return owner.getChildScope();

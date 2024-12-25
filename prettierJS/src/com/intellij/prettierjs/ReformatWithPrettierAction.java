@@ -295,7 +295,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void processFileIterator(@NotNull Project project,
-                                          @NotNull final FileTreeIterator fileIterator,
+                                          final @NotNull FileTreeIterator fileIterator,
                                           boolean reportSkippedFiles,
                                           @NotNull ErrorHandler errorHandler) {
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {

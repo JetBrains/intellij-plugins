@@ -16,14 +16,14 @@
 package com.intellij.protobuf.lang.stub.type;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.io.StringRef;
 import com.intellij.protobuf.lang.psi.PbMessageDefinition;
 import com.intellij.protobuf.lang.psi.impl.PbMessageDefinitionImpl;
 import com.intellij.protobuf.lang.stub.PbMessageDefinitionStub;
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex;
 import com.intellij.protobuf.lang.stub.index.ShortNameIndex;
+import com.intellij.psi.stubs.*;
+import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -40,16 +40,14 @@ public class PbMessageDefinitionType
     return new PbMessageDefinitionImpl(stub, this);
   }
 
-  @NotNull
   @Override
-  public PbMessageDefinitionStub createStub(
+  public @NotNull PbMessageDefinitionStub createStub(
       @NotNull PbMessageDefinition psi, StubElement parentStub) {
     return new PbMessageDefinitionStub(parentStub, this, psi.getName());
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "protobuf.MESSAGE_DEFINITION";
   }
 
@@ -59,9 +57,8 @@ public class PbMessageDefinitionType
     dataStream.writeName(stub.getName());
   }
 
-  @NotNull
   @Override
-  public PbMessageDefinitionStub deserialize(
+  public @NotNull PbMessageDefinitionStub deserialize(
       @NotNull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     String name = null;

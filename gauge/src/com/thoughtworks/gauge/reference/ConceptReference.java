@@ -35,9 +35,8 @@ public final class ConceptReference extends PsiReferenceBase<ConceptStep> {
     super(element);
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     SpecStepImpl step = new SpecStepImpl(this.myElement.getNode());
     step.setConcept(true);
     return StepUtil.findStepImpl(step, moduleForPsiElement(this.myElement));

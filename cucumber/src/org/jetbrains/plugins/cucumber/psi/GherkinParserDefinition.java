@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.ASTNode;
@@ -21,8 +21,7 @@ public final class GherkinParserDefinition implements ParserDefinition {
   public static final IFileElementType GHERKIN_FILE = new IFileElementType(GherkinLanguage.INSTANCE);
 
   @Override
-  @NotNull
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider(true));
   }
 
@@ -37,20 +36,17 @@ public final class GherkinParserDefinition implements ParserDefinition {
   }
 
   @Override
-  @NotNull
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return GherkinTokenTypes.COMMENTS;
   }
 
   @Override
-  @NotNull
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return TokenSet.EMPTY;
   }
 
   @Override
-  @NotNull
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     if (node.getElementType() == GherkinElementTypes.FEATURE) return new GherkinFeatureImpl(node);
     if (node.getElementType() == GherkinElementTypes.FEATURE_HEADER) return new GherkinFeatureHeaderImpl(node);
     if (node.getElementType() == GherkinElementTypes.SCENARIO) return new GherkinScenarioImpl(node);

@@ -99,64 +99,64 @@ public final class PerforceRunner implements PerforceRunnerI {
   private static final int MAX_LOG_LENGTH = 10*1000*1000;
   private static final int OPENED_SIZE = 50;
 
-  @NonNls static final String PASSWORD_INVALID_MESSAGE = "Perforce password (P4PASSWD) invalid or unset";
-  @NlsSafe public static final String PASSWORD_INVALID_MESSAGE2 = "Password invalid.";
-  @NlsSafe public static final String AUTHENTICATION_FAILED_MESSAGE = "Authentication failed";
-  @NonNls private static final String SESSION_EXPIRED_MESSAGE = "Your session has expired";
-  @NonNls public static final String PASSWORD_EXPIRED = "Your password has expired";
-  @NonNls public static final String FILES_UP_TO_DATE = "file(s) up-to-date.";
-  @NonNls private static final String PASSWORD_NOT_ALLOWED_MESSAGE = "Password not allowed at this server security level";
-  @NonNls public static final String NO_SUCH_FILE_MESSAGE = " - no such file(s)";
-  @NonNls private static final String STANDARD_REVERT_UNCHANGED_ERROR_MESSAGE = "file(s) not opened on this client";
-  @NonNls private static final String YET_ANOTHER_STANDARD_REVERT_UNCHANGED_ERROR_MESSAGE = "file(s) not opened for edit.";
-  @NonNls private static final String NO_FILES_TO_RESOLVE_MESSAGE = "no file(s) to resolve";
-  @NonNls private static final String UBINARY_MERGING_MESSAGE = "- ubinary/ubinary merge ";
-  @NonNls private static final String BINARY_MERGING_MESSAGE = "- binary/binary merge ";
-  @NonNls private static final String MERGING_MESSAGE = "- merging ";
-  @NonNls private static final String USING_BASE_MESSAGE = "using base";
-  @NonNls public static final String NOT_UNDER_CLIENT_ROOT_MESSAGE = "is not under client's root";
-  @NonNls public static final String NOT_IN_CLIENT_VIEW_MESSAGE = " - file(s) not in client view";
-  @NonNls public static final String NOT_ON_CLIENT_MESSAGE = "file(s) not on client";
-  @NonNls public static final String NOT_OPENED_ON_CLIENT_MESSAGE = "file(s) not opened on this client";
-  @NonNls private static final String NO_FILES_RESOLVED_MESSAGE = "no file(s) resolved";
-  @NonNls private static final String INVALID_REVISION_NUMBER = "Invalid revision number";
+  static final @NonNls String PASSWORD_INVALID_MESSAGE = "Perforce password (P4PASSWD) invalid or unset";
+  public static final @NlsSafe String PASSWORD_INVALID_MESSAGE2 = "Password invalid.";
+  public static final @NlsSafe String AUTHENTICATION_FAILED_MESSAGE = "Authentication failed";
+  private static final @NonNls String SESSION_EXPIRED_MESSAGE = "Your session has expired";
+  public static final @NonNls String PASSWORD_EXPIRED = "Your password has expired";
+  public static final @NonNls String FILES_UP_TO_DATE = "file(s) up-to-date.";
+  private static final @NonNls String PASSWORD_NOT_ALLOWED_MESSAGE = "Password not allowed at this server security level";
+  public static final @NonNls String NO_SUCH_FILE_MESSAGE = " - no such file(s)";
+  private static final @NonNls String STANDARD_REVERT_UNCHANGED_ERROR_MESSAGE = "file(s) not opened on this client";
+  private static final @NonNls String YET_ANOTHER_STANDARD_REVERT_UNCHANGED_ERROR_MESSAGE = "file(s) not opened for edit.";
+  private static final @NonNls String NO_FILES_TO_RESOLVE_MESSAGE = "no file(s) to resolve";
+  private static final @NonNls String UBINARY_MERGING_MESSAGE = "- ubinary/ubinary merge ";
+  private static final @NonNls String BINARY_MERGING_MESSAGE = "- binary/binary merge ";
+  private static final @NonNls String MERGING_MESSAGE = "- merging ";
+  private static final @NonNls String USING_BASE_MESSAGE = "using base";
+  public static final @NonNls String NOT_UNDER_CLIENT_ROOT_MESSAGE = "is not under client's root";
+  public static final @NonNls String NOT_IN_CLIENT_VIEW_MESSAGE = " - file(s) not in client view";
+  public static final @NonNls String NOT_ON_CLIENT_MESSAGE = "file(s) not on client";
+  public static final @NonNls String NOT_OPENED_ON_CLIENT_MESSAGE = "file(s) not opened on this client";
+  private static final @NonNls String NO_FILES_RESOLVED_MESSAGE = "no file(s) resolved";
+  private static final @NonNls String INVALID_REVISION_NUMBER = "Invalid revision number";
 
-  @NonNls public static final String CHANGE = "Change:";
-  @NonNls public static final String DATE = "Date:";
-  @NonNls public static final String CLIENT = "Client:";
-  @NonNls public static final String USER = "User:";
-  @NonNls public static final String STATUS = "Status:";
-  @NonNls public static final String DESCRIPTION = "Description:";
-  @NonNls public static final String JOB = "Job:";
-  @NonNls public static final String JOBS = "Jobs:";
-  @NonNls public static final String FILES = "Files:";
-  @NonNls public static final String OWNER = "Owner:";
-  @NonNls public static final String VIEW = "View:";
-  @NonNls public static final String TYPE = "Type:";
+  public static final @NonNls String CHANGE = "Change:";
+  public static final @NonNls String DATE = "Date:";
+  public static final @NonNls String CLIENT = "Client:";
+  public static final @NonNls String USER = "User:";
+  public static final @NonNls String STATUS = "Status:";
+  public static final @NonNls String DESCRIPTION = "Description:";
+  public static final @NonNls String JOB = "Job:";
+  public static final @NonNls String JOBS = "Jobs:";
+  public static final @NonNls String FILES = "Files:";
+  public static final @NonNls String OWNER = "Owner:";
+  public static final @NonNls String VIEW = "View:";
+  public static final @NonNls String TYPE = "Type:";
 
-  @NonNls public static final String CLIENTSPEC_ROOT = "Root:";
-  @NonNls public static final String CLIENTSPEC_ALTROOTS = "AltRoots:";
+  public static final @NonNls String CLIENTSPEC_ROOT = "Root:";
+  public static final @NonNls String CLIENTSPEC_ALTROOTS = "AltRoots:";
 
-  @NonNls public static final String USER_NAME = "User name:";
-  @NonNls public static final String CLIENT_NAME = "Client name:";
-  @NonNls public static final String CLIENT_HOST = "Client host:";
-  @NonNls public static final String CLIENT_ROOT = "Client root:";
-  @NonNls public static final String CLIENT_UNKNOWN = "Client unknown.";
-  @NonNls public static final String CURRENT_DIRECTORY = "Current directory:";
-  @NonNls public static final String CLIENT_ADDRESS = "Client address:";
-  @NonNls public static final String PEER_ADDRESS = "Client address:";
-  @NonNls public static final String CLIENT_OPTIONS = "Options:";
-  @NonNls public static final String SERVER_ADDRESS = "Server address:";
-  @NonNls public static final String SERVER_ROOT = "Server root:";
-  @NonNls public static final String SERVER_DATE = "Server date:";
-  @NonNls public static final String SERVER_LICENSE = "Server license:";
-  @NonNls public static final String SERVER_VERSION = "Server version:";
+  public static final @NonNls String USER_NAME = "User name:";
+  public static final @NonNls String CLIENT_NAME = "Client name:";
+  public static final @NonNls String CLIENT_HOST = "Client host:";
+  public static final @NonNls String CLIENT_ROOT = "Client root:";
+  public static final @NonNls String CLIENT_UNKNOWN = "Client unknown.";
+  public static final @NonNls String CURRENT_DIRECTORY = "Current directory:";
+  public static final @NonNls String CLIENT_ADDRESS = "Client address:";
+  public static final @NonNls String PEER_ADDRESS = "Client address:";
+  public static final @NonNls String CLIENT_OPTIONS = "Options:";
+  public static final @NonNls String SERVER_ADDRESS = "Server address:";
+  public static final @NonNls String SERVER_ROOT = "Server root:";
+  public static final @NonNls String SERVER_DATE = "Server date:";
+  public static final @NonNls String SERVER_LICENSE = "Server license:";
+  public static final @NonNls String SERVER_VERSION = "Server version:";
 
-  @NonNls private static final DateTimeFormatter DATE_SPEC_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd:HH:mm:ss", Locale.US).withZone(ZoneId.systemDefault());
-  @NonNls private static final String NOW = "now";
-  @NonNls private static final String DEFAULT_CHANGELIST_NUMBER = "default";
+  private static final @NonNls DateTimeFormatter DATE_SPEC_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd:HH:mm:ss", Locale.US).withZone(ZoneId.systemDefault());
+  private static final @NonNls String NOW = "now";
+  private static final @NonNls String DEFAULT_CHANGELIST_NUMBER = "default";
 
-  @NonNls public static final String CLIENT_FILE_PREFIX = "... clientFile ";
+  public static final @NonNls String CLIENT_FILE_PREFIX = "... clientFile ";
 
   private static final int CHUNK_SIZE = SystemProperties.getIntProperty("p4.chunk.size", 2000);
 
@@ -186,8 +186,8 @@ public final class PerforceRunner implements PerforceRunnerI {
 
   private static final Logger LOG = Logger.getInstance(PerforceRunner.class);
   private static final Logger SPECIFICATION_LOG = Logger.getInstance("#PerforceJobSpecificationLogging");
-  @NonNls private static final String DEFAULT_DESCRIPTION = "<none>";
-  @NonNls private static final String DUMP_FILE_NAME = "p4output.log";
+  private static final @NonNls String DEFAULT_DESCRIPTION = "<none>";
+  private static final @NonNls String DUMP_FILE_NAME = "p4output.log";
 
   private static final String CLIENT_VERSION_REV = "Rev.";
 
@@ -218,15 +218,14 @@ public final class PerforceRunner implements PerforceRunnerI {
     return myProxy.getProxy();
   }
 
-  public Map<String, List<String>> getInfo(@NotNull final P4Connection connection) throws VcsException {
-    @NonNls final String[] p4args = {"info"};
+  public Map<String, List<String>> getInfo(final @NotNull P4Connection connection) throws VcsException {
+    final @NonNls String[] p4args = {"info"};
     final ExecResult execResult = executeP4Command(p4args, connection);
     checkError(execResult, connection);
     return FormParser.execute(execResult.getStdout(), AVAILABLE_INFO, CLIENT_UNKNOWN);
   }
 
-  @Nullable
-  public String getClient(@Nullable final P4Connection connection) throws VcsException {
+  public @Nullable String getClient(final @Nullable P4Connection connection) throws VcsException {
     if (connection == null) return null;
     List<String> clientNames = getInfo(connection).get(CLIENT_NAME);
     return clientNames == null ? null : clientNames.get(0);
@@ -265,8 +264,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     checkError(execResult, connection);
   }
 
-  @NotNull
-  private P4Connection getNotNullConnection(P4File file) throws VcsException {
+  private @NotNull P4Connection getNotNullConnection(P4File file) throws VcsException {
     P4Connection connection = myConnectionManager.getConnectionForFile(file);
     if (connection == null) {
       throw new VcsException(PerforceBundle.message("error.no.connection.for.file", file.getLocalPath()));
@@ -372,7 +370,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  public void revertUnchanged(@NotNull final P4Connection connection, final Collection<String> files) throws VcsException {
+  public void revertUnchanged(final @NotNull P4Connection connection, final Collection<String> files) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[]{"revert", "-a"}, files, null, new PerforceContext(connection));
     if (!execResult.getStderr().contains(STANDARD_REVERT_UNCHANGED_ERROR_MESSAGE) &&
         !execResult.getStderr().contains(YET_ANOTHER_STANDARD_REVERT_UNCHANGED_ERROR_MESSAGE)) {
@@ -389,7 +387,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  private long getActiveListNumber(@Nullable final P4Connection connection) throws VcsException {
+  private long getActiveListNumber(final @Nullable P4Connection connection) throws VcsException {
     if (connection == null) return -1;
     PerforceManager.ensureValidClient(myProject, connection);
     final LocalChangeList activeList = ChangeListManager.getInstance(myProject).getDefaultChangeList();
@@ -455,7 +453,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return doSync(p4File, "-n");
   }
 
-  private ExecResult doSync(final P4File p4File, @Nullable @NonNls final String arg) throws VcsException {
+  private ExecResult doSync(final P4File p4File, final @Nullable @NonNls String arg) throws VcsException {
     p4File.invalidateFstat();
     P4Connection connection = getNotNullConnection(p4File);
     final CommandArguments arguments = CommandArguments.createOn(P4Command.sync);
@@ -475,7 +473,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   }
 
   // todo ? not sure for move+add/delete cases
-  public void assureDel(final P4File p4File, @Nullable final Long changeList) throws VcsException {
+  public void assureDel(final P4File p4File, final @Nullable Long changeList) throws VcsException {
     // reverting the edit of a file at the old path in a renamed directory will recreate both the file
     // and its parent dir => need to delete both
     final List<File> filesToDelete = new ArrayList<>();
@@ -672,10 +670,9 @@ public final class PerforceRunner implements PerforceRunnerI {
     return result;
   }
 
-  @NotNull
-  private static List<PerforceChange> createPerforceChanges(PerforceClient client,
-                                                            ChangeListData data,
-                                                            List<FileChange> changes)
+  private static @NotNull List<PerforceChange> createPerforceChanges(PerforceClient client,
+                                                                     ChangeListData data,
+                                                                     List<FileChange> changes)
     throws VcsException {
     List<PerforceChange> converted = new ArrayList<>();
     for (FileChange fileChange : changes) {
@@ -819,7 +816,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  private void appendTArg(final CommandArguments arguments, @Nullable final P4Connection connection) throws VcsException {
+  private void appendTArg(final CommandArguments arguments, final @Nullable P4Connection connection) throws VcsException {
     if (mySettings.getServerVersion(connection) >= 2003) {
       arguments.append("-t");
     }
@@ -866,7 +863,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
   private static void adjustJobs(final P4Connection connection,
                                  final Map<String, List<String>> changeForm,
-                                 @Nullable final List<PerforceJob> p4jobs) {
+                                 final @Nullable List<PerforceJob> p4jobs) {
     changeForm.remove(JOBS);
     if (p4jobs != null && (! p4jobs.isEmpty())) {
       final List<String> values = new ArrayList<>();
@@ -879,10 +876,10 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  public long submitForConnection(@NotNull final P4Connection connection,
+  public long submitForConnection(final @NotNull P4Connection connection,
                                   final List<PerforceChange> changesForConnection,
                                   final long changeListNumber,
-                                  final String preparedComment, @Nullable final List<PerforceJob> p4jobs) throws VcsException {
+                                  final String preparedComment, final @Nullable List<PerforceJob> p4jobs) throws VcsException {
     List<String> excludedChanges = new ArrayList<>();
     Map<String, List<String>> changeForm = getChangeSpec(connection, changeListNumber);
     String originalDescription = getDescription(changeForm);
@@ -930,7 +927,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return -1;
   }
 
-  public long createChangeList(String description, @NotNull final P4Connection connection, @Nullable final List<String> files)
+  public long createChangeList(String description, final @NotNull P4Connection connection, final @Nullable List<String> files)
     throws VcsException {
     final String changeListForm = createChangeListForm(description, -1, connection, files, myPerforceManager.getClient(connection));
     if (mySettings.showCmds) {
@@ -961,8 +958,8 @@ public final class PerforceRunner implements PerforceRunnerI {
 
   private String createChangeListForm(final String description,
                                       final long changeListNumber, final P4Connection connection,
-                                      @Nullable final List<String> files, final PerforceClient client) throws VcsException {
-    @NonNls final StringBuilder result = new StringBuilder();
+                                      final @Nullable List<String> files, final PerforceClient client) throws VcsException {
+    final @NonNls StringBuilder result = new StringBuilder();
     result.append("Change:\t");
     if (changeListNumber == -1) {
       result.append("new");
@@ -1004,7 +1001,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return result.toString();
   }
 
-  public List<PerforceChangeList> getSubmittedChangeLists(@Nullable String client, @Nullable String user, @NotNull final P4File rootP4File,
+  public List<PerforceChangeList> getSubmittedChangeLists(@Nullable String client, @Nullable String user, final @NotNull P4File rootP4File,
                                                           @NotNull ChangeBrowserSettings settings,
                                                           final int maxCount, final boolean showIntegrated) throws VcsException {
     String interval = dateSpec(settings.getDateAfterFilter(), settings.getDateBeforeFilter(), settings.getChangeAfterFilter(),
@@ -1174,8 +1171,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return result;
   }
 
-  @Nullable
-  private static PerforceChange findChangeByDepotPath(List<PerforceChange> actualChanges, String depotPath) {
+  private static @Nullable PerforceChange findChangeByDepotPath(List<PerforceChange> actualChanges, String depotPath) {
     for (PerforceChange change : actualChanges) {
       if (change.getDepotPath().equals(depotPath)) {
         return change;
@@ -1208,9 +1204,8 @@ public final class PerforceRunner implements PerforceRunnerI {
     return OutputMessageParser.processBranchesOutput(result.getStdout());
   }
 
-  @NotNull
-  public BranchSpec loadBranchSpec(@NotNull final String branchName, @NotNull final P4Connection connection) throws VcsException {
-    @NonNls final String[] p4args = {"branch",
+  public @NotNull BranchSpec loadBranchSpec(final @NotNull String branchName, final @NotNull P4Connection connection) throws VcsException {
+    final @NonNls String[] p4args = {"branch",
       "-o",
       branchName};
     final ExecResult execResult = executeP4Command(p4args, connection);
@@ -1222,7 +1217,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   }
 
   public Map<String, List<String>> loadClient(final String clientName, final P4Connection connection) throws VcsException {
-    @NonNls final String[] p4args = {"client",
+    final @NonNls String[] p4args = {"client",
       "-o",
       clientName};
     final ExecResult execResult = executeP4Command(p4args, connection);
@@ -1241,14 +1236,14 @@ public final class PerforceRunner implements PerforceRunnerI {
       VIEW});
   }
 
-  public byte @NotNull [] getByteContent(final P4File file, @Nullable final String revisionNumber) throws VcsException {
+  public byte @NotNull [] getByteContent(final P4File file, final @Nullable String revisionNumber) throws VcsException {
     return getByteContent(file.getEscapedPath(), revisionNumber, getNotNullConnection(file));
   }
 
   public byte @NotNull [] getByteContent(BaseRevision baseRevision, @NotNull P4Connection connection) throws VcsException {
     return getByteContent(baseRevision.getDepotPath(), baseRevision.getRevisionNum(), connection);
   }
-  public byte @NotNull [] getByteContent(final String depotPath, @Nullable final String revisionNumber, @NotNull P4Connection connection) throws VcsException {
+  public byte @NotNull [] getByteContent(final String depotPath, final @Nullable String revisionNumber, @NotNull P4Connection connection) throws VcsException {
     File tempFile = null;
     try {
       tempFile = FileUtil.createTempFile("ijP4Print", "");
@@ -1277,7 +1272,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return p4File.getFstat(myProject, true).depotFile;
   }
 
-  public LocalPathsSet getResolvedWithConflictsMap(@NotNull final P4Connection connection, final Collection<VirtualFile> roots) throws VcsException {
+  public LocalPathsSet getResolvedWithConflictsMap(final @NotNull P4Connection connection, final Collection<VirtualFile> roots) throws VcsException {
     final List<String> args = new ArrayList<>();
     for (VirtualFile root : roots) {
       args.add(P4File.create(root).getRecursivePath());
@@ -1287,14 +1282,13 @@ public final class PerforceRunner implements PerforceRunnerI {
     return new LocalPathsSet(processResolveOutput(execResult.getStdout()).keySet());
   }
 
-  public LinkedHashSet<VirtualFile> getResolvedWithConflicts(final P4Connection connection, @Nullable final VirtualFile root) throws VcsException {
+  public LinkedHashSet<VirtualFile> getResolvedWithConflicts(final P4Connection connection, final @Nullable VirtualFile root) throws VcsException {
     String element = root == null ? null : P4File.create(root).getRecursivePath();
     //noinspection SSBasedInspection
     return getResolvedWithConflicts(connection, element == null ? Collections.emptyList() : Collections.singletonList(element));
   }
 
-  @NotNull
-  public LinkedHashSet<VirtualFile> getResolvedWithConflicts(P4Connection connection, Collection<String> fileSpecs) throws VcsException {
+  public @NotNull LinkedHashSet<VirtualFile> getResolvedWithConflicts(P4Connection connection, Collection<String> fileSpecs) throws VcsException {
     final CommandArguments args = CommandArguments.createOn(P4Command.resolve);
     args.append("-n");
     args.append("-t");
@@ -1317,8 +1311,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return result;
   }
 
-  @Nullable
-  public BaseRevision getBaseRevision(P4File file) throws VcsException {
+  public @Nullable BaseRevision getBaseRevision(P4File file) throws VcsException {
     final P4Connection connection = getNotNullConnection(file);
     final ExecResult execResult = executeP4Command(new String[]{"resolve",
       "-n", "-o", "-t",
@@ -1352,8 +1345,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return result;
   }
 
-  @Nullable
-  private static BaseRevision createBaseRevision(String line, @Nullable BaseRevision existing) {
+  private static @Nullable BaseRevision createBaseRevision(String line, @Nullable BaseRevision existing) {
     int usingBasePosition = line.indexOf(USING_BASE_MESSAGE);
     if (usingBasePosition < 0) return null;
     String sourcePath = line.substring(0, usingBasePosition);
@@ -1383,7 +1375,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     resolve(file, "-am");
   }
 
-  private void resolve(final P4File file, @NonNls final String resolveMode) throws VcsException {
+  private void resolve(final P4File file, final @NonNls String resolveMode) throws VcsException {
     @NonNls String[] p4args = {"resolve", resolveMode, file.getRecursivePath()};
     final P4Connection connection = getNotNullConnection(file);
     final ExecResult execResult = executeP4Command(p4args, connection);
@@ -1396,7 +1388,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   public ExecResult integrate(final String branchName,
                               final P4File path,
                               final long changeListNum,
-                              @Nullable final String integrateChangeListNum,
+                              final @Nullable String integrateChangeListNum,
                               final boolean reverse,
                               final P4Connection connection) {
     final CommandArguments arguments = CommandArguments.createOn(P4Command.integrate);
@@ -1551,7 +1543,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return new OutputMessageParser(execResult.getStdout()).myLines;
   }
 
-  private CommandArguments createFilelogArgs(boolean showBranches, @Nullable final P4Connection connection) throws VcsException {
+  private CommandArguments createFilelogArgs(boolean showBranches, final @Nullable P4Connection connection) throws VcsException {
     final CommandArguments arguments = CommandArguments.createOn(P4Command.filelog);
     if (showBranches) {
       arguments.append("-i");
@@ -1568,7 +1560,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return arguments;
   }
 
-  private boolean isFilelogNewDateVersion(@Nullable final P4Connection connection) throws VcsException {
+  private boolean isFilelogNewDateVersion(final @Nullable P4Connection connection) throws VcsException {
     final ServerVersion serverVersion = mySettings.getServerFullVersion(connection);
     if (serverVersion == null) return false;
     return serverVersion.getVersionYear() >= 2003 || serverVersion.getVersionYear() == 2002 && serverVersion.getVersionNum() > 1;
@@ -1612,17 +1604,17 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  private boolean isAnnotateBranchSupported(@Nullable final P4Connection connection) throws VcsException {
+  private boolean isAnnotateBranchSupported(final @Nullable P4Connection connection) throws VcsException {
     ServerVersion version = myPerforceManager.getServerVersion(connection);
     if (version == null) return false;
     return version.getVersionYear() > 2005 || version.getVersionYear() == 2005 && version.getVersionNum() >= 2;
   }
 
-  private boolean isAnnotateIgnoringWhitespaceSupported(@Nullable final P4Connection connection) throws VcsException {
+  private boolean isAnnotateIgnoringWhitespaceSupported(final @Nullable P4Connection connection) throws VcsException {
     return isAnnotateBranchSupported(connection);
   }
 
-  public List<ResolvedFile> getResolvedFiles(@NotNull final P4Connection connection, final Collection<VirtualFile> roots) throws VcsException {
+  public List<ResolvedFile> getResolvedFiles(final @NotNull P4Connection connection, final Collection<VirtualFile> roots) throws VcsException {
     final List<String> args = new ArrayList<>();
     for (VirtualFile root : roots) {
       args.add(P4File.create(root).getRecursivePath());
@@ -1662,32 +1654,32 @@ public final class PerforceRunner implements PerforceRunnerI {
     return new OutputMessageParser(execResult.getStdout()).myLines;
   }
 
-  public List<String> getJobsForChange(@NotNull final P4Connection connection, final long number) throws VcsException {
+  public List<String> getJobsForChange(final @NotNull P4Connection connection, final long number) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[] {"fixes", "-c", String.valueOf(number)}, connection);
     checkError(execResult, connection);
     return new OutputMessageParser(execResult.getStdout()).myLines;
   }
 
-  public void addJobForList(@NotNull final P4Connection connection, final long number, final String name) throws VcsException {
+  public void addJobForList(final @NotNull P4Connection connection, final long number, final String name) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[] {"fix", "-c", String.valueOf(number), name}, connection);
     checkError(execResult, connection);
   }
 
-  public void removeJobFromList(@NotNull final P4Connection connection, final long number, final String name) throws VcsException {
+  public void removeJobFromList(final @NotNull P4Connection connection, final long number, final String name) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[] {"fix", "-d", "-c", String.valueOf(number), name}, connection);
     checkError(execResult, connection);
   }
 
   // The method is used in "Upsource Integration" plugin
-  public ExecResult executeP4Command(@NonNls final String[] p4args, @NotNull final P4Connection connection) {
+  public ExecResult executeP4Command(final @NonNls String[] p4args, final @NotNull P4Connection connection) {
     return executeP4Command(p4args, null, connection);
   }
 
-  private ExecResult executeP4Command(@NonNls final String[] p4args, @Nullable final StringBuffer inputStream, @NotNull final P4Connection connection) {
+  private ExecResult executeP4Command(final @NonNls String[] p4args, final @Nullable StringBuffer inputStream, final @NotNull P4Connection connection) {
     return executeP4Command(p4args, Collections.emptyList(), inputStream, new PerforceContext(connection));
   }
 
-  private ExecResult executeP4Command(@NonNls String[] p4cmd, Collection<String> args, @Nullable final StringBuffer inputStream, @NotNull PerforceContext ctx) {
+  private ExecResult executeP4Command(@NonNls String[] p4cmd, Collection<String> args, final @Nullable StringBuffer inputStream, @NotNull PerforceContext ctx) {
     // construct the command-line
     final ExecResult retVal = new ExecResult();
     if (!mySettings.ENABLED) {
@@ -1775,7 +1767,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return totalLength > 2000;
   }
 
-  private static @Nls String createPasswordNotAllowedButSetMessage(@NotNull final P4Connection connection) {
+  private static @Nls String createPasswordNotAllowedButSetMessage(final @NotNull P4Connection connection) {
     return PerforceBundle.message("connection.password.not.allowed", connection.getWorkingDir());
   }
 
@@ -1797,7 +1789,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
   }
 
-  private static VcsException createCorrectException(@NlsSafe String stderr, final PerforceSettings settings, @Nullable final P4Connection connection) {
+  private static VcsException createCorrectException(@NlsSafe String stderr, final PerforceSettings settings, final @Nullable P4Connection connection) {
     if (connection != null) {
       if (stderr.contains(PASSWORD_NOT_ALLOWED_MESSAGE)) {
         return new PerforcePasswordNotAllowedException(settings.USE_LOGIN && settings.useP4CONFIG ? createPasswordNotAllowedButSetMessage(connection) : stderr,
@@ -1884,8 +1876,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return !errorOutput.contains(FILES_UP_TO_DATE) && errorOutput.length() > 2;
   }
 
-  @NotNull
-  public P4WhereResult where(final P4File file, final P4Connection connection) throws VcsException {
+  public @NotNull P4WhereResult where(final P4File file, final P4Connection connection) throws VcsException {
     return where(file.getEscapedPath(), connection);
   }
 
@@ -1898,8 +1889,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return StringUtil.trimEnd(s, "/...");
   }
 
-  @NotNull
-  public P4WhereResult where(final String escapedPath, final P4Connection connection) throws VcsException {
+  public @NotNull P4WhereResult where(final String escapedPath, final P4Connection connection) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[]{"where", escapedPath}, connection);
     checkError(execResult, connection);
 
@@ -1983,7 +1973,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return !error;
   }
 
-  public List<String> getBranchViews(@NotNull String branchName, boolean target, @NotNull final P4Connection connection) throws VcsException {
+  public List<String> getBranchViews(@NotNull String branchName, boolean target, final @NotNull P4Connection connection) throws VcsException {
     List<String> fileSpecs = new ArrayList<>();
     for (String view : loadBranchSpec(branchName, connection).getViews()) {
       String[] split = view.split("\\s");
@@ -1994,7 +1984,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return fileSpecs;
   }
 
-  private boolean isInsideBranch(@NotNull String branchName, @NotNull final P4Connection connection, final String depotPath) throws VcsException {
+  private boolean isInsideBranch(@NotNull String branchName, final @NotNull P4Connection connection, final String depotPath) throws VcsException {
     for (String view : getBranchViews(branchName, true, connection)) {
       if (depotPath.startsWith(StringUtil.trimEnd(view, "..."))) {
         return true;

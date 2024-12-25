@@ -24,26 +24,22 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ProtoSymbolPathDelegate {
 
   /** Implementation of {@link ProtoSymbolPath#getReference()}. */
-  @Nullable
-  public PsiReference getReference(ProtoSymbolPath path) {
+  public @Nullable PsiReference getReference(ProtoSymbolPath path) {
     return null;
   }
 
   /** Implementation of {@link ProtoSymbolPath#getNameIdentifier()}. */
-  @Nullable
-  public PsiElement getNameIdentifier(ProtoSymbolPath path) {
+  public @Nullable PsiElement getNameIdentifier(ProtoSymbolPath path) {
     return null;
   }
 
   /** Implementation of {@link ProtoSymbolPath#getName()}. */
-  @Nullable
-  public String getName(ProtoSymbolPath path) {
+  public @Nullable String getName(ProtoSymbolPath path) {
     return null;
   }
 
   /** Implementation of {@link ProtoSymbolPath#setName(String)}. */
-  @Nullable
-  public PsiElement setName(ProtoSymbolPath path, String name) throws IncorrectOperationException {
+  public @Nullable PsiElement setName(ProtoSymbolPath path, String name) throws IncorrectOperationException {
     throw new IncorrectOperationException();
   }
 }

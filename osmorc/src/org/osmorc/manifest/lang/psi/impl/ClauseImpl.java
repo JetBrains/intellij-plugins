@@ -29,10 +29,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 import java.util.List;
 
@@ -44,9 +44,8 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
     super(node);
   }
 
-  @NotNull
   @Override
-  public String getUnwrappedText() {
+  public @NotNull String getUnwrappedText() {
     return getText().replaceAll("(?s)\\s*\n\\s*", "").trim();
   }
 
@@ -55,15 +54,13 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
     return findChildByClass(HeaderValuePart.class);
   }
 
-  @NotNull
   @Override
-  public List<Attribute> getAttributes() {
+  public @NotNull List<Attribute> getAttributes() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, Attribute.class);
   }
 
-  @Nullable
   @Override
-  public Attribute getAttribute(@NotNull String name) {
+  public @Nullable Attribute getAttribute(@NotNull String name) {
     for (Attribute child = PsiTreeUtil.findChildOfType(this, Attribute.class);
          child != null;
          child = PsiTreeUtil.getNextSiblingOfType(child, Attribute.class)) {
@@ -75,9 +72,8 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
     return null;
   }
 
-  @NotNull
   @Override
-  public List<Directive> getDirectives() {
+  public @NotNull List<Directive> getDirectives() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, Directive.class);
   }
 

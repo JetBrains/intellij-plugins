@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.config;
 
 import com.intellij.javascript.karma.util.KarmaUtil;
@@ -51,7 +51,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(Holder.STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE, new PsiReferenceProvider() {
       @Override
-      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+      public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
         JSLiteralExpression literalExpression = ObjectUtils.tryCast(psiElement, JSLiteralExpression.class);
         if (literalExpression == null) {
           return PsiReference.EMPTY_ARRAY;
@@ -101,9 +101,8 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
       return value.isEmpty() ? "." : value;
     }
 
-    @NotNull
     @Override
-    public Collection<PsiFileSystemItem> computeDefaultContexts() {
+    public @NotNull Collection<PsiFileSystemItem> computeDefaultContexts() {
       if (isAbsolutePathReference()) {
         return toFileSystemItems(ManagingFS.getInstance().getLocalRoots());
       }
@@ -165,9 +164,8 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
       super.reparse();
     }
 
-    @NotNull
     @Override
-    public Collection<PsiFileSystemItem> computeDefaultContexts() {
+    public @NotNull Collection<PsiFileSystemItem> computeDefaultContexts() {
       if (isAbsolutePathReference()) {
         return toFileSystemItems(ManagingFS.getInstance().getLocalRoots());
       }

@@ -27,9 +27,9 @@ public class ResolvedFile {
   private final String myDepotPath;
   private final long myRevision1;
   private final long myRevision2;
-  @NonNls public static final String OPERATION_BRANCH = "branch from";
-  @NonNls public static final String OPERATION_IGNORE = "ignored";
-  @NonNls public static final String OPERATION_MOVE = "moved from";
+  public static final @NonNls String OPERATION_BRANCH = "branch from";
+  public static final @NonNls String OPERATION_IGNORE = "ignored";
+  public static final @NonNls String OPERATION_MOVE = "moved from";
 
   public ResolvedFile(final File localFile, final String operation, final String depotPath, final long revision1, final long revision2) {
     myLocalFile = localFile;

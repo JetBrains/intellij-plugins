@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.osmorc.facet;
 
 import com.intellij.facet.FacetType;
@@ -27,9 +28,8 @@ public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<O
     super("osmorc");
   }
 
-  @NotNull
   @Override
-  public FacetType<OsmorcFacet, OsmorcFacetConfiguration> getFacetType() {
+  public @NotNull FacetType<OsmorcFacet, OsmorcFacetConfiguration> getFacetType() {
     return OsmorcFacetType.getInstance();
   }
 
@@ -68,9 +68,8 @@ public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<O
     }
   }
 
-  @NotNull
   @Override
-  public ElementPattern<FileContent> createSuitableFilePattern() {
+  public @NotNull ElementPattern<FileContent> createSuitableFilePattern() {
     return FileContentPattern.fileContent().with(new PatternCondition<>("osmorc manifest file") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
@@ -79,9 +78,8 @@ public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<O
     });
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return ManifestFileType.INSTANCE;
   }
 

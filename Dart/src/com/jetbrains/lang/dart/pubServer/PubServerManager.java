@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.pubServer;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -34,8 +34,7 @@ public final class PubServerManager implements Disposable {
 
   private final LoadingCache<VirtualFile, PubServerService> myServedDirToPubService;
 
-  @NotNull
-  public static PubServerManager getInstance(@NotNull Project project) {
+  public static @NotNull PubServerManager getInstance(@NotNull Project project) {
     return project.getService(PubServerManager.class);
   }
 
@@ -45,24 +44,24 @@ public final class PubServerManager implements Disposable {
     VirtualFileManager.getInstance()
       .addVirtualFileListener(new VirtualFileListener() {
                                 @Override
-                                public void beforePropertyChange(@NotNull final VirtualFilePropertyEvent event) {
+                                public void beforePropertyChange(final @NotNull VirtualFilePropertyEvent event) {
                                   if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
                                     contentsChanged(event);
                                   }
                                 }
 
                                 @Override
-                                public void beforeFileMovement(@NotNull final VirtualFileMoveEvent event) {
+                                public void beforeFileMovement(final @NotNull VirtualFileMoveEvent event) {
                                   contentsChanged(event);
                                 }
 
                                 @Override
-                                public void fileDeleted(@NotNull final VirtualFileEvent event) {
+                                public void fileDeleted(final @NotNull VirtualFileEvent event) {
                                   contentsChanged(event);
                                 }
 
                                 @Override
-                                public void contentsChanged(@NotNull final VirtualFileEvent event) {
+                                public void contentsChanged(final @NotNull VirtualFileEvent event) {
                                   final VirtualFile file = event.getFile();
                                   if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) &&
                                       file.getFileSystem() == LocalFileSystem.getInstance()) {
@@ -74,7 +73,7 @@ public final class PubServerManager implements Disposable {
     myServedDirToPubService = Caffeine.newBuilder().build(key -> new PubServerService(this.project, consoleManager));
   }
 
-  private void pubspecYamlChanged(@NotNull final VirtualFile file) {
+  private void pubspecYamlChanged(final @NotNull VirtualFile file) {
     final VirtualFile mainDir = file.getParent();
     if (mainDir == null) return;
 
@@ -131,8 +130,7 @@ public final class PubServerManager implements Disposable {
     }
   }
 
-  @NotNull
-  public Collection<String> getAllAlivePubServerAuthorities() {
+  public @NotNull Collection<String> getAllAlivePubServerAuthorities() {
     final Collection<String> result = new SmartList<>();
     for (PubServerService service : myServedDirToPubService.asMap().values()) {
       result.addAll(service.getAllPubServeAuthorities());
@@ -140,8 +138,7 @@ public final class PubServerManager implements Disposable {
     return result;
   }
 
-  @NotNull
-  public Collection<String> getAlivePubServerAuthoritiesForDartRoot(@NotNull final VirtualFile dartProjectRoot) {
+  public @NotNull Collection<String> getAlivePubServerAuthoritiesForDartRoot(final @NotNull VirtualFile dartProjectRoot) {
     final Collection<String> result = new SmartList<>();
     for (VirtualFile subdir : dartProjectRoot.getChildren()) {
       if (!subdir.isDirectory()) continue;
@@ -152,8 +149,7 @@ public final class PubServerManager implements Disposable {
     return result;
   }
 
-  @Nullable
-  public VirtualFile getDartRootByAuthority(@NotNull final String authority) {
+  public @Nullable VirtualFile getDartRootByAuthority(final @NotNull String authority) {
     for (Map.Entry<VirtualFile, PubServerService> entry : myServedDirToPubService.asMap().entrySet()) {
       if (entry.getValue().getAllPubServeAuthorities().contains(authority)) {
         return entry.getKey();
@@ -162,8 +158,7 @@ public final class PubServerManager implements Disposable {
     return null;
   }
 
-  @Nullable
-  public String getPubServerAuthorityForServedDir(@NotNull final VirtualFile servedDir) {
+  public @Nullable String getPubServerAuthorityForServedDir(final @NotNull VirtualFile servedDir) {
     LOG.assertTrue(servedDir.isDirectory() && servedDir.getParent().findChild(PubspecYamlUtil.PUBSPEC_YAML) != null,
                    "Bad argument: " + servedDir.getPath());
     final PubServerService service = myServedDirToPubService.getIfPresent(servedDir);

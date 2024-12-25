@@ -30,12 +30,10 @@ public class YeomanGlobalSettings implements YeomanNodeFiles, PersistentStateCom
   public static final String RELATIVE_CLI_HELPER_PATH = "runner/yeoman-simple-cli/lib";
   public static final String CLI_HELPER_NAME = "cli.js";
 
-  @NotNull
-  private SettingsState myStoreSettings = new SettingsState();
+  private @NotNull SettingsState myStoreSettings = new SettingsState();
 
-  @Nullable
   @Override
-  public SettingsState getState() {
+  public @Nullable SettingsState getState() {
     return myStoreSettings;
   }
 
@@ -50,23 +48,19 @@ public class YeomanGlobalSettings implements YeomanNodeFiles, PersistentStateCom
     public String nodeExePath;
   }
 
-  @NotNull
-  public static YeomanGlobalSettings getInstance() {
+  public static @NotNull YeomanGlobalSettings getInstance() {
     return ApplicationManager.getApplication().getService(YeomanGlobalSettings.class);
   }
 
-  @NotNull
-  public String getGeneratorsFileUrl() {
+  public @NotNull String getGeneratorsFileUrl() {
     return PropertiesComponent.getInstance().getValue(PACKAGES_URL_KEY, PACKAGES_URL_DEFAULT);
   }
 
-  @NotNull
-  public String getGeneratorsFileDefaultEncoding() {
+  public @NotNull String getGeneratorsFileDefaultEncoding() {
     return CharsetToolkit.UTF8;
   }
 
-  @Nullable
-  public String getNodeInterpreterRefName() {
+  public @Nullable String getNodeInterpreterRefName() {
     if (!StringUtil.isEmpty(myStoreSettings.nodeExePath)) {
       return myStoreSettings.nodeExePath;
     }
@@ -75,8 +69,7 @@ public class YeomanGlobalSettings implements YeomanNodeFiles, PersistentStateCom
   }
 
   @Override
-  @Nullable
-  public NodeJsLocalInterpreter getInterpreter() {
+  public @Nullable NodeJsLocalInterpreter getInterpreter() {
     Project defaultProject = ProjectManager.getInstance().getDefaultProject();
     return NodeJsLocalInterpreter.tryCast(NodeJsInterpreterRef.create(getNodeInterpreterRefName()).resolve(defaultProject));
   }
@@ -100,14 +93,12 @@ public class YeomanGlobalSettings implements YeomanNodeFiles, PersistentStateCom
                                     null;
   }
 
-  @NotNull
-  private static String trimAndNotNullize(String path) {
+  private static @NotNull String trimAndNotNullize(String path) {
     return StringUtil.notNullize(path).trim();
   }
 
 
-  @Nullable
-  private String getDefaultYoPackagePath() {
+  private @Nullable String getDefaultYoPackagePath() {
     NodeJsLocalInterpreter interpreter = getInterpreter();
 
     if (interpreter != null) {
@@ -142,8 +133,7 @@ public class YeomanGlobalSettings implements YeomanNodeFiles, PersistentStateCom
     }
   }
 
-  @NotNull
-  private static String getCLIHelperPathFromJar(String jarPath) {
+  private static @NotNull String getCLIHelperPathFromJar(String jarPath) {
     File jarFile = new File(jarPath);
     if (!jarFile.isFile()) {
       throw new RuntimeException("jar file cannot be null");
@@ -152,8 +142,7 @@ public class YeomanGlobalSettings implements YeomanNodeFiles, PersistentStateCom
     return new File(new File(pluginBaseDir, RELATIVE_CLI_HELPER_PATH), CLI_HELPER_NAME).getAbsolutePath();
   }
 
-  @NotNull
-  private static String getCLIHelperPathFromWorkspace() {
+  private static @NotNull String getCLIHelperPathFromWorkspace() {
     URL resource = YeomanGlobalSettings.class.getClassLoader().getResource(RELATIVE_CLI_HELPER_PATH);
     if (resource == null) {
       throw new RuntimeException("Cannot find file compiler implementation");

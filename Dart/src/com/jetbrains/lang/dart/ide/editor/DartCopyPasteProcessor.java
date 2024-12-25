@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -45,12 +45,11 @@ import java.util.List;
 public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPasteProcessor.DartImportsTransferableData> {
   private static final DataFlavor FLAVOR = new DataFlavor(DartImportsTransferableData.class, "Dart imports");
 
-  @NotNull
   @Override
-  public List<DartImportsTransferableData> collectTransferableData(@NotNull final PsiFile psiFile,
-                                                                   @NotNull final Editor editor,
-                                                                   final int @NotNull [] startOffsets,
-                                                                   final int @NotNull [] endOffsets) {
+  public @NotNull List<DartImportsTransferableData> collectTransferableData(final @NotNull PsiFile psiFile,
+                                                                            final @NotNull Editor editor,
+                                                                            final int @NotNull [] startOffsets,
+                                                                            final int @NotNull [] endOffsets) {
     if (!(psiFile instanceof DartFile)) return Collections.emptyList();
     final Project project = psiFile.getProject();
     final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -78,9 +77,8 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
                                        : Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<DartImportsTransferableData> extractTransferableData(@NotNull final Transferable content) {
+  public @NotNull List<DartImportsTransferableData> extractTransferableData(final @NotNull Transferable content) {
     try {
       final Object data = content.getTransferData(FLAVOR);
       if (data instanceof DartImportsTransferableData) {
@@ -92,9 +90,9 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
   }
 
   @Override
-  public void processTransferableData(@NotNull final Project project,
-                                      @NotNull final Editor editor,
-                                      @NotNull final RangeMarker bounds,
+  public void processTransferableData(final @NotNull Project project,
+                                      final @NotNull Editor editor,
+                                      final @NotNull RangeMarker bounds,
                                       final int caretOffset,
                                       final @NotNull Ref<? super Boolean> indented,
                                       final @NotNull List<? extends DartImportsTransferableData> values) {
@@ -144,14 +142,13 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
   }
 
   public static class DartImportsTransferableData implements TextBlockTransferableData {
-    @NotNull private final List<ImportedElements> myImportedElements;
+    private final @NotNull List<ImportedElements> myImportedElements;
 
-    public DartImportsTransferableData(@NotNull final List<ImportedElements> importedElements) {
+    public DartImportsTransferableData(final @NotNull List<ImportedElements> importedElements) {
       myImportedElements = importedElements;
     }
 
-    @NotNull
-    public List<ImportedElements> getImportedElements() {
+    public @NotNull List<ImportedElements> getImportedElements() {
       return myImportedElements;
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -21,9 +21,8 @@ public abstract class DroolsLhsOOPathBindVariableImpl extends DroolsAbstractVari
     return getNameId();
   }
 
-  @NotNull
   @Override
-  public PsiType getType() {
+  public @NotNull PsiType getType() {
     final Set<PsiClass> psiClasses = DroolsResolveUtil.getPatternOOPathBindType(this.getLhsOOPSegmentList());
     return psiClasses.isEmpty() ? (PsiPrimitiveType)PsiTypes.nullType()
                                 : JavaPsiFacade.getElementFactory(getProject()).createType(psiClasses.iterator().next());

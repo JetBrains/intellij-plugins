@@ -323,7 +323,7 @@ public class PostCssParser extends CssParser2 {
     return addIdentOrAmpersandOrError(null);
   }
 
-  private boolean addIdentOrAmpersandOrError(@Nullable final IElementType toCollapse, final IElementType... validTypes) {
+  private boolean addIdentOrAmpersandOrError(final @Nullable IElementType toCollapse, final IElementType... validTypes) {
     if (!isIdentOrAmpersand() && !ArrayUtil.contains(getTokenType(), validTypes)) return super.addIdentOrError();
     PsiBuilder.Marker ident = createCompositeElement();
     addSingleToken();

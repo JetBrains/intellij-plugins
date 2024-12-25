@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -20,12 +20,11 @@ import javax.swing.*;
 public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement implements GherkinPsiElement {
   private static final TokenSet TEXT_FILTER = TokenSet.create(GherkinTokenTypes.TEXT);
 
-  public GherkinPsiElementBase(@NotNull final ASTNode node) {
+  public GherkinPsiElementBase(final @NotNull ASTNode node) {
     super(node);
   }
 
-  @NotNull
-  protected String getElementText() {
+  protected @NotNull String getElementText() {
     final ASTNode node = getNode();
     final ASTNode[] children = node.getChildren(TEXT_FILTER);
     return StringUtil.join(children, astNode -> astNode.getText(), " ").trim();

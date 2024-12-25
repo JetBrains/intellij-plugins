@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.ExecutionException;
@@ -21,21 +21,18 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
     super(project, factory, name);
   }
 
-  @NotNull
   @Override
-  protected BndRunConfigurationOptions getOptions() {
+  protected @NotNull BndRunConfigurationOptions getOptions() {
     return (BndRunConfigurationOptions)super.getOptions();
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends BndRunConfigurationBase> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends BndRunConfigurationBase> getConfigurationEditor() {
     return new BndRunConfigurationEditor(getProject());
   }
 
-  @Nullable
   @Override
-  public abstract RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException;
+  public abstract @Nullable RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException;
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
@@ -53,9 +50,8 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
       super(project, factory, name);
     }
 
-    @Nullable
     @Override
-    public BndLaunchState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public @Nullable BndLaunchState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException {
       return new BndLaunchState(environment, this);
     }
   }
@@ -65,9 +61,8 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
       super(project, factory, name);
     }
 
-    @Nullable
     @Override
-    public BndTestState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public @Nullable BndTestState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException {
       return new BndTestState(environment, this);
     }
   }

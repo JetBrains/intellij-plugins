@@ -87,8 +87,7 @@ public final class ExecResult {
     }
   }
 
-  @NotNull
-  public @NlsSafe String getStdout() {
+  public @NotNull @NlsSafe String getStdout() {
     if (myOutputGobbler != null) {
       return readStreamConvertingLineSeparators(myOutputGobbler, myCharset);
     }
@@ -103,8 +102,7 @@ public final class ExecResult {
     myErrorGobbler = errorGobbler;
   }
 
-  @NotNull
-  public @NlsSafe String getStderr() {
+  public @NotNull @NlsSafe String getStderr() {
     if (myErrorGobbler != null) {
       if (myErrorString == null) {
         // when temp file is used, we can NOT read stream several times (it is destroyed after first read)

@@ -74,8 +74,7 @@ public class P4RevertOperation extends VcsOperation {
   }
 
   @Override
-  @Nullable
-  public VcsOperation checkMerge(final VcsOperation oldOp) {
+  public @Nullable VcsOperation checkMerge(final VcsOperation oldOp) {
     if (!isRenameOrMove()) {
       if (oldOp instanceof P4EditOperation || oldOp instanceof P4AddOperation) {
         VcsOperationOnPath opOnPath = (VcsOperationOnPath) oldOp;

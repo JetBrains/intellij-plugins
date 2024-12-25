@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.execution;
 
 import com.intellij.codeInspection.util.InspectionMessage;
@@ -8,13 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class TsLinterError extends JSLinterError {
-  @Nullable
-  private final String myPath;
+  private final @Nullable String myPath;
   private final int myEndLine;
   private final int myEndColumn;
 
-  @Nullable
-  private final TsLintFixInfo myFixInfo;
+  private final @Nullable TsLintFixInfo myFixInfo;
   private final boolean myIsGlobal;
 
   public TsLinterError(@Nullable String path,
@@ -51,8 +50,7 @@ public final class TsLinterError extends JSLinterError {
     return myEndColumn;
   }
 
-  @Nullable
-  public String getAbsoluteFilePath() {
+  public @Nullable String getAbsoluteFilePath() {
     return myPath;
   }
 
@@ -60,8 +58,7 @@ public final class TsLinterError extends JSLinterError {
     return myFixInfo != null;
   }
 
-  @Nullable
-  public TsLintFixInfo getFixInfo() {
+  public @Nullable TsLintFixInfo getFixInfo() {
     return myFixInfo;
   }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.ide.browsers.BrowserFamily;
@@ -19,13 +20,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class OpenDartObservatoryUrlAction extends DumbAwareAction {
-  @Nullable private String myUrl;
+  private @Nullable String myUrl;
   private final Computable<Boolean> myIsApplicable;
 
   /**
    * @param url {@code null} if URL is not known at the moment of the action instantiation; use {@link #setUrl(String)} afterwards
    */
-  public OpenDartObservatoryUrlAction(@Nullable final String url, @NotNull final Computable<Boolean> isApplicable) {
+  public OpenDartObservatoryUrlAction(final @Nullable String url, final @NotNull Computable<Boolean> isApplicable) {
     super(DartBundle.message("open.observatory.action.text"),
           DartBundle.message("open.observatory.action.description"),
           DartIcons.Dart_16);
@@ -33,7 +34,7 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
     myIsApplicable = isApplicable;
   }
 
-  public void setUrl(@NotNull final String url) {
+  public void setUrl(final @NotNull String url) {
     myUrl = url;
   }
 
@@ -43,7 +44,7 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   }
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     e.getPresentation().setEnabled(myUrl != null && myIsApplicable.compute());
   }
 
@@ -69,11 +70,11 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   /**
    * Opens new tab in any already open Chrome-family browser, if none found - start any new Chrome-family browser
    */
-  public static void openUrlInChromeFamilyBrowser(@NotNull final String url) {
+  public static void openUrlInChromeFamilyBrowser(final @NotNull String url) {
     openInAnyChromeFamilyBrowser(url);
   }
 
-  private static void openInAnyChromeFamilyBrowser(@NotNull final String url) {
+  private static void openInAnyChromeFamilyBrowser(final @NotNull String url) {
     final List<WebBrowser> chromeBrowsers = WebBrowserManager.getInstance().getBrowsers(
       browser -> browser.getFamily() == BrowserFamily.CHROME, true);
 

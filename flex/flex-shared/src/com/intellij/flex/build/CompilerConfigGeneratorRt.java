@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -177,8 +177,7 @@ public final class CompilerConfigGeneratorRt {
     }
   }
 
-  @Nullable
-  private static String getAirVersionIfCustomDescriptor(final JpsFlexBuildConfiguration bc) {
+  private static @Nullable String getAirVersionIfCustomDescriptor(final JpsFlexBuildConfiguration bc) {
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
       final JpsAirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
       if (!packagingOptions.isUseGeneratedDescriptor()) {
@@ -215,8 +214,7 @@ public final class CompilerConfigGeneratorRt {
     return null;
   }
 
-  @Nullable
-  private static String getCustomLinkReportPath(final JpsFlexBuildConfiguration rlmBC) {
+  private static @Nullable String getCustomLinkReportPath(final JpsFlexBuildConfiguration rlmBC) {
     final JpsFlexBuildConfiguration appBC = rlmBC.getModule().getProperties().findConfigurationByName(rlmBC.getName());
     if (appBC != null) {
       final List<String> linkReports = FlexCommonUtils.getOptionValues(appBC.getCompilerOptions().getAdditionalOptions(), "link-report");

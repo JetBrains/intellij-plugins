@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.icons.AllIcons;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
+public abstract class DartFunctionExpressionBase extends DartExpressionImpl {
   private static final RowIcon ICON = IconManager.getInstance().createRowIcon(AllIcons.Nodes.Lambda,
                                                                               IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Private));
 
@@ -38,23 +38,20 @@ abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
                                                           DartGetterDeclaration.class, DartSetterDeclaration.class);
     if (parent != null) {
       return new ItemPresentation() {
-        @Nullable
         @Override
-        public String getPresentableText() {
+        public @Nullable String getPresentableText() {
           ItemPresentation container = ((NavigationItem)parent).getPresentation();
           return container == null ? null : "() in " + container.getPresentableText();
         }
 
-        @Nullable
         @Override
-        public String getLocationString() {
+        public @Nullable String getLocationString() {
           ItemPresentation container = ((NavigationItem)parent).getPresentation();
           return container == null ? null : container.getLocationString();
         }
 
-        @Nullable
         @Override
-        public Icon getIcon(boolean unused) {
+        public @Nullable Icon getIcon(boolean unused) {
           return DartFunctionExpressionBase.this.getIcon(0);
         }
       };

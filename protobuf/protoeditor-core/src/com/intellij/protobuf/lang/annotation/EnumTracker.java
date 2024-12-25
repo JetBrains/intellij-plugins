@@ -93,7 +93,7 @@ final class EnumTracker {
 
   private static class ProblemAnnotation {
     final PsiElement annotationElement;
-    @InspectionMessage final String message;
+    final @InspectionMessage String message;
 
     ProblemAnnotation(PsiElement annotationElement, @InspectionMessage String message) {
       this.annotationElement = annotationElement;

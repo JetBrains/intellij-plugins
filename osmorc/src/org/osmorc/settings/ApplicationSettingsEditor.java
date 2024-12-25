@@ -38,9 +38,8 @@ import javax.swing.*;
 public final class ApplicationSettingsEditor implements SearchableConfigurable {
   private FrameworkDefinitionsEditorComponent myComponent;
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return OsmorcBundle.message("settings.application");
   }
 
@@ -49,9 +48,8 @@ public final class ApplicationSettingsEditor implements SearchableConfigurable {
     return "reference.settings.project.osgi.framework.definitions";
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "osmorc.ide.settings";
   }
 

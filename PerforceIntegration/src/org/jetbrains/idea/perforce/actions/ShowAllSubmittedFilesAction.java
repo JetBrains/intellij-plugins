@@ -84,7 +84,7 @@ public class ShowAllSubmittedFilesAction extends AnAction implements DumbAware {
                                            final String submitMessage,
                                            final Date date,
                                            final String user,
-                                           @NotNull final P4Connection connection) {
+                                           final @NotNull P4Connection connection) {
 
     try {
       final PerforceChangeList changeList = getSubmittedChangeList(project, number, submitMessage, date, user, connection);
@@ -104,13 +104,12 @@ public class ShowAllSubmittedFilesAction extends AnAction implements DumbAware {
     }
   }
 
-  @Nullable
-  public static PerforceChangeList getSubmittedChangeList(Project project,
-                                                           long number,
-                                                           String submitMessage,
-                                                           Date date,
-                                                           String user,
-                                                           P4Connection connection) throws VcsException {
+  public static @Nullable PerforceChangeList getSubmittedChangeList(Project project,
+                                                                    long number,
+                                                                    String submitMessage,
+                                                                    Date date,
+                                                                    String user,
+                                                                    P4Connection connection) throws VcsException {
     final ChangeListData data = new ChangeListData();
     data.NUMBER = number;
     data.USER = user;

@@ -39,51 +39,44 @@ public class LocalRootsFileResolveProvider implements FileResolveProvider {
     this.descriptorPath = descriptorPath;
   }
 
-  @Nullable
   @Override
-  public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
+  public @Nullable VirtualFile findFile(@NotNull String path, @NotNull Project project) {
     return findFileInRoots(path, getProjectRoots(project));
   }
 
-  @Nullable
   @Override
-  public VirtualFile findFile(@NotNull String path, @NotNull Module module) {
+  public @Nullable VirtualFile findFile(@NotNull String path, @NotNull Module module) {
     return findFileInRoots(path, getModuleRoots(module));
   }
 
-  @NotNull
   @Override
-  public List<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
+  public @NotNull List<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
     return getChildEntriesForFile(findFile(path, project));
   }
 
-  @NotNull
   @Override
-  public List<ChildEntry> getChildEntries(@NotNull String path, @NotNull Module module) {
+  public @NotNull List<ChildEntry> getChildEntries(@NotNull String path, @NotNull Module module) {
     return getChildEntriesForFile(findFile(path, module));
   }
 
-  @Nullable
   @Override
-  public VirtualFile getDescriptorFile(@NotNull Project project) {
+  public @Nullable VirtualFile getDescriptorFile(@NotNull Project project) {
     if (descriptorPath != null) {
       return findFile(descriptorPath, project);
     }
     return null;
   }
 
-  @Nullable
   @Override
-  public VirtualFile getDescriptorFile(@NotNull Module module) {
+  public @Nullable VirtualFile getDescriptorFile(@NotNull Module module) {
     if (descriptorPath != null) {
       return findFile(descriptorPath, module);
     }
     return null;
   }
 
-  @NotNull
   @Override
-  public GlobalSearchScope getSearchScope(@NotNull Project project) {
+  public @NotNull GlobalSearchScope getSearchScope(@NotNull Project project) {
     return GlobalSearchScopesCore.directoriesScope(
         project, /* withSubDirectories= */ true, getProjectRoots(project));
   }

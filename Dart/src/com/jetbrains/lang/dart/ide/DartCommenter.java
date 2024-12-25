@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.lang.CodeDocumentationAwareCommenter;
@@ -33,14 +34,12 @@ public final class DartCommenter implements CodeDocumentationAwareCommenter {
   }
 
   @Override
-  @Nullable
-  public IElementType getLineCommentTokenType() {
+  public @Nullable IElementType getLineCommentTokenType() {
     return DartTokenTypesSets.SINGLE_LINE_COMMENT;
   }
 
   @Override
-  @Nullable
-  public IElementType getBlockCommentTokenType() {
+  public @Nullable IElementType getBlockCommentTokenType() {
     return DartTokenTypesSets.MULTI_LINE_COMMENT;
   }
 
@@ -66,8 +65,7 @@ public final class DartCommenter implements CodeDocumentationAwareCommenter {
   }
 
   @Override
-  @Nullable
-  public IElementType getDocumentationCommentTokenType() {
+  public @Nullable IElementType getDocumentationCommentTokenType() {
     return DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
@@ -28,7 +28,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "https://api.dart.dev/stable/";
 
   @Override
-  public @Nls String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
+  public @Nls String generateDoc(final @NotNull PsiElement element, final @Nullable PsiElement originalElement) {
     // in case of code completion 'element' comes from completion list and has nothing to do with 'originalElement',
     // but for Quick Doc in editor we should prefer building docs for 'originalElement' because such doc has info about propagated type
     final PsiElement elementForDocs = resolvesTo(originalElement, element) ? originalElement : element;
@@ -39,7 +39,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
     return DartDocUtil.generateDoc(element);
   }
 
-  private static boolean resolvesTo(@Nullable final PsiElement originalElement, @NotNull final PsiElement target) {
+  private static boolean resolvesTo(final @Nullable PsiElement originalElement, final @NotNull PsiElement target) {
     final PsiReference reference;
 
     if (originalElement instanceof PsiReference) {
@@ -73,8 +73,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
   }
 
   @Override
-  @Nullable
-  public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
+  public @Nullable List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
       return null;
     }
@@ -103,8 +102,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
       .generateDoc(project, elementDescription, false, docText, containingLibraryName, containingClassDescription, staticType, false);
   }
 
-  @Nullable
-  public static HoverInformation getSingleHover(@NotNull final PsiFile psiFile, final int offset) {
+  public static @Nullable HoverInformation getSingleHover(final @NotNull PsiFile psiFile, final int offset) {
     VirtualFile file = psiFile.getVirtualFile();
     final List<HoverInformation> hoverList =
       file != null ? DartAnalysisServerService.getInstance(psiFile.getProject()).analysis_getHover(file, offset) : Collections.emptyList();
@@ -114,8 +112,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
     return hoverList.get(0);
   }
 
-  @Nullable
-  private static String constructDocUrl(@NotNull final DartComponent component) {
+  private static @Nullable String constructDocUrl(final @NotNull DartComponent component) {
     // class:       https://api.dart.dev/stable/dart-web_audio/AnalyserNode-class.html
     // constructor: https://api.dart.dev/stable/dart-core/DateTime/DateTime.fromMicrosecondsSinceEpoch.html
     //              https://api.dart.dev/stable/dart-core/List/List.html
@@ -159,8 +156,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
     }
   }
 
-  @Nullable
-  private static String getLibRelatedUrlPart(@NotNull final PsiElement element) {
+  private static @Nullable String getLibRelatedUrlPart(final @NotNull PsiElement element) {
     for (VirtualFile libFile : DartResolveUtil.findLibrary(element.getContainingFile())) {
       final DartUrlResolver urlResolver = DartUrlResolver.getInstance(element.getProject(), libFile);
 
@@ -174,8 +170,7 @@ public final class DartDocumentationProvider implements DocumentationProvider {
     return null;
   }
 
-  @Nullable
-  private static HoverInformation getSingleHover(final PsiElement element) {
+  private static @Nullable HoverInformation getSingleHover(final PsiElement element) {
     final PsiFile psiFile = element == null ? null : element.getContainingFile();
     if (psiFile != null) {
       final int offset = element.getTextOffset();

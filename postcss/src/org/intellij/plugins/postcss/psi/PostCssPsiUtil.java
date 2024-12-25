@@ -55,8 +55,7 @@ public final class PostCssPsiUtil {
     return element != null && element.textContains('&');
   }
 
-  @NotNull
-  public static List<TextRange> findAllAmpersands(@Nullable final PsiElement element) {
+  public static @NotNull List<TextRange> findAllAmpersands(final @Nullable PsiElement element) {
     if (element == null) return Collections.emptyList();
     List<TextRange> result = new ArrayList<>();
     int index, offset = 0;
@@ -72,8 +71,7 @@ public final class PostCssPsiUtil {
     return result;
   }
 
-  @NotNull
-  public static List<? extends PsiElement> findAllComparisonOperators(@Nullable final CssMediaFeature mediaFeature) {
+  public static @NotNull List<? extends PsiElement> findAllComparisonOperators(final @Nullable CssMediaFeature mediaFeature) {
     return SyntaxTraverser.psiTraverser(mediaFeature).filter(PostCssPsiUtil::isComparisonOperator).toList();
   }
 

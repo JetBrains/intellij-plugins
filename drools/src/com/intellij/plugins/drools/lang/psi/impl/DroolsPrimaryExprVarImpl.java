@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -18,9 +18,8 @@ public abstract class DroolsPrimaryExprVarImpl extends DroolsPsiCompositeElement
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiType getType() {
+  public @NotNull PsiType getType() {
     final List<DroolsIdentifier> identifiers = getIdentifierList();
     if (identifiers.size() == 1) {
       //final PsiType type = RecursionManager.doPreventingRecursion(this, true, new Computable<PsiType>() {

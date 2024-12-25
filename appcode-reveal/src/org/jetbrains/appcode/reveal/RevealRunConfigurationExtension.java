@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -56,8 +56,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
   private static final Key<File> FILE_TO_INJECT = Key.create("reveal.library.to.inject");
   private static final List<String> KNOWN_FRAMEWORK_NAMES = List.of("RevealServer", "Reveal");
 
-  @NotNull
-  public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
+  public static @NotNull RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
     RevealSettings settings = config.getUserData(REVEAL_SETTINGS_KEY);
     return settings == null ? new RevealSettings() : settings;
   }
@@ -102,15 +101,13 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     setRevealSettings(to, settings.clone());
   }
 
-  @Nullable
   @Override
-  protected <P extends AppCodeRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
+  protected @Nullable <P extends AppCodeRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
     return new MyEditor<>();
   }
 
-  @Nullable
   @Override
-  protected String getEditorTitle() {
+  protected @Nullable String getEditorTitle() {
     return RevealBundle.message("dialog.title.reveal");
   }
 
@@ -129,8 +126,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     return isAvailableForPlatform(config);
   }
 
-  @Nullable
-  private static XCBuildSettings getBuildSettings(@NotNull AppCodeRunConfiguration config) {
+  private static @Nullable XCBuildSettings getBuildSettings(@NotNull AppCodeRunConfiguration config) {
     return ReadAction.compute(() -> {
       BuildDestination destination = ContainerUtil.getFirstItem(config.getDestinations());
       if (destination == null) return null;
@@ -141,15 +137,14 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     });
   }
 
-  private static boolean isAvailableForPlatform(@NotNull final AppCodeRunConfiguration config) {
+  private static boolean isAvailableForPlatform(final @NotNull AppCodeRunConfiguration config) {
     return ReadAction.compute(() -> {
       AppleSdk sdk = getSdk(config);
       return sdk != null && (sdk.getPlatform().isIOS() || sdk.getPlatform().isTv());
     });
   }
 
-  @Nullable
-  private static AppleSdk getSdk(@NotNull final AppCodeRunConfiguration config) {
+  private static @Nullable AppleSdk getSdk(final @NotNull AppCodeRunConfiguration config) {
     return ReadAction.compute(() -> {
       XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
       return xcBuildConfiguration == null ? null : XCBuildSettings.getRawBuildSettings(xcBuildConfiguration).getBaseSdk();
@@ -194,11 +189,10 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     environment.putUserData(FILE_TO_INJECT, toInject);
   }
 
-  @Nullable
-  private static File installReveal(@NotNull final AppCodeRunConfiguration configuration,
-                                    @NotNull BuildConfiguration buildConfiguration,
-                                    @NotNull File mainExecutable,
-                                    @NotNull final RevealSettings settings) throws ExecutionException {
+  private static @Nullable File installReveal(final @NotNull AppCodeRunConfiguration configuration,
+                                              @NotNull BuildConfiguration buildConfiguration,
+                                              @NotNull File mainExecutable,
+                                              final @NotNull RevealSettings settings) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.application.bundle.not.found"));
 
@@ -250,9 +244,8 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
               return false;
             }
 
-            @NotNull
             @Override
-            public String getDoNotShowMessage() {
+            public @NotNull String getDoNotShowMessage() {
               return UIBundle.message("dialog.options.do.not.show");
             }
           })
@@ -272,7 +265,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     return signAndInstall(libReveal, buildConfiguration, mainExecutable);
   }
 
-  private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
+  private static boolean hasBundledRevealLib(final @NotNull BuildConfiguration buildConfiguration, final @NotNull File libReveal) {
     return ReadAction.compute(() -> {
       PBXTarget target = buildConfiguration.getConfiguration().getTarget();
       if (target != null) {
@@ -293,10 +286,9 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     });
   }
 
-  @NotNull
-  private static File signAndInstall(@NotNull File libReveal,
-                                     @NotNull final BuildConfiguration buildConfiguration,
-                                     @NotNull File mainExecutable) throws ExecutionException {
+  private static @NotNull File signAndInstall(@NotNull File libReveal,
+                                              final @NotNull BuildConfiguration buildConfiguration,
+                                              @NotNull File mainExecutable) throws ExecutionException {
     File frameworksDir = new File(mainExecutable.getParent(), "Frameworks");
     File libRevealCopy = new File(frameworksDir, libReveal.getName());
 
@@ -313,9 +305,8 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
   }
 
 
-  @NotNull
-  private static String getBundleID(@NotNull ExecutionEnvironment environment,
-                                    @NotNull File product) throws ExecutionException {
+  private static @NotNull String getBundleID(@NotNull ExecutionEnvironment environment,
+                                             @NotNull File product) throws ExecutionException {
     String result = environment.getUserData(BUNDLE_ID_KEY);
     if (result != null) return result;
 
@@ -405,9 +396,8 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
       setRevealSettings(s, settings);
     }
 
-    @NotNull
     @Override
-    protected JComponent createEditor() {
+    protected @NotNull JComponent createEditor() {
       FormBuilder builder = new FormBuilder();
 
       myRevealNotFoundOrIncompatible = new HyperlinkLabel();

@@ -16,8 +16,8 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.psi.PbGroupOptionContainer;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbGroupOptionContainerMixin extends PbElementBase implements PbGroupOptionContainer {
@@ -26,9 +26,8 @@ abstract class PbGroupOptionContainerMixin extends PbElementBase implements PbGr
     super(node);
   }
 
-  @Nullable
   @Override
-  public PsiElement getContext() {
+  public @Nullable PsiElement getContext() {
     // A GroupOptionContainer's context is the group's associated generated field.
     PsiElement parent = getParent();
     if (!(parent instanceof PbGroupDefinitionImpl)) {

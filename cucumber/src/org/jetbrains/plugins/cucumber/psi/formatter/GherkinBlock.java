@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.formatter;
 
 import com.intellij.formatting.*;
@@ -66,14 +67,12 @@ public class GherkinBlock implements ASTBlock {
   }
 
   @Override
-  @NotNull
-  public TextRange getTextRange() {
+  public @NotNull TextRange getTextRange() {
     return myTextRange;
   }
 
   @Override
-  @NotNull
-  public List<Block> getSubBlocks() {
+  public @NotNull List<Block> getSubBlocks() {
     if (myLeaf) return Collections.emptyList();
     if (myChildren == null) {
       myChildren = buildChildren();
@@ -124,8 +123,7 @@ public class GherkinBlock implements ASTBlock {
   }
 
   @Override
-  @Nullable
-  public Wrap getWrap() {
+  public @Nullable Wrap getWrap() {
     return null;
   }
 
@@ -193,8 +191,7 @@ public class GherkinBlock implements ASTBlock {
   }
 
   @Override
-  @NotNull
-  public ChildAttributes getChildAttributes(int newChildIndex) {
+  public @NotNull ChildAttributes getChildAttributes(int newChildIndex) {
     Indent childIndent = BLOCKS_TO_INDENT_CHILDREN.contains(getNode().getElementType()) ? Indent.getNormalIndent() : Indent.getNoneIndent();
     return new ChildAttributes(childIndent, null);
   }

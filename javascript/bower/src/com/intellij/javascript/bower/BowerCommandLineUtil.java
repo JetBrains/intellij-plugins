@@ -38,24 +38,21 @@ public final class BowerCommandLineUtil {
   private BowerCommandLineUtil() {
   }
 
-  @NotNull
-  public static ProcessOutput runBowerCommand(@Nullable ProgressIndicator indicator,
-                                              @NotNull BowerSettings settings,
-                                              String... commands) throws ExecutionException {
+  public static @NotNull ProcessOutput runBowerCommand(@Nullable ProgressIndicator indicator,
+                                                       @NotNull BowerSettings settings,
+                                                       String... commands) throws ExecutionException {
     BowerCommandRun bowerCommandRun = startBowerCommand(settings, commands);
     return bowerCommandRun.captureOutput(indicator, TimeUnit.MINUTES.toMillis(10));
   }
 
-  @NotNull
-  public static BowerCommandRun startBowerCommand(@NotNull BowerSettings settings, String... commands) throws ExecutionException {
+  public static @NotNull BowerCommandRun startBowerCommand(@NotNull BowerSettings settings, String... commands) throws ExecutionException {
     GeneralCommandLine commandLine = createCommandLine(settings);
     commandLine.addParameters(commands);
     LOG.info("Running bower command: " + commandLine.getCommandLineString());
     return new BowerCommandRun(new KillableColoredProcessHandler(commandLine));
   }
 
-  @NotNull
-  public static GeneralCommandLine createCommandLine(@NotNull BowerSettings settings) throws ExecutionException {
+  public static @NotNull GeneralCommandLine createCommandLine(@NotNull BowerSettings settings) throws ExecutionException {
     NodeJsInterpreter interpreter = settings.getInterpreter();
     NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.castAndValidate(interpreter);
     GeneralCommandLine commandLine = new GeneralCommandLine();
@@ -86,8 +83,7 @@ public final class BowerCommandLineUtil {
     return file;
   }
 
-  @Nullable
-  private static File getWorkingDir(@NotNull BowerSettings settings) {
+  private static @Nullable File getWorkingDir(@NotNull BowerSettings settings) {
     File bowerConfigFile = new File(settings.getBowerJsonPath());
     if (bowerConfigFile.isFile()) {
       return bowerConfigFile.getParentFile();

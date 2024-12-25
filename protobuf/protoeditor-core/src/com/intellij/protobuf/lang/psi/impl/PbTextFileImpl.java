@@ -21,7 +21,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbTextFileType;
 import com.intellij.protobuf.lang.psi.PbTextFile;
-import com.intellij.protobuf.lang.psi.PbTextRootMessage;
 import com.intellij.protobuf.lang.resolve.SchemaInfo;
 import com.intellij.protobuf.lang.resolve.SchemaProvider;
 import com.intellij.psi.FileViewProvider;
@@ -37,15 +36,13 @@ public class PbTextFileImpl extends PsiFileBase implements PbTextFile {
     super(viewProvider, language);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return PbTextFileType.INSTANCE;
   }
 
   @Override
-  @Nullable
-  public SchemaInfo getSchemaInfo() {
+  public @Nullable SchemaInfo getSchemaInfo() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->

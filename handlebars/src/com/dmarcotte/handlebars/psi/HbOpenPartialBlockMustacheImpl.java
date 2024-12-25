@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.psi;
 
 import com.dmarcotte.handlebars.psi.impl.HbOpenBlockMustacheImpl;
@@ -13,9 +14,8 @@ public class HbOpenPartialBlockMustacheImpl  extends HbOpenBlockMustacheImpl imp
     super(astNode);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     // todo this icon is okay since this _is_ a partial, but a proper `{{#>` would probably be better
     return HandlebarsIcons.Elements.OpenPartial;
   }

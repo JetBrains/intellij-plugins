@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -25,9 +26,8 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return this;
   }
 
@@ -36,9 +36,8 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     return this;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();
 
     DartReference[] dartReferences = PsiTreeUtil.getChildrenOfType(this, DartReference.class);
@@ -53,9 +52,8 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     return new UnfairTextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getText();
   }
 
@@ -116,9 +114,8 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     return DartResolveUtil.toCandidateInfoArray(elements);
   }
 
-  @NotNull
   @Override
-  public DartClassResolveResult resolveDartClass() {
+  public @NotNull DartClassResolveResult resolveDartClass() {
     if (this instanceof DartSuperExpression) {
       final DartClass dartClass = PsiTreeUtil.getParentOfType(this, DartClass.class);
       return dartClass == null ? DartClassResolveResult.EMPTY : dartClass.getSuperClassResolvedOrObjectClass();
@@ -170,8 +167,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     return DartResolveUtil.getDartClassResolveResult(resolve(), tryGetLeftResolveResult(this).getSpecialization());
   }
 
-  @NotNull
-  private static DartClassResolveResult tryGetLeftResolveResult(DartExpression expression) {
+  private static @NotNull DartClassResolveResult tryGetLeftResolveResult(DartExpression expression) {
     final DartReference[] childReferences = PsiTreeUtil.getChildrenOfType(expression, DartReference.class);
     final DartReference leftReference = childReferences != null ? childReferences[0] : null;
     return leftReference != null

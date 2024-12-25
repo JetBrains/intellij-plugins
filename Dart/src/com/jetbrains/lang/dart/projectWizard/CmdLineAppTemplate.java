@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.openapi.module.Module;
@@ -19,9 +20,9 @@ class CmdLineAppTemplate extends DartProjectTemplate {
   }
 
   @Override
-  public Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
-                                                 @NotNull final Module module,
-                                                 @NotNull final VirtualFile baseDir) throws IOException {
+  public Collection<VirtualFile> generateProject(final @NotNull String sdkRoot,
+                                                 final @NotNull Module module,
+                                                 final @NotNull VirtualFile baseDir) throws IOException {
     final VirtualFile pubspecFile = baseDir.createChildData(this, PubspecYamlUtil.PUBSPEC_YAML);
     pubspecFile.setBinaryContent(("name: " + module.getName() + "\n" +
                                   "version: 0.0.1\n" +

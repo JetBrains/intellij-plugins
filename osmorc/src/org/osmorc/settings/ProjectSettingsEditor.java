@@ -43,21 +43,18 @@ public final class ProjectSettingsEditor implements SearchableConfigurable {
     myProject = project;
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return OsmorcBundle.message("settings.project");
   }
 
-  @NotNull
   @Override
-  public String getHelpTopic() {
+  public @NotNull String getHelpTopic() {
     return "reference.settings.project.osgi.project.settings";
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return getHelpTopic();
   }
 

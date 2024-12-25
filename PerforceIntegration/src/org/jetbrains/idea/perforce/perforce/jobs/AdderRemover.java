@@ -1,14 +1,14 @@
 package org.jetbrains.idea.perforce.perforce.jobs;
 
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
-import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 interface AdderRemover {
   @Nullable
-  VcsException add(@NotNull final PerforceJob job, LocalChangeList list, Project project);
+  VcsException add(final @NotNull PerforceJob job, LocalChangeList list, Project project);
   @Nullable
-  VcsException remove(@NotNull final PerforceJob job, LocalChangeList list, Project project);
+  VcsException remove(final @NotNull PerforceJob job, LocalChangeList list, Project project);
 }

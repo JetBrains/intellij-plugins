@@ -21,9 +21,8 @@ public final class MeteorUpdateConfigurationProvider extends UpdateConfiguration
     })""";
 
   private static final UpdateConfiguration UPDATE_CONFIGURATION = new UpdateConfiguration() {
-    @NotNull
     @Override
-    public UpdatePolicy getPolicy() {
+    public @NotNull UpdatePolicy getPolicy() {
       return LiveEditOptions.getInstance().isNodeUpdateOnChanges() ? UpdatePolicy.AUTO : UpdatePolicy.MANUAL;
     }
 
@@ -32,9 +31,8 @@ public final class MeteorUpdateConfigurationProvider extends UpdateConfiguration
       return LiveEditOptions.getInstance().getNodeAutoDelay();
     }
 
-    @NotNull
     @Override
-    public CharSequence preprocessSource(@NotNull CharSequence text) {
+    public @NotNull CharSequence preprocessSource(@NotNull CharSequence text) {
       return new MergingCharSequence(new MergingCharSequence(S, text), E);
     }
 
@@ -44,9 +42,8 @@ public final class MeteorUpdateConfigurationProvider extends UpdateConfiguration
     }
   };
 
-  @Nullable
   @Override
-  public UpdateConfiguration getConfiguration(@NotNull XDebugProcess debugProcess) {
+  public @Nullable UpdateConfiguration getConfiguration(@NotNull XDebugProcess debugProcess) {
     boolean isMeteorProcess = debugProcess.getSession().getRunProfile() instanceof MeteorRunConfiguration;
 
     return isMeteorProcess ? UPDATE_CONFIGURATION : null;

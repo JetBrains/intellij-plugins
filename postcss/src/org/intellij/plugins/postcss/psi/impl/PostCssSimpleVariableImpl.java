@@ -15,9 +15,8 @@ public class PostCssSimpleVariableImpl extends CompositePsiElement implements Po
     super(PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE);
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     if (getParent() instanceof PostCssSimpleVariableDeclaration) {
       return null;
     }

@@ -38,9 +38,8 @@ public class PbOptionNameReference extends PsiReferenceBase<PbOptionName> {
     super(element);
   }
 
-  @Nullable
   @Override
-  protected TextRange calculateDefaultRangeInElement() {
+  protected @Nullable TextRange calculateDefaultRangeInElement() {
     PsiElement symbol = myElement.getSymbol();
     if (symbol == null) {
       return null;
@@ -52,9 +51,8 @@ public class PbOptionNameReference extends PsiReferenceBase<PbOptionName> {
         identifierRange.getLength());
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     ResolveCache cache = ResolveCache.getInstance(myElement.getProject());
     return cache.resolveWithCaching(
         this, Resolver.INSTANCE, /* needToPreventRecursion= */ false, /* incompleteCode= */ false);
@@ -69,8 +67,7 @@ public class PbOptionNameReference extends PsiReferenceBase<PbOptionName> {
     return resolveNamedFieldInType(name, myElement.getQualifierType());
   }
 
-  @Nullable
-  private static PbField resolveNamedFieldInType(String name, PbMessageType type) {
+  private static @Nullable PbField resolveNamedFieldInType(String name, PbMessageType type) {
     if (type == null) {
       return null;
     }
@@ -85,9 +82,8 @@ public class PbOptionNameReference extends PsiReferenceBase<PbOptionName> {
         .orElse(null);
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public @NotNull Object[] getVariants() {
     PbMessageType qualifierType = myElement.getQualifierType();
     if (qualifierType == null) {
       return LookupElement.EMPTY_ARRAY;
@@ -124,9 +120,8 @@ public class PbOptionNameReference extends PsiReferenceBase<PbOptionName> {
   private static class Resolver implements ResolveCache.Resolver {
     private static final Resolver INSTANCE = new Resolver();
 
-    @Nullable
     @Override
-    public PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
+    public @Nullable PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
       return ((PbOptionNameReference) ref).resolveNoCache();
     }
   }

@@ -16,12 +16,15 @@
 package com.intellij.protobuf.lang.stub.type;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.StubBuilder;
-import com.intellij.psi.stubs.*;
-import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.stub.PbFileStub;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.StubBuilder;
+import com.intellij.psi.stubs.DefaultStubBuilder;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.tree.IStubFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +33,7 @@ public class PbFileElementType extends IStubFileElementType<PbFileStub> {
     super(language);
   }
 
-  public PbFileElementType(@NonNls final String debugName, final Language language) {
+  public PbFileElementType(final @NonNls String debugName, final Language language) {
     super(debugName, language);
   }
 
@@ -39,33 +42,30 @@ public class PbFileElementType extends IStubFileElementType<PbFileStub> {
     return 0;
   }
 
-  @NotNull
   @Override
-  public StubBuilder getBuilder() {
+  public @NotNull StubBuilder getBuilder() {
     return new PbStubBuilder();
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "protobuf.file";
   }
 
   @Override
-  public void serialize(@NotNull final PbFileStub stub, @NotNull final StubOutputStream dataStream) {}
+  public void serialize(final @NotNull PbFileStub stub, final @NotNull StubOutputStream dataStream) {}
 
-  @NotNull
   @Override
-  public PbFileStub deserialize(
-      @NotNull final StubInputStream dataStream,
-      final StubElement parentStub) {
+  public @NotNull PbFileStub deserialize(
+    final @NotNull StubInputStream dataStream,
+    final StubElement parentStub) {
     return new PbFileStub(null);
   }
 
   private static class PbStubBuilder extends DefaultStubBuilder {
-    @NotNull
     @Override
-    protected @SuppressWarnings("rawtypes") StubElement createStubForFile(@NotNull PsiFile file) {
+    @SuppressWarnings("rawtypes")
+    protected @NotNull StubElement createStubForFile(@NotNull PsiFile file) {
       return new PbFileStub((PbFile) file);
     }
   }

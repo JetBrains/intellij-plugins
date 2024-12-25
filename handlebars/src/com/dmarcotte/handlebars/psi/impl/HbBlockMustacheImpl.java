@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.psi.HbBlockMustache;
@@ -13,14 +14,12 @@ abstract class HbBlockMustacheImpl extends HbMustacheImpl implements HbBlockMust
   }
 
   @Override
-  @Nullable
-  public HbMustacheName getBlockMustacheName() {
+  public @Nullable HbMustacheName getBlockMustacheName() {
     return PsiTreeUtil.findChildOfType(this, HbMustacheName.class);
   }
 
   @Override
-  @Nullable
-  public String getName() {
+  public @Nullable String getName() {
     HbMustacheName mainPath = getBlockMustacheName();
     return mainPath == null ? null : mainPath.getName();
   }

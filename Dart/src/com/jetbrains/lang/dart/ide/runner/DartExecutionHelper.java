@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -26,7 +26,7 @@ import java.util.List;
 public final class DartExecutionHelper {
   private DartExecutionHelper() {}
 
-  public static void displayIssues(@NotNull final Project project,
+  public static void displayIssues(final @NotNull Project project,
                                    @NotNull VirtualFile launchFile,
                                    @NotNull @Nls String message,
                                    @Nullable Icon icon) {
@@ -44,14 +44,13 @@ public final class DartExecutionHelper {
     problemsView.showErrorNotification("", message, icon);
   }
 
-  public static void clearIssueNotifications(@NotNull final Project project) {
+  public static void clearIssueNotifications(final @NotNull Project project) {
     final DartProblemsView problemsView = DartProblemsView.getInstance(project);
     problemsView.clearNotifications();
   }
 
-  @Nullable
   @VisibleForTesting
-  public static GlobalSearchScope getScopeOfFilesThatMayAffectExecution(@NotNull Project project, @NotNull VirtualFile file) {
+  public static @Nullable GlobalSearchScope getScopeOfFilesThatMayAffectExecution(@NotNull Project project, @NotNull VirtualFile file) {
     if (!FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return null;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
@@ -76,10 +75,9 @@ public final class DartExecutionHelper {
     return module.getModuleContentScope();
   }
 
-  @NotNull
-  private static GlobalSearchScope getScopeForContextSubdir(@NotNull Module module,
-                                                            @NotNull VirtualFile pubspecFile,
-                                                            @Nullable VirtualFile contextSubdir) {
+  private static @NotNull GlobalSearchScope getScopeForContextSubdir(@NotNull Module module,
+                                                                     @NotNull VirtualFile pubspecFile,
+                                                                     @Nullable VirtualFile contextSubdir) {
     final Project project = module.getProject();
     final VirtualFile dartRoot = pubspecFile.getParent();
 

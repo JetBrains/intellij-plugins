@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -16,13 +16,13 @@ public final class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLi
   private final Map<String, IsolateBreakpointInfo> myIsolateInfo = new HashMap<>();
   private final Map<String, XLineBreakpoint<XBreakpointProperties>> myVmBreakpointIdToXBreakpointMap = new HashMap<>();
 
-  public DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
+  public DartVmServiceBreakpointHandler(final @NotNull DartVmServiceDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);
     myDebugProcess = debugProcess;
   }
 
   @Override
-  public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
+  public void registerBreakpoint(final @NotNull XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
     myXBreakpoints.add(xBreakpoint);
 
     final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
@@ -32,7 +32,7 @@ public final class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLi
   }
 
   @Override
-  public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, boolean temporary) {
+  public void unregisterBreakpoint(final @NotNull XLineBreakpoint<XBreakpointProperties> xBreakpoint, boolean temporary) {
     myXBreakpoints.remove(xBreakpoint);
 
     for (IsolateBreakpointInfo info : myIsolateInfo.values()) {
@@ -44,9 +44,9 @@ public final class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLi
     return myXBreakpoints;
   }
 
-  public void vmBreakpointAdded(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
-                                @NotNull final String isolateId,
-                                @NotNull final Breakpoint vmBreakpoint) {
+  public void vmBreakpointAdded(final @NotNull XLineBreakpoint<XBreakpointProperties> xBreakpoint,
+                                final @NotNull String isolateId,
+                                final @NotNull Breakpoint vmBreakpoint) {
     myVmBreakpointIdToXBreakpointMap.put(vmBreakpoint.getId(), xBreakpoint);
 
     IsolateBreakpointInfo info = getIsolateInfo(isolateId);
@@ -81,7 +81,7 @@ public final class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLi
     return info;
   }
 
-  public void breakpointResolved(@NotNull final Breakpoint vmBreakpoint) {
+  public void breakpointResolved(final @NotNull Breakpoint vmBreakpoint) {
     final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myVmBreakpointIdToXBreakpointMap.get(vmBreakpoint.getId());
 
     // This can be null when the breakpoint has been set by another debugger client.
@@ -90,12 +90,12 @@ public final class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLi
     }
   }
 
-  public void breakpointFailed(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
+  public void breakpointFailed(final @NotNull XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
     // can this xBreakpoint be resolved for other isolate?
     myDebugProcess.getSession().setBreakpointInvalid(xBreakpoint, null);
   }
 
-  public XLineBreakpoint<XBreakpointProperties> getXBreakpoint(@NotNull final Breakpoint vmBreakpoint) {
+  public XLineBreakpoint<XBreakpointProperties> getXBreakpoint(final @NotNull Breakpoint vmBreakpoint) {
     return myVmBreakpointIdToXBreakpointMap.get(vmBreakpoint.getId());
   }
 }

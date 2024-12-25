@@ -44,8 +44,7 @@ public class BowerPackagingService extends PackageManagementServiceEx {
     myPackageInfoManager = new BowerPackageInfoManager(settings);
   }
 
-  @NotNull
-  public BowerSettings getSettings() {
+  public @NotNull BowerSettings getSettings() {
     return mySettings;
   }
 
@@ -82,8 +81,8 @@ public class BowerPackagingService extends PackageManagementServiceEx {
 
   @Override
   public void installPackage(final RepoPackage repoPackage,
-                             @Nullable final String version,
-                             boolean forceUpgrade, @Nullable final String extraOptions, final Listener listener, boolean installToUser) {
+                             final @Nullable String version,
+                             boolean forceUpgrade, final @Nullable String extraOptions, final Listener listener, boolean installToUser) {
     ApplicationManager.getApplication().executeOnPooledThread(
       () -> doInstallPackage(repoPackage.getName(), version, extraOptions, listener));
   }
@@ -146,7 +145,7 @@ public class BowerPackagingService extends PackageManagementServiceEx {
     uninstallBowerPackages(bowerInstalledPackages, listener);
   }
 
-  private void uninstallBowerPackages(final @NotNull List<? extends BowerInstalledPackage> packages, @NotNull final Listener listener) {
+  private void uninstallBowerPackages(final @NotNull List<? extends BowerInstalledPackage> packages, final @NotNull Listener listener) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       for (BowerInstalledPackage pkg : packages) {
         doUninstallPackage(pkg, listener, true);
@@ -209,8 +208,8 @@ public class BowerPackagingService extends PackageManagementServiceEx {
 
   @Override
   public void updatePackage(@NotNull InstalledPackage installedPackage,
-                            @Nullable final String version,
-                            @NotNull final Listener listener) {
+                            final @Nullable String version,
+                            final @NotNull Listener listener) {
     final BowerInstalledPackage pkg = ObjectUtils.tryCast(installedPackage, BowerInstalledPackage.class);
     if (pkg != null) {
       final String packageName = pkg.getName();
@@ -247,8 +246,7 @@ public class BowerPackagingService extends PackageManagementServiceEx {
     consumer.consume(latestVersion);
   }
 
-  @NotNull
-  public ProcessOutput runCommand(String... commands) throws ExecutionException {
+  public @NotNull ProcessOutput runCommand(String... commands) throws ExecutionException {
     return BowerCommandLineUtil.runBowerCommand(null, mySettings, commands);
   }
 }

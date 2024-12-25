@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -17,8 +18,7 @@ public abstract class DartCompletionTimerExtension {
   private static final ExtensionPointName<DartCompletionTimerExtension> EP_NAME =
     ExtensionPointName.create("Dart.completionTimerExtension");
 
-  @NotNull
-  public static List<DartCompletionTimerExtension> getExtensions() {
+  public static @NotNull List<DartCompletionTimerExtension> getExtensions() {
     return EP_NAME.getExtensionList();
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.ide.util.MemberChooser;
@@ -10,12 +10,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.openapi.util.NlsContexts;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.DartNamedElementNode;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -28,22 +28,22 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActionHandler {
   @Override
-  public boolean isValidFor(@NotNull final Editor editor, @NotNull final PsiFile file) {
+  public boolean isValidFor(final @NotNull Editor editor, final @NotNull PsiFile file) {
     return file instanceof DartFile &&
            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), DartClass.class) != null;
   }
 
   @Override
-  public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
+  public void invoke(final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile file) {
     invoke(project, editor, file, editor.getCaretModel().getOffset());
   }
 
-  public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, final int offset) {
+  public void invoke(final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile file, final int offset) {
     final DartClass dartClass = PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
     if (dartClass == null) return;
 
@@ -65,11 +65,11 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     doInvoke(project, editor, file, selectedElements, createFix(dartClass));
   }
 
-  protected void doInvoke(@NotNull final Project project,
-                          @NotNull final Editor editor,
-                          @NotNull final PsiFile file,
-                          @NotNull final Collection<DartNamedElementNode> selectedElements,
-                          @NotNull final BaseCreateMethodsFix createMethodsFix) {
+  protected void doInvoke(final @NotNull Project project,
+                          final @NotNull Editor editor,
+                          final @NotNull PsiFile file,
+                          final @NotNull Collection<DartNamedElementNode> selectedElements,
+                          final @NotNull BaseCreateMethodsFix createMethodsFix) {
     Runnable runnable = new Runnable() {
       @Override
       public void run() {
@@ -98,23 +98,19 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
   }
 
-  @NotNull
-  protected abstract BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass);
+  protected abstract @NotNull BaseCreateMethodsFix createFix(final @NotNull DartClass dartClass);
 
-  @NotNull
-  @NlsContexts.DialogTitle
-  protected abstract String getTitle();
+  protected abstract @NotNull @NlsContexts.DialogTitle String getTitle();
 
-  protected abstract void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates);
+  protected abstract void collectCandidates(final @NotNull DartClass dartClass, final @NotNull List<DartComponent> candidates);
 
-  private final static Condition<DartComponent> NOT_CONSTRUCTOR_CONDITION =
+  private static final Condition<DartComponent> NOT_CONSTRUCTOR_CONDITION =
     component -> DartComponentType.typeOf(component) != DartComponentType.CONSTRUCTOR;
 
-  private final static Condition<DartComponent> NOT_STATIC_CONDITION = component -> !component.isStatic();
+  private static final Condition<DartComponent> NOT_STATIC_CONDITION = component -> !component.isStatic();
 
-  @NotNull
-  protected final Map<Pair<String, Boolean>, DartComponent> computeClassMembersMap(@NotNull final DartClass dartClass,
-                                                                                   final boolean doIncludeStatics) {
+  protected final @NotNull Map<Pair<String, Boolean>, DartComponent> computeClassMembersMap(final @NotNull DartClass dartClass,
+                                                                                            final boolean doIncludeStatics) {
     List<DartComponent> classMembers = DartResolveUtil.getNamedSubComponents(dartClass);
     classMembers = ContainerUtil.filter(classMembers, NOT_CONSTRUCTOR_CONDITION);
     if (!doIncludeStatics) {
@@ -123,8 +119,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     return DartResolveUtil.namedComponentToMap(classMembers);
   }
 
-  @NotNull
-  protected final Map<Pair<String, Boolean>, DartComponent> computeSuperClassesMemberMap(@NotNull final DartClass dartClass) {
+  protected final @NotNull Map<Pair<String, Boolean>, DartComponent> computeSuperClassesMemberMap(final @NotNull DartClass dartClass) {
     final List<DartClass> superClasses = new ArrayList<>();
     final List<DartClass> superInterfaces = new ArrayList<>();
 
@@ -141,8 +136,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     return DartResolveUtil.namedComponentToMap(superClassesMembers);
   }
 
-  @NotNull
-  protected final Map<Pair<String, Boolean>, DartComponent> computeSuperInterfacesMembersMap(@NotNull final DartClass dartClass) {
+  protected final @NotNull Map<Pair<String, Boolean>, DartComponent> computeSuperInterfacesMembersMap(final @NotNull DartClass dartClass) {
     final List<DartClass> superClasses = new ArrayList<>();
     final List<DartClass> superInterfaces = new ArrayList<>();
 
@@ -159,14 +153,13 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     return DartResolveUtil.namedComponentToMap(superInterfacesMembers);
   }
 
-  @Nullable
-  protected JComponent getOptionsComponent(DartClass jsClass, final Collection<DartComponent> candidates) {
+  protected @Nullable JComponent getOptionsComponent(DartClass jsClass, final Collection<DartComponent> candidates) {
     return null;
   }
 
-  protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(@NotNull final Project project,
-                                                                          @NotNull final DartClass dartClass,
-                                                                          @NotNull final Collection<DartComponent> candidates,
+  protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(final @NotNull Project project,
+                                                                          final @NotNull DartClass dartClass,
+                                                                          final @NotNull Collection<DartComponent> candidates,
                                                                           @NotNull @NlsContexts.DialogTitle String title) {
     final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, DartNamedElementNode::new);
     final MemberChooser<DartNamedElementNode> chooser =

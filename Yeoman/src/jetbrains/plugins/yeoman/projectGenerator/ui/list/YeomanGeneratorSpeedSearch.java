@@ -32,9 +32,8 @@ public class YeomanGeneratorSpeedSearch extends SpeedSearchBase<YeomanGeneratorT
     return ((YeomanGeneratorTableModel)getComponent().getModel()).getView().get(getComponent().convertRowIndexToModel(viewIndex));
   }
 
-  @Nullable
   @Override
-  protected String getElementText(Object element) {
+  protected @Nullable String getElementText(Object element) {
     if (element instanceof YeomanGeneratorInfo) {
       return ((YeomanGeneratorInfo)element).getYoName();
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -28,7 +28,7 @@ public class DartServerSubtypesHierarchyTreeStructure extends HierarchyTreeStruc
   }
 
   @Override
-  protected final Object @NotNull [] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
+  protected final Object @NotNull [] buildChildren(final @NotNull HierarchyNodeDescriptor descriptor) {
     final DartClass dartClass = ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();
     if (dartClass == null) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
@@ -43,11 +43,11 @@ public class DartServerSubtypesHierarchyTreeStructure extends HierarchyTreeStruc
     return descriptor.getCachedChildren();
   }
 
-  public static void addSubClassHierarchy(@NotNull final Set<? super TypeHierarchyItem> stackItems,
-                                          @NotNull final Project project,
-                                          @NotNull final List<? extends TypeHierarchyItem> items,
-                                          @NotNull final TypeHierarchyItem item,
-                                          @NotNull final HierarchyNodeDescriptor descriptor) {
+  public static void addSubClassHierarchy(final @NotNull Set<? super TypeHierarchyItem> stackItems,
+                                          final @NotNull Project project,
+                                          final @NotNull List<? extends TypeHierarchyItem> items,
+                                          final @NotNull TypeHierarchyItem item,
+                                          final @NotNull HierarchyNodeDescriptor descriptor) {
     if (!stackItems.add(item)) {
       descriptor.setCachedChildren(ArrayUtilRt.EMPTY_OBJECT_ARRAY);
       return;

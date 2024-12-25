@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -15,14 +15,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
-  public CreateConstructorFix(@NotNull final DartClass dartClass) {
+  public CreateConstructorFix(final @NotNull DartClass dartClass) {
     super(dartClass);
   }
 
   @Override
-  protected void processElements(@NotNull final Project project,
-                                 @NotNull final Editor editor,
-                                 @NotNull final Set<DartComponent> elementsToProcess) {
+  protected void processElements(final @NotNull Project project,
+                                 final @NotNull Editor editor,
+                                 final @NotNull Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
   }
@@ -33,8 +33,7 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
   }
 
   @Override
-  @NotNull
-  protected String getNothingFoundMessage() {
+  protected @NotNull String getNothingFoundMessage() {
     return ""; // can't be called actually because processElements() is overridden
   }
 

@@ -45,21 +45,18 @@ public final class ConceptColorSettingsPage implements ColorSettingsPage {
     new AttributesDescriptor(GaugeBundle.message("gauge.attribute.descriptor.table.item"), HighlighterTokens.TABLE_ROW),
   };
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return null;
   }
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new ConceptSyntaxHighlighter();
   }
 
-  @NotNull
   @Override
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return """
       # Concept Heading
       This comment explains what the spec intends to test
@@ -74,9 +71,8 @@ public final class ConceptColorSettingsPage implements ColorSettingsPage {
       """;
   }
 
-  @Nullable
   @Override
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return null;
   }
 
@@ -91,9 +87,8 @@ public final class ConceptColorSettingsPage implements ColorSettingsPage {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return GaugeBundle.message("gauge.concept.colors");
   }
 }

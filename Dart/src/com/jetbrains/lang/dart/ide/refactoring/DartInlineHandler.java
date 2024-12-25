@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.CommonBundle;
@@ -51,7 +51,7 @@ public final class DartInlineHandler extends InlineActionHandler {
   }
 
   @Override
-  public void inlineElement(@NotNull final Project project, @Nullable final Editor editor, PsiElement element) {
+  public void inlineElement(final @NotNull Project project, final @Nullable Editor editor, PsiElement element) {
     if (editor == null) return;
 
     final InlineRefactoringContext context = findContext(editor);
@@ -109,8 +109,7 @@ public final class DartInlineHandler extends InlineActionHandler {
     return canInlineElementInEditor(element, editor);
   }
 
-  @Nullable
-  static private InlineRefactoringContext findContext(@NotNull Editor editor) {
+  private static @Nullable InlineRefactoringContext findContext(@NotNull Editor editor) {
     // prepare project
     final Project project = editor.getProject();
     if (project == null) {
@@ -138,7 +137,7 @@ public final class DartInlineHandler extends InlineActionHandler {
     return null;
   }
 
-  public static boolean showMessageIfError(@NotNull Project project, @NotNull Editor editor, @Nullable final RefactoringStatus status) {
+  public static boolean showMessageIfError(@NotNull Project project, @NotNull Editor editor, final @Nullable RefactoringStatus status) {
     if (status == null) return true;
 
     if (status.hasError()) {

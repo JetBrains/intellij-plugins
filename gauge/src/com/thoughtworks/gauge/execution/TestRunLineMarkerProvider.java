@@ -39,9 +39,8 @@ final class TestRunLineMarkerProvider extends RunLineMarkerContributor {
     this.helper = new ModuleHelper();
   }
 
-  @Nullable
   @Override
-  public Info getInfo(@NotNull PsiElement psiElement) {
+  public @Nullable Info getInfo(@NotNull PsiElement psiElement) {
     if (!this.helper.isGaugeModule(psiElement)) return null;
     List<IElementType> types = Arrays.asList(SpecTokenTypes.SPEC_HEADING, SpecTokenTypes.SCENARIO_HEADING);
     if (psiElement instanceof LeafPsiElement && types.contains(((LeafPsiElement)psiElement).getElementType())) {

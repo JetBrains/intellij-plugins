@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
@@ -19,9 +17,8 @@ public final class KarmaConfigurationType extends SimpleConfigurationType implem
     super("JavaScriptTestRunnerKarma", KarmaBundle.message("rc.run_configuration_type.name"), null, NotNullLazyValue.createValue(() -> KarmaIcons.Karma2));
   }
 
-  @NotNull
   @Override
-  public String getTag() {
+  public @NotNull String getTag() {
     return "karma";
   }
 
@@ -30,20 +27,17 @@ public final class KarmaConfigurationType extends SimpleConfigurationType implem
     return "reference.dialogs.rundebug.JavaScriptTestRunnerKarma";
   }
 
-  @NotNull
   @Override
-  public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+  public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
     return new KarmaRunConfiguration(project, this, "Karma");
   }
 
-  @NotNull
   @Override
-  public RunConfigurationSingletonPolicy getSingletonPolicy() {
+  public @NotNull RunConfigurationSingletonPolicy getSingletonPolicy() {
     return RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY;
   }
 
-  @NotNull
-  public static KarmaConfigurationType getInstance() {
+  public static @NotNull KarmaConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(KarmaConfigurationType.class);
   }
 

@@ -15,21 +15,20 @@
  */
 package com.intellij.protobuf.lang.findusages;
 
+import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.psi.ElementDescriptionLocation;
 import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.usageView.UsageViewLongNameLocation;
-import com.intellij.protobuf.lang.psi.PbSymbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Provides the title for the find usages tool window. */
 public class PbElementDescriptionProvider implements ElementDescriptionProvider {
 
-  @Nullable
   @Override
-  public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+  public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
     if (location instanceof UsageViewLongNameLocation) {
       if (element instanceof PbSymbol symbol) {
         QualifiedName qualifiedName = symbol.getQualifiedName();

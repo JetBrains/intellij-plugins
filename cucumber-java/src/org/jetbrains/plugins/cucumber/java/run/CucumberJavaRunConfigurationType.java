@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -25,8 +25,7 @@ public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBas
       }
 
       @Override
-      @NotNull
-      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+      public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CucumberJavaRunConfiguration(getDisplayName(), project, this);
       }
 
@@ -47,8 +46,7 @@ public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBas
     return "reference.dialogs.rundebug.CucumberJavaRunConfigurationType";
   }
 
-  @NotNull
-  public static CucumberJavaRunConfigurationType getInstance() {
+  public static @NotNull CucumberJavaRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(CucumberJavaRunConfigurationType.class);
   }
 }

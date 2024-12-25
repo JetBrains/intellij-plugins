@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars;
 
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -21,7 +22,7 @@ public class HbLanguage extends Language implements TemplateLanguage, Injectable
     super("Handlebars", "text/x-handlebars-template", "text/x-handlebars", "text/ractive");
   }
 
-  private HbLanguage(@Nullable Language baseLanguage, @NotNull @NonNls final String ID, @NonNls final String @NotNull ... mimeTypes) {
+  private HbLanguage(@Nullable Language baseLanguage, final @NotNull @NonNls String ID, final @NonNls String @NotNull ... mimeTypes) {
     super(baseLanguage, ID, mimeTypes);
   }
 }

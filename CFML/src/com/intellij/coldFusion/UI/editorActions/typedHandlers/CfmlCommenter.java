@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions.typedHandlers;
 
 import com.intellij.codeInsight.generation.CommenterDataHolder;
@@ -232,8 +232,7 @@ public final class CfmlCommenter implements Commenter, SelfManagingCommenter<Cfm
   }
 
   @Override
-  @NotNull
-  public TextRange insertBlockComment(int startOffset, int endOffset, Document document, MyCommenterData data) {
+  public @NotNull TextRange insertBlockComment(int startOffset, int endOffset, Document document, MyCommenterData data) {
     int startLineNumber = document.getLineNumber(startOffset);
     int startLineStart = document.getLineStartOffset(startLineNumber);
     if (startLineStart == startOffset) {

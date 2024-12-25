@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -32,14 +32,13 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 
 // pretty much like HtmlFileIncludeProvider, but we do not inherit from it so that Dart provider works in Community Edition
 public final class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "dart";
   }
 
   @Override
-  public boolean acceptFile(@NotNull final VirtualFile file) {
+  public boolean acceptFile(final @NotNull VirtualFile file) {
     return HtmlUtil.isHtmlFile(file);
   }
 
@@ -50,7 +49,7 @@ public final class DartPackageAwareFileIncludeProvider extends FileIncludeProvid
   }
 
   @Override
-  public FileIncludeInfo @NotNull [] getIncludeInfos(@NotNull final FileContent content) {
+  public FileIncludeInfo @NotNull [] getIncludeInfos(final @NotNull FileContent content) {
     if (content.getProject().isDefault()) return FileIncludeInfo.EMPTY;
     if (PubspecYamlUtil.findPubspecYamlFile(content.getProject(), content.getFile()) == null) return FileIncludeInfo.EMPTY;
 
@@ -58,7 +57,7 @@ public final class DartPackageAwareFileIncludeProvider extends FileIncludeProvid
     return psiFile instanceof XmlFile ? getIncludeInfos((XmlFile)psiFile) : FileIncludeInfo.EMPTY;
   }
 
-  private static FileIncludeInfo[] getIncludeInfos(@NotNull final XmlFile xmlFile) {
+  private static FileIncludeInfo[] getIncludeInfos(final @NotNull XmlFile xmlFile) {
     final List<FileIncludeInfo> result = new ArrayList<>();
 
     xmlFile.acceptChildren(new XmlRecursiveElementVisitor() {
@@ -84,9 +83,8 @@ public final class DartPackageAwareFileIncludeProvider extends FileIncludeProvid
     return result.toArray(FileIncludeInfo.EMPTY);
   }
 
-  @Nullable
   @Override
-  public PsiFileSystemItem resolveIncludedFile(@NotNull final FileIncludeInfo info, @NotNull final PsiFile context) {
+  public @Nullable PsiFileSystemItem resolveIncludedFile(final @NotNull FileIncludeInfo info, final @NotNull PsiFile context) {
     final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(context);
     final VirtualFile pubspecYamlFile = contextFile == null ? null : PubspecYamlUtil.findPubspecYamlFile(context.getProject(), contextFile);
     if (pubspecYamlFile == null) return null;
@@ -115,8 +113,7 @@ public final class DartPackageAwareFileIncludeProvider extends FileIncludeProvid
     return null;
   }
 
-  @Nullable
-  private static String getPathRelativeToPackageRoot(@Nullable final String path) {
+  private static @Nullable String getPathRelativeToPackageRoot(final @Nullable String path) {
     if (path == null) return null;
 
     if (path.startsWith(PACKAGES_FOLDER_NAME + "/")) {

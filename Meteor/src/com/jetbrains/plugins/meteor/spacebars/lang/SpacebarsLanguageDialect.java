@@ -12,9 +12,8 @@ public final class SpacebarsLanguageDialect extends Language {
     super(HbLanguage.INSTANCE, "Spacebars");
   }
 
-  @Nullable
   @Override
-  public LanguageFileType getAssociatedFileType() {
+  public @Nullable LanguageFileType getAssociatedFileType() {
     return SpacebarsFileType.SPACEBARS_INSTANCE;
   }
 }

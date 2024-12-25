@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring.introduce;
 
 import com.intellij.CommonBundle;
@@ -115,13 +115,11 @@ class ExtractLocalVariableProcessor {
     }
   }
 
-  @Nullable
-  private DartExpression findExpressionWithRange(int offset, int length) {
+  private @Nullable DartExpression findExpressionWithRange(int offset, int length) {
     return PsiTreeUtil.findElementOfClassAtRange(file, offset, offset + length, DartExpression.class);
   }
 
-  @Nullable
-  private List<DartExpression> getDartExpressions(int[] offsets, int[] lengths) {
+  private @Nullable List<DartExpression> getDartExpressions(int[] offsets, int[] lengths) {
     final List<DartExpression> expressions = new ArrayList<>();
     for (int i = 0; i < offsets.length; i++) {
       final DartExpression expression = findExpressionWithRange(offsets[i], lengths[i]);
@@ -253,9 +251,8 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<Serve
     return panel;
   }
 
-  @Nullable
   @Override
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return myVariableNameField;
   }
 }

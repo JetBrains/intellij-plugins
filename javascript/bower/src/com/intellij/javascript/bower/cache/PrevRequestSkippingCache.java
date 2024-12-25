@@ -26,7 +26,7 @@ public class PrevRequestSkippingCache<K, V> {
     myFetchExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("PrevRequestSkippingCache Pool", 2);
   }
 
-  public void fetch(@NotNull final FetchCallback<K, V> callback) {
+  public void fetch(final @NotNull FetchCallback<K, V> callback) {
     myLatestCallback = callback;
     if (!checkRecentCache(callback)) {
       fetchAsync(callback);
@@ -76,7 +76,7 @@ public class PrevRequestSkippingCache<K, V> {
     });
   }
 
-  private void fetchSync(@NotNull final FetchCallback<K, V> callback) {
+  private void fetchSync(final @NotNull FetchCallback<K, V> callback) {
     FutureTask<V> future = new FutureTask<>(() -> {
       try {
         V result = myFetcher.fetch(callback.getKey());
@@ -116,7 +116,7 @@ public class PrevRequestSkippingCache<K, V> {
     V fetch(@NotNull K key) throws Exception;
   }
 
-  public static abstract class FetchCallback<K, V> {
+  public abstract static class FetchCallback<K, V> {
     private final K myKey;
     private final boolean myCanBeSkipped;
 
@@ -125,8 +125,7 @@ public class PrevRequestSkippingCache<K, V> {
       myCanBeSkipped = canBeSkipped;
     }
 
-    @NotNull
-    public K getKey() {
+    public @NotNull K getKey() {
       return myKey;
     }
 

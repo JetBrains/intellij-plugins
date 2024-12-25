@@ -1,9 +1,12 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsLightParameter;
+import com.intellij.plugins.drools.lang.psi.DroolsParameter;
+import com.intellij.plugins.drools.lang.psi.DroolsParameters;
+import com.intellij.plugins.drools.lang.psi.DroolsPrimitiveType;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiImplUtil;
@@ -26,8 +29,7 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
     super(node);
   }
 
-  @NotNull
-  private PsiParameter createParameter(@NotNull DroolsParameter droolsParameter) {
+  private @NotNull PsiParameter createParameter(@NotNull DroolsParameter droolsParameter) {
     LightParameter parameter;
     final String paramName = droolsParameter.getNameId().getText();
     final PsiType psiType = DroolsResolveUtil.resolveType(droolsParameter.getType());
@@ -57,9 +59,8 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
     return null;
   }
 
-  @NotNull
   @Override
-  public PsiParameterList getParameterList() {
+  public @NotNull PsiParameterList getParameterList() {
     LightParameterListBuilder builder = new LightParameterListBuilder(getManager(), JavaLanguage.INSTANCE);
     final DroolsParameters parameters = getDroolsParameters();
     if (parameters != null) {
@@ -72,9 +73,8 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
 
   protected abstract DroolsParameters getDroolsParameters();
 
-  @NotNull
   @Override
-  public PsiReferenceList getThrowsList() {
+  public @NotNull PsiReferenceList getThrowsList() {
     if (myThrowsList == null) {
       myThrowsList = new LightReferenceListBuilder(getManager(), JavaLanguage.INSTANCE, PsiReferenceList.Role.THROWS_LIST);
     }
@@ -96,9 +96,8 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
     return false;
   }
 
-  @NotNull
   @Override
-  public MethodSignature getSignature(@NotNull PsiSubstitutor substitutor) {
+  public @NotNull MethodSignature getSignature(@NotNull PsiSubstitutor substitutor) {
     return MethodSignatureBackedByPsiMethod.create(this, substitutor);
   }
 
@@ -120,8 +119,7 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
   }
 
   @Override
-  @NotNull
-  public List<MethodSignatureBackedByPsiMethod> findSuperMethodSignaturesIncludingStatic(boolean checkAccess) {
+  public @NotNull List<MethodSignatureBackedByPsiMethod> findSuperMethodSignaturesIncludingStatic(boolean checkAccess) {
     return PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess);
   }
 
@@ -135,9 +133,8 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
     return PsiSuperMethodImplUtil.findDeepestSuperMethods(this);
   }
 
-  @NotNull
   @Override
-  public PsiModifierList getModifierList() {
+  public @NotNull PsiModifierList getModifierList() {
     if (myModifierList == null) {
       myModifierList = new LightModifierList(getManager());
     }
@@ -182,9 +179,8 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
     return null;
   }
 
-  @NotNull
   @Override
-  public HierarchicalMethodSignature getHierarchicalMethodSignature() {
+  public @NotNull HierarchicalMethodSignature getHierarchicalMethodSignature() {
     return PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this);
   }
 }

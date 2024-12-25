@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.i18n;
 
 import com.google.gson.Gson;
@@ -118,14 +118,12 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
     return myAllStepKeywords.contains(keyword);
   }
 
-  @NotNull
   @Override
-  public GherkinKeywordTable getKeywordsTable(@Nullable String language) {
+  public @NotNull GherkinKeywordTable getKeywordsTable(@Nullable String language) {
     return getKeywordList(language).getKeywordsTable();
   }
 
-  @NotNull
-  private GherkinKeywordList getKeywordList(@Nullable final String language) {
+  private @NotNull GherkinKeywordList getKeywordList(final @Nullable String language) {
     GherkinKeywordList keywordList = myLanguageKeywords.get(language);
     if (keywordList == null) {
       keywordList = Lazy.myEmptyKeywordList;

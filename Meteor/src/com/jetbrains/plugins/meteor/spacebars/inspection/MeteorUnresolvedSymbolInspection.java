@@ -26,9 +26,8 @@ public final class MeteorUnresolvedSymbolInspection extends LocalInspectionTool 
   private static final Set<String> ignoredParentTags = ContainerUtil.newHashSet("polymer-element");
   public static final String THIS_KEYWORD = "this";
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
 
       @Override

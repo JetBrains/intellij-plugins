@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,7 +30,7 @@ public final class DroolsLhsBindVariablesProcessor implements DroolsDeclarations
   public boolean processElement(@NotNull PsiScopeProcessor processor,
                                 @NotNull ResolveState state,
                                 PsiElement lastParent,
-                                @NotNull PsiElement place, @NotNull final DroolsFile droolsFile) {
+                                @NotNull PsiElement place, final @NotNull DroolsFile droolsFile) {
 
     final Set<PsiVariable> binds = getPatternBinds(place);
     for (PsiVariable bind : binds) {
@@ -39,22 +39,22 @@ public final class DroolsLhsBindVariablesProcessor implements DroolsDeclarations
     return true;
   }
 
-  public static Set<PsiVariable> getPatternBinds(@NotNull final PsiElement psiElement) {
+  public static Set<PsiVariable> getPatternBinds(final @NotNull PsiElement psiElement) {
     final PsiFile file = psiElement.getContainingFile();
     return file instanceof DroolsFile
            ? getPatternBinds(psiElement, (DroolsFile)file, PsiTreeUtil.getParentOfType(psiElement, DroolsRuleStatement.class))
            : Collections.emptySet();
   }
 
-  private static Set<PsiVariable> getPatternBinds(@NotNull final PsiElement psiElement,
-                                                  @NotNull final DroolsFile droolsFile,
-                                                  @Nullable final DroolsRuleStatement droolsRule) {
+  private static Set<PsiVariable> getPatternBinds(final @NotNull PsiElement psiElement,
+                                                  final @NotNull DroolsFile droolsFile,
+                                                  final @Nullable DroolsRuleStatement droolsRule) {
     return getPatternBinds(psiElement, droolsFile, droolsRule, new HashSet<>());
   }
 
-  private static Set<PsiVariable> getPatternBinds(@NotNull final PsiElement psiElement,
-                                                  @NotNull final DroolsFile droolsFile,
-                                                  @Nullable final DroolsRuleStatement droolsRule,
+  private static Set<PsiVariable> getPatternBinds(final @NotNull PsiElement psiElement,
+                                                  final @NotNull DroolsFile droolsFile,
+                                                  final @Nullable DroolsRuleStatement droolsRule,
                                                   Set<DroolsRuleStatement> visited) {
     if (droolsRule == null) return Collections.emptySet();
     visited.add(droolsRule);
@@ -122,8 +122,7 @@ public final class DroolsLhsBindVariablesProcessor implements DroolsDeclarations
     return binds;
   }
 
-  @Nullable
-  public static DroolsRuleStatement findRuleById(@Nullable DroolsStringId id, @NotNull DroolsFile droolsFile) {
+  public static @Nullable DroolsRuleStatement findRuleById(@Nullable DroolsStringId id, @NotNull DroolsFile droolsFile) {
     if (id != null) {
       final String ruleIdText = id.getText();
       if (!StringUtil.isEmpty(ruleIdText)) {

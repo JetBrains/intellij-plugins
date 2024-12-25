@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.process.*;
@@ -90,8 +90,7 @@ public class KarmaProcessOutputManager {
     }
   }
 
-  @NotNull
-  private String concatCurrentLineChunks() {
+  private @NotNull String concatCurrentLineChunks() {
     int size = 0;
     for (Pair<String, Key> chunk : myStdOutCurrentLineChunks) {
       size += chunk.getFirst().length();
@@ -139,12 +138,11 @@ public class KarmaProcessOutputManager {
     return false;
   }
 
-  @NotNull
-  public ProcessHandler getProcessHandler() {
+  public @NotNull ProcessHandler getProcessHandler() {
     return myProcessHandler;
   }
 
-  public void addOutputListener(@NotNull final ArchivedOutputListener outputListener) {
+  public void addOutputListener(final @NotNull ArchivedOutputListener outputListener) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       synchronized (myArchivedTexts) {
         if (myArchiveTextsTruncated) {

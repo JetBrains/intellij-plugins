@@ -222,15 +222,13 @@ public class Proto2NameGenerator implements JavaNameGenerator {
     return fieldNames.build();
   }
 
-  @Nullable
   @Override
-  public String enumClassName(PbEnumDefinition enumDefinition) {
+  public @Nullable String enumClassName(PbEnumDefinition enumDefinition) {
     return proto2DefinitionClassNames.enumClassName(enumDefinition);
   }
 
-  @Nullable
   @Override
-  public String enumValueName(PbEnumValue enumValue) {
+  public @Nullable String enumValueName(PbEnumValue enumValue) {
     return enumValue.getName();
   }
 
@@ -246,15 +244,13 @@ public class Proto2NameGenerator implements JavaNameGenerator {
         String.format("Builder.clear%s", capitalCamelName));
   }
 
-  @Nullable
   @Override
-  public String oneofEnumClassName(PbOneofDefinition oneof) {
+  public @Nullable String oneofEnumClassName(PbOneofDefinition oneof) {
     return proto2DefinitionClassNames.oneofEnumClassName(oneof);
   }
 
-  @Nullable
   @Override
-  public String oneofNotSetEnumValueName(PbOneofDefinition oneof) {
+  public @Nullable String oneofNotSetEnumValueName(PbOneofDefinition oneof) {
     String name = oneof.getName();
     if (name == null) {
       return null;
@@ -264,9 +260,8 @@ public class Proto2NameGenerator implements JavaNameGenerator {
     return camelFullUpper + "_NOT_SET";
   }
 
-  @Nullable
   @Override
-  public String oneofEnumValueName(PbField oneofField) {
+  public @Nullable String oneofEnumValueName(PbField oneofField) {
     String name = oneofField.getName();
     return name != null ? Ascii.toUpperCase(name) : null;
   }

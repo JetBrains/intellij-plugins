@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -16,15 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 public final class DartTypeHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
-  public DartTypeHierarchyNodeDescriptor(@NotNull final Project project,
-                                         @Nullable final HierarchyNodeDescriptor parentDescriptor,
-                                         @NotNull final DartClass dartClass,
+  public DartTypeHierarchyNodeDescriptor(final @NotNull Project project,
+                                         final @Nullable HierarchyNodeDescriptor parentDescriptor,
+                                         final @NotNull DartClass dartClass,
                                          final boolean isBase) {
     super(project, parentDescriptor, dartClass, isBase);
   }
 
-  @Nullable
-  public DartClass getDartClass() {
+  public @Nullable DartClass getDartClass() {
     PsiElement element = getPsiElement();
     return element instanceof DartClass ? (DartClass)element : null;
   }

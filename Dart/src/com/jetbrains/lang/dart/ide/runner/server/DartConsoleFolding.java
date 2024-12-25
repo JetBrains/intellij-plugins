@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ConsoleFolding;
@@ -32,7 +32,7 @@ public final class DartConsoleFolding extends ConsoleFolding {
   }
 
   @Override
-  public boolean shouldFoldLine(@NotNull Project project, @NotNull final String line) {
+  public boolean shouldFoldLine(@NotNull Project project, final @NotNull String line) {
     // check for a stack trace
     if (isFrameLine(line)) {
       myFrameCount++;
@@ -55,9 +55,8 @@ public final class DartConsoleFolding extends ConsoleFolding {
     return DartSdkUtil.isDartSdkHome(probablySdkPath);
   }
 
-  @Nullable
   @Override
-  public String getPlaceholderText(@NotNull Project project, @NotNull final List<String> lines) {
+  public @Nullable String getPlaceholderText(@NotNull Project project, final @NotNull List<String> lines) {
     // Defensively return if lines is empty (WEB-51019)
     if (lines.isEmpty()) {
       return "";
@@ -148,7 +147,7 @@ public final class DartConsoleFolding extends ConsoleFolding {
     return b.toString();
   }
 
-  private boolean isFrameLine(@NotNull final String line) {
+  private boolean isFrameLine(final @NotNull String line) {
     // Handle the "..." ellipses in the middle of a stack overflow trace.
     if (myFrameCount > 0 && line.equals("...")) return true;
 
@@ -169,7 +168,7 @@ public final class DartConsoleFolding extends ConsoleFolding {
     }
   }
 
-  private static String foldTestRunnerCommand(@NotNull final String line) {
+  private static String foldTestRunnerCommand(final @NotNull String line) {
     // C:\dart-sdk\bin\pub.bat run test -r json --concurrency=4 C:/MyProject/test/main_test.dart -n "group1 test21|group1 test22"
     // folded to
     // pub run test main_test.dart -n "group1 test21|group1 test22"
@@ -186,7 +185,7 @@ public final class DartConsoleFolding extends ConsoleFolding {
     return "pub run test " + line.substring(slashIndex + 1, index) + ".dart" + line.substring(tailIndex);
   }
 
-  private static String foldWebdevCommand(@NotNull final String line) {
+  private static String foldWebdevCommand(final @NotNull String line) {
     // /<path-to-sdk>/bin/pub global run webdev daemon web:53322 --launch-app=web/index.html
     // folded to
     // webdev serve web:53322 --launch-app=web/index.html --debug

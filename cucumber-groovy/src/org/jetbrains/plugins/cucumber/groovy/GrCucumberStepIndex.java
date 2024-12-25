@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.lang.LighterAST;
@@ -24,9 +24,8 @@ public final class GrCucumberStepIndex extends CucumberStepIndex {
   private static final String CUCUMBER_GROOVY_4_5_PACKAGE = "io.cucumber.groovy.";
   private static final String[] PACKAGES_TO_SCAN = new String[]{CUCUMBER_GROOVY_PACKAGE, CUCUMBER_GROOVY_1_0_PACKAGE, CUCUMBER_GROOVY_4_5_PACKAGE};
 
-  @NotNull
   @Override
-  public ID<Boolean, List<Integer>> getName() {
+  public @NotNull ID<Boolean, List<Integer>> getName() {
     return INDEX_ID;
   }
 
@@ -40,9 +39,8 @@ public final class GrCucumberStepIndex extends CucumberStepIndex {
     return PACKAGES_TO_SCAN;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(GroovyFileType.GROOVY_FILE_TYPE);
   }
 

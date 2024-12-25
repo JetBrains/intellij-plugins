@@ -29,10 +29,10 @@ import java.util.concurrent.TimeUnit;
 public final class YeomanCommandLineUtil {
 
   public static Runnable createExecuteCommandLineAction(
-    @Nullable final Project project,
-    @NotNull final GeneralCommandLine commandLine,
-    @NotNull final Ref<? super RuntimeException> exceptionRef,
-    @Nullable final ProgressIndicator currentIndicator) {
+    final @Nullable Project project,
+    final @NotNull GeneralCommandLine commandLine,
+    final @NotNull Ref<? super RuntimeException> exceptionRef,
+    final @Nullable ProgressIndicator currentIndicator) {
 
     return new Runnable() {
       @Override
@@ -145,8 +145,7 @@ public final class YeomanCommandLineUtil {
     }
   }
 
-  @NotNull
-  public static GeneralCommandLine createNpmInstallCommandLine(@NotNull Project project, @NotNull File workingDirectory) {
+  public static @NotNull GeneralCommandLine createNpmInstallCommandLine(@NotNull Project project, @NotNull File workingDirectory) {
     final YeomanGlobalSettings files = YeomanGlobalSettings.getInstance();
 
     NodeJsInterpreter interpreter = files.getInterpreter();

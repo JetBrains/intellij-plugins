@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.model.psi.*;
@@ -6,7 +6,6 @@ import com.intellij.coldFusion.model.psi.impl.CfmlTagScriptImpl;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.Factory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -23,17 +22,13 @@ import java.util.regex.Pattern;
 
 public final class CfmlFile extends PsiFileBase {
   private final CachedValue<Map<String, CfmlImplicitVariable>> myImplicitVars;
-  @NonNls
-  public static final String CFMLVARIABLE_MARKER = "@cfmlvariable ";
-  @NonNls
-  public static final String CFMLJAVALOADER_MARKER = "@javaloader ";
+  public static final @NonNls String CFMLVARIABLE_MARKER = "@cfmlvariable ";
+  public static final @NonNls String CFMLJAVALOADER_MARKER = "@javaloader ";
 
-  @NonNls
-  public static final Pattern LOADER_DECL_PATTERN_TEMP =
+  public static final @NonNls Pattern LOADER_DECL_PATTERN_TEMP =
     Pattern.compile("<!---[\\s]*" + CFMLJAVALOADER_MARKER + "[\\s]*name=\"([^\"]+)\".*[\\s]*(loadPaths=\"([^\"]*)\")[\\s]*--->[\\s]*");
 
-  @NonNls
-  public static final Pattern IMPLICIT_VAR_DECL_PATTERN_TEMP = Pattern.compile(
+  public static final @NonNls Pattern IMPLICIT_VAR_DECL_PATTERN_TEMP = Pattern.compile(
     "<!---[\\s]*" + CFMLVARIABLE_MARKER + "[\\s]*name=\"([^\"]+)\"[\\s]*type=\"([^\"]*)\"[\\s]*--->[\\s]*");
 
   CachedValueProvider<Map<String, CfmlImplicitVariable>> createImplicitVarsProvider() {
@@ -41,7 +36,7 @@ public final class CfmlFile extends PsiFileBase {
       final Map<String, CfmlImplicitVariable> result = new HashMap<>();
       this.accept(new PsiRecursiveElementVisitor() {
         @Override
-        public void visitComment(@NotNull final PsiComment comment) {
+        public void visitComment(final @NotNull PsiComment comment) {
           final String text = comment.getText();
           final String[] nameAndType = findVariableNameAndType(text);
           if (nameAndType == null) {
@@ -63,13 +58,11 @@ public final class CfmlFile extends PsiFileBase {
   }
 
   @Override
-  @NotNull
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return CfmlFileType.INSTANCE;
   }
 
-  @NotNull
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return "CfmlFile:" + getName();
   }
 
@@ -112,8 +105,7 @@ public final class CfmlFile extends PsiFileBase {
     return new String[]{matcher.group(1), matcher.group(2)};
   }
 
-  @Nullable
-  public CfmlImplicitVariable findImplicitVariable(String name) {
+  public @Nullable CfmlImplicitVariable findImplicitVariable(String name) {
     return myImplicitVars.getValue().get(name);
   }
 
@@ -139,8 +131,7 @@ public final class CfmlFile extends PsiFileBase {
     return result;
   }
 
-  @Nullable
-  public CfmlComponent getComponentDefinition() {
+  public @Nullable CfmlComponent getComponentDefinition() {
     final Ref<CfmlComponent> ref = new Ref<>(null);
     accept(new CfmlRecursiveElementVisitor() {
       @Override

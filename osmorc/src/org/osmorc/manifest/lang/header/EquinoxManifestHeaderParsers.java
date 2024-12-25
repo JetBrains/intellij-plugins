@@ -49,9 +49,8 @@ public final class EquinoxManifestHeaderParsers implements HeaderParserProvider 
     myParsers.put("Eclipse-GenericRequire", StandardHeaderParser.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public Map<String, HeaderParser> getHeaderParsers() {
+  public @NotNull Map<String, HeaderParser> getHeaderParsers() {
     return myParsers;
   }
 }

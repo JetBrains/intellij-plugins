@@ -50,24 +50,22 @@ import org.jetbrains.annotations.NotNull;
 public class ProtoTypedHandler extends TypedHandlerDelegate {
   private static final Logger logger = Logger.getInstance(ProtoTypedHandler.class);
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(
-      final char c,
-      @NotNull final Project project,
-      @NotNull final Editor editor,
-      @NotNull final PsiFile file,
-      @NotNull FileType fileType) {
+  public @NotNull Result beforeCharTyped(
+    final char c,
+    final @NotNull Project project,
+    final @NotNull Editor editor,
+    final @NotNull PsiFile file,
+    @NotNull FileType fileType) {
     if (c == '>' && handleFile(file) && TypedHandler.handleRParen(editor, file.getFileType(), c)) {
       return Result.STOP;
     }
     return Result.CONTINUE;
   }
 
-  @NotNull
   @Override
-  public Result charTyped(
-      final char c, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
+  public @NotNull Result charTyped(
+    final char c, final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile file) {
 
     if (handleFile(file)) {
       if (c == '<') {
@@ -151,7 +149,7 @@ public class ProtoTypedHandler extends TypedHandlerDelegate {
    * @see TypedHandler
    */
   private static void indentBrace(
-      @NotNull final Project project, @NotNull final Editor editor, final char braceChar) {
+    final @NotNull Project project, final @NotNull Editor editor, final char braceChar) {
     final int offset = editor.getCaretModel().getOffset() - 1;
     final Document document = editor.getDocument();
     CharSequence chars = document.getCharsSequence();

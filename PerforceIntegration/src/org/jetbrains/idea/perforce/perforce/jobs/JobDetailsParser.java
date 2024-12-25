@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JobDetailsParser {
-  private final static ParserLogger LOG = new ParserLogger("#org.jetbrains.idea.perforce.perforce.jobs.JobDetailsParser", "'p4 job' output parse error.");
+  private static final ParserLogger LOG = new ParserLogger("#org.jetbrains.idea.perforce.perforce.jobs.JobDetailsParser", "'p4 job' output parse error.");
   private final List<String> myLines;
 
   public JobDetailsParser(List<String> lines) {
     myLines = lines;
   }
 
-  @NotNull
-  public List<Pair<String, String>> parse() throws VcsException {
+  public @NotNull List<Pair<String, String>> parse() throws VcsException {
     final List<Pair<String, String>> result = new ArrayList<>();
 
     for (String line : myLines) {

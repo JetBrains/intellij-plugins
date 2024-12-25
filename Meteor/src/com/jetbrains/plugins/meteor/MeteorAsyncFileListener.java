@@ -34,19 +34,16 @@ import static com.jetbrains.plugins.meteor.MeteorProjectStartupActivity.METEOR_L
  */
 public final class MeteorAsyncFileListener implements AsyncFileListener {
 
-  @NotNull
-  private static MeteorLibraryUpdater getPackageUpdater(@NotNull Project project) {
+  private static @NotNull MeteorLibraryUpdater getPackageUpdater(@NotNull Project project) {
     return MeteorLibraryUpdater.getInstance(project);
   }
 
-  @Nullable
-  public static VirtualFile getContentRoot(@NotNull Module module, @Nullable VirtualFile root) {
+  public static @Nullable VirtualFile getContentRoot(@NotNull Module module, @Nullable VirtualFile root) {
     return root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
   }
 
-  @Nullable
   @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
+  public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     List<MeteorProjectApplier> result = null;
 
     for (VFileEvent event : events) {
@@ -70,8 +67,7 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
     return result == null || result.size() == 0 ? null : new MeteorCompositeChangeApplier(result);
   }
 
-  @Nullable
-  private static MeteorProjectApplier processCreate(@NotNull VFileCreateEvent event) {
+  private static @Nullable MeteorProjectApplier processCreate(@NotNull VFileCreateEvent event) {
     String name = event.getChildName();
     VirtualFile parent = event.getParent();
     if (name.equals(MeteorPackagesUtil.VERSIONS_FILE_NAME)) {
@@ -86,8 +82,7 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
     return new MeteorExcludeApplier(url, true, parent);
   }
 
-  @Nullable
-  private static MeteorProjectApplier processChange(@NotNull VFileContentChangeEvent event) {
+  private static @Nullable MeteorProjectApplier processChange(@NotNull VFileContentChangeEvent event) {
     VirtualFile file = event.getFile();
     if (file.getName().equals(MeteorPackagesUtil.VERSIONS_FILE_NAME)) {
       return new UpdatePackages(file);
@@ -96,8 +91,7 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
     return null;
   }
 
-  @Nullable
-  private static MeteorProjectApplier processDelete(@NotNull VFileDeleteEvent delete) {
+  private static @Nullable MeteorProjectApplier processDelete(@NotNull VFileDeleteEvent delete) {
     VirtualFile file = delete.getFile();
     String name = file.getName();
     if (!name.equals(METEOR_FOLDER) || !MeteorSettings.getInstance().isExcludeMeteorLocalFolder()) {
@@ -108,9 +102,8 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
     return new MeteorExcludeApplier(url, false, file.getParent());
   }
 
-  private final static class UpdatePackages implements MeteorProjectApplier {
-    @NotNull
-    private final VirtualFile myEventFile;
+  private static final class UpdatePackages implements MeteorProjectApplier {
+    private final @NotNull VirtualFile myEventFile;
 
     private UpdatePackages(@NotNull VirtualFile eventFile) {
       myEventFile = eventFile;
@@ -129,14 +122,12 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
     }
   }
 
-  private final static class MeteorExcludeApplier implements MeteorProjectApplier {
+  private static final class MeteorExcludeApplier implements MeteorProjectApplier {
 
     private final boolean myExclude;
 
-    @NotNull
-    private final String myUrl;
-    @NotNull
-    private final VirtualFile myContext;
+    private final @NotNull String myUrl;
+    private final @NotNull VirtualFile myContext;
 
     private MeteorExcludeApplier(@NotNull String url, boolean toExclude, @NotNull VirtualFile context) {
       myUrl = url;
@@ -162,9 +153,8 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
   }
 
 
-  private final static class MeteorCompositeChangeApplier implements ChangeApplier {
-    @NotNull
-    private final List<MeteorProjectApplier> myEvents;
+  private static final class MeteorCompositeChangeApplier implements ChangeApplier {
+    private final @NotNull List<MeteorProjectApplier> myEvents;
 
     private MeteorCompositeChangeApplier(@NotNull List<MeteorProjectApplier> events) {
       myEvents = events;

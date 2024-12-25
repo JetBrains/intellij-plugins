@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.google.gson.Gson;
@@ -11,8 +12,7 @@ import java.util.List;
 
 public class TsLintFixInfo {
 
-  @Nullable
-  public static TsLintFixInfo createTsLintFixInfo(@Nullable JsonElement element) {
+  public static @Nullable TsLintFixInfo createTsLintFixInfo(@Nullable JsonElement element) {
     if (element == null) return null;
 
     try {

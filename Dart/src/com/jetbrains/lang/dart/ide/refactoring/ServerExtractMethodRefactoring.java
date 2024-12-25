@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.google.common.collect.ImmutableList;
@@ -21,8 +21,8 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
     new ExtractMethodOptions("returnType", false, "name", ImmutableList.of(), false);
   private ExtractMethodFeedback feedback;
 
-  public ServerExtractMethodRefactoring(@NotNull final Project project,
-                                        @NotNull final VirtualFile file,
+  public ServerExtractMethodRefactoring(final @NotNull Project project,
+                                        final @NotNull VirtualFile file,
                                         final int offset,
                                         final int length) {
     super(project, DartBundle.message("progress.title.extract.method"), RefactoringKind.EXTRACT_METHOD, file, offset, length);
@@ -53,8 +53,7 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
     return options;
   }
 
-  @NotNull
-  public List<RefactoringMethodParameter> getParameters() {
+  public @NotNull List<RefactoringMethodParameter> getParameters() {
     return options.getParameters();
   }
 

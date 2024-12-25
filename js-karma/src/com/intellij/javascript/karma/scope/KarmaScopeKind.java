@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.scope;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
@@ -10,25 +11,22 @@ import java.util.function.Supplier;
 
 public enum KarmaScopeKind {
   ALL(JavaScriptBundle.messagePointer("rc.testRunScope.all")) {
-    @NotNull
     @Override
-    public KarmaScopeView createView(@NotNull Project project) {
+    public @NotNull KarmaScopeView createView(@NotNull Project project) {
       return new KarmaAllTestsScopeView();
     }
   },
 
   TEST_FILE(JavaScriptBundle.messagePointer("rc.testRunScope.testFile")) {
-    @NotNull
     @Override
-    public KarmaScopeView createView(@NotNull Project project) {
+    public @NotNull KarmaScopeView createView(@NotNull Project project) {
       return new KarmaTestFileScopeView(project);
     }
   },
 
   SUITE(JavaScriptBundle.messagePointer("rc.testRunScope.suite")) {
-    @NotNull
     @Override
-    public KarmaScopeView createView(@NotNull Project project) {
+    public @NotNull KarmaScopeView createView(@NotNull Project project) {
       return new KarmaSuiteOrTestScopeView(project,
                                            JavaScriptBundle.message("rc.testOrSuiteScope.suite.title"),
                                            JavaScriptBundle.message("rc.testOrSuiteScope.suite.label"));
@@ -36,9 +34,8 @@ public enum KarmaScopeKind {
   },
 
   TEST(JavaScriptBundle.messagePointer("rc.testRunScope.test")) {
-    @NotNull
     @Override
-    public KarmaScopeView createView(@NotNull Project project) {
+    public @NotNull KarmaScopeView createView(@NotNull Project project) {
       return new KarmaSuiteOrTestScopeView(project,
                                            JavaScriptBundle.message("rc.testOrSuiteScope.test.title"),
                                            JavaScriptBundle.message("rc.testOrSuiteScope.test.label"));
@@ -51,11 +48,9 @@ public enum KarmaScopeKind {
     myNameSupplier = nameSupplier;
   }
 
-  @NotNull
-  public @Nls String getName() {
+  public @NotNull @Nls String getName() {
     return myNameSupplier.get();
   }
 
-  @NotNull
-  public abstract KarmaScopeView createView(@NotNull Project project);
+  public abstract @NotNull KarmaScopeView createView(@NotNull Project project);
 }

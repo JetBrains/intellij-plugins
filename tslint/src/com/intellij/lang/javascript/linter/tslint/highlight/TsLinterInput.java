@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.lang.javascript.linter.JSLinterInput;
@@ -11,8 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TsLinterInput extends JSLinterInput<TsLintState> {
 
-  @Nullable
-  private final VirtualFile myConfig;
+  private final @Nullable VirtualFile myConfig;
 
   public TsLinterInput(@NotNull PsiFile psiFile,
                        @NotNull TsLintState state,
@@ -22,8 +22,7 @@ public final class TsLinterInput extends JSLinterInput<TsLintState> {
     myConfig = config;
   }
 
-  @Nullable
-  public VirtualFile getConfig() {
+  public @Nullable VirtualFile getConfig() {
     return myConfig;
   }
 }

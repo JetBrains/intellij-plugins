@@ -276,9 +276,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     return getTableModel().getBundles();
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return root;
   }
 

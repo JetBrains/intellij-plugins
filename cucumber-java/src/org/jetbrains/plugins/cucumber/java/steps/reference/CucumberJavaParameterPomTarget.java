@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps.reference;
 
 import com.intellij.openapi.util.TextRange;
@@ -9,23 +9,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements PomRenameableTarget, PsiDeclaredTarget {
-  @NotNull
-  private final String myName;
+  private final @NotNull String myName;
 
   public CucumberJavaParameterPomTarget(@NotNull PsiElement element, @NotNull String name) {
     super(element);
     myName = name;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public TextRange getNameIdentifierRange() {
+  public @Nullable TextRange getNameIdentifierRange() {
     PsiElement element = getNavigationElement();
     if (element instanceof PsiIdentifier) {
       // method name

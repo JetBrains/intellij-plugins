@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.project.Project;
@@ -21,9 +21,8 @@ import java.util.*;
 public final class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension<List<DartImportOrExportInfo>> {
   private static final ID<Integer, List<DartImportOrExportInfo>> DART_IMPORT_EXPORT_INDEX = ID.create("DartImportIndex");
 
-  @NotNull
   @Override
-  public ID<Integer, List<DartImportOrExportInfo>> getName() {
+  public @NotNull ID<Integer, List<DartImportOrExportInfo>> getName() {
     return DART_IMPORT_EXPORT_INDEX;
   }
 
@@ -35,17 +34,15 @@ public final class DartImportAndExportIndex extends SingleEntryFileBasedIndexExt
   @Override
   public @NotNull SingleEntryIndexer<List<DartImportOrExportInfo>> getIndexer() {
     return new SingleEntryIndexer<>(false) {
-      @Nullable
       @Override
-      protected List<DartImportOrExportInfo> computeValue(@NotNull FileContent inputData) {
+      protected @Nullable List<DartImportOrExportInfo> computeValue(@NotNull FileContent inputData) {
         return DartIndexUtil.indexFile(inputData).getImportAndExportInfos();
       }
     };
   }
 
-  @NotNull
   @Override
-  public DataExternalizer<List<DartImportOrExportInfo>> getValueExternalizer() {
+  public @NotNull DataExternalizer<List<DartImportOrExportInfo>> getValueExternalizer() {
     return new DataExternalizer<>() {
       @Override
       public void save(final @NotNull DataOutput out, final @NotNull List<DartImportOrExportInfo> value) throws IOException {
@@ -66,8 +63,7 @@ public final class DartImportAndExportIndex extends SingleEntryFileBasedIndexExt
       }
 
       @Override
-      @NotNull
-      public List<DartImportOrExportInfo> read(final @NotNull DataInput in) throws IOException {
+      public @NotNull List<DartImportOrExportInfo> read(final @NotNull DataInput in) throws IOException {
         final int size = DataInputOutputUtil.readINT(in);
         final List<DartImportOrExportInfo> result = new ArrayList<>(size);
         for (int i = 0; i < size; ++i) {
@@ -91,15 +87,13 @@ public final class DartImportAndExportIndex extends SingleEntryFileBasedIndexExt
     };
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
-  @NotNull
-  public static List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project,
-                                                                     final @NotNull VirtualFile virtualFile) {
+  public static @NotNull List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project,
+                                                                              final @NotNull VirtualFile virtualFile) {
     return ContainerUtil.notNullize(FileBasedIndex.getInstance().getSingleEntryIndexData(DART_IMPORT_EXPORT_INDEX, virtualFile, project));
   }
 }

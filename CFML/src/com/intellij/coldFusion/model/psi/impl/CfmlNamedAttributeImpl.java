@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.psi.CfmlVariable;
@@ -30,8 +30,7 @@ public class CfmlNamedAttributeImpl extends CfmlAttributeNameImpl implements Cfm
   }
 
   @Override
-  @NotNull
-  public String getlookUpString() {
+  public @NotNull String getlookUpString() {
     return getName();
   }
 }

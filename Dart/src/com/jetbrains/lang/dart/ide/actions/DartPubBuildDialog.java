@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -53,7 +53,7 @@ public class DartPubBuildDialog extends DialogWrapper {
   private final @NotNull Project myProject;
   private final boolean myUseWebdev;
 
-  public DartPubBuildDialog(@NotNull final Project project, @NotNull final VirtualFile packageDir) {
+  public DartPubBuildDialog(final @NotNull Project project, final @NotNull VirtualFile packageDir) {
     super(project);
     myProject = project;
 
@@ -134,21 +134,18 @@ public class DartPubBuildDialog extends DialogWrapper {
   }
 
   @Override
-  @Nullable
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     return myMainPanel;
   }
 
   @Override
-  @Nullable
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     if (myOtherRadioButton.isSelected()) return myOtherModeTextField;
     return null;
   }
 
   @Override
-  @Nullable
-  protected ValidationInfo doValidate() {
+  protected @Nullable ValidationInfo doValidate() {
     if (!myUseWebdev && myOtherRadioButton.isSelected() && StringUtil.isEmptyOrSpaces(myOtherModeTextField.getText())) {
       return new ValidationInfo(DartBundle.message("validation.info.build.mode.not.specified"));
     }
@@ -196,22 +193,19 @@ public class DartPubBuildDialog extends DialogWrapper {
     propertiesComponent.setValue(DART_BUILD_OUTPUT_KEY, outputPath, DEFAULT_OUTPUT_FOLDER);
   }
 
-  @NotNull
-  public String getPubBuildMode() {
+  public @NotNull String getPubBuildMode() {
     if (myReleaseRadioButton.isSelected()) return RELEASE_MODE;
     if (myDebugRadioButton.isSelected()) return DEBUG_MODE;
     return myOtherModeTextField.getText().trim();
   }
 
-  @NotNull
-  public String getInputFolder() {
+  public @NotNull String getInputFolder() {
     String path = myInputFolderTextField.getText().trim();
     if (path.isEmpty()) path = DEFAULT_INPUT_FOLDER;
     return path;
   }
 
-  @NotNull
-  public String getOutputFolder() {
+  public @NotNull String getOutputFolder() {
     String path = myOutputFolderField.getText().trim();
     if (path.isEmpty()) path = DEFAULT_OUTPUT_FOLDER;
     return path;

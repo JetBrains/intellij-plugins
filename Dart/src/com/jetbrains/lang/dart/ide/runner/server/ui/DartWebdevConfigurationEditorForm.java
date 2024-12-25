@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -46,7 +46,7 @@ public class DartWebdevConfigurationEditorForm extends SettingsEditor<DartWebdev
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final DartWebdevConfiguration configuration) {
+  protected void resetEditorFrom(final @NotNull DartWebdevConfiguration configuration) {
     final DartWebdevParameters parameters = configuration.getParameters();
 
     myHtmlFileField.setText(FileUtil.toSystemDependentName(parameters.getHtmlFilePath()));
@@ -57,7 +57,7 @@ public class DartWebdevConfigurationEditorForm extends SettingsEditor<DartWebdev
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartWebdevConfiguration configuration) {
+  protected void applyEditorTo(final @NotNull DartWebdevConfiguration configuration) {
     final DartWebdevParameters parameters = configuration.getParameters();
 
     parameters.setHtmlFilePath(FileUtil.toSystemIndependentName(myHtmlFileField.getText().trim()));
@@ -69,9 +69,8 @@ public class DartWebdevConfigurationEditorForm extends SettingsEditor<DartWebdev
     }
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster;
 
@@ -22,9 +22,8 @@ final class JdlPsiStructureViewFactory implements PsiStructureViewFactory {
   @Override
   public StructureViewBuilder getStructureViewBuilder(@NotNull PsiFile psiFile) {
     return new TreeBasedStructureViewBuilder() {
-      @NotNull
       @Override
-      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+      public @NotNull StructureViewModel createStructureViewModel(@Nullable Editor editor) {
         return new JdlStructureViewModel(psiFile, editor);
       }
     };
@@ -84,9 +83,8 @@ class JdlStructureViewElement implements StructureViewTreeElement {
     return ((Navigatable)element).canNavigateToSource();
   }
 
-  @NotNull
   @Override
-  public ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     ItemPresentation presentation = ((NavigationItem)element).getPresentation();
     assert presentation != null;
     return presentation;

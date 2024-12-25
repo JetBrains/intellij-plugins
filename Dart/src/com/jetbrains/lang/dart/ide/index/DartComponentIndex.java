@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,33 +15,28 @@ import java.util.Collection;
 public final class DartComponentIndex extends FileBasedIndexExtension<String, DartComponentInfo> {
   private static final ID<String, DartComponentInfo> DART_COMPONENT_INDEX = ID.create("DartComponentIndex");
 
-  @NotNull
   @Override
-  public ID<String, DartComponentInfo> getName() {
+  public @NotNull ID<String, DartComponentInfo> getName() {
     return DART_COMPONENT_INDEX;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, DartComponentInfo, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, DartComponentInfo, FileContent> getIndexer() {
     return inputData -> DartIndexUtil.indexFile(inputData).getComponentInfoMap();
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public DataExternalizer<DartComponentInfo> getValueExternalizer() {
+  public @NotNull DataExternalizer<DartComponentInfo> getValueExternalizer() {
     return new DartComponentInfoExternalizer();
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
@@ -55,7 +50,7 @@ public final class DartComponentIndex extends FileBasedIndexExtension<String, Da
     return DartIndexUtil.INDEX_VERSION;
   }
 
-  public static Collection<VirtualFile> getAllFiles(@NotNull final String componentName, @NotNull final GlobalSearchScope scope) {
+  public static Collection<VirtualFile> getAllFiles(final @NotNull String componentName, final @NotNull GlobalSearchScope scope) {
     return FileBasedIndex.getInstance().getContainingFiles(DART_COMPONENT_INDEX, componentName, scope);
   }
 }

@@ -34,9 +34,8 @@ public class StepReference extends PsiReferenceBase<SpecStep> {
     super(element);
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     return StepUtil.findStepImpl(this.myElement, moduleForPsiElement(this.myElement));
   }
 

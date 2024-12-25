@@ -18,20 +18,19 @@ package com.intellij.protobuf.ide.style;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
+import com.intellij.protobuf.ide.util.ResourceUtil;
+import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
-import com.intellij.protobuf.ide.util.ResourceUtil;
-import com.intellij.protobuf.lang.PbLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public class PbLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return PbLanguage.INSTANCE;
   }
 

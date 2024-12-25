@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.openapi.project.Project;
@@ -17,23 +17,20 @@ public class ServerRenameRefactoring extends ServerRefactoring {
   private String elementKindName;
   private String oldName;
 
-  public ServerRenameRefactoring(@NotNull final Project project, @NotNull final VirtualFile file, final int offset, final int length) {
+  public ServerRenameRefactoring(final @NotNull Project project, final @NotNull VirtualFile file, final int offset, final int length) {
     super(project, DartBundle.message("progress.title.rename"), RefactoringKind.RENAME, file, offset, length);
   }
 
-  @NotNull
-  public String getElementKindName() {
+  public @NotNull String getElementKindName() {
     return elementKindName;
   }
 
-  @NotNull
-  public String getOldName() {
+  public @NotNull String getOldName() {
     return oldName;
   }
 
   @Override
-  @Nullable
-  protected RefactoringOptions getOptions() {
+  protected @Nullable RefactoringOptions getOptions() {
     return options;
   }
 

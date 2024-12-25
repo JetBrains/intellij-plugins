@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,8 +23,7 @@ public class IonicExecutor extends CordovaBasedExecutor {
 
 
   @Override
-  @NotNull
-  public String getFrameworkName() {
+  public @NotNull String getFrameworkName() {
     return "Ionic";
   }
 

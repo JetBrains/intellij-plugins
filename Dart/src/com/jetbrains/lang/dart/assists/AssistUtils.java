@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.assists;
 
 import com.google.common.collect.Maps;
@@ -42,7 +42,7 @@ public final class AssistUtils {
   /**
    * @return {@code true} if file contents changed, {@code false} otherwise
    */
-  public static boolean applyFileEdit(@NotNull final Project project, @NotNull final SourceFileEdit fileEdit) {
+  public static boolean applyFileEdit(final @NotNull Project project, final @NotNull SourceFileEdit fileEdit) {
     final VirtualFile file = findVirtualFile(project, fileEdit);
     final Document document = file == null ? null : FileDocumentManager.getInstance().getDocument(file);
     if (document == null) return false;
@@ -52,16 +52,16 @@ public final class AssistUtils {
     return document.getModificationStamp() != initialModStamp;
   }
 
-  public static void applySourceChange(@NotNull final Project project,
-                                       @NotNull final SourceChange sourceChange,
+  public static void applySourceChange(final @NotNull Project project,
+                                       final @NotNull SourceChange sourceChange,
                                        final boolean withLinkedEdits) throws DartSourceEditException {
     applySourceChange(project, sourceChange, withLinkedEdits, Collections.emptySet());
   }
 
-  public static void applySourceChange(@NotNull final Project project,
-                                       @NotNull final SourceChange sourceChange,
+  public static void applySourceChange(final @NotNull Project project,
+                                       final @NotNull SourceChange sourceChange,
                                        final boolean withLinkedEdits,
-                                       @NotNull final Set<String> excludedIds) throws DartSourceEditException {
+                                       final @NotNull Set<String> excludedIds) throws DartSourceEditException {
     final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange, excludedIds);
     // ensure not read-only
     {
@@ -110,11 +110,11 @@ public final class AssistUtils {
     }, message, null);
   }
 
-  public static List<SourceEditInfo> applySourceEdits(@NotNull final Project project,
-                                                      @NotNull final VirtualFile file,
-                                                      @NotNull final Document document,
-                                                      @NotNull final List<? extends SourceEdit> edits,
-                                                      @NotNull final Set<String> excludedIds) {
+  public static List<SourceEditInfo> applySourceEdits(final @NotNull Project project,
+                                                      final @NotNull VirtualFile file,
+                                                      final @NotNull Document document,
+                                                      final @NotNull List<? extends SourceEdit> edits,
+                                                      final @NotNull Set<String> excludedIds) {
     final List<SourceEditInfo> result = new ArrayList<>(edits.size());
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
 
@@ -148,10 +148,9 @@ public final class AssistUtils {
     return result;
   }
 
-  @NotNull
-  private static Map<VirtualFile, SourceFileEdit> getContentFilesChanges(@NotNull final Project project,
-                                                                         @NotNull final SourceChange sourceChange,
-                                                                         @NotNull final Set<String> excludedIds)
+  private static @NotNull Map<VirtualFile, SourceFileEdit> getContentFilesChanges(final @NotNull Project project,
+                                                                                  final @NotNull SourceChange sourceChange,
+                                                                                  final @NotNull Set<String> excludedIds)
     throws DartSourceEditException {
 
     final Map<VirtualFile, SourceFileEdit> map = Maps.newHashMap();
@@ -186,8 +185,7 @@ public final class AssistUtils {
     return map;
   }
 
-  @Nullable
-  private static ChangeTarget findChangeTarget(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
+  private static @Nullable ChangeTarget findChangeTarget(final @NotNull Project project, final @NotNull SourceChange sourceChange) {
     for (LinkedEditGroup group : sourceChange.getLinkedEditGroups()) {
       final List<Position> positions = group.getPositions();
       if (!positions.isEmpty()) {
@@ -210,10 +208,10 @@ public final class AssistUtils {
     return null;
   }
 
-  private static int getLinkedEditConvertedOffset(@NotNull final Project project,
-                                                  @NotNull final VirtualFile file,
+  private static int getLinkedEditConvertedOffset(final @NotNull Project project,
+                                                  final @NotNull VirtualFile file,
                                                   final int linkedEditOffset,
-                                                  @NotNull final List<? extends SourceEditInfo> editInfos) {
+                                                  final @NotNull List<? extends SourceEditInfo> editInfos) {
     // first check if linkedEditOffset is inside of some SourceEdit
     for (SourceEditInfo info : editInfos) {
       if (linkedEditOffset >= info.resultingOriginalOffset &&
@@ -260,8 +258,7 @@ public final class AssistUtils {
     return ProjectRootManager.getInstance(project).getFileIndex().isInContent(file);
   }
 
-  @Nullable
-  public static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
+  public static @Nullable Editor navigate(final @NotNull Project project, final @NotNull VirtualFile file, final int offset) {
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file, offset);
     descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
     descriptor.navigate(true);
@@ -270,10 +267,10 @@ public final class AssistUtils {
     return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
   }
 
-  private static void runLinkedEdits(@NotNull final Project project,
-                                     @NotNull final SourceChange sourceChange,
-                                     @NotNull final ChangeTarget target,
-                                     @NotNull final List<? extends SourceEditInfo> sourceEditInfos) {
+  private static void runLinkedEdits(final @NotNull Project project,
+                                     final @NotNull SourceChange sourceChange,
+                                     final @NotNull ChangeTarget target,
+                                     final @NotNull List<? extends SourceEditInfo> sourceEditInfos) {
     final int caretOffset = getLinkedEditConvertedOffset(project, target.virtualFile, target.originalOffset, sourceEditInfos);
     final Editor editor = navigate(project, target.virtualFile, caretOffset);
     if (editor == null) {
@@ -373,14 +370,14 @@ public final class AssistUtils {
 }
 
 class ChangeTarget {
-  @NotNull final Project project;
-  @NotNull final VirtualFile virtualFile;
-  @NotNull final PsiFile psiFile;
+  final @NotNull Project project;
+  final @NotNull VirtualFile virtualFile;
+  final @NotNull PsiFile psiFile;
   final int originalOffset;
 
-  ChangeTarget(@NotNull final Project project,
-               @NotNull final VirtualFile virtualFile,
-               @NotNull final PsiFile psiFile,
+  ChangeTarget(final @NotNull Project project,
+               final @NotNull VirtualFile virtualFile,
+               final @NotNull PsiFile psiFile,
                final int originalOffset) {
     this.project = project;
     this.originalOffset = originalOffset;

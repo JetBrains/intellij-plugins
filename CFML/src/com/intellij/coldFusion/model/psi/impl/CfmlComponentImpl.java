@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlUtil;
@@ -99,8 +99,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
   }
 
   @Override
-  @NotNull
-  public String getSuperName() {
+  public @NotNull String getSuperName() {
     if (isInterface()) return "";
     if (getStub() != null) return ((CfmlComponentStub)getStub()).getSuperclass();
     return CfmlPsiUtil.getSuperComponentName(this);

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -46,9 +46,8 @@ final class DartFileUrlMapper extends FileUrlMapper {
     DART_SDK_JS_STUB.setWritable(false);
   }
 
-  @NotNull
   @Override
-  public List<Url> getUrls(@NotNull final VirtualFile file, @NotNull final Project project, @Nullable final String currentAuthority) {
+  public @NotNull List<Url> getUrls(final @NotNull VirtualFile file, final @NotNull Project project, final @Nullable String currentAuthority) {
     if (currentAuthority == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return Collections.emptyList();
 
     if (ProjectFileIndex.getInstance(project).isInContent(file)) {
@@ -94,9 +93,8 @@ final class DartFileUrlMapper extends FileUrlMapper {
     }
   }
 
-  @Nullable
   @Override
-  public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project, @Nullable Url requestor) {
+  public @Nullable VirtualFile getFile(final @NotNull Url url, final @NotNull Project project, @Nullable Url requestor) {
     final String scheme = url.getScheme();
     final String authority = url.getAuthority();
     final String path = url.getPath();
@@ -154,8 +152,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
     return null;
   }
 
-  @Nullable
-  private static VirtualFile findContextFile(final @NotNull Project project, final @Nullable Url url) {
+  private static @Nullable VirtualFile findContextFile(final @NotNull Project project, final @Nullable Url url) {
     if (url == null) return null;
 
     for (FileUrlMapper urlMapper : FileUrlMapper.EP_NAME.getExtensions()) {
@@ -173,8 +170,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
     return null;
   }
 
-  @Nullable
-  private static VirtualFile findFileInAnyPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
+  private static @Nullable VirtualFile findFileInAnyPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
     for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
       final VirtualFile file = DartUrlResolver.getInstance(project, yamlFile).findFileByDartUrl(packageUrl);
       if (file != null) return file;
@@ -183,9 +179,8 @@ final class DartFileUrlMapper extends FileUrlMapper {
     return null;
   }
 
-  @Nullable
   @Override
-  public FileType getFileType(@NotNull Url url) {
+  public @Nullable FileType getFileType(@NotNull Url url) {
     return DartUrlResolver.DART_SCHEME.equals(url.getScheme()) || DartUrlResolver.PACKAGE_SCHEME.equals(url.getScheme())
            ? DartFileType.INSTANCE
            : null;

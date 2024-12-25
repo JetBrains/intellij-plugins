@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.coldFusion.model.files.CfmlFile;
@@ -40,8 +40,7 @@ public final class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiE
     return lbrace.getStartOffset() < offset && rbrace.getStartOffset() >= offset;
   }
 
-  @Nullable
-  private static PsiElement findAnchorElement(int offset, PsiFile file) {
+  private static @Nullable PsiElement findAnchorElement(int offset, PsiFile file) {
     if (offset <= 0) {
       return null;
     }

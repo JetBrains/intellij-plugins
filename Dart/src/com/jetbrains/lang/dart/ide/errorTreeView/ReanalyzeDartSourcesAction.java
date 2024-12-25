@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -19,7 +19,7 @@ public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (isApplicable(project)) {
       DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
@@ -34,11 +34,11 @@ public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   }
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     e.getPresentation().setEnabledAndVisible(isApplicable(e.getProject()));
   }
 
-  private static boolean isApplicable(@Nullable final Project project) {
+  private static boolean isApplicable(final @Nullable Project project) {
     return project != null && ToolWindowManager.getInstance(project).getToolWindow(DartProblemsView.TOOLWINDOW_ID) != null;
   }
 }

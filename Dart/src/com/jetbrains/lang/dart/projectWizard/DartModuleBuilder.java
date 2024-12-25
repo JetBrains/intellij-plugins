@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
@@ -79,9 +79,8 @@ public final class DartModuleBuilder extends ModuleBuilder {
     return WebModuleBuilder.GROUP_NAME;
   }
 
-  @Nullable
   @Override
-  public ModuleWizardStep getCustomOptionsStep(final WizardContext context, final Disposable parentDisposable) {
+  public @Nullable ModuleWizardStep getCustomOptionsStep(final WizardContext context, final Disposable parentDisposable) {
     final DartModuleWizardStep step = new DartModuleWizardStep(context);
     Disposer.register(parentDisposable, step);
     return step;
@@ -92,7 +91,7 @@ public final class DartModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public void setupRootModel(@NotNull final ModifiableRootModel modifiableRootModel) {
+  public void setupRootModel(final @NotNull ModifiableRootModel modifiableRootModel) {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     final VirtualFile baseDir = contentEntry == null ? null : contentEntry.getFile();
     if (baseDir != null) {
@@ -100,9 +99,9 @@ public final class DartModuleBuilder extends ModuleBuilder {
     }
   }
 
-  static void setupProject(@NotNull final ModifiableRootModel modifiableRootModel,
-                           @NotNull final VirtualFile baseDir,
-                           @NotNull final DartProjectWizardData wizardData) {
+  static void setupProject(final @NotNull ModifiableRootModel modifiableRootModel,
+                           final @NotNull VirtualFile baseDir,
+                           final @NotNull DartProjectWizardData wizardData) {
     setupSdk(modifiableRootModel, wizardData);
 
     if (wizardData.myTemplate != null) {
@@ -119,8 +118,8 @@ public final class DartModuleBuilder extends ModuleBuilder {
     }
   }
 
-  private static void setupSdk(@NotNull final ModifiableRootModel modifiableRootModel,
-                               @NotNull final DartProjectWizardData wizardData) {
+  private static void setupSdk(final @NotNull ModifiableRootModel modifiableRootModel,
+                               final @NotNull DartProjectWizardData wizardData) {
     // similar to DartConfigurable.apply()
     if (DartSdkUtil.isDartSdkHome(wizardData.dartSdkPath)) {
       final Project project = modifiableRootModel.getProject();
@@ -142,11 +141,11 @@ public final class DartModuleBuilder extends ModuleBuilder {
     }
   }
 
-  public static boolean isPubGetScheduledForNewlyCreatedProject(@NotNull final Project project) {
+  public static boolean isPubGetScheduledForNewlyCreatedProject(final @NotNull Project project) {
     return project.getUserData(PUB_GET_SCHEDULED_KEY) == Boolean.TRUE;
   }
 
-  private static void scheduleFilesOpeningAndPubGet(@NotNull final Module module, @NotNull final Collection<VirtualFile> files) {
+  private static void scheduleFilesOpeningAndPubGet(final @NotNull Module module, final @NotNull Collection<VirtualFile> files) {
     module.getProject().putUserData(PUB_GET_SCHEDULED_KEY, Boolean.TRUE);
     runWhenNonModalIfModuleNotDisposed(() -> {
       module.getProject().putUserData(PUB_GET_SCHEDULED_KEY, null);
@@ -165,7 +164,7 @@ public final class DartModuleBuilder extends ModuleBuilder {
     }, module);
   }
 
-  static void runWhenNonModalIfModuleNotDisposed(@NotNull final Runnable runnable, @NotNull final Module module) {
+  static void runWhenNonModalIfModuleNotDisposed(final @NotNull Runnable runnable, final @NotNull Module module) {
     // runnable must not be executed immediately because the new project model might be not yet committed, so Dart SDK won't be found
     // In WebStorm we get already initialized project at this point, but in IntelliJ IDEA - not yet initialized.
 

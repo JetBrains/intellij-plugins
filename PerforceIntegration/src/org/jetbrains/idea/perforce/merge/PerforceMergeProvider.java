@@ -55,8 +55,7 @@ public class PerforceMergeProvider implements MergeProvider {
   }
 
   @Override
-  @NotNull
-  public MergeData loadRevisions(@NotNull final VirtualFile file) throws VcsException {
+  public @NotNull MergeData loadRevisions(final @NotNull VirtualFile file) throws VcsException {
     final MergeData mergeData = new MergeData();
     VcsRunnable runnable = new VcsRunnable() {
       @Override
@@ -96,7 +95,7 @@ public class PerforceMergeProvider implements MergeProvider {
   }
 
   @Override
-  public void conflictResolvedForFile(@NotNull final VirtualFile file) {
+  public void conflictResolvedForFile(final @NotNull VirtualFile file) {
     try {
       VcsUtil.runVcsProcessWithProgress(() -> myRunner.resolveToYours(P4File.create(file)),
                                         PerforceBundle.message("progress.marking.file.as.resolved"), false, myProject);
@@ -106,7 +105,7 @@ public class PerforceMergeProvider implements MergeProvider {
   }
 
   @Override
-  public boolean isBinary(@NotNull final VirtualFile file) {
+  public boolean isBinary(final @NotNull VirtualFile file) {
     return false;
   }
 

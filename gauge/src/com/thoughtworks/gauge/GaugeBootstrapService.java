@@ -253,8 +253,7 @@ public final class GaugeBootstrapService implements Disposable {
     linkedModulesMap.get(name).add(module);
   }
 
-  @NotNull
-  private static String getProjectGroupValue(Module module) {
+  private static @NotNull String getProjectGroupValue(Module module) {
     String[] values = ModuleManager.getInstance(module.getProject()).getModuleGroupPath(module);
     return values == null || values.length < 1 ? module.getName() : values[0];
   }

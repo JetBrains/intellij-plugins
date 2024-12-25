@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model;
 
 import com.intellij.codeInsight.AutoPopupController;
@@ -43,13 +43,11 @@ import java.util.Set;
  */
 public final class CfmlUtil {
 
-  @Nullable
-  public static Language getSqlLanguage() {
+  public static @Nullable Language getSqlLanguage() {
     return Language.findLanguageByID("SQL");
   }
 
-  @Nullable
-  public static VirtualFile findFileByLibTag(PsiFile originalFile, @NotNull String libtag) {
+  public static @Nullable VirtualFile findFileByLibTag(PsiFile originalFile, @NotNull String libtag) {
     VirtualFile base = getRealVirtualFile(originalFile);
     final Module module = base == null ? null : ModuleUtilCore.findModuleForFile(base, originalFile.getProject());
     base = module == null ? null : module.getModuleFile();
@@ -66,8 +64,7 @@ public final class CfmlUtil {
     return VfsUtil.findRelativeFile(base, libtag.split("/"));
   }
 
-  @Nullable
-  public static CfmlImport getImportByPrefix(@Nullable PsiElement context, @Nullable final String prefix) {
+  public static @Nullable CfmlImport getImportByPrefix(@Nullable PsiElement context, final @Nullable String prefix) {
     if (prefix == null || context == null) {
       return null;
     }
@@ -108,8 +105,7 @@ public final class CfmlUtil {
   /**
    * Use only if {@code ApplicationManager.getApplication() != null}
    */
-  @NotNull
-  private static Project anyProject(Project project) {
+  private static @NotNull Project anyProject(Project project) {
     if (project != null) return project;
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
     if (projects.length != 0) return projects[0];
@@ -176,8 +172,7 @@ public final class CfmlUtil {
     return CfmlDocUtil.attributeDescription(tagName, cfmlAttributeDescription, project);
   }
 
-  @Nullable
-  public static CfmlAttributeDescription getAttribute(String tagName, String attributeName, Project project) {
+  public static @Nullable CfmlAttributeDescription getAttribute(String tagName, String attributeName, Project project) {
     CfmlTagDescription tagDescription = getCfmlLangInfo(project).getTagAttributes().get(tagName);
     if (tagDescription == null) return null;
     final Collection<CfmlAttributeDescription> attributesCollection = tagDescription.getAttributes();
@@ -264,8 +259,7 @@ public final class CfmlUtil {
     return getCfmlLangInfo(project).getVariableScopes();
   }
 
-  @NotNull
-  public static String getFileName(PsiElement element) {
+  public static @NotNull String getFileName(PsiElement element) {
     final String fileName = element.getContainingFile().getName();
     if (fileName.indexOf('.') == -1) {
       return fileName;
@@ -277,8 +271,7 @@ public final class CfmlUtil {
     AutoPopupController.getInstance(editor.getProject()).autoPopupMemberLookup(editor, null);
   }
 
-  @Nullable
-  public static VirtualFile getRealVirtualFile(PsiFile psiFile) {
+  public static @Nullable VirtualFile getRealVirtualFile(PsiFile psiFile) {
     return psiFile.getOriginalFile().getVirtualFile();
   }
 

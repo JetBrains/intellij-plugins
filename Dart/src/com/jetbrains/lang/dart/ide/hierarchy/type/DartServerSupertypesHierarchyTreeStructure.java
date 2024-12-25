@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -25,7 +25,7 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
   }
 
   @Override
-  protected Object @NotNull [] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
+  protected Object @NotNull [] buildChildren(final @NotNull HierarchyNodeDescriptor descriptor) {
     final DartClass dartClass = ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();
     if (dartClass == null || DartResolveUtil.OBJECT.equals(dartClass.getName())) {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
@@ -39,11 +39,11 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
     return descriptor.getCachedChildren();
   }
 
-  private static void addSuperClassHierarchy(@NotNull final Set<TypeHierarchyItem> stackItems,
-                                             @NotNull final Project project,
-                                             @NotNull final List<TypeHierarchyItem> items,
-                                             @NotNull final TypeHierarchyItem item,
-                                             @NotNull final HierarchyNodeDescriptor descriptor) {
+  private static void addSuperClassHierarchy(final @NotNull Set<TypeHierarchyItem> stackItems,
+                                             final @NotNull Project project,
+                                             final @NotNull List<TypeHierarchyItem> items,
+                                             final @NotNull TypeHierarchyItem item,
+                                             final @NotNull HierarchyNodeDescriptor descriptor) {
     if (!stackItems.add(item)) {
       descriptor.setCachedChildren(ArrayUtilRt.EMPTY_OBJECT_ARRAY);
       return;
@@ -71,11 +71,11 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
     descriptor.setCachedChildren(superDescriptors.toArray(HierarchyNodeDescriptor.EMPTY_ARRAY));
   }
 
-  private static void addSuperClassNode(@NotNull final Set<TypeHierarchyItem> stackItems,
-                                        @NotNull final Project project,
-                                        @NotNull final List<TypeHierarchyItem> items,
-                                        @NotNull final HierarchyNodeDescriptor parentNode,
-                                        @NotNull final List<HierarchyNodeDescriptor> descriptors,
+  private static void addSuperClassNode(final @NotNull Set<TypeHierarchyItem> stackItems,
+                                        final @NotNull Project project,
+                                        final @NotNull List<TypeHierarchyItem> items,
+                                        final @NotNull HierarchyNodeDescriptor parentNode,
+                                        final @NotNull List<HierarchyNodeDescriptor> descriptors,
                                         final int index) {
     final TypeHierarchyItem superItem = items.get(index);
     if (DartResolveUtil.OBJECT.equals(superItem.getClassElement().getName())) {

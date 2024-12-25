@@ -45,8 +45,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
   SourceType getSourceType();
 
   /** Returns the {@link IntegerFormat radix} that this integer was defined as in proto source. */
-  @Nullable
-  default IntegerFormat getIntegerFormat() {
+  default @Nullable IntegerFormat getIntegerFormat() {
     if (getSourceType() == SourceType.INTEGER) {
       PsiElement numberElement = getNumberElement();
       if (numberElement == null) {
@@ -74,8 +73,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
   boolean isNegative();
 
   @Override
-  @Nullable
-  default Object getValue() {
+  default @Nullable Object getValue() {
     return getNumber();
   }
 
@@ -83,8 +81,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
    * Returns the value as a Long, or <code>null</code> if either SourceType is not INTEGER or the
    * value is larger than the bounds of a signed 64-bit integer.
    */
-  @Nullable
-  default Long getLongValue() {
+  default @Nullable Long getLongValue() {
     PsiElement numberElement = getNumberElement();
     if (numberElement == null) {
       return null;
@@ -108,8 +105,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
    * value was defined as a negative, or the value is larger than the bounds of an unsigned 64-bit
    * integer.
    */
-  @Nullable
-  default UnsignedLong getUnsignedLongValue() {
+  default @Nullable UnsignedLong getUnsignedLongValue() {
     if (isNegative()) {
       return null;
     }
@@ -121,8 +117,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
    * <code>null</code> if SourceType is not INTEGER or the value is larger than the bounds of an
    * unsigned 64-bit integer.
    */
-  @Nullable
-  default UnsignedLong getUnsignedLongComponent() {
+  default @Nullable UnsignedLong getUnsignedLongComponent() {
     PsiElement numberElement = getNumberElement();
     if (numberElement == null) {
       return null;
@@ -144,8 +139,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
    * Returns the value as a Double, or <code>null</code> if the SourceType is not FLOAT, INF, or
    * NAN, or the value is larger than the bounds of a Double.
    */
-  @Nullable
-  default Double getDoubleValue() {
+  default @Nullable Double getDoubleValue() {
     SourceType sourceType = getSourceType();
     if (sourceType == null) {
       return null;
@@ -178,8 +172,7 @@ public interface ProtoNumberValue extends ProtoLiteral {
    * greater than the maximum value of a signed 64-bit integer. If the number cannot be represented
    * by any of Double, Long or UnsignedLong, <code>null</code> is returned.
    */
-  @Nullable
-  default Number getNumber() {
+  default @Nullable Number getNumber() {
     SourceType sourceType = getSourceType();
     if (sourceType != null) {
       return switch (getSourceType()) {

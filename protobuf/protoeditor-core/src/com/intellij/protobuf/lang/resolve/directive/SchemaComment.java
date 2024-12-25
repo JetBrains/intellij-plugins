@@ -49,23 +49,19 @@ public abstract class SchemaComment {
     this.type = type;
   }
 
-  @NotNull
-  public PsiComment getComment() {
+  public @NotNull PsiComment getComment() {
     return comment;
   }
 
-  @Nullable
-  public TextRange getKeyRange() {
+  public @Nullable TextRange getKeyRange() {
     return keyRange;
   }
 
-  @Nullable
-  public TextRange getNameRange() {
+  public @Nullable TextRange getNameRange() {
     return nameRange;
   }
 
-  @Nullable
-  public String getName() {
+  public @Nullable String getName() {
     return nameRange != null ? nameRange.substring(comment.getText()) : null;
   }
 
@@ -73,8 +69,7 @@ public abstract class SchemaComment {
     return type;
   }
 
-  @Nullable
-  public abstract PsiReference getReference();
+  public abstract @Nullable PsiReference getReference();
 
   public abstract List<PsiReference> getAllReferences();
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
@@ -24,9 +24,8 @@ public class DroolsFile extends PsiFileBase implements PsiImportHolder {
     super(viewProvider, DroolsLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return DroolsFileType.DROOLS_FILE_TYPE;
   }
 
@@ -64,8 +63,7 @@ public class DroolsFile extends PsiFileBase implements PsiImportHolder {
     return findChildrenByClass(DroolsGlobalStatement.class);
   }
 
-  @Nullable
-  public DroolsPackageStatement getPackage() {
+  public @Nullable DroolsPackageStatement getPackage() {
     return findChildByClass(DroolsPackageStatement.class);
   }
 
@@ -73,13 +71,11 @@ public class DroolsFile extends PsiFileBase implements PsiImportHolder {
     return findChildrenByClass(DroolsAttribute.class);
   }
 
-  @Nullable
-  public DroolsUnitStatement getUnitStatement() {
+  public @Nullable DroolsUnitStatement getUnitStatement() {
     return findChildByClass(DroolsUnitStatement.class);
   }
 
-  @Nullable
-  public DroolsAttribute findAttributeByName(@NotNull String name) {
+  public @Nullable DroolsAttribute findAttributeByName(@NotNull String name) {
     for (DroolsAttribute attribute : getAttributes()) {
       if (name.equals(attribute.getAttributeName())) return attribute;
     }
@@ -128,8 +124,7 @@ public class DroolsFile extends PsiFileBase implements PsiImportHolder {
     return (DroolsImport)result;
   }
 
-  @Nullable
-  private PsiElement getAnchorToInsertImportAfter(@NotNull DroolsImport droolsImport) {
+  private @Nullable PsiElement getAnchorToInsertImportAfter(@NotNull DroolsImport droolsImport) {
     DroolsImport[] importStatements = getImports();
     if (importStatements.length == 0) {
       final DroolsPackageStatement aPackage = getPackage();

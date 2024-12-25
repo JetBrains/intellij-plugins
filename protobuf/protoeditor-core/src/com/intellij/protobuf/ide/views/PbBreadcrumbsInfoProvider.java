@@ -16,11 +16,11 @@
 package com.intellij.protobuf.ide.views;
 
 import com.intellij.lang.Language;
+import com.intellij.protobuf.lang.PbLanguage;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider;
-import com.intellij.protobuf.lang.PbLanguage;
-import com.intellij.protobuf.lang.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,9 +38,8 @@ public class PbBreadcrumbsInfoProvider implements BreadcrumbsProvider {
     return e instanceof PbNamedElement && ((PbNamedElement) e).getName() != null;
   }
 
-  @NotNull
   @Override
-  public String getElementInfo(@NotNull PsiElement e) {
+  public @NotNull String getElementInfo(@NotNull PsiElement e) {
     String name = ((PbNamedElement) e).getName();
     if (name == null) {
       return getTooltipPrefix(e);
@@ -48,9 +47,8 @@ public class PbBreadcrumbsInfoProvider implements BreadcrumbsProvider {
     return name;
   }
 
-  @Nullable
   @Override
-  public String getElementTooltip(@NotNull PsiElement e) {
+  public @Nullable String getElementTooltip(@NotNull PsiElement e) {
     QualifiedName name = ((PbNamedElement) e).getQualifiedName();
     return name != null ? String.format("%s <b>%s</b>", getTooltipPrefix(e), name) : null;
   }

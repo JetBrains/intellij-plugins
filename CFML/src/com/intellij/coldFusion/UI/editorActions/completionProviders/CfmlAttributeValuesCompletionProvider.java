@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -16,9 +16,9 @@ import org.jetbrains.annotations.NotNull;
 
 class CfmlAttributeValuesCompletionProvider extends CompletionProvider<CompletionParameters> {
   @Override
-  public void addCompletions(@NotNull final CompletionParameters parameters,
-                             @NotNull final ProcessingContext context,
-                             @NotNull final CompletionResultSet result) {
+  public void addCompletions(final @NotNull CompletionParameters parameters,
+                             final @NotNull ProcessingContext context,
+                             final @NotNull CompletionResultSet result) {
     PsiElement element = parameters.getPosition();
     while (element != null && !(element instanceof CfmlAttributeImpl)) {
       element = element.getParent();

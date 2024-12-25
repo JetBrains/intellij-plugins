@@ -22,7 +22,6 @@ import com.intellij.protobuf.lang.psi.PbCommentOwner;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,9 +30,8 @@ import java.util.List;
 /** A {@link com.intellij.lang.documentation.DocumentationProvider} for proto elements. */
 public class PbDocumentationProvider extends AbstractDocumentationProvider {
 
-  @Nullable
   @Override
-  public @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
+  public @Nullable @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
     if (!(element instanceof PbCommentOwner owner)) {
       return null;
     }

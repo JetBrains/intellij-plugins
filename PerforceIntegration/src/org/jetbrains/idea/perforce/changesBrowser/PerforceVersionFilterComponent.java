@@ -146,9 +146,8 @@ public class PerforceVersionFilterComponent extends StandardVersionFilterCompone
     updatePair(myUseClientFilter, myClientField, e);
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return myPanel;
   }
 }

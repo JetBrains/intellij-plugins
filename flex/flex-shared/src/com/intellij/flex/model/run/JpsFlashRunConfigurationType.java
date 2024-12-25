@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.run;
 
 import com.intellij.util.xmlb.XmlSerializer;
@@ -19,7 +19,7 @@ public final class JpsFlashRunConfigurationType extends JpsElementTypeBase<JpsFl
   public static JpsRunConfigurationPropertiesSerializer<JpsFlashRunnerParameters> createRunConfigurationSerializer() {
     return new JpsRunConfigurationPropertiesSerializer<JpsFlashRunnerParameters>(INSTANCE, ID) {
       @Override
-      public JpsFlashRunnerParameters loadProperties(@Nullable final Element runConfigurationTag) {
+      public JpsFlashRunnerParameters loadProperties(final @Nullable Element runConfigurationTag) {
         final JpsFlashRunnerParameters properties = runConfigurationTag != null
                                                     ? XmlSerializer.deserialize(runConfigurationTag, JpsFlashRunnerParameters.class)
                                                     : null;

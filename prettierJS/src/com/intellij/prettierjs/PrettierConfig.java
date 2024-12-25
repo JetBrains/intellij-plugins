@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.application.options.CodeStyle;
@@ -45,8 +45,7 @@ public class PrettierConfig {
   public final int tabWidth;
   public final TrailingCommaOption trailingComma;
   public final boolean useTabs;
-  @Nullable
-  public final String lineSeparator;
+  public final @Nullable String lineSeparator;
   public final boolean vueIndentScriptAndStyle;
 
   public PrettierConfig(boolean jsxBracketSameLine,
@@ -119,14 +118,12 @@ public class PrettierConfig {
            '}';
   }
 
-  @Nullable
-  private static String parseLineSeparatorValue(@Nullable String string) {
+  private static @Nullable String parseLineSeparatorValue(@Nullable String string) {
     LineSeparator separator = parseLineSeparator(string);
     return separator != null ? separator.getSeparatorString() : null;
   }
 
-  @Nullable
-  private static LineSeparator parseLineSeparator(@Nullable String string) {
+  private static @Nullable LineSeparator parseLineSeparator(@Nullable String string) {
     if (string == null) {
       return null;
     }
@@ -143,8 +140,7 @@ public class PrettierConfig {
     return value == null ? null : value.intValue();
   }
 
-  @Nullable
-  private static TrailingCommaOption parseTrailingCommaValue(@Nullable String string) {
+  private static @Nullable TrailingCommaOption parseTrailingCommaValue(@Nullable String string) {
     return string == null ? null : StringUtil.parseEnum(string, null, TrailingCommaOption.class);
   }
 

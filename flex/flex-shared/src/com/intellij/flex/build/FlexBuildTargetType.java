@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -33,8 +33,7 @@ public final class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> 
   }
 
   @Override
-  @NotNull
-  public List<FlexBuildTarget> computeAllTargets(@NotNull final JpsModel model) {
+  public @NotNull List<FlexBuildTarget> computeAllTargets(final @NotNull JpsModel model) {
     final List<FlexBuildTarget> result = new ArrayList<>();
 
     final JpsProject project = model.getProject();
@@ -67,8 +66,7 @@ public final class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> 
   }
 
   @Override
-  @NotNull
-  public BuildTargetLoader<FlexBuildTarget> createLoader(@NotNull final JpsModel model) {
+  public @NotNull BuildTargetLoader<FlexBuildTarget> createLoader(final @NotNull JpsModel model) {
     return new FlexBuildTargetLoader(model);
   }
 
@@ -80,8 +78,7 @@ public final class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> 
     }
 
     @Override
-    @Nullable
-    public FlexBuildTarget createTarget(@NotNull final String buildTargetId) {
+    public @Nullable FlexBuildTarget createTarget(final @NotNull String buildTargetId) {
       final JpsProject project = myModel.getProject();
 
       final Pair<String, String> runConfigTypeIdAndName = FlexCommonUtils.getRunConfigTypeIdAndNameByBuildTargetId(buildTargetId);

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.CommonBundle;
@@ -40,7 +41,7 @@ public final class DartServerStatementCompletionProcessor extends SmartEnterProc
     return false;
   }
 
-  private static boolean isNoop(@NotNull final SourceChange sourceChange) {
+  private static boolean isNoop(final @NotNull SourceChange sourceChange) {
     for (SourceFileEdit fileEdit : sourceChange.getEdits()) {
       for (SourceEdit edit : fileEdit.getEdits()) {
         if (edit.getLength() != 0 || !edit.getReplacement().isEmpty()) {

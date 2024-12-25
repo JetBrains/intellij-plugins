@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -230,8 +230,7 @@ final class FlexBuilderUtils {
     return FlexCommonUtils.replace(wrapperText, replacementMap);
   }
 
-  @Nullable
-  private static String getSwfMetadata(final String text) {
+  private static @Nullable String getSwfMetadata(final String text) {
     // todo use lexer
     int swfIndex = -1;
     while ((swfIndex = text.indexOf("[SWF", swfIndex + 1)) > -1) {
@@ -359,8 +358,7 @@ final class FlexBuilderUtils {
     return ArrayUtilRt.toStringArray(result);
   }
 
-  @Nullable
-  private static String getExtensionId(final File aneFile) {
+  private static @Nullable String getExtensionId(final File aneFile) {
     try {
       try (ZipFile zipFile = new ZipFile((aneFile))) {
         final ZipEntry entry = zipFile.getEntry("META-INF/ANE/extension.xml");

@@ -16,7 +16,7 @@ public class ConnectionId {
   public String myP4ConfigFileName;
   public String myWorkingDir;
 
-  public ConnectionId(@Nullable final String p4ConfigFileName, @NotNull final String workingDir) {
+  public ConnectionId(final @Nullable String p4ConfigFileName, final @NotNull String workingDir) {
     myP4ConfigFileName = p4ConfigFileName;
     myWorkingDir = workingDir;
     myUseP4Config = true;

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.ComponentSet;
@@ -57,16 +57,14 @@ final class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDepen
   }
 
   @Override
-  @NotNull
-  public JpsFlexDependenciesImpl createCopy() {
+  public @NotNull JpsFlexDependenciesImpl createCopy() {
     return new JpsFlexDependenciesImpl(this);
   }
 
 // ------------------------------------
 
   @Override
-  @Nullable
-  public JpsSdk<?> getSdk() {
+  public @Nullable JpsSdk<?> getSdk() {
     final JpsSdkReference<JpsDummyElement> flexSdkReference = myContainer.getChild(FLEX_SDK_REF_ROLE);
     if (flexSdkReference != null) {
       final JpsTypedLibrary<JpsSdk<JpsDummyElement>> resolve = flexSdkReference.resolve();
@@ -88,41 +86,37 @@ final class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDepen
   }
 
   @Override
-  @NotNull
-  public String getTargetPlayer() {
+  public @NotNull String getTargetPlayer() {
     return myTargetPlayer;
   }
 
   @Override
-  public void setTargetPlayer(@NotNull final String targetPlayer) {
+  public void setTargetPlayer(final @NotNull String targetPlayer) {
     myTargetPlayer = targetPlayer;
   }
 
   @Override
-  @NotNull
-  public ComponentSet getComponentSet() {
+  public @NotNull ComponentSet getComponentSet() {
     return myComponentSet;
   }
 
   @Override
-  public void setComponentSet(@NotNull final ComponentSet componentSet) {
+  public void setComponentSet(final @NotNull ComponentSet componentSet) {
     myComponentSet = componentSet;
   }
 
   @Override
-  @NotNull
-  public LinkageType getFrameworkLinkage() {
+  public @NotNull LinkageType getFrameworkLinkage() {
     return myFrameworkLinkage;
   }
 
   @Override
-  public void setFrameworkLinkage(@NotNull final LinkageType frameworkLinkage) {
+  public void setFrameworkLinkage(final @NotNull LinkageType frameworkLinkage) {
     myFrameworkLinkage = frameworkLinkage;
   }
 
   @Override
-  @NotNull
-  public List<JpsFlexDependencyEntry> getEntries() {
+  public @NotNull List<JpsFlexDependencyEntry> getEntries() {
     return myContainer.getChild(ENTRIES_ROLE).getElements();
   }
 
@@ -220,8 +214,7 @@ final class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDepen
     }
 
     @Override
-    @NotNull
-    public JpsFlexDependencies create() {
+    public @NotNull JpsFlexDependencies create() {
       return new JpsFlexDependenciesImpl();
     }
   }

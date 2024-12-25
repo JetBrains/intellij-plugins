@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.folding;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
@@ -43,15 +43,15 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
   private static final String SINGLE_LINE_COMMENT = "//...";
 
   @Override
-  protected boolean isCustomFoldingRoot(@NotNull final ASTNode node) {
+  protected boolean isCustomFoldingRoot(final @NotNull ASTNode node) {
     final IElementType type = node.getElementType();
     return type == DART_FILE || type == DartTokenTypes.CLASS_BODY || type == DartTokenTypes.FUNCTION_BODY;
   }
 
   @Override
-  protected void buildLanguageFoldRegions(@NotNull final List<FoldingDescriptor> descriptors,
-                                          @NotNull final PsiElement root,
-                                          @NotNull final Document document,
+  protected void buildLanguageFoldRegions(final @NotNull List<FoldingDescriptor> descriptors,
+                                          final @NotNull PsiElement root,
+                                          final @NotNull Document document,
                                           final boolean quick) {
     if (!(root instanceof DartFile dartFile)) return;
 
@@ -96,8 +96,7 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
   }
 
   @Override
-  @NotNull
-  protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
+  protected @NotNull String getLanguagePlaceholderText(final @NotNull ASTNode node, final @NotNull TextRange range) {
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
 
@@ -144,7 +143,7 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
   }
 
   @Override
-  protected boolean isRegionCollapsedByDefault(@NotNull final ASTNode node) {
+  protected boolean isRegionCollapsedByDefault(final @NotNull ASTNode node) {
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
     final CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
@@ -166,10 +165,9 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     return false;
   }
 
-  @Nullable
-  private static TextRange foldFileHeader(@NotNull final List<FoldingDescriptor> descriptors,
-                                          @NotNull final DartFile dartFile,
-                                          @NotNull final Document document) {
+  private static @Nullable TextRange foldFileHeader(final @NotNull List<FoldingDescriptor> descriptors,
+                                                    final @NotNull DartFile dartFile,
+                                                    final @NotNull Document document) {
     PsiElement firstComment = dartFile.getFirstChild();
     if (firstComment instanceof PsiWhiteSpace) firstComment = firstComment.getNextSibling();
 
@@ -204,9 +202,9 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     return null;
   }
 
-  private static <T extends PsiElement> void foldConsequentStatements(@NotNull final List<FoldingDescriptor> descriptors,
-                                                                      @NotNull final DartFile dartFile,
-                                                                      @NotNull final Class<T> aClass) {
+  private static <T extends PsiElement> void foldConsequentStatements(final @NotNull List<FoldingDescriptor> descriptors,
+                                                                      final @NotNull DartFile dartFile,
+                                                                      final @NotNull Class<T> aClass) {
     final T firstStatement = PsiTreeUtil.getChildOfType(dartFile, aClass);
     if (firstStatement == null) return;
 
@@ -234,9 +232,9 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldComments(@NotNull final List<FoldingDescriptor> descriptors,
-                                   @NotNull final Collection<PsiElement> psiElements,
-                                   @Nullable final TextRange fileHeaderRange) {
+  private static void foldComments(final @NotNull List<FoldingDescriptor> descriptors,
+                                   final @NotNull Collection<PsiElement> psiElements,
+                                   final @Nullable TextRange fileHeaderRange) {
     for (Iterator<PsiElement> iter = psiElements.iterator(); iter.hasNext(); ) {
       PsiElement psiElement = iter.next();
       if (!(psiElement instanceof PsiComment)) {
@@ -275,7 +273,7 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldClassBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final DartFile dartFile) {
+  private static void foldClassBodies(final @NotNull List<FoldingDescriptor> descriptors, final @NotNull DartFile dartFile) {
     for (PsiElement element : PsiTreeUtil.getChildrenOfAnyType(dartFile,
                                                                DartClass.class,
                                                                DartExtensionDeclaration.class,
@@ -314,8 +312,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldFunctionBodies(@NotNull final List<FoldingDescriptor> descriptors,
-                                         @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldFunctionBodies(final @NotNull List<FoldingDescriptor> descriptors,
+                                         final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement dartComponent : psiElements) {
       final DartComponentType componentType = DartComponentType.typeOf(dartComponent);
       if (componentType == null) continue;
@@ -328,8 +326,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldFunctionBody(@NotNull final List<FoldingDescriptor> descriptors,
-                                       @NotNull final PsiElement dartComponentOrOperatorDeclaration) {
+  private static void foldFunctionBody(final @NotNull List<FoldingDescriptor> descriptors,
+                                       final @NotNull PsiElement dartComponentOrOperatorDeclaration) {
     final DartPsiCompositeElement psiCompositeElement =
       PsiTreeUtil.getChildOfAnyType(dartComponentOrOperatorDeclaration, DartFunctionBody.class, DartFunctionExpressionBody.class);
     if (psiCompositeElement == null) return;
@@ -370,8 +368,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldTypeArguments(@NotNull final List<FoldingDescriptor> descriptors,
-                                        @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldTypeArguments(final @NotNull List<FoldingDescriptor> descriptors,
+                                        final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartTypeArguments dartTypeArguments) {
         if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class, DartTypeArguments.class) instanceof DartNewExpression) {
@@ -382,8 +380,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldMultilineStrings(@NotNull final List<FoldingDescriptor> descriptors,
-                                           @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldMultilineStrings(final @NotNull List<FoldingDescriptor> descriptors,
+                                           final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement element : psiElements) {
       if (element instanceof DartStringLiteralExpression dartString) {
         PsiElement child = dartString.getFirstChild();
@@ -396,8 +394,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldConstructorInvocationExpressions(@NotNull final List<FoldingDescriptor> descriptors,
-                                                           @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldConstructorInvocationExpressions(final @NotNull List<FoldingDescriptor> descriptors,
+                                                           final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartNewExpression dartNewExpression) {
         // Fold invocation with "new"
@@ -416,8 +414,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldAssertExpressions(@NotNull final List<FoldingDescriptor> descriptors,
-                                            @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldAssertExpressions(final @NotNull List<FoldingDescriptor> descriptors,
+                                            final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartAssertStatement) {
         final ASTNode openParenNode = psiElement.getNode().findChildByType(DartTokenTypes.LPAREN);
@@ -439,8 +437,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldIfStatements(@NotNull final List<FoldingDescriptor> descriptors,
-                                       @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldIfStatements(final @NotNull List<FoldingDescriptor> descriptors,
+                                       final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartIfStatement dartIfStatement) {
         final List<DartBlock> dartBlockList = dartIfStatement.getBlockList();
@@ -451,8 +449,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldLoopStatements(@NotNull final List<FoldingDescriptor> descriptors,
-                                         @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldLoopStatements(final @NotNull List<FoldingDescriptor> descriptors,
+                                         final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       DartBlock dartBlock = null;
       if (psiElement instanceof DartForStatement) {
@@ -471,8 +469,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldParameterLists(@NotNull final List<FoldingDescriptor> descriptors,
-                                         @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldParameterLists(final @NotNull List<FoldingDescriptor> descriptors,
+                                         final @NotNull Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartFormalParameterList paramList) {
         if (paramList.textContains('\n')) {
@@ -482,8 +480,8 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     }
   }
 
-  private static void foldNonEmptyDartArguments(@NotNull final List<FoldingDescriptor> descriptors,
-                                                @Nullable final DartArguments dartArguments) {
+  private static void foldNonEmptyDartArguments(final @NotNull List<FoldingDescriptor> descriptors,
+                                                final @Nullable DartArguments dartArguments) {
     if (dartArguments == null || dartArguments.getArgumentList() == null) return;
 
     DartArgumentList dartArgumentList = dartArguments.getArgumentList();
@@ -492,8 +490,7 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
   }
 
-  @NotNull
-  private static String multilineStringPlaceholder(@NotNull final ASTNode node) {
+  private static @NotNull String multilineStringPlaceholder(final @NotNull ASTNode node) {
     ASTNode child = node.getFirstChildNode();
     if (child == null) return DOT_DOT_DOT;
     if (child.getElementType() == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
@@ -509,11 +506,11 @@ public final class DartFoldingBuilder extends CustomFoldingBuilder implements Du
     return DOT_DOT_DOT;
   }
 
-  private static <T extends PsiElement> void foldLiterals(@NotNull final List<FoldingDescriptor> descriptors,
-                                                          @NotNull final Collection<PsiElement> psiElements,
+  private static <T extends PsiElement> void foldLiterals(final @NotNull List<FoldingDescriptor> descriptors,
+                                                          final @NotNull Collection<PsiElement> psiElements,
                                                           @NotNull IElementType lBracketType,
                                                           @NotNull IElementType rBracketType,
-                                                          @NotNull final Class<T> aClass) {
+                                                          final @NotNull Class<T> aClass) {
     for (PsiElement psiElement : psiElements) {
       if (aClass.isInstance(psiElement)) {
         final ASTNode node = psiElement.getNode();

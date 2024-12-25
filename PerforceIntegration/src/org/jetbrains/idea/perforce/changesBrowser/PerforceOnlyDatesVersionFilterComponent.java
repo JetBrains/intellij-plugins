@@ -11,9 +11,8 @@ public class PerforceOnlyDatesVersionFilterComponent extends StandardVersionFilt
     disableVersionNumbers();
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return (JPanel) getStandardPanel();
   }
 }

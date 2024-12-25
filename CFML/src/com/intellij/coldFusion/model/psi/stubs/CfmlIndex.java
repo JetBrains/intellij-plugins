@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.psi.CfmlComponent;
@@ -55,39 +55,33 @@ public abstract class CfmlIndex implements Disposable {
     return allScope;
   }
 
-  @NotNull
-  public Collection<CfmlComponent> getComponentsByName(@Nullable final String name) {
+  public @NotNull Collection<CfmlComponent> getComponentsByName(final @Nullable String name) {
     return getComponentsByNameInScope(name, getSearchScope());
   }
 
-  @NotNull
-  public Collection<CfmlComponent> getInterfacesByName(@Nullable final String name) {
+  public @NotNull Collection<CfmlComponent> getInterfacesByName(final @Nullable String name) {
     return getInterfacesByNameInScope(name, getSearchScope());
   }
 
-  @NotNull
-  public Collection<CfmlComponent> getComponentsByNameInScope(@Nullable final String name, GlobalSearchScope scope) {
+  public @NotNull Collection<CfmlComponent> getComponentsByNameInScope(final @Nullable String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
     Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlComponentIndex.KEY, StringUtil.toLowerCase(name), project, scope,
                                                                      CfmlComponent.class);
     return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlComponentIndex.KEY);
   }
 
-  @NotNull
-  public Collection<CfmlComponent> getInterfacesByNameInScope(@Nullable final String name, GlobalSearchScope scope) {
+  public @NotNull Collection<CfmlComponent> getInterfacesByNameInScope(final @Nullable String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
     Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlInterfaceIndex.KEY, StringUtil.toLowerCase(name), project, scope,
                                                                      CfmlComponent.class);
     return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlInterfaceIndex.KEY);
   }
 
-  @NotNull
-  public Collection<String> getAllComponentsNames() {
+  public @NotNull Collection<String> getAllComponentsNames() {
     return StubIndex.getInstance().getAllKeys(CfmlComponentIndex.KEY, project);
   }
 
-  @NotNull
-  public Collection<String> getAllInterfaceNames() {
+  public @NotNull Collection<String> getAllInterfaceNames() {
     return StubIndex.getInstance().getAllKeys(CfmlInterfaceIndex.KEY, project);
   }
 

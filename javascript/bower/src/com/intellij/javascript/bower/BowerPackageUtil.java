@@ -27,8 +27,7 @@ public final class BowerPackageUtil {
   private static final String BOWER_JSON = "bower.json";
   private static final Logger LOG = Logger.getInstance(BowerPackageUtil.class);
 
-  @Nullable
-  public static JsonFile getContainingBowerJsonFile(@NotNull PsiElement element) {
+  public static @Nullable JsonFile getContainingBowerJsonFile(@NotNull PsiElement element) {
     PsiFile file = element.getContainingFile();
     if (file instanceof JsonFile && BOWER_JSON.equals(file.getName())) {
       return (JsonFile)file;
@@ -36,10 +35,9 @@ public final class BowerPackageUtil {
     return null;
   }
 
-  @NotNull
-  public static BowerPackageInfo loadPackageInfo(@Nullable ProgressIndicator indicator,
-                                                 @NotNull BowerSettings settings,
-                                                 @NotNull String packageName) throws ExecutionException {
+  public static @NotNull BowerPackageInfo loadPackageInfo(@Nullable ProgressIndicator indicator,
+                                                          @NotNull BowerSettings settings,
+                                                          @NotNull String packageName) throws ExecutionException {
     ProcessOutput output = BowerCommandLineUtil.runBowerCommand(indicator, settings, "info", packageName, "--json");
     JsonReader reader = new JsonReader(new StringReader(output.getStdout()));
     try {
@@ -68,8 +66,7 @@ public final class BowerPackageUtil {
     return new BowerPackageInfo(versions, latestObject);
   }
 
-  @NotNull
-  private static List<String> toVersions(@Nullable JsonArray versionsArray) {
+  private static @NotNull List<String> toVersions(@Nullable JsonArray versionsArray) {
     if (versionsArray == null) {
       return Collections.emptyList();
     }

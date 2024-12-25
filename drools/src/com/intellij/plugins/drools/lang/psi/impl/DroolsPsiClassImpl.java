@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -18,15 +18,11 @@ import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.util.IncorrectOperationException;
-import java.util.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl implements DroolsPsiClass, DroolsTypeDeclaration {
 
@@ -39,9 +35,8 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return getTypeName().getText();
   }
 
-  @Nullable
   @Override
-  public String getQualifiedName() {
+  public @Nullable String getQualifiedName() {
     String typeName = getTypeName().getText();
     if (StringUtil.getPackageName(typeName).isEmpty()) {
       String aPackage = DroolsResolveUtil.getCurrentPackage(PsiTreeUtil.getParentOfType(this, DroolsFile.class));
@@ -65,15 +60,13 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiReferenceList getExtendsList() {
+  public @Nullable PsiReferenceList getExtendsList() {
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiReferenceList getImplementsList() {
+  public @Nullable PsiReferenceList getImplementsList() {
     return null;
   }
 
@@ -94,9 +87,8 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return PsiClassType.EMPTY_ARRAY;
   }
 
-  @Nullable
   @Override
-  public PsiClass getSuperClass() {
+  public @Nullable PsiClass getSuperClass() {
     DroolsSuperType superType = getSuperType();
     if (superType != null) {
       Set<PsiClass> psiClasses = DroolsResolveUtil.resolveQualifiedIdentifier(superType.getQualifiedName().getQualifiedIdentifier());
@@ -177,15 +169,13 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return PsiClass.EMPTY_ARRAY;
   }
 
-  @Nullable
   @Override
-  public PsiField findFieldByName(@NonNls String name, boolean checkBases) {
+  public @Nullable PsiField findFieldByName(@NonNls String name, boolean checkBases) {
     return PsiClassImplUtil.findFieldByName(this, name, checkBases);
   }
 
-  @Nullable
   @Override
-  public PsiMethod findMethodBySignature(@NotNull PsiMethod patternMethod, boolean checkBases) {
+  public @Nullable PsiMethod findMethodBySignature(@NotNull PsiMethod patternMethod, boolean checkBases) {
     return PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases);
   }
 
@@ -199,39 +189,33 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return PsiClassImplUtil.findMethodsByName(this, name, checkBases);
   }
 
-  @NotNull
   @Override
-  public List<Pair<PsiMethod, PsiSubstitutor>> findMethodsAndTheirSubstitutorsByName(@NonNls @NotNull String name, boolean checkBases) {
+  public @NotNull List<Pair<PsiMethod, PsiSubstitutor>> findMethodsAndTheirSubstitutorsByName(@NonNls @NotNull String name, boolean checkBases) {
     return PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases);
   }
 
-  @NotNull
   @Override
-  public List<Pair<PsiMethod, PsiSubstitutor>> getAllMethodsAndTheirSubstitutors() {
+  public @NotNull List<Pair<PsiMethod, PsiSubstitutor>> getAllMethodsAndTheirSubstitutors() {
     return PsiClassImplUtil.getAllWithSubstitutorsByMap(this, PsiClassImplUtil.MemberType.METHOD);
   }
 
-  @Nullable
   @Override
-  public PsiClass findInnerClassByName(@NonNls String name, boolean checkBases) {
+  public @Nullable PsiClass findInnerClassByName(@NonNls String name, boolean checkBases) {
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiElement getLBrace() {
+  public @Nullable PsiElement getLBrace() {
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiElement getRBrace() {
+  public @Nullable PsiElement getRBrace() {
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiIdentifier getNameIdentifier() {
+  public @Nullable PsiIdentifier getNameIdentifier() {
     return new JavaIdentifier(getManager(), getTypeName());
   }
 
@@ -253,15 +237,13 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiClass getContainingClass() {
+  public @Nullable PsiClass getContainingClass() {
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<HierarchicalMethodSignature> getVisibleSignatures() {
+  public @NotNull Collection<HierarchicalMethodSignature> getVisibleSignatures() {
     return Collections.emptySet();
   }
 
@@ -276,9 +258,8 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return this;
   }
 
-  @Nullable
   @Override
-  public PsiDocComment getDocComment() {
+  public @Nullable PsiDocComment getDocComment() {
     return null;
   }
 
@@ -292,9 +273,8 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiTypeParameterList getTypeParameterList() {
+  public @Nullable PsiTypeParameterList getTypeParameterList() {
     return null;
   }
 
@@ -303,9 +283,8 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     return PsiTypeParameter.EMPTY_ARRAY;
   }
 
-  @Nullable
   @Override
-  public PsiModifierList getModifierList() {
+  public @Nullable PsiModifierList getModifierList() {
     return null;
   }
 
@@ -330,9 +309,8 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
       myField = field;
     }
 
-    @NotNull
     @Override
-    public PsiElement getNavigationElement() {
+    public @NotNull PsiElement getNavigationElement() {
       return myField;
     }
   }

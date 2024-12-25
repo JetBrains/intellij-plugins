@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.config;
 
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -12,9 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class KarmaConfigFileInspection extends JSInspection {
-  @NotNull
   @Override
-  protected PsiElementVisitor createVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+  protected @NotNull PsiElementVisitor createVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new JSElementVisitor() {
       @Override
       public void visitJSLiteralExpression(final @NotNull JSLiteralExpression node) {
@@ -57,8 +57,7 @@ public class KarmaConfigFileInspection extends JSInspection {
     }
   }
 
-  @Nullable
-  private static PsiFileSystemItem resolve(@NotNull KarmaConfigFileReference ref) {
+  private static @Nullable PsiFileSystemItem resolve(@NotNull KarmaConfigFileReference ref) {
     ResolveResult[] results = ref.multiResolve(false);
     for (ResolveResult result : results) {
       if (result.isValidResult()) {

@@ -64,37 +64,36 @@ public final class FStat {
   public static final Local LOCAL_MOVE_DELETING = Local.MOVE_DELETING;
 
   public long statTime = System.currentTimeMillis();
-  @Nullable public String movedFile = "";
-  @NonNls public String clientFile = "";
-  @NonNls public String depotFile = "";
-  @NonNls public String headAction = "";
-  @NonNls public String headChange = "";
-  @NonNls public String headRev = "";
-  @NonNls public String headType = "";
-  @NonNls public String headTime = "";
-  @NonNls public String haveRev = "";
-  @NonNls public String action = "";
-  @NonNls public String actionOwner = "";
-  @NonNls public String change = "";
-  @NonNls public String unresolved = null;
+  public @Nullable String movedFile = "";
+  public @NonNls String clientFile = "";
+  public @NonNls String depotFile = "";
+  public @NonNls String headAction = "";
+  public @NonNls String headChange = "";
+  public @NonNls String headRev = "";
+  public @NonNls String headType = "";
+  public @NonNls String headTime = "";
+  public @NonNls String haveRev = "";
+  public @NonNls String action = "";
+  public @NonNls String actionOwner = "";
+  public @NonNls String change = "";
+  public @NonNls String unresolved = null;
   public P4File fromFile = null;
-  @NonNls static final String MOVED_FILE_STATUS_FIELD = "movedFile";
-  @NonNls static final String CLIENT_FILE_STATUS_FIELD = "clientFile ";
-  @NonNls static final String DEPOT_FILE_STATUS_FIELD = "depotFile ";
-  @NonNls static final String HEAD_ACTION_STATUS_FIELD = "headAction ";
-  @NonNls static final String HEAD_CHANGE_STATUS_FIELD = "headChange ";
-  @NonNls static final String HEAD_REV_STATUS_FIELD = "headRev ";
-  @NonNls static final String HEAD_TYPE_STATUS_FIELD = "headType ";
-  @NonNls static final String HEAD_TIME_STATUS_FIELD = "headTime ";
-  @NonNls static final String HAVE_REV_STATUS_FIELD = "haveRev ";
-  @NonNls static final String ACTION_STATUS_FIELD = "action ";
-  @NonNls static final String ACTION_OWNER_STATUS_FIELD = "actionOwner ";
-  @NonNls static final String CHANGE_STATUS_FIELD = "change ";
-  @NonNls static final String UNRESOLVED_STATUS_FIELD = "unresolved ";
+  static final @NonNls String MOVED_FILE_STATUS_FIELD = "movedFile";
+  static final @NonNls String CLIENT_FILE_STATUS_FIELD = "clientFile ";
+  static final @NonNls String DEPOT_FILE_STATUS_FIELD = "depotFile ";
+  static final @NonNls String HEAD_ACTION_STATUS_FIELD = "headAction ";
+  static final @NonNls String HEAD_CHANGE_STATUS_FIELD = "headChange ";
+  static final @NonNls String HEAD_REV_STATUS_FIELD = "headRev ";
+  static final @NonNls String HEAD_TYPE_STATUS_FIELD = "headType ";
+  static final @NonNls String HEAD_TIME_STATUS_FIELD = "headTime ";
+  static final @NonNls String HAVE_REV_STATUS_FIELD = "haveRev ";
+  static final @NonNls String ACTION_STATUS_FIELD = "action ";
+  static final @NonNls String ACTION_OWNER_STATUS_FIELD = "actionOwner ";
+  static final @NonNls String CHANGE_STATUS_FIELD = "change ";
+  static final @NonNls String UNRESOLVED_STATUS_FIELD = "unresolved ";
 
   @Override
-  @NonNls
-  public String toString() {
+  public @NonNls String toString() {
     return "org.jetbrains.idea.perforce.perforce.FStat{" + "status=" + status + ", local=" + local + ", statTime=" + statTime +
            ", \nclientFile='" + clientFile + "'" + ", \ndepotFile='" + depotFile + "'" + ", \nheadAction='" + headAction + "'" +
            ", headChange='" + headChange + "'" + ", headRev='" + headRev + "'" + ", headType='" + headType + "'" + ", headTime='" +

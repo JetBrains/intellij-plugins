@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
@@ -29,9 +29,8 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
     super(project, method);
   }
 
-  @Nullable
   @Override
-  protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
+  protected @Nullable PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
     if (descriptor instanceof DartCallHierarchyNodeDescriptor pyDescriptor) {
       return pyDescriptor.getPsiElement();
     }
@@ -56,9 +55,8 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
     return DartHierarchyUtil.isExecutable(element);
   }
 
-  @Nullable
   @Override
-  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
+  protected @Nullable HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
     if (getCallerType().equals(typeName)) {
       return new DartCallerTreeStructure(myProject, psiElement, getCurrentScopeType());
     }
@@ -71,9 +69,8 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
     }
   }
 
-  @Nullable
   @Override
-  protected Comparator<NodeDescriptor<?>> getComparator() {
+  protected @Nullable Comparator<NodeDescriptor<?>> getComparator() {
     return DartHierarchyUtil.getComparator(myProject);
   }
 }

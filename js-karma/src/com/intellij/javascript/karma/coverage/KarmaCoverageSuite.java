@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.BaseCoverageSuite;
@@ -26,9 +27,8 @@ public class KarmaCoverageSuite extends BaseCoverageSuite {
     myTrackTestFolders = true;
   }
 
-  @NotNull
   @Override
-  public CoverageEngine getCoverageEngine() {
+  public @NotNull CoverageEngine getCoverageEngine() {
     return myKarmaCoverageEngine;
   }
 }

@@ -117,8 +117,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
    * <p>FooBarClient or FooBarServer converts to service FooBar, everything else converts to
    * message.
    */
-  @Nullable
-  private static QualifiedName convertToProtoMessageOrServiceName(GoTypeSpec type) {
+  private static @Nullable QualifiedName convertToProtoMessageOrServiceName(GoTypeSpec type) {
     QualifiedName messageOrServiceName = underscoreToQualifiedName(type.getName());
     if (messageOrServiceName == null) {
       return null;
@@ -127,16 +126,14 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
     return serviceName != null ? serviceName : messageOrServiceName;
   }
 
-  @Nullable
-  private static QualifiedName underscoreToQualifiedName(@Nullable String name) {
+  private static @Nullable QualifiedName underscoreToQualifiedName(@Nullable String name) {
     return Optional.ofNullable(name)
         .map(n -> n.replace('_', '.'))
         .map(QualifiedName::fromDottedString)
         .orElse(null);
   }
 
-  @Nullable
-  private static QualifiedName convertToServiceName(QualifiedName serviceQualifiedName) {
+  private static @Nullable QualifiedName convertToServiceName(QualifiedName serviceQualifiedName) {
     String serviceName =
         Optional.of(serviceQualifiedName)
             .filter(qn -> qn.getComponentCount() == 1)
@@ -159,8 +156,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
    *
    * <p>GetFooBar converts to field foo_bar, everything else converts to method.
    */
-  @Nullable
-  private static QualifiedName convertToProtoFieldOrMethodName(GoMethodDeclaration method) {
+  private static @Nullable QualifiedName convertToProtoFieldOrMethodName(GoMethodDeclaration method) {
     QualifiedName messageOrServiceName =
         Optional.of(method)
             .map(GoMethodDeclaration::getReceiverType)
@@ -188,8 +184,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
   /**
    * Interface method (which is spec instead of declaration) converts to service method in proto.
    */
-  @Nullable
-  private static QualifiedName convertToProtoServiceMethodName(GoMethodSpec method) {
+  private static @Nullable QualifiedName convertToProtoServiceMethodName(GoMethodSpec method) {
     QualifiedName serviceName =
         Optional.ofNullable(PsiTreeUtil.getParentOfType(method, GoTypeSpec.class))
             .map(PbGolangGotoDeclarationHandler::convertToProtoMessageOrServiceName)
@@ -201,8 +196,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
     return serviceName.append(methodName);
   }
 
-  @Nullable
-  private static QualifiedName convertToProtoFieldName(GoFieldDefinition field) {
+  private static @Nullable QualifiedName convertToProtoFieldName(GoFieldDefinition field) {
     QualifiedName messageName =
         Optional.ofNullable(PsiTreeUtil.getParentOfType(field, GoTypeSpec.class))
             .map(PbGolangGotoDeclarationHandler::convertToProtoMessageOrServiceName)
@@ -215,8 +209,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
     return messageName.append(pbFieldName);
   }
 
-  @Nullable
-  private static QualifiedName convertToProtoEnumValueName(GoConstDefinition definition) {
+  private static @Nullable QualifiedName convertToProtoEnumValueName(GoConstDefinition definition) {
     QualifiedName enumTypeName =
         Optional.ofNullable(PsiTreeUtil.getParentOfType(definition, GoConstSpec.class))
             .map(GoConstSpec::getType)
@@ -253,8 +246,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
   }
 
   /** NewFooClient is a standalone function to produce a client for the Foo service. */
-  @Nullable
-  private static QualifiedName convertToProtoServiceName(GoFunctionDeclaration function) {
+  private static @Nullable QualifiedName convertToProtoServiceName(GoFunctionDeclaration function) {
     String functionName = function.getName();
     if (functionName == null) {
       return null;
@@ -269,8 +261,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
     return null;
   }
 
-  @Nullable
-  private static PbFile getPbFile(PsiElement element) {
+  private static @Nullable PbFile getPbFile(PsiElement element) {
     return Optional.of(element)
         .map(PsiElement::getContainingFile)
         .filter(GoFile.class::isInstance)
@@ -279,8 +270,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
         .orElse(null);
   }
 
-  @Nullable
-  private static PbFile getPbFile(GoFile goFile) {
+  private static @Nullable PbFile getPbFile(GoFile goFile) {
     VirtualFile resolvedFile = goFile.getVirtualFile();
     if (resolvedFile == null || !resolvedFile.getName().endsWith(".pb.go")) {
       return null;

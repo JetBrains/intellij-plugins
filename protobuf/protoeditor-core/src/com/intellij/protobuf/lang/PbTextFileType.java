@@ -31,23 +31,20 @@ public class PbTextFileType extends LanguageFileType {
     super(PbTextLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     // Warning: this is conflated with Language#myID in several places...
     // They should be identical.
     return PbTextLanguage.INSTANCE.getID();
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return PbIdeBundle.message("prototext.name.sentence");
   }
 
-  @NotNull
   @Override
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return "textproto";
   }
 

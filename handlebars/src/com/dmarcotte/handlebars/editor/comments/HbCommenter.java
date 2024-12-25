@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor.comments;
 
 import com.dmarcotte.handlebars.HbLanguage;
@@ -11,37 +11,32 @@ import org.jetbrains.annotations.Nullable;
 public final class HbCommenter implements Commenter {
   private static final Commenter ourHandlebarsCommenter = new HandlebarsCommenter();
 
-  @Nullable
   @Override
-  public String getLineCommentPrefix() {
+  public @Nullable String getLineCommentPrefix() {
     Commenter commenter = getCommenter();
     return commenter != null ? commenter.getLineCommentPrefix() : null;
   }
 
-  @Nullable
   @Override
-  public String getBlockCommentPrefix() {
+  public @Nullable String getBlockCommentPrefix() {
     Commenter commenter = getCommenter();
     return commenter != null ? commenter.getBlockCommentPrefix() : null;
   }
 
-  @Nullable
   @Override
-  public String getBlockCommentSuffix() {
+  public @Nullable String getBlockCommentSuffix() {
     Commenter commenter = getCommenter();
     return commenter != null ? commenter.getBlockCommentSuffix() : null;
   }
 
-  @Nullable
   @Override
-  public String getCommentedBlockCommentPrefix() {
+  public @Nullable String getCommentedBlockCommentPrefix() {
     Commenter commenter = getCommenter();
     return commenter != null ? commenter.getCommentedBlockCommentPrefix() : null;
   }
 
-  @Nullable
   @Override
-  public String getCommentedBlockCommentSuffix() {
+  public @Nullable String getCommentedBlockCommentSuffix() {
     Commenter commenter = getCommenter();
     return commenter != null ? commenter.getCommentedBlockCommentSuffix() : null;
   }

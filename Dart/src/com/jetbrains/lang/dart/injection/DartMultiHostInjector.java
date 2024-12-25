@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.injection;
 
 import com.intellij.lang.Language;
@@ -25,16 +26,15 @@ public final class DartMultiHostInjector implements MultiHostInjector {
   // a string like "<${label}>...</${label}>" than "<a foo${label}>...</a>", and we'd like it to be parsed as HTML.
   public static final String STRING_TEMPLATE_PLACEHOLDER = "Dart_string_template_placeholder ";
 
-  @Nullable private static final Language JS_REGEXP_LANG = Language.findLanguageByID("JSRegexp");
+  private static final @Nullable Language JS_REGEXP_LANG = Language.findLanguageByID("JSRegexp");
 
-  @NotNull
   @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+  public @NotNull List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(DartStringLiteralExpression.class);
   }
 
   @Override
-  public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement element) {
+  public void getLanguagesToInject(final @NotNull MultiHostRegistrar registrar, final @NotNull PsiElement element) {
     if (element instanceof DartStringLiteralExpression) {
       if (isRegExp((DartStringLiteralExpression)element)) {
         injectRegExp(registrar, (DartStringLiteralExpression)element);
@@ -45,7 +45,7 @@ public final class DartMultiHostInjector implements MultiHostInjector {
     }
   }
 
-  private static boolean isRegExp(@NotNull final DartStringLiteralExpression element) {
+  private static boolean isRegExp(final @NotNull DartStringLiteralExpression element) {
     // new RegExp(r'\d+'); RegExp(r'\d+')
     final PsiElement parent1 = element.getParent();
     final PsiElement parentParent2 = parent1 instanceof DartArgumentList && parent1.getFirstChild() == element ? parent1.getParent() : null;
@@ -61,7 +61,7 @@ public final class DartMultiHostInjector implements MultiHostInjector {
     return false;
   }
 
-  private static void injectRegExp(@NotNull final MultiHostRegistrar registrar, @NotNull final DartStringLiteralExpression element) {
+  private static void injectRegExp(final @NotNull MultiHostRegistrar registrar, final @NotNull DartStringLiteralExpression element) {
     if (JS_REGEXP_LANG == null) return; // JavaScript plugin not available
 
     final PsiElement child = element.getFirstChild();
@@ -80,7 +80,7 @@ public final class DartMultiHostInjector implements MultiHostInjector {
     registrar.doneInjecting();
   }
 
-  private static void injectHtmlIfNeeded(@NotNull final MultiHostRegistrar registrar, @NotNull final DartStringLiteralExpression element) {
+  private static void injectHtmlIfNeeded(final @NotNull MultiHostRegistrar registrar, final @NotNull DartStringLiteralExpression element) {
     final List<HtmlPlaceInfo> infos = new SmartList<>();
     final StringBuilder textBuf = new StringBuilder();
     PsiElement child = element.getFirstChild();
@@ -122,7 +122,7 @@ public final class DartMultiHostInjector implements MultiHostInjector {
     }
   }
 
-  private static boolean looksLikeHtml(@NotNull final String text) {
+  private static boolean looksLikeHtml(final @NotNull String text) {
     // similar to com.intellij.lang.javascript.JSInjectionController.willInjectHtml(), but strings like 'List<int>', '<foo> and <bar>' are not treated as HTML
     // also, unlike JavaScript, HTML is injected in Dart only if '<' is the first non-space symbol in string
     if (!text.trim().startsWith("<")) return false;
@@ -154,10 +154,10 @@ public final class DartMultiHostInjector implements MultiHostInjector {
   }
 
   private static class HtmlPlaceInfo {
-    @NotNull private final TextRange range;
-    @Nullable private final String suffix;
+    private final @NotNull TextRange range;
+    private final @Nullable String suffix;
 
-    HtmlPlaceInfo(@NotNull final TextRange range, @Nullable final String suffix) {
+    HtmlPlaceInfo(final @NotNull TextRange range, final @Nullable String suffix) {
       this.range = range;
       this.suffix = suffix;
     }

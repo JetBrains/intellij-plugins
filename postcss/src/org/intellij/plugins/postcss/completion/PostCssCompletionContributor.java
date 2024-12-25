@@ -33,13 +33,12 @@ public class PostCssCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, customSelector(), new PseudoSelectorsCompletionProvider());
   }
 
-  @NotNull
-  private static ElementPattern<? extends PsiElement> customSelector() {
+  private static @NotNull ElementPattern<? extends PsiElement> customSelector() {
     return psiElement(CssElementTypes.CSS_IDENT).withReference(PostCssCustomSelectorReference.class);
   }
 
   @Override
-  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
+  public void fillCompletionVariants(final @NotNull CompletionParameters parameters, final @NotNull CompletionResultSet result) {
     if (result.isStopped()) return;
     final PsiElement position = parameters.getPosition();
     if (!PostCssPsiUtil.isInsidePostCss(position)) return;
@@ -51,8 +50,8 @@ public class PostCssCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static void addVariantsForCustomMedia(@NotNull final CompletionParameters parameters,
-                                                @NotNull final CompletionResultSet result) {
+  private static void addVariantsForCustomMedia(final @NotNull CompletionParameters parameters,
+                                                final @NotNull CompletionResultSet result) {
     final PsiElement position = parameters.getPosition();
     Project project = position.getProject();
     final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(position);
@@ -66,9 +65,8 @@ public class PostCssCompletionContributor extends CompletionContributor {
     }
   }
 
-  @NotNull
-  private static LookupElement createCustomElementLookup(@NotNull final CssNamedElement element,
-                                                         @NotNull final Set<VirtualFile> importedFiles) {
+  private static @NotNull LookupElement createCustomElementLookup(final @NotNull CssNamedElement element,
+                                                                  final @NotNull Set<VirtualFile> importedFiles) {
     int priority = CssCompletionUtil.CSS_PSEUDO_SELECTOR_PRIORITY +
                    (importedFiles.contains(element.getContainingFile().getVirtualFile()) ? 1 : 0);
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
   final boolean myImplementNotOverride;
 
-  public OverrideImplementMethodFix(@NotNull final DartClass dartClass, final boolean implementNotOverride) {
+  public OverrideImplementMethodFix(final @NotNull DartClass dartClass, final boolean implementNotOverride) {
     super(dartClass);
     myImplementNotOverride = implementNotOverride;
   }
@@ -25,8 +25,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
   }
 
   @Override
-  @NotNull
-  protected String getNothingFoundMessage() {
+  protected @NotNull String getNothingFoundMessage() {
     return DartBundle.message(myImplementNotOverride ? "dart.fix.implement.none.found" : "dart.fix.override.none.found");
   }
 

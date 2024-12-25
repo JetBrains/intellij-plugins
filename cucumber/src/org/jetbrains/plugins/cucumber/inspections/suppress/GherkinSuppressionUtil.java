@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections.suppress;
 
 import com.intellij.codeInspection.SuppressQuickFix;
@@ -23,7 +23,7 @@ public final class GherkinSuppressionUtil {
   private GherkinSuppressionUtil() {
   }
 
-  public static SuppressQuickFix @NotNull [] getDefaultSuppressActions(@NotNull final String toolId) {
+  public static SuppressQuickFix @NotNull [] getDefaultSuppressActions(final @NotNull String toolId) {
     return new SuppressQuickFix[]{
       new GherkinSuppressForStepCommentFix(toolId),
       new GherkinSuppressForScenarioCommentFix(toolId),
@@ -31,12 +31,11 @@ public final class GherkinSuppressionUtil {
     };
   }
 
-  public static boolean isSuppressedFor(@NotNull final PsiElement element, @NotNull final String toolId) {
+  public static boolean isSuppressedFor(final @NotNull PsiElement element, final @NotNull String toolId) {
     return ReadAction.compute(() -> getSuppressedIn(element, toolId) != null).booleanValue();
   }
 
-  @Nullable
-  private static PsiComment getSuppressedIn(@NotNull PsiElement place, @NotNull String toolId) {
+  private static @Nullable PsiComment getSuppressedIn(@NotNull PsiElement place, @NotNull String toolId) {
     // find suppression holder with suppression comment about given inspection tool
     PsiElement suppressionHolder = PsiTreeUtil.getNonStrictParentOfType(place, GherkinSuppressionHolder.class);
     while (suppressionHolder != null) {
@@ -49,9 +48,8 @@ public final class GherkinSuppressionUtil {
     return null;
   }
 
-  @Nullable
-  private static PsiComment getSuppressionComment(@NotNull String toolId,
-                                                  @NotNull PsiElement element) {
+  private static @Nullable PsiComment getSuppressionComment(@NotNull String toolId,
+                                                            @NotNull PsiElement element) {
     final PsiElement comment = PsiTreeUtil.skipWhitespacesBackward(element);
     if (comment instanceof PsiComment) {
       String text = comment.getText();

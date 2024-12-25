@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -21,20 +21,17 @@ public final class CfmlFileType extends LanguageFileType {
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return "CFML";
   }
 
   @Override
-  @NotNull
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return CfmlBundle.message("filetype.coldfusion.description");
   }
 
   @Override
-  @NotNull
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return "cfm";
   }
 
@@ -43,8 +40,7 @@ public final class CfmlFileType extends LanguageFileType {
     return CFMLIcons.Cfml;
   }
 
-  @NonNls
-  public String @NotNull [] getExtensions() {
+  public @NonNls String @NotNull [] getExtensions() {
     return new String[]{"cfm", "cfml", "cfc"};
   }
 }

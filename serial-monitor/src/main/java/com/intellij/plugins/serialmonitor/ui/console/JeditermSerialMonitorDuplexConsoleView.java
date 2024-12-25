@@ -38,10 +38,10 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
 
   private static final String STATE_STORAGE_KEY = "SerialMonitorDuplexConsoleViewState";
 
-  @NotNull private final SerialPortService.SerialConnection myConnection;
-  @NotNull private final SerialPortProfile myPortProfile;
-  @NotNull private final ToggleAction mySwitchConsoleAction;
-  @NotNull private final JBLoadingPanel myLoadingPanel;
+  private final @NotNull SerialPortService.SerialConnection myConnection;
+  private final @NotNull SerialPortProfile myPortProfile;
+  private final @NotNull ToggleAction mySwitchConsoleAction;
+  private final @NotNull JBLoadingPanel myLoadingPanel;
   private Charset myCharset = StandardCharsets.US_ASCII;
 
   public SerialPortService.@NotNull SerialConnection getConnection() {
@@ -51,10 +51,9 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
   //todo auto reconnect while build
   //todo interoperability with other plugins
 
-  @NotNull
-  public static JeditermSerialMonitorDuplexConsoleView create(@NotNull Project project,
-                                                              @NotNull SerialPortProfile portProfile,
-                                                              @NotNull JBLoadingPanel loadingPanel) {
+  public static @NotNull JeditermSerialMonitorDuplexConsoleView create(@NotNull Project project,
+                                                                       @NotNull SerialPortProfile portProfile,
+                                                                       @NotNull JBLoadingPanel loadingPanel) {
     SerialPortService.SerialConnection connection =
       ApplicationManager.getApplication().getService(SerialPortService.class)
         .newConnection(portProfile.getPortName());
@@ -84,8 +83,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
   }
 
   @Override
-  @NotNull
-  public Presentation getSwitchConsoleActionPresentation() {
+  public @NotNull Presentation getSwitchConsoleActionPresentation() {
     return mySwitchConsoleAction.getTemplatePresentation();
   }
 
@@ -102,9 +100,8 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
   /**
    * Allows filtering out inappropriate actions from toolbar.
    */
-  @NotNull
   @Override
-  public AnAction @NotNull [] createConsoleActions() {
+  public @NotNull AnAction @NotNull [] createConsoleActions() {
 
     return new AnAction[]{
       new ConnectDisconnectAction(this),
@@ -117,8 +114,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
       new ClearAllAction()};
   }
 
-  @NotNull
-  public PortStatus getStatus() {
+  public @NotNull PortStatus getStatus() {
     return myConnection.getStatus();
   }
 
@@ -175,8 +171,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     );
   }
 
-  @NotNull
-  public Charset getCharset() {
+  public @NotNull Charset getCharset() {
     return myCharset;
   }
 

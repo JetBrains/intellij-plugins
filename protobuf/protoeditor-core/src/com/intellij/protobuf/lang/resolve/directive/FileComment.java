@@ -17,9 +17,9 @@ package com.intellij.protobuf.lang.resolve.directive;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.resolve.PbImportReference;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiReference;
-import com.intellij.protobuf.lang.resolve.PbImportReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,9 +31,8 @@ class FileComment extends SchemaComment {
     super(comment, keyRange, nameRange, type);
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     String filename = getName();
     if (filename == null) {
       return null;

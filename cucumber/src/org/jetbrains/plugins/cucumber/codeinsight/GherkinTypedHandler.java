@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.codeinsight;
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
@@ -26,8 +27,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param element to start looking for
    * @return GherkinTable or null
    */
-  @Nullable
-  private static GherkinTable getTable(@NotNull PsiElement element) {
+  private static @Nullable GherkinTable getTable(@NotNull PsiElement element) {
     while (element != null) {
       if (element instanceof GherkinTable) {
         break;
@@ -41,8 +41,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * Looks for GherkinTableRow where the caret is located
    * @return GherkinTableRow if caret is inside row, null otherwise
    */
-  @Nullable
-  private static GherkinTableRow findCurrentRow(@NotNull final Editor editor, @NotNull final PsiFile file) {
+  private static @Nullable GherkinTableRow findCurrentRow(final @NotNull Editor editor, final @NotNull PsiFile file) {
     int offset = editor.getCaretModel().getOffset();
     PsiElement cursorElement = file.findElementAt(offset - 1);
     if (cursorElement == null) {
@@ -93,8 +92,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param currentRow row to start
    * @return GherkinTableRow (or header) if there is a row above or null otherwise
    */
-  @Nullable
-  private static GherkinTableRow getPreviousRow(@NotNull final GherkinTableRow currentRow) {
+  private static @Nullable GherkinTableRow getPreviousRow(final @NotNull GherkinTableRow currentRow) {
     if (currentRow.getParent() != null && currentRow.getParent() instanceof GherkinTable table) {
       int i = table.getDataRows().indexOf(currentRow);
       if (i > 0) {
@@ -111,7 +109,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param row where to look for
    * @return number of column
    */
-  private static int getColumnNumber(@NotNull final GherkinTableRow row, final int caretPosition) {
+  private static int getColumnNumber(final @NotNull GherkinTableRow row, final int caretPosition) {
     final String rowText = row.getText();
     final int length = Math.min(caretPosition, rowText.length());
     int count = 0;
@@ -134,7 +132,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param row a row above current
    * @return offset in parent that corresponds preferred position of typed pipe symbol
    */
-  private static int getPreferredPipeOffset(@NotNull final GherkinTableRow row, final int columnNumber) {
+  private static int getPreferredPipeOffset(final @NotNull GherkinTableRow row, final int columnNumber) {
     final String rowText = row.getText();
     int i = 0;
     int passedPipeCount = 0;
@@ -147,13 +145,12 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
     return (passedPipeCount - 2 == columnNumber) ? i : -1;
   }
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(char c,
-                                @NotNull Project project,
-                                @NotNull Editor editor,
-                                @NotNull PsiFile file,
-                                @NotNull FileType fileType) {
+  public @NotNull Result beforeCharTyped(char c,
+                                         @NotNull Project project,
+                                         @NotNull Editor editor,
+                                         @NotNull PsiFile file,
+                                         @NotNull FileType fileType) {
     if (fileType.equals(GherkinFileType.INSTANCE)) {
       if (c == PIPE) {
         final GherkinTableRow currentRow = findCurrentRow(editor, file);

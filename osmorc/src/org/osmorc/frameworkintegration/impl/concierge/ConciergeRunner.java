@@ -88,9 +88,8 @@ public class ConciergeRunner extends AbstractFrameworkRunner {
     parameters.getProgramParametersList().add(myArgFile.getPath());
   }
 
-  @Nullable
   @Override
-  public File getArgumentFile() {
+  public @Nullable File getArgumentFile() {
     return myArgFile;
   }
 }

@@ -27,15 +27,13 @@ abstract class PbEnumReservedRangeMixin extends PbElementBase implements PbReser
     super(node);
   }
 
-  @Nullable
   @Override
-  public Long getFrom() {
+  public @Nullable Long getFrom() {
     return getFromValue().getLongValue();
   }
 
-  @Nullable
   @Override
-  public Long getTo() {
+  public @Nullable Long getTo() {
     if (getNode().findChildByType(ProtoTokenTypes.MAX) != null) {
       return (long) Integer.MAX_VALUE;
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -105,7 +105,7 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
     final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
     sdkEditor.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(@NotNull final DocumentEvent e) {
+      protected void textChanged(final @NotNull DocumentEvent e) {
         final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
         if (!sdkHomePath.isEmpty()) {
           final String version = DartSdkUtil.getSdkVersion(sdkHomePath);
@@ -197,26 +197,22 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
   }
 
   @Override
-  @NotNull
-  public String getId() {
+  public @NotNull String getId() {
     return "dart.settings";
   }
 
   @Override
-  @Nls
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return DartBundle.message("dart.title");
   }
 
   @Override
-  @Nullable
-  public String getHelpTopic() {
+  public @Nullable String getHelpTopic() {
     return "settings.dart.settings";
   }
 
   @Override
-  @Nullable
-  public JComponent createComponent() {
+  public @Nullable JComponent createComponent() {
     return myMainPanel;
   }
 
@@ -259,8 +255,7 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
     return false;
   }
 
-  @NotNull
-  private static String getTextFromCombo(@NotNull final ComboboxWithBrowseButton combo) {
+  private static @NotNull String getTextFromCombo(final @NotNull ComboboxWithBrowseButton combo) {
     return FileUtilRt.toSystemIndependentName(combo.getComboBox().getEditor().getItem().toString().trim());
   }
 
@@ -304,7 +299,7 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
     updateErrorLabel();
   }
 
-  private static void ensureComboModelContainsCurrentItem(@NotNull final JComboBox comboBox) {
+  private static void ensureComboModelContainsCurrentItem(final @NotNull JComboBox comboBox) {
     final Object currentItem = comboBox.getEditor().getItem();
 
     boolean contains = false;
@@ -471,7 +466,7 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
     });
   }
 
-  public static void openDartSettings(@NotNull final Project project) {
+  public static void openDartSettings(final @NotNull Project project) {
     ShowSettingsUtilImpl.showSettingsDialog(project, DART_SETTINGS_PAGE_ID, "");
   }
 

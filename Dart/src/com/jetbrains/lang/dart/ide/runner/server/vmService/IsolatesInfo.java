@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import org.dartlang.vm.service.element.Isolate;
@@ -20,7 +20,7 @@ public final class IsolatesInfo {
     private boolean shouldInitialResume = false;
     private CompletableFuture<Isolate> myCachedIsolate;
 
-    private IsolateInfo(@NotNull final String isolateId, @NotNull final String isolateName) {
+    private IsolateInfo(final @NotNull String isolateId, final @NotNull String isolateName) {
       myIsolateId = isolateId;
       myIsolateName = isolateName;
     }
@@ -53,7 +53,7 @@ public final class IsolatesInfo {
 
   private final Map<String, IsolateInfo> myIsolateIdToInfoMap = new HashMap<>();
 
-  public synchronized boolean addIsolate(@NotNull final IsolateRef isolateRef) {
+  public synchronized boolean addIsolate(final @NotNull IsolateRef isolateRef) {
     if (myIsolateIdToInfoMap.containsKey(isolateRef.getId())) {
       return false;
     }
@@ -63,21 +63,21 @@ public final class IsolatesInfo {
     return true;
   }
 
-  public synchronized void setBreakpointsSet(@NotNull final IsolateRef isolateRef) {
+  public synchronized void setBreakpointsSet(final @NotNull IsolateRef isolateRef) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       info.breakpointsSet = true;
     }
   }
 
-  public synchronized void setShouldInitialResume(@NotNull final IsolateRef isolateRef) {
+  public synchronized void setShouldInitialResume(final @NotNull IsolateRef isolateRef) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       info.shouldInitialResume = true;
     }
   }
 
-  public synchronized boolean getShouldInitialResume(@NotNull final IsolateRef isolateRef) {
+  public synchronized boolean getShouldInitialResume(final @NotNull IsolateRef isolateRef) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       return info.breakpointsSet && info.shouldInitialResume;
@@ -87,7 +87,7 @@ public final class IsolatesInfo {
     }
   }
 
-  public synchronized void deleteIsolate(@NotNull final IsolateRef isolateRef) {
+  public synchronized void deleteIsolate(final @NotNull IsolateRef isolateRef) {
     myIsolateIdToInfoMap.remove(isolateRef.getId());
   }
 
@@ -98,9 +98,8 @@ public final class IsolatesInfo {
     }
   }
 
-  @NotNull
-  public synchronized CompletableFuture<Isolate> getCachedIsolate(String isolateId,
-                                                                  Supplier<? extends CompletableFuture<Isolate>> isolateSupplier) {
+  public synchronized @NotNull CompletableFuture<Isolate> getCachedIsolate(String isolateId,
+                                                                           Supplier<? extends CompletableFuture<Isolate>> isolateSupplier) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateId);
     if (info == null) {
       return CompletableFuture.completedFuture(null);

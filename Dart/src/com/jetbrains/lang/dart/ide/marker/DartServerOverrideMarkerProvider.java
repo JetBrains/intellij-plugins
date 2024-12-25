@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.marker;
 
 import com.intellij.codeInsight.daemon.DaemonBundle;
@@ -49,8 +49,7 @@ public final class DartServerOverrideMarkerProvider implements LineMarkerProvide
     }
   }
 
-  @Nullable
-  private static LineMarkerInfo createOverrideMarker(DartComponentName componentName) {
+  private static @Nullable LineMarkerInfo createOverrideMarker(DartComponentName componentName) {
     final VirtualFile virtualFile = componentName.getContainingFile().getVirtualFile();
     if (virtualFile == null || !virtualFile.isInLocalFileSystem()) {
       return null;
@@ -76,10 +75,9 @@ public final class DartServerOverrideMarkerProvider implements LineMarkerProvide
     return tryCreateOverrideMarker(componentName, superclassComponent, interfaceComponents);
   }
 
-  @Nullable
-  private static LineMarkerInfo tryCreateOverrideMarker(@NotNull final DartComponentName componentName,
-                                                        @Nullable final DartComponent superclassComponent,
-                                                        @NotNull final List<DartComponent> interfaceComponents) {
+  private static @Nullable LineMarkerInfo tryCreateOverrideMarker(final @NotNull DartComponentName componentName,
+                                                                  final @Nullable DartComponent superclassComponent,
+                                                                  final @NotNull List<DartComponent> interfaceComponents) {
     if (superclassComponent == null && interfaceComponents.isEmpty()) {
       return null;
     }

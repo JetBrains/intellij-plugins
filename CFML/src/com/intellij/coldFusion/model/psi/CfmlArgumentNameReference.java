@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.TailType;
@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class CfmlArgumentNameReference extends CfmlReferenceExpression implements PsiElement {
-  public CfmlArgumentNameReference(@NotNull final ASTNode node) {
+  public CfmlArgumentNameReference(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -42,8 +42,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
   }
 
   // ColdFusion does not allow dublicates in functions' names
-  @Nullable
-  private CfmlFunction resolveToFunction() {
+  private @Nullable CfmlFunction resolveToFunction() {
     CfmlFunctionCallExpression parentOfType = PsiTreeUtil.getParentOfType(this, CfmlFunctionCallExpression.class);
     if (parentOfType != null) {
       CfmlReference referenceExpression = parentOfType.getReferenceExpression();
@@ -89,9 +88,8 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     return ResolveResult.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getReferenceName() {
+  public @NotNull String getReferenceName() {
     PsiElement referenceNameElement = getReferenceNameElement();
     if (referenceNameElement != null) {
       return referenceNameElement.getText();
@@ -151,9 +149,8 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     PsiElement referenceNameElement = getReferenceNameElement();
     return referenceNameElement != null ? referenceNameElement.getText() : "";
   }

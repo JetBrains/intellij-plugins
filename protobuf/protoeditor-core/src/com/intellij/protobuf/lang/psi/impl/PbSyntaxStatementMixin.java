@@ -29,9 +29,8 @@ abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSynta
     super(node);
   }
 
-  @Nullable
   @Override
-  public SyntaxLevel getSyntaxLevel() {
+  public @Nullable SyntaxLevel getSyntaxLevel() {
     String syntaxType = getSyntaxTypeExpression().getText();
     PbStringValue syntaxVersionPsi = getSyntaxVersionExpression();
     String syntaxVersion = syntaxVersionPsi == null ? "" : syntaxVersionPsi.getAsString();

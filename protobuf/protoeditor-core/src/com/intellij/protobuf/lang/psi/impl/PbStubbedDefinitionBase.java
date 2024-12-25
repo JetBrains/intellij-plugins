@@ -16,14 +16,12 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.protobuf.lang.psi.PbDefinition;
 import com.intellij.protobuf.lang.psi.PbStatement;
-import com.intellij.protobuf.lang.psi.PbStatementOwner;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.stub.PbElementStub;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -38,9 +36,8 @@ abstract class PbStubbedDefinitionBase<T extends PbElementStub<?>> extends PbStu
     super(stub, nodeType);
   }
 
-  @NotNull
   @Override
-  public List<PbStatement> getStatements() {
+  public @NotNull List<PbStatement> getStatements() {
     return PbPsiImplUtil.getStatements(getBody());
   }
 }

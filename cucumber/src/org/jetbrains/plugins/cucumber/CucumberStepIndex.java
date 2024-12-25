@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.lang.LighterAST;
@@ -81,9 +81,8 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
                                                                   "Þurh",  "Tha the", "Ama", "Fakat", "O zaman",  "Ve", "Eğer ki",
                                                                   "Diyelim ki");
   
-  @NotNull
   @Override
-  public DataIndexer<Boolean, List<Integer>, FileContent> getIndexer() {
+  public @NotNull DataIndexer<Boolean, List<Integer>, FileContent> getIndexer() {
     return inputData -> {
       CharSequence text = inputData.getContentAsText();
       if (!hasCucumberImport(text)) {
@@ -98,15 +97,13 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
     };
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<Boolean> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<Boolean> getKeyDescriptor() {
     return BooleanDataDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public DataExternalizer<List<Integer>> getValueExternalizer() {
+  public @NotNull DataExternalizer<List<Integer>> getValueExternalizer() {
     return DATA_EXTERNALIZER;
   }
 

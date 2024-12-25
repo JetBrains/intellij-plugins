@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lexer.LexerBase;
@@ -22,15 +22,15 @@ public class GherkinLexer extends LexerBase {
   private List<String> myKeywords;
   private int myState;
 
-  private final static int STATE_DEFAULT = 0;
-  private final static int STATE_AFTER_KEYWORD = 1;
-  private final static int STATE_TABLE = 2;
-  private final static int STATE_AFTER_STEP_KEYWORD = 3;
-  private final static int STATE_AFTER_SCENARIO_KEYWORD = 4;
-  private final static int STATE_INSIDE_PYSTRING = 5;
+  private static final int STATE_DEFAULT = 0;
+  private static final int STATE_AFTER_KEYWORD = 1;
+  private static final int STATE_TABLE = 2;
+  private static final int STATE_AFTER_STEP_KEYWORD = 3;
+  private static final int STATE_AFTER_SCENARIO_KEYWORD = 4;
+  private static final int STATE_INSIDE_PYSTRING = 5;
 
-  private final static int STATE_PARAMETER_INSIDE_PYSTRING = 6;
-  private final static int STATE_PARAMETER_INSIDE_STEP = 7;
+  private static final int STATE_PARAMETER_INSIDE_PYSTRING = 6;
+  private static final int STATE_PARAMETER_INSIDE_STEP = 7;
 
   public static final String PYSTRING_MARKER = "\"\"\"";
   private final GherkinKeywordProvider myKeywordProvider;
@@ -77,7 +77,7 @@ public class GherkinLexer extends LexerBase {
     return myPosition;
   }
 
-  private boolean isStepParameter(@NotNull final String currentElementTerminator) {
+  private boolean isStepParameter(final @NotNull String currentElementTerminator) {
     int pos = myPosition;
 
     if (myBuffer.charAt(pos) == '<') {
@@ -251,8 +251,7 @@ public class GherkinLexer extends LexerBase {
     return myState == STATE_AFTER_STEP_KEYWORD || myState == STATE_AFTER_SCENARIO_KEYWORD;
   }
 
-  @Nullable
-  public static String fetchLocationLanguage(final @NotNull String commentText) {
+  public static @Nullable String fetchLocationLanguage(final @NotNull String commentText) {
     if (commentText.startsWith("language:")) {
       return commentText.substring(9).trim();
     }
@@ -333,8 +332,7 @@ public class GherkinLexer extends LexerBase {
   }
 
   @Override
-  @NotNull
-  public CharSequence getBufferSequence() {
+  public @NotNull CharSequence getBufferSequence() {
     return myBuffer;
   }
 

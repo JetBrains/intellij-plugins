@@ -26,9 +26,8 @@ import org.jetbrains.annotations.NotNull;
 
 /** A {@link SpellcheckingStrategy} for protobuf files */
 public class PbSpellcheckingStrategy extends SpellcheckingStrategy implements DumbAware {
-  @NotNull
   @Override
-  public Tokenizer<?> getTokenizer(PsiElement element) {
+  public @NotNull Tokenizer<?> getTokenizer(PsiElement element) {
     if (element instanceof ProtoStringPart) {
       if (element instanceof PbTextStringPart) {
         return StringPartTokenizer.INSTANCE;

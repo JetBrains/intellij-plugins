@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.structure;
 
 import com.dmarcotte.handlebars.psi.HbPsiFile;
@@ -17,15 +18,13 @@ class HbTreeElementFile extends PsiTreeElementBase<HbPsiFile> {
     this.myFile = psiFile;
   }
 
-  @NotNull
   @Override
-  public Collection<StructureViewTreeElement> getChildrenBase() {
+  public @NotNull Collection<StructureViewTreeElement> getChildrenBase() {
     return HbTreeElement.getStructureViewTreeElements(myFile);
   }
 
-  @Nullable
   @Override
-  public String getPresentableText() {
+  public @Nullable String getPresentableText() {
     return myFile.getName();
   }
 }

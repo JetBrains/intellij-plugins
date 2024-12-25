@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
@@ -35,8 +35,7 @@ public final class DartHierarchyUtil {
   private DartHierarchyUtil() {
   }
 
-  @Nullable
-  public static DartClass findDartClass(@NotNull final Project project, @NotNull final TypeHierarchyItem item) {
+  public static @Nullable DartClass findDartClass(final @NotNull Project project, final @NotNull TypeHierarchyItem item) {
     final Element classElement = item.getClassElement();
     final Location location = classElement.getLocation();
     final DartComponent component = findDartComponent(project, location);
@@ -53,8 +52,7 @@ public final class DartHierarchyUtil {
     }
   }
 
-  @NotNull
-  public static List<TypeHierarchyItem> getTypeHierarchyItems(@NotNull DartClass dartClass) {
+  public static @NotNull List<TypeHierarchyItem> getTypeHierarchyItems(@NotNull DartClass dartClass) {
     final VirtualFile file = dartClass.getContainingFile().getVirtualFile();
     final DartComponentName name = dartClass.getComponentName();
     if (name == null) return Collections.emptyList();
@@ -123,8 +121,7 @@ public final class DartHierarchyUtil {
     return PsiTreeUtil.getParentOfType(last, DartReference.class);
   }
 
-  @Nullable
-  public static DartComponent findDartComponent(@NotNull final Project project, @NotNull final Location location) {
+  public static @Nullable DartComponent findDartComponent(final @NotNull Project project, final @NotNull Location location) {
     String filePathOrUri = location.getFile();
     DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
     VirtualFile virtualFile = fileInfo.findFile();

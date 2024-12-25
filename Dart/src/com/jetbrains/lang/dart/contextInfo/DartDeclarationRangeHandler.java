@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.contextInfo;
 
 import com.intellij.codeInsight.hint.DeclarationRangeHandler;
@@ -10,8 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class DartDeclarationRangeHandler implements DeclarationRangeHandler<DartPsiCompositeElement> {
   @Override
-  @Nullable
-  public TextRange getDeclarationRange(@NotNull DartPsiCompositeElement element) {
+  public @Nullable TextRange getDeclarationRange(@NotNull DartPsiCompositeElement element) {
     // returned range is extended to full line(s) in platform
     if (element instanceof DartCallExpression) {
       DartExpression expression = ((DartCallExpression)element).getExpression();

@@ -42,15 +42,13 @@ public final class ConciergeIntegrator extends AbstractFrameworkIntegrator {
     super(new ConciergeInstanceManager());
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
-  @NotNull
   @Override
-  public FrameworkRunner createFrameworkRunner() {
+  public @NotNull FrameworkRunner createFrameworkRunner() {
     return new ConciergeRunner();
   }
 

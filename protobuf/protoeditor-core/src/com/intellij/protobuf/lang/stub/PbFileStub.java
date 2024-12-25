@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.lang.stub;
 
-import com.intellij.psi.stubs.PsiFileStubImpl;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.stub.type.PbStubElementTypes;
+import com.intellij.psi.stubs.PsiFileStubImpl;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.Nullable;
 
 /** Protobuf file stub. */
@@ -28,15 +28,13 @@ public class PbFileStub extends PsiFileStubImpl<PbFile> implements PbStatementOw
     super(file);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     PbPackageStatementStub packageStatement = getPackageStatement();
     return packageStatement != null ? packageStatement.getPackageQualifiedName() : null;
   }
 
-  @Nullable
-  private PbPackageStatementStub getPackageStatement() {
+  private @Nullable PbPackageStatementStub getPackageStatement() {
     return findChildStubByType(PbStubElementTypes.PACKAGE_STATEMENT);
   }
 }

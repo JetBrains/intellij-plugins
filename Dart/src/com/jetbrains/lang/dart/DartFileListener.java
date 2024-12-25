@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -58,9 +58,8 @@ public final class DartFileListener implements AsyncFileListener {
   private static final Logger LOG = Logger.getInstance(DartFileListener.class);
   private static final Object DART_PACKAGE_ROOTS_UPDATE_COALESCE = new Object();
 
-  @Nullable
   @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
+  public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     SmartList<VFileEvent> packagesFileEvents = new SmartList<>();
     SmartList<VFileEvent> moveOrRenameAnalyzableFileEvents = new SmartList<>();
 
@@ -102,7 +101,7 @@ public final class DartFileListener implements AsyncFileListener {
     return new DartFileChangeApplier(packagesFileEvents, moveOrRenameAnalyzableFileEvents);
   }
 
-  public static void scheduleDartPackageRootsUpdate(@NotNull final Project project) {
+  public static void scheduleDartPackageRootsUpdate(final @NotNull Project project) {
     if (Registry.is("dart.projects.without.pubspec", false)) return;
     if (!project.isInitialized()) {
       LOG.error("Method is called too early for project " + project);
@@ -125,8 +124,7 @@ public final class DartFileListener implements AsyncFileListener {
       .submit(AppExecutorUtil.getAppExecutorService());
   }
 
-  @NotNull
-  private static DartLibInfo collectPackagesLibraryRoots(@NotNull final Project project) {
+  private static @NotNull DartLibInfo collectPackagesLibraryRoots(final @NotNull Project project) {
     final DartLibInfo libInfo = new DartLibInfo();
 
     final Collection<VirtualFile> pubspecYamlFiles =
@@ -164,7 +162,7 @@ public final class DartFileListener implements AsyncFileListener {
     return libInfo;
   }
 
-  private static @NotNull Library updatePackagesLibraryRoots(@NotNull final Project project, @NotNull final DartLibInfo libInfo) {
+  private static @NotNull Library updatePackagesLibraryRoots(final @NotNull Project project, final @NotNull DartLibInfo libInfo) {
     final LibraryTable projectLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
     final Library existingLibrary = projectLibraryTable.getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     final Library library =
@@ -206,7 +204,7 @@ public final class DartFileListener implements AsyncFileListener {
     return library;
   }
 
-  private static boolean isBrokenPackageMap(@Nullable final LibraryProperties properties) {
+  private static boolean isBrokenPackageMap(final @Nullable LibraryProperties properties) {
     if (!(properties instanceof DartPackagesLibraryProperties)) return true;
 
     for (Map.Entry<String, List<String>> entry : ((DartPackagesLibraryProperties)properties).getPackageNameToDirsMap().entrySet()) {
@@ -218,7 +216,7 @@ public final class DartFileListener implements AsyncFileListener {
     return false;
   }
 
-  private static void removeDartPackagesLibraryAndDependencies(@NotNull final Project project) {
+  private static void removeDartPackagesLibraryAndDependencies(final @NotNull Project project) {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       removeDependencyOnDartPackagesLibrary(module);
     }
@@ -231,9 +229,9 @@ public final class DartFileListener implements AsyncFileListener {
     }
   }
 
-  public static void updateDependenciesOnDartPackagesLibrary(@NotNull final Project project,
-                                                             @NotNull final Condition<? super Module> moduleFilter,
-                                                             @NotNull final Library library) {
+  public static void updateDependenciesOnDartPackagesLibrary(final @NotNull Project project,
+                                                             final @NotNull Condition<? super Module> moduleFilter,
+                                                             final @NotNull Library library) {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       if (moduleFilter.value(module)) {
         addDependencyOnDartPackagesLibrary(module, library);
@@ -244,7 +242,7 @@ public final class DartFileListener implements AsyncFileListener {
     }
   }
 
-  private static void removeDependencyOnDartPackagesLibrary(@NotNull final Module module) {
+  private static void removeDependencyOnDartPackagesLibrary(final @NotNull Module module) {
     if (!hasDartPackageLibrary(module)) return;
 
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
@@ -272,7 +270,7 @@ public final class DartFileListener implements AsyncFileListener {
            DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
   }
 
-  private static void addDependencyOnDartPackagesLibrary(@NotNull final Module module, @NotNull final Library library) {
+  private static void addDependencyOnDartPackagesLibrary(final @NotNull Module module, final @NotNull Library library) {
     if (hasDartPackageLibrary(module)) return;
 
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
@@ -292,7 +290,7 @@ public final class DartFileListener implements AsyncFileListener {
     return ContainerUtil.exists(ModuleRootManager.getInstance(module).getOrderEntries(), DartFileListener::isDartPackageLibrary);
   }
 
-  private static boolean isPathOutsideProjectContent(@NotNull final ProjectFileIndex fileIndex, @NotNull String path) {
+  private static boolean isPathOutsideProjectContent(final @NotNull ProjectFileIndex fileIndex, @NotNull String path) {
     if (ApplicationManager.getApplication().isUnitTestMode() && path.contains("/pub/global/cache/")) {
       return true;
     }
@@ -314,7 +312,7 @@ public final class DartFileListener implements AsyncFileListener {
     private final Set<String> myLibRootUrls = new TreeSet<>();
     private final Map<String, List<String>> myPackagesMap = new TreeMap<>();
 
-    private void addPackage(@NotNull final String packageName, @NotNull final String packagePath) {
+    private void addPackage(final @NotNull String packageName, final @NotNull String packagePath) {
       myLibRootUrls.add(VfsUtilCore.pathToUrl(packagePath));
 
       List<String> paths = myPackagesMap.get((packageName));

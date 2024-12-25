@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
@@ -15,23 +15,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfmlStringLiteralExpression extends CfmlCompositeElement implements CfmlExpression {
-  public CfmlStringLiteralExpression(@NotNull final ASTNode node) {
+  public CfmlStringLiteralExpression(final @NotNull ASTNode node) {
     super(node);
   }
 
   @Override
-  @Nullable
-  public PsiType getPsiType() {
+  public @Nullable PsiType getPsiType() {
     return CfmlPsiUtil.getTypeByName(CommonClassNames.JAVA_LANG_STRING, getProject());
   }
 
-  @Nullable
-  public PsiElement getValueElement() {
+  public @Nullable PsiElement getValueElement() {
     return findChildByType(CfmlTokenTypes.STRING_TEXT);
   }
 
-  @NotNull
-  public String getValue() {
+  public @NotNull String getValue() {
     final ASTNode value = getNode().findChildByType(CfmlTokenTypes.STRING_TEXT);
     if (value != null) {
       return value.getText();

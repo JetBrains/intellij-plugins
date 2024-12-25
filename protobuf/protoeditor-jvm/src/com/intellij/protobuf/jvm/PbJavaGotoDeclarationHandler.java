@@ -92,8 +92,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
     return results.toArray(PsiElement.EMPTY_ARRAY);
   }
 
-  @Nullable
-  private static PbFile matchingProtoFileFromSource(PsiElement resolvedReference) {
+  private static @Nullable PbFile matchingProtoFileFromSource(PsiElement resolvedReference) {
     if (!(resolvedReference.getContainingFile() instanceof PsiCompiledFile)) {
       return null;
     }

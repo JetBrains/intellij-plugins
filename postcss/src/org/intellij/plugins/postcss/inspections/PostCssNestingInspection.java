@@ -20,9 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public class PostCssNestingInspection extends PostCssBaseInspection {
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, final boolean isOnTheFly) {
     return new PostCssElementVisitor() {
       @Override
       public void visitCssSelector(CssSelector selector) {

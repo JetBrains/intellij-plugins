@@ -45,9 +45,8 @@ final class ScenarioExecutionProducer extends LazyRunConfigurationProducer<Gauge
   ScenarioExecutionProducer() {
   }
 
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return new GaugeRunTaskConfigurationType().getConfigurationFactories()[0];
   }
 

@@ -41,8 +41,7 @@ public final class ProtoFromSourceComments {
 
   private ProtoFromSourceComments() {}
 
-  @Nullable
-  public static PbFile findProtoOfGeneratedCode(String commentPrefix, PsiFile file) {
+  public static @Nullable PbFile findProtoOfGeneratedCode(String commentPrefix, PsiFile file) {
     boolean foundGeneratedComment = false;
     String source = null;
     for (PsiElement element = file.getFirstChild();

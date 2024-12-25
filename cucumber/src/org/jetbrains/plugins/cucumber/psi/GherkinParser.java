@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.ASTNode;
@@ -16,8 +17,7 @@ public class GherkinParser implements PsiParser {
     TokenSet.create(BACKGROUND_KEYWORD, SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD, RULE_KEYWORD, FEATURE_KEYWORD);
 
   @Override
-  @NotNull
-  public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
+  public @NotNull ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
     final PsiBuilder.Marker marker = builder.mark();
     parseFileTopLevel(builder);
     marker.done(GherkinParserDefinition.GHERKIN_FILE);
@@ -279,7 +279,7 @@ public class GherkinParser implements PsiParser {
     rowMarker.done(headerRow ? GherkinElementTypes.TABLE_HEADER_ROW : GherkinElementTypes.TABLE_ROW);
   }
 
-  private static int getTokenLength(@Nullable final String tokenText) {
+  private static int getTokenLength(final @Nullable String tokenText) {
     return tokenText != null ? tokenText.length() : 0;
   }
 }

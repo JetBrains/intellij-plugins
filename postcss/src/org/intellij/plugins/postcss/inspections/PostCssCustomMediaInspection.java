@@ -16,9 +16,8 @@ import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomMediaInspection extends PostCssBaseInspection {
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, final boolean isOnTheFly) {
     return new PostCssElementVisitor() {
       @Override
       public void visitPostCssCustomMediaAtRule(PostCssCustomMediaAtRuleImpl postCssCustomMediaAtRule) {

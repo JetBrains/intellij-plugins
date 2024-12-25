@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc;
 
 import com.intellij.openapi.util.JDOMUtil;
@@ -44,8 +44,7 @@ public final class InfoFromConfigFile {
     myTargetPlayer = targetPlayer;
   }
 
-  @Nullable
-  public String getMainClass(final JpsModule module) {
+  public @Nullable String getMainClass(final JpsModule module) {
     if (!myMainClassInitialized && myConfigFile != null && myConfigFile.isFile()) {
       myMainClass = myMainClassPath == null ? null : getMainClassByPath(module, myMainClassPath, myConfigFile.getParent());
     }
@@ -53,18 +52,15 @@ public final class InfoFromConfigFile {
     return myMainClass;
   }
 
-  @Nullable
-  public String getOutputFileName() {
+  public @Nullable String getOutputFileName() {
     return myOutputFileName;
   }
 
-  @Nullable
-  public String getOutputFolderPath() {
+  public @Nullable String getOutputFolderPath() {
     return myOutputFolderPath;
   }
 
-  @Nullable
-  public String getTargetPlayer() {
+  public @Nullable String getTargetPlayer() {
     return myTargetPlayer;
   }
 
@@ -99,8 +95,7 @@ public final class InfoFromConfigFile {
     return FileUtilRt.getNameWithoutExtension(mainClassCanonicalPath);
   }
 
-  @NotNull
-  public static InfoFromConfigFile getInfoFromConfigFile(final String configFilePath) {
+  public static @NotNull InfoFromConfigFile getInfoFromConfigFile(final String configFilePath) {
     final File configFile = configFilePath.isEmpty() ? null : new File(configFilePath);
     if (configFile == null || !configFile.isFile()) {
       ourCache.remove(configFilePath);

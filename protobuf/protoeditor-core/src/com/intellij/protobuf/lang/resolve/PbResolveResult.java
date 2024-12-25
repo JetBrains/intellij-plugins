@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
+import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.PbSymbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,14 +58,12 @@ public final class PbResolveResult implements ResolveResult {
     return resultType;
   }
 
-  @Nullable
   @Override
-  public PbSymbol getElement() {
+  public @Nullable PbSymbol getElement() {
     return symbol;
   }
 
-  @Nullable
-  public QualifiedName getName() {
+  public @Nullable QualifiedName getName() {
     return name;
   }
 

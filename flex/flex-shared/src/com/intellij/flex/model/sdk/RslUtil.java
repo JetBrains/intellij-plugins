@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.sdk;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -37,7 +37,7 @@ public final class RslUtil {
     return rslUrls == null ? Collections.emptyList() : rslUrls;
   }
 
-  private synchronized static Map<String, List<String>> getSwcPathToRslUrlsMap(final String sdkHome) {
+  private static synchronized Map<String, List<String>> getSwcPathToRslUrlsMap(final String sdkHome) {
     final String configFilePath = sdkHome + "/frameworks/flex-config.xml";
     final File configFile = new File(configFilePath);
     if (!configFile.isFile()) {

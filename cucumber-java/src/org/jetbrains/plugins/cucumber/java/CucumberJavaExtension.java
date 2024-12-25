@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
@@ -30,15 +31,13 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
     new String[]{CUCUMBER_JAVA_5_STEP_DEFINITION_ANNOTATION_CLASS_NAME, CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
       ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION};
 
-  @NotNull
   @Override
-  public BDDFrameworkType getStepFileType() {
+  public @NotNull BDDFrameworkType getStepFileType() {
     return new BDDFrameworkType(JavaFileType.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public StepDefinitionCreator getStepDefinitionCreator() {
+  public @NotNull StepDefinitionCreator getStepDefinitionCreator() {
     return new JavaStepDefinitionCreator();
   }
 

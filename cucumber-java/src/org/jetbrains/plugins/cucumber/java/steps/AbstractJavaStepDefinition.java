@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
@@ -31,9 +32,8 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
     return myModule;
   }
 
-  @Nullable
   @Override
-  public String getCucumberRegex() {
+  public @Nullable String getCucumberRegex() {
     String definitionText = getExpression();
     if (definitionText == null) {
       return null;

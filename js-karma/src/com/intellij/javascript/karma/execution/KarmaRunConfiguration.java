@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
@@ -60,8 +60,7 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     KarmaRunSettingsSerializationUtil.writeXml(element, myRunSettings);
   }
 
-  @NotNull
-  public NodePackage getKarmaPackage() {
+  public @NotNull NodePackage getKarmaPackage() {
     if (isTemplate()) {
       NodePackage pkg = myRunSettings.getKarmaPackage();
       return pkg != null ? pkg : KarmaUtil.PKG_DESCRIPTOR.createPackage("");
@@ -73,8 +72,7 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     return karmaPackage;
   }
 
-  @NotNull
-  private NodePackage getOrInitKarmaPackage() {
+  private @NotNull NodePackage getOrInitKarmaPackage() {
     NodePackage pkg = myRunSettings.getKarmaPackage();
     if (pkg == null) {
       Project project = getProject();
@@ -92,8 +90,7 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     return pkg;
   }
 
-  @Nullable
-  private VirtualFile getContextFile() {
+  private @Nullable VirtualFile getContextFile() {
     VirtualFile f = findFile(myRunSettings.getTestFileSystemDependentPath());
     if (f == null) {
       f = findFile(myRunSettings.getConfigPathSystemDependent());
@@ -104,32 +101,27 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     return f;
   }
 
-  @NotNull
   @Override
-  public KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor) {
+  public @NotNull KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor) {
     return createTestConsoleProperties(executor, null);
   }
 
-  @NotNull
-  public KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor, @Nullable KarmaServer server) {
+  public @NotNull KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor, @Nullable KarmaServer server) {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(getProject(), server);
     return new KarmaConsoleProperties(this, executor, filterProvider);
   }
 
-  @Nullable
   @Override
-  public NodeJsInterpreter getInterpreter() {
+  public @Nullable NodeJsInterpreter getInterpreter() {
     return myRunSettings.getInterpreterRef().resolve(getProject());
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends AbstractNodeTargetRunProfile> createConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends AbstractNodeTargetRunProfile> createConfigurationEditor() {
     return new KarmaRunConfigurationEditor(getProject());
   }
 
-  @Nullable
-  private static VirtualFile findFile(@NotNull String path) {
+  private static @Nullable VirtualFile findFile(@NotNull String path) {
     return FileUtil.isAbsolute(path) ? LocalFileSystem.getInstance().findFileByPath(path) : null;
   }
 
@@ -153,9 +145,8 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     }
   }
 
-  @Nullable
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
+  public @Nullable RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
     return new KarmaRunProfileState(getProject(),
                                     this,
                                     env,
@@ -194,8 +185,7 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     }
   }
 
-  @NotNull
-  public KarmaRunSettings getRunSettings() {
+  public @NotNull KarmaRunSettings getRunSettings() {
     return myRunSettings;
   }
 
@@ -237,9 +227,8 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     return super.suggestedName();
   }
 
-  @Nullable
   @Override
-  public String getActionName() {
+  public @Nullable String getActionName() {
     KarmaScopeKind scopeKind = myRunSettings.getScopeKind();
     if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       return StringUtil.notNullize(ContainerUtil.getLastItem(myRunSettings.getTestNames()));
@@ -247,9 +236,8 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
     return super.getActionName();
   }
 
-  @Nullable
   @Override
-  public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
+  public @Nullable RefactoringElementListener getRefactoringElementListener(PsiElement element) {
     return KarmaRunConfigurationRefactoringHandler.getRefactoringElementListener(this, element);
   }
 

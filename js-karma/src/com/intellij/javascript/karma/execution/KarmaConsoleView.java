@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
@@ -62,14 +62,12 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     registerKarmaServerTab(ui);
   }
 
-  @Nullable
   @Override
-  public String getExecutionConsoleId() {
+  public @Nullable String getExecutionConsoleId() {
     return null;
   }
 
-  @NotNull
-  private Content registerConsoleContent(@NotNull final RunnerLayoutUi ui) {
+  private @NotNull Content registerConsoleContent(final @NotNull RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
@@ -153,8 +151,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     }
   }
 
-  @NotNull
-  public KarmaServer getKarmaServer() {
+  public @NotNull KarmaServer getKarmaServer() {
     return myServer;
   }
 
@@ -165,8 +162,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   /**
    * @return null in case of "Import Test Result" action
    */
-  @Nullable
-  public static KarmaConsoleView get(@NotNull ExecutionResult result, @NotNull RunProfileState state) {
+  public static @Nullable KarmaConsoleView get(@NotNull ExecutionResult result, @NotNull RunProfileState state) {
     ExecutionConsole console = result.getExecutionConsole();
     if (console instanceof KarmaConsoleView) {
       return (KarmaConsoleView)console;
@@ -217,9 +213,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       super(debugProcess);
     }
 
-    @NotNull
     @Override
-    public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
+    public @NotNull Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
       return KarmaConsoleView.this.registerConsoleContent(ui);
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.highlighting;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -47,8 +47,7 @@ public final class CfmlColorSettingPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     //noinspection HardCodedStringLiteral
     return "CFML";
   }
@@ -69,14 +68,12 @@ public final class CfmlColorSettingPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new CfmlHighlighter.CfmlFileHighlighter(null);
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return """
       <cffunction name="test">
       \t<cfargument name="fred" test="test"/>

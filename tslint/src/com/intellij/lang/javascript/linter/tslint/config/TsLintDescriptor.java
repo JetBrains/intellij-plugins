@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
@@ -24,9 +24,8 @@ import static com.intellij.lang.javascript.linter.JSLinterConfigFileUtil.findDis
 public final class TsLintDescriptor extends JSLinterDescriptor {
   public static final String PACKAGE_NAME = "tslint";
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return TsLintBundle.message("settings.javascript.linters.tslint.configurable.name");
   }
 
@@ -68,9 +67,8 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
     new TsLintCodeStyleImporter(true).importConfigFileWhenToolInstalled(file);
   }
 
-  @NotNull
   @Override
-  public Class<? extends JSLinterConfiguration> getConfigurationClass() {
+  public @NotNull Class<? extends JSLinterConfiguration> getConfigurationClass() {
     return TsLintConfiguration.class;
   }
 }

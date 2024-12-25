@@ -24,7 +24,7 @@ class AverageByKindTimeStatistics<Kind extends Enum> extends
   }
 
   @Override
-  public void stop(@NotNull final Long key, final Kind kind, final String presentation) {
+  public void stop(final @NotNull Long key, final Kind kind, final String presentation) {
     step(new Pair<>(kind, System.currentTimeMillis() - key));
   }
 

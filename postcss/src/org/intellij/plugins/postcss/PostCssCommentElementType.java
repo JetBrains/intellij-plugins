@@ -18,9 +18,8 @@ public class PostCssCommentElementType extends PostCssElementType implements Css
     return 0;
   }
 
-  @NotNull
   @Override
-  public String getContinuationChars() {
+  public @NotNull String getContinuationChars() {
     return "";
   }
 }

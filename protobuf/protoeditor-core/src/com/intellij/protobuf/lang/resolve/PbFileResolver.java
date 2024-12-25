@@ -33,8 +33,7 @@ import java.util.function.Function;
 /** A helper class for finding files given path names. */
 public final class PbFileResolver {
 
-  @NotNull
-  public static List<PbFile> findFilesForContext(
+  public static @NotNull List<PbFile> findFilesForContext(
       @NotNull String path, @NotNull PsiElement context) {
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     if (module != null) {
@@ -44,24 +43,21 @@ public final class PbFileResolver {
     }
   }
 
-  @NotNull
-  public static List<PbFile> findFilesInModule(@NotNull String path, @NotNull Module module) {
+  public static @NotNull List<PbFile> findFilesInModule(@NotNull String path, @NotNull Module module) {
     if (!isValidImportPath(path)) {
       return Collections.emptyList();
     }
     return findFiles(module.getProject(), (provider) -> provider.findFile(path, module));
   }
 
-  @NotNull
-  public static List<PbFile> findFilesInProject(@NotNull String path, @NotNull Project project) {
+  public static @NotNull List<PbFile> findFilesInProject(@NotNull String path, @NotNull Project project) {
     if (!isValidImportPath(path)) {
       return Collections.emptyList();
     }
     return findFiles(project, (provider) -> provider.findFile(path, project));
   }
 
-  @NotNull
-  public static Collection<ChildEntry> getChildNamesForContext(
+  public static @NotNull Collection<ChildEntry> getChildNamesForContext(
       @NotNull String path, @NotNull PsiElement context) {
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     if (module != null) {
@@ -71,8 +67,7 @@ public final class PbFileResolver {
     }
   }
 
-  @NotNull
-  public static Collection<ChildEntry> getChildNamesInModule(
+  public static @NotNull Collection<ChildEntry> getChildNamesInModule(
       @NotNull String path, @NotNull Module module) {
     if (!isValidImportPath(path)) {
       return Collections.emptyList();
@@ -80,8 +75,7 @@ public final class PbFileResolver {
     return getChildEntries(module.getProject(), provider -> provider.getChildEntries(path, module));
   }
 
-  @NotNull
-  public static Collection<ChildEntry> getChildNamesInProject(
+  public static @NotNull Collection<ChildEntry> getChildNamesInProject(
       @NotNull String path, @NotNull Project project) {
     if (!isValidImportPath(path)) {
       return Collections.emptyList();
@@ -102,8 +96,7 @@ public final class PbFileResolver {
         || path.equals(".."));
   }
 
-  @NotNull
-  static FileResolveProvider @NotNull[] getProviders(@NotNull Project project) {
+  static @NotNull FileResolveProvider @NotNull[] getProviders(@NotNull Project project) {
     return FileResolveProvider.EP_NAME.getExtensions(project);
   }
 
@@ -115,8 +108,7 @@ public final class PbFileResolver {
     return scope;
   }
 
-  @NotNull
-  private static List<PbFile> findFiles(
+  private static @NotNull List<PbFile> findFiles(
       Project project, Function<FileResolveProvider, VirtualFile> fn) {
     Set<PbFile> results = new LinkedHashSet<>();
 
@@ -133,8 +125,7 @@ public final class PbFileResolver {
     return new ArrayList<>(results);
   }
 
-  @NotNull
-  private static Collection<ChildEntry> getChildEntries(
+  private static @NotNull Collection<ChildEntry> getChildEntries(
       Project project, Function<FileResolveProvider, Collection<ChildEntry>> fn) {
     Set<ChildEntry> results = new LinkedHashSet<>();
 

@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 class PbBlockBodyType extends IErrorCounterReparseableElementType
     implements ILightLazyParseableElementType {
 
-  PbBlockBodyType(@NonNls final String debugName, final Language language) {
+  PbBlockBodyType(final @NonNls String debugName, final Language language) {
     super(debugName, language);
   }
 
@@ -89,9 +89,8 @@ class PbBlockBodyType extends IErrorCounterReparseableElementType
     return balance;
   }
 
-  @Nullable
   @Override
-  public ASTNode createNode(CharSequence text) {
+  public @Nullable ASTNode createNode(CharSequence text) {
     return new LazyParseableElement(this, text);
   }
 }

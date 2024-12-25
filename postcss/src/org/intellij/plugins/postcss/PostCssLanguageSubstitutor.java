@@ -9,9 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PostCssLanguageSubstitutor extends LanguageSubstitutor {
-  @Nullable
   @Override
-  public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
+  public @Nullable Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
     String dialectName = CssDialectMappings.getInstance(project).getMapping(file);
     return PostCssDialect.DIALECT_NAME.equals(dialectName) ? PostCssLanguage.INSTANCE : null;
   }

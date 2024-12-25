@@ -19,8 +19,7 @@ class WritingAdderRemover implements AdderRemover {
   }
 
   @Override
-  @Nullable
-  public VcsException add(@NotNull final PerforceJob job, final LocalChangeList list, final Project project) {
+  public @Nullable VcsException add(final @NotNull PerforceJob job, final LocalChangeList list, final Project project) {
     final Ref<VcsException> exceptionRef = new Ref<>();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       try {
@@ -35,8 +34,7 @@ class WritingAdderRemover implements AdderRemover {
   }
 
   @Override
-  @Nullable
-  public VcsException remove(@NotNull final PerforceJob job, final LocalChangeList list, final Project project) {
+  public @Nullable VcsException remove(final @NotNull PerforceJob job, final LocalChangeList list, final Project project) {
     final Ref<VcsException> exceptionRef = new Ref<>();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       try {

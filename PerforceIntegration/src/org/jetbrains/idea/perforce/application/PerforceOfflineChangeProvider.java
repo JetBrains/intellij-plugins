@@ -36,7 +36,7 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
 
   @Override
   public void getChanges(@NotNull VcsDirtyScope dirtyScope, @NotNull ChangelistBuilder builder, @NotNull ProgressIndicator progress,
-                         @NotNull final ChangeListManagerGate addGate) throws VcsException {
+                         final @NotNull ChangeListManagerGate addGate) throws VcsException {
     builder.reportAdditionalInfo(() -> {
       HyperlinkLabel label = new HyperlinkLabel();
       label.setForeground(JBColor.RED);
@@ -137,8 +137,7 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
     return (beforePath != null && dirtyScope.belongsTo(beforePath)) || (afterPath != null && dirtyScope.belongsTo(afterPath));
   }
 
-  @Nullable
-  private static FilePath createFilePath(final String beforePath) {
+  private static @Nullable FilePath createFilePath(final String beforePath) {
     if (beforePath == null) return null;
     return VcsContextFactory.getInstance().createFilePathOn(new File(beforePath), false);
   }

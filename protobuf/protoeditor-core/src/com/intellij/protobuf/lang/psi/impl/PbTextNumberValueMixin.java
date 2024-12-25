@@ -17,13 +17,13 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.google.common.base.Ascii;
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.resolve.PbEnumNumberReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.resolve.PbEnumNumberReference;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -40,9 +40,8 @@ abstract class PbTextNumberValueMixin extends PbTextElementBase implements PbTex
     super(node);
   }
 
-  @Nullable
   @Override
-  public ProtoNumberValue.SourceType getSourceType() {
+  public @Nullable ProtoNumberValue.SourceType getSourceType() {
     PsiElement childElement = getNumberElement();
     ASTNode childNode = childElement != null ? childElement.getNode() : null;
     if (childNode != null) {
@@ -61,8 +60,7 @@ abstract class PbTextNumberValueMixin extends PbTextElementBase implements PbTex
   }
 
   @Override
-  @Nullable
-  public PsiElement getNumberElement() {
+  public @Nullable PsiElement getNumberElement() {
     return findChildByType(NUMBER_TOKENS);
   }
 
@@ -88,9 +86,8 @@ abstract class PbTextNumberValueMixin extends PbTextElementBase implements PbTex
     }
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     if (!isValidInt32()) {
       return null;
     }

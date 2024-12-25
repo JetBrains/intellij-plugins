@@ -37,27 +37,23 @@ public final class ConceptParserDefinition implements ParserDefinition {
 
   public static final IFileElementType FILE = new IFileElementType(Concept.INSTANCE);
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new ConceptLexer();
   }
 
   @Override
-  @NotNull
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return ConceptTokenSets.COMMENTS;
   }
 
   @Override
-  @NotNull
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return TokenSet.EMPTY;
   }
 
   @Override
-  @NotNull
-  public PsiParser createParser(final Project project) {
+  public @NotNull PsiParser createParser(final Project project) {
     return new ConceptParser();
   }
 
@@ -77,8 +73,7 @@ public final class ConceptParserDefinition implements ParserDefinition {
   }
 
   @Override
-  @NotNull
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     return ConceptTokenTypes.Factory.createElement(node);
   }
 }

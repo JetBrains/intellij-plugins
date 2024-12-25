@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -17,8 +17,7 @@ import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
 public final class DartWebdevConfigurationType extends ConfigurationTypeBase implements DumbAware {
-  @NotNull
-  public static DartWebdevConfigurationType getInstance() {
+  public static @NotNull DartWebdevConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(DartWebdevConfigurationType.class);
   }
 
@@ -28,14 +27,13 @@ public final class DartWebdevConfigurationType extends ConfigurationTypeBase imp
           DartBundle.message("webdev.debug.configuration.description"),
           NotNullLazyValue.createValue(() -> DartIcons.DartWeb));
     addFactory(new ConfigurationFactory(this) {
-      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(@NotNull final Project project) {
+      public @NotNull RunConfiguration createTemplateConfiguration(final @NotNull Project project) {
         return new DartWebdevConfiguration(project, this, "Dart Web");
       }
 
       @Override
-      public boolean isApplicable(@NotNull final Project project) {
+      public boolean isApplicable(final @NotNull Project project) {
         return FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project)) &&
                FileTypeIndex.containsFileOfType(HtmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }

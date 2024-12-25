@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model;
 
 import com.intellij.util.xmlb.XmlSerializer;
@@ -40,13 +41,11 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
   }
 
   @Override
-  @NotNull
-  public JpsFlexCompilerProjectExtension createCopy() {
+  public @NotNull JpsFlexCompilerProjectExtension createCopy() {
     return new JpsFlexCompilerProjectExtension(this);
   }
 
-  @NotNull
-  public static JpsFlexCompilerProjectExtension getInstance(final JpsProject project) {
+  public static @NotNull JpsFlexCompilerProjectExtension getInstance(final JpsProject project) {
     final JpsFlexCompilerProjectExtension child = project.getContainer().getChild(ROLE);
     return child != null ? child : new JpsFlexCompilerProjectExtension();
   }
@@ -54,7 +53,7 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
   static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexCompilerConfiguration") {
       @Override
-      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+      public void loadExtension(final @NotNull JpsProject project, final @NotNull Element componentTag) {
         JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
       }
     };
@@ -66,7 +65,7 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
   static JpsProjectExtensionSerializer createProjectExtensionSerializerIws() {
     return new JpsProjectExtensionSerializer("workspace.xml", "FlexCompilerConfiguration") {
       @Override
-      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+      public void loadExtension(final @NotNull JpsProject project, final @NotNull Element componentTag) {
         JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
       }
     };

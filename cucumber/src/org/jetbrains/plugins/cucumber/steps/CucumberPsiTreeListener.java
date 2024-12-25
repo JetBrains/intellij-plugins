@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.steps;
 
 
@@ -36,22 +37,22 @@ public class CucumberPsiTreeListener extends PsiTreeChangeAdapter {
   }
 
   @Override
-  public void childRemoved(@NotNull final PsiTreeChangeEvent event) {
+  public void childRemoved(final @NotNull PsiTreeChangeEvent event) {
     processChange(event.getParent());
   }
 
   @Override
-  public void childReplaced(@NotNull final PsiTreeChangeEvent event) {
+  public void childReplaced(final @NotNull PsiTreeChangeEvent event) {
     processChange(event.getParent());
   }
 
   @Override
-  public void childrenChanged(@NotNull final PsiTreeChangeEvent event) {
+  public void childrenChanged(final @NotNull PsiTreeChangeEvent event) {
     processChange(event.getParent());
   }
 
   @Override
-  public void childMoved(@NotNull final PsiTreeChangeEvent event) {
+  public void childMoved(final @NotNull PsiTreeChangeEvent event) {
     processChange(event.getOldParent());
     processChange(event.getNewParent());
   }

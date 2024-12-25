@@ -30,21 +30,18 @@ final class GaugeSettings implements SearchableConfigurable, Disposable {
   private GaugeConfig gaugeConfig;
   private GaugeSettingsModel model;
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "gauge";
   }
 
-  @Nls(capitalization = Nls.Capitalization.Title)
   @Override
-  public String getDisplayName() {
+  public @Nls(capitalization = Nls.Capitalization.Title) String getDisplayName() {
     return GaugeBundle.GAUGE;
   }
 
-  @Nullable
   @Override
-  public JComponent createComponent() {
+  public @Nullable JComponent createComponent() {
     model = GaugeSettingsService.getSettings();
     gaugeConfig = new GaugeConfig();
     gaugeConfig.setValues(model);

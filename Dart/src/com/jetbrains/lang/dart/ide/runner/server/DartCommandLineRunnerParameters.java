@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -47,7 +35,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
    * Get the Dart project directory for the given file (or folder) by looking for the first parent that contains a pubspec.
    * In case none can be found, the file's parent (or the folder itself) is used instead.
    */
-  public static @NlsSafe String suggestDartWorkingDir(@NotNull final Project project, @NotNull final VirtualFile dartFileOrFolder) {
+  public static @NlsSafe String suggestDartWorkingDir(final @NotNull Project project, final @NotNull VirtualFile dartFileOrFolder) {
     final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, dartFileOrFolder);
     if (pubspec != null) {
       final VirtualFile parent = pubspec.getParent();
@@ -63,8 +51,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     }
   }
 
-  @Nullable
-  public @NlsSafe String getFilePath() {
+  public @Nullable @NlsSafe String getFilePath() {
     return myFilePath;
   }
 
@@ -72,8 +59,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myFilePath = filePath;
   }
 
-  @Nullable
-  public @NlsSafe String getVMOptions() {
+  public @Nullable @NlsSafe String getVMOptions() {
     return myVMOptions;
   }
 
@@ -96,8 +82,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myCheckedModeOrEnableAsserts = checkedModeOrEnableAsserts;
   }
 
-  @Nullable
-  public @NlsSafe String getArguments() {
+  public @Nullable @NlsSafe String getArguments() {
     return myArguments;
   }
 
@@ -105,8 +90,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myArguments = arguments;
   }
 
-  @Nullable
-  public @NlsSafe String getWorkingDirectory() {
+  public @Nullable @NlsSafe String getWorkingDirectory() {
     return myWorkingDirectory;
   }
 
@@ -114,10 +98,9 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myWorkingDirectory = workingDirectory;
   }
 
-  @NotNull
   @OptionTag
   @XMap
-  public Map<String, String> getEnvs() {
+  public @NotNull Map<String, String> getEnvs() {
     return myEnvs;
   }
 
@@ -135,8 +118,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myIncludeParentEnvs = includeParentEnvs;
   }
 
-  @NotNull
-  public @NlsSafe String computeProcessWorkingDirectory(@NotNull final Project project) {
+  public @NotNull @NlsSafe String computeProcessWorkingDirectory(final @NotNull Project project) {
     if (!StringUtil.isEmptyOrSpaces(myWorkingDirectory)) return myWorkingDirectory;
 
     try {
@@ -147,8 +129,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     }
   }
 
-  @NotNull
-  public VirtualFile getDartFileOrDirectory() throws RuntimeConfigurationError {
+  public @NotNull VirtualFile getDartFileOrDirectory() throws RuntimeConfigurationError {
     if (StringUtil.isEmptyOrSpaces(myFilePath)) {
       throw new RuntimeConfigurationError(DartBundle.message("path.to.dart.file.not.set"));
     }

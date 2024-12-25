@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.coldFusion.model.files.CfmlFile;
@@ -55,7 +55,7 @@ public final class CfmlReferenceContributor extends PsiReferenceContributor {
   }
 
   @Override
-  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registerImplicitVariableProvider(registrar);
   }
 
@@ -63,7 +63,7 @@ public final class CfmlReferenceContributor extends PsiReferenceContributor {
     // reference to java types
     registrar.registerReferenceProvider(Holder.CFMLVARIABLE_COMMENT, new PsiReferenceProvider() {
       @Override
-      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, final @NotNull ProcessingContext context) {
         return getReferencesToJavaTypes(element);
       }
     }, PsiReferenceRegistrar.DEFAULT_PRIORITY);
@@ -82,8 +82,7 @@ public final class CfmlReferenceContributor extends PsiReferenceContributor {
     return provider.getReferencesByString(range.substring(text), element, range.getStartOffset());
   }
 
-  @Nullable
-  public static TextRange findTypeNameRange(@NotNull String text) {
+  public static @Nullable TextRange findTypeNameRange(@NotNull String text) {
     return CfmlPsiUtil.findRange(text, "type=\"", "\"");
   }
 }

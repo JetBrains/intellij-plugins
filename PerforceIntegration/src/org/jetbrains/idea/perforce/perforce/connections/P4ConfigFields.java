@@ -9,7 +9,7 @@ public enum P4ConfigFields {
   P4PASSWD("P4PASSWD", "-P"),
   P4CHARSET("P4CHARSET", "-C");
 
-  public final static String P4TICKETS = "P4TICKETS";
+  public static final String P4TICKETS = "P4TICKETS";
 
   private final String myName;
   private final String myFlag;

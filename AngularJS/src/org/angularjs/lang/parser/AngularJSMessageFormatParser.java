@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
@@ -17,7 +18,7 @@ import java.util.Set;
 import static org.angularjs.AngularJSBundle.message;
 
 public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSParser> {
-  @NonNls public static final String OFFSET_OPTION = "offset";
+  public static final @NonNls String OFFSET_OPTION = "offset";
   private boolean myInsideSelectExpression = false;
 
   public AngularJSMessageFormatParser(@NotNull AngularJSParser parser) {

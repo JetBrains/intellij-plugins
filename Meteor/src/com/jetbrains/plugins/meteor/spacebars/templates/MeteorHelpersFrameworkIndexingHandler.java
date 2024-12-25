@@ -179,8 +179,7 @@ public final class MeteorHelpersFrameworkIndexingHandler extends FrameworkIndexi
            POSSIBLE_NAMESPACES_FOR_GLOBAL_HELPER_METHOD.contains(withNamespaceQualifier.getReferencedName());
   }
 
-  @Nullable
-  private static JSReferenceExpression getReferenceExpressionQualifier(@Nullable JSExpression expression) {
+  private static @Nullable JSReferenceExpression getReferenceExpressionQualifier(@Nullable JSExpression expression) {
     if (expression instanceof JSReferenceExpression) {
       JSExpression qualifier = ((JSReferenceExpression)expression).getQualifier();
       return qualifier instanceof JSReferenceExpression ? (JSReferenceExpression)qualifier : null;

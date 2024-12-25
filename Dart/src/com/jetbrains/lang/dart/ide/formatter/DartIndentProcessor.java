@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.Indent;
@@ -240,7 +240,7 @@ public class DartIndentProcessor {
     return Indent.getNoneIndent();
   }
 
-  private static boolean isBetweenBraces(@NotNull final ASTNode node) {
+  private static boolean isBetweenBraces(final @NotNull ASTNode node) {
     final IElementType elementType = node.getElementType();
     if (elementType == LBRACE || elementType == RBRACE) return false;
 

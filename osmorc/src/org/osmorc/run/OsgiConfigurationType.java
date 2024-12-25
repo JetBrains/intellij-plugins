@@ -48,9 +48,8 @@ public final class OsgiConfigurationType extends SimpleConfigurationType {
     super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), createValue(() -> OsmorcIdeaIcons.Osgi));
   }
 
-  @NotNull
   @Override
-  public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+  public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
     return new OsgiRunConfiguration(project, this, "");
   }
 
@@ -60,9 +59,8 @@ public final class OsgiConfigurationType extends SimpleConfigurationType {
            && ProjectFacetManager.getInstance(project).hasFacets(OsmorcFacetType.ID);
   }
 
-  @NotNull
   @Override
-  public String getTag() {
+  public @NotNull String getTag() {
     return "osgi";
   }
 

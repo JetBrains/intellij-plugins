@@ -76,9 +76,8 @@ public final class SpecPsiImplUtil {
 
   public static ItemPresentation getPresentation(final SpecStepImpl element) {
     return new ItemPresentation() {
-      @Nullable
       @Override
-      public String getPresentableText() {
+      public @Nullable String getPresentableText() {
         return element.getText();
       }
 
@@ -87,9 +86,8 @@ public final class SpecPsiImplUtil {
         return element.getContainingFile().getName();
       }
 
-      @Nullable
       @Override
-      public Icon getIcon(boolean unused) {
+      public @Nullable Icon getIcon(boolean unused) {
         return null;
       }
     };

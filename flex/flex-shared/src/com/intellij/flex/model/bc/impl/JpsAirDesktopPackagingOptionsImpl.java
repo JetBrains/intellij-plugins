@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirDesktopPackagingOptions;
@@ -28,8 +28,7 @@ final class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase
   }
 
   @Override
-  @NotNull
-  public JpsAirDesktopPackagingOptionsImpl createCopy() {
+  public @NotNull JpsAirDesktopPackagingOptionsImpl createCopy() {
     return new JpsAirDesktopPackagingOptionsImpl(this);
   }
 
@@ -74,8 +73,7 @@ final class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase
     }
 
     @Override
-    @NotNull
-    public JpsAirDesktopPackagingOptions create() {
+    public @NotNull JpsAirDesktopPackagingOptions create() {
       return new JpsAirDesktopPackagingOptionsImpl();
     }
   }

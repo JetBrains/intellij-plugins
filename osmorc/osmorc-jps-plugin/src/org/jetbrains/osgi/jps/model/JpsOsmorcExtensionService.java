@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.model;
 
 import org.jetbrains.annotations.NotNull;
@@ -13,13 +13,11 @@ public final class JpsOsmorcExtensionService {
 
   private JpsOsmorcExtensionService() { }
 
-  @Nullable
-  public static JpsOsmorcProjectExtension getExtension(@NotNull JpsProject project) {
+  public static @Nullable JpsOsmorcProjectExtension getExtension(@NotNull JpsProject project) {
     return project.getContainer().getChild(JpsOsmorcProjectExtension.ROLE);
   }
 
-  @Nullable
-  public static JpsOsmorcModuleExtension getExtension(@NotNull JpsModule module) {
+  public static @Nullable JpsOsmorcModuleExtension getExtension(@NotNull JpsModule module) {
     return module.getContainer().getChild(JpsOsmorcModuleExtension.ROLE);
   }
 }

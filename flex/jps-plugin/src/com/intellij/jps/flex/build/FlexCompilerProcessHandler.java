@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.execution.process.BaseOSProcessHandler;
@@ -39,12 +40,12 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
     }
 
     @Override
-    public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+    public void onTextAvailable(final @NotNull ProcessEvent event, final @NotNull Key outputType) {
       handleText(event.getText());
     }
 
     @Override
-    public void processTerminated(@NotNull final ProcessEvent event) {
+    public void processTerminated(final @NotNull ProcessEvent event) {
       registerCompilationFinished();
     }
 

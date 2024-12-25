@@ -28,13 +28,11 @@ public class SchemaInfo {
     this.extensionResolver = resolver;
   }
 
-  @NotNull
-  public PbMessageType getRootMessageType() {
+  public @NotNull PbMessageType getRootMessageType() {
     return this.rootMessageType;
   }
 
-  @NotNull
-  public PbSymbolResolver getExtensionResolver() {
+  public @NotNull PbSymbolResolver getExtensionResolver() {
     return this.extensionResolver;
   }
 

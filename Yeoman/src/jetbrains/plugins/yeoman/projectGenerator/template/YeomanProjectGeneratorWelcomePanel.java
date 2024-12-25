@@ -85,8 +85,7 @@ public class YeomanProjectGeneratorWelcomePanel implements YeomanProjectGenerato
     myOwner.setCentralComponent(wrapperForWelcome);
   }
 
-  @NotNull
-  private LabeledComponent<?> createInstallGeneratorsButtonPanel(ArrayList<PanelWithAnchor> toMergeWithAnchor) {
+  private @NotNull LabeledComponent<?> createInstallGeneratorsButtonPanel(ArrayList<PanelWithAnchor> toMergeWithAnchor) {
     final JButton button = myGeneratorsMain.getInstallGeneratorsButton();
     final JPanel buttonToLeftPanel = new JPanel(new BorderLayout());
     buttonToLeftPanel.add(button, BorderLayout.WEST);
@@ -96,8 +95,7 @@ public class YeomanProjectGeneratorWelcomePanel implements YeomanProjectGenerato
     return installedGeneratorsButtonComponent;
   }
 
-  @NotNull
-  private LabeledComponent<JBTextField> createOptionsPanel(ArrayList<PanelWithAnchor> toMergeWithAnchor) {
+  private @NotNull LabeledComponent<JBTextField> createOptionsPanel(ArrayList<PanelWithAnchor> toMergeWithAnchor) {
     myOptionsTextField = new JBTextField(10);
     final LabeledComponent<JBTextField> optionsTextLabelComponent =
       LabeledComponent.create(myOptionsTextField, YeomanBundle.message("yeoman.generator.options"), BorderLayout.WEST);
@@ -105,8 +103,7 @@ public class YeomanProjectGeneratorWelcomePanel implements YeomanProjectGenerato
     return optionsTextLabelComponent;
   }
 
-  @NotNull
-  private static JPanel createGeneratorsWithLabelPanel(ArrayList<PanelWithAnchor> toMergeWithAnchor) {
+  private static @NotNull JPanel createGeneratorsWithLabelPanel(ArrayList<PanelWithAnchor> toMergeWithAnchor) {
     JPanel generatorsPanel = new JPanel(new BorderLayout(UIUtil.DEFAULT_HGAP, 2));
     final JPanel labelToTopPanel = new JPanel(new BorderLayout());
     final JBLabel labelGenerator = new JBLabel(YeomanBundle.message("yeoman.generator.generator"));
@@ -148,9 +145,8 @@ public class YeomanProjectGeneratorWelcomePanel implements YeomanProjectGenerato
   }
 
 
-  @Nls
   @Override
-  public String validate() {
+  public @Nls String validate() {
     if (myYeomanGlobalSettings.getInterpreter() == null) {
       return YeomanBundle.message("yeoman.generators.dialog.configure.error.node");
     }
@@ -161,9 +157,8 @@ public class YeomanProjectGeneratorWelcomePanel implements YeomanProjectGenerato
     return null;
   }
 
-  @NotNull
   @Override
-  public YeomanProjectGeneratorSubPanel next(ActionEvent e) {
+  public @NotNull YeomanProjectGeneratorSubPanel next(ActionEvent e) {
     commitSettings();
 
     myNodeAndYeomanLink.setVisible(false);
@@ -183,8 +178,7 @@ public class YeomanProjectGeneratorWelcomePanel implements YeomanProjectGenerato
     mySettings.info = object instanceof YeomanInstalledGeneratorInfo ? (YeomanInstalledGeneratorInfo)object : null;
   }
 
-  @NotNull
-  private File createTempStoreDirectory(String path) {
+  private @NotNull File createTempStoreDirectory(String path) {
     final File file = new File(path, new File(myOwner.getLocationTitle()).getName());
     if (file.exists()) {
       FileUtil.delete(file);

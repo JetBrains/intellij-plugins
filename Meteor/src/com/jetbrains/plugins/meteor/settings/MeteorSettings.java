@@ -45,9 +45,8 @@ public final class MeteorSettings implements PersistentStateComponent<MeteorSett
     return ApplicationManager.getApplication().getService(MeteorSettings.class);
   }
 
-  @Nullable
   @Override
-  public MeteorSettings getState() {
+  public @Nullable MeteorSettings getState() {
     return this;
   }
 
@@ -81,14 +80,12 @@ public final class MeteorSettings implements PersistentStateComponent<MeteorSett
   }
 
   @SuppressWarnings("ConstantConditions")
-  @NotNull
-  public static String detectMeteorExecutablePath() {
+  public static @NotNull String detectMeteorExecutablePath() {
     List<String> strings = detectMeteorExecutablePaths();
     return strings.isEmpty() ? "" : ContainerUtil.getFirstItem(strings);
   }
 
-  @NotNull
-  public static List<String> detectMeteorExecutablePaths() {
+  public static @NotNull List<String> detectMeteorExecutablePaths() {
     List<File> result = new ArrayList<>();
     if (SystemInfo.isWindows) {
       ContainerUtil.addIfNotNull(result, PathEnvironmentVariableUtil.findInPath("meteor.bat"));

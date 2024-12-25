@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
 import com.intellij.ide.util.EditSourceUtil;
@@ -51,9 +52,8 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
     return Collections.emptyList();
   }
 
-  @Nullable
   @Override
-  protected String getCucumberRegexFromElement(PsiElement element) {
+  protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
     if (!(element instanceof GrMethodCall)) {
       return null;
     }

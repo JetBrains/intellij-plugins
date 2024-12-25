@@ -17,9 +17,8 @@ public class PostCssFileElementType extends IStubFileElementType {
     return super.getStubVersion() + CssFileElementType.BASE_VERSION + MY_STUB_VERSION;
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "postcss.file";
   }
 }

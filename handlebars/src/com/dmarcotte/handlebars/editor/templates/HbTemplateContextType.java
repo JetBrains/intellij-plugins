@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor.templates;
 
 import com.dmarcotte.handlebars.HbBundle;
@@ -19,9 +20,8 @@ public final class HbTemplateContextType extends TemplateContextType {
     return HbLanguage.INSTANCE.is(file.getLanguage());
   }
 
-  @Nullable
   @Override
-  public SyntaxHighlighter createHighlighter() {
+  public @Nullable SyntaxHighlighter createHighlighter() {
     return new HbHighlighter();
   }
 }

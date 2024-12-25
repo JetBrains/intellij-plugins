@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.CodeDocumentationAwareCommenter;
@@ -10,25 +11,21 @@ import org.jetbrains.annotations.Nullable;
  * @author Roman.Chernyatchik
  */
 public final class GherkinCommenter implements CodeDocumentationAwareCommenter {
-  @NonNls
-  private static final String LINE_COMMENT_PREFIX = "#";
+  private static final @NonNls String LINE_COMMENT_PREFIX = "#";
 
   @Override
-  @Nullable
-  public String getLineCommentPrefix() {
+  public @Nullable String getLineCommentPrefix() {
     return LINE_COMMENT_PREFIX;
   }
 
   @Override
-  @Nullable
-  public String getBlockCommentPrefix() {
+  public @Nullable String getBlockCommentPrefix() {
     // N/A
     return null;
   }
 
   @Override
-  @Nullable
-  public String getBlockCommentSuffix() {
+  public @Nullable String getBlockCommentSuffix() {
     // N/A
     return null;
   }
@@ -43,39 +40,33 @@ public final class GherkinCommenter implements CodeDocumentationAwareCommenter {
     return null;
   }
 
-  @Nullable
   @Override
-  public IElementType getLineCommentTokenType() {
+  public @Nullable IElementType getLineCommentTokenType() {
     return GherkinTokenTypes.COMMENT;
   }
 
-  @Nullable
   @Override
-  public IElementType getBlockCommentTokenType() {
+  public @Nullable IElementType getBlockCommentTokenType() {
     return null;
   }
 
-  @Nullable
   @Override
-  public IElementType getDocumentationCommentTokenType() {
+  public @Nullable IElementType getDocumentationCommentTokenType() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDocumentationCommentPrefix() {
+  public @Nullable String getDocumentationCommentPrefix() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDocumentationCommentLinePrefix() {
+  public @Nullable String getDocumentationCommentLinePrefix() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDocumentationCommentSuffix() {
+  public @Nullable String getDocumentationCommentSuffix() {
     return null;
   }
 

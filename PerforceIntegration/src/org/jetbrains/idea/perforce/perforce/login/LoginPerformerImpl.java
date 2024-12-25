@@ -20,19 +20,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginPerformerImpl implements LoginPerformer {
-  private final static Logger LOG = Logger.getInstance(LoginPerformerImpl.class);
-  @NonNls private static final String LOGGED_IN_MESSAGE = "logged in";
-  @NonNls private static final String NAVIGATE_MESSAGE = "Navigate to URL";
-  @NonNls private final static String CONNECT_FAILED = "Connect to server failed; check $P4PORT.";
-  @NonNls private final static String CONNECTION_REFUSED = "Connection refused";
-  @NonNls private final static String SSO_REQUIRED = "ssoAuth required";
-  @NonNls private final static String SSO_OPTIONAL = "ssoAuth optional";
-  @NonNls private final static String PASSWORD_DELETED = "Password deleted";
-  @NonNls private final static String PASSWORD_UPDATED = "Password updated";
+  private static final Logger LOG = Logger.getInstance(LoginPerformerImpl.class);
+  private static final @NonNls String LOGGED_IN_MESSAGE = "logged in";
+  private static final @NonNls String NAVIGATE_MESSAGE = "Navigate to URL";
+  private static final @NonNls String CONNECT_FAILED = "Connect to server failed; check $P4PORT.";
+  private static final @NonNls String CONNECTION_REFUSED = "Connection refused";
+  private static final @NonNls String SSO_REQUIRED = "ssoAuth required";
+  private static final @NonNls String SSO_OPTIONAL = "ssoAuth optional";
+  private static final @NonNls String PASSWORD_DELETED = "Password deleted";
+  private static final @NonNls String PASSWORD_UPDATED = "Password updated";
 
   private final P4Connection myConnection;
   private final PerforceSettings mySettings;
-  private final static Pattern ourTicketExpiresPattern =
+  private static final Pattern ourTicketExpiresPattern =
     Pattern.compile("User (.*) ticket expires in\\s+((\\d*)\\s+hours\\s+)?(\\d+)\\s+minutes.*", Pattern.DOTALL);
   private final PerforceConnectionManagerI myConnectionManager;
   // used for single connection case
@@ -72,8 +72,7 @@ public class LoginPerformerImpl implements LoginPerformer {
     }
   }
 
-  @NotNull
-  private static LoginState tryParseTicketExpiresTime(@NotNull String stdOut) {
+  private static @NotNull LoginState tryParseTicketExpiresTime(@NotNull String stdOut) {
     final Matcher matcher = ourTicketExpiresPattern.matcher(stdOut);
     if (matcher.matches()) {
       final String hours = matcher.group(3);
@@ -92,8 +91,7 @@ public class LoginPerformerImpl implements LoginPerformer {
   }
 
   @TestOnly
-  @NotNull
-  public static LoginState parseExpirationTicket(@NotNull String stdOut) {
+  public static @NotNull LoginState parseExpirationTicket(@NotNull String stdOut) {
     return tryParseTicketExpiresTime(stdOut);
   }
 
@@ -108,7 +106,7 @@ public class LoginPerformerImpl implements LoginPerformer {
   }
 
   @Override
-  public LoginState login(@NotNull final String password) {
+  public LoginState login(final @NotNull String password) {
     try {
       final StringBuffer data = new StringBuffer();
       data.append(password);

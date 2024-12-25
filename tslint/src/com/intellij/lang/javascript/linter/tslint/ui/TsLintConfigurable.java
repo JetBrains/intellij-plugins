@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
-  @NonNls public static final String SETTINGS_JAVA_SCRIPT_LINTERS_TSLINT = "settings.javascript.linters.tslint";
+  public static final @NonNls String SETTINGS_JAVA_SCRIPT_LINTERS_TSLINT = "settings.javascript.linters.tslint";
 
   public TsLintConfigurable(@NotNull Project project) {
     super(project, TsLintConfiguration.class, false);
@@ -29,21 +29,18 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
     super(project, TsLintConfiguration.class, fullModeDialog);
   }
 
-  @NotNull
   @Override
-  protected JSLinterView<TsLintState> createView() {
+  protected @NotNull JSLinterView<TsLintState> createView() {
     return new NewTslintView(myProject, getDisplayName(), new TslintPanel(getProject(), isFullModeDialog(), false));
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return SETTINGS_JAVA_SCRIPT_LINTERS_TSLINT;
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return TsLintBundle.message("settings.javascript.linters.tslint.configurable.name");
   }
 
@@ -73,9 +70,8 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
       myPanel = panel;
     }
 
-    @NotNull
     @Override
-    protected TsLintState getStateWithConfiguredAutomatically() {
+    protected @NotNull TsLintState getStateWithConfiguredAutomatically() {
       return TsLintState.DEFAULT
         .withLinterPackage(AutodetectLinterPackage.INSTANCE);
     }
@@ -90,9 +86,8 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
       myPanel.setState(state);
     }
 
-    @NotNull
     @Override
-    protected TsLintState getState() {
+    protected @NotNull TsLintState getState() {
       return myPanel.getState();
     }
   }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -12,19 +13,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class DartDocCommentImpl extends ASTWrapperPsiElement implements DartDocComment {
 
-  public DartDocCommentImpl(@NotNull final ASTNode node) {
+  public DartDocCommentImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
   @Override
-  @Nullable
-  public PsiElement getOwner() {
+  public @Nullable PsiElement getOwner() {
     return null; // todo
   }
 
-  @NotNull
   @Override
-  public IElementType getTokenType() {
+  public @NotNull IElementType getTokenType() {
     return getNode().getElementType();
   }
 

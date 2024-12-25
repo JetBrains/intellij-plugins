@@ -46,13 +46,11 @@ public interface PbSymbolOwner extends PbElement {
   @NotNull
   Map<String, Collection<PbSymbol>> getSymbolMap();
 
-  @NotNull
-  default Collection<PbSymbol> getSymbols() {
+  default @NotNull Collection<PbSymbol> getSymbols() {
     return getSymbolMap().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
   }
 
-  @NotNull
-  default <T> Collection<T> getSymbols(Class<T> type) {
+  default @NotNull <T> Collection<T> getSymbols(Class<T> type) {
     return getSymbols()
         .stream()
         .filter(type::isInstance)
@@ -70,8 +68,7 @@ public interface PbSymbolOwner extends PbElement {
    * @param relativeName the relative descendant name
    * @return a collection of matching symbols
    */
-  @NotNull
-  default Collection<PbSymbol> findSymbols(QualifiedName relativeName) {
+  default @NotNull Collection<PbSymbol> findSymbols(QualifiedName relativeName) {
     QualifiedName childScope = getChildScope();
     if (childScope == null || relativeName == null) {
       return Collections.emptyList();
@@ -85,8 +82,7 @@ public interface PbSymbolOwner extends PbElement {
    *
    * @see #findSymbols(QualifiedName)
    */
-  @NotNull
-  default <T> Collection<T> findSymbols(QualifiedName relativeName, Class<T> type) {
+  default @NotNull <T> Collection<T> findSymbols(QualifiedName relativeName, Class<T> type) {
     return findSymbols(relativeName)
         .stream()
         .filter(type::isInstance)
@@ -95,15 +91,13 @@ public interface PbSymbolOwner extends PbElement {
   }
 
   /** Return direct symbol children with the given name. */
-  @NotNull
-  default Collection<PbSymbol> findSymbols(String name) {
+  default @NotNull Collection<PbSymbol> findSymbols(String name) {
     Collection<PbSymbol> pbSymbols = getSymbolMap().get(name);
     return pbSymbols == null ? List.of() : pbSymbols;
   }
 
   /** Return direct symbol children with the given name and type. */
-  @NotNull
-  default <T> Collection<T> findSymbols(String name, Class<T> type) {
+  default @NotNull <T> Collection<T> findSymbols(String name, Class<T> type) {
     return findSymbols(name)
         .stream()
         .filter(type::isInstance)

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections.model;
 
 import com.intellij.openapi.project.Project;
@@ -26,8 +27,8 @@ public class CreateStepDefinitionFileModel {
   private final @NotNull PsiFile myContext;
 
   public CreateStepDefinitionFileModel(@NotNull PsiFile context,
-                                       @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultNameMap,
-                                       @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap) {
+                                       final @NotNull Map<BDDFrameworkType, String> fileTypeToDefaultNameMap,
+                                       final @NotNull Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap) {
     myContext = context;
     myProject = context.getProject();
     List<FileTypeComboboxItem> myFileTypeList = new ArrayList<>();
@@ -55,7 +56,7 @@ public class CreateStepDefinitionFileModel {
     return myFileName;
   }
 
-  public void setFileName(@NotNull final String fileName) {
+  public void setFileName(final @NotNull String fileName) {
     myFileName = fileName;
   }
 
@@ -67,7 +68,7 @@ public class CreateStepDefinitionFileModel {
     return myDirectory;
   }
 
-  public void setDirectory(@Nullable final String directory) {
+  public void setDirectory(final @Nullable String directory) {
     myDirectory = directory;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.CompilerOptionInfo;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOptionsImpl> implements JpsFlexCompilerOptions {
-  private @NotNull final Map<String, String> myOptions = new HashMap<>();
+  private final @NotNull Map<String, String> myOptions = new HashMap<>();
   private @NotNull ResourceFilesMode myResourceFilesMode = ResourceFilesMode.All;
   private @NotNull String myFilesToIncludeInSWC = "";
   private @NotNull String myAdditionalConfigFilePath = "";
@@ -35,57 +35,50 @@ public final class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexComp
   }
 
   @Override
-  @NotNull
-  public JpsFlexCompilerOptionsImpl createCopy() {
+  public @NotNull JpsFlexCompilerOptionsImpl createCopy() {
     return new JpsFlexCompilerOptionsImpl(this);
   }
 
 // ------------------------------------
 
   @Override
-  @Nullable
-  public String getOption(@NotNull String name) {
+  public @Nullable String getOption(@NotNull String name) {
     return myOptions.get(name);
   }
 
   @Override
-  @NotNull
-  public Map<String, String> getAllOptions() {
+  public @NotNull Map<String, String> getAllOptions() {
     return Collections.unmodifiableMap(myOptions);
   }
 
   @Override
-  @NotNull
-  public ResourceFilesMode getResourceFilesMode() {
+  public @NotNull ResourceFilesMode getResourceFilesMode() {
     return myResourceFilesMode;
   }
 
   @Override
-  public void setResourceFilesMode(@NotNull final ResourceFilesMode resourceFilesMode) {
+  public void setResourceFilesMode(final @NotNull ResourceFilesMode resourceFilesMode) {
     myResourceFilesMode = resourceFilesMode;
   }
 
   @Override
-  @NotNull
-  public Collection<String> getFilesToIncludeInSWC() {
+  public @NotNull Collection<String> getFilesToIncludeInSWC() {
     if (myFilesToIncludeInSWC.isEmpty()) return Collections.emptyList();
     return StringUtil.split(myFilesToIncludeInSWC, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
-  @NotNull
-  public String getAdditionalConfigFilePath() {
+  public @NotNull String getAdditionalConfigFilePath() {
     return myAdditionalConfigFilePath;
   }
 
   @Override
-  @NotNull
-  public String getAdditionalOptions() {
+  public @NotNull String getAdditionalOptions() {
     return myAdditionalOptions;
   }
 
   @Override
-  public void setAdditionalOptions(@NotNull final String additionalOptions) {
+  public void setAdditionalOptions(final @NotNull String additionalOptions) {
     myAdditionalOptions = additionalOptions;
   }
 

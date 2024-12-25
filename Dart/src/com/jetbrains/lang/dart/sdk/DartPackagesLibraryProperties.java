@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.roots.libraries.LibraryProperties;
@@ -18,24 +19,22 @@ public class DartPackagesLibraryProperties extends LibraryProperties<DartPackage
     myPackageNameToDirsMap = new TreeMap<>();
   }
 
-  @NotNull
   @MapAnnotation(surroundWithTag = false)
-  public Map<String, List<String>> getPackageNameToDirsMap() {
+  public @NotNull Map<String, List<String>> getPackageNameToDirsMap() {
     return myPackageNameToDirsMap;
   }
 
-  public void setPackageNameToDirsMap(@NotNull final Map<String, List<String>> packageNameToDirsMap) {
+  public void setPackageNameToDirsMap(final @NotNull Map<String, List<String>> packageNameToDirsMap) {
     myPackageNameToDirsMap = packageNameToDirsMap;
   }
 
   @Override
-  @Nullable
-  public DartPackagesLibraryProperties getState() {
+  public @Nullable DartPackagesLibraryProperties getState() {
     return this;
   }
 
   @Override
-  public void loadState(@NotNull final DartPackagesLibraryProperties state) {
+  public void loadState(final @NotNull DartPackagesLibraryProperties state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

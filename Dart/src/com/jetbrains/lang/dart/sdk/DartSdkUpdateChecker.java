@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.BrowserUtil;
@@ -36,7 +36,7 @@ public final class DartSdkUpdateChecker {
 
   private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-+.]*)");
 
-  public static void mayBeCheckForSdkUpdate(@NotNull final Project project) {
+  public static void mayBeCheckForSdkUpdate(final @NotNull Project project) {
     if (Registry.is("dart.projects.without.pubspec", false)) return;
 
     final DartSdkUpdateOption option = DartSdkUpdateOption.getDartSdkUpdateOption();
@@ -68,8 +68,7 @@ public final class DartSdkUpdateChecker {
     });
   }
 
-  @Nullable
-  static SdkUpdateInfo getSdkUpdateInfo(@NotNull final DartSdkUpdateOption updateOption) {
+  static @Nullable SdkUpdateInfo getSdkUpdateInfo(final @NotNull DartSdkUpdateOption updateOption) {
     boolean checkForStable = updateOption == DartSdkUpdateOption.Stable || updateOption == DartSdkUpdateOption.StableAndDev;
     boolean checkForDev = updateOption == DartSdkUpdateOption.StableAndDev;
 
@@ -93,7 +92,7 @@ public final class DartSdkUpdateChecker {
     return sdkUpdateInfo;
   }
 
-  public static int compareDartSdkVersions(@NotNull final String version1, @NotNull final String version2) {
+  public static int compareDartSdkVersions(final @NotNull String version1, final @NotNull String version2) {
     // Dart SDK follows Semantic Versioning. There are 3 kind of versions:
     // stable release like "1.11.0"
     // dev preview like "1.11.0-dev.3.0"
@@ -121,8 +120,7 @@ public final class DartSdkUpdateChecker {
     return StringUtil.compareVersionNumbers(remainder1, remainder2);
   }
 
-  @Nullable
-  private static Couple<String> getMajorMinorPatchAndRemainder(@NotNull final String semanticVersion) {
+  private static @Nullable Couple<String> getMajorMinorPatchAndRemainder(final @NotNull String semanticVersion) {
     final Matcher matcher = SEMANTIC_VERSION_PATTERN.matcher(semanticVersion);
     if (matcher.matches()) {
       return Couple.of(matcher.group(1), matcher.group(2));
@@ -130,10 +128,10 @@ public final class DartSdkUpdateChecker {
     return null;
   }
 
-  private static void notifySdkUpdateAvailable(@NotNull final Project project,
-                                               @NotNull final String currentSdkVersion,
-                                               @NotNull final String availableSdkVersion,
-                                               @NotNull final String downloadUrl) {
+  private static void notifySdkUpdateAvailable(final @NotNull Project project,
+                                               final @NotNull String currentSdkVersion,
+                                               final @NotNull String availableSdkVersion,
+                                               final @NotNull String downloadUrl) {
     final String title = DartBundle.message("dart.sdk.update.title");
     final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
@@ -151,8 +149,7 @@ public final class DartSdkUpdateChecker {
     }).notify(project);
   }
 
-  @Nullable
-  private static SdkUpdateInfo getSdkUpdateInfo(@NotNull final String updateCheckUrl, @NotNull final String sdkDownloadUrl) {
+  private static @Nullable SdkUpdateInfo getSdkUpdateInfo(final @NotNull String updateCheckUrl, final @NotNull String sdkDownloadUrl) {
     try {
       // { "date"     : "2015-05-28",
       //   "version"  : "1.11.0-dev.3.0",
@@ -169,10 +166,10 @@ public final class DartSdkUpdateChecker {
   }
 
   static class SdkUpdateInfo {
-    @NotNull final String myDownloadUrl;
-    @NotNull final String myVersion;
+    final @NotNull String myDownloadUrl;
+    final @NotNull String myVersion;
 
-    SdkUpdateInfo(@NotNull final String downloadUrl, @NotNull final String version) {
+    SdkUpdateInfo(final @NotNull String downloadUrl, final @NotNull String version) {
       myDownloadUrl = downloadUrl;
       myVersion = version;
     }

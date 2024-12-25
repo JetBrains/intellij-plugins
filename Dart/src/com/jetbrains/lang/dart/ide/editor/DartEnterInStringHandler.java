@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
@@ -21,11 +22,11 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 public final class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
 
   @Override
-  public Result preprocessEnter(@NotNull final PsiFile file,
-                                @NotNull final Editor editor,
-                                @NotNull final Ref<Integer> caretOffsetRef,
+  public Result preprocessEnter(final @NotNull PsiFile file,
+                                final @NotNull Editor editor,
+                                final @NotNull Ref<Integer> caretOffsetRef,
                                 final @NotNull Ref<Integer> caretAdvanceRef,
-                                @NotNull final DataContext dataContext,
+                                final @NotNull DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
     if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;
 
@@ -74,8 +75,7 @@ public final class DartEnterInStringHandler extends EnterHandlerDelegateAdapter 
     return Result.Continue;
   }
 
-  @Nullable
-  private static String getOpeningQuoteText(@NotNull final ASTNode node) {
+  private static @Nullable String getOpeningQuoteText(final @NotNull ASTNode node) {
     ASTNode prev = node.getTreePrev();
     while (prev != null) {
       if (prev.getElementType() == OPEN_QUOTE) {
@@ -86,11 +86,11 @@ public final class DartEnterInStringHandler extends EnterHandlerDelegateAdapter 
     return null;
   }
 
-  private static void breakString(@NotNull final String startQuote,
-                                  @NotNull final String endQuote,
-                                  @NotNull final Ref<Integer> caretOffsetRef,
-                                  @NotNull final Ref<Integer> caretAdvanceRef,
-                                  @NotNull final Document document) {
+  private static void breakString(final @NotNull String startQuote,
+                                  final @NotNull String endQuote,
+                                  final @NotNull Ref<Integer> caretOffsetRef,
+                                  final @NotNull Ref<Integer> caretAdvanceRef,
+                                  final @NotNull Document document) {
     // The final effect is to insert matching close-quote, newline, indent, matching open-quote.
     int caretOffset = caretOffsetRef.get().intValue();
     int caretAdvance = caretAdvanceRef.get().intValue();

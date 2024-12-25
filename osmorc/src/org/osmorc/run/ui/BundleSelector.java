@@ -140,20 +140,17 @@ public class BundleSelector extends DialogWrapper {
     return new DefaultTreeModel(root);
   }
 
-  @Nullable
   @Override
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     return myContentPane;
   }
 
-  @Nullable
   @Override
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return myBundleTree;
   }
 
-  @NotNull
-  public List<SelectedBundle> getSelectedBundles() {
+  public @NotNull List<SelectedBundle> getSelectedBundles() {
     TreePath[] paths = myBundleTree.getSelectionPaths();
     if (paths == null) return ContainerUtil.emptyList();
 

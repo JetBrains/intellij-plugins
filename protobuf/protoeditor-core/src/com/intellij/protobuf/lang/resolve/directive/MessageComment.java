@@ -18,9 +18,6 @@ package com.intellij.protobuf.lang.resolve.directive;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.psi.ProtoSymbolPath;
@@ -30,6 +27,9 @@ import com.intellij.protobuf.lang.resolve.PbSymbolLookupElement;
 import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
 import com.intellij.protobuf.lang.resolve.ResolveFilters;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,9 +47,8 @@ class MessageComment extends SchemaComment {
     this.fileComment = comment;
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     List<PsiReference> references = getAllReferences();
     if (references.isEmpty()) {
       return null;

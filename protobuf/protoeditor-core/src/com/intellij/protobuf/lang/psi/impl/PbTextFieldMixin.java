@@ -16,8 +16,8 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.psi.*;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,9 +30,8 @@ abstract class PbTextFieldMixin extends PbTextElementBase implements PbTextField
     super(node);
   }
 
-  @NotNull
   @Override
-  public List<PbTextElement> getValues() {
+  public @NotNull List<PbTextElement> getValues() {
     PbTextValueList valueList = getValueList();
     PsiElement parent = valueList != null ? valueList : this;
     return Stream.of(parent.getChildren())

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirSigningOptions;
@@ -36,8 +36,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public JpsAirSigningOptionsImpl createCopy() {
+  public @NotNull JpsAirSigningOptionsImpl createCopy() {
     return new JpsAirSigningOptionsImpl(this);
   }
 
@@ -54,8 +53,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public String getProvisioningProfilePath() {
+  public @NotNull String getProvisioningProfilePath() {
     return myProvisioningProfilePath;
   }
 
@@ -65,8 +63,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public String getKeystorePath() {
+  public @NotNull String getKeystorePath() {
     return myKeystorePath;
   }
 
@@ -76,8 +73,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public String getKeystoreType() {
+  public @NotNull String getKeystoreType() {
     return myKeystoreType;
   }
 
@@ -87,8 +83,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public String getKeyAlias() {
+  public @NotNull String getKeyAlias() {
     return myKeyAlias;
   }
 
@@ -98,8 +93,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public String getProvider() {
+  public @NotNull String getProvider() {
     return myProvider;
   }
 
@@ -109,8 +103,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
   }
 
   @Override
-  @NotNull
-  public String getTsa() {
+  public @NotNull String getTsa() {
     return myTsa;
   }
 
@@ -151,8 +144,7 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
     }
 
     @Override
-    @NotNull
-    public JpsAirSigningOptions create() {
+    public @NotNull JpsAirSigningOptions create() {
       return new JpsAirSigningOptionsImpl();
     }
   }

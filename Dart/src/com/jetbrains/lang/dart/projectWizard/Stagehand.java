@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.ExecutionException;
@@ -86,9 +86,9 @@ public class Stagehand {
     return new CapturingProcessHandler(command).runProcess(timeoutInSeconds * 1000, false);
   }
 
-  public void generateInto(@NotNull final String sdkRoot,
-                           @NotNull final VirtualFile projectDirectory,
-                           @NotNull final String templateId) throws ExecutionException {
+  public void generateInto(final @NotNull String sdkRoot,
+                           final @NotNull VirtualFile projectDirectory,
+                           final @NotNull String templateId) throws ExecutionException {
     ProcessOutput output = isUseDartCreate(sdkRoot)
                            ? runDartCreate(sdkRoot, projectDirectory.getParent().getPath(), 30, "--force", "--no-pub", "--template",
                                            templateId, projectDirectory.getName())
@@ -100,7 +100,7 @@ public class Stagehand {
     }
   }
 
-  public List<StagehandDescriptor> getAvailableTemplates(@NotNull final String sdkRoot) {
+  public List<StagehandDescriptor> getAvailableTemplates(final @NotNull String sdkRoot) {
     try {
       ProcessOutput output = isUseDartCreate(sdkRoot)
                              ? runDartCreate(sdkRoot, null, 10, "--list-templates")
@@ -140,7 +140,7 @@ public class Stagehand {
     return EMPTY;
   }
 
-  public void install(@NotNull final String sdkRoot) {
+  public void install(final @NotNull String sdkRoot) {
     if (isUseDartCreate(sdkRoot)) return;
 
     try {

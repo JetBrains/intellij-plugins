@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -47,7 +47,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent event) {
+  public void actionPerformed(final @NotNull AnActionEvent event) {
     final Project project = event.getProject();
     if (project == null) return;
 
@@ -71,20 +71,18 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     }
   }
 
-  @NotNull
-  protected abstract @Nls String getActionTextForEditor();
+  protected abstract @NotNull @Nls String getActionTextForEditor();
 
-  @NotNull
-  protected abstract @Nls String getActionTextForFiles();
+  protected abstract @NotNull @Nls String getActionTextForFiles();
 
-  protected abstract void runOverEditor(@NotNull final Project project,
-                                        @NotNull final Editor editor,
-                                        @NotNull final PsiFile psiFile);
+  protected abstract void runOverEditor(final @NotNull Project project,
+                                        final @NotNull Editor editor,
+                                        final @NotNull PsiFile psiFile);
 
-  protected abstract void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles);
+  protected abstract void runOverFiles(final @NotNull Project project, final @NotNull List<VirtualFile> dartFiles);
 
   @Override
-  public void update(@NotNull final AnActionEvent event) {
+  public void update(final @NotNull AnActionEvent event) {
     final Presentation presentation = event.getPresentation();
     final Project project = event.getProject();
     if (project == null) {
@@ -118,7 +116,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     presentation.setText(getActionTextForFiles());
   }
 
-  public static void showHintLater(@NotNull final Editor editor, @NotNull final @NlsContexts.HintText String text, final boolean error) {
+  public static void showHintLater(final @NotNull Editor editor, final @NotNull @NlsContexts.HintText String text, final boolean error) {
     ApplicationManager.getApplication().invokeLater(() -> {
       final JComponent component = error ? HintUtil.createErrorLabel(text) : HintUtil.createInformationLabel(text);
       final LightweightHint hint = new LightweightHint(component);
@@ -128,9 +126,8 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     }, ModalityState.nonModal(), o -> editor.isDisposed() || !editor.getComponent().isShowing());
   }
 
-  @NotNull
-  private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project,
-                                                             final VirtualFile @NotNull [] filesAndDirs) {
+  private static @NotNull List<VirtualFile> getApplicableVirtualFiles(final @NotNull Project project,
+                                                                      final VirtualFile @NotNull [] filesAndDirs) {
     final List<VirtualFile> result = new SmartList<>();
 
     GlobalSearchScope dirScope = null;
@@ -161,7 +158,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     return result;
   }
 
-  private static boolean isApplicableFile(@NotNull final Project project, @Nullable final VirtualFile file) {
+  private static boolean isApplicableFile(final @NotNull Project project, final @Nullable VirtualFile file) {
     if (file == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return false;
     if (!ProjectFileIndex.getInstance(project).isInContent(file)) return false;
 
@@ -172,7 +169,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     return true;
   }
 
-  private static boolean mayHaveApplicableDartFiles(@NotNull final Project project,
+  private static boolean mayHaveApplicableDartFiles(final @NotNull Project project,
                                                     final VirtualFile @NotNull [] files) {
     for (VirtualFile fileOrDir : files) {
       if (!fileOrDir.isDirectory() && isApplicableFile(project, fileOrDir)) {

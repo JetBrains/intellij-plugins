@@ -79,15 +79,13 @@ public class YeomanProjectGeneratorRunPanel implements YeomanProjectGeneratorSub
     }
   }
 
-  @Nullable
   @Override
-  public String validate() {
+  public @Nullable String validate() {
     return null;
   }
 
   @Override
-  @NotNull
-  public YeomanProjectGeneratorSubPanel next(@Nullable ActionEvent e) {
+  public @NotNull YeomanProjectGeneratorSubPanel next(@Nullable ActionEvent e) {
     if (!isReadyToClose()) {
       myIsEnable = false;
       myOwner.setMainButtonEnable(false);

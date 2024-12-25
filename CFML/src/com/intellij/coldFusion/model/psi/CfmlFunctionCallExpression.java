@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
@@ -50,14 +50,12 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
       myClassName = className;
     }
 
-    @Nullable
-    public PsiType getRawType() {
+    public @Nullable PsiType getRawType() {
       return CfmlPsiUtil.getTypeByName(myClassName, getProject());
     }
   }
 
-  @Nullable
-  public PsiType getExternalType() {
+  public @Nullable PsiType getExternalType() {
     String functionName = getFunctionName();
 
     final CfmlReference referenceExpression = getReferenceExpression();
@@ -125,8 +123,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
   }
 
   @Override
-  @Nullable
-  public PsiType getPsiType() {
+  public @Nullable PsiType getPsiType() {
     PsiType externalType = getExternalType();
 
     if (externalType == null) {
@@ -186,14 +183,12 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
   }
 
   @Override
-  @Nullable
-  public CfmlReference getReferenceExpression() {
+  public @Nullable CfmlReference getReferenceExpression() {
     return findChildByClass(CfmlReferenceExpression.class);
   }
 
   @Override
-  @Nullable
-  public CfmlArgumentList findArgumentList() {
+  public @Nullable CfmlArgumentList findArgumentList() {
     return findChildByClass(CfmlArgumentList.class);
   }
 

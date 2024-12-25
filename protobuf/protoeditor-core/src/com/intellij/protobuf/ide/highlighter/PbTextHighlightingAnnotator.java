@@ -19,17 +19,17 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.ProtoNumberValue.SourceType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
 /** A small highlighting annotator for text format elements. */
 public class PbTextHighlightingAnnotator implements Annotator {
 
   @Override
-  public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
+  public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     element.accept(
         new PbTextVisitor() {
           @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.plugins.drools.lang.psi.searchers;
 
@@ -24,8 +24,7 @@ import java.util.Collection;
 public final class DroolsClassFinder extends PsiElementFinder {
 
   @Override
-  @Nullable
-  public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+  public @Nullable PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
     if (scope.getProject() == null) return null;
 
     String packageName = StringUtil.getPackageName(qualifiedName);

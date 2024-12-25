@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.formatter;
 
 
@@ -17,9 +17,8 @@ import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.ge
 
 public final class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return CfmlLanguage.INSTANCE;
   }
 
@@ -127,9 +126,8 @@ public final class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeSty
     commonSettings.SPACE_AFTER_TYPE_CAST = false;
   }
 
-  @Nullable
   @Override
-  public IndentOptionsEditor getIndentOptionsEditor() {
+  public @Nullable IndentOptionsEditor getIndentOptionsEditor() {
     return new SmartIndentOptionsEditor();
   }
 

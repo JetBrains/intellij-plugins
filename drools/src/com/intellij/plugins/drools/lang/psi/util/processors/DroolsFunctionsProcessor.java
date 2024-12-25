@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
@@ -33,7 +33,7 @@ public final class DroolsFunctionsProcessor implements DroolsDeclarationsProcess
     return true;
   }
 
-  public static LightMethodBuilder createLightMethodBuilder(@NotNull final DroolsFunctionStatement function) {
+  public static LightMethodBuilder createLightMethodBuilder(final @NotNull DroolsFunctionStatement function) {
     return new DroolsFunctionLightMethodBuilder(function);
   }
 }

@@ -178,7 +178,7 @@ public class Angular2TemplateReferencesProvider extends PsiReferenceProvider {
 
   public static final class Angular2TemplateReferenceData {
     private final VirtualFile targetFile;
-    @Nullable private final Collection<VirtualFile> contexts;
+    private final @Nullable Collection<VirtualFile> contexts;
 
     private Angular2TemplateReferenceData(@NotNull PsiFileSystemItem targetFile,
                                           @Nullable Collection<PsiFileSystemItem> contexts) {

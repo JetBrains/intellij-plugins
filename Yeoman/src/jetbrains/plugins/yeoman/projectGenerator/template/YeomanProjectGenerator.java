@@ -1,7 +1,6 @@
 package jetbrains.plugins.yeoman.projectGenerator.template;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.ide.util.projectWizard.CustomStepProjectGenerator;
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil;
@@ -49,28 +48,25 @@ public class YeomanProjectGenerator extends DirectoryProjectGeneratorBase<Yeoman
     public YeomanInstalledGeneratorInfo info;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return YeomanBundle.message("settings.yeoman.name");
   }
 
-  @Nullable
   @Override
-  public Icon getLogo() {
+  public @Nullable Icon getLogo() {
     return YeomanIcons.Yeoman;
   }
 
   @Override
   public void generateProject(@NotNull Project project,
-                              @NotNull final VirtualFile baseDir,
-                              @NotNull final Settings settings,
+                              final @NotNull VirtualFile baseDir,
+                              final @NotNull Settings settings,
                               @NotNull Module module) {
     generateProject(project, baseDir, settings);
   }
 
-  public static void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir, @Nullable final Settings settings) {
+  public static void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir, final @Nullable Settings settings) {
     assert settings != null;
     final File baseDirFile = VfsUtilCore.virtualToIoFile(baseDir);
     if (ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
@@ -130,7 +126,7 @@ public class YeomanProjectGenerator extends DirectoryProjectGeneratorBase<Yeoman
     }
   }
 
-  private static void installAllDepends(@NotNull final Project project, @NotNull final File dir) {
+  private static void installAllDepends(final @NotNull Project project, final @NotNull File dir) {
     final GeneralCommandLine npmInstallCommandLine = YeomanCommandLineUtil.createNpmInstallCommandLine(project, dir);
     installDepends(project,
                    npmInstallCommandLine,
@@ -143,8 +139,8 @@ public class YeomanProjectGenerator extends DirectoryProjectGeneratorBase<Yeoman
                    });
   }
 
-  private static void installDepends(@NotNull final Project project,
-                                     @Nullable final GeneralCommandLine line,
+  private static void installDepends(final @NotNull Project project,
+                                     final @Nullable GeneralCommandLine line,
                                      @NotNull @Nls String title,
                                      final Runnable success) {
     if (line == null) return;

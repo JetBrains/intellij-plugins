@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.psi.util.PsiTreeUtil;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class DartParameterDescription {
-  @NotNull private final String myText;
+  private final @NotNull String myText;
 
   public DartParameterDescription(@NotNull String text) {
     myText = text;
@@ -32,8 +32,7 @@ public class DartParameterDescription {
     return result;
   }
 
-  @NotNull
-  public String getText() {
+  public @NotNull String getText() {
     return myText;
   }
 

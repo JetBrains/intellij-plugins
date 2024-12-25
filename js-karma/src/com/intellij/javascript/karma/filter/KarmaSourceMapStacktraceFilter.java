@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.filter;
 
 import com.intellij.execution.filters.AbstractFileHyperlinkFilter;
@@ -26,9 +27,8 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
     myBaseFilter = baseFilter;
   }
 
-  @NotNull
   @Override
-  public List<FileHyperlinkRawData> parse(@NotNull String line) {
+  public @NotNull List<FileHyperlinkRawData> parse(@NotNull String line) {
     int separatorInd = line.indexOf(SEPARATOR);
     if (separatorInd >= 0) {
       String first = line.substring(0, separatorInd);
@@ -45,9 +45,8 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
     return myBaseFilter.parse(line);
   }
 
-  @Nullable
   @Override
-  public VirtualFile findFile(@NotNull String filePath) {
+  public @Nullable VirtualFile findFile(@NotNull String filePath) {
     VirtualFile file = super.findFile(filePath);
     if (file == null && filePath.startsWith("/tmp/")) {
       return super.findFile(StringUtil.trimStart(filePath, "/tmp/"));

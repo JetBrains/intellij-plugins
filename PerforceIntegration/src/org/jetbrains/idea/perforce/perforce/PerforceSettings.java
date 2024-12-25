@@ -186,14 +186,12 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     return myProject;
   }
 
-  @Nullable
   @Transient
-  public String getPasswd() {
+  public @Nullable String getPasswd() {
     return PasswordSafe.getInstance().getPassword(new CredentialAttributes(getClass().getName(), PERFORCE_SETTINGS_PASSWORD_KEY));
   }
 
-  @Nullable
-  public String requestForPassword(P4Connection connection) {
+  public @Nullable String requestForPassword(P4Connection connection) {
     String prompt = connection == null
                ? PerforceBundle.message("message.text.perforce.command.failed.enter.password.v2")
                : PerforceBundle.message("message.text.perforce.command.failed.withdir.enter.password.v2", connection.getWorkingDir());
@@ -206,16 +204,15 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     return askUpdatePassword(myProject, attemptsMachine, new CredentialAttributes(getClass().getName(), PERFORCE_SETTINGS_PASSWORD_KEY));
   }
 
-  public long getServerVersion(@Nullable final P4Connection connection) throws VcsException {
+  public long getServerVersion(final @Nullable P4Connection connection) throws VcsException {
     return PerforceManager.getInstance(myProject).getServerVersionYear(connection);
   }
 
-  public long getServerVersionCached(@Nullable final P4Connection connection) throws VcsException {
+  public long getServerVersionCached(final @Nullable P4Connection connection) throws VcsException {
     return PerforceManager.getInstance(myProject).getServerVersionYearCached(connection);
   }
 
-  @Nullable
-  public ServerVersion getServerFullVersion(@Nullable final P4Connection connection) throws VcsException {
+  public @Nullable ServerVersion getServerFullVersion(final @Nullable P4Connection connection) throws VcsException {
     return PerforceManager.getInstance(myProject).getServerVersion(connection);
   }
 
@@ -334,18 +331,15 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     }
   }
 
-  @Nullable
-  public P4Connection getConnectionForFile(@NotNull P4File file) {
+  public @Nullable P4Connection getConnectionForFile(@NotNull P4File file) {
     return PerforceConnectionManager.getInstance(getProject()).getConnectionForFile(file);
   }
 
-  @Nullable
-  public P4Connection getConnectionForFile(@NotNull File file) {
+  public @Nullable P4Connection getConnectionForFile(@NotNull File file) {
     return PerforceConnectionManager.getInstance(getProject()).getConnectionForFile(file);
   }
 
-  @Nullable
-  public P4Connection getConnectionForFile(@NotNull VirtualFile file) {
+  public @Nullable P4Connection getConnectionForFile(@NotNull VirtualFile file) {
     return PerforceConnectionManager.getInstance(getProject()).getConnectionForFile(file);
   }
 
@@ -366,7 +360,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
       .unmodifiableCollection(new HashSet<>(PerforceConnectionManager.getInstance(getProject()).getAllConnections().values()));
   }
 
-  public ParticularConnectionSettings getSettings(@NotNull final P4Connection connection) {
+  public ParticularConnectionSettings getSettings(final @NotNull P4Connection connection) {
     ConnectionId id = connection.getId();
     if (!myConnectionSettings.containsKey(id)) {
       myConnectionSettings.put(id, new ParticularConnectionSettings());
@@ -397,9 +391,8 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     return SERVER_TIMEOUT;
   }
 
-  @NotNull
   @Override
-  public String getCharsetName() {
+  public @NotNull String getCharsetName() {
     return CHARSET;
   }
 }

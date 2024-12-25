@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.util;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -13,8 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TestUtil {
 
-  @Nullable
-  public static String findGroupOrTestName(@Nullable final DartCallExpression expression) {
+  public static @Nullable String findGroupOrTestName(final @Nullable DartCallExpression expression) {
     String testName;
     final DartArguments arguments = expression == null ? null : expression.getArguments();
     final DartArgumentList dartArgumentList = arguments == null ? null : arguments.getArgumentList();
@@ -26,8 +25,7 @@ public final class TestUtil {
     return testName;
   }
 
-  @Nullable
-  public static PsiElement findTestElement(@Nullable PsiElement element) {
+  public static @Nullable PsiElement findTestElement(@Nullable PsiElement element) {
     DartCallExpression callExpression = PsiTreeUtil.getParentOfType(element, DartCallExpression.class, false);
     while (callExpression != null) {
       if (isGroup(callExpression) || isTest(callExpression)) {
@@ -38,15 +36,15 @@ public final class TestUtil {
     return element != null ? element.getContainingFile() : null;
   }
 
-  public static boolean isTest(@NotNull final DartCallExpression expression) {
+  public static boolean isTest(final @NotNull DartCallExpression expression) {
     return checkCalledFunctionName(expression, "test");
   }
 
-  public static boolean isGroup(@NotNull final DartCallExpression expression) {
+  public static boolean isGroup(final @NotNull DartCallExpression expression) {
     return checkCalledFunctionName(expression, "group");
   }
 
-  private static boolean checkCalledFunctionName(@NotNull final DartCallExpression callExpression, @NotNull final String expectedName) {
+  private static boolean checkCalledFunctionName(final @NotNull DartCallExpression callExpression, final @NotNull String expectedName) {
     DartExpression expression = callExpression.getExpression();
     return expression != null && expectedName.equals(expression.getText());
   }

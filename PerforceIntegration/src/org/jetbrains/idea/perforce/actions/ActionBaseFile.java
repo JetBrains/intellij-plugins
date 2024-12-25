@@ -46,11 +46,11 @@ public abstract class ActionBaseFile extends DumbAwareAction {
 
   private static final Logger LOG = Logger.getInstance(ActionBaseFile.class);
 
-  protected final static String[] YES_NO_OPTIONS = {CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText()};
-  protected final static String[] YES_NO_CANCELREST_OPTIONS = {CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
+  protected static final String[] YES_NO_OPTIONS = {CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText()};
+  protected static final String[] YES_NO_CANCELREST_OPTIONS = {CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
     PerforceBundle.message("button.text.cancel.rest")};
 
-  protected static void log(@NonNls final String msg) {
+  protected static void log(final @NonNls String msg) {
     LOG.debug(msg);
   }
 
@@ -85,7 +85,7 @@ public abstract class ActionBaseFile extends DumbAwareAction {
                                         final List<VirtualFile> filesToPostProcess) throws CancelActionException, VcsException;
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent event) {
+  public void actionPerformed(final @NotNull AnActionEvent event) {
     Project project = event.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
     VirtualFile[] vFiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);

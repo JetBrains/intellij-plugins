@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.intellij.codeInsight.template.Expression;
@@ -11,9 +12,8 @@ public final class DartSuggestVariableNameMacro extends DartMacroBase {
     return "dartSuggestVariableName";
   }
 
-  @NotNull
   @Override
-  public String getDefaultValue() {
+  public @NotNull String getDefaultValue() {
     return "o";
   }
 

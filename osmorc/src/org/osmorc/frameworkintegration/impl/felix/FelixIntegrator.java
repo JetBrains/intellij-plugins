@@ -40,15 +40,13 @@ public final class FelixIntegrator extends AbstractFrameworkIntegrator {
     super(new FelixInstanceManager());
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
-  @NotNull
   @Override
-  public FrameworkRunner createFrameworkRunner() {
+  public @NotNull FrameworkRunner createFrameworkRunner() {
     return new FelixRunner();
   }
 

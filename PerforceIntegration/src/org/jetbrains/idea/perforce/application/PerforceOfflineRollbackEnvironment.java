@@ -38,14 +38,12 @@ public class PerforceOfflineRollbackEnvironment extends DefaultRollbackEnvironme
   }
 
   @Override
-  @Nls(capitalization = Nls.Capitalization.Title)
-  @NotNull
-  public String getRollbackOperationName() {
+  public @Nls(capitalization = Nls.Capitalization.Title) @NotNull String getRollbackOperationName() {
     return PerforceBundle.message("operation.name.revert");
   }
 
   @Override
-  public void rollbackChanges(List<? extends Change> changes, final List<VcsException> _exceptions, @NotNull final RollbackProgressListener listener) {
+  public void rollbackChanges(List<? extends Change> changes, final List<VcsException> _exceptions, final @NotNull RollbackProgressListener listener) {
     final List<? super VcsException> exceptions = Collections.synchronizedList(_exceptions);
 
     List<Runnable> actions = new ArrayList<>();

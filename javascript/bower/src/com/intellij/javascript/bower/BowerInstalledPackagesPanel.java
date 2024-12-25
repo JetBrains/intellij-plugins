@@ -34,7 +34,7 @@ public class BowerInstalledPackagesPanel extends InstalledPackagesPanel {
     super.updatePackages(packageManagementService);
   }
 
-  private static void saveBowerConfig(@NotNull final BowerPackagingService bowerService) {
+  private static void saveBowerConfig(final @NotNull BowerPackagingService bowerService) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       File file;
       file = new File(bowerService.getSettings().getBowerJsonPath());
@@ -51,9 +51,8 @@ public class BowerInstalledPackagesPanel extends InstalledPackagesPanel {
     });
   }
 
-  @NotNull
   @Override
-  protected ManagePackagesDialog createManagePackagesDialog() {
+  protected @NotNull ManagePackagesDialog createManagePackagesDialog() {
     ManagePackagesDialog dialog = super.createManagePackagesDialog();
     dialog.setOptionsText("--save");
     return dialog;

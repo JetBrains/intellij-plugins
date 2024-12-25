@@ -36,11 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PerforceIntegrateEnvironment extends AbstractUpdateEnvironment {
-  @NonNls private static final Map<String, String> ourPatternToGroupId = new HashMap<>();
+  private static final @NonNls Map<String, String> ourPatternToGroupId = new HashMap<>();
 
-  @NonNls private static final String INTEGRATED = "INTEGRATED";
-  @NonNls private static final String CANT_INTEGRATE = "CANT_INTEGRATE";
-  @NonNls @VisibleForTesting public static final String BRANCHED = "BRANCHED";
+  private static final @NonNls String INTEGRATED = "INTEGRATED";
+  private static final @NonNls String CANT_INTEGRATE = "CANT_INTEGRATE";
+  @VisibleForTesting public static final @NonNls String BRANCHED = "BRANCHED";
 
   static {
     ourPatternToGroupId.put(" - integrate from ", INTEGRATED);

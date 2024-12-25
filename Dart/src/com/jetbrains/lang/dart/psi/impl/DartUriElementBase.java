@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -17,13 +18,12 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
 
   private static final Condition<PsiFileSystemItem> DART_FILE_OR_DIR_FILTER = item -> item.isDirectory() || item instanceof DartFile;
 
-  public DartUriElementBase(@NotNull final ASTNode node) {
+  public DartUriElementBase(final @NotNull ASTNode node) {
     super(node);
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     final PsiReference[] references = getReferences();
     return references.length == 0 ? null : references[0];
   }
@@ -35,9 +35,9 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
 
   public static final class DartUriElementManipulator extends AbstractElementManipulator<DartUriElement> {
     @Override
-    public DartUriElement handleContentChange(@NotNull final DartUriElement oldUriElement,
-                                              @NotNull final TextRange range,
-                                              @NotNull final String newContent) {
+    public DartUriElement handleContentChange(final @NotNull DartUriElement oldUriElement,
+                                              final @NotNull TextRange range,
+                                              final @NotNull String newContent) {
       final String newUriElementText = StringUtil.replaceSubstring(oldUriElement.getText(), getRangeInElement(oldUriElement), newContent);
       final PsiFile fileFromText = PsiFileFactory.getInstance(oldUriElement.getProject())
         .createFileFromText(DartLanguage.INSTANCE, "import " + newUriElementText + ";");
@@ -48,9 +48,8 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
       return (DartUriElement)oldUriElement.replace(importStatement.getUriElement());
     }
 
-    @NotNull
     @Override
-    public TextRange getRangeInElement(@NotNull final DartUriElement element) {
+    public @NotNull TextRange getRangeInElement(final @NotNull DartUriElement element) {
       return element.getUriStringAndItsRange().second;
     }
   }

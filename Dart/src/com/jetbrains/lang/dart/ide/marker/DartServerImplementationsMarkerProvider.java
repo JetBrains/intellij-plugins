@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.marker;
 
 import com.intellij.codeInsight.daemon.DaemonBundle;
@@ -35,8 +35,7 @@ public final class DartServerImplementationsMarkerProvider implements LineMarker
     return createMarker(name);
   }
 
-  @Nullable
-  private static LineMarkerInfo createMarker(@NotNull final DartComponentName name) {
+  private static @Nullable LineMarkerInfo createMarker(final @NotNull DartComponentName name) {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(name.getProject());
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     if (file == null || !file.isInLocalFileSystem()) {
@@ -64,8 +63,7 @@ public final class DartServerImplementationsMarkerProvider implements LineMarker
     return null;
   }
 
-  @NotNull
-  private static LineMarkerInfo createMarkerClass(@NotNull final DartComponentName name) {
+  private static @NotNull LineMarkerInfo createMarkerClass(final @NotNull DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
     return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod,
@@ -85,8 +83,7 @@ public final class DartServerImplementationsMarkerProvider implements LineMarker
     }, GutterIconRenderer.Alignment.RIGHT);
   }
 
-  @NotNull
-  private static LineMarkerInfo createMarkerMember(@NotNull final DartComponentName name) {
+  private static @NotNull LineMarkerInfo createMarkerMember(final @NotNull DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
     return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod,

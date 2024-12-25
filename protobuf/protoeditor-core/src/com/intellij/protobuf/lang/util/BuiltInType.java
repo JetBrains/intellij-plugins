@@ -82,8 +82,7 @@ public enum BuiltInType {
    * @param name type name
    * @return The {@link BuiltInType} instance of the given name, or <code>null</code>.
    */
-  @Nullable
-  public static BuiltInType getType(String name) {
+  public static @Nullable BuiltInType getType(String name) {
     if (name == null) {
       return null;
     }
@@ -91,14 +90,12 @@ public enum BuiltInType {
   }
 
   /** Returns the type name. */
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return Ascii.toLowerCase(this.name());
   }
 
   /** Returns a {@link ValueTester} to be used in the specified type context. */
-  @NotNull
-  public ValueTester getValueTester(ValueTesterType type) {
+  public @NotNull ValueTester getValueTester(ValueTesterType type) {
     return factory.getValueTester(type);
   }
 
@@ -115,10 +112,8 @@ public enum BuiltInType {
       this.unsigned = unsigned;
     }
 
-    @Nls
-    @NotNull
     @Override
-    public ValueTester getValueTester(ValueTesterType type) {
+    public @Nls @NotNull ValueTester getValueTester(ValueTesterType type) {
       return value -> {
         if (!(value instanceof ProtoNumberValue number)) {
           return PbLangBundle.message("integer.value.expected");
@@ -139,10 +134,8 @@ public enum BuiltInType {
   }
 
   private static class FloatTester implements ValueTesterFactory {
-    @Nls
-    @NotNull
     @Override
-    public ValueTester getValueTester(ValueTesterType type) {
+    public @Nls @NotNull ValueTester getValueTester(ValueTesterType type) {
       return value -> {
         if (value instanceof ProtoIdentifierValue identifierValue) {
           // getAsNumber() might return null, but the following instanceof check will catch it.
@@ -189,10 +182,8 @@ public enum BuiltInType {
   }
 
   private static class StringTester implements ValueTesterFactory {
-    @Nls
-    @NotNull
     @Override
-    public ValueTester getValueTester(ValueTesterType type) {
+    public @Nls @NotNull ValueTester getValueTester(ValueTesterType type) {
       return value -> {
         if (!(value instanceof ProtoStringValue)) {
           return PbLangBundle.message("string.value.expected");
@@ -203,10 +194,8 @@ public enum BuiltInType {
   }
 
   private static class BooleanTester implements ValueTesterFactory {
-    @Nls
-    @NotNull
     @Override
-    public ValueTester getValueTester(ValueTesterType type) {
+    public @Nls @NotNull ValueTester getValueTester(ValueTesterType type) {
       return value -> {
         if (!(value instanceof ProtoBooleanValue)) {
           return PbLangBundle.message("boolean.value.expected");

@@ -16,11 +16,11 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.psi.PbExtendDefinition;
 import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.stub.PbExtendDefinitionStub;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,15 +37,13 @@ abstract class PbExtendDefinitionMixin extends PbStubbedDefinitionBase<PbExtendD
     super(stub, nodeType);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return PbIcons.EXTEND;
   }
 
-  @NotNull
   @Override
-  public String getPresentableText() {
+  public @NotNull String getPresentableText() {
     PbTypeName typeName = getTypeName();
     if (typeName != null) {
       return "extend " + typeName.getReferenceString();

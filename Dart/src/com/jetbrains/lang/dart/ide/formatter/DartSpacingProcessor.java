@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.Block;
@@ -797,7 +797,7 @@ public class DartSpacingProcessor {
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
-  private static int getMinLineBreaksBetweenTopLevelNodes(@NotNull final IElementType type1, @NotNull final IElementType type2) {
+  private static int getMinLineBreaksBetweenTopLevelNodes(final @NotNull IElementType type1, final @NotNull IElementType type2) {
     /*
        libraryStatement
      | partOfStatement
@@ -1092,8 +1092,7 @@ public class DartSpacingProcessor {
     return false;
   }
 
-  @Nullable
-  private static ASTNode getPrevSiblingOnTheSameLineSkipCommentsAndWhitespace(@NotNull ASTNode node) {
+  private static @Nullable ASTNode getPrevSiblingOnTheSameLineSkipCommentsAndWhitespace(@NotNull ASTNode node) {
     while ((node = node.getTreePrev()) != null) {
       if (node.getElementType() == WHITE_SPACE || COMMENTS.contains(node.getElementType())) {
         if (node.getText().contains("\n")) {

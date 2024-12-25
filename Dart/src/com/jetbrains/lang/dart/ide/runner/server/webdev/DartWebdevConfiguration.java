@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.ExecutionException;
@@ -30,8 +30,7 @@ public class DartWebdevConfiguration extends LocatableConfigurationBase<DartWebd
     super(project, factory, name);
   }
 
-  @NotNull
-  public DartWebdevParameters getParameters() {
+  public @NotNull DartWebdevParameters getParameters() {
     return myParameters;
   }
 
@@ -47,22 +46,19 @@ public class DartWebdevConfiguration extends LocatableConfigurationBase<DartWebd
     return clone;
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<DartWebdevConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<DartWebdevConfiguration> getConfigurationEditor() {
     return new DartWebdevConfigurationEditorForm(getProject());
   }
 
-  @Nullable
   @Override
-  public RunProfileState getState(@NotNull final Executor executor,
-                                  @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public @Nullable RunProfileState getState(final @NotNull Executor executor,
+                                            final @NotNull ExecutionEnvironment env) throws ExecutionException {
     return new DartWebdevRunningState(env);
   }
 
-  @Nullable
   @Override
-  public String suggestedName() {
+  public @Nullable String suggestedName() {
     // Attempt to compute the relative path to the html file, i.e. some "web/index.html"
     // If not successful, return at least the file name, i.e. some "index.html"
     final String htmlFilePath = myParameters.getHtmlFilePath();

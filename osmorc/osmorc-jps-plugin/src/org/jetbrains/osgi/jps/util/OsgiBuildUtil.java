@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.util;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -30,15 +30,13 @@ public final class OsgiBuildUtil {
     ourMavenPluginLoaded = pluginLoaded;
   }
 
-  @NotNull
-  public static Properties getMavenProjectProperties(@NotNull CompileContext context, @NotNull JpsModule module) {
+  public static @NotNull Properties getMavenProjectProperties(@NotNull CompileContext context, @NotNull JpsModule module) {
     Properties result = new Properties();
     if (ourMavenPluginLoaded) collectMavenProjectProperties(context, module, result);
     return result;
   }
 
-  @Nullable
-  public static File getMavenProjectPath(@NotNull CompileContext context, @NotNull JpsModule module) {
+  public static @Nullable File getMavenProjectPath(@NotNull CompileContext context, @NotNull JpsModule module) {
     return ourMavenPluginLoaded ? findMavenProjectPath(context, module) : null;
   }
 
@@ -62,8 +60,7 @@ public final class OsgiBuildUtil {
     return findMavenProjectPath(dataPaths, module);
   }
 
-  @Nullable
-  public static File findMavenProjectPath(BuildDataPaths dataPaths, JpsModule module) {
+  public static @Nullable File findMavenProjectPath(BuildDataPaths dataPaths, JpsModule module) {
     MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
     if (projectConfig != null) {
       MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
@@ -74,8 +71,7 @@ public final class OsgiBuildUtil {
     return null;
   }
 
-  @Nullable
-  public static File findFileInModuleContentRoots(@NotNull JpsModule module, @NotNull String relativePath) {
+  public static @Nullable File findFileInModuleContentRoots(@NotNull JpsModule module, @NotNull String relativePath) {
     String ioRelativePath = FileUtil.toSystemDependentName(relativePath);
     for (String rootUrl : module.getContentRootsList().getUrls()) {
       File root = JpsPathUtil.urlToFile(rootUrl);

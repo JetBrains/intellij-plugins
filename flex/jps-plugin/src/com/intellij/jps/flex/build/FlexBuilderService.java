@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.build.FlexBuildTargetType;
@@ -13,14 +14,12 @@ import java.util.List;
 public class FlexBuilderService extends BuilderService {
 
   @Override
-  @NotNull
-  public List<? extends BuildTargetType<?>> getTargetTypes() {
+  public @NotNull List<? extends BuildTargetType<?>> getTargetTypes() {
     return Arrays.asList(FlexResourceBuildTargetType.PRODUCTION, FlexResourceBuildTargetType.TEST, FlexBuildTargetType.INSTANCE);
   }
 
   @Override
-  @NotNull
-  public List<? extends TargetBuilder<?, ?>> createBuilders() {
+  public @NotNull List<? extends TargetBuilder<?, ?>> createBuilders() {
     return Arrays.asList(new FlexResourceBuilder(), new FlexBuilder());
   }
 }

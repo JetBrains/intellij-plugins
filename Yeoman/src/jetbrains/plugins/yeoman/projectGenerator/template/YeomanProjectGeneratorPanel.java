@@ -50,9 +50,7 @@ public class YeomanProjectGeneratorPanel implements Disposable, YeomanProjectGen
     myYeomanGlobalSettings = YeomanGlobalSettings.getInstance();
   }
 
-  @Nls
-  @Nullable
-  public String validate() {
+  public @Nls @Nullable String validate() {
     if (mySubPanel != null) {
       return mySubPanel.validate();
     }
@@ -114,8 +112,7 @@ public class YeomanProjectGeneratorPanel implements Disposable, YeomanProjectGen
 
 
   @Override
-  @NotNull
-  public JPanel getMainPanel() {
+  public @NotNull JPanel getMainPanel() {
     return myMainPanel;
   }
 
@@ -132,9 +129,8 @@ public class YeomanProjectGeneratorPanel implements Disposable, YeomanProjectGen
     }
   }
 
-  @Nullable
   @Override
-  public ValidateHandler getValidateHandler() {
+  public @Nullable ValidateHandler getValidateHandler() {
     return myValidateHandler;
   }
 
@@ -155,14 +151,12 @@ public class YeomanProjectGeneratorPanel implements Disposable, YeomanProjectGen
   }
 
   @Override
-  @NotNull
-  public String getLocationTitle() {
+  public @NotNull String getLocationTitle() {
     return myLocation.getComponent().getText();
   }
 
   @Override
-  @Nullable
-  public LabeledComponent<TextFieldWithBrowseButton> getLocationComponent() {
+  public @Nullable LabeledComponent<TextFieldWithBrowseButton> getLocationComponent() {
     return  myLocation;
   }
 

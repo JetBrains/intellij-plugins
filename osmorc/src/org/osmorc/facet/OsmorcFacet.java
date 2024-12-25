@@ -64,8 +64,7 @@ public final class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
    * @param module the module
    * @return the Osmorc facet of this module or null if the module doesn't have an Osmorc facet.
    */
-  @Nullable
-  public static OsmorcFacet getInstance(@NotNull Module module) {
+  public static @Nullable OsmorcFacet getInstance(@NotNull Module module) {
     return FacetManager.getInstance(module).getFacetByType(OsmorcFacetType.ID);
   }
 
@@ -76,8 +75,7 @@ public final class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
    * @return the Osmorc facet of the module to which the element belongs or null if this module doesn't have an Osmorc
    *         facet or if the belonging module could not be determined.
    */
-  @Nullable
-  public static OsmorcFacet getInstance(@NotNull PsiElement element) {
+  public static @Nullable OsmorcFacet getInstance(@NotNull PsiElement element) {
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module != null) {
       return getInstance(module);
@@ -103,8 +101,7 @@ public final class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
     return module != null && hasOsmorcFacet(module);
   }
 
-  @NotNull
-  public String getManifestLocation() {
+  public @NotNull String getManifestLocation() {
     if (getConfiguration().isUseProjectDefaultManifestFileLocation()) {
       return ProjectSettings.getInstance(getModule().getProject()).getDefaultManifestFileLocation();
     }
@@ -118,8 +115,7 @@ public final class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
    *
    * @return the manifest file. If the manifest is automatically generated, returns null.
    */
-  @Nullable
-  public VirtualFile getManifestFile() {
+  public @Nullable VirtualFile getManifestFile() {
     if (getConfiguration().isOsmorcControlsManifest()) {
       String pathToJar = getConfiguration().getJarFileLocation();
       VirtualFile jarFile = LocalFileSystem.getInstance().findFileByPath(pathToJar);

@@ -16,7 +16,6 @@
 
 package org.jetbrains.idea.perforce.actions;
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,13 +24,13 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class TimeLapseViewAction extends RevisionGraphAction {
-  @Override @NonNls
-  protected String getCommandName() {
+  @Override
+  protected @NonNls String getCommandName() {
     return "annotate";
   }
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     super.update(e);
     VirtualFile vf = e.getData(CommonDataKeys.VIRTUAL_FILE);
     e.getPresentation().setEnabled(e.getPresentation().isEnabled() && vf != null && !vf.getFileType().isBinary() && !vf.isDirectory());

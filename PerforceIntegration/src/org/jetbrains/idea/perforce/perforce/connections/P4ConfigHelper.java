@@ -14,8 +14,7 @@ import java.util.Map;
 public class P4ConfigHelper {
   private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
 
-  @Nullable
-  public File findDirWithP4ConfigFile(@NotNull final VirtualFile parent, @NotNull final String p4ConfigFileName) {
+  public @Nullable File findDirWithP4ConfigFile(final @NotNull VirtualFile parent, final @NotNull String p4ConfigFileName) {
     File current = VfsUtilCore.virtualToIoFile(parent);
 
     final List<File> paths = new ArrayList<>();

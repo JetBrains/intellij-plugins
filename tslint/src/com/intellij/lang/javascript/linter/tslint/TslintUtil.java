@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
@@ -44,13 +44,11 @@ public final class TslintUtil {
     return JSLinterConfigFileUtil.hasConfigFiles(project, CONFIG_FILE_NAMES);
   }
 
-  @NotNull
-  public static List<VirtualFile> findAllConfigsInScope(@NotNull Project project) {
+  public static @NotNull List<VirtualFile> findAllConfigsInScope(@NotNull Project project) {
     return JSLinterConfigFileUtil.findAllConfigs(project, CONFIG_FILE_NAMES);
   }
 
-  @Nullable
-  public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull Project project, @NotNull VirtualFile virtualFile) {
+  public static @Nullable VirtualFile getConfig(@NotNull TsLintState state, @NotNull Project project, @NotNull VirtualFile virtualFile) {
     return doGetConfig(state, project, virtualFile);
   }
 
@@ -67,8 +65,7 @@ public final class TslintUtil {
     return lookupConfig(project, virtualFile);
   }
 
-  @Nullable
-  public static VirtualFile lookupConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+  public static @Nullable VirtualFile lookupConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     for (TsLintConfigDetector detector : TsLintConfigDetector.TS_LINT_CONFIG_DETECTOR_EP.getExtensionList()) {
       TsLintConfigDetector.TsLintConfigs setup = detector.detectConfigs(project, virtualFile);
       if (setup != null) {

@@ -38,9 +38,9 @@ public abstract class VcsOperation implements Cloneable {
     myChangeList = changeList;
   }
 
-  @NotNull abstract String getInputPath();
+  abstract @NotNull String getInputPath();
 
-  @NotNull abstract String getOutputPath();
+  abstract @NotNull String getOutputPath();
 
   public String getChangeList() {
     return myChangeList;
@@ -50,8 +50,7 @@ public abstract class VcsOperation implements Cloneable {
     myChangeList = changeList;
   }
 
-  @Nullable
-  public Change getChange(final Project project, ChangeListManagerGate addGate) {
+  public @Nullable Change getChange(final Project project, ChangeListManagerGate addGate) {
     return null;
   }
 
@@ -65,8 +64,7 @@ public abstract class VcsOperation implements Cloneable {
    * @return null if this operation cancels {@code oldOp}; {@code oldOp} if the operations
    * are independent
    */
-  @Nullable
-  public VcsOperation checkMerge(final VcsOperation oldOp) {
+  public @Nullable VcsOperation checkMerge(final VcsOperation oldOp) {
     return oldOp;
   }
 

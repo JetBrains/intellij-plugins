@@ -9,8 +9,8 @@ import java.util.TreeMap;
 class LongCallsStatistics<Kind extends Enum>
   extends IntervalStatistics<LongCallsStatistics.Data<Kind>, LongCallsStatistics.IntervalData<Kind>, LongCallsStatistics.AverageData<Kind>> implements Tracer<Kind, Long> {
 
-  private final static int ourDefaultMaxKept = 20;
-  private final static long ourDefaultLowerBound = 1000;
+  private static final int ourDefaultMaxKept = 20;
+  private static final long ourDefaultLowerBound = 1000;
   private final long myLowerBound;
 
   LongCallsStatistics(long intervalInMillis, int historyQueueSize, @Nullable Runnable switchListener, final int maxKept, long lowerBound) {

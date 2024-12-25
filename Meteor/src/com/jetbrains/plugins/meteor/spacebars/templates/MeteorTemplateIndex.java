@@ -29,8 +29,7 @@ public final class MeteorTemplateIndex extends ScalarIndexExtension<String> {
 
   private static final class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
-    @NotNull
-    public Map<String, Void> map(@NotNull final FileContent inputData) {
+    public @NotNull Map<String, Void> map(final @NotNull FileContent inputData) {
       Map<String, Void> result = new HashMap<>();
       visitTemplateTags(inputData.getPsiFile(), tag -> {
         String name = tag.getAttributeValue(NAME_ATTRIBUTE);
@@ -43,27 +42,23 @@ public final class MeteorTemplateIndex extends ScalarIndexExtension<String> {
     }
   }
 
-  @NotNull
   @Override
-  public ID<String, Void> getName() {
+  public @NotNull ID<String, Void> getName() {
     return METEOR_TEMPLATES_INDEX;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, Void, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, Void, FileContent> getIndexer() {
     return new MyDataIndexer();
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(HtmlFileType.INSTANCE, SpacebarsFileType.SPACEBARS_INSTANCE) {
       @Override
       public boolean acceptInput(@NotNull VirtualFile file) {
@@ -82,8 +77,7 @@ public final class MeteorTemplateIndex extends ScalarIndexExtension<String> {
     return INDEX_VERSION;
   }
 
-  @NotNull
-  public static ArrayList<PsiElement> findDeclarations(final String key, final PsiManager psiManager, GlobalSearchScope scope) {
+  public static @NotNull ArrayList<PsiElement> findDeclarations(final String key, final PsiManager psiManager, GlobalSearchScope scope) {
     final ArrayList<PsiElement> result = new ArrayList<>();
     FileBasedIndex.getInstance().getFilesWithKey(METEOR_TEMPLATES_INDEX, ContainerUtil.newHashSet(key), file -> {
       PsiFile psiFile = psiManager.findFile(file);

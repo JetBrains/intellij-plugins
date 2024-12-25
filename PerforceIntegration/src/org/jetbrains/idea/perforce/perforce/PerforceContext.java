@@ -10,7 +10,7 @@ import java.io.IOException;
 
 class PerforceContext {
   private static final int ourVeryLongServerTimeout = 1200 * 1000;
-  @NotNull public final P4Connection connection;
+  public final @NotNull P4Connection connection;
   public final boolean longTimeout;
   public final boolean justLogged;
 
@@ -24,7 +24,7 @@ class PerforceContext {
     this.justLogged = justLogged;
   }
 
-  void runP4Command(PerforceSettings settings, String[] p4args, ExecResult retVal, @Nullable final StringBuffer inputStream)
+  void runP4Command(PerforceSettings settings, String[] p4args, ExecResult retVal, final @Nullable StringBuffer inputStream)
     throws VcsException, PerforceTimeoutException, IOException, InterruptedException {
     connection.runP4Command(longTimeout ? new LongTimeoutProxy(settings) : settings, p4args, retVal, inputStream);
   }
@@ -41,9 +41,8 @@ class PerforceContext {
       return myDelegate.getServerTimeout() <= 0 ? ourVeryLongServerTimeout : Math.max(ourVeryLongServerTimeout, myDelegate.getServerTimeout());
     }
 
-    @NotNull
     @Override
-    public String getCharsetName() {
+    public @NotNull String getCharsetName() {
       return myDelegate.getCharsetName();
     }
 

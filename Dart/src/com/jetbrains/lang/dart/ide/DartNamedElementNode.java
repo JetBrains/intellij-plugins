@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.codeInsight.generation.ClassMember;
@@ -34,9 +34,8 @@ public class DartNamedElementNode extends PsiElementMemberChooserObject implemen
     }
   }
 
-  @Nullable
   @Override
-  public MemberChooserObject getParentNodeDelegate() {
+  public @Nullable MemberChooserObject getParentNodeDelegate() {
     final DartComponent result = PsiTreeUtil.getParentOfType(getPsiElement(), DartComponent.class);
     return result == null ? null : new DartNamedElementNode(result);
   }

@@ -64,7 +64,7 @@ public final class ClientRootsCache {
     return root.startsWith("/");
   }
 
-  String getRaw(@Nullable final String converted) {
+  String getRaw(final @Nullable String converted) {
     synchronized (myLock) {
       final String was = myCanonicalToRaw.get(converted);
       return was == null ? converted : was;
@@ -72,7 +72,7 @@ public final class ClientRootsCache {
   }
 
   // faster than File canonical path
-  String convertPath(@Nullable final String convertedClientRoot, @NotNull final String s) {
+  String convertPath(final @Nullable String convertedClientRoot, final @NotNull String s) {
     final String trimmed = s.trim();
     synchronized (myLock) {
       if (convertedClientRoot != null) {

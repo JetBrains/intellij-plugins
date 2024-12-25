@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
@@ -26,9 +26,8 @@ public final class CucumberJava8StepIndex extends CucumberStepIndex {
   private static final String JAVA_8_CUCUMBER_4_5_PACKAGE = "io.cucumber.java8.";
   private static final String[] PACKAGES_TO_SCAN = new String[]{JAVA_8_CUCUMBER_4_5_PACKAGE, JAVA_8_PACKAGE};
 
-  @NotNull
   @Override
-  public ID<Boolean, List<Integer>> getName() {
+  public @NotNull ID<Boolean, List<Integer>> getName() {
     return INDEX_ID;
   }
 
@@ -47,9 +46,8 @@ public final class CucumberJava8StepIndex extends CucumberStepIndex {
     return PACKAGES_TO_SCAN;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(JavaFileType.INSTANCE) {
       @Override
       public boolean acceptInput(@NotNull VirtualFile file) {

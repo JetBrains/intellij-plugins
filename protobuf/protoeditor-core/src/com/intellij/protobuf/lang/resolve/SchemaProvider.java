@@ -27,8 +27,7 @@ public interface SchemaProvider {
       ExtensionPointName.create("com.intellij.protobuf.schemaProvider");
 
   /** Returns the first SchemaInfo determined for the given file. */
-  @Nullable
-  static SchemaInfo forFile(PbTextFile file) {
+  static @Nullable SchemaInfo forFile(PbTextFile file) {
     if (file == null) {
       return null;
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.TailTypes;
@@ -354,7 +354,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void handleInsert(@NotNull final InsertionContext context, @NotNull LookupElement item) {
+    public void handleInsert(final @NotNull InsertionContext context, @NotNull LookupElement item) {
       if (!ranges.isEmpty()) {
         final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
         final GherkinStep step = PsiTreeUtil.getParentOfType(element, GherkinStep.class);

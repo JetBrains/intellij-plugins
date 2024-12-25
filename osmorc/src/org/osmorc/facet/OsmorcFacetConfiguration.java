@@ -309,8 +309,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   /**
    * Returns the manifest location, relative to the module's content roots.
    */
-  @NotNull
-  public String getManifestLocation() {
+  public @NotNull String getManifestLocation() {
     return myManifestLocation != null ? myManifestLocation : "";
   }
 
@@ -322,8 +321,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   /**
    * Returns the .jar file to be created for this module.
    */
-  @NotNull
-  public String getJarFileLocation() {
+  public @NotNull String getJarFileLocation() {
     String nullSafeLocation = myJarFileLocation != null ? myJarFileLocation : "";
     if (myOutputPathType == null || myFacet == null) {
       // not initialized
@@ -356,8 +354,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   /**
    * Returns the file name of the .jar file.
    */
-  @NotNull
-  public String getJarFileName() {
+  public @NotNull String getJarFileName() {
     if (myOutputPathType == null) {
       return "";
     }
@@ -374,8 +371,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   /**
    * Returns the path where the .jar file should be stored (excluding the name).
    */
-  @NotNull
-  public String getJarFilePath() {
+  public @NotNull String getJarFilePath() {
     if (myOutputPathType == null) {
       return "";
     }
@@ -407,8 +403,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     return myOutputPathType != null ? myOutputPathType : OutputPathType.SpecificOutputPath;
   }
 
-  @NotNull
-  public String getBundleSymbolicName() {
+  public @NotNull String getBundleSymbolicName() {
     return myBundleSymbolicName != null ? myBundleSymbolicName : "";
   }
 
@@ -426,8 +421,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     myModificationCount.getAndIncrement();
   }
 
-  @NotNull
-  public String getBundleVersion() {
+  public @NotNull String getBundleVersion() {
     return myBundleVersion != null ? myBundleVersion : "1.0.0";
   }
 
@@ -444,8 +438,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   /**
    * Returns additional properties to be added to the bundle manifest.
    */
-  @NotNull
-  public String getAdditionalProperties() {
+  public @NotNull String getAdditionalProperties() {
     return myAdditionalProperties != null ? myAdditionalProperties : "";
   }
 
@@ -455,8 +448,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
    * map once you have changed it. The returned map is ordered and will return entries in the same order as they have been specified in the
    * settings dialog.
    */
-  @NotNull
-  public Map<String, String> getAdditionalPropertiesAsMap() {
+  public @NotNull Map<String, String> getAdditionalPropertiesAsMap() {
     try {
       OrderedProperties p = new OrderedProperties();
       p.load(new StringReader(getAdditionalProperties()));
@@ -501,8 +493,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     return myUseProjectDefaultManifestFileLocation;
   }
 
-  @NotNull
-  public String getBndFileLocation() {
+  public @NotNull String getBndFileLocation() {
     return myBndFileLocation != null ? myBndFileLocation : "";
   }
 
@@ -511,8 +502,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     myModificationCount.getAndIncrement();
   }
 
-  @NotNull
-  public String getBundlorFileLocation() {
+  public @NotNull String getBundlorFileLocation() {
     return myBundlorFileLocation != null ? myBundlorFileLocation : "";
   }
 
@@ -521,8 +511,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     myModificationCount.getAndIncrement();
   }
 
-  @NotNull
-  public List<Pair<String, String>> getAdditionalJARContents() {
+  public @NotNull List<Pair<String, String>> getAdditionalJARContents() {
     if (myAdditionalJARContents == null) {
       myAdditionalJARContents = new ArrayList<>();
     }
@@ -534,8 +523,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     myModificationCount.getAndIncrement();
   }
 
-  @NotNull
-  public String getIgnoreFilePattern() {
+  public @NotNull String getIgnoreFilePattern() {
     return myIgnoreFilePattern != null ? myIgnoreFilePattern : "";
   }
 

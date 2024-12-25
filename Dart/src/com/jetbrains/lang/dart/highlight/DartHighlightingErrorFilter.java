@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DartHighlightingErrorFilter extends HighlightErrorFilter {
   @Override
-  public boolean shouldHighlightErrorElement(@NotNull final PsiErrorElement element) {
+  public boolean shouldHighlightErrorElement(final @NotNull PsiErrorElement element) {
     if (!(element.getLanguage() == DartLanguage.INSTANCE)) return true;
 
     final VirtualFile file = DartResolveUtil.getRealVirtualFile(element.getContainingFile());

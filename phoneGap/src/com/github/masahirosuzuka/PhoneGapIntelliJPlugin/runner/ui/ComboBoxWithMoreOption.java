@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 
@@ -13,13 +14,10 @@ import java.util.Collection;
 
 public class ComboBoxWithMoreOption extends ComboBox<String> {
 
-  @NotNull
-  private final Collection<@Nls String> myStartItems;
-  @NotNull
-  private final Collection<String> myExtendedItems;
+  private final @NotNull Collection<@Nls String> myStartItems;
+  private final @NotNull Collection<String> myExtendedItems;
   
-  @NotNull @Nls
-  private final String myMoreItem;
+  private final @NotNull @Nls String myMoreItem;
 
   public ComboBoxWithMoreOption(@NotNull Collection<@Nls String> startItems, @NotNull Collection<@Nls String> extendedItems) {
     super();

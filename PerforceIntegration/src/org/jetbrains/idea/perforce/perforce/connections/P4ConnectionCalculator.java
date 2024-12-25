@@ -77,8 +77,7 @@ public class P4ConnectionCalculator {
     myMultipleConnections = new PerforceMultipleConnections(p4ConfigFileName, defaultParameters, connectionSettings, configsMap);
   }
 
-  @NotNull
-  public PerforceMultipleConnections getMultipleConnections() {
+  public @NotNull PerforceMultipleConnections getMultipleConnections() {
     return myMultipleConnections;
   }
 

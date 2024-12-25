@@ -43,7 +43,7 @@ import static java.util.function.Function.identity;
 public class SingletonConnection extends AbstractP4Connection implements PerforceConnectionMapper {
   private static final Logger LOG = Logger.getInstance(SingletonConnection.class);
 
-  private final static Key<SingletonConnection> KEY_IN_PROJECT = new Key<>("Connection per project");
+  private static final Key<SingletonConnection> KEY_IN_PROJECT = new Key<>("Connection per project");
   public static final ConnectionId SINGLETON_CONNECTION_ID = new ConnectionId();
   public static final File CURR_DIR = new File(".");
   private final PerforceSettings mySettings;
@@ -76,15 +76,13 @@ public class SingletonConnection extends AbstractP4Connection implements Perforc
   }
 
   @Override
-  @NotNull
-  public File getWorkingDirectory() {
+  public @NotNull File getWorkingDirectory() {
     VirtualFile[] roots = ProjectLevelVcsManager.getInstance(myProject).getRootsUnderVcs(PerforceVcs.getInstance(myProject));
     return roots.length > 0 ? VfsUtilCore.virtualToIoFile(roots[0]) : CURR_DIR;
   }
 
-  @NotNull
   @Override
-  public ConnectionKey getConnectionKey() {
+  public @NotNull ConnectionKey getConnectionKey() {
     return new ConnectionKey(mySettings.port, mySettings.client, mySettings.user);
   }
 

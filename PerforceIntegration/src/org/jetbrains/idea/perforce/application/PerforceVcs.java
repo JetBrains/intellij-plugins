@@ -112,15 +112,12 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return NAME;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getShortNameWithMnemonic() {
+  public @Nls @NotNull String getShortNameWithMnemonic() {
     return PerforceBundle.message("perforce.name.with.mnemonic");
   }
 
@@ -134,8 +131,7 @@ public final class PerforceVcs extends AbstractVcs {
     return !PerforceSettings.getSettings(myProject).ENABLED;
   }
 
-  @Nullable
-  private <T> T validProvider(T initialValue) {
+  private @Nullable <T> T validProvider(T initialValue) {
     return getSettings().ENABLED ? initialValue : null;
   }
 
@@ -150,14 +146,12 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @NotNull
-  public EditFileProvider getEditFileProvider() {
+  public @NotNull EditFileProvider getEditFileProvider() {
     return myMyEditFileProvider;
   }
 
   @Override
-  @NotNull
-  public PerforceCheckinEnvironment getCheckinEnvironment() {
+  public @NotNull PerforceCheckinEnvironment getCheckinEnvironment() {
     if (myPerforceCheckinEnvironment == null) {
       myPerforceCheckinEnvironment = new PerforceCheckinEnvironment(myProject, this);
     }
@@ -246,8 +240,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @NotNull
-  public UpdateEnvironment getUpdateEnvironment() {
+  public @NotNull UpdateEnvironment getUpdateEnvironment() {
     if (myPerforceUpdateEnvironment == null) {
       myPerforceUpdateEnvironment = new PerforceUpdateEnvironment(myProject);
     }
@@ -259,8 +252,7 @@ public final class PerforceVcs extends AbstractVcs {
     return PerforceSettings.getSettings(myProject);
   }
 
-  @Nullable
-  static public String getFileNameComplaint(P4File file) {
+  public static @Nullable String getFileNameComplaint(P4File file) {
     String filename = file.getLocalPath();
     if (StringUtil.containsAnyChar(filename, "@#%*")) {
       return PerforceBundle.message("file.wildcards.restricted", filename);
@@ -363,8 +355,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @NotNull
-  public ChangeProvider getChangeProvider() {
+  public @NotNull ChangeProvider getChangeProvider() {
     if (getSettings().ENABLED) {
       return getOnlineChangeProvider();
     }
@@ -423,8 +414,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @NotNull
-  public PerforceCommittedChangesProvider getCommittedChangesProvider() {
+  public @NotNull PerforceCommittedChangesProvider getCommittedChangesProvider() {
     if (myCommittedChangesProvider == null) {
       myCommittedChangesProvider = new PerforceCommittedChangesProvider(myProject);
     }
@@ -458,8 +448,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @Nullable
-  public VcsRevisionNumber parseRevisionNumber(final String revisionNumberString) {
+  public @Nullable VcsRevisionNumber parseRevisionNumber(final String revisionNumberString) {
     long revision;
     try {
       revision = Long.parseLong(revisionNumberString);
@@ -476,8 +465,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  @NotNull
-  public MergeProvider getMergeProvider() {
+  public @NotNull MergeProvider getMergeProvider() {
     if (myMergeProvider == null) {
       myMergeProvider = new PerforceMergeProvider(myProject);
     }
@@ -586,9 +574,8 @@ public final class PerforceVcs extends AbstractVcs {
     return -1;
   }
 
-  @NotNull
   @Override
-  public ThreeState mayRemoveChangeList(@NotNull LocalChangeList list, boolean explicitly) {
+  public @NotNull ThreeState mayRemoveChangeList(@NotNull LocalChangeList list, boolean explicitly) {
     List<ShelvedChange> shelvedChanges = PerforceManager.getInstance(myProject).getShelf().getShelvedChanges(list);
     if (!shelvedChanges.isEmpty()) {
       if (!explicitly) {

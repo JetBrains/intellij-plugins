@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -53,8 +53,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   }
 
   @Override
-  @NotNull
-  public ExecutionResult execute(final @NotNull Executor executor, final @NotNull ProgramRunner<?> runner) throws ExecutionException {
+  public @NotNull ExecutionResult execute(final @NotNull Executor executor, final @NotNull ProgramRunner<?> runner) throws ExecutionException {
     final ProcessHandler processHandler = startProcess();
     final ConsoleView consoleView = createConsole(getEnvironment());
     consoleView.attachToProcess(processHandler);
@@ -95,9 +94,8 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     return consoleView;
   }
 
-  @NotNull
   @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
+  protected @NotNull ProcessHandler startProcess() throws ExecutionException {
     Project project = getEnvironment().getProject();
 
     DartSdk sdk = DartSdk.getDartSdk(project);
@@ -214,9 +212,8 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       setIdBasedTestTree(true);
     }
 
-    @Nullable
     @Override
-    public SMTestLocator getTestLocator() {
+    public @Nullable SMTestLocator getTestLocator() {
       return DartTestLocationProvider.INSTANCE;
     }
 
@@ -233,9 +230,8 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       }
     }
 
-    @Nullable
     @Override
-    public AbstractRerunFailedTestsAction createRerunFailedTestsAction(ConsoleView consoleView) {
+    public @Nullable AbstractRerunFailedTestsAction createRerunFailedTestsAction(ConsoleView consoleView) {
       if (ActionManager.getInstance().getAction("RerunFailedTests") == null) return null; // backward compatibility
 
       DartTestRerunnerAction action = new DartTestRerunnerAction(consoleView);

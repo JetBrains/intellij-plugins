@@ -41,12 +41,12 @@ public class ChangeCreator {
                       isResolvedWithConflict ? FileStatus.MERGED_WITH_CONFLICTS : FileStatus.ADDED);
   }
 
-  public Change createDeletedFileChange(@NotNull final File file, final long haveRevision, boolean isResolvedWithConflict) {
+  public Change createDeletedFileChange(final @NotNull File file, final long haveRevision, boolean isResolvedWithConflict) {
     return createChange(PerforceCachingContentRevision.create(myProject, VcsUtil.getFilePath(file, false), haveRevision), null,
                       isResolvedWithConflict ? FileStatus.MERGED_WITH_CONFLICTS : FileStatus.DELETED);
   }
 
-  public Change createRenameChange(@NotNull final P4Connection connection, final ResolvedFile resolvedFile, final FilePath afterPath) {
+  public Change createRenameChange(final @NotNull P4Connection connection, final ResolvedFile resolvedFile, final FilePath afterPath) {
     long revision = resolvedFile.getRevision2();
     if (revision < 0) {
       revision = resolvedFile.getRevision1();
@@ -57,7 +57,7 @@ public class ChangeCreator {
     return createChange(beforeRevision, afterRevision, FileStatus.MODIFIED);
   }
 
-  private Change createChange(@Nullable final ContentRevision before, @Nullable final ContentRevision after, final FileStatus fileStatus) {
+  private Change createChange(final @Nullable ContentRevision before, final @Nullable ContentRevision after, final FileStatus fileStatus) {
     final Change change = new Change(before, after, fileStatus);
     if (after != null) {
       ContainerUtil.addIfNotNull(reportedChanges, after.getFile().getVirtualFile());

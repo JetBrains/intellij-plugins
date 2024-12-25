@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.coverage;
 
 import com.google.gson.JsonElement;
@@ -57,11 +57,10 @@ public class KarmaCoveragePeer {
     myActiveCoverageSession = coverageSession;
   }
 
-  public void registerEventHandlers(@NotNull final KarmaServer server) {
+  public void registerEventHandlers(final @NotNull KarmaServer server) {
     server.registerStreamEventHandler(new StreamEventHandler() {
-      @NotNull
       @Override
-      public String getEventType() {
+      public @NotNull String getEventType() {
         return "coverageFinished";
       }
 

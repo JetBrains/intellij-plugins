@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster;
 
@@ -11,14 +11,11 @@ public final class JdlConstants {
   private JdlConstants() {
   }
 
-  @NlsSafe
-  public static final String APPLICATION_BASE_NAME = "baseName";
+  public static final @NlsSafe String APPLICATION_BASE_NAME = "baseName";
   public static final String APPLICATION_UNNAMED = "<unnamed>";
 
-  @NlsSafe
-  public static final String CONFIG_BLOCK_NAME = "config";
-  @NlsSafe
-  public static final String DEPLOYMENT_BLOCK_NAME = "deployment";
+  public static final @NlsSafe String CONFIG_BLOCK_NAME = "config";
+  public static final @NlsSafe String DEPLOYMENT_BLOCK_NAME = "deployment";
 
   public static final String TRUE = "true";
   public static final String FALSE = "false";

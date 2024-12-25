@@ -51,9 +51,8 @@ import java.nio.file.Path;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public final class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder problemsHolder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder problemsHolder, boolean isOnTheFly) {
     boolean isMaven = MavenDomUtil.isMavenFile(problemsHolder.getFile());
     return !isMaven ? PsiElementVisitor.EMPTY_VISITOR : new XmlElementVisitor() {
       @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.psi.*;
@@ -12,18 +12,15 @@ public abstract class CfmlExpressionTypeCalculator {
   private CfmlExpressionTypeCalculator() {
   }
 
-  @Nullable
-  public PsiType calculateBinary(@NotNull CfmlExpression leftOperand, @NotNull CfmlExpression rightOperand) {
+  public @Nullable PsiType calculateBinary(@NotNull CfmlExpression leftOperand, @NotNull CfmlExpression rightOperand) {
     return checkAndReturnNumeric(leftOperand, rightOperand);
   }
 
-  @Nullable
-  public PsiType calculateUnary(@NotNull CfmlExpression expression) {
+  public @Nullable PsiType calculateUnary(@NotNull CfmlExpression expression) {
     throw new AssertionError(this);
   }
 
-  @Nullable
-  private static PsiType checkAndReturnNumeric(@NotNull CfmlExpression leftOperand, @NotNull CfmlExpression rightOperand) {
+  private static @Nullable PsiType checkAndReturnNumeric(@NotNull CfmlExpression leftOperand, @NotNull CfmlExpression rightOperand) {
     PsiType rightType = rightOperand.getPsiType();
     if (rightType == null) {
       return null;

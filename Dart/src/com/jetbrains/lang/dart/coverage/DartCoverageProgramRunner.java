@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.coverage;
 
 import com.intellij.coverage.CoverageExecutor;
@@ -33,9 +33,8 @@ public final class DartCoverageProgramRunner extends GenericProgramRunner {
 
   private boolean myCoveragePackageActivated;
 
-  @NotNull
   @Override
-  public String getRunnerId() {
+  public @NotNull String getRunnerId() {
     return ID;
   }
 
@@ -45,14 +44,13 @@ public final class DartCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  public RunnerSettings createConfigurationData(@NotNull final ConfigurationInfoProvider settingsProvider) {
+  public RunnerSettings createConfigurationData(final @NotNull ConfigurationInfoProvider settingsProvider) {
     return new CoverageRunnerData();
   }
 
-  @Nullable
   @Override
-  protected RunContentDescriptor doExecute(final @NotNull RunProfileState state,
-                                           final @NotNull ExecutionEnvironment env) throws ExecutionException {
+  protected @Nullable RunContentDescriptor doExecute(final @NotNull RunProfileState state,
+                                                     final @NotNull ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)env.getRunProfile();
@@ -81,9 +79,9 @@ public final class DartCoverageProgramRunner extends GenericProgramRunner {
     return result;
   }
 
-  private static void startCollectingCoverage(@NotNull final ExecutionEnvironment env,
-                                              @NotNull final ProcessHandler dartAppProcessHandler,
-                                              @NotNull final String observatoryUrl) {
+  private static void startCollectingCoverage(final @NotNull ExecutionEnvironment env,
+                                              final @NotNull ProcessHandler dartAppProcessHandler,
+                                              final @NotNull String observatoryUrl) {
     final DartCommandLineRunConfiguration dartRC = (DartCommandLineRunConfiguration)env.getRunProfile();
 
     final DartCoverageEnabledConfiguration coverageConfiguration =
@@ -106,7 +104,7 @@ public final class DartCoverageProgramRunner extends GenericProgramRunner {
 
       coverageProcess.addProcessListener(new ProcessAdapter() {
         @Override
-        public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+        public void onTextAvailable(final @NotNull ProcessEvent event, final @NotNull Key outputType) {
           LOG.debug(event.getText());
         }
       });

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -33,9 +33,8 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
     myCommands = commandLine;
   }
 
-  @Nullable
   @Override
-  public List<String> getAllRepositories() {
+  public @Nullable List<String> getAllRepositories() {
     return myRepositoryStore.getRepositories();
   }
 
@@ -92,7 +91,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
 
   @Override
   public void installPackage(final RepoPackage repoPackage,
-                             @Nullable final String version,
+                             final @Nullable String version,
                              boolean forceUpgrade,
                              @Nullable String extraOptions,
                              final Listener listener,

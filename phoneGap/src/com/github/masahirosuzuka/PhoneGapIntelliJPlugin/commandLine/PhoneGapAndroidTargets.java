@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 
@@ -32,8 +32,7 @@ public class PhoneGapAndroidTargets extends PhoneGapTargets {
     super(project);
   }
 
-  @NotNull
-  public static String getAndroidName() {
+  public static @NotNull String getAndroidName() {
     return SystemInfo.isWindows ? "android" + ".bat" : "android";
   }
 
@@ -51,21 +50,18 @@ public class PhoneGapAndroidTargets extends PhoneGapTargets {
            (device.startsWith("* ") && device.endsWith(" *"));
   }
 
-  @NotNull
   @Override
-  protected List<String> listDevicesNonCached() {
+  protected @NotNull List<String> listDevicesNonCached() {
     return list(getAdbName(), PARSER_DEVICES, false, "devices");
   }
 
-  @NotNull
   @Override
-  protected List<String> listVirtualDevicesNonCached() {
+  protected @NotNull List<String> listVirtualDevicesNonCached() {
     return list(getAndroidName(), PARSER_VIRTUAL_DEVICES, false, "-v", "list", "avd", "-c");
   }
 
-  @NotNull
   @Override
-  public String platform() {
+  public @NotNull String platform() {
     return PLATFORM_ANDROID;
   }
 }

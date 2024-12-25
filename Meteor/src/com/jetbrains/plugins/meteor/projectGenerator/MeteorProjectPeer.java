@@ -96,9 +96,8 @@ public class MeteorProjectPeer implements WebProjectGenerator.GeneratorPeer<Mete
     SwingHelper.updateItems(myProjectType, getProjectTypes(), null);
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent(@NotNull TextFieldWithBrowseButton myLocationField, @NotNull Runnable checkValid) {
+  public @NotNull JComponent getComponent(@NotNull TextFieldWithBrowseButton myLocationField, @NotNull Runnable checkValid) {
     createAndInit();
     return FormBuilder.createFormBuilder()
       .addLabeledComponent(MeteorBundle.message("settings.meteor.configurable.executable.generator"), myExecutablePathField)
@@ -121,9 +120,8 @@ public class MeteorProjectPeer implements WebProjectGenerator.GeneratorPeer<Mete
   }
 
 
-  @NotNull
   @Override
-  public MeteorProjectTemplateGenerator.MeteorProjectSettings getSettings() {
+  public @NotNull MeteorProjectTemplateGenerator.MeteorProjectSettings getSettings() {
     MeteorProjectTemplateGenerator.MeteorProjectSettings settings = new MeteorProjectTemplateGenerator.MeteorProjectSettings();
     settings.setMeteorExecutablePath(myExecutablePathField.getText());
     settings.setType(((String)myProjectType.getSelectedItem()));
@@ -131,9 +129,8 @@ public class MeteorProjectPeer implements WebProjectGenerator.GeneratorPeer<Mete
     return settings;
   }
 
-  @Nullable
   @Override
-  public ValidationInfo validate() {
+  public @Nullable ValidationInfo validate() {
     String path = myExecutablePathField.getText();
 
     boolean error;

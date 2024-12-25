@@ -38,13 +38,11 @@ public class FrameworkIntegratorRegistry {
     return ApplicationManager.getApplication().getService(FrameworkIntegratorRegistry.class);
   }
 
-  @NotNull
-  public List<FrameworkIntegrator> getFrameworkIntegrators() {
+  public @NotNull List<FrameworkIntegrator> getFrameworkIntegrators() {
     return FrameworkIntegrator.EP_NAME.getExtensionList();
   }
 
-  @Nullable
-  public FrameworkIntegrator findIntegratorByName(@NotNull String name) {
+  public @Nullable FrameworkIntegrator findIntegratorByName(@NotNull String name) {
     for (FrameworkIntegrator integrator : getFrameworkIntegrators()) {
       if (name.equals(integrator.getDisplayName())) {
         return integrator;
@@ -53,8 +51,7 @@ public class FrameworkIntegratorRegistry {
     return null;
   }
 
-  @Nullable
-  public FrameworkIntegrator findIntegratorByInstanceDefinition(@NotNull FrameworkInstanceDefinition definition) {
+  public @Nullable FrameworkIntegrator findIntegratorByInstanceDefinition(@NotNull FrameworkInstanceDefinition definition) {
     return findIntegratorByName(definition.getFrameworkIntegratorName());
   }
 }

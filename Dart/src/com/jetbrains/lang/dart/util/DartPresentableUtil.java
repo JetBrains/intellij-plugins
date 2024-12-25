@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.NlsSafe;
@@ -15,20 +15,18 @@ import java.util.List;
 
 public final class DartPresentableUtil {
 
-  @NonNls public static final String RIGHT_ARROW = UIUtil.rightArrow();
-  @NonNls private static final String SPACE = " ";
+  public static final @NonNls String RIGHT_ARROW = UIUtil.rightArrow();
+  private static final @NonNls String SPACE = " ";
 
   public static String setterGetterName(String name) {
     return name.startsWith("_") ? name.substring(1) : name;
   }
 
-  @NotNull
-  public static String getPresentableParameterList(DartComponent element) {
+  public static @NotNull String getPresentableParameterList(DartComponent element) {
     return getPresentableParameterList(element, new DartGenericSpecialization());
   }
 
-  @NotNull
-  public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization) {
+  public static @NotNull String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization) {
     return getPresentableParameterList(element, specialization, false, false, false);
   }
 

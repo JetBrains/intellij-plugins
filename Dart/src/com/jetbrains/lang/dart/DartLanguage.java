@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.Language;
@@ -14,9 +14,8 @@ public final class DartLanguage extends Language {
     super("Dart", DART_MIME_TYPE);
   }
 
-  @Nullable
   @Override
-  public LanguageFileType getAssociatedFileType() {
+  public @Nullable LanguageFileType getAssociatedFileType() {
     return DartFileType.INSTANCE;
   }
 }

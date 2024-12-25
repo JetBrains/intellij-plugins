@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
@@ -37,9 +37,8 @@ public class PhoneGapTargetsPanel extends ReloadableComboBoxPanel<String> {
     return (TextFieldWithHistory)myComboBox;
   }
 
-  @NotNull
   @Override
-  protected JComboBox<String> createValuesComboBox() {
+  protected @NotNull JComboBox<String> createValuesComboBox() {
     return new TextFieldWithHistory();
   }
 }

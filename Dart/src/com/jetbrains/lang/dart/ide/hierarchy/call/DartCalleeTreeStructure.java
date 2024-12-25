@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.openapi.project.Project;
@@ -72,8 +73,7 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
     return found == null ? null : found.getParent();
   }
 
-  @NotNull
-  private static List<DartNavigationTarget> getRegionAt(int offset, @NotNull List<DartNavigationRegion> regions) {
+  private static @NotNull List<DartNavigationTarget> getRegionAt(int offset, @NotNull List<DartNavigationRegion> regions) {
     for (DartNavigationRegion region : regions) {
       int targetStart = region.getOffset();
       int targetEnd = targetStart + region.getLength();
@@ -84,9 +84,8 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
     return new ArrayList<>(0);
   }
 
-  @NotNull
   @Override
-  protected List<PsiElement> getChildren(@NotNull PsiElement element) {
+  protected @NotNull List<PsiElement> getChildren(@NotNull PsiElement element) {
     final List<PsiElement> list = new ArrayList<>();
     getCallees(element, list);
     return list;

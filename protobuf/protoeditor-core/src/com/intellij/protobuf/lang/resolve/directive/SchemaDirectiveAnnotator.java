@@ -101,17 +101,14 @@ public class SchemaDirectiveAnnotator implements Annotator {
     }
   }
 
-  @NotNull
-  @InspectionMessage
-  private static String missingNameWarning(SchemaComment.Type type) {
+  private static @NotNull @InspectionMessage String missingNameWarning(SchemaComment.Type type) {
     return PbLangBundle.message(switch (type) {
       case FILE, IMPORT -> "missing.filename";
       case MESSAGE -> "missing.message.name";
     });
   }
 
-  @InspectionMessage
-  private static String cannotResolveWarning(PsiReference ref, String name) {
+  private static @InspectionMessage String cannotResolveWarning(PsiReference ref, String name) {
     if (ref instanceof PbImportReference) {
       return PbLangBundle.message("cannot.resolve.import", name);
     }

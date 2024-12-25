@@ -60,8 +60,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
   private static final @NonNls String RECENTS_KEY = "JSMoveMembersDialog.RECENTS_KEY";
   private final JSClass mySourceClass;
   private final String mySourceClassName;
-  @Unmodifiable
-  private final List<JSMemberInfo> myMemberInfos;
+  private final @Unmodifiable List<JSMemberInfo> myMemberInfos;
   private final JSReferenceEditor myTfTargetClassName;
   private JSMemberSelectionTable myTable;
   private final MoveCallback myMoveCallback;

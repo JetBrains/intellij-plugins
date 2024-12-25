@@ -26,9 +26,8 @@ import org.jetbrains.annotations.NotNull;
  * A factory for creating a syntax highlighter for Gauge specifications.
  */
 final class SpecSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
-  @NotNull
   @Override
-  public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
+  public @NotNull SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
     return new SpecSyntaxHighlighter();
   }
 }

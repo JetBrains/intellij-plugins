@@ -19,19 +19,14 @@ import static jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGe
 public class YeomanGeneratorCheckboxControl implements YeomanGeneratorControl {
 
   public static class Choice {
-    @Nls
-    private String value;
-    @Nls
-    private String name;
+    private @Nls String value;
+    private @Nls String name;
     private boolean checked;
   }
   
-  @NonNls
-  private String type;
-  @Nls
-  private String name;
-  @Nls
-  private String message;
+  private @NonNls String type;
+  private @Nls String name;
+  private @Nls String message;
   private Choice[] choices;
 
 

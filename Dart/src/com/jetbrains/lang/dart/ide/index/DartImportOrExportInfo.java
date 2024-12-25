@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,30 +27,25 @@ public class DartImportOrExportInfo implements DartShowHideInfo {
     myHideComponents = hideComponents;
   }
 
-  @NotNull
-  public String getUri() {
+  public @NotNull String getUri() {
     return myUri;
   }
 
-  @NotNull
-  public Kind getKind() {
+  public @NotNull Kind getKind() {
     return myKind;
   }
 
-  @Nullable
-  public String getImportPrefix() {
+  public @Nullable String getImportPrefix() {
     return myImportPrefix;
   }
 
   @Override
-  @NotNull
-  public Set<String> getShowComponents() {
+  public @NotNull Set<String> getShowComponents() {
     return myShowComponents;
   }
 
   @Override
-  @NotNull
-  public Set<String> getHideComponents() {
+  public @NotNull Set<String> getHideComponents() {
     return myHideComponents;
   }
 

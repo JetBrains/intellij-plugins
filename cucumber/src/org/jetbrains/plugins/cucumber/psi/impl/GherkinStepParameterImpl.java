@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -15,7 +16,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
 
 public class GherkinStepParameterImpl extends GherkinPsiElementBase implements GherkinStepParameter {
-  public GherkinStepParameterImpl(@NotNull final ASTNode node) {
+  public GherkinStepParameterImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -52,9 +53,8 @@ public class GherkinStepParameterImpl extends GherkinPsiElementBase implements G
     return this;
   }
 
-  @NotNull
   @Override
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     return new LocalSearchScope(getContainingFile());
   }
 }

@@ -17,20 +17,20 @@ package com.intellij.protobuf.lang.resolve;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.psi.PbEnumValue;
+import com.intellij.protobuf.lang.psi.ProtoIdentifierValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.protobuf.lang.psi.PbEnumDefinition;
-import com.intellij.protobuf.lang.psi.PbEnumValue;
-import com.intellij.protobuf.lang.psi.ProtoIdentifierValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Provides a reference to a {@link PbEnumValue}. */
 public class PbEnumValueReference extends PsiReferenceBase<ProtoIdentifierValue> {
 
-  @NotNull private final PbEnumDefinition enumDefinition;
+  private final @NotNull PbEnumDefinition enumDefinition;
 
   public PbEnumValueReference(
       @NotNull ProtoIdentifierValue element, @NotNull PbEnumDefinition enumDefinition) {
@@ -38,22 +38,19 @@ public class PbEnumValueReference extends PsiReferenceBase<ProtoIdentifierValue>
     this.enumDefinition = enumDefinition;
   }
 
-  @Nullable
   @Override
-  protected TextRange calculateDefaultRangeInElement() {
+  protected @Nullable TextRange calculateDefaultRangeInElement() {
     return TextRange.create(0, myElement.getTextLength());
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     String valueName = myElement.getText();
     return enumDefinition.getEnumValueMap().get(valueName).stream().findFirst().orElse(null);
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public @NotNull Object[] getVariants() {
     return enumDefinition
         .getEnumValues()
         .stream()

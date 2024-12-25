@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.HbLanguage;
@@ -24,8 +24,7 @@ public class HbParseDefinition implements ParserDefinition {
   public static final IFileElementType FILE_ELEMENT_TYPE = new IStubFileElementType<>("handlebars", HbLanguage.INSTANCE);
 
   @Override
-  @NotNull
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new HbLexer();
   }
 
@@ -40,26 +39,22 @@ public class HbParseDefinition implements ParserDefinition {
   }
 
   @Override
-  @NotNull
-  public TokenSet getWhitespaceTokens() {
+  public @NotNull TokenSet getWhitespaceTokens() {
     return HbTokenTypes.WHITESPACES;
   }
 
   @Override
-  @NotNull
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return HbTokenTypes.COMMENTS;
   }
 
   @Override
-  @NotNull
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return HbTokenTypes.STRING_LITERALS;
   }
 
   @Override
-  @NotNull
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     final IElementType elementType = node.getElementType();
     if (elementType == HbTokenTypes.BLOCK_WRAPPER) {
       return new HbBlockWrapperImpl(node);

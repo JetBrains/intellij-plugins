@@ -17,13 +17,13 @@ package com.intellij.protobuf.ide.formatter;
 
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.protobuf.lang.psi.PbStatement;
 import com.intellij.protobuf.lang.psi.PbTextElementType;
 import com.intellij.protobuf.lang.psi.ProtoBlockBody;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.TokenType;
+import com.intellij.psi.formatter.common.AbstractBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,9 +104,8 @@ public class PbBlock extends AbstractBlock {
     return Indent.getNoneIndent();
   }
 
-  @Nullable
   @Override
-  public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
+  public @Nullable Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
     return spacingBuilder.getSpacing(this, child1, child2);
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,8 +18,7 @@ public final class DartNameSuggesterUtil {
   private DartNameSuggesterUtil() {
   }
 
-  @NotNull
-  private static String deleteNonLetterFromString(@NotNull final String string) {
+  private static @NotNull String deleteNonLetterFromString(final @NotNull String string) {
     Pattern pattern = Pattern.compile("[^a-zA-Z_]+");
     Matcher matcher = pattern.matcher(string);
     return matcher.replaceAll("_");
@@ -74,8 +73,7 @@ public final class DartNameSuggesterUtil {
     return result;
   }
 
-  @NotNull
-  public static Collection<String> generateNames(@NotNull String name) {
+  public static @NotNull Collection<String> generateNames(@NotNull String name) {
     name = StringUtil.decapitalize(deleteNonLetterFromString(StringUtil.unquoteString(name.replace('.', '_'))));
     if (name.startsWith("get")) {
       name = name.substring(3);

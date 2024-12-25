@@ -45,9 +45,8 @@ public final class BndManifestHeaderParsers implements HeaderParserProvider {
     myParsers.put("Include-Resource", StandardHeaderParser.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public Map<String, HeaderParser> getHeaderParsers() {
+  public @NotNull Map<String, HeaderParser> getHeaderParsers() {
     return myParsers;
   }
 }

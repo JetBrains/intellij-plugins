@@ -55,16 +55,16 @@ public class OutputMessageParser {
   public static final DateTimeFormatter NEW_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US);
   public static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US);
 
-  @NonNls private static final String CLIENT_PREFIX = "Client";
+  private static final @NonNls String CLIENT_PREFIX = "Client";
   private static final String FILE_PREFIX = "...";
   protected final String myOutput;
 
   private static class ChangeReadingPolicy {
 
-    @NonNls private static final String CHANGE_REGEX = "(Change )(.*)( on )(.*)( by )(.*)(@)(.*)";
+    private static final @NonNls String CHANGE_REGEX = "(Change )(.*)( on )(.*)( by )(.*)(@)(.*)";
     public static final Pattern CHANGE_PATTERN = Pattern.compile(CHANGE_REGEX);
 
-    @NonNls private static final String CHANGE_DESCRIPTION_REGEX = "(Change )(.*)( by )(.*)(@)(.*)( on )(.*)";
+    private static final @NonNls String CHANGE_DESCRIPTION_REGEX = "(Change )(.*)( by )(.*)(@)(.*)( on )(.*)";
     public static final Pattern CHANGE_DESCRIPTION_PATTERN = Pattern.compile(CHANGE_DESCRIPTION_REGEX);
 
     private final Pattern myPattern;
@@ -91,16 +91,16 @@ public class OutputMessageParser {
   }
 
 
-  @NonNls private static final String LOG_REGEX = "(... #)(.*)( change )(.*)( )(.*)( on )(.*)( by )(.*)(@)(.*)( \\()(.*)(\\))";
+  private static final @NonNls String LOG_REGEX = "(... #)(.*)( change )(.*)( )(.*)( on )(.*)( by )(.*)(@)(.*)( \\()(.*)(\\))";
   public static final Pattern LOG_PATTERN = Pattern.compile(LOG_REGEX);
   public static final Pattern DEPOT_PATTERN = Pattern.compile("(//)(.*)");
 
-  @NonNls public static final Pattern SERVER_VERSION_PATTERN = Pattern.compile("(.*\\/.*\\/)(.*)(\\.)(\\d+)([^\\d]*\\/.* \\(.*\\/.*\\/.*\\))");
-  @NonNls public static final Pattern CLIENT_VERSION_PATTERN = Pattern.compile("(.*/.*/)(.*)(\\.)(\\d+)[^\\d]*/(.*) (\\(.*/.*/.*\\)).");
-  @NonNls private static final String BRANCH_FROM_PREFIX = "... ... branch from ";
-  @NonNls private static final String AFFECTED_FILES_PREFIX = "Affected files ...";
-  @NonNls private static final String SHELVED_FILES_PREFIX = "Shelved files ...";
-  @NonNls private static final String BRANCH_PREFIX = "Branch";
+  public static final @NonNls Pattern SERVER_VERSION_PATTERN = Pattern.compile("(.*\\/.*\\/)(.*)(\\.)(\\d+)([^\\d]*\\/.* \\(.*\\/.*\\/.*\\))");
+  public static final @NonNls Pattern CLIENT_VERSION_PATTERN = Pattern.compile("(.*/.*/)(.*)(\\.)(\\d+)[^\\d]*/(.*) (\\(.*/.*/.*\\)).");
+  private static final @NonNls String BRANCH_FROM_PREFIX = "... ... branch from ";
+  private static final @NonNls String AFFECTED_FILES_PREFIX = "Affected files ...";
+  private static final @NonNls String SHELVED_FILES_PREFIX = "Shelved files ...";
+  private static final @NonNls String BRANCH_PREFIX = "Branch";
 
   protected OutputMessageParser(final String output) {
     myOutput = output;
@@ -216,8 +216,7 @@ public class OutputMessageParser {
     }
   }
 
-  @Nullable
-  protected String readTo(final String s) {
+  protected @Nullable String readTo(final String s) {
     final int position = myCurrentLine.indexOf(s);
     if (position < 0) return null;
     String result = myCurrentLine.substring(0, position).trim();
@@ -235,8 +234,7 @@ public class OutputMessageParser {
     return result;
   }
 
-  @Nullable
-  private ChangeListData readNextChange(final ChangeReadingPolicy changePattern) {
+  private @Nullable ChangeListData readNextChange(final ChangeReadingPolicy changePattern) {
     if (myLines.isEmpty()) return null;
     myCurrentLine = myLines.remove(0);
     final Matcher matcher = changePattern.getPattern().matcher(myCurrentLine);
@@ -395,8 +393,7 @@ Rev. P4/NTX86/2004.2/68597 (2004/09/03).
 
 */
 
-  @NotNull
-  private FileChange createFileChange() {
+  private @NotNull FileChange createFileChange() {
     if (myProgressIndicator != null && myProgressIndicator.isCanceled()) {
       throw new ProcessCanceledException();
     }
@@ -424,8 +421,7 @@ Rev. P4/NTX86/2004.2/68597 (2004/09/03).
     return result;
   }
 
-  @Nullable
-  private String readNextBranch() {
+  private @Nullable String readNextBranch() {
 
     if (myLines.isEmpty()) return null;
     myCurrentLine = myLines.remove(0);

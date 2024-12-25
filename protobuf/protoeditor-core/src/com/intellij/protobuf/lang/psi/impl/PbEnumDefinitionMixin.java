@@ -17,12 +17,12 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.psi.PbEnumDefinition;
 import com.intellij.protobuf.lang.psi.PbEnumValue;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.stub.PbEnumDefinitionStub;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,15 +39,13 @@ abstract class PbEnumDefinitionMixin extends PbStubbedNamedDefinitionBase<PbEnum
     super(stub, nodeType);
   }
 
-  @NotNull
   @Override
-  public Multimap<String, PbEnumValue> getEnumValueMap() {
+  public @NotNull Multimap<String, PbEnumValue> getEnumValueMap() {
     return PbPsiImplUtil.getCachedEnumValueMap(this);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return PbIcons.ENUM;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.util;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -36,12 +36,11 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   public static final DartTestLocationProvider INSTANCE = new DartTestLocationProvider();
   public static final Type STRING_LIST_TYPE = new TypeToken<List<String>>() {}.getType();
 
-  @NotNull
   @Override
-  public List<Location> getLocation(@NotNull String protocol,
-                                    @NotNull String path,
-                                    @NotNull Project project,
-                                    @NotNull GlobalSearchScope scope) {
+  public @NotNull List<Location> getLocation(@NotNull String protocol,
+                                             @NotNull String path,
+                                             @NotNull Project project,
+                                             @NotNull GlobalSearchScope scope) {
     // see DartTestEventsConverter.addLocationHint()
     // path is like /Users/x/projects/foo/test/foo_test.dart,35,12,["main tests","calculate_fail"]
 
@@ -74,8 +73,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     return getLocationByGroupAndTestNames(psiFile, nodes);
   }
 
-  @Nullable
-  private static Location<PsiElement> getLocationByLineAndColumn(@NotNull final PsiFile file, final int line, final int column) {
+  private static @Nullable Location<PsiElement> getLocationByLineAndColumn(final @NotNull PsiFile file, final int line, final int column) {
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     if (document == null) return null;
     if (line >= document.getLineCount()) return null;
@@ -98,7 +96,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   }
 
   @VisibleForTesting
-  public List<Location> getLocationForTest(@NotNull final PsiFile psiFile, @NotNull final String testPath) {
+  public List<Location> getLocationForTest(final @NotNull PsiFile psiFile, final @NotNull String testPath) {
     return getLocationByGroupAndTestNames(psiFile, pathToNodes(testPath));
   }
 
@@ -108,7 +106,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     if (psiFile instanceof DartFile && !nodes.isEmpty()) {
       PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<>() {
         @Override
-        public boolean execute(@NotNull final PsiElement element) {
+        public boolean execute(final @NotNull PsiElement element) {
           if (element instanceof DartCallExpression expression) {
             if (TestUtil.isTest(expression) || TestUtil.isGroup(expression)) {
               if (nodes.get(nodes.size() - 1).equals(getTestLabel(expression))) {
@@ -130,8 +128,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
           return true;
         }
 
-        @Nullable
-        private static DartCallExpression getGroup(final DartCallExpression expression) {
+        private static @Nullable DartCallExpression getGroup(final DartCallExpression expression) {
           return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true,
                                                                  element -> element instanceof DartCallExpression &&
                                                                             TestUtil.isGroup((DartCallExpression)element));
@@ -144,8 +141,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     return locations;
   }
 
-  @Nullable
-  public static String getTestLabel(@NotNull final DartCallExpression testCallExpression) {
+  public static @Nullable String getTestLabel(final @NotNull DartCallExpression testCallExpression) {
     final DartArguments arguments = testCallExpression.getArguments();
     final DartArgumentList argumentList = arguments == null ? null : arguments.getArgumentList();
     final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();

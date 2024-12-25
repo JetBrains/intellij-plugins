@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.run;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -66,16 +67,14 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
   }
 
   @Override
-  @NotNull
-  public JpsFlexUnitRunnerParameters createCopy() {
+  public @NotNull JpsFlexUnitRunnerParameters createCopy() {
     return new JpsFlexUnitRunnerParameters(this);
   }
 
   // ------------------
 
-  @NotNull
   @Attribute("scope")
-  public Scope getScope() {
+  public @NotNull Scope getScope() {
     return myScope;
   }
 
@@ -83,9 +82,8 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     myScope = scope;
   }
 
-  @NotNull
   @Attribute("package_name")
-  public String getPackageName() {
+  public @NotNull String getPackageName() {
     return myPackageName;
   }
 
@@ -93,9 +91,8 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     myPackageName = packageName;
   }
 
-  @NotNull
   @Attribute("class_name")
-  public String getClassName() {
+  public @NotNull String getClassName() {
     return myClassName;
   }
 
@@ -103,9 +100,8 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     myClassName = className;
   }
 
-  @NotNull
   @Attribute("method_name")
-  public String getMethodName() {
+  public @NotNull String getMethodName() {
     return myMethodName;
   }
 
@@ -113,9 +109,8 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     myMethodName = methodName;
   }
 
-  @Nullable
   @Attribute("output_log_level")
-  public OutputLogLevel getOutputLogLevel() {
+  public @Nullable OutputLogLevel getOutputLogLevel() {
     return myOutputLogLevel;
   }
 
@@ -142,8 +137,7 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
   }
 
   @Override
-  @Nullable
-  public JpsFlexBuildConfiguration getBC(final JpsProject project) {
+  public @Nullable JpsFlexBuildConfiguration getBC(final JpsProject project) {
     final JpsFlexBuildConfiguration bc = super.getBC(project);
     if (bc == null) return null;
 

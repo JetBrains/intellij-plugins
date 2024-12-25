@@ -19,7 +19,7 @@ public class ConnectionKey {
   private final String client;
   private final String user;
 
-  public ConnectionKey(@NotNull final String server, @NotNull final String client, @NotNull final String user) {
+  public ConnectionKey(final @NotNull String server, final @NotNull String client, final @NotNull String user) {
     this.server = server;
     this.client = client;
     this.user = user;

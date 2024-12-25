@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.files.CfmlFile;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
-  public CfmlFileElementType(@NonNls final String debugName, final Language language) {
+  public CfmlFileElementType(final @NonNls String debugName, final Language language) {
     super(debugName, language);
   }
 
@@ -25,8 +25,7 @@ public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
   public StubBuilder getBuilder() {
     return new DefaultStubBuilder() {
       @Override
-      @NotNull
-      protected StubElement createStubForFile(@NotNull final PsiFile file) {
+      protected @NotNull StubElement createStubForFile(final @NotNull PsiFile file) {
         if (file instanceof CfmlFile) {
           return new CfmlFileStubImpl((CfmlFile)file);
         }
@@ -41,9 +40,8 @@ public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
     return super.getStubVersion() + 34;
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "cfml.FILE";
   }
 
@@ -52,9 +50,8 @@ public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
     dataStream.writeName(stub.getName().toString());
   }
 
-  @NotNull
   @Override
-  public CfmlFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull CfmlFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     StringRef name = dataStream.readName();
     return new CfmlFileStubImpl(name);
   }

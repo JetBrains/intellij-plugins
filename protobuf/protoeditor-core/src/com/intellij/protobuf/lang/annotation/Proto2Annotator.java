@@ -29,7 +29,7 @@ import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto2Syn
 /** Annotations specific to proto2 syntax level. */
 public class Proto2Annotator implements Annotator {
   @Override
-  public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
+  public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     // Only operate on proto3 files.
     if (!(element instanceof PbElement pbElement)
         || !isDeprecatedProto2Syntax(pbElement.getPbFile().getSyntaxLevel())) {

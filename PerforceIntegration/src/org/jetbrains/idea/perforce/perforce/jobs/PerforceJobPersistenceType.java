@@ -16,8 +16,7 @@ public enum PerforceJobPersistenceType {
     myName = name;
   }
 
-  @Nullable
-  public static PerforceJobPersistenceType parse(final String s) {
+  public static @Nullable PerforceJobPersistenceType parse(final String s) {
     final String l = StringUtil.toLowerCase(s);
     if (optional.myName.equals(l)) return optional;
     if (_default.myName.equals(l)) return _default;

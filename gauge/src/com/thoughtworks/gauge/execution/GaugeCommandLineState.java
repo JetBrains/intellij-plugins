@@ -56,15 +56,13 @@ public final class GaugeCommandLineState extends CommandLineState {
     this.config = config;
   }
 
-  @NotNull
   @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
+  protected @NotNull ProcessHandler startProcess() throws ExecutionException {
     return GaugeRunProcessHandler.runCommandLine(commandLine, GaugeDebugInfo.getInstance(commandLine, env), project);
   }
 
-  @NotNull
   @Override
-  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
+  public @NotNull ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
     addProjectClasspath();
     if (GaugeVersion.isGreaterOrEqual(GaugeRunConfiguration.TEST_RUNNER_SUPPORT_VERSION, false)
         && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {

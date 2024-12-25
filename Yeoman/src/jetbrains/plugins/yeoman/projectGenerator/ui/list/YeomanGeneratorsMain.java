@@ -32,8 +32,7 @@ import java.awt.*;
 
 public class YeomanGeneratorsMain implements Disposable {
   
-  @NlsSafe
-  private static final String TEXT_SUFFIX = "</body></html>";
+  private static final @NlsSafe String TEXT_SUFFIX = "</body></html>";
 
   protected JPanel main;
   protected JPanel myToolbarPanel;
@@ -45,8 +44,7 @@ public class YeomanGeneratorsMain implements Disposable {
   private JSplitPane mySplitPane;
   protected YeomanGeneratorTable myGeneratorTable;
 
-  @Nullable
-  protected MyPluginsFilter myFilter;
+  protected @Nullable MyPluginsFilter myFilter;
 
   private YeomanGeneratorInfoPanelHeader myGeneratorInfoPanelHeader;
   private ActionToolbar myActionToolbar;
@@ -144,14 +142,12 @@ public class YeomanGeneratorsMain implements Disposable {
 
 
 
-  @Nullable
-  private YeomanGeneratorInfo getSelectedValue() {
+  private @Nullable YeomanGeneratorInfo getSelectedValue() {
     YeomanGeneratorInfo[] descriptors = myGeneratorTable.getSelectedObjects();
     return descriptors != null && descriptors.length == 1 ? descriptors[0] : null;
   }
 
-  @NlsSafe
-  private static String getTextPrefix() {
+  private static @NlsSafe String getTextPrefix() {
     final int fontSize = JBUIScale.scale(13);
     final int m1 = JBUIScale.scale(1);
     final int m2 = JBUIScale.scale(5);
@@ -181,8 +177,7 @@ public class YeomanGeneratorsMain implements Disposable {
   }
 
 
-  @NotNull
-  public JPanel getMainPanel() {
+  public @NotNull JPanel getMainPanel() {
     return main;
   }
 
@@ -196,8 +191,7 @@ public class YeomanGeneratorsMain implements Disposable {
   }
 
   @SuppressWarnings("unused")
-  @Nullable
-  public YeomanGeneratorInfo getSelectedObject() {
+  public @Nullable YeomanGeneratorInfo getSelectedObject() {
     return ArrayUtil.getFirstElement(myGeneratorTable.getSelectedObjects());
   }
 
@@ -226,13 +220,11 @@ public class YeomanGeneratorsMain implements Disposable {
     myGeneratorTable.select(info);
   }
 
-  @Nullable
-  public YeomanInstalledGeneratorInfo getInstalledGeneratorInfo(YeomanGeneratorInfo info) {
+  public @Nullable YeomanInstalledGeneratorInfo getInstalledGeneratorInfo(YeomanGeneratorInfo info) {
     return info instanceof YeomanInstalledGeneratorInfo ? (YeomanInstalledGeneratorInfo)info : null;
   }
 
-  @Nullable
-  public YeomanGeneratorFullInfo getFullGeneratorInfo(@Nullable YeomanGeneratorInfo info) {
+  public @Nullable YeomanGeneratorFullInfo getFullGeneratorInfo(@Nullable YeomanGeneratorInfo info) {
     return YeomanGeneratorFullInfo.getFullInfo(info);
   }
 }

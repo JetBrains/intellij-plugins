@@ -24,7 +24,7 @@ import java.io.*;
 
 public final class StreamGobbler implements CancellableRunnable {
   private static final Logger LOG = Logger.getInstance(StreamGobbler.class);
-  private final static int IN_MEMORY_RESULT_THRESHOULD = 48 * 1024; // 48K
+  private static final int IN_MEMORY_RESULT_THRESHOULD = 48 * 1024; // 48K
 
   private OutputStream myByteContents;
   private final ByteArrayOutputStream myInMemoryContents;

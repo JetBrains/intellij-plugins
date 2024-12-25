@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -69,8 +69,7 @@ public final class BuildConfigurationNature {
     return result;
   }
 
-  @NotNull
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     switch (targetPlatform) {
       case Web:
         return pureAS ? FlexSharedIcons.BcWebAs : FlexSharedIcons.BcWebFlex;

@@ -54,7 +54,7 @@ public class ParticularConnectionPerforceIntegratePanel implements PerforcePanel
   private final P4Connection myConnection;
   private final PerforceRunner myRunner;
 
-  public ParticularConnectionPerforceIntegratePanel(final Project project, @NotNull final P4Connection connection) {
+  public ParticularConnectionPerforceIntegratePanel(final Project project, final @NotNull P4Connection connection) {
     myProject = project;
     myChangeListChooser = new ChangeListChooser(myChangeLists, myNewChangeListButton, project, connection);
     myConnection = connection;
@@ -98,7 +98,7 @@ public class ParticularConnectionPerforceIntegratePanel implements PerforcePanel
     });
   }
 
-  @Nullable private String getSelectedBranchName() {
+  private @Nullable String getSelectedBranchName() {
     return (String)myBranches.getSelectedItem();
   }
 

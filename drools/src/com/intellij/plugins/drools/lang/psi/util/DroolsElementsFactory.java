@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.project.Project;
@@ -13,8 +13,7 @@ import java.util.List;
 
 public final class DroolsElementsFactory {
 
-  @Nullable
-  public static DroolsNameId createPatternBindIdentifier(@NotNull String name, @NotNull Project project) {
+  public static @Nullable DroolsNameId createPatternBindIdentifier(@NotNull String name, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project)
       .createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "rule foo when " + name + ": Foo() then aaa");
 
@@ -26,8 +25,7 @@ public final class DroolsElementsFactory {
     return null;
   }
 
-  @Nullable
-  public static DroolsTypeName createDeclaredTypeNameIdentifier(@NotNull String name, @NotNull Project project) {
+  public static @Nullable DroolsTypeName createDeclaredTypeNameIdentifier(@NotNull String name, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project)
       .createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "declare " + name + " end");
 
@@ -40,8 +38,7 @@ public final class DroolsElementsFactory {
     return null;
   }
 
-  @Nullable
-  public static DroolsFieldName createFieldNameIdentifier(@NotNull String name, @NotNull Project project) {
+  public static @Nullable DroolsFieldName createFieldNameIdentifier(@NotNull String name, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project)
       .createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "declare Foo " + name + " : int end");
 
@@ -59,8 +56,7 @@ public final class DroolsElementsFactory {
     return null;
   }
 
-  @Nullable
-  public static DroolsNameId createFunctionNameIdentifier(@NotNull String name, @NotNull Project project) {
+  public static @Nullable DroolsNameId createFunctionNameIdentifier(@NotNull String name, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project)
       .createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "function void " + name + "(){}");
 
@@ -72,16 +68,14 @@ public final class DroolsElementsFactory {
     return null;
   }
 
-  @Nullable
-  public static DroolsStringId createQueryNameIdentifier(@NotNull String name, @NotNull Project project) {
+  public static @Nullable DroolsStringId createQueryNameIdentifier(@NotNull String name, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project)
       .createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "query " + name + " end");
 
     return psiFile.getQueries()[0].getStringId();
   }
 
-  @Nullable
-  public static DroolsIdentifier createDroolsIdentifier(@NotNull String name, @NotNull Project project) {
+  public static @Nullable DroolsIdentifier createDroolsIdentifier(@NotNull String name, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project).
       createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "import " + name);
     final PsiElement deepestElement = psiFile.findElementAt(8);
@@ -94,8 +88,7 @@ public final class DroolsElementsFactory {
     return null;
   }
 
-  @Nullable
-  public static DroolsImport createDroolsImport(@NotNull String className, @NotNull Project project) {
+  public static @Nullable DroolsImport createDroolsImport(@NotNull String className, @NotNull Project project) {
     final DroolsFile psiFile = (DroolsFile)PsiFileFactory.getInstance(project).
       createFileFromText("_dummy.drl", DroolsFileType.DROOLS_FILE_TYPE, "import " + className+";");
     final DroolsImport[] imports = psiFile.getImports();

@@ -24,9 +24,8 @@ import org.jetbrains.annotations.NotNull;
 /** Creates a {@link SyntaxHighlighter} for use with standalone prototext files. */
 public class PbTextSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
+  public @NotNull SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
     return new PbTextSyntaxHighlighter();
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
@@ -14,9 +15,8 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
     myAnnotationValue = annotationValue;
   }
 
-  @Nullable
   @Override
-  protected String getCucumberRegexFromElement(PsiElement element) {
+  protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
     if (element == null) {
       return null;
     }

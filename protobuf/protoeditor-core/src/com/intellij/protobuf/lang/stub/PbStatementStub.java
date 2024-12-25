@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.stub;
 
-import com.intellij.psi.stubs.StubElement;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbStatement;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,8 +26,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface PbStatementStub<T extends PbElement> extends PbElementStub<T> {
 
-  @Nullable
-  default PbStatementOwnerStub<?> getOwner() {
+  default @Nullable PbStatementOwnerStub<?> getOwner() {
     return StubMethods.getOwner(this);
   }
 }

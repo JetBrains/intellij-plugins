@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.CommonBundle;
@@ -667,7 +667,7 @@ public final class DartServerCompletionContributor extends CompletionContributor
     };
   }
 
-  private static abstract class SuggestionDetailsInsertHandlerBase implements InsertHandler<LookupElement> {
+  private abstract static class SuggestionDetailsInsertHandlerBase implements InsertHandler<LookupElement> {
     protected final @NotNull Project myProject;
     protected final @NotNull VirtualFile myFile;
     protected final int myStartOffsetInHostFile;

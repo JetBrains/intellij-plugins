@@ -15,15 +15,14 @@ import javax.swing.*;
 import java.util.Objects;
 
 public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescriptor, CssNavigableDescriptor {
-  @NotNull private final PostCssCustomSelector mySelector;
+  private final @NotNull PostCssCustomSelector mySelector;
 
-  public PostCssCustomSelectorDescriptor(@NotNull final PostCssCustomSelector selector) {
+  public PostCssCustomSelectorDescriptor(final @NotNull PostCssCustomSelector selector) {
     mySelector = selector;
   }
 
-  @Nullable
   @Override
-  public PsiElement getElement() {
+  public @Nullable PsiElement getElement() {
     return mySelector;
   }
 
@@ -42,9 +41,8 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
     return false;
   }
 
-  @NotNull
   @Override
-  public CssVersion getCssVersion() {
+  public @NotNull CssVersion getCssVersion() {
     return CssVersion.UNKNOWN;
   }
 
@@ -58,39 +56,33 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
     return true;
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "--" + mySelector.getName();
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return ":--" + mySelector.getName();
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return "";
   }
 
-  @Nullable
   @Override
-  public String getDocumentationString(@Nullable PsiElement context) {
+  public @Nullable String getDocumentationString(@Nullable PsiElement context) {
     return null;
   }
 
-  @NotNull
   @Override
-  public String getElementTypeName() {
+  public @NotNull String getElementTypeName() {
     return PostCssBundle.message("custom.selector.label");
   }
 
-  @Nullable
   @Override
-  public String getSpecificationUrl() {
+  public @Nullable String getSpecificationUrl() {
     return null;
   }
 
@@ -99,9 +91,8 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
     return CssContextType.EMPTY_ARRAY;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     final ItemPresentation presentation = Objects.requireNonNull(mySelector.getPresentation());
     return presentation.getIcon(false);
   }

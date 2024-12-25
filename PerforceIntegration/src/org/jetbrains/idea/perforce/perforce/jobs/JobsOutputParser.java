@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JobsOutputParser {
-  private final static ParserLogger LOG = new ParserLogger("#org.jetbrains.idea.perforce.perforce.jobs.JobsOutputParser",
+  private static final ParserLogger LOG = new ParserLogger("#org.jetbrains.idea.perforce.perforce.jobs.JobsOutputParser",
                                                            "'p4 jobs' output parsing error.");
   private final PerforceJobSpecification mySpecification;
   private final List<String> myLines;
@@ -62,7 +62,7 @@ public class JobsOutputParser {
     private final PerforceJobField myField;
     private final Parser myParser;
 
-    protected FieldParser(@NotNull final PerforceJobField field, final Parser parser) {
+    protected FieldParser(final @NotNull PerforceJobField field, final Parser parser) {
       myField = field;
       myParser = parser;
     }
@@ -99,17 +99,15 @@ public class JobsOutputParser {
   }
 
   //jobname on date by user *status* description
-  private final static Parser[] ourParsers = new Parser[] {
+  private static final Parser[] ourParsers = new Parser[] {
     new Parser() {
       @Override
-      @NotNull
-      public StandardJobFields getField() {
+      public @NotNull StandardJobFields getField() {
         return StandardJobFields.name;
       }
 
       @Override
-      @NotNull
-      public String parse(String s, final Ref<Integer> startFrom) throws VcsException {
+      public @NotNull String parse(String s, final Ref<Integer> startFrom) throws VcsException {
         int idx = s.indexOf(" ");
         idx = (idx == -1) ? s.length() : idx;
         final String result = s.substring(0, idx);
@@ -119,14 +117,12 @@ public class JobsOutputParser {
     },
     new Parser() {
       @Override
-      @NotNull
-      public StandardJobFields getField() {
+      public @NotNull StandardJobFields getField() {
         return StandardJobFields.date;
       }
 
       @Override
-      @Nullable
-      public String parse(String s, final Ref<Integer> startFrom) throws VcsException {
+      public @Nullable String parse(String s, final Ref<Integer> startFrom) throws VcsException {
         final int idx = s.indexOf(ON, startFrom.get());
         if (idx == -1) {
           return null;
@@ -140,14 +136,12 @@ public class JobsOutputParser {
     },
     new Parser() {
       @Override
-      @NotNull
-      public StandardJobFields getField() {
+      public @NotNull StandardJobFields getField() {
         return StandardJobFields.user;
       }
 
       @Override
-      @Nullable
-      public String parse(String s, final Ref<Integer> startFrom) throws VcsException {
+      public @Nullable String parse(String s, final Ref<Integer> startFrom) throws VcsException {
         final int idx = s.indexOf(BY, startFrom.get());
         if (idx == -1) {
           return null;
@@ -160,14 +154,12 @@ public class JobsOutputParser {
     },
     new Parser() {
       @Override
-      @NotNull
-      public StandardJobFields getField() {
+      public @NotNull StandardJobFields getField() {
         return StandardJobFields.status;
       }
 
       @Override
-      @Nullable
-      public String parse(String s, final Ref<Integer> startFrom) throws VcsException {
+      public @Nullable String parse(String s, final Ref<Integer> startFrom) throws VcsException {
         final int idx1 = s.indexOf(STAR, startFrom.get());
         if (idx1 == -1) {
           return null;
@@ -180,14 +172,12 @@ public class JobsOutputParser {
     },
     new Parser() {
       @Override
-      @NotNull
-      public StandardJobFields getField() {
+      public @NotNull StandardJobFields getField() {
         return StandardJobFields.description;
       }
 
       @Override
-      @NotNull
-      public String parse(String s, final Ref<Integer> startFrom) {
+      public @NotNull String parse(String s, final Ref<Integer> startFrom) {
         String removeWrappers = s.substring(startFrom.get()).trim();
         removeWrappers = StringUtil.trimStart(removeWrappers, "'");
         if (removeWrappers.endsWith("'")) {

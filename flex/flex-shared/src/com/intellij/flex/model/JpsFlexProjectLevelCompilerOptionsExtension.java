@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model;
 
 import com.intellij.flex.model.bc.JpsFlexModuleOrProjectCompilerOptions;
@@ -28,8 +28,7 @@ public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompos
   }
 
   @Override
-  @NotNull
-  public JpsFlexProjectLevelCompilerOptionsExtension createCopy() {
+  public @NotNull JpsFlexProjectLevelCompilerOptionsExtension createCopy() {
     return new JpsFlexProjectLevelCompilerOptionsExtension(this);
   }
 
@@ -46,7 +45,7 @@ public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompos
   static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
       @Override
-      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+      public void loadExtension(final @NotNull JpsProject project, final @NotNull Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
       }
     };
@@ -58,7 +57,7 @@ public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompos
   static JpsProjectExtensionSerializer createProjectExtensionSerializerIws() {
     return new JpsProjectExtensionSerializer("workspace.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
       @Override
-      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+      public void loadExtension(final @NotNull JpsProject project, final @NotNull Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
       }
     };

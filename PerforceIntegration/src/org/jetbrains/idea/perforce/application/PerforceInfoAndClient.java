@@ -8,17 +8,15 @@ import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.PerforceAuthenticationException;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
-import org.jetbrains.idea.perforce.perforce.connections.P4ParametersConnection;
 
 import java.util.*;
 
 public final class PerforceInfoAndClient {
-  private final static Logger LOG = Logger.getInstance(PerforceInfoAndClient.class);
+  private static final Logger LOG = Logger.getInstance(PerforceInfoAndClient.class);
 
-  @NotNull
-  static ConnectionInfo calcInfo(@NotNull final P4Connection connection,
-                                 @NotNull PerforceRunner runner,
-                                 @NotNull ClientRootsCache clientRootsCache) {
+  static @NotNull ConnectionInfo calcInfo(final @NotNull P4Connection connection,
+                                          @NotNull PerforceRunner runner,
+                                          @NotNull ClientRootsCache clientRootsCache) {
     try {
       final Map<String, List<String>> infoMap = calcInfoMap(connection, runner);
       return new ConnectionInfo(infoMap, new ClientData(calcClientMap(connection, runner, extractClient(infoMap), clientRootsCache)));
@@ -41,19 +39,17 @@ public final class PerforceInfoAndClient {
     return clientValue.get(0);
   }
 
-  @NotNull
-  private static Map<String, List<String>> calcClientMap(P4Connection connection,
-                                                         PerforceRunner runner,
-                                                         final String client,
-                                                         final ClientRootsCache clientRootsCache) throws VcsException {
+  private static @NotNull Map<String, List<String>> calcClientMap(P4Connection connection,
+                                                                  PerforceRunner runner,
+                                                                  final String client,
+                                                                  final ClientRootsCache clientRootsCache) throws VcsException {
     final Map<String, List<String>> clientMap = runner.loadClient(client, connection);
     convertRoots(clientMap, PerforceRunner.CLIENTSPEC_ROOT, clientRootsCache);
     convertRoots(clientMap, PerforceRunner.CLIENTSPEC_ALTROOTS, clientRootsCache);
     return clientMap;
   }
 
-  @NotNull
-  private static Map<String, List<String>> calcInfoMap(@NotNull P4Connection connection, @NotNull PerforceRunner runner) throws VcsException {
+  private static @NotNull Map<String, List<String>> calcInfoMap(@NotNull P4Connection connection, @NotNull PerforceRunner runner) throws VcsException {
     final Map<String, List<String>> infoMap = runner.getInfo(connection);
     if (infoMap.containsKey(PerforceRunner.CLIENT_UNKNOWN)) {
       throw new VcsException(PerforceBundle.message("error.client.unknown"));

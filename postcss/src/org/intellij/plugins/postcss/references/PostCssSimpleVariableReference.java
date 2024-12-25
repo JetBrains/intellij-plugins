@@ -44,7 +44,7 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
       return result.get();
     };
 
-  public PostCssSimpleVariableReference(@NotNull final PsiElement element) {
+  public PostCssSimpleVariableReference(final @NotNull PsiElement element) {
     super(element);
   }
 
@@ -62,15 +62,13 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
     return TextRange.create(1, myElement.getTextLength()); // skip leading $ in $foo
   }
 
-  @NotNull
   @Override
-  public String getUnresolvedMessagePattern() {
+  public @NotNull String getUnresolvedMessagePattern() {
     return CssBundle.message("inspections.unresolved.variable", getCanonicalText());
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, false, false);
   }
 

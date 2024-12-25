@@ -50,15 +50,13 @@ public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator
     myRunConfigurationChecker = checker;
   }
 
-  @NotNull
   @Override
-  public FrameworkInstanceManager getFrameworkInstanceManager() {
+  public @NotNull FrameworkInstanceManager getFrameworkInstanceManager() {
     return myInstanceManager;
   }
 
-  @Nullable
   @Override
-  public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
+  public @Nullable FrameworkRunPropertiesEditor createRunPropertiesEditor() {
     return null;
   }
 

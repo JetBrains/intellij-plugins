@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -148,7 +148,7 @@ public final class DartAnnotator implements Annotator {
   }
 
   @Contract("_, null -> false")
-  private static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile file) {
+  private static boolean canBeAnalyzedByServer(final @NotNull Project project, final @Nullable VirtualFile file) {
     if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return false;
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
@@ -160,7 +160,7 @@ public final class DartAnnotator implements Annotator {
   }
 
   @Override
-  public void annotate(@NotNull final PsiElement element, @NotNull final AnnotationHolder holder) {
+  public void annotate(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
 
     final AnnotationSession session = holder.getCurrentAnnotationSession();
@@ -304,8 +304,7 @@ public final class DartAnnotator implements Annotator {
     builder.create();
   }
 
-  @Nullable
-  private static ProblemHighlightType getSpecialHighlightType(@NotNull final DartServerData.DartError error) {
+  private static @Nullable ProblemHighlightType getSpecialHighlightType(final @NotNull DartServerData.DartError error) {
     final String code = error.getCode();
     if (code != null) {
       // See https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/lib/error/error.dart
@@ -358,8 +357,7 @@ public final class DartAnnotator implements Annotator {
     }
   }
 
-  @NotNull
-  public static List<Pair<TextRange, Boolean>> getEscapeSequenceRangesAndValidity(final @Nullable String text) {
+  public static @NotNull List<Pair<TextRange, Boolean>> getEscapeSequenceRangesAndValidity(final @Nullable String text) {
     // \\xFF                 2 hex digits
     // \\uFFFF               4 hex digits
     // \\u{F} - \\u{FFFFFF}  from 1 up to 6 hex digits

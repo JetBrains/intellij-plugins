@@ -32,9 +32,8 @@ public class PbStructureViewElement extends PsiTreeElementBase<PbElement> {
     super(element);
   }
 
-  @NotNull
   @Override
-  public Collection<StructureViewTreeElement> getChildrenBase() {
+  public @NotNull Collection<StructureViewTreeElement> getChildrenBase() {
     PbElement element = getElement();
     if (!(element instanceof PbStatementOwner owner)) {
       return Collections.emptyList();
@@ -50,9 +49,8 @@ public class PbStructureViewElement extends PsiTreeElementBase<PbElement> {
         .collect(Collectors.toList());
   }
 
-  @Nullable
   @Override
-  public String getPresentableText() {
+  public @Nullable String getPresentableText() {
     PbElement element = getElement();
     if (element == null) {
       return "";

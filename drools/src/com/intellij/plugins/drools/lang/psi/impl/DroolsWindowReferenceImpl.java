@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -26,9 +26,8 @@ public abstract class DroolsWindowReferenceImpl extends DroolsPsiCompositeElemen
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return this;
   }
 
@@ -37,16 +36,14 @@ public abstract class DroolsWindowReferenceImpl extends DroolsPsiCompositeElemen
     return this;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();
     return new TextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getText();
   }
 

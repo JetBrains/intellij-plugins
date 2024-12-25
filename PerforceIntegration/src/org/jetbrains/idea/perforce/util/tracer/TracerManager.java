@@ -17,9 +17,9 @@ public class TracerManager<Kind extends Enum> implements Tracer<Kind, Object> {
   private long myPreviousOutputTime;
   private final Runnable myInnerLogger;
 
-  public TracerManager(@Nullable final TracerParameters traceAverageTimes,
-                       @Nullable final TracerParameters traceNumberConcurrentThreads,
-                       @Nullable final LongCallsParameters traceLongCalls, final Logger logger, final long interval) {
+  public TracerManager(final @Nullable TracerParameters traceAverageTimes,
+                       final @Nullable TracerParameters traceNumberConcurrentThreads,
+                       final @Nullable LongCallsParameters traceLongCalls, final Logger logger, final long interval) {
     myLogger = logger;
     myInterval = interval;
     myPresentations = new LinkedList<>();

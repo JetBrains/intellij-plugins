@@ -13,9 +13,8 @@ import java.util.List;
  * @author Roman.Chernyatchik
  */
 public class PerforceQuickListContentProvider extends VcsQuickListContentProviderBase {
-  @NotNull
   @Override
-  protected String getVcsName() {
+  protected @NotNull String getVcsName() {
     return PerforceVcs.NAME;
   }
 

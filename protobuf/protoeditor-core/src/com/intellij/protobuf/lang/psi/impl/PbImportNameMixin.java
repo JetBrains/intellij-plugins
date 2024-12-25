@@ -16,9 +16,9 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiReference;
 import com.intellij.protobuf.lang.psi.PbImportName;
 import com.intellij.protobuf.lang.resolve.PbImportReference;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbImportNameMixin extends PbElementBase implements PbImportName {
@@ -27,9 +27,8 @@ abstract class PbImportNameMixin extends PbElementBase implements PbImportName {
     super(node);
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     return new PbImportReference(this);
   }
 }

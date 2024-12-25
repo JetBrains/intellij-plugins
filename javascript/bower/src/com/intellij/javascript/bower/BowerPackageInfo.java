@@ -27,8 +27,7 @@ public class BowerPackageInfo {
     myLatestContent = latestContent;
   }
 
-  @NotNull
-  public List<String> getVersions() {
+  public @NotNull List<String> getVersions() {
     return myVersions;
   }
 

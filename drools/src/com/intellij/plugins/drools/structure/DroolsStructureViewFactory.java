@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.structure;
 
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -12,11 +12,10 @@ import org.jetbrains.annotations.Nullable;
 
 public final class DroolsStructureViewFactory implements PsiStructureViewFactory {
   @Override
-  public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
+  public StructureViewBuilder getStructureViewBuilder(final @NotNull PsiFile psiFile) {
     return new TreeBasedStructureViewBuilder() {
       @Override
-      @NotNull
-      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+      public @NotNull StructureViewModel createStructureViewModel(@Nullable Editor editor) {
         return new DroolsStructureViewModel(psiFile, editor);
       }
 

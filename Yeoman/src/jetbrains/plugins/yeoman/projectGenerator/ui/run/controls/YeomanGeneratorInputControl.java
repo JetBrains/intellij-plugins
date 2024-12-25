@@ -13,14 +13,10 @@ import javax.swing.*;
 @SuppressWarnings("unused")
 public class YeomanGeneratorInputControl implements YeomanGeneratorControl {
 
-  @NonNls
-  private String type;
-  @Nls
-  private String name;
-  @Nls
-  private String message;
-  @SerializedName("default") @Nls
-  private String defaultValue;
+  private @NonNls String type;
+  private @Nls String name;
+  private @Nls String message;
+  @SerializedName("default") private @Nls String defaultValue;
 
 
   @Override

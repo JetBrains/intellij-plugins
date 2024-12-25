@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.errorProne;
 
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
@@ -20,33 +21,28 @@ public final class ErrorProneJavaBackendCompiler implements BackendCompiler {
     myProject = project;
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return COMPILER_ID;
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return ErrorProneBundle.message("compiler.name.javac.with.error.prone");
   }
 
-  @NotNull
   @Override
-  public Configurable createConfigurable() {
+  public @NotNull Configurable createConfigurable() {
     return new JavacConfigurable(myProject, ErrorProneCompilerConfiguration.getOptions(myProject));
   }
 
-  @NotNull
   @Override
-  public Set<FileType> getCompilableFileTypes() {
+  public @NotNull Set<FileType> getCompilableFileTypes() {
     return Collections.singleton(JavaFileType.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public CompilerOptions getOptions() {
+  public @NotNull CompilerOptions getOptions() {
     return ErrorProneCompilerConfiguration.getOptions(myProject);
   }
 }

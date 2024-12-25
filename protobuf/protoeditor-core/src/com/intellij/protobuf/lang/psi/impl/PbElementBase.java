@@ -19,10 +19,10 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 abstract class PbElementBase extends ASTWrapperPsiElement
@@ -46,9 +46,8 @@ abstract class PbElementBase extends ASTWrapperPsiElement
     return override != null ? override : super.getParent();
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     PsiElement override = getNavigationElementOverride();
     return override != null ? override : super.getNavigationElement();
   }
@@ -59,9 +58,8 @@ abstract class PbElementBase extends ASTWrapperPsiElement
     return override != null ? override : super.getTextRange();
   }
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return PbLanguage.INSTANCE;
   }
 }

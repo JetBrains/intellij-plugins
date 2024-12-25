@@ -25,8 +25,7 @@ public interface ProtoLiteral extends PsiElement {
    *
    * @return the literal value
    */
-  @Nullable
-  default Object getValue() {
+  default @Nullable Object getValue() {
     return getText();
   }
 
@@ -35,8 +34,7 @@ public interface ProtoLiteral extends PsiElement {
    *
    * @return the string representation, or <code>null</code> if one cannot be determined
    */
-  @Nullable
-  default String getAsString() {
+  default @Nullable String getAsString() {
     Object value = getValue();
     return value != null ? value.toString() : null;
   }

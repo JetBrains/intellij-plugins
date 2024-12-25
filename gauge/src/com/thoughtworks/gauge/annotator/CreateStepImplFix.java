@@ -75,15 +75,13 @@ public final class CreateStepImplFix extends BaseIntentionAction {
     this.step = step;
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     return GaugeBundle.message("intention.name.create.step.implementation");
   }
 
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return GaugeBundle.message("intention.family.name.step.implementation");
   }
 
@@ -136,9 +134,8 @@ public final class CreateStepImplFix extends BaseIntentionAction {
               return aValue == null ? AllIcons.Actions.IntentionBulb : aValue.getIcon(0);
             }
 
-            @NotNull
             @Override
-            public String getTextFor(PsiFile value) {
+            public @NotNull String getTextFor(PsiFile value) {
               return value == null ? GaugeBundle.message("create.new.file") : getJavaFileName(value);
             }
           });
@@ -212,8 +209,7 @@ public final class CreateStepImplFix extends BaseIntentionAction {
     });
   }
 
-  @Nullable
-  private PsiMethod addStepImplMethod(PsiFile psifile, Project project) {
+  private @Nullable PsiMethod addStepImplMethod(PsiFile psifile, Project project) {
     PsiClass psiClass = PsiTreeUtil.getChildOfType(psifile, PsiClass.class);
     if (psiClass == null) return null;
 
@@ -277,8 +273,7 @@ public final class CreateStepImplFix extends BaseIntentionAction {
     }
   }
 
-  @NotNull
-  private static String getMethodName(PsiClass psiClass) {
+  private static @NotNull String getMethodName(PsiClass psiClass) {
     try {
       for (int i = 1, length = psiClass.getAllMethods().length; i < length; i++) {
         String methodName = IMPLEMENTATION + i;

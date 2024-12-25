@@ -16,12 +16,12 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.PbOneofBody;
 import com.intellij.protobuf.lang.psi.PbOneofDefinition;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,15 +31,13 @@ abstract class PbOneofBodyMixin extends PbElementBase implements PbOneofBody {
     super(node);
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.ONEOF_OPTIONS.forDescriptor(descriptor);
   }
 
   @Override
-  @Nullable
-  public QualifiedName getExtensionOptionScope() {
+  public @Nullable QualifiedName getExtensionOptionScope() {
     PsiElement parent = getParent();
     if (!(parent instanceof PbOneofDefinition oneof)) {
       return null;

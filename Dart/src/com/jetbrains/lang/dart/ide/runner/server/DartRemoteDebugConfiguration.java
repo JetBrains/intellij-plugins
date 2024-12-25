@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.Executor;
@@ -27,14 +27,13 @@ import org.jetbrains.annotations.Nullable;
 public class DartRemoteDebugConfiguration extends RunConfigurationBase<Element> implements RunConfigurationWithSuppressedDefaultRunAction {
   @NotNull DartRemoteDebugParameters myParameters = new DartRemoteDebugParameters();
 
-  protected DartRemoteDebugConfiguration(@NotNull final Project project,
-                                         @NotNull final DartRemoteDebugConfigurationType configType,
-                                         @NotNull final String name) {
+  protected DartRemoteDebugConfiguration(final @NotNull Project project,
+                                         final @NotNull DartRemoteDebugConfigurationType configType,
+                                         final @NotNull String name) {
     super(project, configType.getConfigurationFactories()[0], name);
   }
 
-  @NotNull
-  public DartRemoteDebugParameters getParameters() {
+  public @NotNull DartRemoteDebugParameters getParameters() {
     return myParameters;
   }
 
@@ -63,16 +62,14 @@ public class DartRemoteDebugConfiguration extends RunConfigurationBase<Element> 
     return clone;
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<DartRemoteDebugConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<DartRemoteDebugConfiguration> getConfigurationEditor() {
     return new DartRemoteDebugConfigurationEditor(getProject());
   }
 
-  @Nullable
   @Override
-  public RunProfileState getState(@NotNull final Executor executor,
-                                  @NotNull final ExecutionEnvironment environment) {
+  public @Nullable RunProfileState getState(final @NotNull Executor executor,
+                                            final @NotNull ExecutionEnvironment environment) {
     return EmptyRunProfileState.INSTANCE;
   }
 

@@ -50,8 +50,7 @@ public interface ProjectSettingsConfigurator {
    * @param project the project
    * @return a collection of descriptor suggestions, possibly empty.
    */
-  @NotNull
-  default Collection<String> getDescriptorPathSuggestions(Project project) {
+  default @NotNull Collection<String> getDescriptorPathSuggestions(Project project) {
     return Collections.emptyList();
   }
 }

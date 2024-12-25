@@ -63,8 +63,7 @@ public class BundleCompiler implements Reporter {
    * The bundles are cached, so if the source library does not change, it will not be bundlified again.
    * Returns a string array containing paths of the bundlified libraries.
    */
-  @NotNull
-  public List<String> bundlifyLibraries(@NotNull Module module) throws OsgiBuildException {
+  public @NotNull List<String> bundlifyLibraries(@NotNull Module module) throws OsgiBuildException {
     myIndicator.setText(OsmorcBundle.message("compiler.progress.bundling.libraries", module.getName()));
 
     File outputDir = getOutputDir(module);

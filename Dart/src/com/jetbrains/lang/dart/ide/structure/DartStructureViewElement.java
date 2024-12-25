@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.icons.AllIcons;
@@ -52,20 +52,19 @@ final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     return new Icon[]{Variable, iconManager.getPlatformIcon(PlatformIcons.StaticMark), iconManager.getPlatformIcon(PlatformIcons.FinalMark)};
   });
 
-  @NotNull private final PsiFile myPsiFile;
-  @NotNull private final Outline myOutline;
-  @NotNull private final String myPresentableText;
+  private final @NotNull PsiFile myPsiFile;
+  private final @NotNull Outline myOutline;
+  private final @NotNull String myPresentableText;
 
-  DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
+  DartStructureViewElement(final @NotNull PsiFile psiFile, final @NotNull Outline outline) {
     super(findBestPsiElementForOutline(psiFile, outline));
     myPsiFile = psiFile;
     myOutline = outline;
     myPresentableText = getPresentableText(outline);
   }
 
-  @NotNull
   @Override
-  public Collection<StructureViewTreeElement> getChildrenBase() {
+  public @NotNull Collection<StructureViewTreeElement> getChildrenBase() {
     if (myOutline.getChildren().isEmpty()) return Collections.emptyList();
     return ContainerUtil.map(myOutline.getChildren(), outline -> new DartStructureViewElement(myPsiFile, outline));
   }
@@ -77,14 +76,12 @@ final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     PsiNavigationSupport.getInstance().createNavigatable(myPsiFile.getProject(), myPsiFile.getVirtualFile(), offset).navigate(requestFocus);
   }
 
-  @NotNull
   @Override
-  public String getPresentableText() {
+  public @NotNull String getPresentableText() {
     return myPresentableText;
   }
 
-  @NotNull
-  private static String getPresentableText(@NotNull final Outline outline) {
+  private static @NotNull String getPresentableText(final @NotNull Outline outline) {
     final Element element = outline.getElement();
     final StringBuilder b = new StringBuilder();
     if (ElementKind.EXTENSION.equals(element.getKind())) {
@@ -103,9 +100,8 @@ final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     return b.toString();
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(boolean unused) {
+  public @Nullable Icon getIcon(boolean unused) {
     final Element element = myOutline.getElement();
     final boolean finalOrConst = element.isConst() || element.isFinal();
 
@@ -143,8 +139,7 @@ final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     };
   }
 
-  @Nullable
-  static PsiElement findBestPsiElementForOutline(@NotNull PsiFile psiFile, @NotNull Outline outline) {
+  static @Nullable PsiElement findBestPsiElementForOutline(@NotNull PsiFile psiFile, @NotNull Outline outline) {
     DartAnalysisServerService das = DartAnalysisServerService.getInstance(psiFile.getProject());
     int startOffset = das.getConvertedOffset(psiFile.getVirtualFile(), outline.getCodeOffset());
     int endOffset = das.getConvertedOffset(psiFile.getVirtualFile(), outline.getCodeOffset() + outline.getCodeLength());

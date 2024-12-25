@@ -16,10 +16,10 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.resolve.PbEnumValueReference;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbTextIdentifierValueMixin extends PbTextElementBase
@@ -29,9 +29,8 @@ abstract class PbTextIdentifierValueMixin extends PbTextElementBase
     super(node);
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     PbTextField field = PsiTreeUtil.getParentOfType(this, PbTextField.class);
     if (field == null) {
       return null;
@@ -43,9 +42,8 @@ abstract class PbTextIdentifierValueMixin extends PbTextElementBase
     return null;
   }
 
-  @Nullable
   @Override
-  public Boolean getBooleanValue() {
+  public @Nullable Boolean getBooleanValue() {
     String text = getText();
     if ("true".equals(text) || "True".equals(text) || "t".equals(text)) {
       return Boolean.TRUE;
@@ -55,9 +53,8 @@ abstract class PbTextIdentifierValueMixin extends PbTextElementBase
     return null;
   }
 
-  @Nullable
   @Override
-  public ProtoNumberValue getAsNumber() {
+  public @Nullable ProtoNumberValue getAsNumber() {
     PbTextNumberValue numberValue = new PbTextNumberValueImpl(getNode());
     if (numberValue.getSourceType() != null) {
       return numberValue;
@@ -66,9 +63,8 @@ abstract class PbTextIdentifierValueMixin extends PbTextElementBase
     return null;
   }
 
-  @Nullable
   @Override
-  public Object getValue() {
+  public @Nullable Object getValue() {
     return getText();
   }
 }

@@ -18,13 +18,13 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 public class PostCssReferenceContributor extends PsiReferenceContributor {
 
   @Override
-  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(psiElement().with(new PostCssReferencePattern()), new PostCssReferenceProvider());
   }
 
   private static class PostCssReferenceProvider extends PsiReferenceProvider {
     @Override
-    public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, final @NotNull ProcessingContext context) {
       PsiElement parent = element.getParent();
       if (parent instanceof CssPseudoClass && parent.getText().startsWith(":--")) {
         return new PsiReference[]{new PostCssCustomSelectorReference(element)};

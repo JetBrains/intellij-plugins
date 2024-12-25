@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
 
-  public DartCallHierarchyNodeDescriptor(final NodeDescriptor parentDescriptor, @NotNull final PsiElement element, final boolean isBase) {
+  public DartCallHierarchyNodeDescriptor(final NodeDescriptor parentDescriptor, final @NotNull PsiElement element, final boolean isBase) {
     super(element.getProject(), parentDescriptor, element, isBase);
   }
 

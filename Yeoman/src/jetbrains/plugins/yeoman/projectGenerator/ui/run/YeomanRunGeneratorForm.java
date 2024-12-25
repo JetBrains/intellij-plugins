@@ -64,8 +64,7 @@ public class YeomanRunGeneratorForm implements Disposable {
   }
 
 
-  @Nullable
-  private YeomanInstalledGeneratorInfo myInfo;
+  private @Nullable YeomanInstalledGeneratorInfo myInfo;
   private final String myDirectoryForCreate;
   private final EventHandler myGlobalEventHandler;
   private JScrollPane myScrollPane;
@@ -151,7 +150,7 @@ public class YeomanRunGeneratorForm implements Disposable {
         }
 
         @Override
-        public void processTerminated(@NotNull final ProcessEvent event) {
+        public void processTerminated(final @NotNull ProcessEvent event) {
           UIUtil.invokeLaterIfNeeded(() -> {
             done();
 
@@ -250,8 +249,7 @@ public class YeomanRunGeneratorForm implements Disposable {
     }
   }
 
-  @NotNull
-  private JTextField createGeneratorNameField() {
+  private @NotNull JTextField createGeneratorNameField() {
     final JTextField field = new JTextField();
     if (myInfo != null) {
       field.setText(myInfo.getYoName());
@@ -260,8 +258,7 @@ public class YeomanRunGeneratorForm implements Disposable {
     return field;
   }
 
-  @NotNull
-  public JScrollPane getHolderPanel() {
+  public @NotNull JScrollPane getHolderPanel() {
     return myScrollPane;
   }
 
@@ -292,8 +289,7 @@ public class YeomanRunGeneratorForm implements Disposable {
     myScrollPane.setViewportView(new JPanel(new BorderLayout()));
   }
 
-  @NotNull
-  public JComponent getMainPanel() {
+  public @NotNull JComponent getMainPanel() {
     return myMainPanel;
   }
 

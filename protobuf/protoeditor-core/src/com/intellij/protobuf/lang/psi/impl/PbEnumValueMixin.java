@@ -16,13 +16,13 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.PbEnumValue;
 import com.intellij.protobuf.lang.psi.PbOptionExpression;
 import com.intellij.protobuf.lang.psi.PbOptionList;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,21 +36,18 @@ abstract class PbEnumValueMixin extends PbNamedElementBase implements PbEnumValu
     super(node);
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.ENUM_VALUE_OPTIONS.forDescriptor(descriptor);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return PbIcons.ENUM_VALUE;
   }
 
-  @NotNull
   @Override
-  public List<PbOptionExpression> getOptions() {
+  public @NotNull List<PbOptionExpression> getOptions() {
     PbOptionList optionList = getOptionList();
     if (optionList == null) {
       return Collections.emptyList();
@@ -59,8 +56,7 @@ abstract class PbEnumValueMixin extends PbNamedElementBase implements PbEnumValu
   }
 
   @Override
-  @Nullable
-  public QualifiedName getExtensionOptionScope() {
+  public @Nullable QualifiedName getExtensionOptionScope() {
     QualifiedName name = getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }

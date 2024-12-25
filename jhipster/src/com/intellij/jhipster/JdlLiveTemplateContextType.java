@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster;
 
@@ -9,8 +9,7 @@ import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.NotNull;
 
 final class JdlLiveTemplateContextType extends TemplateContextType {
-  @NlsSafe
-  public static final String JDL = "JDL";
+  public static final @NlsSafe String JDL = "JDL";
 
   public JdlLiveTemplateContextType() {
     super(JDL);

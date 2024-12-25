@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 
@@ -28,8 +28,7 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
 public abstract class PhoneGapTargets {
   private static final Logger LOGGER = Logger.getInstance(PhoneGapTargets.class);
 
-  @Nullable
-  public static PhoneGapTargets createTargetsList(@NotNull Project project, @Nullable String platform) {
+  public static @Nullable PhoneGapTargets createTargetsList(@NotNull Project project, @Nullable String platform) {
     if (PLATFORM_ANDROID.equals(platform)) {
       return new PhoneGapAndroidTargets(project);
     }
@@ -40,8 +39,7 @@ public abstract class PhoneGapTargets {
     return null;
   }
 
-  @NotNull
-  public static List<String> listTargets(@Nullable PhoneGapTargets phoneGapTargets, @Nullable String command) {
+  public static @NotNull List<String> listTargets(@Nullable PhoneGapTargets phoneGapTargets, @Nullable String command) {
     if (phoneGapTargets == null) return ContainerUtil.emptyList();
 
     if (COMMAND_EMULATE.equals(command)) {
@@ -56,8 +54,7 @@ public abstract class PhoneGapTargets {
   }
 
 
-  @NotNull
-  protected final Project myProject;
+  protected final @NotNull Project myProject;
 
   private final NotNullLazyValue<List<String>> myVirtualDevices = NotNullLazyValue.lazy(() -> {
     return listVirtualDevicesNonCached();
@@ -71,21 +68,17 @@ public abstract class PhoneGapTargets {
     myProject = project;
   }
 
-  @NotNull
-  public List<String> listDevices() {
+  public @NotNull List<String> listDevices() {
     return myDevices.getValue();
   }
 
-  @NotNull
-  public List<String> listVirtualDevices() {
+  public @NotNull List<String> listVirtualDevices() {
     return myVirtualDevices.getValue();
   }
 
-  @NotNull
-  protected abstract List<String> listDevicesNonCached();
+  protected abstract @NotNull List<String> listDevicesNonCached();
 
-  @NotNull
-  protected abstract List<String> listVirtualDevicesNonCached();
+  protected abstract @NotNull List<String> listVirtualDevicesNonCached();
 
   protected List<String> list(String executableName,
                               Function<String, String> parser,
@@ -124,6 +117,5 @@ public abstract class PhoneGapTargets {
     return result;
   }
 
-  @NotNull
-  public abstract String platform();
+  public abstract @NotNull String platform();
 }

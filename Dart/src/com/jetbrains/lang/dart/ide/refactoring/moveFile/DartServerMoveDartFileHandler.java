@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring.moveFile;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -102,7 +102,7 @@ public final class DartServerMoveDartFileHandler extends MoveFileHandler {
     // the Dart Analysis Server would now be pointing to incorrect file paths if we tried to use them at this point.
   }
 
-  private static void showMoveFileExceptionDialog(@NotNull final Project project, @NotNull @NlsContexts.DialogMessage String message) {
+  private static void showMoveFileExceptionDialog(final @NotNull Project project, @NotNull @NlsContexts.DialogMessage String message) {
     ApplicationManager.getApplication()
       .invokeLater(() -> Messages.showErrorDialog(project, message, DartBundle.message("dart.refactoring.move.file.dialog.title")));
   }

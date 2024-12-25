@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.lang.stub;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbStatementOwner;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +30,7 @@ import java.util.List;
  */
 public interface PbStatementOwnerStub<T extends PbElement> extends PbElementStub<T> {
   /** Returns the list of child statement stubs. */
-  @NotNull
-  default List<PbStatementStub<?>> getStatements() {
+  default @NotNull List<PbStatementStub<?>> getStatements() {
     return StubMethods.getStatements(this);
   }
 

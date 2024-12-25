@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.coverage.CoverageExecutor;
@@ -146,8 +146,7 @@ public final class KarmaRunProfileState implements NodeDebuggableRunProfileState
     myFailedTestNames = failedTestNames;
   }
 
-  @NotNull
-  private static KarmaExecutionType findExecutionType(@NotNull Executor executor) {
+  private static @NotNull KarmaExecutionType findExecutionType(@NotNull Executor executor) {
     if (executor.equals(DefaultDebugExecutor.getDebugExecutorInstance())) {
       return KarmaExecutionType.DEBUG;
     }

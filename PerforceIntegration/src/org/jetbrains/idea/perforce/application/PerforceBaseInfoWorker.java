@@ -25,7 +25,7 @@ import java.util.WeakHashMap;
  */
 @Service(Service.Level.PROJECT)
 public final class PerforceBaseInfoWorker {
-  private final static Logger LOG = Logger.getInstance(PerforceBaseInfoWorker.class);
+  private static final Logger LOG = Logger.getInstance(PerforceBaseInfoWorker.class);
 
   private long myLastValidTime = -1;
   private final PerforceConnectionManagerI myConnectionManager;
@@ -133,20 +133,17 @@ public final class PerforceBaseInfoWorker {
     }
   }
 
-  @Nullable
-  public Map<String, List<String>> getInfo(P4Connection connection) throws VcsException {
+  public @Nullable Map<String, List<String>> getInfo(P4Connection connection) throws VcsException {
     ConnectionInfo info = getInfoAndClient(connection);
     return info == null ? null : info.getInfo();
   }
 
-  @Nullable
-  public ClientData getClient(P4Connection connection) throws VcsException {
+  public @Nullable ClientData getClient(P4Connection connection) throws VcsException {
     ConnectionInfo info = getInfoAndClient(connection);
     return info == null ? null : info.getClient();
   }
 
-  @Nullable
-  public Map<String, List<String>> getCachedInfo(P4Connection connection) throws VcsException {
+  public @Nullable Map<String, List<String>> getCachedInfo(P4Connection connection) throws VcsException {
     synchronized (myInfoLock) {
       if (myStop) return null;
       ConnectionInfo info = connection == null ? null : myInfos.get(connection);
@@ -158,8 +155,7 @@ public final class PerforceBaseInfoWorker {
     }
   }
 
-  @Nullable
-  public ClientData getCachedClient(P4Connection connection) throws VcsException {
+  public @Nullable ClientData getCachedClient(P4Connection connection) throws VcsException {
     synchronized (myInfoLock) {
       if (myStop) return null;
       ConnectionInfo info = connection == null ? null : myInfos.get(connection);
@@ -167,8 +163,7 @@ public final class PerforceBaseInfoWorker {
     }
   }
 
-  @Nullable
-  private ConnectionInfo getInfoAndClient(P4Connection connection) throws VcsException {
+  private @Nullable ConnectionInfo getInfoAndClient(P4Connection connection) throws VcsException {
     ConnectionInfo info;
     boolean dirty;
     synchronized (myInfoLock) {

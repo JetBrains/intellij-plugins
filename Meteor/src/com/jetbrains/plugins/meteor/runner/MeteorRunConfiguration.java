@@ -47,29 +47,23 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
 
   @Tag(STATE_TAG_NAME)
   private static class MeteorState {
-    @Tag
-    @Nullable
-    public StartBrowserSettings startBrowserSettings;
+    @Tag public @Nullable StartBrowserSettings startBrowserSettings;
   }
 
-  @NotNull
-  private MeteorState myState = new MeteorState();
+  private @NotNull MeteorState myState = new MeteorState();
 
-  @NotNull
   @Override
-  public DebuggableFileFinder createFileFinder(@NotNull Project project) {
+  public @NotNull DebuggableFileFinder createFileFinder(@NotNull Project project) {
     return new MeteorFileFinder(FileUtil.toSystemIndependentName(getEffectiveWorkingDirectory()));
   }
 
-  @Nullable
   @Override
-  protected String computeDefaultExePath() {
+  protected @Nullable String computeDefaultExePath() {
     return MeteorSettings.getInstance().getExecutablePath();
   }
 
-  @NotNull
   @Override
-  protected String getInputFileTitle() {
+  protected @NotNull String getInputFileTitle() {
     return "";
   }
 
@@ -79,12 +73,11 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
     return path == null ? computeDefaultExePath() : path;
   }
 
-  @NotNull
   @Override
-  public XDebugProcess createDebugProcess(@NotNull InetSocketAddress socketAddress,
-                                          @NotNull XDebugSession session,
-                                          @Nullable ExecutionResult executionResult,
-                                          @NotNull ExecutionEnvironment environment) {
+  public @NotNull XDebugProcess createDebugProcess(@NotNull InetSocketAddress socketAddress,
+                                                   @NotNull XDebugSession session,
+                                                   @Nullable ExecutionResult executionResult,
+                                                   @NotNull ExecutionEnvironment environment) {
     var connection = new WipLocalVmConnection();
     DebuggableFileFinder fileFinder = createFileFinder(session.getProject());
     var process = new NodeChromeDebugProcess(session, fileFinder, connection, executionResult);
@@ -92,8 +85,7 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
     return process;
   }
 
-  @NotNull
-  public StartBrowserSettings getStartBrowserSettings() {
+  public @NotNull StartBrowserSettings getStartBrowserSettings() {
     if (myState.startBrowserSettings == null) {
       myState.startBrowserSettings = new StartBrowserSettings();
       myState.startBrowserSettings.setUrl("http://localhost:3000");
@@ -111,15 +103,13 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
     super(project, factory, name);
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new MeteorRunConfigurationEditor(getProject());
   }
 
-  @Nullable
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
+  public @Nullable RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
     return new MeteorRunProfileState(this, environment);
   }
 
@@ -191,8 +181,7 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
     return IS_NODE8_DEFAULT;
   }
 
-  @Nullable
-  private VirtualFile findAssociatedMeteorDir() {
+  private @Nullable VirtualFile findAssociatedMeteorDir() {
     VirtualFile dotMeteorVirtualFile = null;
     String workingDirectory = getEffectiveWorkingDirectory();
     if (workingDirectory != null) {

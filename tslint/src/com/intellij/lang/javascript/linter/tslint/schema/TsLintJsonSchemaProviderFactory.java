@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.schema;
 
 import com.intellij.lang.javascript.EmbeddedJsonSchemaFileProvider;
@@ -18,15 +19,13 @@ public final class TsLintJsonSchemaProviderFactory implements JsonSchemaProvider
   private static final String TSLINT_JSON_SCHEMA_DIR = "/tslintJsonSchema";
   private static final @NlsSafe String NAME = "TSLint";
 
-  @NotNull
-  private static EmbeddedJsonSchemaFileProvider createProvider() {
+  private static @NotNull EmbeddedJsonSchemaFileProvider createProvider() {
     return new EmbeddedJsonSchemaFileProvider(TSLINT_SCHEMA_JSON, NAME, "http://json.schemastore.org/tslint",
                                               TsLintJsonSchemaProviderFactory.class, TSLINT_JSON_SCHEMA_DIR + '/', TslintUtil.CONFIG_FILE_NAMES);
   }
 
-  @NotNull
   @Override
-  public List<JsonSchemaFileProvider> getProviders(@NotNull final Project project) {
+  public @NotNull List<JsonSchemaFileProvider> getProviders(final @NotNull Project project) {
     return Collections.singletonList(createProvider());
   }
 }

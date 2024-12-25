@@ -1,10 +1,13 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.plugins.drools.DroolsLanguage;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import com.intellij.psi.impl.light.LightMethodBuilder;
 import com.intellij.psi.impl.light.LightParameter;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +37,7 @@ public class DroolsFunctionLightMethodBuilder extends LightMethodBuilder {
     }
   }
 
-  @NotNull
-  private PsiParameter createParameter(@NotNull DroolsParameter droolsParameter) {
+  private @NotNull PsiParameter createParameter(@NotNull DroolsParameter droolsParameter) {
     LightParameter parameter;
     final String paramName = droolsParameter.getNameId().getText();
     final PsiType psiType = DroolsResolveUtil.resolveType(droolsParameter.getType());
@@ -51,9 +53,8 @@ public class DroolsFunctionLightMethodBuilder extends LightMethodBuilder {
     return parameter;
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     return myFunction;
   }
 

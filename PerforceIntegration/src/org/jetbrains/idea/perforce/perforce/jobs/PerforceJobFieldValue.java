@@ -12,15 +12,15 @@ public class PerforceJobFieldValue {
     myValue = value;
   }
 
-  @NotNull public PerforceJobField getField() {
+  public @NotNull PerforceJobField getField() {
     return myField;
   }
 
-  @NotNull public @NlsSafe String getValue() {
+  public @NotNull @NlsSafe String getValue() {
     return myValue;
   }
 
-  public void setValue(@NotNull final String value) {
+  public void setValue(final @NotNull String value) {
     myValue = value;
   }
 }

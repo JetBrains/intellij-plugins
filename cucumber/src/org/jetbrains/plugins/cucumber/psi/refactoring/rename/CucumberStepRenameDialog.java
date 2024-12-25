@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
 import com.intellij.openapi.editor.Document;
@@ -79,7 +80,7 @@ public class CucumberStepRenameDialog extends RenameDialog {
     return myStepDefinition;
   }
 
-  private static void guardRegexpSpecialSymbols(@NotNull final Editor editor) {
+  private static void guardRegexpSpecialSymbols(final @NotNull Editor editor) {
     final String text = editor.getDocument().getText();
     final RegExpLexer lexer = new RegExpLexer(EnumSet.noneOf(RegExpCapability.class));
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
@@ -29,9 +30,8 @@ public final class GherkinFindUsagesProvider implements FindUsagesProvider {
     return "reference.dialogs.findUsages.other";
   }
 
-  @NotNull
   @Override
-  public String getType(@NotNull PsiElement element) {
+  public @NotNull String getType(@NotNull PsiElement element) {
     if (element instanceof GherkinStep) {
       return CucumberBundle.message("cucumber.step");
     } else if (element instanceof GherkinStepParameter) {
@@ -40,15 +40,13 @@ public final class GherkinFindUsagesProvider implements FindUsagesProvider {
     return CucumberBundle.message("gherkin.find.usages.unknown.element.type");
   }
 
-  @NotNull
   @Override
-  public String getDescriptiveName(@NotNull PsiElement element) {
+  public @NotNull String getDescriptiveName(@NotNull PsiElement element) {
     return element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : "";
   }
 
-  @NotNull
   @Override
-  public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
+  public @NotNull String getNodeText(@NotNull PsiElement element, boolean useFullName) {
     return getDescriptiveName(element);
   }
 }

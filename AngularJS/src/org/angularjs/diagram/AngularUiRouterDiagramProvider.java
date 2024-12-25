@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.diagram;
 
 import com.intellij.diagram.*;
@@ -48,8 +48,8 @@ import javax.swing.border.StrokeBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
@@ -98,7 +98,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         final List<String> warnings = element.getWarnings();
         final List<String> notes = element.getNotes();
         if (errors.isEmpty() && warnings.isEmpty() && notes.isEmpty()) return element.getTooltip();
-        @Nls final StringBuilder sb = new StringBuilder(element.getTooltip());
+        final @Nls StringBuilder sb = new StringBuilder(element.getTooltip());
         if (!notes.isEmpty()) {
           for (String note : notes) {
             sb.append('\n').append(note);

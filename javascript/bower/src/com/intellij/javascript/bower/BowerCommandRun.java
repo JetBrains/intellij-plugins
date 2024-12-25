@@ -18,8 +18,7 @@ public class BowerCommandRun {
     myProcessHandler = processHandler;
   }
 
-  @NotNull
-  public ProcessOutput captureOutput(@Nullable ProgressIndicator indicator, long timeoutMillis) throws ExecutionException {
+  public @NotNull ProcessOutput captureOutput(@Nullable ProgressIndicator indicator, long timeoutMillis) throws ExecutionException {
     ProcessOutput output = myCatcher.run(indicator, timeoutMillis);
     if (output.isTimeout()) {
       throw new ExecutionException(BowerBundle.message("dialog.message.command.timed.out", myProcessHandler.getCommandLineForLog()));

@@ -18,21 +18,18 @@ public class BowerConfigurable implements Configurable, Configurable.NoScroll {
     myProject = project;
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return BowerBundle.message("settings.javascript.bower.configurable.name");
   }
 
-  @Nullable
   @Override
-  public String getHelpTopic() {
+  public @Nullable String getHelpTopic() {
     return "Settings.JavaScript.Bower";
   }
 
-  @Nullable
   @Override
-  public JComponent createComponent() {
+  public @Nullable JComponent createComponent() {
     BowerView view = getView();
     return view.getComponent();
   }

@@ -29,8 +29,8 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
   private PerforceMultipleConnections myMultipleConnections;
@@ -164,7 +164,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
     child.setParent(parent);
   }
 
-  private boolean addRootError(@NotNull final P4Connection connection, final BaseNode fileNode) {
+  private boolean addRootError(final @NotNull P4Connection connection, final BaseNode fileNode) {
     boolean somethingAdded = false;
     if (myChecker.getNotAuthorized().containsKey(connection)) {
       addNode(fileNode, new ErrorNode(PerforceBundle.message("login.not.logged.in")));

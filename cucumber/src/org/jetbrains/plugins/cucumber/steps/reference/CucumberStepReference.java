@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.steps.reference;
 
 import com.intellij.openapi.module.Module;
@@ -38,14 +38,12 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   }
 
   @Override
-  @NotNull
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return myStep;
   }
 
   @Override
-  @NotNull
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     return myRange;
   }
 
@@ -56,8 +54,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   }
 
   @Override
-  @NotNull
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return myStep.getText();
   }
 
@@ -137,8 +134,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
    * @return first definition (if any) or null if no definition found
    * @see #resolveToDefinitions()
    */
-  @Nullable
-  public AbstractStepDefinition resolveToDefinition() {
+  public @Nullable AbstractStepDefinition resolveToDefinition() {
     final Collection<AbstractStepDefinition> definitions = resolveToDefinitions();
     return (definitions.isEmpty() ? null : definitions.iterator().next());
   }
@@ -147,8 +143,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
    * @return step definitions
    * @see #resolveToDefinition()
    */
-  @NotNull
-  public Collection<AbstractStepDefinition> resolveToDefinitions() {
+  public @NotNull Collection<AbstractStepDefinition> resolveToDefinitions() {
     return CucumberStepHelper.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
   }
 

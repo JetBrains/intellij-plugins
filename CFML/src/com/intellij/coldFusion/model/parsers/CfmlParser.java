@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.parsers;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -61,8 +61,7 @@ public class CfmlParser implements PsiParser {
   }
 
   @Override
-  @NotNull
-  public ASTNode parse(final IElementType root, final PsiBuilder builder) {
+  public @NotNull ASTNode parse(final IElementType root, final PsiBuilder builder) {
     Stack<Tag> tagNamesStack = new Stack<>();
     // builder.setDebugMode(true);
     final PsiBuilder.Marker marker = builder.mark();
@@ -378,8 +377,7 @@ public class CfmlParser implements PsiParser {
     }
   }
 
-  @Nullable
-  private static String swallowClosing(PsiBuilder builder) {
+  private static @Nullable String swallowClosing(PsiBuilder builder) {
     if (compareAndEat(builder, LSLASH_ANGLEBRACKET)) {
       String tagName = builder.getTokenText();
       if (compareAndEat(builder, CF_TAG_NAME) && compareAndEat(builder, CLOSER)) {

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -31,9 +32,8 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
   public static final String CUCUMBER_API_JAVA8_EN = "cucumber.api.java8.En";
   private static final String FILE_TEMPLATE_CUCUMBER_JAVA_8_STEP_DEFINITION_JAVA = "Cucumber Java 8 Step Definition.java";
 
-  @NotNull
   @Override
-  public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
+  public @NotNull PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
     final PsiFile result =  super.createStepDefinitionContainer(dir, name);
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(dir.getProject()).getFileIndex();
@@ -60,9 +60,8 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     return result;
   }
 
-  @NotNull
   @Override
-  public String getStepDefinitionFilePath(@NotNull PsiFile file) {
+  public @NotNull String getStepDefinitionFilePath(@NotNull PsiFile file) {
     return super.getStepDefinitionFilePath(file) + " (Java 8 style)";
   }
 
@@ -144,7 +143,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     addedStepDef.getParent().addAfter(semicolon.getPsi(), addedStepDef);
   }
 
-  private static PsiElement buildStepDefinitionByStep(@NotNull final GherkinStep step, Language language) {
+  private static PsiElement buildStepDefinitionByStep(final @NotNull GherkinStep step, Language language) {
     final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getName(), 0, null, null);
     final SnippetGenerator generator = new SnippetGenerator(new Java8Snippet());
 

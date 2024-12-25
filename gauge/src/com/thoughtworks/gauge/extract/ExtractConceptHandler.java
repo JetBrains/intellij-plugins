@@ -36,7 +36,7 @@ final class ExtractConceptHandler {
   private StepsBuilder builder;
   private PsiFile psiFile;
 
-  public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
+  public void invoke(final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile psiFile) {
     this.psiFile = psiFile;
     try {
       List<PsiElement> steps = getSteps(editor, this.psiFile);

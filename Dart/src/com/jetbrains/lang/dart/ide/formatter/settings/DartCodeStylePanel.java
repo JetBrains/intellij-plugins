@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.formatter.settings;
 
 import com.intellij.application.options.CodeStyleAbstractPanel;
@@ -31,27 +31,23 @@ public class DartCodeStylePanel extends CodeStyleAbstractPanel {
     return 0;
   }
 
-  @Nullable
   @Override
-  protected EditorHighlighter createHighlighter(@NotNull EditorColorsScheme scheme) {
+  protected @Nullable EditorHighlighter createHighlighter(@NotNull EditorColorsScheme scheme) {
     return null;
   }
 
-  @NotNull
   @Override
-  protected FileType getFileType() {
+  protected @NotNull FileType getFileType() {
     return DartFileType.INSTANCE;
   }
 
-  @Nullable
   @Override
-  protected String getPreviewText() {
+  protected @Nullable String getPreviewText() {
     return null;
   }
 
-  @Nullable
   @Override
-  public JComponent getPanel() {
+  public @Nullable JComponent getPanel() {
     //return FormBuilder.createFormBuilder()
     //  .addLabeledComponent(DartBundle.message("line.length"), myLineLengthField)
     //  .addTooltip(DartBundle.message("dartfmt.tooltip"))
@@ -61,7 +57,7 @@ public class DartCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  public void apply(@NotNull final CodeStyleSettings settings) {
+  public void apply(final @NotNull CodeStyleSettings settings) {
     CommonCodeStyleSettings dartSettings = settings.getCommonSettings(getDefaultLanguage());
     try {
       int lineLength = Integer.parseInt(myLineLengthField.getText().trim());
@@ -73,7 +69,7 @@ public class DartCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  public boolean isModified(@NotNull final CodeStyleSettings settings) {
+  public boolean isModified(final @NotNull CodeStyleSettings settings) {
     CommonCodeStyleSettings dartSettings = settings.getCommonSettings(getDefaultLanguage());
     try {
       int lineLength = Integer.parseInt(myLineLengthField.getText().trim());
@@ -84,7 +80,7 @@ public class DartCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  protected void resetImpl(@NotNull final CodeStyleSettings settings) {
+  protected void resetImpl(final @NotNull CodeStyleSettings settings) {
     CommonCodeStyleSettings dartSettings = settings.getCommonSettings(getDefaultLanguage());
     myLineLengthField.setText(String.valueOf(dartSettings.RIGHT_MARGIN));
   }

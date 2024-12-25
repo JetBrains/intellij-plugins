@@ -17,10 +17,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 public class MeteorDebuggableProcessHandler extends DefaultDebugProcessHandler implements KillableProcess {
-  @NotNull
-  private final MeteorMainProcessHandler myMainProcessHandler;
-  @Nullable
-  private volatile ProcessAdapter myListener;
+  private final @NotNull MeteorMainProcessHandler myMainProcessHandler;
+  private volatile @Nullable ProcessAdapter myListener;
   private volatile RunContentDescriptor myRunContentDescriptor;
   private volatile RemoteVmConnection myVmConnection;
   private boolean myCalledDestroyParent;
@@ -29,8 +27,7 @@ public class MeteorDebuggableProcessHandler extends DefaultDebugProcessHandler i
     return myCalledDestroyParent;
   }
 
-  @NotNull
-  public MeteorMainProcessHandler getMainHandler() {
+  public @NotNull MeteorMainProcessHandler getMainHandler() {
     return myMainProcessHandler;
   }
 

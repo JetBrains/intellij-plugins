@@ -29,7 +29,7 @@ public class PostCssCustomSelectorStubElementType extends CssSimpleNamedStubElem
   }
 
   @Override
-  public void indexStub(@NotNull final CssNamedStub<PostCssCustomSelector> stub, @NotNull final IndexSink sink) {
+  public void indexStub(final @NotNull CssNamedStub<PostCssCustomSelector> stub, final @NotNull IndexSink sink) {
     sink.occurrence(PostCssCustomSelectorIndex.KEY, stub.getName());
   }
 }

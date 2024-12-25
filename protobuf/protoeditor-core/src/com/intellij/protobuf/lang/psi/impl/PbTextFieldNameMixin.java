@@ -16,11 +16,11 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.resolve.PbTextFieldNameReference;
 import com.intellij.protobuf.lang.util.BuiltInType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextFieldName {
@@ -30,8 +30,7 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
   }
 
   @Override
-  @Nullable
-  public PbField getDeclaredField() {
+  public @Nullable PbField getDeclaredField() {
     PsiReference ref = getEffectiveReference();
     if (ref == null) {
       return null;
@@ -43,9 +42,8 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
     return (PbField) resolved;
   }
 
-  @Nullable
   @Override
-  public PbNamedTypeElement getDeclaredNamedType() {
+  public @Nullable PbNamedTypeElement getDeclaredNamedType() {
     PsiReference ref = null;
     PbTextExtensionName extensionName = getExtensionName();
     if (extensionName != null && extensionName.isAnyTypeUrl()) {
@@ -72,9 +70,8 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
     return (PbNamedTypeElement) refElement;
   }
 
-  @Nullable
   @Override
-  public BuiltInType getDeclaredBuiltInType() {
+  public @Nullable BuiltInType getDeclaredBuiltInType() {
     PbField field = getDeclaredField();
     if (field == null) {
       return null;
@@ -96,9 +93,8 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
     }
   }
 
-  @Nullable
   @Override
-  public PsiReference getEffectiveReference() {
+  public @Nullable PsiReference getEffectiveReference() {
     PbTextExtensionName extensionName = getExtensionName();
     if (extensionName != null) {
       if (extensionName.isAnyTypeUrl()) {

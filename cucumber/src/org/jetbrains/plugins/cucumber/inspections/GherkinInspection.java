@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -9,8 +10,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
  */
 public abstract class GherkinInspection extends LocalInspectionTool {
   @Override
-  @NotNull
-  public String getGroupDisplayName() {
+  public @NotNull String getGroupDisplayName() {
     return CucumberBundle.message("cucumber.inspection.group.name");
   }
 

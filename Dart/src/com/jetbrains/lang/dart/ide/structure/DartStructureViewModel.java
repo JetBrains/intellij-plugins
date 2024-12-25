@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.ide.structureView.StructureViewModel;
@@ -23,7 +23,7 @@ import java.util.List;
 
 class DartStructureViewModel extends TextEditorBasedStructureViewModel implements StructureViewModel.ElementInfoProvider {
 
-  @NotNull private final StructureViewTreeElement myRootElement;
+  private final @NotNull StructureViewTreeElement myRootElement;
 
   private final DartServerData.OutlineListener myListener = fileInfo -> {
     VirtualFile file = fileInfo.findFile();
@@ -33,7 +33,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
   };
 
 
-  DartStructureViewModel(@Nullable final Editor editor, @NotNull final PsiFile psiFile) {
+  DartStructureViewModel(final @Nullable Editor editor, final @NotNull PsiFile psiFile) {
     super(editor, psiFile);
     myRootElement = new DartStructureViewRootElement(psiFile);
     DartAnalysisServerService.getInstance(getPsiFile().getProject()).addOutlineListener(myListener);
@@ -45,15 +45,13 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     super.dispose();
   }
 
-  @NotNull
   @Override
-  public StructureViewTreeElement getRoot() {
+  public @NotNull StructureViewTreeElement getRoot() {
     return myRootElement;
   }
 
   @Override
-  @Nullable
-  public PsiElement getCurrentEditorElement() {
+  public @Nullable PsiElement getCurrentEditorElement() {
     // Note: this should return an object of type PsiElement to be compatible with the Context Info (alt+q) action.
     if (getEditor() == null) return null;
 
@@ -65,8 +63,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     return DartStructureViewElement.findBestPsiElementForOutline(getPsiFile(), result);
   }
 
-  @NotNull
-  private Outline findDeepestOutlineForOffset(final int offset, @NotNull final Outline outline) {
+  private @NotNull Outline findDeepestOutlineForOffset(final int offset, final @NotNull Outline outline) {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getPsiFile().getProject());
     final VirtualFile file = getPsiFile().getVirtualFile();
     final List<Outline> children = outline.getChildren();
@@ -110,15 +107,13 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
 
     DartStructureViewRootElement(PsiFile file) {super(file);}
 
-    @Nullable
     @Override
-    public String getPresentableText() {
+    public @Nullable String getPresentableText() {
       return null;
     }
 
-    @NotNull
     @Override
-    public Collection<StructureViewTreeElement> getChildrenBase() {
+    public @NotNull Collection<StructureViewTreeElement> getChildrenBase() {
       final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getValue().getProject());
       final Outline outline = service.getOutline(getValue().getVirtualFile());
       return outline != null ? Arrays.asList(new DartStructureViewElement(getValue(), outline).getChildren())

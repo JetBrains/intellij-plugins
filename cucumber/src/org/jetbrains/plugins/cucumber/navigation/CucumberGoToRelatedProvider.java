@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.navigation;
 
 import com.intellij.navigation.GotoRelatedItem;
@@ -20,8 +21,7 @@ import java.util.List;
 
 public final class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   @Override
-  @NotNull
-  public List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {
+  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(context);
     if (file != null) {
       return getItems(file);
@@ -29,9 +29,8 @@ public final class CucumberGoToRelatedProvider extends GotoRelatedProvider {
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
+  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
     final PsiFile file = psiElement.getContainingFile();
     if (file instanceof GherkinFile gherkinFile) {
       final List<GherkinStep> steps = new ArrayList<>();

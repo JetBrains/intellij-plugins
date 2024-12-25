@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
@@ -22,14 +23,12 @@ public final class DartProjectGenerator extends WebProjectTemplate<DartProjectWi
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return DartBundle.message("dart.title");
   }
 
   @Override
-  @NotNull
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return DartBundle.message("dart.project.description");
   }
 
@@ -39,16 +38,15 @@ public final class DartProjectGenerator extends WebProjectTemplate<DartProjectWi
   }
 
   @Override
-  @NotNull
-  public ProjectGeneratorPeer<DartProjectWizardData> createPeer() {
+  public @NotNull ProjectGeneratorPeer<DartProjectWizardData> createPeer() {
     return new DartGeneratorPeer();
   }
 
   @Override
-  public void generateProject(@NotNull final Project project,
-                              @NotNull final VirtualFile baseDir,
-                              @NotNull final DartProjectWizardData data,
-                              @NotNull final Module module) {
+  public void generateProject(final @NotNull Project project,
+                              final @NotNull VirtualFile baseDir,
+                              final @NotNull DartProjectWizardData data,
+                              final @NotNull Module module) {
     ApplicationManager.getApplication().runWriteAction(
       () -> {
         final ModifiableRootModel modifiableModel = ModifiableModelsProvider.getInstance().getModuleModifiableModel(module);
@@ -58,7 +56,7 @@ public final class DartProjectGenerator extends WebProjectTemplate<DartProjectWi
   }
 
   @Override
-  public int compareTo(@NotNull final DartProjectGenerator generator) {
+  public int compareTo(final @NotNull DartProjectGenerator generator) {
     return getName().compareTo(generator.getName());
   }
 }

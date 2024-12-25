@@ -42,15 +42,13 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
     super(element);
   }
 
-  @Nullable
   @Override
-  protected TextRange calculateDefaultRangeInElement() {
+  protected @Nullable TextRange calculateDefaultRangeInElement() {
     return TextRange.create(0, myElement.getTextLength());
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     ResolveCache cache = ResolveCache.getInstance(myElement.getProject());
     return cache.resolveWithCaching(
         this, Resolver.INSTANCE, /* needToPreventRecursion= */ false, /* incompleteCode= */ false);
@@ -73,8 +71,7 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
     return parentMessage.getDeclaredMessage();
   }
 
-  @Nullable
-  private static PbField resolveNamedFieldInType(String name, PbMessageType type) {
+  private static @Nullable PbField resolveNamedFieldInType(String name, PbMessageType type) {
     if (type == null) {
       return null;
     }
@@ -115,9 +112,8 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
     return null;
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public @NotNull Object[] getVariants() {
     PbMessageType qualifierType = getContainingMessage(myElement);
     if (qualifierType == null) {
       return LookupElement.EMPTY_ARRAY;
@@ -175,9 +171,8 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
   private static class Resolver implements ResolveCache.Resolver {
     private static final Resolver INSTANCE = new Resolver();
 
-    @Nullable
     @Override
-    public PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
+    public @Nullable PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
       return ((PbTextFieldNameReference) ref).resolveNoCache();
     }
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.moveCode;
 
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
@@ -35,20 +35,20 @@ public final class DartStatementMover extends LineMover {
   private SmartPsiElementPointer statementToSurroundWithCodeBlock;
 
   @Override
-  public void afterMove(@NotNull final Editor editor, @NotNull final PsiFile file, @NotNull final MoveInfo info, final boolean down) {
+  public void afterMove(final @NotNull Editor editor, final @NotNull PsiFile file, final @NotNull MoveInfo info, final boolean down) {
     super.afterMove(editor, file, info, down);
     statementToSurroundWithCodeBlock = null;
   }
 
   @Override
-  public void beforeMove(@NotNull final Editor editor, @NotNull final MoveInfo info, final boolean down) {
+  public void beforeMove(final @NotNull Editor editor, final @NotNull MoveInfo info, final boolean down) {
     super.beforeMove(editor, info, down);
     if (statementToSurroundWithCodeBlock != null) {
       surroundWithCodeBlock(info, down);
     }
   }
 
-  private void surroundWithCodeBlock(@NotNull final MoveInfo info, final boolean down) {
+  private void surroundWithCodeBlock(final @NotNull MoveInfo info, final boolean down) {
     // TODO Implement surroundWithCodeBlock()
   }
 
@@ -147,7 +147,7 @@ public final class DartStatementMover extends LineMover {
     return new LineRange(startLine, endLine);
   }
 
-  private boolean checkMovingInsideOutside(PsiFile file, final Editor editor, @NotNull final MoveInfo info, final boolean down) {
+  private boolean checkMovingInsideOutside(PsiFile file, final Editor editor, final @NotNull MoveInfo info, final boolean down) {
     final int offset = editor.getCaretModel().getOffset();
     PsiElement elementAtOffset = file.getViewProvider().findElementAt(offset, DartLanguage.INSTANCE);
     if (elementAtOffset == null) return false;
@@ -229,7 +229,7 @@ public final class DartStatementMover extends LineMover {
   private boolean calcInsertOffset(@NotNull PsiFile file,
                                    @NotNull Editor editor,
                                    @NotNull LineRange range,
-                                   @NotNull final MoveInfo info,
+                                   final @NotNull MoveInfo info,
                                    final boolean down) {
     int destLine = getDestLineForAnon(editor, range, down);
 
@@ -564,8 +564,7 @@ public final class DartStatementMover extends LineMover {
     return result[0];
   }
 
-  @Nullable
-  private static PsiElement expressionStatementTeminator(PsiElement element) {
+  private static @Nullable PsiElement expressionStatementTeminator(PsiElement element) {
     if (element instanceof DartExpression || element instanceof DartVarDeclarationList) {
       PsiElement token = PsiTreeUtil.skipWhitespacesAndCommentsForward(element);
       if (token != null && token.getNode().getElementType() == DartTokenTypes.SEMICOLON) {
@@ -575,8 +574,7 @@ public final class DartStatementMover extends LineMover {
     return null;
   }
 
-  @Nullable
-  private static PsiElement firstNonWhiteMovableElement(int offset, PsiFile file, boolean lookRight) {
+  private static @Nullable PsiElement firstNonWhiteMovableElement(int offset, PsiFile file, boolean lookRight) {
     PsiElement element = firstNonWhiteElement(offset, file, lookRight);
     if (element == null) return null;
     if (element instanceof DartExpressionList && lookRight) {

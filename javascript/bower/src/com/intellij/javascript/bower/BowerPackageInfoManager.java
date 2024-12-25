@@ -21,7 +21,7 @@ public class BowerPackageInfoManager {
     );
   }
 
-  public void fetchPackageInfo(@NotNull final PackageInfoConsumer packageInfoConsumer) {
+  public void fetchPackageInfo(final @NotNull PackageInfoConsumer packageInfoConsumer) {
     String packageName = packageInfoConsumer.myPackageName;
     boolean canBeSkipped = packageInfoConsumer.myCanBeSkipped;
     PrevRequestSkippingCache.FetchCallback<String, BowerPackageInfo> callback =
@@ -39,7 +39,7 @@ public class BowerPackageInfoManager {
     myCache.fetch(callback);
   }
 
-  public static abstract class PackageInfoConsumer {
+  public abstract static class PackageInfoConsumer {
     private final String myPackageName;
     private final boolean myCanBeSkipped;
 

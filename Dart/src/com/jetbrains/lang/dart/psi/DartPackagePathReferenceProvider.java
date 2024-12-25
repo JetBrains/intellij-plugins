@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.util.TextRange;
@@ -50,7 +50,7 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     };
   }
 
-  private static boolean canContainDartPackageReference(@Nullable final String tagName, @Nullable final String attrName) {
+  private static boolean canContainDartPackageReference(final @Nullable String tagName, final @Nullable String attrName) {
     return ("link".equalsIgnoreCase(tagName) && "href".equalsIgnoreCase(attrName)) ||
            ("script".equalsIgnoreCase(tagName) && "src".equalsIgnoreCase(attrName)) ||
            ("img".equalsIgnoreCase(tagName) && "src".equalsIgnoreCase(attrName));
@@ -76,8 +76,8 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     return getDartPackageReferences(psiElement, DartUrlResolver.getInstance(psiElement.getProject(), file));
   }
 
-  private static FileReference[] getDartPackageReferences(@NotNull final PsiElement psiElement,
-                                                          @NotNull final DartUrlResolver dartResolver) {
+  private static FileReference[] getDartPackageReferences(final @NotNull PsiElement psiElement,
+                                                          final @NotNull DartUrlResolver dartResolver) {
     final TextRange textRange = ElementManipulators.getValueTextRange(psiElement);
     final String referenceText = textRange.substring(psiElement.getText());
 

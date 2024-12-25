@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -26,9 +26,8 @@ import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLValue;
 
 public final class DartPathPackageReferenceInspection extends LocalInspectionTool {
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, final boolean isOnTheFly) {
     if (!PubspecYamlUtil.PUBSPEC_YAML.equals(holder.getFile().getName())) return super.buildVisitor(holder, isOnTheFly);
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
@@ -39,7 +38,7 @@ public final class DartPathPackageReferenceInspection extends LocalInspectionToo
 
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(@NotNull final PsiElement element) {
+      public void visitElement(final @NotNull PsiElement element) {
         ProgressIndicatorProvider.checkCanceled();
 
         if (!(element instanceof YAMLKeyValue) ||
@@ -71,8 +70,7 @@ public final class DartPathPackageReferenceInspection extends LocalInspectionToo
     };
   }
 
-  @Nullable
-  private static VirtualFile checkReferences(@NotNull final ProblemsHolder holder, @NotNull final YAMLKeyValue element) {
+  private static @Nullable VirtualFile checkReferences(final @NotNull ProblemsHolder holder, final @NotNull YAMLKeyValue element) {
     for (PsiReference reference : element.getReferences()) {
       if (reference instanceof FileReference && !reference.isSoft()) {
         final PsiFileSystemItem resolve = ((FileReference)reference).resolve();

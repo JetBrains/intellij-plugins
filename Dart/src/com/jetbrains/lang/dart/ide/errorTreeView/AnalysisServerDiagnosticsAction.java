@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.google.dart.server.GetServerPortConsumer;
@@ -42,7 +42,7 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
     run(project);
   }
 
-  void run(@NotNull final Project project) {
+  void run(final @NotNull Project project) {
     // Get the current analysis server.
     DartAnalysisServerService server = DartAnalysisServerService.getInstance(project);
 

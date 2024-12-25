@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.osmorc.maven.facet;
 
 import aQute.bnd.header.OSGiHeader;
@@ -36,8 +36,7 @@ public final class ImporterUtil {
    * @param tag         the tag  to remove
    * @return the string without the tag.
    */
-  @NotNull
-  static String removeTagFromInstruction(@NotNull String instruction, @NotNull String tag) {
+  static @NotNull String removeTagFromInstruction(@NotNull String instruction, @NotNull String tag) {
     StringBuilder buf = new StringBuilder();
 
     String[] clauses = instruction.split(",");
@@ -61,8 +60,7 @@ public final class ImporterUtil {
    * @param project the maven project
    * @return a collection of dependencies.
    */
-  @NotNull
-  static Collection<MavenArtifact> collectDependencies(@NotNull Map<String, String> props, @NotNull MavenProject project) {
+  static @NotNull Collection<MavenArtifact> collectDependencies(@NotNull Map<String, String> props, @NotNull MavenProject project) {
     Collection<MavenArtifact> dependencies;
     if (Boolean.parseBoolean(props.get(DependencyEmbedder.EMBED_TRANSITIVE))) {
       Set<MavenArtifact> processed = new HashSet<>();

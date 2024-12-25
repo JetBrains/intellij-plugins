@@ -53,13 +53,10 @@ abstract class ConvertArgTypeIntentionBase extends PsiElementBaseIntentionAction
     editor.getSelectionModel().setSelection(startOffset + 1, endOffset - 1);
   }
 
-  @NotNull
-  protected abstract String getReplacementString(String paramText);
+  protected abstract @NotNull String getReplacementString(String paramText);
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return getText();
   }
 }

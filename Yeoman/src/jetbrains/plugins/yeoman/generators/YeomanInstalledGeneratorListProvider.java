@@ -41,13 +41,11 @@ public class YeomanInstalledGeneratorListProvider {
   }
 
 
-  @NotNull
-  private static List<YeomanInstalledGeneratorInfo> getGlobalInstalledGenerators() {
+  private static @NotNull List<YeomanInstalledGeneratorInfo> getGlobalInstalledGenerators() {
     return ContainerUtil.map(getGlobalInstalledGeneratorFiles(), file -> new YeomanInstalledGeneratorInfo(file));
   }
 
-  @NotNull
-  private static List<YeomanInstalledGeneratorInfo> getLocalInstalledGenerators() {
+  private static @NotNull List<YeomanInstalledGeneratorInfo> getLocalInstalledGenerators() {
     final File file = new File(PathManager.getSystemPath(), YeomanGeneratorInstaller.LOCAL_GENERATORS_RELATIVE_PATH);
     if (!file.exists()) return ContainerUtil.emptyList();
 
@@ -61,8 +59,7 @@ public class YeomanInstalledGeneratorListProvider {
   }
 
 
-  @Nullable
-  public YeomanInstalledGeneratorInfo getGeneratorByYoName(@NotNull String name) {
+  public @Nullable YeomanInstalledGeneratorInfo getGeneratorByYoName(@NotNull String name) {
     for (YeomanInstalledGeneratorInfo info : getAllInstalledGenerators()) {
       if (name.equals(info.getYoName())) {
         return info;

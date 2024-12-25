@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.execution;
 
 
@@ -24,14 +24,11 @@ public final class TsLintOutputJsonParser {
   private static final Logger LOG = TslintUtil.LOG;
   public static final String FIX_PROPERTY = "fix";
 
-  @Nullable
-  private final String myPath;
+  private final @Nullable String myPath;
   private final boolean myMyZeroBasedRowCol;
 
-  @NotNull
-  private final List<TsLinterError> myErrors;
-  @NotNull
-  private final Gson myGson;
+  private final @NotNull List<TsLinterError> myErrors;
+  private final @NotNull Gson myGson;
 
   public TsLintOutputJsonParser(@Nullable String path, final JsonElement root, boolean zeroBasedRowCol, @NotNull Gson gson) {
     myPath = path;
@@ -124,8 +121,7 @@ public final class TsLintOutputJsonParser {
     return Pair.create(line.getAsJsonPrimitive().getAsInt() + 1, character.getAsJsonPrimitive().getAsInt() + 1);
   }
 
-  @NotNull
-  public List<TsLinterError> getErrors() {
+  public @NotNull List<TsLinterError> getErrors() {
     return myErrors;
   }
 

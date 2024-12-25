@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.psi.HbPsiFile;
@@ -12,9 +13,8 @@ import javax.swing.*;
 
 public final class HbIconProvider extends IconProvider {
 
-  @Nullable
   @Override
-  public Icon getIcon(@NotNull PsiElement element, @Iconable.IconFlags int flags) {
+  public @Nullable Icon getIcon(@NotNull PsiElement element, @Iconable.IconFlags int flags) {
     if (element instanceof HbPsiFile) {
       return HandlebarsIcons.Handlebars_icon;
     }

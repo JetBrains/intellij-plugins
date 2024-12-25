@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.coverage;
 
 import com.google.gson.Gson;
@@ -35,9 +35,8 @@ public final class DartCoverageRunner extends CoverageRunner {
   private static final String ID = "DartCoverageRunner";
   private static final Logger LOG = Logger.getInstance(DartCoverageRunner.class.getName());
 
-  @Nullable
   @Override
-  public ProjectData loadCoverageData(@NotNull final File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
+  public @Nullable ProjectData loadCoverageData(final @NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
     if (!(baseCoverageSuite instanceof DartCoverageSuite)) {
       return null;
     }
@@ -56,8 +55,7 @@ public final class DartCoverageRunner extends CoverageRunner {
     }
   }
 
-  @Nullable
-  private static ProjectData doLoadCoverageData(@NotNull final File sessionDataFile, @NotNull final DartCoverageSuite coverageSuite) {
+  private static @Nullable ProjectData doLoadCoverageData(final @NotNull File sessionDataFile, final @NotNull DartCoverageSuite coverageSuite) {
     final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
     // coverageProcess == null means that we are switching to data gathered earlier
     if (coverageProcess != null) {
@@ -129,8 +127,7 @@ public final class DartCoverageRunner extends CoverageRunner {
     return projectData;
   }
 
-  @Nullable
-  private static String getFileForUri(@NotNull final Project project, @NotNull final String contextId, @NotNull final String uri) {
+  private static @Nullable String getFileForUri(final @NotNull Project project, final @NotNull String contextId, final @NotNull String uri) {
     if (uri.startsWith("dart:_") || uri.startsWith("dart:") && uri.contains("-patch/")) {
       // dart:_builtin or dart:core-patch/core_patch.dart
       return null;
@@ -144,21 +141,18 @@ public final class DartCoverageRunner extends CoverageRunner {
     return null;
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return "Dart";
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return ID;
   }
 
-  @NotNull
   @Override
-  public String getDataFileExtension() {
+  public @NotNull String getDataFileExtension() {
     return "json";
   }
 

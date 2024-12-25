@@ -16,8 +16,7 @@ public final class SpacebarsUtils {
   /**
    * Returns simple HbPsiElementImpl element with inner text = name
    */
-  @Nullable
-  public static HbPsiElementImpl createMustacheTag(@NotNull Project project, @NotNull String name, boolean partial) {
+  public static @Nullable HbPsiElementImpl createMustacheTag(@NotNull Project project, @NotNull String name, boolean partial) {
     HbPsiFile text = createFileFromText(project, "{{" + (partial ? ">" : "") + name + "}}");
 
     PsiElement statement = text.getFirstChild();
@@ -35,8 +34,7 @@ public final class SpacebarsUtils {
     return (HbPsiElementImpl)id.getPsi();
   }
 
-  @NotNull
-  private static HbPsiFile createFileFromText(final Project project, @NotNull final String text) {
+  private static @NotNull HbPsiFile createFileFromText(final Project project, final @NotNull String text) {
     return (HbPsiFile)PsiFileFactory.getInstance(project).createFileFromText("foo.spacebars", SpacebarsFileType.SPACEBARS_INSTANCE, text);
   }
 }

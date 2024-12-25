@@ -42,8 +42,7 @@ public class BowerPackagesView {
     myComponent = panel;
   }
 
-  @NotNull
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return myComponent;
   }
 
@@ -84,7 +83,7 @@ public class BowerPackagesView {
     myPackagesNotificationPanel.showError(html, null, null);
   }
 
-  private void checkVersion(@NotNull final BowerSettings settings) {
+  private void checkVersion(final @NotNull BowerSettings settings) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
         ProcessOutput output = BowerCommandLineUtil.runBowerCommand(null, settings, "--version");

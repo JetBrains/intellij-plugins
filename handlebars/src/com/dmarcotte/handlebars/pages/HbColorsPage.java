@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.pages;
 
 import com.dmarcotte.handlebars.HbBundle;
@@ -30,8 +30,7 @@ public final class HbColorsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return HbBundle.message("filetype.hb.description");
   }
 
@@ -51,14 +50,12 @@ public final class HbColorsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new HbHighlighter();
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return """
       {{identifier my-val=true my-other-val=42 my-string-val="a string"}}
       {{! this is a comment }}

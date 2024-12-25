@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.components.Service;
@@ -35,8 +35,7 @@ public final class DartClassResolveCache {
     myMap.put(dartClass, result);
   }
 
-  @Nullable
-  public DartClassResolveResult get(@NotNull DartClass dartClass) {
+  public @Nullable DartClassResolveResult get(@NotNull DartClass dartClass) {
     return myMap.get(dartClass);
   }
 }

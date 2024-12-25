@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.flutter;
 
 import com.intellij.ide.plugins.PluginManagerCore;
@@ -30,12 +30,11 @@ public final class FlutterUtil {
   /**
    * @return the Flutter SDK root relative to the given Dart SDK or {@code null}
    */
-  @Nullable
-  public static String getFlutterRoot(@NotNull final String dartSdkPath) {
+  public static @Nullable String getFlutterRoot(final @NotNull String dartSdkPath) {
     return dartSdkPath.endsWith(DART_SDK_SUFFIX) ? dartSdkPath.substring(0, dartSdkPath.length() - DART_SDK_SUFFIX.length()) : null;
   }
 
-  public static boolean isFlutterModule(@NotNull final Module module) {
+  public static boolean isFlutterModule(final @NotNull Module module) {
     // Check the module type for backwards compatibility:
     if (FLUTTER_MODULE_TYPE_ID.equals(ModuleType.get(module).getId())) return true;
 
@@ -58,7 +57,7 @@ public final class FlutterUtil {
    * the same logic is used between the two plugins to avoid issues like this:
    * https://github.com/flutter/flutter-intellij/issues/1445
    */
-  public static boolean isPubspecDeclaringFlutter(@NotNull final VirtualFile pubspec) {
+  public static boolean isPubspecDeclaringFlutter(final @NotNull VirtualFile pubspec) {
     // It uses Flutter if it contains:
     // dependencies:
     //   flutter:

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -21,9 +21,8 @@ public final class PhoneGapConfigurationType implements ConfigurationType, DumbA
     myConfigurationFactory = new PhoneGapConfigurationFactory(this);
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return PhoneGapBundle.message("phonegap.run.configuration.title");
   }
 
@@ -37,9 +36,8 @@ public final class PhoneGapConfigurationType implements ConfigurationType, DumbA
     return PhoneGapIcons.PhonegapIntegration;
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return RUN_CONFIGURATION_ID;
   }
 
@@ -58,9 +56,8 @@ public final class PhoneGapConfigurationType implements ConfigurationType, DumbA
       super(type);
     }
 
-    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+    public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new PhoneGapRunConfiguration(project, myConfigurationFactory, RUN_CONFIGURATION_ID);
     }
 

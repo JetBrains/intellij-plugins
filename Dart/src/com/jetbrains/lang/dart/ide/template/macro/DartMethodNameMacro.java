@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -24,8 +25,7 @@ public final class DartMethodNameMacro extends DartMacroBase {
   }
 
   @VisibleForTesting
-  @Nullable
-  public String getContainingFunctionName(@Nullable final PsiElement element) {
+  public @Nullable String getContainingFunctionName(final @Nullable PsiElement element) {
     if (element == null) return null;
     final DartComponent parent = PsiTreeUtil.getParentOfType(element,
                                                              DartGetterDeclaration.class,

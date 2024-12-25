@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -107,8 +107,7 @@ public final class BndProjectImporter {
     myProjects = toImport;
   }
 
-  @NotNull
-  public Module createRootModule(@NotNull ModifiableModuleModel model) {
+  public @NotNull Module createRootModule(@NotNull ModifiableModuleModel model) {
     String rootDir = myProject.getBasePath();
     assert rootDir != null : myProject;
     String imlPath = rootDir + File.separator + myProject.getName() + ModuleFileType.DOT_DEFAULT_EXTENSION;
@@ -500,16 +499,14 @@ public final class BndProjectImporter {
     return VfsUtil.getUrlForLibraryRoot(file);
   }
 
-  @NotNull
-  public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) {
+  public static @NotNull Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) {
     return ContainerUtil.filter(workspace.getAllProjects(), Conditions.notNull());
   }
 
   /**
    * Caches a workspace for methods below.
    */
-  @Nullable
-  public static Workspace findWorkspace(@NotNull com.intellij.openapi.project.Project project) {
+  public static @Nullable Workspace findWorkspace(@NotNull com.intellij.openapi.project.Project project) {
     String basePath = project.getBasePath();
     if (basePath != null && Files.exists(Paths.get(basePath, CNF_DIR))) {
       try {
@@ -525,8 +522,7 @@ public final class BndProjectImporter {
     return null;
   }
 
-  @Nullable
-  public static Workspace getWorkspace(@Nullable com.intellij.openapi.project.Project project) {
+  public static @Nullable Workspace getWorkspace(@Nullable com.intellij.openapi.project.Project project) {
     return project == null || project.isDefault() ? null : BND_WORKSPACE_KEY.get(project);
   }
 

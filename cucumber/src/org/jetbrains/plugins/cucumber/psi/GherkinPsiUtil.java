@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.openapi.util.TextRange;
@@ -24,8 +24,7 @@ public final class GherkinPsiUtil {
   private GherkinPsiUtil() {
   }
 
-  @Nullable
-  public static GherkinFileImpl getGherkinFile(@NotNull final PsiElement element) {
+  public static @Nullable GherkinFileImpl getGherkinFile(final @NotNull PsiElement element) {
     if (!element.isValid()) {
       return null;
     }
@@ -33,10 +32,9 @@ public final class GherkinPsiUtil {
     return containingFile instanceof GherkinFileImpl ? (GherkinFileImpl)containingFile : null;
   }
 
-  @Nullable
-  public static List<TextRange> buildParameterRanges(@NotNull GherkinStep step,
-                                                     @NotNull AbstractStepDefinition definition,
-                                                     final int shiftOffset) {
+  public static @Nullable List<TextRange> buildParameterRanges(@NotNull GherkinStep step,
+                                                               @NotNull AbstractStepDefinition definition,
+                                                               final int shiftOffset) {
 
     OutlineStepSubstitution substitution = convertOutlineStepName(step);
 

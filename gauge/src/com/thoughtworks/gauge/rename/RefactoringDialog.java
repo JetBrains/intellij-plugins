@@ -40,9 +40,8 @@ public final class RefactoringDialog extends DialogWrapper {
   private final Editor editor;
   private final String text;
 
-  @Nullable
   @Override
-  public JComponent getPreferredFocusedComponent() {
+  public @Nullable JComponent getPreferredFocusedComponent() {
     return inputText;
   }
 
@@ -130,9 +129,8 @@ public final class RefactoringDialog extends DialogWrapper {
     dispose();
   }
 
-  @Nullable
   @Override
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     return contentPane;
   }
 

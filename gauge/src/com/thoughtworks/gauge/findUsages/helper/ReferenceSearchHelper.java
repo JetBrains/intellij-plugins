@@ -52,13 +52,11 @@ public class ReferenceSearchHelper {
            GaugeUtil.isGaugeElement(element);
   }
 
-  @NotNull
-  public StepCollector getStepCollector(PsiElement element) {
+  public @NotNull StepCollector getStepCollector(PsiElement element) {
     return new StepCollector(element.getProject());
   }
 
-  @NotNull
-  public static List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
+  public static @NotNull List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
     List<PsiElement> elements = new ArrayList<>();
     if (element instanceof ConceptStepImpl) {
       elements = collector.get(getConceptStepText((ConceptStepImpl)element));

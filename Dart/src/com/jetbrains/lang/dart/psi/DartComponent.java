@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -28,7 +29,7 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
 
   boolean isOperator();
 
-  DartMetadata getMetadataByName(@NotNull final String name);
+  DartMetadata getMetadataByName(final @NotNull String name);
 
   @NotNull
   List<DartMetadata> getMetadataList();

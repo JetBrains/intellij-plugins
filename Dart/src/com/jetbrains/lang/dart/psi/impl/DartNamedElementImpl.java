@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -38,8 +39,7 @@ public abstract class DartNamedElementImpl extends DartPsiCompositeElementImpl i
   }
 
   @Override
-  @Nullable
-  public ItemPresentation getPresentation() {
+  public @Nullable ItemPresentation getPresentation() {
     final PsiElement parent = getParent();
     if (parent instanceof NavigationItem) {
       return ((NavigationItem)parent).getPresentation();
@@ -58,9 +58,8 @@ public abstract class DartNamedElementImpl extends DartPsiCompositeElementImpl i
     return this;
   }
 
-  @NotNull
   @Override
-  public DartId getId() {
+  public @NotNull DartId getId() {
     return PsiTreeUtil.getChildOfType(this, DartId.class);
   }
 }

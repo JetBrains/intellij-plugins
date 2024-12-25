@@ -360,8 +360,7 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
       return extension.isValidTagNameChar(c);
     }
 
-    @Nullable
-    private XmlExtension getXmlExtension() {
+    private @Nullable XmlExtension getXmlExtension() {
       Document document = myEditor.getDocument();
       VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       PsiFile psiFile = file != null && file.isValid() ? PsiManager.getInstance(myProject).findFile(file) : null;
@@ -399,8 +398,7 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
       return document.getText(leader).equals(document.getText(support));
     }
 
-    @Nullable
-    private static TextRange findSupportRange(@Nullable PsiElement leader) {
+    private static @Nullable TextRange findSupportRange(@Nullable PsiElement leader) {
       if (leader == null || TreeUtil.findSibling(leader.getNode(), XmlTokenType.XML_TAG_END) == null) return null;
       PsiElement support = RenameTagBeginOrEndIntentionAction.findOtherSide(leader, false);
       if (support == null || leader == support) support = RenameTagBeginOrEndIntentionAction.findOtherSide(leader, true);

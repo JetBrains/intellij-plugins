@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsLibraryDependencyEntry;
@@ -29,16 +30,14 @@ class JpsSharedLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
   }
 
   @Override
-  @NotNull
-  public JpsSharedLibraryDependencyEntryImpl createCopy() {
+  public @NotNull JpsSharedLibraryDependencyEntryImpl createCopy() {
     return new JpsSharedLibraryDependencyEntryImpl(this);
   }
 
 // ------------------------------------
 
   @Override
-  @Nullable
-  public JpsLibrary getLibrary() {
+  public @Nullable JpsLibrary getLibrary() {
     return myContainer.getChild(LIB_REF_ROLE).resolve();
   }
 }

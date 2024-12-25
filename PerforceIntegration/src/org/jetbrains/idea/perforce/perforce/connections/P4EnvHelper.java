@@ -134,13 +134,11 @@ public final class P4EnvHelper {
     return myDefaultParamsMap.get(P4ConfigFields.P4IGNORE.getName()) != null;
   }
 
-  @Nullable
-  public synchronized String getP4Config() {
+  public synchronized @Nullable String getP4Config() {
     return myDefaultParamsMap.get(P4ConfigFields.P4CONFIG.getName());
   }
 
-  @Nullable
-  public synchronized String getP4Ignore() {
+  public synchronized @Nullable String getP4Ignore() {
     return myDefaultParamsMap.get(P4ConfigFields.P4IGNORE.getName());
   }
 
@@ -157,8 +155,7 @@ public final class P4EnvHelper {
       parameters.setIgnoreFileName(myDefaultParams.getIgnoreFileName());
   }
 
-  @Nullable
-  public static String getP4IgnoreFileNameFromEnv() {
+  public static @Nullable String getP4IgnoreFileNameFromEnv() {
     String testValue = AbstractP4Connection.getTestEnvironment().get(P4ConfigFields.P4IGNORE.getName());
     if (testValue != null) return testValue;
 

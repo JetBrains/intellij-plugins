@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -22,9 +22,8 @@ public final class TsLintSuppressionUtil extends JSLinterSuppressionUtil {
   private TsLintSuppressionUtil() {
   }
 
-  @Nullable
   @Override
-  protected String getRulesFromFileLevelComment(@NotNull PsiComment comment) {
+  protected @Nullable String getRulesFromFileLevelComment(@NotNull PsiComment comment) {
     if (comment.getNode().getElementType() != JSTokenTypes.C_STYLE_COMMENT) {
       return null;
     }
@@ -38,9 +37,8 @@ public final class TsLintSuppressionUtil extends JSLinterSuppressionUtil {
     return null;
   }
 
-  @Nullable
   @Override
-  protected String getRulesFromLineSuppressionComment(@NotNull PsiComment comment) {
+  protected @Nullable String getRulesFromLineSuppressionComment(@NotNull PsiComment comment) {
     String text = comment.getText();
     if (text.contains(LINE_COMMENT_PREFIX)) {
       Matcher matcher = LINE_SUPPRESSION_PATTERN.matcher(text);
@@ -51,26 +49,22 @@ public final class TsLintSuppressionUtil extends JSLinterSuppressionUtil {
     return null;
   }
 
-  @NotNull
   @Override
-  protected String getToolName() {
+  protected @NotNull String getToolName() {
     return TsLintBundle.message("tslint.framework.title");
   }
 
   @Override
-  @NotNull
-  protected String buildFileCommentText(@Nullable String existing, @Nullable String toAdd) {
+  protected @NotNull String buildFileCommentText(@Nullable String existing, @Nullable String toAdd) {
     return getCommentText(FILE_COMMENT_PREFIX, existing, toAdd);
   }
 
-  @NotNull
   @Override
-  protected String buildLineCommentText(@Nullable String ruleCode, @Nullable String existingSuppressions) {
+  protected @NotNull String buildLineCommentText(@Nullable String ruleCode, @Nullable String existingSuppressions) {
     return getCommentText(LINE_COMMENT_PREFIX, existingSuppressions, ruleCode);
   }
 
-  @NotNull
-  private static String getCommentText(String prefix, @Nullable String existing, @Nullable String toAdd) {
+  private static @NotNull String getCommentText(String prefix, @Nullable String existing, @Nullable String toAdd) {
     if (toAdd == null) {
       //'suppress all' should overwrite suppression for particular rules
       return prefix;

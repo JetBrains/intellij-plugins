@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster.uml;
 
@@ -28,8 +28,7 @@ import static com.intellij.openapi.graph.services.GraphLayoutService.GraphLayout
 
 @SuppressWarnings("UnstableApiUsage")
 final class JdlDiagramPanel implements Disposable {
-  @Nullable
-  private DiagramBuilder builder;
+  private @Nullable DiagramBuilder builder;
 
   private final MyPanel chartPanel = new MyPanel();
   private final JdlUmlProvider umlProvider = new JdlUmlProvider();

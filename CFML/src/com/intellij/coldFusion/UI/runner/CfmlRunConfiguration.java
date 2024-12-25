@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.execution.Executor;
@@ -28,9 +28,8 @@ public class CfmlRunConfiguration extends RunConfigurationBase<Element> implemen
     super(project, factory, name);
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new CfmlRunConfigurationEditor();
   }
 
@@ -94,9 +93,8 @@ public class CfmlRunConfiguration extends RunConfigurationBase<Element> implemen
     return Objects.equals(getName(), suggestedName());
   }
 
-  @Nullable
   @Override
-  public String suggestedName() {
+  public @Nullable String suggestedName() {
     final String path = getRunnerParameters().getUrl();
     return StringUtil.isNotEmpty(path) ? PathUtil.getFileName(path) : null;
   }

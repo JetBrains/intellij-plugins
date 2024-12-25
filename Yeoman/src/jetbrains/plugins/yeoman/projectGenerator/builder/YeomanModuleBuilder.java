@@ -4,8 +4,8 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -60,9 +60,8 @@ public class YeomanModuleBuilder extends ModuleBuilder {
     return YeomanBundle.message("module.builder.description.yeoman.project.type");
   }
 
-  @Nullable
   @Override
-  public @NonNls String getBuilderId() {
+  public @Nullable @NonNls String getBuilderId() {
     return "Yeoman";
   }
 
@@ -81,9 +80,8 @@ public class YeomanModuleBuilder extends ModuleBuilder {
     return WebModuleBuilder.GROUP_NAME;
   }
 
-  @Nullable
   @Override
-  public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
+  public @Nullable Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
     ThreadingAssertions.assertEventDispatchThread();
     Module module = super.commitModule(project, model);
     if (module != null) {
@@ -99,9 +97,8 @@ public class YeomanModuleBuilder extends ModuleBuilder {
     return module;
   }
 
-  @Nullable
   @Override
-  public ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
+  public @Nullable ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
     final YeomanSelectGeneratorWizardStep step = new YeomanSelectGeneratorWizardStep(this, context);
     Disposer.register(parentDisposable, step);
     return step;

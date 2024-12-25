@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor.folding;
 
 import com.dmarcotte.handlebars.config.HbConfig;
@@ -112,9 +113,8 @@ public final class HbFoldingBuilder implements FoldingBuilder, DumbAware {
     return endCloseStache;
   }
 
-  @Nullable
   @Override
-  public String getPlaceholderText(@NotNull ASTNode node) {
+  public @Nullable String getPlaceholderText(@NotNull ASTNode node) {
     return "...";
   }
 

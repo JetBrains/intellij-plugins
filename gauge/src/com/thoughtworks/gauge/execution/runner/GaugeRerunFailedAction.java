@@ -37,9 +37,8 @@ public class GaugeRerunFailedAction extends AbstractRerunFailedTestsAction {
     super(componentContainer);
   }
 
-  @Nullable
   @Override
-  protected MyRunProfile getRunProfile(@NotNull ExecutionEnvironment environment) {
+  protected @Nullable MyRunProfile getRunProfile(@NotNull ExecutionEnvironment environment) {
     RunProfile config = myConsoleProperties.getConfiguration();
     return config instanceof GaugeRunConfiguration ? new RerunProfile((GaugeRunConfiguration)config) : null;
   }
@@ -53,17 +52,15 @@ public class GaugeRerunFailedAction extends AbstractRerunFailedTestsAction {
       this.config = configuration;
     }
 
-    @Nullable
     @Override
-    public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
+    public @Nullable RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
       GeneralCommandLine commandLine = GaugeCommandLine.getInstance(config.getModule(), getProject());
       commandLine.addParameters(GaugeConstants.RUN, GaugeConstants.FAILED);
       return new GaugeCommandLineState(commandLine, getProject(), env, config);
     }
 
-    @Nullable
     @Override
-    public GlobalSearchScope getSearchScope() {
+    public @Nullable GlobalSearchScope getSearchScope() {
       return null;
     }
 

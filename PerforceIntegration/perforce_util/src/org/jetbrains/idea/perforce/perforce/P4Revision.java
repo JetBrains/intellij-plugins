@@ -33,7 +33,7 @@ public final class P4Revision {
   private String mySubmitMessage = null;
   private final boolean myBranched;
 
-  public P4Revision(@NotNull final String depotPath,
+  public P4Revision(final @NotNull String depotPath,
                     final long revisionNumber,
                     final long changeNumber,
                     final String action,
@@ -57,8 +57,7 @@ public final class P4Revision {
     return myRevisionNumber;
   }
 
-  @NotNull 
-  public String getDepotPath() {
+  public @NotNull String getDepotPath() {
     return myDepotPath;
   }
 

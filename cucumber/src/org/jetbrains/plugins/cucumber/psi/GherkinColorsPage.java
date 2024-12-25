@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -64,20 +65,17 @@ public final class GherkinColorsPage implements ColorSettingsPage {
   }
 
   @Override
-  @Nullable
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ADDITIONAL_HIGHLIGHT_DESCRIPTORS;
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return CucumberBundle.message("color.settings.gherkin.name");
   }
 
   @Override
-  @NotNull
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     return CucumberIcons.Cucumber;
   }
 
@@ -92,14 +90,12 @@ public final class GherkinColorsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new GherkinSyntaxHighlighter(new PlainGherkinKeywordProvider());
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return DEMO_TEXT;
   }
 }

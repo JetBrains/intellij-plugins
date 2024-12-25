@@ -18,9 +18,6 @@ package com.intellij.protobuf.lang.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
@@ -28,6 +25,9 @@ import com.intellij.protobuf.lang.resolve.PbSymbolLookupElement;
 import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
 import com.intellij.protobuf.lang.resolve.ResolveFilters;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,9 +37,8 @@ abstract class PbExtensionNameMixin extends PbQualifiedReferenceBase implements 
     super(node);
   }
 
-  @NotNull
   @Override
-  public ProtoSymbolPathDelegate getDefaultPathDelegate() {
+  public @NotNull ProtoSymbolPathDelegate getDefaultPathDelegate() {
     return new ProtoSymbolPathDelegate() {
       @Override
       public PsiReference getReference(ProtoSymbolPath path) {
@@ -62,14 +61,12 @@ abstract class PbExtensionNameMixin extends PbQualifiedReferenceBase implements 
     };
   }
 
-  @Nullable
   @Override
-  public PsiReference getEffectiveReference() {
+  public @Nullable PsiReference getEffectiveReference() {
     return getSymbolPath().getReference();
   }
 
-  @Nullable
-  private Condition<PbSymbol> getExtensionFilter() {
+  private @Nullable Condition<PbSymbol> getExtensionFilter() {
     PbOptionName optionName = PsiTreeUtil.getParentOfType(this, PbOptionName.class);
     if (optionName == null) {
       return null;

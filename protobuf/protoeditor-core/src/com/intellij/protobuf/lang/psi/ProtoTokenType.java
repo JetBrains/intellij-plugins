@@ -16,9 +16,9 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.lang.ProtoBaseLanguage;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.ILeafElementType;
-import com.intellij.protobuf.lang.ProtoBaseLanguage;
 import org.jetbrains.annotations.NotNull;
 
 /** An {@link ILeafElementType} that returns {@link ProtoLeafElement} instances. */
@@ -27,9 +27,8 @@ public class ProtoTokenType extends IElementType implements ILeafElementType {
     super(debugName, ProtoBaseLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public ASTNode createLeafNode(@NotNull CharSequence leafText) {
+  public @NotNull ASTNode createLeafNode(@NotNull CharSequence leafText) {
     return new ProtoLeafElement(this, leafText);
   }
 }

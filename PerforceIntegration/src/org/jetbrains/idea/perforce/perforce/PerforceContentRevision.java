@@ -36,8 +36,8 @@ import java.io.IOException;
 
 public class PerforceContentRevision implements ByteBackedContentRevision {
   protected final Project myProject;
-  @Nullable private final P4Connection myConnection;
-  @Nullable private final String myDepotPath;
+  private final @Nullable P4Connection myConnection;
+  private final @Nullable String myDepotPath;
   protected final long myRevision;
   protected final String myStringRevision;
   protected FilePath myFilePath;
@@ -61,8 +61,7 @@ public class PerforceContentRevision implements ByteBackedContentRevision {
   }
 
   @Override
-  @Nullable
-  public String getContent() throws VcsException {
+  public @Nullable String getContent() throws VcsException {
     String content = ContentRevisionCache.getAsString(getContentAsBytes(), getFile(), null);
     // todo whether we need to convert them?
     return content == null ? null : StringUtil.convertLineSeparators(content, System.lineSeparator());
@@ -89,8 +88,7 @@ public class PerforceContentRevision implements ByteBackedContentRevision {
   }
 
   @Override
-  @NotNull
-  public FilePath getFile() {
+  public @NotNull FilePath getFile() {
     if (myFilePath == null) {
       if ((! myProject.isDisposed()) && PerforceSettings.getSettings(myProject).ENABLED) {
         PerforceClient client = PerforceManager.getInstance(myProject).getClient(myConnection);
@@ -113,8 +111,7 @@ public class PerforceContentRevision implements ByteBackedContentRevision {
   }
 
   @Override
-  @NotNull
-  public VcsRevisionNumber getRevisionNumber() {
+  public @NotNull VcsRevisionNumber getRevisionNumber() {
     return new PerforceOnlyRevisionNumber(myRevision);
   }
 

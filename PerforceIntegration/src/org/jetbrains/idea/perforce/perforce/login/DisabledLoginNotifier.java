@@ -23,10 +23,8 @@ class DisabledLoginNotifier extends GenericNotifierImpl<P4Connection, Connection
     myLoginManager = loginManager;
   }
 
-  @NotNull
   @Override
-  @NlsContexts.NotificationContent
-  protected String getNotificationContent(final P4Connection connection) {
+  protected @NotNull @NlsContexts.NotificationContent String getNotificationContent(final P4Connection connection) {
     return PerforceBundle.message("connection.error.notification", connection.getWorkingDirectory(), FIX, INSPECT);
   }
 
@@ -44,9 +42,8 @@ class DisabledLoginNotifier extends GenericNotifierImpl<P4Connection, Connection
     return false;
   }
 
-  @NotNull
   @Override
-  protected ConnectionId getKey(final P4Connection obj) {
+  protected @NotNull ConnectionId getKey(final P4Connection obj) {
     return obj.getId();
   }
 

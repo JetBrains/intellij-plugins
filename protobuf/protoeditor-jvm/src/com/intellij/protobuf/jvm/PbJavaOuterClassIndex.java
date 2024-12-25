@@ -56,12 +56,11 @@ public class PbJavaOuterClassIndex extends ScalarIndexExtension<String> {
         .collect(Collectors.toList());
   }
 
-  @NotNull
   @Override
-  public InputFilter getInputFilter() {
+  public @NotNull InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(PbFileType.INSTANCE) {
       @Override
-      public boolean acceptInput(@NotNull final VirtualFile file) {
+      public boolean acceptInput(final @NotNull VirtualFile file) {
         return file.isInLocalFileSystem();
       }
     };
@@ -72,21 +71,18 @@ public class PbJavaOuterClassIndex extends ScalarIndexExtension<String> {
     return true;
   }
 
-  @NotNull
   @Override
-  public ID<String, Void> getName() {
+  public @NotNull ID<String, Void> getName() {
     return INDEX_ID;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, Void, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, Void, FileContent> getIndexer() {
     return INDEXER_INSTANCE;
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
@@ -98,8 +94,7 @@ public class PbJavaOuterClassIndex extends ScalarIndexExtension<String> {
   private static class OuterClassNameIndexer implements DataIndexer<String, Void, FileContent> {
 
     @Override
-    @NotNull
-    public Map<String, Void> map(@NotNull FileContent inputData) {
+    public @NotNull Map<String, Void> map(@NotNull FileContent inputData) {
       PbFile pbFile = ObjectUtils.tryCast(inputData.getPsiFile(), PbFile.class);
       if (pbFile == null) {
         return Collections.emptyMap();
@@ -113,8 +108,7 @@ public class PbJavaOuterClassIndex extends ScalarIndexExtension<String> {
     }
 
     /** Return all of the java outer class names that can be generated from this proto file. */
-    @NotNull
-    private static Collection<String> computeOuterClassNames(PbFile file) {
+    private static @NotNull Collection<String> computeOuterClassNames(PbFile file) {
       List<JavaNameGenerator> nameGenerators = NameGeneratorSelector.selectForFile(file);
       List<String> results = new ArrayList<>();
       for (JavaNameGenerator nameGenerator : nameGenerators) {

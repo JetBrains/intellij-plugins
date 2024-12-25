@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.coverage;
 
 import com.intellij.coverage.CoverageBundle;
@@ -15,20 +15,17 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
     super(project);
   }
 
-  @NotNull
-  public static DartCoverageAnnotator getInstance(@NotNull Project project) {
+  public static @NotNull DartCoverageAnnotator getInstance(@NotNull Project project) {
     return project.getService(DartCoverageAnnotator.class);
   }
 
-  @Nullable
   @Override
-  protected FileCoverageInfo fillInfoForUncoveredFile(@NotNull final File file) {
+  protected @Nullable FileCoverageInfo fillInfoForUncoveredFile(final @NotNull File file) {
     return new FileCoverageInfo();
   }
 
-  @Nullable
   @Override
-  protected String getLinesCoverageInformationString(@NotNull final FileCoverageInfo info) {
+  protected @Nullable String getLinesCoverageInformationString(final @NotNull FileCoverageInfo info) {
     if (info.totalLineCount == 0) return null;
     if (info.coveredLineCount == 0) return info instanceof DirCoverageInfo ? null :
                                            CoverageBundle.message("lines.covered.info.no.lines.covered");
@@ -38,9 +35,8 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
     //return super.getLinesCoverageInformationString(info); // "15% lines covered"
   }
 
-  @Nullable
   @Override
-  protected String getFilesCoverageInformationString(@NotNull final DirCoverageInfo info) {
+  protected @Nullable String getFilesCoverageInformationString(final @NotNull DirCoverageInfo info) {
     if (info.totalFilesCount == 0) return null;
     if (info.coveredFilesCount == 0) {
       return DartBundle.message("coverage.string.0.of.1.files.covered", info.coveredFilesCount, info.totalFilesCount);

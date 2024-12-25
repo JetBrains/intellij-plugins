@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -22,15 +22,13 @@ import java.util.List;
 public final class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
   private String myParametersListPresentableText = "";
 
-  @Nullable
   @Override
-  public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
+  public @Nullable PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
     final PsiElement contextElement = context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
     return findElementForParameterInfo(contextElement);
   }
 
-  @Nullable
-  public static PsiElement findElementForParameterInfo(@Nullable final PsiElement contextElement) {
+  public static @Nullable PsiElement findElementForParameterInfo(final @Nullable PsiElement contextElement) {
     final DartArguments arguments = PsiTreeUtil.getParentOfType(contextElement, DartArguments.class);
     final PsiElement parent = arguments == null ? null : arguments.getParent();
     if (parent instanceof DartCallExpression || parent instanceof DartNewExpression || parent instanceof DartMetadata) {

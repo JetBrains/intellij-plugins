@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
@@ -25,8 +25,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
   }
 
   @Override
-  @NotNull
-  public String getParametersAsString() {
+  public @NotNull String getParametersAsString() {
     return getFunctionInfo().getParametersListPresentableText();
   }
 
@@ -36,8 +35,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
   }
 
   @Override
-  @Nullable
-  public PsiType getReturnType() {
+  public @Nullable PsiType getReturnType() {
     final String returnTypeString = CfmlPsiUtil.getPureAttributeValue(this, "returntype");
     return returnTypeString != null ?
            new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
@@ -62,9 +60,8 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     return baseIcon;
   }
 
-  @NotNull
   @Override
-  public String getTagName() {
+  public @NotNull String getTagName() {
     return TAG_NAME;
   }
 
@@ -73,8 +70,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
   }
 
   @Override
-  @NotNull
-  public CfmlFunctionDescription getFunctionInfo() {
+  public @NotNull CfmlFunctionDescription getFunctionInfo() {
     return CfmlLookUpItemUtil.getFunctionDescription(this);
   }
 

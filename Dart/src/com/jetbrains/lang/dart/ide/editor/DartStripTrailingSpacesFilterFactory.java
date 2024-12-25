@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.lang.ASTNode;
@@ -17,24 +18,23 @@ import static com.jetbrains.lang.dart.DartTokenTypes.REGULAR_STRING_PART;
 
 public final class DartStripTrailingSpacesFilterFactory extends PsiBasedStripTrailingSpacesFilter.Factory {
 
-  @NotNull
   @Override
-  protected PsiBasedStripTrailingSpacesFilter createFilter(@NotNull final Document document) {
+  protected @NotNull PsiBasedStripTrailingSpacesFilter createFilter(final @NotNull Document document) {
     return new DartStripTrailingSpacesFilter(document);
   }
 
   @Override
-  protected boolean isApplicableTo(@NotNull final Language language) {
+  protected boolean isApplicableTo(final @NotNull Language language) {
     return language == DartLanguage.INSTANCE;
   }
 
   private static class DartStripTrailingSpacesFilter extends PsiBasedStripTrailingSpacesFilter {
-    protected DartStripTrailingSpacesFilter(@NotNull final Document document) {
+    protected DartStripTrailingSpacesFilter(final @NotNull Document document) {
       super(document);
     }
 
     @Override
-    protected void process(@NotNull final PsiFile psiFile) {
+    protected void process(final @NotNull PsiFile psiFile) {
       PsiElementVisitor visitor = new DartRecursiveVisitor() {
         @Override
         public void visitStringLiteralExpression(@NotNull DartStringLiteralExpression literalExpression) {

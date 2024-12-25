@@ -32,9 +32,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ProtoCommentProvider implements MultipleLangCommentProvider {
 
-  @Nullable
   @Override
-  public Commenter getLineCommenter(
+  public @Nullable Commenter getLineCommenter(
     @NotNull PsiFile file, @NotNull Editor editor, @NotNull Language lineStartLanguage, @NotNull Language lineEndLanguage) {
     if (file instanceof PbFile) {
       return PbCommenter.INSTANCE;

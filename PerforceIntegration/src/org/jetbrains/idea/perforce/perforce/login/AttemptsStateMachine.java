@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class AttemptsStateMachine {
-  private final static Logger LOG = Logger.getInstance(AttemptsStateMachine.class);
+  private static final Logger LOG = Logger.getInstance(AttemptsStateMachine.class);
   private static final long ourTimeToRelogin = 3600000;
   private static final long ourSuccessBlindInterval = 600000;
   private static final long ourCredentialsBlindInterval = 1000;
@@ -158,7 +158,7 @@ public final class AttemptsStateMachine {
     return executeUnderLock(() -> ensureImpl(ignoreDelays));
   }
 
-  public void failed(final boolean connectionProblem, @Nullable final @NlsContexts.DialogMessage String errorMessage) {
+  public void failed(final boolean connectionProblem, final @Nullable @NlsContexts.DialogMessage String errorMessage) {
     synchronized (myLock) {
       myConnectionProblem = connectionProblem;
       myErrorMessage = errorMessage;

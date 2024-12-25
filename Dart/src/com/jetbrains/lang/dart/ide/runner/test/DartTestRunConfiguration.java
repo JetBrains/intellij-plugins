@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.ExecutionException;
@@ -24,26 +25,22 @@ public class DartTestRunConfiguration extends DartRunConfigurationBase {
   }
 
   @Override
-  @NotNull
-  public DartTestRunnerParameters getRunnerParameters() {
+  public @NotNull DartTestRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartTestConfigurationEditorForm(getProject());
   }
 
   @Override
-  @Nullable
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  public @Nullable RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     return new DartTestRunningState(env);
   }
 
   @Override
-  @Nullable
-  public String suggestedName() {
+  public @Nullable String suggestedName() {
     final String path = myRunnerParameters.getFilePath();
     final String groupOrTestName = myRunnerParameters.getTestName();
     if (path == null) return null;

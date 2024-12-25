@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.project.Project;
@@ -16,9 +16,8 @@ import java.util.List;
 public final class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<String>> {
   public static final ID<Integer, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
 
-  @NotNull
   @Override
-  public ID<Integer, List<String>> getName() {
+  public @NotNull ID<Integer, List<String>> getName() {
     return DART_PATH_INDEX;
   }
 
@@ -30,28 +29,24 @@ public final class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<L
   @Override
   public @NotNull SingleEntryIndexer<List<String>> getIndexer() {
     return new SingleEntryIndexer<>(false) {
-      @Nullable
       @Override
-      protected List<String> computeValue(@NotNull FileContent inputData) {
+      protected @Nullable List<String> computeValue(@NotNull FileContent inputData) {
         return DartIndexUtil.indexFile(inputData).getPartUris();
       }
     };
   }
 
-  @NotNull
   @Override
-  public DataExternalizer<List<String>> getValueExternalizer() {
+  public @NotNull DataExternalizer<List<String>> getValueExternalizer() {
     return StringCollectionExternalizer.STRING_LIST_EXTERNALIZER;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
-  @NotNull
-  public static List<String> getPartUris(@NotNull final Project project, @NotNull final VirtualFile virtualFile) {
+  public static @NotNull List<String> getPartUris(final @NotNull Project project, final @NotNull VirtualFile virtualFile) {
     return ContainerUtil.notNullize(FileBasedIndex.getInstance().getSingleEntryIndexData(DART_PATH_INDEX, virtualFile, project));
   }
 }

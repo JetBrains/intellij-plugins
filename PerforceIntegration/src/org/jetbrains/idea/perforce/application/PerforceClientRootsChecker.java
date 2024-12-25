@@ -50,8 +50,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
     }
   }
 
-  @Nullable
-  private static WrongRoots checkRoots(Collection<VirtualFile> roots, List<String> clientRoots) {
+  private static @Nullable WrongRoots checkRoots(Collection<VirtualFile> roots, List<String> clientRoots) {
     WrongRoots wrongRoots = null;
 
     for (VirtualFile root : roots) {

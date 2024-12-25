@@ -72,8 +72,8 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   @Override
-  public void getChanges(@NotNull final VcsDirtyScope dirtyScope, @NotNull final ChangelistBuilder builder, @NotNull final ProgressIndicator progress,
-                         @NotNull final ChangeListManagerGate addGate) throws VcsException {
+  public void getChanges(final @NotNull VcsDirtyScope dirtyScope, final @NotNull ChangelistBuilder builder, final @NotNull ProgressIndicator progress,
+                         final @NotNull ChangeListManagerGate addGate) throws VcsException {
     Stopwatch sw = Stopwatch.createStarted();
     try (AccessToken ignored = myVcs.readLockP4()) {
       doGetChanges(dirtyScope, builder, progress, addGate);
@@ -313,7 +313,7 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
   }
 
-  private void processConnection(@NotNull final P4Connection connection,
+  private void processConnection(final @NotNull P4Connection connection,
                                  final ChangelistBuilder builder,
                                  final Collection<VirtualFile> roots,
                                  final ProgressIndicator progress,

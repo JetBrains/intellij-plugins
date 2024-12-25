@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.build;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
@@ -30,9 +30,8 @@ public final class FlexResourceBuildTargetType extends ModuleBasedBuildTargetTyp
     return myIsTests;
   }
 
-  @NotNull
   @Override
-  public List<FlexResourceBuildTarget> computeAllTargets(@NotNull JpsModel model) {
+  public @NotNull List<FlexResourceBuildTarget> computeAllTargets(@NotNull JpsModel model) {
     final List<FlexResourceBuildTarget> targets = new ArrayList<>();
     for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : model.getProject().getModules(JpsFlexModuleType.INSTANCE)) {
       targets.add(new FlexResourceBuildTarget(this, module));
@@ -40,9 +39,8 @@ public final class FlexResourceBuildTargetType extends ModuleBasedBuildTargetTyp
     return targets;
   }
 
-  @NotNull
   @Override
-  public BuildTargetLoader<FlexResourceBuildTarget> createLoader(@NotNull JpsModel model) {
+  public @NotNull BuildTargetLoader<FlexResourceBuildTarget> createLoader(@NotNull JpsModel model) {
     final Map<String, JpsTypedModule<JpsFlexBuildConfigurationManager>> modules =
       new HashMap<>();
     for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : model.getProject().getModules(JpsFlexModuleType.INSTANCE)) {
@@ -50,9 +48,8 @@ public final class FlexResourceBuildTargetType extends ModuleBasedBuildTargetTyp
     }
 
     return new BuildTargetLoader<FlexResourceBuildTarget>() {
-      @Nullable
       @Override
-      public FlexResourceBuildTarget createTarget(@NotNull String targetId) {
+      public @Nullable FlexResourceBuildTarget createTarget(@NotNull String targetId) {
         final JpsTypedModule<JpsFlexBuildConfigurationManager> module = modules.get(targetId);
         return module != null ? new FlexResourceBuildTarget(FlexResourceBuildTargetType.this, module) : null;
       }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.config;
 
 import com.intellij.lang.html.HTMLLanguage;
@@ -8,88 +9,76 @@ import org.jetbrains.annotations.NotNull;
  */
 enum Property {
   AUTO_GENERATE_CLOSE_TAG {
-    @NotNull
     @Override
-    public String getStringName() {
+    public @NotNull String getStringName() {
       // please excuse the "disabled" in this name.  This is an artifact from an earlier approach
       //      to properties, which we keep for backwards compatibility
       return "HbDisableAutoGenerateCloseTag";
     }
 
-    @NotNull
     @Override
-    public String getDefault() {
+    public @NotNull String getDefault() {
       return ENABLED;
     }
   },
 
   AUTOCOMPLETE_MUSTACHES {
-    @NotNull
     @Override
-    public String getStringName() {
+    public @NotNull String getStringName() {
       return "HbAutocompleteMustaches";
     }
 
-    @NotNull
     @Override
-    public String getDefault() {
+    public @NotNull String getDefault() {
       return ENABLED;
     }
   },
 
   FORMATTER {
-    @NotNull
     @Override
-    public String getStringName() {
+    public @NotNull String getStringName() {
       return "HbFormatter";
     }
 
-    @NotNull
     @Override
-    public String getDefault() {
+    public @NotNull String getDefault() {
       return ENABLED;
     }
   },
 
   AUTO_COLLAPSE_BLOCKS {
-    @NotNull
     @Override
-    public String getStringName() {
+    public @NotNull String getStringName() {
       return "HbAutoCollapseBlocks";
     }
 
-    @NotNull
     @Override
-    public String getDefault() {
+    public @NotNull String getDefault() {
       return DISABLED;
     }
   },
 
   COMMENTER_LANGUAGE_ID {
-    @NotNull
     @Override
-    public String getStringName() {
+    public @NotNull String getStringName() {
       return "HbCommenterLanguageId";
     }
 
-    @NotNull
     @Override
-    public String getDefault() {
+    public @NotNull String getDefault() {
       return HTMLLanguage.INSTANCE.getID();
     }
 
   },
 
   SHOULD_OPEN_HTML {
-    @NotNull
     @Override
-    public String getStringName() {
+    public @NotNull String getStringName() {
       return "HbShouldOpenHtmlAsHb";
     }
 
-    @NotNull
     @Override
-    public String getDefault() {
+    public @NotNull String getDefault() {
       return "";
     }
   };
@@ -104,12 +93,10 @@ enum Property {
    * <p/>
    * IMPORTANT: these should probably never change so that we don't lose a user's preferences between releases.
    */
-  @NotNull
-  public abstract String getStringName();
+  public abstract @NotNull String getStringName();
 
   /**
    * The default/initial value for a user
    */
-  @NotNull
-  public abstract String getDefault();
+  public abstract @NotNull String getDefault();
 }

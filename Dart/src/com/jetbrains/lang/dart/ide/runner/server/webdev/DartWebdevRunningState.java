@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.ExecutionException;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 public class DartWebdevRunningState extends CommandLineState {
 
-  @NotNull protected DartWebdevParameters myDartWebdevParameters;
+  protected @NotNull DartWebdevParameters myDartWebdevParameters;
 
   public DartWebdevRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
@@ -53,9 +53,8 @@ public class DartWebdevRunningState extends CommandLineState {
     DartWebdevConsoleView.install(env.getProject(), this);
   }
 
-  @NotNull
   @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
+  protected @NotNull ProcessHandler startProcess() throws ExecutionException {
     if (!DartWebdev.INSTANCE.getActivated()) {
       DartWebdev.INSTANCE.ensureWebdevActivated(getEnvironment().getProject());
     }

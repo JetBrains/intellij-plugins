@@ -56,8 +56,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -109,9 +109,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     PbProjectSettings.notifyUpdated(project);
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return panel;
   }
 
@@ -192,9 +191,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private static final ImportPathGroup loadingStateGroup =
     ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.loading"), 100);
 
-  @NotNull
-  private ActionListener groupItemPresentationUpdater(ImportPathGroup group,
-                                                      Function<Project, Collection<?>> heavyImportsFetcher) {
+  private @NotNull ActionListener groupItemPresentationUpdater(ImportPathGroup group,
+                                                               Function<Project, Collection<?>> heavyImportsFetcher) {
     return new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
@@ -343,8 +341,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     return panel;
   }
 
-  @NotNull
-  private static AnActionButtonUpdater allowOnlyEffectivePathEditing(TableView<ImportPath> importPathTable) {
+  private static @NotNull AnActionButtonUpdater allowOnlyEffectivePathEditing(TableView<ImportPath> importPathTable) {
     return e -> {
       int selectedRow = importPathTable.getSelectedRow();
       if (selectedRow == -1) return false;
@@ -434,9 +431,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       super(name);
     }
 
-    @Nullable
     @Override
-    public String valueOf(ImportPath o) {
+    public @Nullable String valueOf(ImportPath o) {
       return o.location;
     }
 
@@ -488,9 +484,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       super(name);
     }
 
-    @Nullable
     @Override
-    public String valueOf(ImportPath o) {
+    public @Nullable String valueOf(ImportPath o) {
       return o.prefix;
     }
 
@@ -589,8 +584,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private static class LocationCellEditor extends AbstractTableCellEditor {
-    @NlsContexts.DialogTitle
-    private final String title;
+    private final @NlsContexts.DialogTitle String title;
     private final Project project;
     private CellEditorComponentWithBrowseButton<JTextField> component = null;
 

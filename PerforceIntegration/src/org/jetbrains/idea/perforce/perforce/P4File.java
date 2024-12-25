@@ -60,27 +60,24 @@ public final class P4File {
   private FStat myFstat = null;
 
   private String myLocalPath = null;
-  @NonNls private static final String VF_CACHE = "P4_VF_CACHE";
+  private static final @NonNls String VF_CACHE = "P4_VF_CACHE";
   public static final Key<P4File> KEY = new Key<>(VF_CACHE);
 
-  @NotNull
-  public static P4File createInefficientFromLocalPath(final String localPath) {
+  public static @NotNull P4File createInefficientFromLocalPath(final String localPath) {
     final P4File p4File = new P4File(null, null, null);
     p4File.myLocalPath = localPath;
     return p4File;
   }
-  @NotNull
-  public static P4File createInefficientFromLocalPath(final String localPath,
-                                                      String name,
-                                                      VirtualFile vFile,
-                                                      VirtualFile parentDirOfDeleted) {
+  public static @NotNull P4File createInefficientFromLocalPath(final String localPath,
+                                                               String name,
+                                                               VirtualFile vFile,
+                                                               VirtualFile parentDirOfDeleted) {
     final P4File p4File = new P4File(name, vFile, parentDirOfDeleted);
     p4File.myLocalPath = localPath;
     return p4File;
   }
 
-  @NotNull
-  public static P4File create(@NotNull final VirtualFile vFile) {
+  public static @NotNull P4File create(final @NotNull VirtualFile vFile) {
     final P4File userData = vFile.getUserData(KEY);
     final P4File p4File;
     if (userData != null) {
@@ -92,8 +89,7 @@ public final class P4File {
     }
     return p4File;
   }
-  @NotNull
-  public static P4File create(@NotNull final FilePath filePath) {
+  public static @NotNull P4File create(final @NotNull FilePath filePath) {
     VirtualFile virtualFile = filePath.getVirtualFile();
     if (virtualFile != null) {
       return create(virtualFile);
@@ -102,8 +98,7 @@ public final class P4File {
       return createInefficientFromLocalPath(filePath.getPath(), filePath.getName(), null, filePath.getVirtualFileParent());
     }
   }
-  @NotNull
-  public static P4File create(@NotNull final File file) {
+  public static @NotNull P4File create(final @NotNull File file) {
     VirtualFile virtualFile = findVirtualFile(file);
     if (virtualFile != null) {
       return create(virtualFile);
@@ -113,7 +108,7 @@ public final class P4File {
     }
   }
 
-  private static VirtualFile findVirtualFile(@NotNull final File file) {
+  private static VirtualFile findVirtualFile(final @NotNull File file) {
     return ReadAction.compute(() -> LocalFileSystem.getInstance().findFileByIoFile(file));
   }
 
@@ -218,8 +213,7 @@ public final class P4File {
     return new File(getLocalPath());
   }
 
-  @NotNull
-  public String getLocalPath() {
+  public @NotNull String getLocalPath() {
     if (myLocalPath == null) {
       ApplicationManager.getApplication().runReadAction(() -> {
         if (myVFile != null) {
@@ -237,8 +231,7 @@ public final class P4File {
   }
 
   @Override
-  @NonNls
-  public String toString() {
+  public @NonNls String toString() {
     return "org.jetbrains.idea.perforce.perforce.P4File{'" + getLocalPath() + "'}";
   }
 

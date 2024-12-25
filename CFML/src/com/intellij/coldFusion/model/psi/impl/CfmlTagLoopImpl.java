@@ -1,7 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
-import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
 import com.intellij.coldFusion.model.psi.CfmlRecursiveElementVisitor;
 import com.intellij.coldFusion.model.psi.CfmlVariable;
@@ -31,9 +30,8 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
       return null;
     }
 
-    @NotNull
     @Override
-    public String getName() {
+    public @NotNull String getName() {
       return getNameIdentifier().getText();
     }
 
@@ -42,9 +40,8 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
       return true;
     }
 
-    @NotNull
     @Override
-    public String getlookUpString() {
+    public @NotNull String getlookUpString() {
       return getName();
     }
 
@@ -53,9 +50,8 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
       throw new IncorrectOperationException();
     }
 
-    @NotNull
     @Override
-    public PsiElement getNavigationElement() {
+    public @NotNull PsiElement getNavigationElement() {
       return super.getNavigationElement();
     }
 
@@ -66,8 +62,7 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
     }
 
     @Override
-    @NotNull
-    public PsiElement getNameIdentifier() {
+    public @NotNull PsiElement getNameIdentifier() {
       return getNavigationElement();
     }
   }
@@ -87,8 +82,7 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
   }
 
   @Override
-  @NotNull
-  public String getTagName() {
+  public @NotNull String getTagName() {
     return "cfloop";
   }
 

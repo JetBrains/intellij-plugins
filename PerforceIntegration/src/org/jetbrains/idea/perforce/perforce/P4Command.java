@@ -39,8 +39,7 @@ public enum P4Command {
     return myName;
   }
 
-  @NotNull
-  public static P4Command getInstance(final String command) {
+  public static @NotNull P4Command getInstance(final String command) {
     final String trimmed = command.trim();
     final P4Command[] p4Commands = values();
     for (P4Command p4Command : p4Commands) {

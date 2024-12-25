@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -29,20 +29,17 @@ public final class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileV
   }
 
   @Override
-  @NotNull
-  public Language getBaseLanguage() {
+  public @NotNull Language getBaseLanguage() {
     return CfmlLanguage.INSTANCE;
   }
 
   @Override
-  @NotNull
-  public Set<Language> getLanguages() {
+  public @NotNull Set<Language> getLanguages() {
     return ourRelevantLanguages;
   }
 
   @Override
-  @Nullable
-  protected PsiFile createFile(@NotNull final Language lang) {
+  protected @Nullable PsiFile createFile(final @NotNull Language lang) {
     if (lang == getTemplateDataLanguage()) {
       PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(HTMLLanguage.INSTANCE).createFile(this);
       file.setContentElementType(CfmlElementTypes.TEMPLATE_DATA);
@@ -60,15 +57,13 @@ public final class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileV
     return null;
   }
 
-  @NotNull
   @Override
-  protected CfmlFileViewProvider cloneInner(@NotNull final VirtualFile copy) {
+  protected @NotNull CfmlFileViewProvider cloneInner(final @NotNull VirtualFile copy) {
     return new CfmlFileViewProvider(getManager(), copy, false);
   }
 
   @Override
-  @NotNull
-  public Language getTemplateDataLanguage() {
+  public @NotNull Language getTemplateDataLanguage() {
     return HTMLLanguage.INSTANCE;
   }
 }

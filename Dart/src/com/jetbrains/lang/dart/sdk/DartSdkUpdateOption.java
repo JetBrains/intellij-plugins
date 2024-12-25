@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -28,8 +28,7 @@ public enum DartSdkUpdateOption {
     return myPresentableNameSupplier.get();
   }
 
-  @NotNull
-  public static DartSdkUpdateOption getDartSdkUpdateOption() {
+  public static @NotNull DartSdkUpdateOption getDartSdkUpdateOption() {
     final String value = PropertiesComponent.getInstance().getValue(DART_CHECK_SDK_UPDATE_KEY, DART_CHECK_SDK_UPDATE_DEFAULT.name());
     try {
       return valueOf(value);
@@ -39,7 +38,7 @@ public enum DartSdkUpdateOption {
     }
   }
 
-  public static void setDartSdkUpdateOption(@NotNull final DartSdkUpdateOption option) {
+  public static void setDartSdkUpdateOption(final @NotNull DartSdkUpdateOption option) {
     PropertiesComponent.getInstance().setValue(DART_CHECK_SDK_UPDATE_KEY, option.name(), DART_CHECK_SDK_UPDATE_DEFAULT.name());
   }
 }

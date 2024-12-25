@@ -25,12 +25,9 @@ public class YeomanGeneratorListControl implements YeomanGeneratorControl {
 
 
   public static class Choice {
-    @Nullable @Nls
-    private String value;
-    @Nullable
-    private String key;
-    @Nullable @Nls
-    private String name;
+    private @Nullable @Nls String value;
+    private @Nullable String key;
+    private @Nullable @Nls String name;
   }
 
   public static final Gson GSON = new Gson();
@@ -76,12 +73,9 @@ public class YeomanGeneratorListControl implements YeomanGeneratorControl {
   }
 
 
-  @NonNls
-  private String type;
-  @Nls
-  private String name;
-  @Nls
-  private String message;
+  private @NonNls String type;
+  private @Nls String name;
+  private @Nls String message;
   private Choice[] choices;
 
   @SerializedName("default")
@@ -156,8 +150,7 @@ public class YeomanGeneratorListControl implements YeomanGeneratorControl {
     };
   }
 
-  @NotNull
-  public @Nls String getRadioText(@NotNull Choice choice) {
+  public @NotNull @Nls String getRadioText(@NotNull Choice choice) {
     return wrapText(StringUtil.isEmpty(choice.name) ? choice.value == null ? "" : choice.value : choice.name);
   }
 

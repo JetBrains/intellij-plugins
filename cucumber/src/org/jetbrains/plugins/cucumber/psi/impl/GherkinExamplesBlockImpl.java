@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -14,7 +14,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTable;
 public class GherkinExamplesBlockImpl extends GherkinPsiElementBase implements GherkinExamplesBlock {
   private static final TokenSet TABLE_FILTER = TokenSet.create(GherkinElementTypes.TABLE);
 
-  public GherkinExamplesBlockImpl(@NotNull final ASTNode node) {
+  public GherkinExamplesBlockImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -34,8 +34,7 @@ public class GherkinExamplesBlockImpl extends GherkinPsiElementBase implements G
   }
 
   @Override
-  @Nullable
-  public GherkinTable getTable() {
+  public @Nullable GherkinTable getTable() {
     final ASTNode node = getNode();
 
     final ASTNode tableNode = node.findChildByType(TABLE_FILTER);

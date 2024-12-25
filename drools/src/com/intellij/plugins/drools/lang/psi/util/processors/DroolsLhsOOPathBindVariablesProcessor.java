@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.plugins.drools.lang.psi.*;
@@ -34,7 +34,7 @@ public final class DroolsLhsOOPathBindVariablesProcessor implements DroolsDeclar
   public boolean processElement(@NotNull PsiScopeProcessor processor,
                                 @NotNull ResolveState state,
                                 PsiElement lastParent,
-                                @NotNull PsiElement place, @NotNull final DroolsFile droolsFile) {
+                                @NotNull PsiElement place, final @NotNull DroolsFile droolsFile) {
 
     final Set<PsiVariable> ooPathBinds = getOOPathBinds(place);
     for (PsiVariable bind : ooPathBinds) {
@@ -43,22 +43,22 @@ public final class DroolsLhsOOPathBindVariablesProcessor implements DroolsDeclar
     return true;
   }
 
-  public static Set<PsiVariable> getOOPathBinds(@NotNull final PsiElement psiElement) {
+  public static Set<PsiVariable> getOOPathBinds(final @NotNull PsiElement psiElement) {
     final PsiFile file = psiElement.getContainingFile();
     return file instanceof DroolsFile
            ? getOOPathBinds(psiElement, (DroolsFile)file, PsiTreeUtil.getParentOfType(psiElement, DroolsRuleStatement.class))
            : Collections.emptySet();
   }
 
-  private static Set<PsiVariable> getOOPathBinds(@NotNull final PsiElement psiElement,
-                                                 @NotNull final DroolsFile droolsFile,
-                                                 @Nullable final DroolsRuleStatement droolsRule) {
+  private static Set<PsiVariable> getOOPathBinds(final @NotNull PsiElement psiElement,
+                                                 final @NotNull DroolsFile droolsFile,
+                                                 final @Nullable DroolsRuleStatement droolsRule) {
     return getOOPathBinds(psiElement, droolsFile, droolsRule, new HashSet<>());
   }
 
-  private static Set<PsiVariable> getOOPathBinds(@NotNull final PsiElement psiElement,
-                                                 @NotNull final DroolsFile droolsFile,
-                                                 @Nullable final DroolsRuleStatement droolsRule,
+  private static Set<PsiVariable> getOOPathBinds(final @NotNull PsiElement psiElement,
+                                                 final @NotNull DroolsFile droolsFile,
+                                                 final @Nullable DroolsRuleStatement droolsRule,
                                                  Set<DroolsRuleStatement> visited) {
     if (droolsRule == null) return Collections.emptySet();
     visited.add(droolsRule);

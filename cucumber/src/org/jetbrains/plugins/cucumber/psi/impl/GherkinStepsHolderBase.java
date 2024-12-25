@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -14,8 +15,7 @@ public abstract class GherkinStepsHolderBase extends GherkinPsiElementBase imple
   }
 
   @Override
-  @NotNull
-  public final String getScenarioName() {
+  public final @NotNull String getScenarioName() {
     final StringBuilder result = new StringBuilder();
 
     ASTNode node = getNode().getFirstChildNode();
@@ -46,8 +46,7 @@ public abstract class GherkinStepsHolderBase extends GherkinPsiElementBase imple
   }
 
   @Override
-  @NotNull
-  public String getScenarioKeyword() {
+  public @NotNull String getScenarioKeyword() {
     return getFirstChild().getText();
   }
 }

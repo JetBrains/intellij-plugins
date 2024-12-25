@@ -31,10 +31,9 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
     return PsiElement.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
-                                                                                         @Nullable PsiElement context) {
+  public @NotNull Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
+                                                                                                  @Nullable PsiElement context) {
     if (context instanceof CssPseudoClass) {
       if (context.textContains('&') || PostCssPsiUtil.isInsideRulesetWithNestedRulesets(context)) {
         return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
@@ -61,9 +60,8 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
     return PostCssPsiUtil.isInsideRulesetWithNestedRulesets(context);
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(@Nullable final PsiElement context) {
+  public @NotNull Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(final @Nullable PsiElement context) {
     if (context == null || DumbService.getInstance(context.getProject()).isDumb()) {
       return Collections.emptyList();
     }
@@ -90,10 +88,9 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
     return result;
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssMediaFeatureDescriptor> findMediaFeatureDescriptors(@NotNull String name,
-                                                                                     @Nullable PsiElement context) {
+  public @NotNull Collection<? extends CssMediaFeatureDescriptor> findMediaFeatureDescriptors(@NotNull String name,
+                                                                                              @Nullable PsiElement context) {
     if (context instanceof CssMediaFeature mediaFeature) {
       PsiElement identifier = mediaFeature.getNameIdentifier();
       if (identifier == null) return Collections.emptyList();

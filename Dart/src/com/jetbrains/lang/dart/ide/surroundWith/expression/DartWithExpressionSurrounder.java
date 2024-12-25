@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.surroundWith.expression;
 
 import com.intellij.lang.surroundWith.Surrounder;
@@ -18,8 +18,7 @@ public abstract class DartWithExpressionSurrounder implements Surrounder {
     return elements.length == 1 && elements[0] instanceof DartExpression;
   }
 
-  @Nullable
-  protected DartExpression getSurroundedNode(@NotNull final PsiElement element) {
+  protected @Nullable DartExpression getSurroundedNode(final @NotNull PsiElement element) {
     return DartElementGenerator.createExpressionFromText(
       element.getProject(),
       getTemplateText(element)
@@ -27,8 +26,7 @@ public abstract class DartWithExpressionSurrounder implements Surrounder {
   }
 
   @Override
-  @Nullable
-  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
+  public @Nullable TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
     PsiElement source = elements[0];
 
     final DartExpression parenthExprNode = getSurroundedNode(source);

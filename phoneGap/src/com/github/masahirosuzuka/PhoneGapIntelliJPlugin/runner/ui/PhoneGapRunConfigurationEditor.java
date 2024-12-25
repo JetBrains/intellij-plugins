@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -32,7 +32,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 
@@ -137,9 +140,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
 
     myExecutablePathField = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
     myWorkDirField = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
@@ -157,9 +159,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myTarget.getTargetsField().setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
     myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<>() {
 
-      @NotNull
       @Override
-      public Set<String> getCachedValues() {
+      public @NotNull Set<String> getCachedValues() {
         return Collections.emptySet();
       }
 

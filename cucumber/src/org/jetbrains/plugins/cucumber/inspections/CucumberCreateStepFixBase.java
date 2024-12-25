@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -38,7 +38,7 @@ import java.util.*;
 
 public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   private static final Logger LOG = Logger.getInstance(CucumberCreateStepFixBase.class);
-  protected abstract void createStepOrSteps(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext fileAndFrameworkType);
+  protected abstract void createStepOrSteps(GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext fileAndFrameworkType);
 
   @Override
   public boolean startInWriteAction() {
@@ -46,13 +46,12 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   }
 
   @Override
-  @NotNull
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
     // TODO + step defs pairs from other content roots
@@ -69,9 +68,8 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
             return true;
           }
 
-          @NotNull
           @Override
-          public String getTextFor(CucumberStepDefinitionCreationContext value) {
+          public @NotNull String getTextFor(CucumberStepDefinitionCreationContext value) {
             if (value.getPsiFile() == null) {
               return CucumberBundle.message("create.new.file");
             }
@@ -108,13 +106,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(final @NotNull GherkinFile featureFile) {
     final Set<CucumberStepDefinitionCreationContext> result = CucumberStepHelper.getStepDefinitionContainers(featureFile);
     result.removeIf(e -> CucumberStepHelper.getExtensionMap().get(e.getFrameworkType()) == null);
     return result;
   }
 
-  private boolean createStepDefinitionFile(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  private boolean createStepDefinitionFile(final GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext context) {
     final PsiFile featureFile = step.getContainingFile();
     assert featureFile != null;
 
@@ -158,7 +156,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   /**
    * @return false if was cancelled
    */
-  protected boolean createFileOrStepDefinition(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  protected boolean createFileOrStepDefinition(final GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext context) {
     if (context.getFrameworkType() == null) {
       return createStepDefinitionFile(step, context);
     }
@@ -170,8 +168,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     return true;
   }
 
-  @Nullable
-  private static CreateStepDefinitionFileModel askUserForFilePath(@NotNull final GherkinStep step) {
+  private static @Nullable CreateStepDefinitionFileModel askUserForFilePath(final @NotNull GherkinStep step) {
     final InputValidator validator = new InputValidator() {
       @Override
       public boolean checkInput(final String filePath) {
@@ -208,7 +205,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  private void createStepDefinition(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  private void createStepDefinition(GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext context) {
     StepDefinitionCreator stepDefCreator = CucumberStepHelper.getExtensionMap().get(context.getFrameworkType()).getStepDefinitionCreator();
     PsiFile file = context.getPsiFile();
     if (file != null) {

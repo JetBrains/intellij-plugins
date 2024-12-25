@@ -16,12 +16,12 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.protobuf.lang.psi.PbNumberValue;
 import com.intellij.protobuf.lang.psi.ProtoNumberValue;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -38,9 +38,8 @@ abstract class PbNumberValueMixin extends PbElementBase implements PbNumberValue
     super(node);
   }
 
-  @Nullable
   @Override
-  public ProtoNumberValue.SourceType getSourceType() {
+  public @Nullable ProtoNumberValue.SourceType getSourceType() {
     PsiElement childElement = getNumberElement();
     ASTNode childNode = childElement != null ? childElement.getNode() : null;
     if (childNode != null) {
@@ -61,8 +60,7 @@ abstract class PbNumberValueMixin extends PbElementBase implements PbNumberValue
   }
 
   @Override
-  @Nullable
-  public PsiElement getNumberElement() {
+  public @Nullable PsiElement getNumberElement() {
     return findChildByType(NUMBER_TOKENS);
   }
 

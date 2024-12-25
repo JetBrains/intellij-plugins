@@ -65,9 +65,8 @@ public class PbImportReference extends PsiPolyVariantReferenceBase<PsiElement> {
     setRangeInElement(TextRange.create(start, end));
   }
 
-  @NotNull
   @Override
-  public ResolveResult @NotNull[] multiResolve(boolean incompleteCode) {
+  public @NotNull ResolveResult @NotNull[] multiResolve(boolean incompleteCode) {
     ResolveCache cache = ResolveCache.getInstance(myElement.getProject());
     return cache.resolveWithCaching(
         this,
@@ -76,9 +75,8 @@ public class PbImportReference extends PsiPolyVariantReferenceBase<PsiElement> {
         incompleteCode);
   }
 
-  @NotNull
   @Override
-  public Object @NotNull [] getVariants() {
+  public @NotNull Object @NotNull [] getVariants() {
     PsiElement value = getElement();
     String path = importPath;
     int lastSlash = path.lastIndexOf('/');
@@ -111,8 +109,7 @@ public class PbImportReference extends PsiPolyVariantReferenceBase<PsiElement> {
     return results.toArray();
   }
 
-  @NotNull
-  private ResolveResult[] multiResolveNoCache() {
+  private @NotNull ResolveResult[] multiResolveNoCache() {
     PsiElement value = getElement();
     List<PbFile> results = PbFileResolver.findFilesForContext(importPath, value);
     return results.stream().map(PsiElementResolveResult::new).toArray(ResolveResult[]::new);

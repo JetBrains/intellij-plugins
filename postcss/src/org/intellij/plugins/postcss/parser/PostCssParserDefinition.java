@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class PostCssParserDefinition extends CSSParserDefinition {
 
   @Override
-  @NotNull
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new PostCssLexer();
   }
 
@@ -32,15 +31,13 @@ public class PostCssParserDefinition extends CSSParserDefinition {
     return PostCssElementTypes.POST_CSS_FILE;
   }
 
-  @NotNull
   @Override
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return PostCssTokenTypes.POST_CSS_COMMENTS;
   }
 
-  @NotNull
   @Override
-  public PsiParser createParser(final Project project) {
+  public @NotNull PsiParser createParser(final Project project) {
     return new PostCssParser();
   }
 }

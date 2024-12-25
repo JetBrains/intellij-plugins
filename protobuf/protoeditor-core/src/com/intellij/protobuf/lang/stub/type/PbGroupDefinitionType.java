@@ -16,14 +16,14 @@
 package com.intellij.protobuf.lang.stub.type;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.io.StringRef;
 import com.intellij.protobuf.lang.psi.PbGroupDefinition;
 import com.intellij.protobuf.lang.psi.impl.PbGroupDefinitionImpl;
 import com.intellij.protobuf.lang.stub.PbGroupDefinitionStub;
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex;
 import com.intellij.protobuf.lang.stub.index.ShortNameIndex;
+import com.intellij.psi.stubs.*;
+import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -41,16 +41,14 @@ public class PbGroupDefinitionType
     return new PbGroupDefinitionImpl(stub, this);
   }
 
-  @NotNull
   @Override
-  public PbGroupDefinitionStub createStub(
+  public @NotNull PbGroupDefinitionStub createStub(
       @NotNull PbGroupDefinition psi, StubElement parentStub) {
     return new PbGroupDefinitionStub(parentStub, this, psi.getName());
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "protobuf.GROUP_DEFINITION";
   }
 
@@ -60,9 +58,8 @@ public class PbGroupDefinitionType
     dataStream.writeName(stub.getName());
   }
 
-  @NotNull
   @Override
-  public PbGroupDefinitionStub deserialize(
+  public @NotNull PbGroupDefinitionStub deserialize(
       @NotNull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     String name = null;

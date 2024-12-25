@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties;
@@ -19,20 +20,17 @@ public final class DartSdkLibraryPresentationProvider extends LibraryPresentatio
     super(KIND);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(@Nullable DummyLibraryProperties properties) {
+  public @Nullable Icon getIcon(@Nullable DummyLibraryProperties properties) {
     return DartIcons.Dart_16;
   }
 
   @Override
-  @Nullable
-  public DummyLibraryProperties detect(@NotNull final List<VirtualFile> classesRoots) {
+  public @Nullable DummyLibraryProperties detect(final @NotNull List<VirtualFile> classesRoots) {
     return findDartCoreRoot(classesRoots) == null ? null : DummyLibraryProperties.INSTANCE;
   }
 
-  @Nullable
-  public static VirtualFile findDartCoreRoot(@NotNull final List<? extends VirtualFile> classesRoots) {
+  public static @Nullable VirtualFile findDartCoreRoot(final @NotNull List<? extends VirtualFile> classesRoots) {
     for (VirtualFile root : classesRoots) {
       if (root.isInLocalFileSystem() &&
           root.isDirectory() &&

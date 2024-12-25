@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirPackageEntry;
@@ -28,8 +28,7 @@ final class JpsAndroidPackagingOptionsImpl extends JpsAirPackagingOptionsBase<Jp
   }
 
   @Override
-  @NotNull
-  public JpsAndroidPackagingOptionsImpl createCopy() {
+  public @NotNull JpsAndroidPackagingOptionsImpl createCopy() {
     return new JpsAndroidPackagingOptionsImpl(this);
   }
 
@@ -74,8 +73,7 @@ final class JpsAndroidPackagingOptionsImpl extends JpsAirPackagingOptionsBase<Jp
     }
 
     @Override
-    @NotNull
-    public JpsAndroidPackagingOptions create() {
+    public @NotNull JpsAndroidPackagingOptions create() {
       return new JpsAndroidPackagingOptionsImpl();
     }
   }

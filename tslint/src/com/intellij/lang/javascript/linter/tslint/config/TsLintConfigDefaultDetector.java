@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
@@ -12,9 +12,8 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 public class TsLintConfigDefaultDetector implements TsLintConfigDetector {
 
-  @Nullable
   @Override
-  public TsLintConfigs detectConfigs(@NotNull Project project, @NotNull VirtualFile fileToBeLinted) {
+  public @Nullable TsLintConfigs detectConfigs(@NotNull Project project, @NotNull VirtualFile fileToBeLinted) {
     return doIfNotNull(JSLinterConfigFileUtil.findFileUpToFileSystemRoot(fileToBeLinted, CONFIG_FILE_NAMES),
                        file -> new TsLintConfigDetector.TsLintConfigs(file, null));
   }

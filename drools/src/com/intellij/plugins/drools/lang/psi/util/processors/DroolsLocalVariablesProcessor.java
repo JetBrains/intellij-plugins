@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
@@ -7,9 +7,9 @@ import com.intellij.plugins.drools.lang.psi.DroolsSimpleRhsStatement;
 import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public final class DroolsLocalVariablesProcessor implements DroolsDeclarationsProcessor {
@@ -35,8 +35,7 @@ public final class DroolsLocalVariablesProcessor implements DroolsDeclarationsPr
     return true;
   }
 
-  @NotNull
-  public static Set<PsiVariable> getLocalVariables(PsiElement place) {
+  public static @NotNull Set<PsiVariable> getLocalVariables(PsiElement place) {
    final Set<PsiVariable> psiVariables = new HashSet<>();
     DroolsSimpleRhsStatement rhsStatement = PsiTreeUtil.getParentOfType(place, DroolsSimpleRhsStatement.class, false);
     if (rhsStatement != null) {

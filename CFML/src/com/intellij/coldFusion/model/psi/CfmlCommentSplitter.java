@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.openapi.util.TextRange;
@@ -15,14 +15,11 @@ import java.util.regex.Pattern;
 
 public final class CfmlCommentSplitter extends BaseSplitter {
 
-  @NotNull
-  private static final Pattern CFML = Pattern.compile("</?[Cc][Ff](\\S)+");
+  private static final @NotNull Pattern CFML = Pattern.compile("</?[Cc][Ff](\\S)+");
 
-  @NotNull
-  private static final Splitter ps = PlainTextSplitter.getInstance();
+  private static final @NotNull Splitter ps = PlainTextSplitter.getInstance();
 
-  @NotNull
-  public static final CfmlCommentSplitter INSTANCE = new CfmlCommentSplitter();
+  public static final @NotNull CfmlCommentSplitter INSTANCE = new CfmlCommentSplitter();
 
   private CfmlCommentSplitter() {
   }

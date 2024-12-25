@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -35,9 +35,8 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
     super(Collections.singletonList(KarmaUtil.KARMA_PACKAGE_NAME));
   }
 
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return KarmaConfigurationType.getInstance();
   }
 
@@ -60,9 +59,8 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
     return false;
   }
 
-  @Nullable
-  private static Pair<KarmaRunSettings, PsiElement> setup(@Nullable PsiElement element,
-                                                          @NotNull KarmaRunSettings templateSettings) {
+  private static @Nullable Pair<KarmaRunSettings, PsiElement> setup(@Nullable PsiElement element,
+                                                                    @NotNull KarmaRunSettings templateSettings) {
     JSFile file = ObjectUtils.tryCast(element != null ? element.getContainingFile() : null, JSFile.class);
     VirtualFile virtualFile = PsiUtilCore.getVirtualFile(file);
     if (virtualFile == null) {
@@ -88,11 +86,10 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
     return null;
   }
 
-  @Nullable
-  private static Pair<KarmaRunSettings, PsiElement> setupAsSuiteOrTest(@NotNull JSFile file,
-                                                                       @NotNull VirtualFile virtualFile,
-                                                                       @NotNull PsiElement element,
-                                                                       @NotNull KarmaRunSettings templateSettings) {
+  private static @Nullable Pair<KarmaRunSettings, PsiElement> setupAsSuiteOrTest(@NotNull JSFile file,
+                                                                                 @NotNull VirtualFile virtualFile,
+                                                                                 @NotNull PsiElement element,
+                                                                                 @NotNull KarmaRunSettings templateSettings) {
     TextRange textRange = element.getTextRange();
     if (textRange == null || !file.isTestFile()) {
       return null;
@@ -121,10 +118,9 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
     return null;
   }
 
-  @NotNull
-  private static KarmaRunSettings guessConfigFileIfNeeded(@NotNull KarmaRunSettings settings,
-                                                          @NotNull VirtualFile contextFile,
-                                                          @NotNull Project project) {
+  private static @NotNull KarmaRunSettings guessConfigFileIfNeeded(@NotNull KarmaRunSettings settings,
+                                                                   @NotNull VirtualFile contextFile,
+                                                                   @NotNull Project project) {
     if (!settings.getConfigPathSystemDependent().isEmpty()) {
       return settings;
     }

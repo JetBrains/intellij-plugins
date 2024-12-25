@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.highlighting;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -31,9 +31,9 @@ import java.util.Map;
  * Created by Lera Nikolaenko
  */
 public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
-  public CfmlHighlighter(@Nullable final Project project,
-                         @Nullable final VirtualFile virtualFile,
-                         @NotNull final EditorColorsScheme colors) {
+  public CfmlHighlighter(final @Nullable Project project,
+                         final @Nullable VirtualFile virtualFile,
+                         final @NotNull EditorColorsScheme colors) {
     super(new CfmlFileHighlighter(project), colors);
     registerLayer(CfmlElementTypes.TEMPLATE_TEXT, new LayerDescriptor(
       SyntaxHighlighterFactory.getSyntaxHighlighter(HtmlFileType.INSTANCE, project, virtualFile), ""));
@@ -48,8 +48,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
     }
 
     @Override
-    @NotNull
-    public Lexer getHighlightingLexer() {
+    public @NotNull Lexer getHighlightingLexer() {
       return new CfmlLexer(true, myProject);
     }
 

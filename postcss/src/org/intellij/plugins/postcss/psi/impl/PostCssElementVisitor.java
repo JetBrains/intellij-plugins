@@ -4,7 +4,7 @@ import com.intellij.psi.css.CssElementVisitor;
 import org.intellij.plugins.postcss.psi.PostCssSimpleVariable;
 import org.intellij.plugins.postcss.psi.PostCssSimpleVariableDeclaration;
 
-abstract public class PostCssElementVisitor extends CssElementVisitor {
+public abstract class PostCssElementVisitor extends CssElementVisitor {
   public void visitPostCssNest(final PostCssNestImpl postCssNest) {
     visitElement(postCssNest);
   }

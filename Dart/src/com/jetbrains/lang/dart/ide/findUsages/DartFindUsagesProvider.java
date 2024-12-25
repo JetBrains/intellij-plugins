@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.lang.findUsages.FindUsagesProvider;
@@ -23,8 +23,7 @@ public final class DartFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getType(@NotNull final PsiElement element) {
+  public @NotNull String getType(final @NotNull PsiElement element) {
     if (element instanceof DartLibraryNameElement) {
       return DartBundle.message("find.usages.type.library");
     }
@@ -35,8 +34,7 @@ public final class DartFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getDescriptiveName(@NotNull final PsiElement element) {
+  public @NotNull String getDescriptiveName(final @NotNull PsiElement element) {
     if (element instanceof PsiNamedElement) {
       return StringUtil.notNullize(((PsiNamedElement)element).getName());
     }
@@ -44,8 +42,7 @@ public final class DartFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getNodeText(@NotNull final PsiElement element, final boolean useFullName) {
+  public @NotNull String getNodeText(final @NotNull PsiElement element, final boolean useFullName) {
     final String name = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : null;
     return name != null ? name : element.getText();
   }

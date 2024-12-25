@@ -23,8 +23,8 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 
 public class P4EditOperation extends VcsOperationOnPath {
   private static final Logger LOG = Logger.getInstance(P4EditOperation.class);
-  @NonNls private static final String CANNOT_FIND_ERROR = "the system cannot find";
-  @NonNls private static final String CANNOT_FIND_ERROR_2 = "no such file or directory";
+  private static final @NonNls String CANNOT_FIND_ERROR = "the system cannot find";
+  private static final @NonNls String CANNOT_FIND_ERROR_2 = "no such file or directory";
   private boolean mySuppressErrors;
 
   private boolean myNeedPathRefresh;

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -27,7 +27,7 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
   private boolean mySuperclassOverridesEqualEqualAndHashCode;
   private boolean supportsObjectHashMethods = false;
 
-  public CreateEqualsAndHashcodeFix(@NotNull final DartClass dartClass) {
+  public CreateEqualsAndHashcodeFix(final @NotNull DartClass dartClass) {
     super(dartClass);
   }
 
@@ -41,9 +41,9 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
   }
 
   @Override
-  protected void processElements(@NotNull final Project project,
-                                 @NotNull final Editor editor,
-                                 @NotNull final Set<DartComponent> elementsToProcess) {
+  protected void processElements(final @NotNull Project project,
+                                 final @NotNull Editor editor,
+                                 final @NotNull Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
   }
@@ -55,12 +55,11 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
   }
 
   @Override
-  @NotNull
-  protected String getNothingFoundMessage() {
+  protected @NotNull String getNothingFoundMessage() {
     return ""; // can't be called actually because processElements() is overridden
   }
 
-  private static boolean doesSuperclassOverrideEqualEqualAndHashCode(@NotNull final DartClass dartClass) {
+  private static boolean doesSuperclassOverrideEqualEqualAndHashCode(final @NotNull DartClass dartClass) {
     final Project project = dartClass.getProject();
     final VirtualFile file = dartClass.getContainingFile().getVirtualFile();
     final DartComponentName name = dartClass.getComponentName();

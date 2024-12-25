@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
@@ -25,7 +25,7 @@ public class DartAnalysisServerSettingsForm {
   private HoverHyperlinkLabel myAnalysisDiagnosticsHyperlink;
   private JBCheckBox packageScopedAnalysisCheckbox;
 
-  DartAnalysisServerSettingsForm(@NotNull final Project project) {
+  DartAnalysisServerSettingsForm(final @NotNull Project project) {
     myProject = project;
   }
 
@@ -46,7 +46,7 @@ public class DartAnalysisServerSettingsForm {
     });
   }
 
-  public void reset(@NotNull final DartProblemsPresentationHelper presentationHelper) {
+  public void reset(final @NotNull DartProblemsPresentationHelper presentationHelper) {
     if (presentationHelper.getScopedAnalysisMode() == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage) {
       packageScopedAnalysisCheckbox.setSelected(true);
     }
@@ -55,7 +55,7 @@ public class DartAnalysisServerSettingsForm {
     }
   }
 
-  public void addListener(@NotNull final ServerSettingsListener serverSettingsListener) {
+  public void addListener(final @NotNull ServerSettingsListener serverSettingsListener) {
     packageScopedAnalysisCheckbox.addActionListener(e -> serverSettingsListener.settingsChanged());
   }
 
@@ -63,8 +63,7 @@ public class DartAnalysisServerSettingsForm {
     return myMainPanel;
   }
 
-  @NotNull
-  public DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode() {
+  public @NotNull DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode() {
     if (packageScopedAnalysisCheckbox.isSelected()) {
       return DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
     }

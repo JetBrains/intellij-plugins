@@ -40,9 +40,8 @@ public class PbTextParserDefinition implements ParserDefinition {
 
   public PbTextParserDefinition() {}
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return ProtoLexer.forPrototext();
   }
 
@@ -51,21 +50,18 @@ public class PbTextParserDefinition implements ParserDefinition {
     return new PbTextParser();
   }
 
-  @NotNull
   @Override
-  public TokenSet getWhitespaceTokens() {
+  public @NotNull TokenSet getWhitespaceTokens() {
     return ProtoTokenTypes.WHITE_SPACE;
   }
 
-  @NotNull
   @Override
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return ProtoTokenTypes.COMMENTS;
   }
 
-  @NotNull
   @Override
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return ProtoTokenTypes.STRINGS;
   }
 
@@ -84,9 +80,8 @@ public class PbTextParserDefinition implements ParserDefinition {
     return SpaceRequirements.MAY;
   }
 
-  @NotNull
   @Override
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     return PbTextTypes.Factory.createElement(node);
   }
 }

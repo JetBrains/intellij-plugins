@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -17,16 +18,14 @@ public final class DartMethodReturnTypeMacro extends DartMacroBase {
     return "dartReturnType";
   }
 
-  @Nullable
   @Override
-  public Result calculateResult(final Expression @NotNull [] params, final ExpressionContext context) {
+  public @Nullable Result calculateResult(final Expression @NotNull [] params, final ExpressionContext context) {
     final String returnType = getContainingFunctionReturnType(context.getPsiElementAtStartOffset());
     return returnType == null ? null : new TextResult(returnType);
   }
 
   @VisibleForTesting
-  @Nullable
-  public String getContainingFunctionReturnType(@Nullable final PsiElement element) {
+  public @Nullable String getContainingFunctionReturnType(final @Nullable PsiElement element) {
     if (element == null) return null;
     final DartComponent parent = PsiTreeUtil.getParentOfType(element,
                                                              DartGetterDeclaration.class,
@@ -50,7 +49,7 @@ public final class DartMethodReturnTypeMacro extends DartMacroBase {
     return null;
   }
 
-  private static String getReturnTypeString(@Nullable final DartReturnType returnType) {
+  private static String getReturnTypeString(final @Nullable DartReturnType returnType) {
     return returnType == null ? null : returnType.getText();
   }
 }

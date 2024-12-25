@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -19,9 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DartCommandLineRuntimeConfigurationProducer extends LazyRunConfigurationProducer<DartCommandLineRunConfiguration> {
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
@@ -51,9 +50,8 @@ public final class DartCommandLineRuntimeConfigurationProducer extends LazyRunCo
     return dartFile != null && dartFile.getPath().equals(configuration.getRunnerParameters().getFilePath());
   }
 
-  @Nullable
-  public static VirtualFile getRunnableDartFileFromContext(@NotNull final ConfigurationContext context,
-                                                           final boolean checkBrowserSpecificImports) {
+  public static @Nullable VirtualFile getRunnableDartFileFromContext(final @NotNull ConfigurationContext context,
+                                                                     final boolean checkBrowserSpecificImports) {
     final PsiElement psiLocation = context.getPsiLocation();
     final PsiFile psiFile = psiLocation == null ? null : psiLocation.getContainingFile();
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -71,8 +69,7 @@ public final class DartCommandLineRuntimeConfigurationProducer extends LazyRunCo
     return null;
   }
 
-  @Nullable
-  private static VirtualFile getDartFileFromContext(final @NotNull ConfigurationContext context) {
+  private static @Nullable VirtualFile getDartFileFromContext(final @NotNull ConfigurationContext context) {
     final PsiElement psiLocation = context.getPsiLocation();
     final PsiFile psiFile = psiLocation == null ? null : psiLocation.getContainingFile();
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);

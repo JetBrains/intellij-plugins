@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.inspections;
 
 
@@ -16,9 +17,8 @@ import java.util.Set;
 public final class HbEmptyBlockInspection extends LocalInspectionTool {
   private static final Set<String> HELPERS_WITH_ARGUMENTS = Set.of("if", "each", "with");
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
 
       @Override

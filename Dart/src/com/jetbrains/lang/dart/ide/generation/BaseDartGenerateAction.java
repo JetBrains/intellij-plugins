@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -29,7 +29,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     assert project != null;
     final Pair<Editor, PsiFile> editorAndPsiFile = getEditorAndPsiFile(e);
@@ -44,11 +44,10 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return Pair.create(editor, psiFile);
   }
 
-  @NotNull
-  protected abstract BaseDartGenerateHandler getGenerateHandler();
+  protected abstract @NotNull BaseDartGenerateHandler getGenerateHandler();
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     final Pair<Editor, PsiFile> editorAndPsiFile = getEditorAndPsiFile(e);
     final Editor editor = editorAndPsiFile.first;
     final PsiFile psiFile = editorAndPsiFile.second;
@@ -59,11 +58,11 @@ public abstract class BaseDartGenerateAction extends AnAction {
     e.getPresentation().setEnabledAndVisible(enable);
   }
 
-  protected boolean doEnable(@Nullable final DartClass dartClass) {
+  protected boolean doEnable(final @Nullable DartClass dartClass) {
     return dartClass != null;
   }
 
-  protected static boolean doesClassContainMethod(@NotNull final DartClass dartClass, @NotNull final String methodName) {
+  protected static boolean doesClassContainMethod(final @NotNull DartClass dartClass, final @NotNull String methodName) {
     if (methodName.isEmpty()) {
       return false;
     }
@@ -79,7 +78,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return false;
   }
 
-  protected static boolean doesClassContainGetter(@NotNull final DartClass dartClass, @NotNull final String getterName) {
+  protected static boolean doesClassContainGetter(final @NotNull DartClass dartClass, final @NotNull String getterName) {
     if (getterName.isEmpty()) {
       return false;
     }
@@ -95,7 +94,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return false;
   }
 
-  protected static boolean hasNonStaticField(@NotNull final DartClass dartClass) {
+  protected static boolean hasNonStaticField(final @NotNull DartClass dartClass) {
     for (DartComponent component : DartResolveUtil.getNamedSubComponents(dartClass)) {
       if (DartComponentType.typeOf(component) == DartComponentType.FIELD && !component.isStatic()) {
         return true;

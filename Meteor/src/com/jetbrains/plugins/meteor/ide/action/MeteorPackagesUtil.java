@@ -42,8 +42,7 @@ public final class MeteorPackagesUtil {
 
   public static final String[] EXTENSIONS = JSFileReferencesUtil.IMPLICIT_EXTENSIONS;
 
-  @Nullable
-  public static VirtualFile getVersionPackage(@Nullable VirtualFile packagesFolder, @NotNull PackageWrapper wrapper) {
+  public static @Nullable VirtualFile getVersionPackage(@Nullable VirtualFile packagesFolder, @NotNull PackageWrapper wrapper) {
     if (packagesFolder == null) return null;
     if (IGNORED_PACKAGES.contains(wrapper.getName())) return null;
 
@@ -64,13 +63,11 @@ public final class MeteorPackagesUtil {
     return versionedPackage;
   }
 
-  @Nullable
-  public static VirtualFile getDotMeteorVirtualFile(@NotNull Project project, @Nullable PsiFile baseFile) {
+  public static @Nullable VirtualFile getDotMeteorVirtualFile(@NotNull Project project, @Nullable PsiFile baseFile) {
     return getDotMeteorVirtualFile(project, baseFile, false);
   }
 
-  @Nullable
-  public static VirtualFile getDotMeteorVirtualFile(@NotNull Project project, @Nullable PsiFile baseFile, boolean stored) {
+  public static @Nullable VirtualFile getDotMeteorVirtualFile(@NotNull Project project, @Nullable PsiFile baseFile, boolean stored) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
     if (baseFile == null) {
@@ -88,15 +85,13 @@ public final class MeteorPackagesUtil {
     return parent;
   }
 
-  @Nullable
-  static VirtualFile getVersionsFile(@NotNull Project project, @Nullable VirtualFile dotMeteorVirtualFile) {
+  static @Nullable VirtualFile getVersionsFile(@NotNull Project project, @Nullable VirtualFile dotMeteorVirtualFile) {
     return getMeteorDirectoryFileByName(project, dotMeteorVirtualFile, VERSIONS_FILE_NAME);
   }
 
-  @Nullable
-  public static VirtualFile getMeteorDirectoryFileByName(@NotNull Project project,
-                                                         @Nullable VirtualFile dotMeteorVirtualFile,
-                                                         @NotNull String fileName) {
+  public static @Nullable VirtualFile getMeteorDirectoryFileByName(@NotNull Project project,
+                                                                   @Nullable VirtualFile dotMeteorVirtualFile,
+                                                                   @NotNull String fileName) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
     if (dotMeteorVirtualFile != null) {
@@ -121,14 +116,12 @@ public final class MeteorPackagesUtil {
     PropertiesComponent.getInstance(project).setValue(SETTING_METEOR_GLOBAL, value, getDefaultPathToGlobalMeteorRoot());
   }
 
-  @NotNull
-  public static Collection<CodeType> getCodes(Project project) {
+  public static @NotNull Collection<CodeType> getCodes(Project project) {
     final String settings = PropertiesComponent.getInstance(project).getValue(SETTING_SCOPE_IMPORT);
     return StringUtil.isEmpty(settings) ? getDefaultCodes() : parse(settings);
   }
 
-  @NotNull
-  private static EnumSet<CodeType> getDefaultCodes() {
+  private static @NotNull EnumSet<CodeType> getDefaultCodes() {
     return EnumSet.of(CodeType.CLIENT);
   }
 
@@ -156,8 +149,7 @@ public final class MeteorPackagesUtil {
     return StringUtil.join(codes, type -> type.name(), ";");
   }
 
-  @NotNull
-  public static String getDefaultPathToGlobalMeteorRoot() {
+  public static @NotNull String getDefaultPathToGlobalMeteorRoot() {
     if (!SystemInfo.isWindows) {
       return SystemProperties.getUserHome() + "/" + MeteorProjectStartupActivity.METEOR_FOLDER;
     }
@@ -189,18 +181,15 @@ public final class MeteorPackagesUtil {
       myVersion = strings[1];
     }
 
-    @NotNull
-    public String getVersion() {
+    public @NotNull String getVersion() {
       return myVersion;
     }
 
-    @NotNull
-    public String getOriginalName() {
+    public @NotNull String getOriginalName() {
       return myOriginalName;
     }
 
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return myName;
     }
   }

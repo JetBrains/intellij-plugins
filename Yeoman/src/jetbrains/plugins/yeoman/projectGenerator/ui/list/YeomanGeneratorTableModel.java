@@ -23,15 +23,13 @@ public class YeomanGeneratorTableModel extends AbstractTableModel implements Sor
 
   public YeomanGeneratorTableModel() {
     myColumnInfos = new ColumnInfo[] {new ColumnInfo<YeomanGeneratorInfo, String>(YeomanBundle.message("column.info.generators")) {
-      @Nullable
       @Override
-      public String valueOf(YeomanGeneratorInfo o) {
+      public @Nullable String valueOf(YeomanGeneratorInfo o) {
         return o.getYoName();
       }
 
-      @Nullable
       @Override
-      public TableCellRenderer getRenderer(YeomanGeneratorInfo info) {
+      public @Nullable TableCellRenderer getRenderer(YeomanGeneratorInfo info) {
         return new YeomanGeneratorCellRenderer(info);
       }
     }};
@@ -57,9 +55,8 @@ public class YeomanGeneratorTableModel extends AbstractTableModel implements Sor
     return myView.get(row);
   }
 
-  @Nullable
   @Override
-  public RowSorter.SortKey getDefaultSortKey() {
+  public @Nullable RowSorter.SortKey getDefaultSortKey() {
     return null;
   }
 

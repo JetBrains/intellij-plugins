@@ -18,9 +18,7 @@ public final class YeomanGeneratorControlUtil {
     return buildTitle(text);
   }
 
-  @NlsSafe
-  @NotNull
-  public static String wrapText(@NotNull @Nls String text) {
+  public static @NlsSafe @NotNull String wrapText(@NotNull @Nls String text) {
     return "<html>" + StringUtil.escapeXmlEntities(text) + "</html>";
   }
 }

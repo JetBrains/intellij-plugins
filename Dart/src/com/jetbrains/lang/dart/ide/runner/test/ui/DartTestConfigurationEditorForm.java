@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.test.ui;
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
@@ -44,7 +44,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JTextField myTestRunnerOptionsField;
   private EnvironmentVariablesComponent myEnvironmentVariables;
 
-  public DartTestConfigurationEditorForm(@NotNull final Project project) {
+  public DartTestConfigurationEditorForm(final @NotNull Project project) {
     DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
     // Unfortunately, withFileFilter() only works for files, not directories.
     myDirField.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DartBundle.message("choose.dart.directory")));
@@ -59,7 +59,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
     final DocumentAdapter dirListener = new DocumentAdapter() {
       @Override
-      protected void textChanged(@NotNull final DocumentEvent e) {
+      protected void textChanged(final @NotNull DocumentEvent e) {
         onTestDirChanged(project);
       }
     };
@@ -73,7 +73,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull final DartTestRunConfiguration configuration) {
+  protected void resetEditorFrom(final @NotNull DartTestRunConfiguration configuration) {
     final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     myScopeCombo.setSelectedItem(parameters.getScope());
@@ -96,7 +96,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartTestRunConfiguration configuration) {
+  protected void applyEditorTo(final @NotNull DartTestRunConfiguration configuration) {
     final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     final DartTestRunnerParameters.Scope scope = (DartTestRunnerParameters.Scope)myScopeCombo.getSelectedItem();
@@ -140,13 +140,12 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     }
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myMainPanel;
   }
 
-  private static boolean isDirApplicable(@NotNull final String path, @NotNull final Project project) {
+  private static boolean isDirApplicable(final @NotNull String path, final @NotNull Project project) {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
     return file != null && file.isDirectory() && PubspecYamlUtil.findPubspecYamlFile(project, file) != null;
   }

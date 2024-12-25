@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -14,9 +14,8 @@ public class CfmlNamedTagImpl extends CfmlTagImpl implements PsiNameIdentifierOw
     super(astNode);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     CfmlAttributeNameImpl attribute = findChildByClass(CfmlAttributeNameImpl.class);
     if (attribute == null) {
       return "";
@@ -25,9 +24,8 @@ public class CfmlNamedTagImpl extends CfmlTagImpl implements PsiNameIdentifierOw
     return value != null ? value : "";
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     PsiElement namedAttribute = findChildByClass(CfmlAttributeNameImpl.class);
     return namedAttribute != null ? namedAttribute.getNavigationElement() : this;
   }

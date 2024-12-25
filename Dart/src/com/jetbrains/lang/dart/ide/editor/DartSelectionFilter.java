@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.openapi.util.Condition;
@@ -11,15 +12,14 @@ import org.jetbrains.annotations.Nullable;
 
 public final class DartSelectionFilter implements Condition<PsiElement> {
   @Override
-  public boolean value(@NotNull final PsiElement psiElement) {
+  public boolean value(final @NotNull PsiElement psiElement) {
     if (getSiblingSemicolonIfExpression(psiElement) != null) {
       return false; // DartWordSelectionHandler will select this expression with the following semicolon
     }
     return true;
   }
 
-  @Nullable
-  public static PsiElement getSiblingSemicolonIfExpression(@NotNull final PsiElement psiElement) {
+  public static @Nullable PsiElement getSiblingSemicolonIfExpression(final @NotNull PsiElement psiElement) {
     if ((psiElement instanceof DartExpression)) {
       final PsiElement last = PsiTreeUtil.getDeepestLast(psiElement);
       if (last.getNode().getElementType() != DartTokenTypes.SEMICOLON) {

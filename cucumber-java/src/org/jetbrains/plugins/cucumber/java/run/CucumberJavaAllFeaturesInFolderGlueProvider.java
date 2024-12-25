@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.openapi.progress.ProgressManager;
@@ -22,7 +22,7 @@ public class CucumberJavaAllFeaturesInFolderGlueProvider implements CucumberGlue
   public void calculateGlue(@NotNull Consumer<String> consumer) {
     myDirectory.accept(new PsiElementVisitor() {
       @Override
-      public void visitFile(@NotNull final PsiFile file) {
+      public void visitFile(final @NotNull PsiFile file) {
         if (file instanceof GherkinFile) {
           CucumberJavaUtil.calculateGlueFromGherkinFile((GherkinFile)file, consumer);
         }

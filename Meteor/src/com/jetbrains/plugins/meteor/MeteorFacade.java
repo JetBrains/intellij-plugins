@@ -42,8 +42,7 @@ public final class MeteorFacade {
     return i != -1;
   }
 
-  @NotNull
-  public Collection<VirtualFile> getMeteorFolders(Project project) {
+  public @NotNull Collection<VirtualFile> getMeteorFolders(Project project) {
     return ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(MeteorProjectStartupActivity.METEOR_FOLDER,
                                                                     GlobalSearchScope.projectScope(project)),
                                 file -> !JSLibraryUtil.isProbableLibraryFile(file) && file.isDirectory());
@@ -56,8 +55,7 @@ public final class MeteorFacade {
     return PropertiesComponent.getInstance(project).getBoolean(MeteorProjectStartupActivity.METEOR_PROJECT_KEY);
   }
 
-  @NotNull
-  public Collection<VirtualFile> getStoredMeteorFolders(@Nullable Project project) {
+  public @NotNull Collection<VirtualFile> getStoredMeteorFolders(@Nullable Project project) {
     if (project == null || project.isDefault()) return ContainerUtil.emptyList();
     List<String> values = PropertiesComponent.getInstance(project).getList(MeteorProjectStartupActivity.METEOR_FOLDERS_CACHED);
     if (values == null || values.isEmpty()) {

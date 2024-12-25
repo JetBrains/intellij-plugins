@@ -41,21 +41,18 @@ abstract class PbPackageNameMixin extends PbElementBase implements PbPackageName
     super(node);
   }
 
-  @Nullable
   @Override
-  public PbPackageName getQualifier() {
+  public @Nullable PbPackageName getQualifier() {
     return PsiTreeUtil.getChildOfType(this, PbPackageName.class);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getQualifiedName() {
+  public @Nullable QualifiedName getQualifiedName() {
     return PbPsiImplUtil.getQualifiedName(this);
   }
 
-  @Nullable
   @Override
-  public PbSymbolOwner getSymbolOwner() {
+  public @Nullable PbSymbolOwner getSymbolOwner() {
     PbPackageName qualifier = getQualifier();
     return qualifier != null ? getQualifier() : getPbFile();
   }
@@ -65,21 +62,18 @@ abstract class PbPackageNameMixin extends PbElementBase implements PbPackageName
     return getNameIdentifier().getTextOffset();
   }
 
-  @NotNull
   @Override
-  public PsiElement getNameIdentifier() {
+  public @NotNull PsiElement getNameIdentifier() {
     return findNotNullChildByType(ProtoTokenTypes.IDENTIFIER_LITERAL);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return getNameIdentifier().getText();
   }
 
-  @Nullable
   @Override
-  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+  public @Nullable PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     PsiElement identifier = getNameIdentifier();
     ASTNode node = identifier.getNode();
     if (node instanceof LeafElement) {
@@ -89,15 +83,13 @@ abstract class PbPackageNameMixin extends PbElementBase implements PbPackageName
     throw new IncorrectOperationException();
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     return getQualifiedName();
   }
 
-  @NotNull
   @Override
-  public Map<String, Collection<PbSymbol>> getSymbolMap() {
+  public @NotNull Map<String, Collection<PbSymbol>> getSymbolMap() {
     return getPbFile().getPackageSymbolMap(getQualifiedName());
   }
 

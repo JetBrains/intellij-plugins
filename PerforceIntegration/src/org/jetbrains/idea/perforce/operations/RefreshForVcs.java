@@ -47,7 +47,7 @@ public class RefreshForVcs {
     VcsDirtyScopeManager.getInstance(project).filesDirty(vFiles, vDirs);
   }
 
-  private static VirtualFile refreshDir(@Nullable final File dir) {
+  private static VirtualFile refreshDir(final @Nullable File dir) {
     if (dir == null) return null;
 
     final VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(dir);

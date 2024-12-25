@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.ExecutionException;
@@ -20,19 +20,19 @@ import java.util.Collection;
 import java.util.List;
 
 class StagehandTemplate extends DartProjectTemplate {
-  @NotNull private final Stagehand myStagehand;
-  @NotNull private final Stagehand.StagehandDescriptor myTemplate;
+  private final @NotNull Stagehand myStagehand;
+  private final @NotNull Stagehand.StagehandDescriptor myTemplate;
 
-  StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandDescriptor template) {
+  StagehandTemplate(final @NotNull Stagehand stagehand, final @NotNull Stagehand.StagehandDescriptor template) {
     super(template.myLabel, template.myDescription);
     myStagehand = stagehand;
     myTemplate = template;
   }
 
   @Override
-  public Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
-                                                 @NotNull final Module module,
-                                                 @NotNull final VirtualFile baseDir) throws IOException {
+  public Collection<VirtualFile> generateProject(final @NotNull String sdkRoot,
+                                                 final @NotNull Module module,
+                                                 final @NotNull VirtualFile baseDir) throws IOException {
     try {
       myStagehand.generateInto(sdkRoot, baseDir, myTemplate.myId);
     }

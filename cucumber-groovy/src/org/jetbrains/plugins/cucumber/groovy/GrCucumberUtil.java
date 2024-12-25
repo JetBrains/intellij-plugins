@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -34,8 +34,7 @@ public final class GrCucumberUtil {
            getStepDefinitionPatternText((GrMethodCall)element) != null;
   }
 
-  @Nullable
-  public static GrReferenceExpression getCucumberStepRef(final GrMethodCall stepDefinition) {
+  public static @Nullable GrReferenceExpression getCucumberStepRef(final GrMethodCall stepDefinition) {
     final GrExpression ref = stepDefinition.getInvokedExpression();
     if (!(ref instanceof GrReferenceExpression)) return null;
 
@@ -55,8 +54,7 @@ public final class GrCucumberUtil {
     return (GrReferenceExpression)ref;
   }
 
-  @Nullable
-  public static String getStepDefinitionPatternText(final GrMethodCall stepDefinition) {
+  public static @Nullable String getStepDefinitionPatternText(final GrMethodCall stepDefinition) {
     return ApplicationManager.getApplication().runReadAction((NullableComputable<String>)() -> {
       GrLiteral pattern = getStepDefinitionPattern(stepDefinition);
       if (pattern == null) return null;
@@ -65,8 +63,7 @@ public final class GrCucumberUtil {
     });
   }
 
-  @Nullable
-  public static GrLiteral getStepDefinitionPattern(final GrMethodCall stepDefinition) {
+  public static @Nullable GrLiteral getStepDefinitionPattern(final GrMethodCall stepDefinition) {
     return ApplicationManager.getApplication().runReadAction((NullableComputable<GrLiteral>)() -> {
       GrArgumentList argumentList = stepDefinition.getArgumentList();
 

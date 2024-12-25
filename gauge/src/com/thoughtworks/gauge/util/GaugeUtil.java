@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.EnvironmentUtil;
@@ -174,8 +173,7 @@ public final class GaugeUtil {
            : (StepUtil.isConcept(element) || StepUtil.isStep(element));
   }
 
-  @Nullable
-  public static File getContentEntryDirForGradleProject(Module module) {
+  public static @Nullable File getContentEntryDirForGradleProject(Module module) {
     ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
 
     ContentEntry[] contentEntries = moduleRootManager.getContentEntries();

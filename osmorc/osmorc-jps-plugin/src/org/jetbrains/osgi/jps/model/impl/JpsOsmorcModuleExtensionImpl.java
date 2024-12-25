@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.model.impl;
 
 import com.intellij.openapi.util.NullableLazyValue;
@@ -55,15 +55,13 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     return myProperties;
   }
 
-  @NotNull
   @Override
-  public JpsOsmorcModuleExtensionImpl createCopy() {
+  public @NotNull JpsOsmorcModuleExtensionImpl createCopy() {
     return new JpsOsmorcModuleExtensionImpl(XmlSerializerUtil.createCopy(myProperties));
   }
 
-  @NotNull
   @Override
-  public String getJarFileLocation() {
+  public @NotNull String getJarFileLocation() {
     String jarFileLocation = myProperties.myJarFileLocation;
     OutputPathType outputPathType = myProperties.myOutputPathType;
     String nullSafeLocation = jarFileLocation != null ? jarFileLocation : "";
@@ -90,9 +88,8 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     }
   }
 
-  @Nullable
   @Override
-  public File getBundleDescriptorFile() {
+  public @Nullable File getBundleDescriptorFile() {
     return myDescriptorFile.getValue();
   }
 
@@ -121,42 +118,36 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     return myProperties.myManifestGenerationMode == ManifestGenerationMode.OsmorcControlled;
   }
 
-  @NotNull
   @Override
-  public String getBndFileLocation() {
+  public @NotNull String getBndFileLocation() {
     return StringUtil.notNullize(myProperties.myBndFileLocation);
   }
 
-  @NotNull
   @Override
-  public Map<String, String> getAdditionalProperties() {
+  public @NotNull Map<String, String> getAdditionalProperties() {
     return Collections.unmodifiableMap(myProperties.myAdditionalProperties);
   }
 
-  @NotNull
   @Override
-  public String getBundleSymbolicName() {
+  public @NotNull String getBundleSymbolicName() {
     return StringUtil.notNullize(myProperties.myBundleSymbolicName);
   }
 
-  @NotNull
   @Override
-  public String getBundleVersion() {
+  public @NotNull String getBundleVersion() {
     return StringUtil.notNullize(myProperties.myBundleVersion, "1.0.0");
   }
 
-  @Nullable
   @Override
-  public String getBundleActivator() {
+  public @Nullable String getBundleActivator() {
     return myProperties.myBundleActivator;
   }
 
   /**
    * Returns the manifest file for this facet. If the manifest is automatically generated, returns null.
    */
-  @Nullable
   @Override
-  public File getManifestFile() {
+  public @Nullable File getManifestFile() {
     if (isOsmorcControlsManifest()) {
       String pathToJar = getJarFileLocation();
       if (pathToJar.isEmpty()) {
@@ -185,9 +176,8 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     }
   }
 
-  @NotNull
   @Override
-  public String getManifestLocation() {
+  public @NotNull String getManifestLocation() {
     if (myProperties.myUseProjectDefaultManifestFileLocation) {
       JpsOsmorcProjectExtension projectExtension = getProjectExtension();
       return projectExtension == null ? JarFile.MANIFEST_NAME : projectExtension.getDefaultManifestFileLocation();
@@ -202,21 +192,18 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     return myProperties.myAlwaysRebuildBundleJar;
   }
 
-  @NotNull
   @Override
-  public List<OsmorcJarContentEntry> getAdditionalJarContents() {
+  public @NotNull List<OsmorcJarContentEntry> getAdditionalJarContents() {
     return Collections.unmodifiableList(myProperties.myAdditionalJARContents);
   }
 
-  @Nullable
   @Override
-  public String getIgnoreFilePattern() {
+  public @Nullable String getIgnoreFilePattern() {
     return myProperties.myIgnoreFilePattern;
   }
 
-  @NotNull
   @Override
-  public String getBundlorFileLocation() {
+  public @NotNull String getBundlorFileLocation() {
     return StringUtil.notNullize(myProperties.myBundlorFileLocation);
   }
 

@@ -137,7 +137,7 @@ public final class MeteorImportPackagesAsExternalLib {
   }
 
 
-  private static void updateVersionList(@Nullable final VirtualFile dotMeteorVirtualFile, final Project project) {
+  private static void updateVersionList(final @Nullable VirtualFile dotMeteorVirtualFile, final Project project) {
     if (dotMeteorVirtualFile == null) return;
 
     final VirtualFile folderWithDotMeteor = dotMeteorVirtualFile.getParent();
@@ -169,8 +169,7 @@ public final class MeteorImportPackagesAsExternalLib {
     updateInfo(project, dotMeteorVirtualFile);
   }
 
-  @NotNull
-  public static String getLibraryName(CodeType type) {
+  public static @NotNull String getLibraryName(CodeType type) {
     return METEOR_PACKAGES_LIB_NAME + "-" + type.getNameEnd();
   }
 }

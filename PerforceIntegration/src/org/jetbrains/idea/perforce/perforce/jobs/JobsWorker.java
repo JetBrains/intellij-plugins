@@ -11,7 +11,10 @@ import org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class JobsWorker {
   private final Project myProject;
@@ -35,21 +38,18 @@ public class JobsWorker {
     return parser.parse();
   }
 
-  @NotNull
-  public List<PerforceJob> getJobs(final PerforceJobSpecification specification, final JobsSearchSpecificator specificator,
-                                   final P4Connection connection, final ConnectionKey key) throws VcsException {
+  public @NotNull List<PerforceJob> getJobs(final PerforceJobSpecification specification, final JobsSearchSpecificator specificator,
+                                            final P4Connection connection, final ConnectionKey key) throws VcsException {
     final List<String> lines = myRunner.getJobs(connection, specificator);
     final JobsOutputParser parser = new JobsOutputParser(specification, lines, connection, key);
     return parser.parse();
   }
 
-  @Nullable
-  private Long getNativeListNumber(LocalChangeList list, ConnectionKey key) {
+  private @Nullable Long getNativeListNumber(LocalChangeList list, ConnectionKey key) {
     return mySynchronizer.getNumber(key, list.getName());
   }
 
-  @NotNull
-  public List<Pair<String, String>> loadJob(final PerforceJob job) throws VcsException {
+  public @NotNull List<Pair<String, String>> loadJob(final PerforceJob job) throws VcsException {
     final List<String> lines = myRunner.getJobDetails(job);
     final JobDetailsParser parser = new JobDetailsParser(lines);
     return parser.parse();

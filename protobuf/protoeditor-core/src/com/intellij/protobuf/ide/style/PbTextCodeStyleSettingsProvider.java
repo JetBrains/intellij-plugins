@@ -40,9 +40,8 @@ public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     return PbIdeBundle.message("prototext.name");
   }
 
-  @NotNull
   @Override
-  public CodeStyleConfigurable createConfigurable(
+  public @NotNull CodeStyleConfigurable createConfigurable(
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("prototext.name")) {
       @Override
@@ -50,9 +49,8 @@ public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
         return new ProtoTextCodeStyleMainPanel(getCurrentSettings(), settings);
       }
 
-      @Nullable
       @Override
-      public String getHelpTopic() {
+      public @Nullable String getHelpTopic() {
         return null;
       }
     };

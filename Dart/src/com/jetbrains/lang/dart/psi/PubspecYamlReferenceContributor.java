@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.util.Condition;
@@ -24,11 +24,11 @@ import java.util.Collection;
 
 public final class PubspecYamlReferenceContributor extends PsiReferenceContributor {
   @Override
-  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), new PubspecYamlReferenceProvider());
   }
 
-  public static boolean isPathPackageDefinition(@NotNull final YAMLKeyValue element) {
+  public static boolean isPathPackageDefinition(final @NotNull YAMLKeyValue element) {
     if (!PubspecYamlUtil.PUBSPEC_YAML.equals(element.getContainingFile().getName())) return false;
     if (!PubspecYamlUtil.PATH.equals(element.getKeyText())) return false;
 
@@ -49,7 +49,7 @@ public final class PubspecYamlReferenceContributor extends PsiReferenceContribut
 
   private static class PubspecYamlReferenceProvider extends PsiReferenceProvider {
     @Override
-    public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(final @NotNull PsiElement element, final @NotNull ProcessingContext context) {
       if (!(element instanceof YAMLKeyValue) || !isPathPackageDefinition((YAMLKeyValue)element)) {
         return PsiReference.EMPTY_ARRAY;
       }
@@ -65,9 +65,8 @@ public final class PubspecYamlReferenceContributor extends PsiReferenceContribut
 
       final FileReferenceSet fileReferenceSet = new FileReferenceSet(StringUtil.unquoteString(text), element, startInElement,
                                                                      this, element.getContainingFile().getViewProvider().getVirtualFile().isCaseSensitive(), false) {
-        @NotNull
         @Override
-        public Collection<PsiFileSystemItem> computeDefaultContexts() {
+        public @NotNull Collection<PsiFileSystemItem> computeDefaultContexts() {
           if (isAbsolutePathReference()) {
             final VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
             final Collection<PsiFileSystemItem> result = new SmartList<>();

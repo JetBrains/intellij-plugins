@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.project;
 
 import aQute.bnd.header.Parameters;
@@ -32,28 +32,23 @@ public class BundleManifest {
     myMap = new HashMap<>(map);
   }
 
-  @Nullable
-  public PsiFile getSource() {
+  public @Nullable PsiFile getSource() {
     return mySource;
   }
 
-  @Nullable
-  public String get(@NotNull String attr) {
+  public @Nullable String get(@NotNull String attr) {
     return myMap.get(attr);
   }
 
-  @Nullable
-  public String getBundleSymbolicName() {
+  public @Nullable String getBundleSymbolicName() {
     return get(Constants.BUNDLE_SYMBOLICNAME);
   }
 
-  @Nullable
-  public String getBundleActivator() {
+  public @Nullable String getBundleActivator() {
     return get(Constants.BUNDLE_ACTIVATOR);
   }
 
-  @Nullable
-  public String getExportedPackage(@NotNull String packageName) {
+  public @Nullable String getExportedPackage(@NotNull String packageName) {
     for (String exported : getValues(Constants.EXPORT_PACKAGE)) {
       exported = StringUtil.trimEnd(exported, ".*");
       if (PsiNameHelper.isSubpackageOf(packageName, exported)) {

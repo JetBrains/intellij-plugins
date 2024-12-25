@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionException;
@@ -142,8 +142,7 @@ public class KarmaExecutionSession {
     });
   }
 
-  @NotNull
-  private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
+  private @NotNull OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     NodeTargetRun targetRun = createTargetRun(interpreter, server);
     OSProcessHandler processHandler = targetRun.startProcessEx().getProcessHandler();
@@ -152,8 +151,7 @@ public class KarmaExecutionSession {
     return processHandler;
   }
 
-  @NotNull
-  private NodeTargetRun createTargetRun(@NotNull NodeJsInterpreter interpreter, @NotNull KarmaServer server) throws ExecutionException {
+  private @NotNull NodeTargetRun createTargetRun(@NotNull NodeJsInterpreter interpreter, @NotNull KarmaServer server) throws ExecutionException {
     NodeTargetRun targetRun = new NodeTargetRun(interpreter, myProject, null, NodeTargetRunOptions.of(shouldUsePtyForTestRunners(),
                                                                                                       myRunConfiguration));
     TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
@@ -196,8 +194,7 @@ public class KarmaExecutionSession {
     return targetRun;
   }
 
-  @Nullable
-  private String getTestNamesPattern() throws ExecutionException {
+  private @Nullable String getTestNamesPattern() throws ExecutionException {
     if (myFailedTestNames != null) {
       return JSTestRunnerUtil.getTestsPattern(myFailedTestNames, false);
     }

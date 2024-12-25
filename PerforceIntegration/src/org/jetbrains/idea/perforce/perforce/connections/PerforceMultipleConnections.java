@@ -17,7 +17,7 @@ import java.util.Map;
 public class PerforceMultipleConnections implements PerforceConnectionMapper {
   private static final Logger LOG = Logger.getInstance(PerforceMultipleConnections.class);
 
-  @Nullable private final String myP4ConfigValue;
+  private final @Nullable String myP4ConfigValue;
 
   private final VirtualFileMapping<P4ConnectionParameters> myParametersMap = new VirtualFileMapping<>();
   private final P4ConnectionParameters myDefaultParameters;
@@ -42,8 +42,7 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
     return myDefaultParameters;
   }
 
-  @Nullable
-  public String getP4ConfigValue() {
+  public @Nullable String getP4ConfigValue() {
     return myP4ConfigValue;
   }
 

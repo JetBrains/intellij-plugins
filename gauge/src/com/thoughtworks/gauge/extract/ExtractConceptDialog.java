@@ -21,8 +21,8 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.ui.TextFieldWithAutoCompletion;
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.GaugeConstants;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,13 +100,11 @@ final class ExtractConceptDialog extends JDialog {
     this.OKButton.addActionListener(getOKAction());
   }
 
-  @NotNull
-  private ActionListener getCancelAction() {
+  private @NotNull ActionListener getCancelAction() {
     return e -> onCancel();
   }
 
-  @NotNull
-  private ActionListener getOKAction() {
+  private @NotNull ActionListener getOKAction() {
     return e -> {
       if (conceptName.getText().trim().isEmpty()) {
         errors.setText(GaugeBundle.message("please.enter.concept.name"));
@@ -133,27 +131,23 @@ final class ExtractConceptDialog extends JDialog {
 
   private static TextFieldWithAutoCompletionListProvider<String> getAutoCompleteTextField(final List<String> dirNames) {
     return new TextFieldWithAutoCompletionListProvider<>(dirNames) {
-      @Nullable
       @Override
-      protected Icon getIcon(@NotNull String item) {
+      protected @Nullable Icon getIcon(@NotNull String item) {
         return super.getIcon(item);
       }
 
-      @NotNull
       @Override
-      protected String getLookupString(@NotNull String o) {
+      protected @NotNull String getLookupString(@NotNull String o) {
         return o;
       }
 
-      @Nullable
       @Override
-      protected String getTailText(@NotNull String item) {
+      protected @Nullable String getTailText(@NotNull String item) {
         return super.getTailText(item);
       }
 
-      @Nullable
       @Override
-      protected String getTypeText(@NotNull String item) {
+      protected @Nullable String getTypeText(@NotNull String item) {
         return super.getTypeText(item);
       }
 

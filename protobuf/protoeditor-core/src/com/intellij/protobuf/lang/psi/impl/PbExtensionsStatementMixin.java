@@ -16,14 +16,14 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.PbExtensionsStatement;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.psi.PbOptionExpression;
 import com.intellij.protobuf.lang.psi.PbOptionList;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,15 +36,13 @@ abstract class PbExtensionsStatementMixin extends PbStatementBase implements PbE
     super(node);
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.EXTENSION_RANGE_OPTIONS.forDescriptor(descriptor);
   }
 
   @Override
-  @Nullable
-  public QualifiedName getExtensionOptionScope() {
+  public @Nullable QualifiedName getExtensionOptionScope() {
     PbMessageType message = PsiTreeUtil.getParentOfType(this, PbMessageType.class);
     if (message == null) {
       return null;
@@ -53,9 +51,8 @@ abstract class PbExtensionsStatementMixin extends PbStatementBase implements PbE
     return name != null ? name.removeLastComponent() : null;
   }
 
-  @NotNull
   @Override
-  public List<PbOptionExpression> getOptions() {
+  public @NotNull List<PbOptionExpression> getOptions() {
     PbOptionList optionList = getOptionList();
     if (optionList == null) {
       return Collections.emptyList();

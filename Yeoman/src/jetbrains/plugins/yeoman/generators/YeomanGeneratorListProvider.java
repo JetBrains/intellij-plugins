@@ -116,8 +116,7 @@ public class YeomanGeneratorListProvider {
     return downloadJsonWithDataImpl();
   }
 
-  @NotNull
-  private File downloadJsonWithDataImpl() throws IOException {
+  private @NotNull File downloadJsonWithDataImpl() throws IOException {
     if (myLock.tryLock()) {
       try {
         File yoGeneratorsFile = getStoreFile();
@@ -163,8 +162,7 @@ public class YeomanGeneratorListProvider {
     return getStoreFile().exists();
   }
 
-  @NotNull
-  private static File getStoreFile() {
+  private static @NotNull File getStoreFile() {
     return new File(PathManager.getSystemPath(),
                     GENERATOR_INFO_RELATIVE_PATH +
                     File.separator +

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.build;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +25,8 @@ public final class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<Osmo
     super("osmorc");
   }
 
-  @NotNull
   @Override
-  public List<OsmorcBuildTarget> computeAllTargets(@NotNull JpsModel model) {
+  public @NotNull List<OsmorcBuildTarget> computeAllTargets(@NotNull JpsModel model) {
     List<OsmorcBuildTarget> targets = new ArrayList<>();
     for (JpsModule module : model.getProject().getModules()) {
       JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(module);
@@ -38,9 +37,8 @@ public final class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<Osmo
     return targets;
   }
 
-  @NotNull
   @Override
-  public BuildTargetLoader<OsmorcBuildTarget> createLoader(@NotNull JpsModel model) {
+  public @NotNull BuildTargetLoader<OsmorcBuildTarget> createLoader(@NotNull JpsModel model) {
     return new Loader(model);
   }
 
@@ -57,9 +55,8 @@ public final class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<Osmo
       }
     }
 
-    @Nullable
     @Override
-    public OsmorcBuildTarget createTarget(@NotNull String targetId) {
+    public @Nullable OsmorcBuildTarget createTarget(@NotNull String targetId) {
       return myTargets.get(targetId);
     }
   }

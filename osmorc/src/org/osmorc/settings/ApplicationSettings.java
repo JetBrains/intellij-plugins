@@ -91,8 +91,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     }
   }
 
-  @Nullable
-  public FrameworkInstanceDefinition getFrameworkInstance(@Nullable String name) {
+  public @Nullable FrameworkInstanceDefinition getFrameworkInstance(@Nullable String name) {
     if (name != null) {
       for (FrameworkInstanceDefinition frameworkInstanceDefinition : myInstances) {
         if (name.equals(frameworkInstanceDefinition.getName())) {
@@ -103,8 +102,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     return null;
   }
 
-  @NotNull
-  public List<FrameworkInstanceDefinition> getActiveFrameworkInstanceDefinitions() {
+  public @NotNull List<FrameworkInstanceDefinition> getActiveFrameworkInstanceDefinitions() {
     Set<String> names = ContainerUtil.map2Set(FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators(), FrameworkIntegrator::getDisplayName);
     return ContainerUtil.filter(myInstances, definition -> names.contains(definition.getFrameworkIntegratorName()));
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.ASTNode;
@@ -21,9 +21,8 @@ import org.jetbrains.annotations.NotNull;
 public final class DartParserDefinition implements ParserDefinition {
   public static final IFileElementType DART_FILE = new IFileElementType("DARTFILE", DartLanguage.INSTANCE);
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new DartLexer();
   }
 
@@ -37,15 +36,13 @@ public final class DartParserDefinition implements ParserDefinition {
     return DART_FILE;
   }
 
-  @NotNull
   @Override
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return DartTokenTypesSets.COMMENTS;
   }
 
-  @NotNull
   @Override
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return TokenSet.create(
       DartTokenTypes.RAW_SINGLE_QUOTED_STRING,
       DartTokenTypes.RAW_TRIPLE_QUOTED_STRING,
@@ -55,9 +52,8 @@ public final class DartParserDefinition implements ParserDefinition {
     );
   }
 
-  @NotNull
   @Override
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     final IElementType type = node.getElementType();
 
     if (type == DartTokenTypesSets.EMBEDDED_CONTENT) return new DartEmbeddedContentImpl(node);

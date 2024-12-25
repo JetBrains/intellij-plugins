@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 class AverageByKindTimePresentation<Kind extends Enum> implements StatisticsPresentation<AverageByKindTimeStatistics<Kind>> {
-  private final static NumberFormat ourNumberFormat = new DecimalFormat("0.00");
+  private static final NumberFormat ourNumberFormat = new DecimalFormat("0.00");
 
   @Override
   public void putSelf(StringBuilder sb, AverageByKindTimeStatistics<Kind> statistics) {

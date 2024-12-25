@@ -22,21 +22,18 @@ public class PostCssSimpleVariableDeclarationImpl extends CompositePsiElement im
     super(PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE_DECLARATION);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return StringUtil.trimLeading(getNameIdentifier().getText(), '$');
   }
 
-  @NotNull
   @Override
-  public PsiElement getNameIdentifier() {
+  public @NotNull PsiElement getNameIdentifier() {
     return getFirstChild();
   }
 
-  @Nullable
   @Override
-  public CssTermList getInitializer() {
+  public @Nullable CssTermList getInitializer() {
     return PsiTreeUtil.getChildOfType(this, CssTermList.class);
   }
 
@@ -45,9 +42,8 @@ public class PostCssSimpleVariableDeclarationImpl extends CompositePsiElement im
     return CssUtil.getLineNumber(this);
   }
 
-  @NotNull
   @Override
-  public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+  public @NotNull PsiElement setName(@NotNull String name) throws IncorrectOperationException {
     PsiFile file = PsiFileFactory.getInstance(getProject()).createFileFromText(PostCssLanguage.INSTANCE, "$" + name);
     PsiElement oldVarToken = getNameIdentifier().getFirstChild();
     PsiElement newVarToken = PsiTreeUtil.getDeepestFirst(file);

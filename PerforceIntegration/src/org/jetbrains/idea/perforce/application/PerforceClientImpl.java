@@ -42,9 +42,8 @@ class PerforceClientImpl implements PerforceClient {
     return PerforceManager.getInstance(myProject).getCachedInfo(myConnection);
   }
 
-  @NotNull
   @Override
-  public Project getProject() {
+  public @NotNull Project getProject() {
     return myProject;
   }
 
@@ -53,9 +52,8 @@ class PerforceClientImpl implements PerforceClient {
     return getFieldValue(PerforceRunner.CLIENT_NAME);
   }
 
-  @NotNull
   @Override
-  public List<String> getRoots() throws VcsException {
+  public @NotNull List<String> getRoots() throws VcsException {
     return PerforceManager.getInstance(myProject).getClientRoots(myConnection);
   }
 
@@ -64,9 +62,8 @@ class PerforceClientImpl implements PerforceClient {
     return PerforceManager.getInstance(myProject).getCachedClients(myConnection).getViews();
   }
 
-  @Nullable
   @Override
-  public List<String> getCachedOptions() {
+  public @Nullable List<String> getCachedOptions() {
     try {
       ClientData clientSpec = PerforceManager.getInstance(myProject).getClientOnlyCached(myConnection);
       return clientSpec == null ? null : clientSpec.getOptions();
@@ -87,14 +84,12 @@ class PerforceClientImpl implements PerforceClient {
   }
 
   @Override
-  @Nullable
-  public String getServerPort() throws VcsException {
+  public @Nullable String getServerPort() throws VcsException {
     return getFieldValue(PerforceRunner.SERVER_ADDRESS);
   }
 
   @Override
-  @Nullable
-  public String getDeclaredServerPort() {
+  public @Nullable String getDeclaredServerPort() {
     if (myConnection instanceof P4ParametersConnection) {
       return ((P4ParametersConnection)myConnection).getParameters().getServer();
     }

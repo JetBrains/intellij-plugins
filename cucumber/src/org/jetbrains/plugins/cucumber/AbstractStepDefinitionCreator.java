@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.codeInsight.template.Template;
@@ -26,8 +26,7 @@ import java.util.Objects;
 
 public abstract class AbstractStepDefinitionCreator implements StepDefinitionCreator {
   @Override
-  @NotNull
-  public String getStepDefinitionFilePath(@NotNull final PsiFile psiFile) {
+  public @NotNull String getStepDefinitionFilePath(final @NotNull PsiFile psiFile) {
     final VirtualFile file = psiFile.getVirtualFile();
     assert file != null;
     VirtualFile parent = file.getParent();
@@ -54,9 +53,8 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
     return buf.toString();
   }
 
-  @NotNull
   @Override
-  public String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step) {
+  public @NotNull String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step) {
     PsiFile featureFile = step.getContainingFile();
     final PsiDirectory dir = findStepDefinitionDirectory(featureFile);
     if (dir != null) {
@@ -65,8 +63,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
     return FileUtil.join(featureFile.getContainingDirectory().getVirtualFile().getPath(), CucumberUtil.STEP_DEFINITIONS_DIR_NAME);
   }
 
-  @Nullable
-  private static PsiDirectory findStepDefinitionDirectory(@NotNull final PsiFile featureFile) {
+  private static @Nullable PsiDirectory findStepDefinitionDirectory(final @NotNull PsiFile featureFile) {
     final PsiDirectory psiFeatureDir = featureFile.getContainingDirectory();
     assert psiFeatureDir != null;
 

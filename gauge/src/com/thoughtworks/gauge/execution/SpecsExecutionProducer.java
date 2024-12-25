@@ -42,9 +42,8 @@ final class SpecsExecutionProducer extends LazyRunConfigurationProducer<GaugeRun
   SpecsExecutionProducer() {
   }
 
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return new GaugeRunTaskConfigurationType().getConfigurationFactories()[0];
   }
 
@@ -90,8 +89,7 @@ final class SpecsExecutionProducer extends LazyRunConfigurationProducer<GaugeRun
     return StringUtil.join(getSpecs(selectedFiles), GaugeConstants.SPEC_FILE_DELIMITER).equals(specs);
   }
 
-  @NotNull
-  private static List<String> getSpecs(VirtualFile[] selectedFiles) {
+  private static @NotNull List<String> getSpecs(VirtualFile[] selectedFiles) {
     List<String> specsToExecute = new ArrayList<>();
     for (VirtualFile selectedFile : selectedFiles) {
       if (isSpecFile(selectedFile)) {

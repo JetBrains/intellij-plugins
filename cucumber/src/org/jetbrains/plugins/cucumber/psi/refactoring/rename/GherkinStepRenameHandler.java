@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -42,8 +42,7 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
     RenameDialog.showRenameDialog(dataContext, dialog);
   }
 
-  @Nullable
-  public GherkinStep getGherkinStep(@Nullable final DataContext context) {
+  public @Nullable GherkinStep getGherkinStep(final @Nullable DataContext context) {
     PsiElement element = null;
     if (context == null) return null;
     final Editor editor = CommonDataKeys.EDITOR.getData(context);

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.surroundWith.statement;
 
 import com.intellij.lang.ASTNode;
@@ -19,8 +19,7 @@ public abstract class DartStatementSurrounder implements Surrounder {
     return true;
   }
 
-  @Nullable
-  protected PsiElement createSurrounder(@NotNull Project project) {
+  protected @Nullable PsiElement createSurrounder(@NotNull Project project) {
     return DartElementGenerator.createStatementFromText(
       project,
       getTemplateText()
@@ -28,8 +27,7 @@ public abstract class DartStatementSurrounder implements Surrounder {
   }
 
   @Override
-  @Nullable
-  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
+  public @Nullable TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
     PsiElement parent = elements[0].getParent();
 
     PsiElement surrounder = createSurrounder(project);
@@ -65,8 +63,7 @@ public abstract class DartStatementSurrounder implements Surrounder {
 
   protected abstract String getTemplateText();
 
-  @Nullable
-  protected abstract PsiElement findElementToAdd(@NotNull final PsiElement surrounder);
+  protected abstract @Nullable PsiElement findElementToAdd(final @NotNull PsiElement surrounder);
 
   protected abstract int cleanUpAndGetPlaceForCaret(@NotNull PsiElement surrounder);
 }

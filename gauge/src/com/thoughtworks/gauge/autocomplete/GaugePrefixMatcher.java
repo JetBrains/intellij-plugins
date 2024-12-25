@@ -36,9 +36,8 @@ public final class GaugePrefixMatcher extends PrefixMatcher {
     return matcher.find();
   }
 
-  @NotNull
   @Override
-  public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
+  public @NotNull PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
     return new GaugePrefixMatcher(prefix);
   }
 

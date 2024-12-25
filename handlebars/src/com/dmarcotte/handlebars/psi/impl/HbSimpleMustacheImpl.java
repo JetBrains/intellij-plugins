@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
@@ -27,9 +28,8 @@ public class HbSimpleMustacheImpl extends HbPlainMustacheImpl implements HbSimpl
     return null;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(@IconFlags int flags) {
+  public @Nullable Icon getIcon(@IconFlags int flags) {
     PsiElement openStacheElem = getFirstChild();
     if (openStacheElem == null) {
       return null;

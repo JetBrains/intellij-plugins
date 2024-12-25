@@ -49,9 +49,8 @@ public class PbUsageTypeProvider implements UsageTypeProvider {
     return new UsageType(() -> PbLangBundle.message("usage.service.method.reference"));
   }
 
-  @Nullable
   @Override
-  public UsageType getUsageType(PsiElement element) {
+  public @Nullable UsageType getUsageType(PsiElement element) {
     PbTypeName typeParent = PsiTreeUtil.getParentOfType(element, PbTypeName.class);
     if (typeParent != null) {
       if (PsiTreeUtil.getParentOfType(typeParent, PbField.class) != null) {

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.psi.HbBlockWrapper;
@@ -20,9 +21,8 @@ public class HbBlockWrapperImpl extends HbPsiElementImpl implements HbBlockWrapp
     return openBlockMustache == null ? null : openBlockMustache.getName();
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(@IconFlags int flags) {
+  public @Nullable Icon getIcon(@IconFlags int flags) {
     HbOpenBlockMustache openBlockMustache = getHbOpenBlockMustache();
     return openBlockMustache == null ? null : openBlockMustache.getIcon(0);
   }

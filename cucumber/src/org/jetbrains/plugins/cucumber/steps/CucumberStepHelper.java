@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,9 +32,9 @@ public final class CucumberStepHelper {
    * @param fileNameWithoutExtension name of the file with out "." and extension
    * @param frameworkType            type of file to create
    */
-  public static PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir,
-                                          @NotNull final String fileNameWithoutExtension,
-                                          @NotNull final BDDFrameworkType frameworkType) {
+  public static PsiFile createStepDefinitionFile(final @NotNull PsiDirectory dir,
+                                                 final @NotNull String fileNameWithoutExtension,
+                                                 final @NotNull BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     if (ep == null) {
       LOG.error(String.format("Unsupported step definition file type %s", frameworkType.toString()));
@@ -45,8 +45,8 @@ public final class CucumberStepHelper {
   }
 
   public static boolean validateNewStepDefinitionFileName(@NotNull Project project,
-                                                          @NotNull final String fileName,
-                                                          @NotNull final BDDFrameworkType frameworkType) {
+                                                          final @NotNull String fileName,
+                                                          final @NotNull BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     assert ep != null;
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(project, fileName);
@@ -61,8 +61,7 @@ public final class CucumberStepHelper {
    * @param step        step itself
    * @return definitions
    */
-  @NotNull
-  public static Collection<AbstractStepDefinition> findStepDefinitions(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
+  public static @NotNull Collection<AbstractStepDefinition> findStepDefinitions(final @NotNull PsiFile featureFile, final @NotNull GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
       return Collections.emptyList();
@@ -95,8 +94,7 @@ public final class CucumberStepHelper {
    * @param definition step definition
    * @return pattern or null if does not exist
    */
-  @Nullable
-  private static Pattern getPatternByDefinition(@Nullable final AbstractStepDefinition definition) {
+  private static @Nullable Pattern getPatternByDefinition(final @Nullable AbstractStepDefinition definition) {
     if (definition == null) {
       return null;
     }
@@ -104,7 +102,7 @@ public final class CucumberStepHelper {
   }
 
   // ToDo: use binary search here
-  public static List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern, @NotNull final Module module) {
+  public static List<AbstractStepDefinition> findStepDefinitionsByPattern(final @NotNull String pattern, final @NotNull Module module) {
     final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
     final List<AbstractStepDefinition> result = new ArrayList<>();
     for (AbstractStepDefinition stepDefinition : allSteps) {
@@ -116,14 +114,14 @@ public final class CucumberStepHelper {
     return result;
   }
 
-  public static List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
+  public static List<AbstractStepDefinition> getAllStepDefinitions(final @NotNull PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) return Collections.emptyList();
     return loadStepsFor(featureFile, module);
   }
 
 
-  private static List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
+  private static List<AbstractStepDefinition> loadStepsFor(final @Nullable PsiFile featureFile, final @NotNull Module module) {
     ArrayList<AbstractStepDefinition> result = new ArrayList<>();
 
     for (CucumberJvmExtensionPoint extension : getCucumberExtensions()) {
@@ -132,7 +130,7 @@ public final class CucumberStepHelper {
     return result;
   }
 
-  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(final @NotNull GherkinFile featureFile) {
     Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
     for (CucumberJvmExtensionPoint ep : getCucumberExtensions()) {
       // Skip if framework file creation support is optional

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.internal.statistic.beans.MetricEvent;
@@ -25,9 +25,8 @@ public class TslintOptionsUsageCollector extends ProjectUsagesCollector {
   private static final EventId ADDITIONAL_RULES_SPECIFIED = GROUP.registerEvent("additional.rules.specified");
   private static final EventId CUSTOM_CONFIG_SPECIFIED = GROUP.registerEvent("custom.config.specified");
 
-  @NotNull
   @Override
-  public Set<MetricEvent> getMetrics(@NotNull Project project) {
+  public @NotNull Set<MetricEvent> getMetrics(@NotNull Project project) {
     ExtendedLinterState<TsLintState> extendedState = TsLintConfiguration.getInstance(project).getExtendedState();
     if (!extendedState.isEnabled()) {
       return Collections.emptySet();

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.ide.highlighter.EmbeddedTokenHighlighter;
@@ -64,8 +64,7 @@ public final class DartSyntaxHighlighter extends SyntaxHighlighterBase implement
   }
 
   @Override
-  @NotNull
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new DartLexer();
   }
 
@@ -74,9 +73,8 @@ public final class DartSyntaxHighlighter extends SyntaxHighlighterBase implement
     return pack(ATTRIBUTES.get(tokenType));
   }
 
-  @NotNull
   @Override
-  public MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
+  public @NotNull MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
     MultiMap<IElementType, TextAttributesKey> map = MultiMap.create();
     map.putAllValues(ATTRIBUTES);
     return map;

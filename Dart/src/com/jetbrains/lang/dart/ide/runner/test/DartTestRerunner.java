@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.ExecutionException;
@@ -29,9 +30,8 @@ public class DartTestRerunner implements RunProfileState {
     return environment;
   }
 
-  @Nullable
   @Override
-  public ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
+  public @Nullable ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
     DartTestRunningState state = new DartTestRunningState(environment);
     DartTestRunnerParameters params = state.getParameters();
     params.setScope(DartTestRunnerParameters.Scope.MULTIPLE_NAMES);

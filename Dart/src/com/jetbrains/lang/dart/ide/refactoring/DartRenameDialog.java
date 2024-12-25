@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
@@ -35,14 +35,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 final class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> {
   private final JLabel myNewNamePrefix = new JLabel("");
   private NameSuggestionsField myNameSuggestionsField;
 
-  DartRenameDialog(@NotNull final Project project, @Nullable final Editor editor, @NotNull final ServerRenameRefactoring refactoring) {
+  DartRenameDialog(final @NotNull Project project, final @Nullable Editor editor, final @NotNull ServerRenameRefactoring refactoring) {
     super(project, editor, refactoring);
 
     setTitle(DartBundle.message("dialog.title.rename.0", refactoring.getElementKindName()));
@@ -168,8 +168,8 @@ final class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefacto
                                         RefactoringBundle.message("usageView.doAction"), false);
   }
 
-  private void fillTargetsAndUsageToEditIdMap(@NotNull final List<UsageTarget> usageTargets,
-                                              @NotNull final Map<Usage, String> usageToEditIdMap) {
+  private void fillTargetsAndUsageToEditIdMap(final @NotNull List<UsageTarget> usageTargets,
+                                              final @NotNull Map<Usage, String> usageToEditIdMap) {
     final SourceChange change = myRefactoring.getChange();
     assert change != null;
 
@@ -202,8 +202,7 @@ final class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefacto
     }
   }
 
-  @NotNull
-  private Runnable createRefactoringRunnable(@NotNull final UsageView usageView, @NotNull final Map<Usage, String> usageToEditIdMap) {
+  private @NotNull Runnable createRefactoringRunnable(final @NotNull UsageView usageView, final @NotNull Map<Usage, String> usageToEditIdMap) {
     return () -> {
       final Set<String> excludedIds = new HashSet<>();
 

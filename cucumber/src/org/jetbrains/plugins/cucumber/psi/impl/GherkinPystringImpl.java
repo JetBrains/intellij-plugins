@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -9,7 +10,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
 
 public class GherkinPystringImpl extends GherkinPsiElementBase implements GherkinPystring {
-  public GherkinPystringImpl(@NotNull final ASTNode node) {
+  public GherkinPystringImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -29,7 +30,7 @@ public class GherkinPystringImpl extends GherkinPsiElementBase implements Gherki
   }
 
   @Override
-  public PsiLanguageInjectionHost updateText(@NotNull final String text) {
+  public PsiLanguageInjectionHost updateText(final @NotNull String text) {
     final String docStringSep = getFirstChild().getText();
     final int startOffset = text.startsWith(docStringSep) ? docStringSep.length() : 0;
     final int endOffset = text.endsWith(docStringSep) ? docStringSep.length() : 0;

@@ -17,7 +17,6 @@
 package com.thoughtworks.gauge.parser;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -37,33 +36,28 @@ import org.jetbrains.annotations.NotNull;
 public final class SpecParserDefinition implements ParserDefinition {
   public static final IFileElementType FILE = new IFileElementType(Specification.INSTANCE);
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new SpecLexer();
   }
 
   @Override
-  @NotNull
-  public TokenSet getWhitespaceTokens() {
+  public @NotNull TokenSet getWhitespaceTokens() {
     return SpecTokenSets.WHITE_SPACES;
   }
 
   @Override
-  @NotNull
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return SpecTokenSets.COMMENTS;
   }
 
   @Override
-  @NotNull
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return TokenSet.EMPTY;
   }
 
   @Override
-  @NotNull
-  public PsiParser createParser(Project project) {
+  public @NotNull PsiParser createParser(Project project) {
     return new SpecParser();
   }
 
@@ -83,8 +77,7 @@ public final class SpecParserDefinition implements ParserDefinition {
   }
 
   @Override
-  @NotNull
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     return SpecTokenTypes.Factory.createElement(node);
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.psi.HbCloseBlockMustache;
@@ -25,9 +26,8 @@ public class HbOpenBlockMustacheImpl extends HbBlockMustacheImpl implements HbOp
     return null;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return HandlebarsIcons.Elements.OpenBlock;
   }
 }

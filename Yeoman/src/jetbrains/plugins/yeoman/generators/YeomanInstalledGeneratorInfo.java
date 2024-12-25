@@ -10,20 +10,16 @@ import java.io.File;
 
 public class YeomanInstalledGeneratorInfo implements YeomanGeneratorInfo {
 
-  @NotNull
-  private final String myName;
+  private final @NotNull String myName;
 
-  @NotNull
-  private final String myFilePath;
+  private final @NotNull String myFilePath;
   private final boolean myIsGlobal;
 
-  @Nullable
-  public YeomanGeneratorFullInfo getFullInfo() {
+  public @Nullable YeomanGeneratorFullInfo getFullInfo() {
     return myFullInfo;
   }
 
-  @Nullable
-  private YeomanGeneratorFullInfo myFullInfo;
+  private @Nullable YeomanGeneratorFullInfo myFullInfo;
 
   public YeomanInstalledGeneratorInfo(VirtualFile file) {
     myName = file.getNameWithoutExtension();
@@ -39,20 +35,17 @@ public class YeomanInstalledGeneratorInfo implements YeomanGeneratorInfo {
   }
 
 
-  @NotNull
   @Override
-  public String getYoName() {
+  public @NotNull String getYoName() {
     return YeomanGeneratorInfo.Util.getYoName(myName);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @NotNull
-  public String getFilePath() {
+  public @NotNull String getFilePath() {
     return myFilePath;
   }
 

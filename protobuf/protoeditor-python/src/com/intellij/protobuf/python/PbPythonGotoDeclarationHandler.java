@@ -83,8 +83,7 @@ public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHand
     return results;
   }
 
-  @Nullable
-  private static PbFile findSourceOfGeneratedPy(PyFile file) {
+  private static @Nullable PbFile findSourceOfGeneratedPy(PyFile file) {
     return ProtoFromSourceComments.findProtoOfGeneratedCode("#", file);
   }
 

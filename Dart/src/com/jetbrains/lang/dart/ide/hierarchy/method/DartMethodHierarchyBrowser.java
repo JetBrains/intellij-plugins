@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.ide.IdeBundle;
@@ -29,9 +29,8 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
     super(project, target);
   }
 
-  @Nullable
   @Override
-  protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
+  protected @Nullable PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
     if (descriptor instanceof DartMethodHierarchyNodeDescriptor) {
       return descriptor.getPsiElement();
     }
@@ -45,9 +44,8 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
     trees.put(getMethodType(), tree);
   }
 
-  @Nullable
   @Override
-  protected JPanel createLegendPanel() {
+  protected @Nullable JPanel createLegendPanel() {
     return createStandardLegendPanel(IdeBundle.message("hierarchy.legend.method.is.defined.in.class"),
                                      IdeBundle.message("hierarchy.legend.method.defined.in.superclass"),
                                      IdeBundle.message("hierarchy.legend.method.should.be.defined"));
@@ -61,9 +59,8 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
            PsiTreeUtil.getParentOfType(element, DartClass.class) != null;
   }
 
-  @Nullable
   @Override
-  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
+  protected @Nullable HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
     if (!getMethodType().equals(type)) {
       LOG.error("unexpected type: " + type);
       return null;
@@ -71,9 +68,8 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
     return new DartMethodHierarchyTreeStructure(myProject, (DartComponent)psiElement);
   }
 
-  @Nullable
   @Override
-  protected Comparator<NodeDescriptor<?>> getComparator() {
+  protected @Nullable Comparator<NodeDescriptor<?>> getComparator() {
     return null;
   }
 }

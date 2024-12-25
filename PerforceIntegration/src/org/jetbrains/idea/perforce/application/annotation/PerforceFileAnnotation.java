@@ -53,7 +53,7 @@ public class PerforceFileAnnotation extends FileAnnotation {
   public PerforceFileAnnotation(final AnnotationInfo annotationInfo,
                                 final VirtualFile file,
                                 P4Revision[] revisions,
-                                final Project project, @NotNull final P4Connection connection, long revision) {
+                                final Project project, final @NotNull P4Connection connection, long revision) {
     super(project);
     myAnnotationInfo = annotationInfo;
     myRevisions = revisions;
@@ -115,20 +115,17 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return new LineAnnotationAspect[]{REVISION, DATE, CLIENT};
   }
 
-  @Nullable
   @Override
-  public String getToolTip(int lineNumber) {
+  public @Nullable String getToolTip(int lineNumber) {
     return getToolTip(lineNumber, false);
   }
 
-  @Nullable
   @Override
-  public String getHtmlToolTip(int lineNumber) {
+  public @Nullable String getHtmlToolTip(int lineNumber) {
     return getToolTip(lineNumber, true);
   }
 
-  @Nullable
-  private @NlsContexts.Tooltip String getToolTip(int lineNumber, boolean asHtml) {
+  private @Nullable @NlsContexts.Tooltip String getToolTip(int lineNumber, boolean asHtml) {
     P4Revision revision = findRevisionForLine(lineNumber);
     if (revision == null) return null;
 
@@ -142,9 +139,8 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return myAnnotationInfo.getContent();
   }
 
-  @Nullable
   @VisibleForTesting
-  public P4Revision findRevisionForLine(final int lineNumber) {
+  public @Nullable P4Revision findRevisionForLine(final int lineNumber) {
     final long revision = myAnnotationInfo.getRevision(lineNumber);
     if (revision == -1) return null;
     for (P4Revision p4Revision : myRevisions) {
@@ -167,16 +163,14 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return null;
   }
 
-  @Nullable
   @Override
-  public Date getLineDate(int lineNumber) {
+  public @Nullable Date getLineDate(int lineNumber) {
     P4Revision p4Revision = findRevisionForLine(lineNumber);
     return p4Revision == null ? null : p4Revision.getDate();
   }
 
-  @NotNull
   @Override
-  public VcsRevisionNumber getCurrentRevision() {
+  public @NotNull VcsRevisionNumber getCurrentRevision() {
     return new PerforceOnlyRevisionNumber(myRevision);
   }
 
@@ -225,9 +219,8 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return myFile;
   }
 
-  @Nullable
   @Override
-  public LineModificationDetailsProvider getLineModificationDetailsProvider() {
+  public @Nullable LineModificationDetailsProvider getLineModificationDetailsProvider() {
     return DefaultLineModificationDetailsProvider.create(this);
   }
 }

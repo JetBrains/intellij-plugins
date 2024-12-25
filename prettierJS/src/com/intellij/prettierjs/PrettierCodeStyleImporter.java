@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.execution.ExecutionException;
@@ -25,27 +25,23 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
     super(isForInitialImport);
   }
 
-  @NotNull
   @Override
-  protected Configurable createSettingsConfigurable(@NotNull Project project) {
+  protected @NotNull Configurable createSettingsConfigurable(@NotNull Project project) {
     return new PrettierConfigurable(project);
   }
 
-  @NotNull
   @Override
-  protected JSNpmLinterState getStoredState(Project project) {
+  protected @NotNull JSNpmLinterState getStoredState(Project project) {
     return PrettierConfiguration.getInstance(project);
   }
 
-  @NotNull
   @Override
-  protected String getNpmPackageName() {
+  protected @NotNull String getNpmPackageName() {
     return PrettierUtil.PACKAGE_NAME;
   }
 
-  @NotNull
   @Override
-  protected String getToolName() {
+  protected @NotNull String getToolName() {
     @NlsSafe String prettier = "Prettier";
     return prettier;
   }
@@ -55,17 +51,15 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
     return parsedConfig != null;
   }
 
-  @Nullable
   @Override
-  protected PrettierConfig parseConfigFromFile(@NotNull PsiFile configPsi) {
+  protected @Nullable PrettierConfig parseConfigFromFile(@NotNull PsiFile configPsi) {
     return PrettierUtil.parseConfig(configPsi.getProject(), configPsi.getVirtualFile());
   }
 
-  @Nullable
   @Override
-  protected PrettierConfig computeEffectiveConfig(@NotNull PsiFile configPsi,
-                                                  @NotNull NodeJsInterpreter interpreter,
-                                                  @NotNull NodePackage linterPackage) throws ExecutionException {
+  protected @Nullable PrettierConfig computeEffectiveConfig(@NotNull PsiFile configPsi,
+                                                            @NotNull NodeJsInterpreter interpreter,
+                                                            @NotNull NodePackage linterPackage) throws ExecutionException {
     String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
     String convertConfigScriptPath =
       getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
@@ -81,9 +75,8 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
     return PrettierUtil.parseConfigFromJsonText(text);
   }
 
-  @NotNull
   @Override
-  protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull PrettierConfig config) {
+  protected @NotNull ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull PrettierConfig config) {
     if (config.isInstalled(configPsi.getProject())) {
       return ImportResult.alreadyImported();
     }

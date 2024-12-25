@@ -52,7 +52,7 @@ public abstract class JSReferenceEditor extends ComponentWithBrowseButton<JCompo
 
   protected JSReferenceEditor(final String text,
                               @NotNull Project project,
-                              @Nullable final String recentsKey,
+                              final @Nullable String recentsKey,
                               final GlobalSearchScope scope,
                               final @Nullable JavaScriptParserBase.ForceContext typeContext,
                               @Nullable Condition<JSClass> filter,
@@ -121,7 +121,7 @@ public abstract class JSReferenceEditor extends ComponentWithBrowseButton<JCompo
                                          Project project,
                                          GlobalSearchScope scope,
                                          @Nullable JavaScriptParserBase.ForceContext typeContext,
-                                         @Nullable final Condition<JSClass> filter,
+                                         final @Nullable Condition<JSClass> filter,
                                          final boolean needPackages,
                                          @Nullable PsiElement context) {
     final JSFile fragment =
@@ -134,8 +134,7 @@ public abstract class JSReferenceEditor extends ComponentWithBrowseButton<JCompo
       }
 
       @Override
-      @Nullable
-      public Condition<JSClass> getFilter() {
+      public @Nullable Condition<JSClass> getFilter() {
         return filter;
       }
     });
@@ -203,20 +202,20 @@ public abstract class JSReferenceEditor extends ComponentWithBrowseButton<JCompo
 
   public static JSReferenceEditor forClassName(final String text,
                                                final @NotNull Project project,
-                                               @Nullable final String recentsKey,
+                                               final @Nullable String recentsKey,
                                                GlobalSearchScope scope,
                                                final @Nullable JavaScriptParserBase.ForceContext typeContext,
-                                               @Nullable final Condition<JSClass> classFilter,
-                                               @NlsContexts.DialogTitle @NotNull final String chooserTitle) {
+                                               final @Nullable Condition<JSClass> classFilter,
+                                               final @NlsContexts.DialogTitle @NotNull String chooserTitle) {
     return forClassName(text, project, recentsKey, scope, typeContext, classFilter, chooserTitle, null);
   }
 
   public static JSReferenceEditor forClassName(final String text,
                                                final @NotNull Project project,
-                                               @Nullable final String recentsKey,
+                                               final @Nullable String recentsKey,
                                                GlobalSearchScope scope,
                                                final @Nullable JavaScriptParserBase.ForceContext typeContext,
-                                               @Nullable final Condition<JSClass> classFilter,
+                                               final @Nullable Condition<JSClass> classFilter,
                                                @NlsContexts.DialogTitle @NotNull String chooserTitle,
                                                @Nullable PsiElement context) {
     return new JSReferenceEditor(text, project, recentsKey, scope, typeContext, classFilter,

@@ -24,14 +24,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PerforceLoginTicketsListener implements VirtualFileListener {
   // null -> listener disabled
-  @Nullable
-  private static final String ourP4TicketsFile = calculateAndNotify();
+  private static final @Nullable String ourP4TicketsFile = calculateAndNotify();
   private final AtomicReference<String> myLoadedText;
   private final PerforceLoginManager myLoginManager;
   private final ZipAndQueue myZipAndQueue;
 
-  @Nullable
-  private static String calculateAndNotify() {
+  private static @Nullable String calculateAndNotify() {
     String value = calculatePath();
     if (value == null) {
       Notifications.Bus.notify(new Notification(PerforceVcs.getKey().getName(), PerforceBundle.message("login.monitor.failure"),
@@ -52,8 +50,7 @@ public class PerforceLoginTicketsListener implements VirtualFileListener {
    * If this variable is not set, tickets are stored in %USERPROFILE%\p4tickets.txt on Windows
    * and in $HOME/.p4tickets on UNIX.
    */
-  @Nullable
-  private static String calculatePath() {
+  private static @Nullable String calculatePath() {
     String ticketsFilePath = EnvironmentUtil.getValue(P4ConfigFields.P4TICKETS);
     if (!StringUtil.isEmptyOrSpaces(ticketsFilePath)) return ticketsFilePath;
 

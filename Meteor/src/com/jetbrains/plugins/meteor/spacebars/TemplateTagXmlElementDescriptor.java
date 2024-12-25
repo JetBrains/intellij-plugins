@@ -65,15 +65,13 @@ public class TemplateTagXmlElementDescriptor implements XmlElementDescriptor {
     return new XmlAttributeDescriptor[]{new MeteorTemplateNameAttributeDescriptor()};
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
     return getAttributeDescriptor(attribute.getName(), attribute.getParent());
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(final @NonNls String attributeName, @Nullable XmlTag context) {
     return MeteorTemplateIndex.NAME_ATTRIBUTE.equals(attributeName) ? new MeteorTemplateNameAttributeDescriptor() : null;
   }
 
@@ -82,9 +80,8 @@ public class TemplateTagXmlElementDescriptor implements XmlElementDescriptor {
     return null;
   }
 
-  @Nullable
   @Override
-  public XmlElementsGroup getTopGroup() {
+  public @Nullable XmlElementsGroup getTopGroup() {
     return null;
   }
 
@@ -93,9 +90,8 @@ public class TemplateTagXmlElementDescriptor implements XmlElementDescriptor {
     return CONTENT_TYPE_ANY;
   }
 
-  @Nullable
   @Override
-  public String getDefaultValue() {
+  public @Nullable String getDefaultValue() {
     return null;
   }
 

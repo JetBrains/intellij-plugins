@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
@@ -36,16 +37,16 @@ public interface DartClass extends DartComponent {
   List<DartComponent> getConstructors();
 
   @Nullable
-  DartComponent findFieldByName(@NotNull final String name);
+  DartComponent findFieldByName(final @NotNull String name);
 
   @Nullable
-  DartComponent findMethodByName(@NotNull final String name);
+  DartComponent findMethodByName(final @NotNull String name);
 
   @Nullable
-  DartComponent findMemberByName(@NotNull final String name);
+  DartComponent findMemberByName(final @NotNull String name);
 
   @NotNull
-  List<DartComponent> findMembersByName(@NotNull final String name);
+  List<DartComponent> findMembersByName(final @NotNull String name);
 
   @Nullable
   DartTypeParameters getTypeParameters();

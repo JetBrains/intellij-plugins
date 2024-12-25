@@ -16,10 +16,10 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.protobuf.lang.psi.PbImportStatement;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbImportStatementMixin extends PbStatementBase implements PbImportStatement {
@@ -31,9 +31,8 @@ abstract class PbImportStatementMixin extends PbStatementBase implements PbImpor
     super(node);
   }
 
-  @Nullable
   @Override
-  public PsiElement getImportLabel() {
+  public @Nullable PsiElement getImportLabel() {
     ASTNode node = getNode().findChildByType(IMPORT_LABELS);
     return node == null ? null : node.getPsi();
   }

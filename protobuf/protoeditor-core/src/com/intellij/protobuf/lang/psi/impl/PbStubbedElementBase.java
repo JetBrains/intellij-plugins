@@ -18,12 +18,12 @@ package com.intellij.protobuf.lang.psi.impl;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.stub.PbElementStub;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 
 abstract class PbStubbedElementBase<T extends PbElementStub<?>> extends StubBasedPsiElementBase<T>
@@ -51,9 +51,8 @@ abstract class PbStubbedElementBase<T extends PbElementStub<?>> extends StubBase
     return override != null ? override : super.getParent();
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     PsiElement override = getNavigationElementOverride();
     return override != null ? override : super.getNavigationElement();
   }

@@ -16,12 +16,12 @@
 package com.intellij.protobuf.lang.psi.util;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.descriptor.Descriptor;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.descriptor.Descriptor;
-import com.intellij.protobuf.lang.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,8 +82,7 @@ public final class PbPsiUtil {
   }
 
   /** Returns the descriptor option with the given name if it exists, or else <code>null</code>. */
-  @Nullable
-  public static PbOptionExpression getDescriptorOption(PbOptionOwner owner, String name) {
+  public static @Nullable PbOptionExpression getDescriptorOption(PbOptionOwner owner, String name) {
     Descriptor descriptor = Descriptor.locate(owner.getPbFile());
     if (descriptor == null) {
       return null;
@@ -108,8 +107,7 @@ public final class PbPsiUtil {
    *     Boolean#FALSE} if the option is set to any other value, or <code>null</code> if the option
    *     is not set.
    */
-  @Nullable
-  public static Boolean getBooleanDescriptorOption(PbOptionOwner owner, String optionName) {
+  public static @Nullable Boolean getBooleanDescriptorOption(PbOptionOwner owner, String optionName) {
     PbOptionExpression option = getDescriptorOption(owner, optionName);
     if (option == null) {
       return null;
@@ -167,8 +165,7 @@ public final class PbPsiUtil {
    * @param element The child element
    * @return The symbol owner parent
    */
-  @Nullable
-  public static PbSymbolOwner getSymbolOwner(PsiElement element) {
+  public static @Nullable PbSymbolOwner getSymbolOwner(PsiElement element) {
     PbSymbolOwner owner = PsiTreeUtil.getParentOfType(element, PbSymbolOwner.class);
     // If the parent is the file, we possibly need to artificially return
     // the most-qualified package name element as the symbol parent by delegating to
@@ -179,8 +176,7 @@ public final class PbPsiUtil {
     return owner;
   }
 
-  @Nullable
-  public static <T> T resolveRefToType(PsiReference ref, Class<T> type) {
+  public static @Nullable <T> T resolveRefToType(PsiReference ref, Class<T> type) {
     return streamRefToType(ref, type).findFirst().orElse(null);
   }
 

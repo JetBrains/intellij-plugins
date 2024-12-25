@@ -43,9 +43,8 @@ public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     return PbIdeBundle.message("plugin.name");
   }
 
-  @NotNull
   @Override
-  public CodeStyleConfigurable createConfigurable(
+  public @NotNull CodeStyleConfigurable createConfigurable(
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("plugin.name")) {
       @Override
@@ -53,9 +52,8 @@ public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
         return new ProtoCodeStyleMainPanel(getCurrentSettings(), settings);
       }
 
-      @Nullable
       @Override
-      public String getHelpTopic() {
+      public @Nullable String getHelpTopic() {
         return null;
       }
     };

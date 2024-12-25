@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.sdk;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -31,8 +32,7 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
   public static JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>> createSdkPropertiesSerializer() {
     return new JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>>(ID, INSTANCE) {
       @Override
-      @NotNull
-      public JpsSimpleElement<JpsFlexmojosSdkProperties> loadProperties(@Nullable final Element propertiesElement) {
+      public @NotNull JpsSimpleElement<JpsFlexmojosSdkProperties> loadProperties(final @Nullable Element propertiesElement) {
         final Collection<String> flexCompilerClasspath = new ArrayList<>();
         String adlPath = "";
         String airRuntimePath = "";

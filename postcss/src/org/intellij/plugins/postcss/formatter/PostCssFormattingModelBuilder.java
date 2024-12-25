@@ -69,9 +69,8 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
       super(_node, extension);
     }
 
-    @Nullable
     @Override
-    public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
+    public @Nullable Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
       if (child1 instanceof ASTBlock && child2 instanceof ASTBlock) {
         ASTNode node1 = ((ASTBlock)child1).getNode();
         ASTNode node2 = ((ASTBlock)child2).getNode();
@@ -90,9 +89,8 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
       super(node, Indent.getNoneIndent(), extension);
     }
 
-    @Nullable
     @Override
-    public Spacing getSpacing(Block child1, @NotNull Block child2) {
+    public @Nullable Spacing getSpacing(Block child1, @NotNull Block child2) {
       if (child1 instanceof ASTBlock && child2 instanceof ASTBlock) {
         if (isPostCssSimpleVar(((ASTBlock)child1).getNode()) || isPostCssSimpleVar(((ASTBlock)child2).getNode())) {
           return Spacing.createSpacing(0, 1, 0, true, getKeepBlankLines());
@@ -111,9 +109,8 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
       super(_node, indent, extension, alignment, childAlignment);
     }
 
-    @Nullable
     @Override
-    public Spacing getSpacing(Block child1, @NotNull Block child2) {
+    public @Nullable Spacing getSpacing(Block child1, @NotNull Block child2) {
       if (child1 instanceof ASTBlock && child2 instanceof ASTBlock) {
         if (isPostCssSimpleVar(((ASTBlock)child1).getNode()) || isPostCssSimpleVar(((ASTBlock)child2).getNode())) {
           return Spacing.createSpacing(0, 1, 0, true, getKeepBlankLines());

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.base;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -31,8 +31,7 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
   }
 
   @Override
-  @NotNull
-  public abstract DartCommandLineRunnerParameters getRunnerParameters();
+  public abstract @NotNull DartCommandLineRunnerParameters getRunnerParameters();
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
@@ -40,20 +39,19 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
   }
 
   @Override
-  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
+  public void writeExternal(final @NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(getRunnerParameters(), element, new SkipDefaultValuesSerializationFilters());
   }
 
   @Override
-  public void readExternal(@NotNull final Element element) throws InvalidDataException {
+  public void readExternal(final @NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(getRunnerParameters(), element);
   }
 
-  @Nullable
   @Override
-  public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
+  public @Nullable RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
     if (!(element instanceof PsiFileSystemItem)) return null;
 
     final String filePath = getRunnerParameters().getFilePath();
@@ -96,7 +94,7 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
     }
 
     @Override
-    protected void refactored(@NotNull final PsiElement element, @Nullable final String oldQualifiedName) {
+    protected void refactored(final @NotNull PsiElement element, final @Nullable String oldQualifiedName) {
       final boolean generatedName = getName().equals(suggestedName());
       final String filePath = getRunnerParameters().getFilePath();
       final boolean updateWorkingDir = filePath != null &&

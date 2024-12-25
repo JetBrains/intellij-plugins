@@ -45,9 +45,8 @@ abstract class PbGroupDefinitionMixin extends PbStubbedSymbolOwnerBase<PbGroupDe
     super(stub, nodeType);
   }
 
-  @NotNull
   @Override
-  public List<PbSymbol> getAdditionalSiblings() {
+  public @NotNull List<PbSymbol> getAdditionalSiblings() {
     PbSimpleField generatedField = getGeneratedField();
     if (generatedField != null) {
       return Collections.singletonList(generatedField);
@@ -55,15 +54,13 @@ abstract class PbGroupDefinitionMixin extends PbStubbedSymbolOwnerBase<PbGroupDe
     return Collections.emptyList();
   }
 
-  @Nullable
   @Override
-  public PbSimpleField getGeneratedField() {
+  public @Nullable PbSimpleField getGeneratedField() {
     return CachedValuesManager.getCachedValue(
         this, () -> Result.create(generateField(), PbCompositeModificationTracker.byElement(this)));
   }
 
-  @Nullable
-  private PbSimpleField generateField() {
+  private @Nullable PbSimpleField generateField() {
     String name = getName();
     PbNumberValue number = getFieldNumber();
     Long numberValue = number != null ? number.getLongValue() : null;
@@ -106,21 +103,18 @@ abstract class PbGroupDefinitionMixin extends PbStubbedSymbolOwnerBase<PbGroupDe
       }
     }
 
-    @Nullable
     @Override
-    public PbFieldLabel getDeclaredLabel() {
+    public @Nullable PbFieldLabel getDeclaredLabel() {
       return PbGroupDefinitionMixin.this.getDeclaredLabel();
     }
 
-    @Nullable
     @Override
-    public PbNumberValue getFieldNumber() {
+    public @Nullable PbNumberValue getFieldNumber() {
       return PbGroupDefinitionMixin.this.getFieldNumber();
     }
 
-    @NotNull
     @Override
-    public List<PbOptionExpression> getOptions() {
+    public @NotNull List<PbOptionExpression> getOptions() {
       // Return the group's option list.
       PbGroupOptionContainer optionContainer = getGroupOptionContainer();
       if (optionContainer == null) {

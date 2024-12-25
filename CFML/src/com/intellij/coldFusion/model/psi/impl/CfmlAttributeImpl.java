@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
@@ -24,8 +24,7 @@ public class CfmlAttributeImpl extends CfmlCompositeElement implements CfmlAttri
     return getAttributeName();
   }
 
-  @Nullable
-  public PsiElement getValueElement() {
+  public @Nullable PsiElement getValueElement() {
     return findChildByType(CfmlElementTypes.ATTRIBUTE_VALUE);
   }
 
@@ -42,8 +41,7 @@ public class CfmlAttributeImpl extends CfmlCompositeElement implements CfmlAttri
   }
 
   @Override
-  @Nullable
-  public String getPureAttributeValue() {
+  public @Nullable String getPureAttributeValue() {
     PsiElement element = getValueElement();
     if (element != null) {
       final PsiElement[] children = element.getChildren();

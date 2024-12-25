@@ -24,7 +24,7 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 
 class DartPackageAwareFileReference extends FileReference {
-  @NotNull private final DartUrlResolver myDartResolver;
+  private final @NotNull DartUrlResolver myDartResolver;
 
   DartPackageAwareFileReference(@NotNull FileReferenceSet fileReferenceSet,
                                 TextRange range,
@@ -36,7 +36,7 @@ class DartPackageAwareFileReference extends FileReference {
   }
 
   @Override
-  protected ResolveResult @NotNull [] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
+  protected ResolveResult @NotNull [] innerResolve(final boolean caseSensitive, final @NotNull PsiFile containingFile) {
     if (PACKAGES_FOLDER_NAME.equals(getText())) {
       final VirtualFile pubspecYamlFile = myDartResolver.getPubspecYamlFile();
       final VirtualFile packagesDir = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(PACKAGES_FOLDER_NAME);
@@ -110,7 +110,7 @@ class DartPackageAwareFileReference extends FileReference {
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull final PsiElement element, final boolean absolute) throws IncorrectOperationException {
+  public PsiElement bindToElement(final @NotNull PsiElement element, final boolean absolute) throws IncorrectOperationException {
     final String path = getFileReferenceSet().getPathString();
 
     if (path.startsWith(PACKAGES_FOLDER_NAME + "/") || path.contains("/" + PACKAGES_FOLDER_NAME + "/")) {

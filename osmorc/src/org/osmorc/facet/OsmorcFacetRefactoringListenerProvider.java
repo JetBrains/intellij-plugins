@@ -38,8 +38,7 @@ import org.jetbrains.annotations.Nullable;
  */
 final class OsmorcFacetRefactoringListenerProvider implements RefactoringElementListenerProvider {
   @Override
-  @Nullable
-  public RefactoringElementListener getListener(final PsiElement element) {
+  public @Nullable RefactoringElementListener getListener(final PsiElement element) {
     if (element instanceof PsiClass) {
       OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(element);
       if (osmorcFacet != null) {
@@ -64,12 +63,12 @@ final class OsmorcFacetRefactoringListenerProvider implements RefactoringElement
     }
 
     @Override
-    public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
+    public void elementRenamedOrMoved(final @NotNull PsiElement newElement) {
       ApplicationManager.getApplication().runWriteAction(() -> osmorcFacetConfiguration.setBundleActivator(((PsiClass)newElement).getQualifiedName()));
     }
 
     @Override
-    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull final String oldQualifiedName) {
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, final @NotNull String oldQualifiedName) {
       ApplicationManager.getApplication().runWriteAction(() -> osmorcFacetConfiguration.setBundleActivator(oldQualifiedName));
     }
   }

@@ -19,23 +19,19 @@ public final class BowerSettings {
     myBowerJsonPath = FileUtil.toSystemIndependentName(builder.myBowerJsonPath);
   }
 
-  @Nullable
-  public NodeJsInterpreter getInterpreter() {
+  public @Nullable NodeJsInterpreter getInterpreter() {
     return NodeJsInterpreterManager.getInstance(myProject).getInterpreter();
   }
 
-  @NotNull
-  public NodePackage getBowerPackage() {
+  public @NotNull NodePackage getBowerPackage() {
     return myBowerPackage;
   }
 
-  @NotNull
-  public String getBowerJsonPath() {
+  public @NotNull String getBowerJsonPath() {
     return myBowerJsonPath;
   }
 
-  @NotNull
-  public Builder createBuilder() {
+  public @NotNull Builder createBuilder() {
     Builder builder = new Builder(myProject);
     builder.setBowerPackage(myBowerPackage);
     builder.setBowerJsonPath(myBowerJsonPath);
@@ -75,20 +71,17 @@ public final class BowerSettings {
       myProject = project;
     }
 
-    @NotNull
-    public Builder setBowerPackage(@NotNull NodePackage bowerPackage) {
+    public @NotNull Builder setBowerPackage(@NotNull NodePackage bowerPackage) {
       myBowerPackage = bowerPackage;
       return this;
     }
 
-    @NotNull
-    public Builder setBowerJsonPath(@NotNull String bowerJsonPath) {
+    public @NotNull Builder setBowerJsonPath(@NotNull String bowerJsonPath) {
       myBowerJsonPath = bowerJsonPath;
       return this;
     }
 
-    @NotNull
-    public BowerSettings build() {
+    public @NotNull BowerSettings build() {
       return new BowerSettings(this);
     }
   }

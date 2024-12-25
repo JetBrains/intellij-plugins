@@ -23,10 +23,10 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionProblemsNotifier;
 
 public class AuthNotifier {
-  @NonNls public static final String INSPECT = "inspect";
-  @NonNls public static final String FIX = "fix";
-  @NonNls public static final String RETRY = "retry";
-  @NonNls public static final String OFFLINE = "offline";
+  public static final @NonNls String INSPECT = "inspect";
+  public static final @NonNls String FIX = "fix";
+  public static final @NonNls String RETRY = "retry";
+  public static final @NonNls String OFFLINE = "offline";
 
   private final Project myProject;
   private final PerforceSettings mySettings;
@@ -44,7 +44,7 @@ public class AuthNotifier {
   private static final class MyPasswordNotifier extends GenericNotifierImpl<P4Connection, ConnectionId> {
     private final PerforceLoginManager myLoginManager;
 
-    public MyPasswordNotifier(@NotNull final Project project, @NotNull final PerforceLoginManager loginManager) {
+    public MyPasswordNotifier(final @NotNull Project project, final @NotNull PerforceLoginManager loginManager) {
       super(project, PerforceVcs.NAME, PerforceBundle.message("login.password.expired.title"), NotificationType.ERROR);
       myLoginManager = loginManager;
     }
@@ -66,9 +66,8 @@ public class AuthNotifier {
       return null;
     }
 
-    @NotNull
     @Override
-    protected @NlsContexts.NotificationContent String getNotificationContent(P4Connection connection) {
+    protected @NotNull @NlsContexts.NotificationContent String getNotificationContent(P4Connection connection) {
       HtmlBuilder builder = new HtmlBuilder();
       builder.append(
         HtmlChunk.raw(PerforceBundle.message("login.password.expired", connection.getWorkingDirectory()))
@@ -89,10 +88,8 @@ public class AuthNotifier {
       myLoginManager = loginManager;
     }
 
-    @NotNull
     @Override
-    @NlsContexts.NotificationContent
-    protected String getNotificationContent(@NotNull P4Connection connection) {
+    protected @NotNull @NlsContexts.NotificationContent String getNotificationContent(@NotNull P4Connection connection) {
       HtmlBuilder builder = new HtmlBuilder();
       builder.append(
         HtmlChunk.raw(PerforceBundle.message("login.error.notification", connection.getWorkingDirectory()))
@@ -119,9 +116,8 @@ public class AuthNotifier {
       return false;
     }
 
-    @NotNull
     @Override
-    protected ConnectionId getKey(final P4Connection obj) {
+    protected @NotNull ConnectionId getKey(final P4Connection obj) {
       return obj.getId();
     }
 

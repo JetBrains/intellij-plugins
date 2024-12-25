@@ -17,13 +17,13 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.protobuf.lang.psi.PbNamedElement;
+import com.intellij.protobuf.lang.psi.PbSymbolOwner;
+import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.protobuf.lang.psi.PbNamedElement;
-import com.intellij.protobuf.lang.psi.PbSymbolOwner;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,21 +36,18 @@ abstract class PbNamedElementBase extends PbStatementBase implements PbNamedElem
     super(node);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getQualifiedName() {
+  public @Nullable QualifiedName getQualifiedName() {
     return PbPsiImplUtil.getQualifiedName(this);
   }
 
-  @Nullable
   @Override
-  public PbSymbolOwner getSymbolOwner() {
+  public @Nullable PbSymbolOwner getSymbolOwner() {
     return PbPsiImplUtil.getSymbolOwner(this);
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     PsiElement name = getNameIdentifier();
     if (name != null) {
       return name.getText();
@@ -79,8 +76,7 @@ abstract class PbNamedElementBase extends PbStatementBase implements PbNamedElem
   }
 
   @Override
-  @Nullable
-  public ItemPresentation getPresentation() {
+  public @Nullable ItemPresentation getPresentation() {
     PbNamedElement element = this;
     return new ItemPresentation() {
 
@@ -89,9 +85,8 @@ abstract class PbNamedElementBase extends PbStatementBase implements PbNamedElem
         return element.getPresentableText();
       }
 
-      @Nullable
       @Override
-      public String getLocationString() {
+      public @Nullable String getLocationString() {
         PbSymbolOwner owner = getSymbolOwner();
         if (owner != null) {
           QualifiedName qualifiedName = owner.getChildScope();

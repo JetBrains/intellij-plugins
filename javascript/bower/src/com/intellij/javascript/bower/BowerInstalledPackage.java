@@ -13,8 +13,7 @@ public class BowerInstalledPackage extends InstalledPackage {
     myLatestVersion = latestVersion;
   }
 
-  @Nullable
-  public String getLatestVersion() {
+  public @Nullable String getLatestVersion() {
     return myLatestVersion;
   }
 

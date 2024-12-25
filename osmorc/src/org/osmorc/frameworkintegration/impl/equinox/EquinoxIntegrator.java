@@ -40,15 +40,13 @@ public final class EquinoxIntegrator extends AbstractFrameworkIntegrator {
     super(new EquinoxInstanceManager(), new EquinoxOsgiRunConfigurationChecker());
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
-  @NotNull
   @Override
-  public FrameworkRunner createFrameworkRunner() {
+  public @NotNull FrameworkRunner createFrameworkRunner() {
     return new EquinoxRunner();
   }
 

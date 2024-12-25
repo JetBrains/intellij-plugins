@@ -16,10 +16,10 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.SchemaInfo;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbAggregateValueMixin extends PbElementBase implements PbAggregateValue {
@@ -28,9 +28,8 @@ abstract class PbAggregateValueMixin extends PbElementBase implements PbAggregat
     super(node);
   }
 
-  @Nullable
   @Override
-  public SchemaInfo getSchemaInfo() {
+  public @Nullable SchemaInfo getSchemaInfo() {
     // Find the containing OptionExpression.
     PbFile pbFile = getPbFile();
     PbOptionExpression optionExpression =

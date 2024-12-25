@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -34,9 +34,8 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
     return this;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     StringBuilder name = new StringBuilder();
     for (DartId id : PsiTreeUtil.getChildrenOfTypeAsList(this, DartId.class)) {
       if (!name.isEmpty()) {
@@ -48,8 +47,7 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
   }
 
   @Override
-  @Nullable
-  public ItemPresentation getPresentation() {
+  public @Nullable ItemPresentation getPresentation() {
     return new ItemPresentation() {
       @Override
       public String getPresentableText() {

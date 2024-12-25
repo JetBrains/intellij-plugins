@@ -30,9 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * Gauge specification (.spec) file.
  */
 final class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new SpecLexer();
   }
 

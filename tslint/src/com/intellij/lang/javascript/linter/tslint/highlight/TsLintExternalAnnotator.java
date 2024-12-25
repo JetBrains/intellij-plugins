@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -50,8 +50,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   private static final TsLintExternalAnnotator INSTANCE_FOR_BATCH_INSPECTION = new TsLintExternalAnnotator(false);
 
-  @NotNull
-  public static TsLintExternalAnnotator getInstanceForBatchInspection() {
+  public static @NotNull TsLintExternalAnnotator getInstanceForBatchInspection() {
     return INSTANCE_FOR_BATCH_INSPECTION;
   }
 
@@ -88,11 +87,10 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     return holder != null && holder.isTypeScript;
   }
 
-  @Nullable
   @Override
-  protected TsLinterInput createInfo(@NotNull PsiFile psiFile,
-                                     TsLintState state,
-                                     EditorColorsScheme colorsScheme) {
+  protected @Nullable TsLinterInput createInfo(@NotNull PsiFile psiFile,
+                                               TsLintState state,
+                                               EditorColorsScheme colorsScheme) {
     VirtualFile config = TslintUtil.getConfig(state, psiFile.getProject(), psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
@@ -103,16 +101,14 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   }
 
 
-  @Nullable
   @Override
-  public JSLinterAnnotationResult annotate(@NotNull TsLinterInput collectedInfo) {
+  public @Nullable JSLinterAnnotationResult annotate(@NotNull TsLinterInput collectedInfo) {
     return TslintLanguageServiceManager.getInstance(collectedInfo.getProject())
       .useService(collectedInfo.getVirtualFile(), collectedInfo.getState().getNodePackageRef(),
                   service -> annotateWithService(collectedInfo, service));
   }
 
-  @Nullable
-  private static JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
+  private static @Nullable JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
     VirtualFile config = collectedInfo.getConfig();
     final Project project = collectedInfo.getProject();
     final TsLintState linterState = collectedInfo.getState();
@@ -155,10 +151,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     });
   }
 
-  @NotNull
-  private static JSLinterAnnotationResult createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
-                                                                   @Nullable VirtualFile config,
-                                                                   @NotNull @InspectionMessage String error) {
+  private static @NotNull JSLinterAnnotationResult createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
+                                                                            @Nullable VirtualFile config,
+                                                                            @NotNull @InspectionMessage String error) {
     final ProcessOutput output = new ProcessOutput();
     output.appendStderr(error);
     final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),

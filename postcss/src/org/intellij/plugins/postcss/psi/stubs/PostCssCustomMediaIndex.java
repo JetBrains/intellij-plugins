@@ -14,13 +14,12 @@ import java.util.Collection;
 public class PostCssCustomMediaIndex extends StringStubIndexExtension<PostCssCustomMedia> {
   public static final StubIndexKey<String, PostCssCustomMedia> KEY = StubIndexKey.createIndexKey("postcss.custom.media");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, PostCssCustomMedia> getKey() {
+  public @NotNull StubIndexKey<String, PostCssCustomMedia> getKey() {
     return KEY;
   }
 
-  public static Collection<PostCssCustomMedia> getCustomMediaFeatures(@NotNull final String name, @NotNull final PsiElement context) {
+  public static Collection<PostCssCustomMedia> getCustomMediaFeatures(final @NotNull String name, final @NotNull PsiElement context) {
     GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(context);
     return StubIndex.getElements(KEY, name, context.getProject(), scope, PostCssCustomMedia.class);
   }

@@ -64,8 +64,7 @@ public final class ProjectSettings implements PersistentStateComponent<ProjectSe
    * @param project the project for which the output path should be returned
    * @return the output path.
    */
-  @NotNull
-  public static String getDefaultBundlesOutputPath(Project project) {
+  public static @NotNull String getDefaultBundlesOutputPath(Project project) {
     CompilerProjectExtension instance = CompilerProjectExtension.getInstance(project);
     if (instance != null) {
       final VirtualFilePointer compilerOutput = instance.getCompilerOutputPointer();
@@ -90,8 +89,7 @@ public final class ProjectSettings implements PersistentStateComponent<ProjectSe
   /**
    * The project wide bundle output path. All compiled bundles will be put in this path. This can be overridden by facet settings.
    */
-  @Nullable
-  public String getBundlesOutputPath() {
+  public @Nullable String getBundlesOutputPath() {
     return myBundlesOutputPath;
   }
 
@@ -102,8 +100,7 @@ public final class ProjectSettings implements PersistentStateComponent<ProjectSe
   /**
    * The name of the framework instance that should be used for this project.
    */
-  @Nullable
-  public String getFrameworkInstanceName() {
+  public @Nullable String getFrameworkInstanceName() {
     return myFrameworkInstanceName;
   }
 
@@ -130,9 +127,8 @@ public final class ProjectSettings implements PersistentStateComponent<ProjectSe
     myBndAutoImport = bndAutoImport;
   }
 
-  @NotNull
   @Override
-  public ProjectSettings getState() {
+  public @NotNull ProjectSettings getState() {
     return this;
   }
 

@@ -16,9 +16,9 @@
 package com.intellij.protobuf.lang.resolve.directive;
 
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
-import com.intellij.protobuf.lang.PbTextLanguage;
 import org.jetbrains.annotations.NotNull;
 
 /** A reference contributor that provides references for directive comments. */
@@ -29,9 +29,8 @@ public class SchemaDirectiveReferenceContributor extends PsiReferenceContributor
     registrar.registerReferenceProvider(
         PlatformPatterns.psiComment().withLanguage(PbTextLanguage.INSTANCE),
         new PsiReferenceProvider() {
-          @NotNull
           @Override
-          public PsiReference[] getReferencesByElement(
+          public @NotNull PsiReference[] getReferencesByElement(
               @NotNull PsiElement element, @NotNull ProcessingContext context) {
             return getReferencesFromComment((PsiComment) element);
           }

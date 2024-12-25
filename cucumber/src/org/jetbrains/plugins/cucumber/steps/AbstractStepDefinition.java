@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -36,7 +36,7 @@ public abstract class AbstractStepDefinition {
 
   private volatile Pattern myRegex;
 
-  public AbstractStepDefinition(@NotNull final PsiElement element) {
+  public AbstractStepDefinition(final @NotNull PsiElement element) {
     myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
   }
 
@@ -57,16 +57,14 @@ public abstract class AbstractStepDefinition {
     }
   }
 
-  @Nullable
-  public PsiElement getElement() {
+  public @Nullable PsiElement getElement() {
     return myElementPointer.getElement();
   }
 
   /**
    * @return regexp pattern for step or null if regexp is malformed
    */
-  @Nullable
-  public Pattern getPattern() {
+  public @Nullable Pattern getPattern() {
     try {
       final String cucumberRegex = getCucumberRegex();
       if (cucumberRegex == null) return null;
@@ -90,14 +88,12 @@ public abstract class AbstractStepDefinition {
     }
   }
 
-  @Nullable
-  public String getCucumberRegex() {
+  public @Nullable String getCucumberRegex() {
     return getExpression();
   }
 
-  @Nullable
   @Contract("null -> null")
-  protected abstract String getCucumberRegexFromElement(PsiElement element);
+  protected abstract @Nullable String getCucumberRegexFromElement(PsiElement element);
   
   protected boolean isCaseSensitive() {
     return true;
@@ -123,7 +119,7 @@ public abstract class AbstractStepDefinition {
   /**
    * Set new value for step definitions (most likely provided by refactor->rename)
    */
-  public void setCucumberRegex(@NotNull final String newValue) {
+  public void setCucumberRegex(final @NotNull String newValue) {
   }
 
   /**
@@ -132,7 +128,7 @@ public abstract class AbstractStepDefinition {
    * @param step Step to check
    * @return true if supports.
    */
-  public boolean supportsStep(@NotNull final PsiElement step) {
+  public boolean supportsStep(final @NotNull PsiElement step) {
     return true;
   }
 
@@ -142,7 +138,7 @@ public abstract class AbstractStepDefinition {
    *                If not null -- check if it can be renamed to the new (provided) name.
    * @return true if rename is supported
    */
-  public boolean supportsRename(@Nullable final String newName) {
+  public boolean supportsRename(final @Nullable String newName) {
     return true;
   }
 
@@ -152,8 +148,7 @@ public abstract class AbstractStepDefinition {
    * @param searchScope scope to find steps
    * @return steps
    */
-  @NotNull
-  public Collection<GherkinStep> findSteps(@NotNull final SearchScope searchScope) {
+  public @NotNull Collection<GherkinStep> findSteps(final @NotNull SearchScope searchScope) {
     final String regex = getCucumberRegex();
     final PsiElement element = getElement();
     if ((regex == null) || (element == null)) {

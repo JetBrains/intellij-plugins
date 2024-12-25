@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.annotator;
 
 import com.intellij.lang.ASTNode;
@@ -8,7 +9,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
@@ -33,7 +33,7 @@ import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReferen
 public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
   private final AnnotationHolder myHolder;
 
-  public GherkinAnnotatorVisitor(@NotNull final AnnotationHolder holder) {
+  public GherkinAnnotatorVisitor(final @NotNull AnnotationHolder holder) {
     myHolder = holder;
   }
 
@@ -47,7 +47,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
   }
 
   @Override
-  public void visitElement(@NotNull final PsiElement element) {
+  public void visitElement(final @NotNull PsiElement element) {
     ProgressManager.checkCanceled();
     super.visitElement(element);
 
@@ -124,7 +124,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     }
   }
 
-  private void highlightOutlineParams(@NotNull final GherkinStep step, @NotNull final CucumberStepReference reference) {
+  private void highlightOutlineParams(final @NotNull GherkinStep step, final @NotNull CucumberStepReference reference) {
     final List<String> realSubstitutions = getRealSubstitutions(step);
     if (realSubstitutions != null && !realSubstitutions.isEmpty()) {
       // regexp for searching outline parameters substitutions
@@ -183,8 +183,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     }
   }
 
-  @Nullable
-  private static List<String> getRealSubstitutions(@NotNull final GherkinStep step) {
+  private static @Nullable List<String> getRealSubstitutions(final @NotNull GherkinStep step) {
     final List<String> possibleSubstitutions = step.getParamsSubstitutions();
     if (!possibleSubstitutions.isEmpty()) {
       // get step definition

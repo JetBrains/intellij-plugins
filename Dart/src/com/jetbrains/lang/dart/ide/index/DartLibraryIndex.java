@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.application.ReadAction;
@@ -37,9 +37,8 @@ public final class DartLibraryIndex extends ScalarIndexExtension<String> {
 
   private final DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
-  @NotNull
   @Override
-  public ID<String, Void> getName() {
+  public @NotNull ID<String, Void> getName() {
     return DART_LIBRARY_INDEX;
   }
 
@@ -48,21 +47,18 @@ public final class DartLibraryIndex extends ScalarIndexExtension<String> {
     return DartIndexUtil.INDEX_VERSION;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, Void, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, Void, FileContent> getIndexer() {
     return myDataIndexer;
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
@@ -71,28 +67,25 @@ public final class DartLibraryIndex extends ScalarIndexExtension<String> {
     return true;
   }
 
-  public static Collection<VirtualFile> getFilesByLibName(@NotNull final GlobalSearchScope scope, @NotNull final String libraryName) {
+  public static Collection<VirtualFile> getFilesByLibName(final @NotNull GlobalSearchScope scope, final @NotNull String libraryName) {
     return FileBasedIndex.getInstance().getContainingFiles(DART_LIBRARY_INDEX, libraryName, scope);
   }
 
-  @Nullable
-  public static String getSdkLibUriByRelativePath(final @NotNull Project project, final @NotNull String relativePath) {
+  public static @Nullable String getSdkLibUriByRelativePath(final @NotNull Project project, final @NotNull String relativePath) {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     final List<String> libNames = sdk == null ? null
                                               : getSdkLibUriToRelativePathMap(project, sdk.getHomePath()).getKeysByValue(relativePath);
     return libNames == null || libNames.isEmpty() ? null : libNames.get(0);
   }
 
-  @Nullable
-  public static VirtualFile getSdkLibByUri(@NotNull final Project project, @NotNull final String sdkLibUri) {
+  public static @Nullable VirtualFile getSdkLibByUri(final @NotNull Project project, final @NotNull String sdkLibUri) {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     final String relativeLibPath = sdk == null ? null : getSdkLibUriToRelativePathMap(project, sdk.getHomePath()).get(sdkLibUri);
     return relativeLibPath == null ? null : LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/" + relativeLibPath);
   }
 
-  @NotNull
-  public static BidirectionalMap<String, String> getSdkLibUriToRelativePathMap(@NotNull final Project project,
-                                                                               @NotNull final String sdkHomePath) {
+  public static @NotNull BidirectionalMap<String, String> getSdkLibUriToRelativePathMap(final @NotNull Project project,
+                                                                                        final @NotNull String sdkHomePath) {
     VirtualFile librariesDartFile = LocalFileSystem.getInstance().findFileByPath(sdkHomePath + "/lib/_internal/libraries.dart");
     if (librariesDartFile == null) {
       librariesDartFile =
@@ -181,8 +174,7 @@ const Map<String, LibraryInfo> LIBRARIES = const {
 
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
-    @NotNull
-    public Map<String, Void> map(@NotNull final FileContent inputData) {
+    public @NotNull Map<String, Void> map(final @NotNull FileContent inputData) {
       final DartFileIndexData indexData = DartIndexUtil.indexFile(inputData);
 
       return indexData.isPart() || indexData.getLibraryName() == null ? Collections.emptyMap()

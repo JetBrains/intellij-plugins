@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -37,9 +37,8 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
     return getTokenType().toString();
   }
 
-  @NotNull
   @Override
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     // LocalSearchScope enables in-place rename. See DartRefactoringSupportProvider.isInplaceRenameAvailable() and its usages.
     DartComponentType type = DartComponentType.typeOf(this);
     if (type == DartComponentType.LOCAL_VARIABLE) {

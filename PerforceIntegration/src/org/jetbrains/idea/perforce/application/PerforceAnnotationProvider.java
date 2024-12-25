@@ -47,15 +47,13 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     myRunner = PerforceRunner.getInstance(project);
   }
 
-  @NotNull
   @Override
-  public FileAnnotation annotate(@NotNull VirtualFile file) throws VcsException {
+  public @NotNull FileAnnotation annotate(@NotNull VirtualFile file) throws VcsException {
     FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(file);
     return doAnnotate(file, ChangesUtil.getCommittedPath(myProject, filePath), -1);
   }
 
-  @NotNull
-  private FileAnnotation doAnnotate(@NotNull VirtualFile vFile, @NotNull FilePath file, long changeNumber) throws VcsException {
+  private @NotNull FileAnnotation doAnnotate(@NotNull VirtualFile vFile, @NotNull FilePath file, long changeNumber) throws VcsException {
     P4File p4File = P4File.create(file);
     P4Connection connection = PerforceSettings.getSettings(myProject).getConnectionForFile(p4File);
     if (connection == null) {
@@ -65,8 +63,7 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     return doAnnotate(changeNumber, connection, p4File.getEscapedPath()).createAnnotation(vFile);
   }
 
-  @NotNull
-  private AnnotationPrecursor doAnnotate(final long changeNumber, P4Connection connection, @NotNull final String path) throws VcsException {
+  private @NotNull AnnotationPrecursor doAnnotate(final long changeNumber, P4Connection connection, final @NotNull String path) throws VcsException {
     final P4Revision[] fileLog = myRunner.filelog(connection, path, true);
     P4Revision p4Revision = ContainerUtil.find(fileLog, p4Revision1 -> p4Revision1.getChangeNumber() == changeNumber);
     String pathAtRevision = p4Revision == null ? path : p4Revision.getDepotPath();
@@ -80,7 +77,7 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     final AnnotationInfo info;
     final P4Revision[] fileLog;
     final long changeNumber;
-    @Nullable final P4Revision p4Revision;
+    final @Nullable P4Revision p4Revision;
     final P4Connection connection;
 
     AnnotationPrecursor(AnnotationInfo info, P4Revision[] fileLog, long changeNumber, @Nullable P4Revision p4Revision, P4Connection connection) {
@@ -96,17 +93,15 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     }
   }
 
-  @NotNull
   @Override
-  public FileAnnotation annotate(@NotNull VirtualFile file, VcsFileRevision revision) throws VcsException {
+  public @NotNull FileAnnotation annotate(@NotNull VirtualFile file, VcsFileRevision revision) throws VcsException {
     PerforceVcsRevisionNumber number = (PerforceVcsRevisionNumber) revision.getRevisionNumber();
     FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(file);
     return doAnnotate(file, filePath, number.getChangeNumber());
   }
 
-  @NotNull
   @Override
-  public FileAnnotation annotate(@NotNull FilePath path, @NotNull VcsRevisionNumber number) throws VcsException {
+  public @NotNull FileAnnotation annotate(@NotNull FilePath path, @NotNull VcsRevisionNumber number) throws VcsException {
     PerforceSettings settings = PerforceSettings.getSettings(myProject);
     P4Connection connection = settings.getConnectionForFile(path.getIOFile());
     if (connection == null) {

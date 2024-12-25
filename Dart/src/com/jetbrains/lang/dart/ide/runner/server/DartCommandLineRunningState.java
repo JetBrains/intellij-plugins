@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -69,7 +69,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     catch (RuntimeConfigurationError e) { /* can't happen because already checked */}
   }
 
-  public void addObservatoryUrlConsumer(@NotNull final Consumer<String> consumer) {
+  public void addObservatoryUrlConsumer(final @NotNull Consumer<String> consumer) {
     myObservatoryUrlConsumers.add(consumer);
   }
 
@@ -91,9 +91,8 @@ public class DartCommandLineRunningState extends CommandLineState {
     actions.add(openObservatoryAction);
   }
 
-  @NotNull
   @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
+  protected @NotNull ProcessHandler startProcess() throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine();
 
     // Workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
@@ -109,7 +108,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+      public void onTextAvailable(final @NotNull ProcessEvent event, final @NotNull Key outputType) {
         final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
         final String prefix2 = DartConsoleFilter.DART_VM_LISTENING_ON + "http://";
         final String text = event.getText().trim();
@@ -169,8 +168,8 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.setExePath(DartSdkUtil.getDartExePath(sdk));
   }
 
-  private void setupParameters(@NotNull final DartSdk sdk,
-                               @NotNull final GeneralCommandLine commandLine) throws ExecutionException {
+  private void setupParameters(final @NotNull DartSdk sdk,
+                               final @NotNull GeneralCommandLine commandLine) throws ExecutionException {
     int customObservatoryPort = -1;
 
     final String vmOptions = myRunnerParameters.getVMOptions();
@@ -236,7 +235,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
   }
 
-  protected void appendParamsAfterVmOptionsBeforeArgs(@NotNull final GeneralCommandLine commandLine) throws ExecutionException {
+  protected void appendParamsAfterVmOptionsBeforeArgs(final @NotNull GeneralCommandLine commandLine) throws ExecutionException {
     final VirtualFile dartFile;
     try {
       dartFile = myRunnerParameters.getDartFileOrDirectory();
@@ -252,7 +251,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.addParameter(option);
   }
 
-  private static int parseIntBeforeSlash(@NotNull final String s) throws NumberFormatException {
+  private static int parseIntBeforeSlash(final @NotNull String s) throws NumberFormatException {
     // "5858" or "5858/0.0.0.0"
     final int index = s.indexOf('/');
     return Integer.parseInt(index > 0 ? s.substring(0, index) : s);

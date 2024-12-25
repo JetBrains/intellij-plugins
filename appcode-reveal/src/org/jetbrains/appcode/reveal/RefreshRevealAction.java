@@ -29,11 +29,11 @@ import java.io.File;
 public final class RefreshRevealAction extends DumbAwareAction {
   public static final Icon ICON = AppcodeRevealIcons.RunWithReveal;
 
-  @NotNull private final AppCodeRunConfiguration myConfiguration;
-  @NotNull private final ExecutionEnvironment myEnvironment;
-  @NotNull private final ProcessHandler myProcessHandler;
-  @NotNull private final BuildDestination myDestination;
-  @NotNull private final String myBundleID;
+  private final @NotNull AppCodeRunConfiguration myConfiguration;
+  private final @NotNull ExecutionEnvironment myEnvironment;
+  private final @NotNull ProcessHandler myProcessHandler;
+  private final @NotNull BuildDestination myDestination;
+  private final @NotNull String myBundleID;
 
   private boolean myDisabled = false;
 
@@ -133,8 +133,7 @@ public final class RefreshRevealAction extends DumbAwareAction {
     }
   }
 
-  @Nullable
-  private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
+  private static @Nullable String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
     if (destination instanceof MacOSBuildDestination) {
       // Xcode 8's simulators use the host computer's name
       return ExecUtil.execAndReadLine(new GeneralCommandLine("scutil", "--get", "ComputerName"));

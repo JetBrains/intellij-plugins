@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.psi.PsiElement;
@@ -14,11 +15,11 @@ public class DartClassResolveResult implements Cloneable {
   private final @Nullable DartClass myDartClass;
   private final @NotNull DartGenericSpecialization mySpecialization;
 
-  protected DartClassResolveResult(@Nullable final DartClass aClass) {
+  protected DartClassResolveResult(final @Nullable DartClass aClass) {
     this(aClass, new DartGenericSpecialization());
   }
 
-  protected DartClassResolveResult(@Nullable final DartClass aClass, @NotNull final DartGenericSpecialization specialization) {
+  protected DartClassResolveResult(final @Nullable DartClass aClass, final @NotNull DartGenericSpecialization specialization) {
     myDartClass = aClass;
     mySpecialization = specialization;
   }
@@ -28,14 +29,12 @@ public class DartClassResolveResult implements Cloneable {
     return new DartClassResolveResult(myDartClass, mySpecialization.clone());
   }
 
-  @NotNull
-  public static DartClassResolveResult create(@Nullable final DartClass dartClass) {
+  public static @NotNull DartClassResolveResult create(final @Nullable DartClass dartClass) {
     return create(dartClass, new DartGenericSpecialization());
   }
 
-  @NotNull
-  public static DartClassResolveResult create(@Nullable final DartClass dartClass,
-                                              @NotNull final DartGenericSpecialization specialization) {
+  public static @NotNull DartClassResolveResult create(final @Nullable DartClass dartClass,
+                                                       final @NotNull DartGenericSpecialization specialization) {
     if (dartClass == null) {
       return new DartClassResolveResult(null);
     }
@@ -64,13 +63,13 @@ public class DartClassResolveResult implements Cloneable {
     return clone;
   }
 
-  private void merge(@NotNull final DartGenericSpecialization otherSpecializations) {
+  private void merge(final @NotNull DartGenericSpecialization otherSpecializations) {
     for (String key : otherSpecializations.map.keySet()) {
       mySpecialization.map.put(key, otherSpecializations.map.get(key));
     }
   }
 
-  private void softMerge(@NotNull final DartGenericSpecialization otherSpecializations) {
+  private void softMerge(final @NotNull DartGenericSpecialization otherSpecializations) {
     for (String key : otherSpecializations.map.keySet()) {
       if (!mySpecialization.map.containsKey(key)) {
         mySpecialization.map.put(key, otherSpecializations.map.get(key));
@@ -78,17 +77,15 @@ public class DartClassResolveResult implements Cloneable {
     }
   }
 
-  @Nullable
-  public DartClass getDartClass() {
+  public @Nullable DartClass getDartClass() {
     return myDartClass;
   }
 
-  @NotNull
-  public DartGenericSpecialization getSpecialization() {
+  public @NotNull DartGenericSpecialization getSpecialization() {
     return mySpecialization;
   }
 
-  public void specialize(@Nullable final PsiElement element) {
+  public void specialize(final @Nullable PsiElement element) {
     if (element == null || myDartClass == null || !myDartClass.isGeneric()) {
       return;
     }
@@ -100,7 +97,7 @@ public class DartClassResolveResult implements Cloneable {
     }
   }
 
-  public void specializeByParameters(@Nullable final DartTypeArguments typeArguments) {
+  public void specializeByParameters(final @Nullable DartTypeArguments typeArguments) {
     if (typeArguments == null || myDartClass == null || !myDartClass.isGeneric()) {
       return;
     }
@@ -119,7 +116,7 @@ public class DartClassResolveResult implements Cloneable {
     specializeSupers(myDartClass, mySpecialization);
   }
 
-  private static void specializeSupers(@Nullable final DartClass dartClass, @NotNull final DartGenericSpecialization specialization) {
+  private static void specializeSupers(final @Nullable DartClass dartClass, final @NotNull DartGenericSpecialization specialization) {
     if (dartClass == null) {
       return;
     }
@@ -133,9 +130,9 @@ public class DartClassResolveResult implements Cloneable {
     }
   }
 
-  private static void specializeSuperType(@Nullable final DartClass dartClass,
-                                          @NotNull final DartGenericSpecialization specialization,
-                                          @NotNull final DartType type) {
+  private static void specializeSuperType(final @Nullable DartClass dartClass,
+                                          final @NotNull DartGenericSpecialization specialization,
+                                          final @NotNull DartType type) {
     final DartTypeArguments targetTypeArguments = type.getTypeArguments();
     if (targetTypeArguments == null || dartClass == null || dartClass.getTypeParameters() == null) {
       return;

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.imports;
 
 import com.intellij.lang.ImportOptimizer;
@@ -16,9 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DartImportOptimizer implements ImportOptimizer {
-  @NotNull
   @Override
-  public Runnable processFile(@NotNull final PsiFile file) {
+  public @NotNull Runnable processFile(final @NotNull PsiFile file) {
     DartAnalysisServerService.getInstance(file.getProject()).serverReadyForRequest();
     return new CollectingInfoRunnable() {
       private boolean myFileChanged = false;
@@ -42,9 +41,8 @@ public final class DartImportOptimizer implements ImportOptimizer {
         }
       }
 
-      @Nullable
       @Override
-      public String getUserNotificationInfo() {
+      public @Nullable String getUserNotificationInfo() {
         return myFileChanged ? DartBundle.message("organized.directives") : null;
       }
     };

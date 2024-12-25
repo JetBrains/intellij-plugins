@@ -17,19 +17,19 @@ package com.intellij.protobuf.lang.resolve;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
 import com.intellij.protobuf.lang.psi.PbEnumDefinition;
 import com.intellij.protobuf.lang.psi.PbEnumValue;
 import com.intellij.protobuf.lang.psi.PbNumberValue;
 import com.intellij.protobuf.lang.psi.ProtoNumberValue;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReferenceBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Provides a reference to a {@link PbEnumValue}. */
 public class PbEnumNumberReference extends PsiReferenceBase<ProtoNumberValue> {
 
-  @NotNull private final PbEnumDefinition enumDefinition;
+  private final @NotNull PbEnumDefinition enumDefinition;
 
   public PbEnumNumberReference(
       @NotNull ProtoNumberValue element, @NotNull PbEnumDefinition enumDefinition) {
@@ -37,15 +37,13 @@ public class PbEnumNumberReference extends PsiReferenceBase<ProtoNumberValue> {
     this.enumDefinition = enumDefinition;
   }
 
-  @Nullable
   @Override
-  protected TextRange calculateDefaultRangeInElement() {
+  protected @Nullable TextRange calculateDefaultRangeInElement() {
     return TextRange.create(0, myElement.getTextLength());
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     if (!myElement.isValidInt32()) {
       return null;
     }
@@ -67,9 +65,8 @@ public class PbEnumNumberReference extends PsiReferenceBase<ProtoNumberValue> {
         .orElse(null);
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public @NotNull Object[] getVariants() {
     // We don't give suggestions for enum numbers, only named values
     // (handled by PbEnumValueReference).
     return LookupElement.EMPTY_ARRAY;

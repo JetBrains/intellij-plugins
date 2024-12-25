@@ -39,8 +39,7 @@ public final class MeteorJSPredefinedLibraryProvider extends JSPredefinedLibrary
     return new ScriptingLibraryModel[]{libraryModel};
   }
 
-  @NotNull
-  private static Set<VirtualFile> getLibraryFiles() {
+  private static @NotNull Set<VirtualFile> getLibraryFiles() {
     VirtualFile file = dereference(stubFile);
     if (file == null) {
       file = MeteorStubPath.getLastMeteorLib();

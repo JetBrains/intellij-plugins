@@ -27,13 +27,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface PbStatement extends PbElement, PbCommentOwner {
 
-  @Nullable
-  default PbStatementOwner getStatementOwner() {
+  default @Nullable PbStatementOwner getStatementOwner() {
     return PbPsiImplUtil.getStatementOwner(this);
   }
 
-  @NotNull
-  default String getPresentableText() {
+  default @NotNull String getPresentableText() {
     return getText();
   }
 }

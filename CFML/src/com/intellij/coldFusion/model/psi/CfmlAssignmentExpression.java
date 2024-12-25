@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -27,8 +27,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     super(node);
   }
 
-  @Nullable
-  private AssignedVariable createAssignedVariable() {
+  private @Nullable AssignedVariable createAssignedVariable() {
     CfmlReferenceExpression varElement = getAssignedVariableElement();
     if (varElement == null) {
       return null;
@@ -40,8 +39,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     return new AssignedVariable(findChildByType(CfscriptTokenTypes.VAR_KEYWORD) != null);
   }
 
-  @Nullable
-  public CfmlReferenceExpression getAssignedVariableElement() {
+  public @Nullable CfmlReferenceExpression getAssignedVariableElement() {
     if (getFirstChild() instanceof CfmlArgumentNameReference) return (CfmlReferenceExpression)getFirstChild();
     PsiElement element = findChildByType(CfmlElementTypes.REFERENCE_EXPRESSION);
     if (!(element instanceof CfmlReferenceExpression)) {
@@ -50,14 +48,12 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     return (CfmlReferenceExpression)element;
   }
 
-  @Nullable
-  private PsiType getAssignedVariableElementType() {
+  private @Nullable PsiType getAssignedVariableElementType() {
     final CfmlExpression e = getRightHandExpr();
     return e != null ? e.getPsiType() : null;
   }
 
-  @Nullable
-  public CfmlExpression getRightHandExpr() {
+  public @Nullable CfmlExpression getRightHandExpr() {
     CfmlExpression[] expressions = findChildrenByClass(CfmlExpression.class);
     if (expressions.length != 2) {
       return null;
@@ -65,8 +61,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     return expressions[1];
   }
 
-  @Nullable
-  public CfmlVariable getAssignedVariable() {
+  public @Nullable CfmlVariable getAssignedVariable() {
     return myAssignedVariable.getValue();
   }
 
@@ -83,14 +78,12 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       myIsDefinition = isDefinition;
     }
 
-    @Nullable
-    public CfmlExpression getRightHandExpr() {
+    public @Nullable CfmlExpression getRightHandExpr() {
       return CfmlAssignmentExpression.this.getRightHandExpr();
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       final CfmlReferenceExpression expression = getAssignedVariableElement();
       if (expression == null) {
         return "";
@@ -110,9 +103,8 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return this;
     }
 
-    @NotNull
     @Override
-    public PsiElement getNavigationElement() {
+    public @NotNull PsiElement getNavigationElement() {
       final CfmlReferenceExpression expression = getAssignedVariableElement();
       assert expression != null;
       final PsiElement namedElement = expression.getReferenceNameElement();
@@ -144,8 +136,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return "AssignedVariable " + getName();
     }
 
-    @Nullable
-    private String getScopeName() {
+    private @Nullable String getScopeName() {
       final CfmlReferenceExpression expression = getAssignedVariableElement();
       if (expression != null) {
         final PsiElement scope = expression.getScope();
@@ -172,8 +163,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     }
 
     @Override
-    @NotNull
-    public String getlookUpString() {
+    public @NotNull String getlookUpString() {
       final CfmlReferenceExpression expression = getAssignedVariableElement();
       if (expression == null) {
         return "";

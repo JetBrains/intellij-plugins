@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model;
 
 import com.intellij.flex.model.lib.JpsFlexLibraryType;
@@ -21,8 +22,7 @@ import java.util.List;
 public class JpsFlexModelSerializerExtension extends JpsModelSerializerExtension {
 
   @Override
-  @NotNull
-  public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
+  public @NotNull List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
     return Arrays.asList(JpsFlexCompilerProjectExtension.createProjectExtensionSerializerIws(),
                          JpsFlexCompilerProjectExtension.createProjectExtensionSerializer(),
                          JpsFlexProjectLevelCompilerOptionsExtension.createProjectExtensionSerializerIws(),
@@ -30,27 +30,23 @@ public class JpsFlexModelSerializerExtension extends JpsModelSerializerExtension
   }
 
   @Override
-  @NotNull
-  public List<? extends JpsSdkPropertiesSerializer<?>> getSdkPropertiesSerializers() {
+  public @NotNull List<? extends JpsSdkPropertiesSerializer<?>> getSdkPropertiesSerializers() {
     return Arrays.asList(JpsFlexSdkType.createJpsSdkPropertiesSerializer(),
                          JpsFlexmojosSdkType.createSdkPropertiesSerializer());
   }
 
   @Override
-  @NotNull
-  public List<? extends JpsLibraryPropertiesSerializer<?>> getLibraryPropertiesSerializers() {
+  public @NotNull List<? extends JpsLibraryPropertiesSerializer<?>> getLibraryPropertiesSerializers() {
     return Collections.singletonList(JpsFlexLibraryType.createLibraryPropertiesSerializer());
   }
 
   @Override
-  @NotNull
-  public List<? extends JpsModulePropertiesSerializer<?>> getModulePropertiesSerializers() {
+  public @NotNull List<? extends JpsModulePropertiesSerializer<?>> getModulePropertiesSerializers() {
     return Collections.singletonList(JpsFlexModuleType.createModulePropertiesSerializer());
   }
 
   @Override
-  @NotNull
-  public List<? extends JpsRunConfigurationPropertiesSerializer<?>> getRunConfigurationPropertiesSerializers() {
+  public @NotNull List<? extends JpsRunConfigurationPropertiesSerializer<?>> getRunConfigurationPropertiesSerializers() {
     return Arrays.asList(JpsFlashRunConfigurationType.createRunConfigurationSerializer(),
                          JpsFlexUnitRunConfigurationType.createRunConfigurationSerializer());
   }

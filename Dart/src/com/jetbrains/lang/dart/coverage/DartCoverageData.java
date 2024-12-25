@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.coverage;
 
 import org.jetbrains.annotations.NotNull;
@@ -7,10 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class DartCoverageData {
-  @Nullable private List<DartFileCoverageData> coverage;
+  private @Nullable List<DartFileCoverageData> coverage;
 
-  @Nullable
-  public List<DartFileCoverageData> getCoverage() {
+  public @Nullable List<DartFileCoverageData> getCoverage() {
     return coverage;
   }
 
@@ -18,8 +17,7 @@ public class DartCoverageData {
     this.coverage = coverage;
   }
 
-  @NotNull
-  public Map<String, SortedMap<Integer, Integer>> getMergedDartFileCoverageData() {
+  public @NotNull Map<String, SortedMap<Integer, Integer>> getMergedDartFileCoverageData() {
     Map<String, SortedMap<Integer, Integer>> mergedCoverageData = new HashMap<>();
     List<DartFileCoverageData> coverageData = getCoverage();
     if (coverageData != null) {
@@ -51,11 +49,10 @@ public class DartCoverageData {
 
 
 class DartFileCoverageData {
-  @Nullable private String source;
-  @Nullable private List<Integer> hits;
+  private @Nullable String source;
+  private @Nullable List<Integer> hits;
 
-  @Nullable
-  public String getSource() {
+  public @Nullable String getSource() {
     return source;
   }
 
@@ -63,8 +60,7 @@ class DartFileCoverageData {
     this.source = source;
   }
 
-  @Nullable
-  public List<Integer> getHits() {
+  public @Nullable List<Integer> getHits() {
     return hits;
   }
 

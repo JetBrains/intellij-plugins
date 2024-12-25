@@ -22,7 +22,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.*;
+import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.IntCollectionDataExternalizer;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
@@ -30,15 +31,13 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
 
 public final class GaugeFileStubIndex extends SingleEntryFileBasedIndexExtension<Collection<Integer>> {
-  @NonNls
-  public static final ID<Integer, Collection<Integer>> NAME = ID.create("GaugeFileStubIndex");
+  public static final @NonNls ID<Integer, Collection<Integer>> NAME = ID.create("GaugeFileStubIndex");
 
-  @NotNull
   @Override
-  public ID<Integer, Collection<Integer>> getName() {
+  public @NotNull ID<Integer, Collection<Integer>> getName() {
     return NAME;
   }
 
@@ -56,15 +55,13 @@ public final class GaugeFileStubIndex extends SingleEntryFileBasedIndexExtension
     };
   }
 
-  @NotNull
   @Override
-  public DataExternalizer<Collection<Integer>> getValueExternalizer() {
+  public @NotNull DataExternalizer<Collection<Integer>> getValueExternalizer() {
     return new IntCollectionDataExternalizer();
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(SpecFileType.INSTANCE, ConceptFileType.INSTANCE) {
       @Override
       public boolean acceptInput(@NotNull VirtualFile virtualFile) {

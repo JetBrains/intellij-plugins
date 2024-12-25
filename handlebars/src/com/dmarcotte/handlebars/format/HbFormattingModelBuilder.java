@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
@@ -89,8 +89,7 @@ public final class HbFormattingModelBuilder extends TemplateLanguageFormattingMo
   }
 
   private static class HandlebarsTagBlock extends HandlebarsBlock {
-    @NotNull
-    private final Alignment myChildAttributeAlignment;
+    private final @NotNull Alignment myChildAttributeAlignment;
 
 
     HandlebarsTagBlock(@NotNull ASTNode node,
@@ -105,9 +104,8 @@ public final class HbFormattingModelBuilder extends TemplateLanguageFormattingMo
       myChildAttributeAlignment = Alignment.createAlignment();
     }
 
-    @NotNull
     @Override
-    public ChildAttributes getChildAttributes(int newChildIndex) {
+    public @NotNull ChildAttributes getChildAttributes(int newChildIndex) {
       if (newChildIndex > 0) {
         List<Block> blocks = getSubBlocks();
         if (blocks.size() > newChildIndex - 1) {
@@ -149,8 +147,7 @@ public final class HbFormattingModelBuilder extends TemplateLanguageFormattingMo
 
   private static class HandlebarsBlock extends TemplateLanguageBlock {
 
-    @NotNull
-    protected final HtmlPolicy myHtmlPolicy;
+    protected final @NotNull HtmlPolicy myHtmlPolicy;
 
 
     HandlebarsBlock(@NotNull ASTNode node,
@@ -300,9 +297,8 @@ public final class HbFormattingModelBuilder extends TemplateLanguageFormattingMo
      * <p/>
      * This method handles indent and alignment on Enter.
      */
-    @NotNull
     @Override
-    public ChildAttributes getChildAttributes(int newChildIndex) {
+    public @NotNull ChildAttributes getChildAttributes(int newChildIndex) {
       /*
        * We indent if we're in a BLOCK_WRAPPER (note that this works nicely since Enter can only be invoked
        * INSIDE a block (i.e. after the open block 'stache).

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster.psi;
 
@@ -26,8 +26,7 @@ import java.util.Objects;
 
 public final class JdlPredefinedSdkEntity extends FakePsiElement implements SyntheticElement, PsiMetaOwner, PsiPresentableMetaData {
 
-  @NlsSafe
-  public static final String ENTITY = "entity";
+  public static final @NlsSafe String ENTITY = "entity";
 
   private final PsiElement parent;
   private final String entityName;
@@ -92,8 +91,7 @@ public final class JdlPredefinedSdkEntity extends FakePsiElement implements Synt
   }
 
   @Override
-  @NotNull
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return JdlLanguage.INSTANCE;
   }
 

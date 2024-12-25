@@ -416,8 +416,7 @@ public abstract class AbstractP4Connection implements P4Connection {
 
   private static class Tracer {
     private final PerforceManager myPm;
-    @NotNull
-    private final P4Command myCommand;
+    private final @NotNull P4Command myCommand;
     private final CommandDebugInfoWrapper myWrapper;
     private Object myContext;
 

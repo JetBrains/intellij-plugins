@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -35,9 +35,8 @@ public final class DartMethodParametersMacro extends DartMacroBase {
     return new ListResult(result);
   }
 
-  @Nullable
   @VisibleForTesting
-  public List<String> getContainingMethodParameterNames(@Nullable final PsiElement element) {
+  public @Nullable List<String> getContainingMethodParameterNames(final @Nullable PsiElement element) {
     if (element == null) return null;
 
     final DartComponent parent = PsiTreeUtil.getParentOfType(element,
@@ -70,7 +69,7 @@ public final class DartMethodParametersMacro extends DartMacroBase {
     return results;
   }
 
-  private static void findAndAddName(@NotNull final List<String> results, @NotNull final DartNormalFormalParameter parameter) {
+  private static void findAndAddName(final @NotNull List<String> results, final @NotNull DartNormalFormalParameter parameter) {
     final DartComponentName componentName = parameter.findComponentName();
     if (componentName != null) {
       final String name = componentName.getName();

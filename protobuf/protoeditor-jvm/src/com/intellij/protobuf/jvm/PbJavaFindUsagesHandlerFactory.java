@@ -46,9 +46,8 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     return psiElement instanceof PbSymbol;
   }
 
-  @Nullable
   @Override
-  public FindUsagesHandler createFindUsagesHandler(
+  public @Nullable FindUsagesHandler createFindUsagesHandler(
       @NotNull PsiElement psiElement, boolean forHighlightUsages) {
     // This factory only handles proto -> java.
     // When highlighting usages of proto elements, the editor will have a proto file open,
@@ -77,9 +76,8 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       this.additionalElements = additionalElements;
     }
 
-    @NotNull
     @Override
-    public PsiElement[] getSecondaryElements() {
+    public @NotNull PsiElement[] getSecondaryElements() {
       return additionalElements;
     }
   }

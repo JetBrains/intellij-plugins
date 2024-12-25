@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -16,7 +16,7 @@ import java.util.List;
 
 
 public class GherkinTableRowImpl extends GherkinPsiElementBase implements GherkinTableRow {
-  public GherkinTableRowImpl(@NotNull final ASTNode node) {
+  public GherkinTableRowImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -31,8 +31,7 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
   }
 
   // ToDo: Andrey Vokin, remove code duplication
-  @NotNull
-  public static <T extends PsiElement> List<T> getChildrenByFilter(final PsiElement psiElement, final Class<T> c) {
+  public static @NotNull <T extends PsiElement> List<T> getChildrenByFilter(final PsiElement psiElement, final Class<T> c) {
     LinkedList<T> list = new LinkedList<>();
     for (PsiElement element : psiElement.getChildren()) {
       if (c.isInstance(element)) {
@@ -45,8 +44,7 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
   }
 
   @Override
-  @NotNull
-  public List<GherkinTableCell> getPsiCells() {
+  public @NotNull List<GherkinTableCell> getPsiCells() {
 
     return getChildrenByFilter(this, GherkinTableCell.class);
   }

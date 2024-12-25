@@ -38,18 +38,15 @@ import java.util.Map;
  */
 public final class PbPsiImplUtil {
 
-  @Nullable
-  public static PbStatementOwner getStatementOwner(PbStatement element) {
+  public static @Nullable PbStatementOwner getStatementOwner(PbStatement element) {
     return PsiTreeUtil.getParentOfType(element, PbStatementOwner.class);
   }
 
-  @Nullable
-  public static PbSymbolOwner getSymbolOwner(PsiElement element) {
+  public static @Nullable PbSymbolOwner getSymbolOwner(PsiElement element) {
     return PbPsiUtil.getSymbolOwner(element);
   }
 
-  @Nullable
-  public static PbOptionOwner getOptionOwner(PsiElement element) {
+  public static @Nullable PbOptionOwner getOptionOwner(PsiElement element) {
     // For finding PbOptionOwner parents, we use getContext() instead of getParent(). Group
     // definitions generate an associated field, and the options specified along with the group are
     // tied to the generated field. See PbGroupDefinitionMixin.
@@ -58,13 +55,11 @@ public final class PbPsiImplUtil {
     return PsiTreeUtil.getContextOfType(element, PbOptionOwner.class, true);
   }
 
-  @NotNull
-  public static List<PbStatement> getStatements(PbElement parent) {
+  public static @NotNull List<PbStatement> getStatements(PbElement parent) {
     return PsiTreeUtil.getChildrenOfTypeAsList(parent, PbStatement.class);
   }
 
-  @Nullable
-  public static QualifiedName getQualifiedName(final PbSymbol element) {
+  public static @Nullable QualifiedName getQualifiedName(final PbSymbol element) {
     return CachedValuesManager.getCachedValue(
         element,
         () ->
@@ -72,8 +67,7 @@ public final class PbPsiImplUtil {
               calculateQualifiedName(element), PbCompositeModificationTracker.byElement(element)));
   }
 
-  @Nullable
-  private static QualifiedName calculateQualifiedName(PbSymbol element) {
+  private static @Nullable QualifiedName calculateQualifiedName(PbSymbol element) {
     String name = element.getName();
     if (name == null) {
       return null;
@@ -93,8 +87,7 @@ public final class PbPsiImplUtil {
    * Returns a TextRange for the element without starting and ending quotes. If the quotes are
    * incomplete (missing end quote), the start and end offsets will be the same.
    */
-  @NotNull
-  public static TextRange getTextRangeNoQuotes(PsiElement element) {
+  public static @NotNull TextRange getTextRangeNoQuotes(PsiElement element) {
     TextRange range = element.getTextRange();
     String text = element.getText();
     char endQuote;

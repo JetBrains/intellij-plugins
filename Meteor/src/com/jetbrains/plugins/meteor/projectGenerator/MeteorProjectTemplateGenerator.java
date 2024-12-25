@@ -54,10 +54,8 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
     return "Meteor";
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return MeteorBundle.message("settings.meteor.project.generator.name");
   }
 
@@ -66,7 +64,7 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
     return MeteorBundle.message("settings.meteor.project.generator.descr");
   }
 
-  private static void setProjectLanguageLevel(@NotNull final Project project, MeteorProjectSettings settings) {
+  private static void setProjectLanguageLevel(final @NotNull Project project, MeteorProjectSettings settings) {
     String type = settings.myType;
     JSLanguageLevel level = JSLanguageLevel.ES6;
     if (type.contains("react")) {
@@ -75,16 +73,16 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
     JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(level);
   }
 
-  private static void setHandlebarsSettings(@NotNull final Project project, MeteorProjectSettings settings) {
+  private static void setHandlebarsSettings(final @NotNull Project project, MeteorProjectSettings settings) {
     if (settings.myType.contains("angular")) {
       HbConfig.setShouldOpenHtmlAsHandlebars(false, project);
     }
   }
 
   @Override
-  public void generateProject(@NotNull final Project project,
+  public void generateProject(final @NotNull Project project,
                               final @NotNull VirtualFile baseDir,
-                              @NotNull final MeteorProjectSettings settings,
+                              final @NotNull MeteorProjectSettings settings,
                               @NotNull Module module) {
     final Ref<Boolean> noErrorOnProjectCreating = Ref.create(false);
     setProjectLanguageLevel(project, settings);
@@ -110,9 +108,9 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
     });
   }
 
-  public static void createDefaultProject(@NotNull final Project project,
-                                          @NotNull final VirtualFile baseDir,
-                                          @NotNull final MeteorProjectSettings settings,
+  public static void createDefaultProject(final @NotNull Project project,
+                                          final @NotNull VirtualFile baseDir,
+                                          final @NotNull MeteorProjectSettings settings,
                                           final Ref<Boolean> noErrorOnProjectCreating) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
 
@@ -218,9 +216,8 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
   }
 
 
-  @NotNull
   @Override
-  public MeteorProjectPeer createPeer() {
+  public @NotNull MeteorProjectPeer createPeer() {
     return new MeteorProjectPeer();
   }
 
@@ -229,7 +226,7 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
     return MeteorIcons.Meteor2;
   }
 
-  public final static class MeteorProjectSettings {
+  public static final class MeteorProjectSettings {
     public void setType(String type) {
       myType = type;
     }

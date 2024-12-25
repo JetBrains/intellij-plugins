@@ -42,15 +42,13 @@ abstract class PbStubbedSymbolOwnerBase<T extends PbNamedElementStub<?>>
     super(stub, nodeType);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     return getQualifiedName();
   }
 
-  @NotNull
   @Override
-  public Map<String, Collection<PbSymbol>> getSymbolMap() {
+  public @NotNull Map<String, Collection<PbSymbol>> getSymbolMap() {
     return PbPsiImplUtil.getCachedSymbolMap(this);
   }
 

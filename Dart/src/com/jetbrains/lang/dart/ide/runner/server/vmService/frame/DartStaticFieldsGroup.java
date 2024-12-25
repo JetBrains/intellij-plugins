@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.google.gson.JsonElement;
@@ -15,15 +15,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 // similar to com.intellij.debugger.engine.JavaStaticGroup
 class DartStaticFieldsGroup extends XValueGroup {
-  @NotNull private final DartVmServiceDebugProcess myDebugProcess;
-  @NotNull private final String myIsolateId;
-  @NotNull private final String myClassName;
-  @NotNull private final SmartList<? extends FieldRef> myFieldRefs;
+  private final @NotNull DartVmServiceDebugProcess myDebugProcess;
+  private final @NotNull String myIsolateId;
+  private final @NotNull String myClassName;
+  private final @NotNull SmartList<? extends FieldRef> myFieldRefs;
 
-  DartStaticFieldsGroup(@NotNull final DartVmServiceDebugProcess debugProcess,
-                        @NotNull final String isolateId,
-                        @NotNull final String className,
-                        @NotNull final SmartList<? extends FieldRef> fieldsRefs) {
+  DartStaticFieldsGroup(final @NotNull DartVmServiceDebugProcess debugProcess,
+                        final @NotNull String isolateId,
+                        final @NotNull String className,
+                        final @NotNull SmartList<? extends FieldRef> fieldsRefs) {
     super("static");
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
@@ -31,9 +31,8 @@ class DartStaticFieldsGroup extends XValueGroup {
     myFieldRefs = fieldsRefs;
   }
 
-  @NotNull
   @Override
-  public String getSeparator() {
+  public @NotNull String getSeparator() {
     return "";
   }
 
@@ -48,7 +47,7 @@ class DartStaticFieldsGroup extends XValueGroup {
   }
 
   @Override
-  public void computeChildren(@NotNull final XCompositeNode node) {
+  public void computeChildren(final @NotNull XCompositeNode node) {
     final AtomicInteger counter = new AtomicInteger(myFieldRefs.size());
     final XValueChildrenList list = new XValueChildrenList(myFieldRefs.size());
 

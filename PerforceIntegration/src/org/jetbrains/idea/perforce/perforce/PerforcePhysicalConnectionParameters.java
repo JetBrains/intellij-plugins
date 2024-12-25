@@ -42,9 +42,8 @@ public class PerforcePhysicalConnectionParameters implements PerforcePhysicalCon
     return myServerTimeout;
   }
 
-  @NotNull
   @Override
-  public String getCharsetName() {
+  public @NotNull String getCharsetName() {
     return myCharsetName;
   }
 }

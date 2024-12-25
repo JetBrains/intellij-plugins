@@ -1,13 +1,11 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -36,7 +34,7 @@ public final class CucumberJavaVersionUtil {
 
   private static final List<Pair<String, String>> VERSION_CLASS_MARKERS = new ArrayList<>();
 
-  private final static Logger LOG = Logger.getInstance(CucumberJavaVersionUtil.class);
+  private static final Logger LOG = Logger.getInstance(CucumberJavaVersionUtil.class);
 
   static {
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.plugin.event.EventHandler", CUCUMBER_CORE_VERSION_5));
@@ -54,8 +52,7 @@ public final class CucumberJavaVersionUtil {
    * If {@code module} is not null module's scope with libraries used to look for Cucumber-Core library,
    * {@code project}'s scope used otherwise.
    */
-  @NotNull
-  public static String getCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
+  public static @NotNull String getCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
     CachedValuesManager manager = CachedValuesManager.getManager(project);
 
     CachedValue<String> result = manager.createCachedValue(
@@ -76,8 +73,7 @@ public final class CucumberJavaVersionUtil {
     return VersionComparatorUtil.compare(getCucumberCoreVersion(module, module.getProject()), CUCUMBER_CORE_VERSION_3) >= 0;
   }
 
-  @NotNull
-  private static String computeCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
+  private static @NotNull String computeCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
     GlobalSearchScope scope =
       module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, true) : GlobalSearchScope.projectScope(project);
 

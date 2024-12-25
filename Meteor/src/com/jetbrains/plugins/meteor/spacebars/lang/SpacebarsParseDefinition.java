@@ -36,9 +36,8 @@ public final class SpacebarsParseDefinition extends HbParseDefinition {
   @Override
   public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
     return new HbPsiFile(viewProvider, SpacebarsLanguageDialect.INSTANCE) {
-      @NotNull
       @Override
-      public FileType getFileType() {
+      public @NotNull FileType getFileType() {
         return SpacebarsFileType.SPACEBARS_INSTANCE;
       }
 

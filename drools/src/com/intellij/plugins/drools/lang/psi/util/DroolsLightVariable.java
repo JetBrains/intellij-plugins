@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.psi.*;
@@ -22,8 +22,7 @@ public class DroolsLightVariable extends ImplicitVariableImpl {
     myDeclaration = psiElement;
   }
 
-  @NotNull
-  private static PsiType getPropertyType(@NotNull PsiType type) {
+  private static @NotNull PsiType getPropertyType(@NotNull PsiType type) {
     if (type instanceof PsiClassType) {
       final PsiClass psiClass = ((PsiClassType)type).resolve();
       if (psiClass != null && !InheritanceUtil.isInheritor(psiClass, CommonClassNames.JAVA_UTIL_COLLECTION) &&
@@ -36,8 +35,7 @@ public class DroolsLightVariable extends ImplicitVariableImpl {
   }
 
   @Override
-  @NotNull
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     return myDeclaration;
   }
 
@@ -49,8 +47,7 @@ public class DroolsLightVariable extends ImplicitVariableImpl {
   }
 
   @Override
-  @Nullable
-  public PsiFile getContainingFile() {
+  public @Nullable PsiFile getContainingFile() {
     if (!isValid()) throw new PsiInvalidElementAccessException(this);
     return myDeclaration != null ? myDeclaration.getContainingFile() : null;
   }
@@ -78,8 +75,7 @@ public class DroolsLightVariable extends ImplicitVariableImpl {
   }
 
   @Override
-  @NotNull
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     final PsiFile file = (myDeclaration != null ? myDeclaration:getDeclarationScope()).getContainingFile();
     return file.getUseScope();
   }

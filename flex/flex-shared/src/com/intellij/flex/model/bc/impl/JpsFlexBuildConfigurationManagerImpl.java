@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
@@ -33,8 +34,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
   }
 
   @Override
-  @NotNull
-  public JpsFlexBuildConfigurationManagerImpl createCopy() {
+  public @NotNull JpsFlexBuildConfigurationManagerImpl createCopy() {
     return new JpsFlexBuildConfigurationManagerImpl(this);
   }
 
@@ -55,8 +55,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
   }
 
   @Override
-  @Nullable
-  public JpsFlexBuildConfiguration findConfigurationByName(final String name) {
+  public @Nullable JpsFlexBuildConfiguration findConfigurationByName(final String name) {
     for (JpsFlexBuildConfiguration configuration : getBuildConfigurations()) {
       if (configuration.getName().equals(name)) {
         return configuration;
@@ -72,21 +71,21 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
   }
 
   @Override
-  public JpsFlexBuildConfiguration createCopy(@NotNull final JpsFlexBuildConfiguration bc) {
+  public JpsFlexBuildConfiguration createCopy(final @NotNull JpsFlexBuildConfiguration bc) {
     final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createConfigurationCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());
     return copy;
   }
 
   @Override
-  public JpsFlexBuildConfiguration createTemporaryCopyForCompilation(@NotNull final JpsFlexBuildConfiguration bc) {
+  public JpsFlexBuildConfiguration createTemporaryCopyForCompilation(final @NotNull JpsFlexBuildConfiguration bc) {
     final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createConfigurationCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());
     copy.setTempBCForCompilation(true);
     return copy;
   }
 
-  private void updateActiveConfiguration(@Nullable final String activeBCName) {
+  private void updateActiveConfiguration(final @Nullable String activeBCName) {
     final List<JpsFlexBuildConfiguration> bcs = getBuildConfigurations();
     if (bcs.isEmpty()) {
       LOG.error("No Flex build configurations");

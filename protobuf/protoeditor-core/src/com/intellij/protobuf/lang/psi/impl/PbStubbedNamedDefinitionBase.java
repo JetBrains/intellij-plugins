@@ -17,15 +17,15 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.protobuf.lang.psi.PbNamedElement;
+import com.intellij.protobuf.lang.psi.PbSymbolOwner;
+import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import com.intellij.protobuf.lang.stub.PbNamedElementStub;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.protobuf.lang.psi.PbNamedElement;
-import com.intellij.protobuf.lang.psi.PbSymbolOwner;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
-import com.intellij.protobuf.lang.stub.PbNamedElementStub;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,21 +43,18 @@ abstract class PbStubbedNamedDefinitionBase<T extends PbNamedElementStub<?>>
     super(stub, nodeType);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getQualifiedName() {
+  public @Nullable QualifiedName getQualifiedName() {
     return PbPsiImplUtil.getQualifiedName(this);
   }
 
-  @Nullable
   @Override
-  public PbSymbolOwner getSymbolOwner() {
+  public @Nullable PbSymbolOwner getSymbolOwner() {
     return PbPsiImplUtil.getSymbolOwner(this);
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     PbNamedElementStub<?> stub = getStub();
     if (stub != null) {
       return stub.getName();
@@ -89,16 +86,14 @@ abstract class PbStubbedNamedDefinitionBase<T extends PbNamedElementStub<?>>
     return name != null ? name.getTextOffset() : super.getTextOffset();
   }
 
-  @NotNull
   @Override
-  public String getPresentableText() {
+  public @NotNull String getPresentableText() {
     String name = getName();
     return name != null ? name : getText();
   }
 
   @Override
-  @Nullable
-  public ItemPresentation getPresentation() {
+  public @Nullable ItemPresentation getPresentation() {
     PbNamedElement element = this;
     return new ItemPresentation() {
 
@@ -107,9 +102,8 @@ abstract class PbStubbedNamedDefinitionBase<T extends PbNamedElementStub<?>>
         return element.getPresentableText();
       }
 
-      @Nullable
       @Override
-      public String getLocationString() {
+      public @Nullable String getLocationString() {
         PbSymbolOwner owner = getSymbolOwner();
         if (owner != null) {
           QualifiedName qualifiedName = owner.getChildScope();
@@ -120,9 +114,8 @@ abstract class PbStubbedNamedDefinitionBase<T extends PbNamedElementStub<?>>
         return null;
       }
 
-      @Nullable
       @Override
-      public Icon getIcon(boolean unused) {
+      public @Nullable Icon getIcon(boolean unused) {
         return element.getIcon(0);
       }
     };

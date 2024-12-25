@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
@@ -21,14 +22,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return CucumberBundle.message("cucumber.create.all.steps.title");
   }
 
   @Override
-  protected void createStepOrSteps(GherkinStep sourceStep, @NotNull final CucumberStepDefinitionCreationContext fileAndFrameworkType) {
+  protected void createStepOrSteps(GherkinStep sourceStep, final @NotNull CucumberStepDefinitionCreationContext fileAndFrameworkType) {
     final PsiFile probableGherkinFile = sourceStep.getContainingFile();
     if (!(probableGherkinFile instanceof GherkinFile gherkinFile)) {
       return;

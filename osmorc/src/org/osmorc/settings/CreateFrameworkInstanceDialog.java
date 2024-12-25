@@ -136,9 +136,8 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
     return myBaseFolderChooser.getButton();
   }
 
-  @Nullable
   @Override
-  protected JComponent createCenterPanel() {
+  protected @Nullable JComponent createCenterPanel() {
     return myMainPanel;
   }
 
@@ -147,8 +146,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
     return "reference.settings.project.osgi.new.framework.instance";
   }
 
-  @NotNull
-  public FrameworkInstanceDefinition createDefinition() {
+  public @NotNull FrameworkInstanceDefinition createDefinition() {
     FrameworkInstanceDefinition framework = new FrameworkInstanceDefinition();
     framework.setName(myNameField.getText().trim());
     framework.setFrameworkIntegratorName(myIntegrator.getDisplayName());

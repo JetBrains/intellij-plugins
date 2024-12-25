@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.ui.HoverHyperlinkLabel;
@@ -49,7 +49,7 @@ public class DartProblemsFilterForm {
     });
   }
 
-  public void reset(@NotNull final DartProblemsPresentationHelper presentationHelper) {
+  public void reset(final @NotNull DartProblemsPresentationHelper presentationHelper) {
     myErrorsCheckBox.setSelected(presentationHelper.isShowErrors());
     myWarningsCheckBox.setSelected(presentationHelper.isShowWarnings());
     myHintsCheckBox.setSelected(presentationHelper.isShowHints());
@@ -71,7 +71,7 @@ public class DartProblemsFilterForm {
     }
   }
 
-  public void addListener(@NotNull final FilterListener filterListener) {
+  public void addListener(final @NotNull FilterListener filterListener) {
     myListeners.add(filterListener);
 
     final ActionListener listener = e -> filterListener.filtersChanged();
@@ -103,8 +103,7 @@ public class DartProblemsFilterForm {
     return myHintsCheckBox.isSelected();
   }
 
-  @NotNull
-  public DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
+  public @NotNull DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
     if (myCurrentFileRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.File;
     if (myCurrentDirectoryRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.Directory;
     if (myCurrentDartPackageRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.DartPackage;

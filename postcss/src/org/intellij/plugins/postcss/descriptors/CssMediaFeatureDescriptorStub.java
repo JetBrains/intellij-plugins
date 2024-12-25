@@ -14,19 +14,17 @@ public class CssMediaFeatureDescriptorStub extends CssNullValue implements CssMe
 
   private final String myName;
 
-  protected CssMediaFeatureDescriptorStub(@NotNull final String name) {
+  protected CssMediaFeatureDescriptorStub(final @NotNull String name) {
     myName = name;
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return myName;
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return getId();
   }
 
@@ -35,9 +33,8 @@ public class CssMediaFeatureDescriptorStub extends CssNullValue implements CssMe
     return true;
   }
 
-  @Nullable
   @Override
-  public String getAppliesToValue() {
+  public @Nullable String getAppliesToValue() {
     return "";
   }
 
@@ -46,15 +43,13 @@ public class CssMediaFeatureDescriptorStub extends CssNullValue implements CssMe
     return CssConstants.DEFAULT_MEDIA_GROUPS;
   }
 
-  @NotNull
   @Override
-  public String getElementTypeName() {
+  public @NotNull String getElementTypeName() {
     return PostCssBundle.message("postcss.custom.media.query");
   }
 
-  @NotNull
   @Override
-  public CssValueDescriptor getValueDescriptor() {
+  public @NotNull CssValueDescriptor getValueDescriptor() {
     return new CssNullValue();
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.model.impl;
 
 import com.intellij.util.xmlb.XmlSerializer;
@@ -23,15 +23,13 @@ import java.util.List;
 public final class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtension {
   private static final String COMPONENT_NAME = "Osmorc";
 
-  @NotNull
   @Override
-  public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
+  public @NotNull List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
     return Collections.singletonList(new JpsOsmorcProjectExtensionSerializer());
   }
 
-  @NotNull
   @Override
-  public List<? extends JpsFacetConfigurationSerializer<?>> getFacetConfigurationSerializers() {
+  public @NotNull List<? extends JpsFacetConfigurationSerializer<?>> getFacetConfigurationSerializers() {
     return Collections.singletonList(new JpsOsmorcModuleExtensionSerializer());
   }
 

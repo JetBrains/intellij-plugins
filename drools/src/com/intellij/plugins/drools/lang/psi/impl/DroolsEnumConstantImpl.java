@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -25,8 +25,7 @@ public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements Droo
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return getFieldName().getText();
   }
 
@@ -34,15 +33,13 @@ public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements Droo
   public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
   }
 
-  @NotNull
   @Override
-  public PsiIdentifier getNameIdentifier() {
+  public @NotNull PsiIdentifier getNameIdentifier() {
     return new JavaIdentifier(getManager(), getFieldName());
   }
 
-  @Nullable
   @Override
-  public PsiDocComment getDocComment() {
+  public @Nullable PsiDocComment getDocComment() {
     return null;
   }
 
@@ -51,15 +48,13 @@ public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements Droo
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiClass getContainingClass() {
+  public @Nullable PsiClass getContainingClass() {
     return PsiTreeUtil.getParentOfType(this, DroolsPsiClass.class);
   }
 
-  @NotNull
   @Override
-  public PsiType getType() {
+  public @NotNull PsiType getType() {
     final DroolsPsiClass psiClass = PsiTreeUtil.getParentOfType(this, DroolsPsiClass.class);
     if (psiClass != null) {
       // todo
@@ -67,15 +62,13 @@ public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements Droo
     return PsiType.getJavaLangObject(getManager(), getResolveScope());
   }
 
-  @Nullable
   @Override
-  public PsiTypeElement getTypeElement() {
+  public @Nullable PsiTypeElement getTypeElement() {
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiExpression getInitializer() {
+  public @Nullable PsiExpression getInitializer() {
     return null;
   }
 
@@ -89,9 +82,8 @@ public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements Droo
 
   }
 
-  @Nullable
   @Override
-  public Object computeConstantValue() {
+  public @Nullable Object computeConstantValue() {
     return null;
   }
 
@@ -106,9 +98,8 @@ public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements Droo
     return this;
   }
 
-  @Nullable
   @Override
-  public PsiModifierList getModifierList() {
+  public @Nullable PsiModifierList getModifierList() {
     return null;
   }
 

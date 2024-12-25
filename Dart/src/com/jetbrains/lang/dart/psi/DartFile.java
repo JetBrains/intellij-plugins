@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
@@ -20,9 +20,8 @@ public class DartFile extends PsiFileBase implements DartExecutionScope {
     super(viewProvider, DartLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return DartFileType.INSTANCE;
   }
 
@@ -31,9 +30,8 @@ public class DartFile extends PsiFileBase implements DartExecutionScope {
     return "Dart File";
   }
 
-  @NotNull
   @Override
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     // There are corner cases when file from a project may be used in a library, or from a different module without any dependency, etc.
     return GlobalSearchScope.allScope(getProject());
   }

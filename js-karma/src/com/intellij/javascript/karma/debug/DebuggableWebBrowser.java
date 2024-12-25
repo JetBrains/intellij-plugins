@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.debug;
 
 import com.intellij.ide.browsers.WebBrowser;
@@ -15,18 +15,15 @@ public final class DebuggableWebBrowser {
     myWebBrowser = webBrowser;
   }
 
-  @NotNull
-  public JavaScriptDebugEngine getDebugEngine() {
+  public @NotNull JavaScriptDebugEngine getDebugEngine() {
     return myDebugEngine;
   }
 
-  @NotNull
-  public WebBrowser getWebBrowser() {
+  public @NotNull WebBrowser getWebBrowser() {
     return myWebBrowser;
   }
 
-  @Nullable
-  public static DebuggableWebBrowser create(@NotNull WebBrowser browser) {
+  public static @Nullable DebuggableWebBrowser create(@NotNull WebBrowser browser) {
     JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.Companion.findByBrowser(browser);
     return debugEngine != null ? new DebuggableWebBrowser(debugEngine, browser) : null;
   }

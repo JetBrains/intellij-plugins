@@ -1,11 +1,10 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.actions;
 
 import com.intellij.ide.actions.CreateFileAction;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.module.Module;
@@ -40,13 +39,13 @@ public class CreateRuleFileAction extends CreateFileAction {
   }
 
   @Override
-  protected PsiElement @NotNull [] create(@NotNull final String newName, final @NotNull PsiDirectory directory) throws Exception {
+  protected PsiElement @NotNull [] create(final @NotNull String newName, final @NotNull PsiDirectory directory) throws Exception {
     final Module module = ModuleUtilCore.findModuleForPsiElement(directory);
     assert module != null : directory;
 
 
     final FileTemplate template = FileTemplateManager.getInstance(module.getProject()).getJ2eeTemplate("drools.rule.drl");
-    @NonNls final String fileName = getFileName(newName);
+    final @NonNls String fileName = getFileName(newName);
 
     Map<String, Object> proprs = new HashMap<>();
     proprs.put("RULE_NAME", FileUtilRt.getNameWithoutExtension(newName));

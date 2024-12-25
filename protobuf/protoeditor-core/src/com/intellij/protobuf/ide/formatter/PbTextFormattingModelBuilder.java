@@ -16,23 +16,18 @@
 package com.intellij.protobuf.ide.formatter;
 
 import com.intellij.formatting.*;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
+import com.intellij.protobuf.lang.PbTextLanguage;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.protobuf.lang.PbTextLanguage;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** A {@link FormattingModelBuilder} for prototext files. */
 public class PbTextFormattingModelBuilder implements FormattingModelBuilder {
 
-  @NotNull
   @Override
-  public FormattingModel createModel(@NotNull FormattingContext formattingContext) {
+  public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
     PsiFile file = formattingContext.getContainingFile();
     return FormattingModelProvider.createFormattingModelForPsiFile(
         file,

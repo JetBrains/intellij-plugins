@@ -19,23 +19,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public final class HCLPsiImplUtilJ {
-  @NotNull
-  public static String getName(@NotNull HCLProperty property) {
+  public static @NotNull String getName(@NotNull HCLProperty property) {
     return HCLPsiImplUtils.INSTANCE.getName(property);
   }
 
-  @NotNull
-  public static String getName(@NotNull HCLBlock block) {
+  public static @NotNull String getName(@NotNull HCLBlock block) {
     return HCLPsiImplUtils.INSTANCE.getName(block);
   }
 
-  @NotNull
-  public static String getFullName(@NotNull HCLBlock block) {
+  public static @NotNull String getFullName(@NotNull HCLBlock block) {
     return HCLPsiImplUtils.INSTANCE.getFullName(block);
   }
 
-  @NotNull
-  public static HCLExpression getNameElement(@NotNull HCLProperty property) {
+  public static @NotNull HCLExpression getNameElement(@NotNull HCLProperty property) {
     return HCLPsiImplUtils.INSTANCE.getNameElement(property);
   }
 
@@ -43,13 +39,11 @@ public final class HCLPsiImplUtilJ {
     return HCLPsiImplUtils.INSTANCE.getNameElements(block);
   }
 
-  @Nullable
-  public static HCLExpression getValue(@NotNull HCLProperty property) {
+  public static @Nullable HCLExpression getValue(@NotNull HCLProperty property) {
     return HCLPsiImplUtils.INSTANCE.getValue(property);
   }
 
-  @Nullable
-  public static HCLObject getObject(@NotNull HCLBlock block) {
+  public static @Nullable HCLObject getObject(@NotNull HCLBlock block) {
     return HCLPsiImplUtils.INSTANCE.getObject(block);
   }
 
@@ -73,28 +67,23 @@ public final class HCLPsiImplUtilJ {
     return HCLPsiImplUtils.INSTANCE.getPresentation(o);
   }
 
-  @NotNull
-  public static List<Pair<TextRange, String>> getTextFragments(@NotNull HCLStringLiteral literal) {
+  public static @NotNull List<Pair<TextRange, String>> getTextFragments(@NotNull HCLStringLiteral literal) {
     return JavaUtil.getTextFragments(literal);
   }
 
-  @Nullable
-  public static HCLProperty findProperty(@NotNull HCLObject object, @NotNull String name) {
+  public static @Nullable HCLProperty findProperty(@NotNull HCLObject object, @NotNull String name) {
     return HCLPsiImplUtils.INSTANCE.findProperty(object, name);
   }
 
-  @NotNull
-  public static List<HCLBlock> getBlockList(@NotNull HCLObject object) {
+  public static @NotNull List<HCLBlock> getBlockList(@NotNull HCLObject object) {
     return PsiTreeUtil.getChildrenOfTypeAsList(object, HCLBlock.class);
   }
 
-  @NotNull
-  public static List<HCLExpression> getElements(@NotNull HCLObject object) {
+  public static @NotNull List<HCLExpression> getElements(@NotNull HCLObject object) {
     return PsiTreeUtil.getChildrenOfTypeAsList(object, HCLExpression.class);
   }
 
-  @NotNull
-  public static String getValue(@NotNull HCLStringLiteral literal) {
+  public static @NotNull String getValue(@NotNull HCLStringLiteral literal) {
     return HCLPsiImplUtils.INSTANCE.getValue(literal);
   }
 
@@ -102,8 +91,7 @@ public final class HCLPsiImplUtilJ {
     return HCLPsiImplUtils.INSTANCE.getQuoteSymbol(literal);
   }
 
-  @NotNull
-  public static String getValue(@NotNull HCLHeredocLiteral literal) {
+  public static @NotNull String getValue(@NotNull HCLHeredocLiteral literal) {
     return HCLPsiImplUtils.INSTANCE.getValue(literal);
   }
 
@@ -111,27 +99,22 @@ public final class HCLPsiImplUtilJ {
     return HCLPsiImplUtils.INSTANCE.isIndented(literal);
   }
 
-  @Nullable
-  public static Integer getIndentation(@NotNull HCLHeredocLiteral literal) {
+  public static @Nullable Integer getIndentation(@NotNull HCLHeredocLiteral literal) {
     return HCLPsiImplUtils.INSTANCE.getIndentation(literal);
   }
 
-  @Nullable
-  public static Integer getMinimalIndentation(@NotNull HCLHeredocContent content) {
+  public static @Nullable Integer getMinimalIndentation(@NotNull HCLHeredocContent content) {
     return HCLPsiImplUtils.INSTANCE.getMinimalIndentation(content);
   }
 
-  @NotNull
-  public static String getValue(@NotNull HCLHeredocContent content) {
+  public static @NotNull String getValue(@NotNull HCLHeredocContent content) {
     return HCLPsiImplUtils.INSTANCE.getValue(content, 0);
   }
 
-  @NotNull
-  public static List<String> getLines(@NotNull HCLHeredocContent content) {
+  public static @NotNull List<String> getLines(@NotNull HCLHeredocContent content) {
     return HCLPsiImplUtils.INSTANCE.getLines(content);
   }
-  @NotNull
-  public static List<CharSequence> getLinesRaw(@NotNull HCLHeredocContent content) {
+  public static @NotNull List<CharSequence> getLinesRaw(@NotNull HCLHeredocContent content) {
     return HCLPsiImplUtils.INSTANCE.getLinesRaw(content);
   }
 
@@ -139,13 +122,11 @@ public final class HCLPsiImplUtilJ {
     return HCLPsiImplUtils.INSTANCE.getLinesCount(content);
   }
 
-  @NotNull
-  public static List<Pair<TextRange, String>> getTextFragments(@NotNull HCLHeredocContent literal) {
+  public static @NotNull List<Pair<TextRange, String>> getTextFragments(@NotNull HCLHeredocContent literal) {
     return JavaUtil.getTextFragments(literal);
   }
 
-  @NotNull
-  public static String getName(@NotNull HCLHeredocMarker marker) {
+  public static @NotNull String getName(@NotNull HCLHeredocMarker marker) {
     return HCLPsiImplUtils.INSTANCE.getName(marker);
   }
 
@@ -153,24 +134,20 @@ public final class HCLPsiImplUtilJ {
     return HCLPsiImplUtils.INSTANCE.getValue(literal);
   }
 
-  @NotNull
-  public static Number getValue(@NotNull HCLNumberLiteral literal) {
+  public static @NotNull Number getValue(@NotNull HCLNumberLiteral literal) {
     return HCLPsiImplUtils.INSTANCE.getValue(literal);
   }
 
-  @NotNull
-  public static String getId(@NotNull HCLIdentifier identifier) {
+  public static @NotNull String getId(@NotNull HCLIdentifier identifier) {
     return HCLPsiImplUtils.INSTANCE.getId(identifier);
   }
 
-  @Nullable
-  public static HCLIdentifier getVar1(@NotNull HCLForIntro intro) {
+  public static @Nullable HCLIdentifier getVar1(@NotNull HCLForIntro intro) {
     // May be null in case of incomplete 'for', e.g. '[for :]'
     return PsiTreeUtil.getChildOfType(intro, HCLIdentifier.class);
   }
 
-  @Nullable
-  public static HCLIdentifier getVar2(@NotNull HCLForIntro intro) {
+  public static @Nullable HCLIdentifier getVar2(@NotNull HCLForIntro intro) {
     final HCLIdentifier var1 = getVar1(intro);
     final PsiElement next = PsiTreeUtil.skipSiblingsForward(var1, PsiWhiteSpace.class);
     if (next != null && next.getNode().getElementType() == HCLElementTypes.COMMA) {
@@ -179,28 +156,24 @@ public final class HCLPsiImplUtilJ {
     return null;
   }
 
-  @Nullable
-  public static HCLExpression getContainer(@NotNull HCLForIntro intro) {
+  public static @Nullable HCLExpression getContainer(@NotNull HCLForIntro intro) {
     final HCLIdentifier var1 = getVar1(intro);
     final HCLIdentifier var2 = getVar2(intro);
     // May be null in case of incomplete 'for', e.g. '[for a in ]'
     return PsiTreeUtil.getNextSiblingOfType(var2 != null ? var2 : var1, HCLExpression.class);
   }
 
-  @NotNull
-  public static HCLExpression getExpression(@NotNull HCLForArrayExpression expression) {
+  public static @NotNull HCLExpression getExpression(@NotNull HCLForArrayExpression expression) {
     //noinspection ConstantConditions
     return PsiTreeUtil.getChildOfType(expression, HCLExpression.class);
   }
 
-  @NotNull
-  public static HCLExpression getKey(@NotNull HCLForObjectExpression expression) {
+  public static @NotNull HCLExpression getKey(@NotNull HCLForObjectExpression expression) {
     //noinspection ConstantConditions
     return PsiTreeUtil.getChildOfType(expression, HCLExpression.class);
   }
 
-  @NotNull
-  public static HCLExpression getValue(@NotNull HCLForObjectExpression expression) {
+  public static @NotNull HCLExpression getValue(@NotNull HCLForObjectExpression expression) {
     //noinspection ConstantConditions
     return PsiTreeUtil.getNextSiblingOfType(getKey(expression), HCLExpression.class);
   }
@@ -209,18 +182,15 @@ public final class HCLPsiImplUtilJ {
     return expression.getNode().findChildByType(HCLElementTypes.OP_ELLIPSIS) != null;
   }
 
-  @NotNull
-  public static IElementType getOperationSign(HCLUnaryExpression expression) {
+  public static @NotNull IElementType getOperationSign(HCLUnaryExpression expression) {
     return expression.getNode().getChildren(HCLTokenTypes.getHCL_UNARY_OPERATORS())[0].getElementType();
   }
 
-  @NotNull
-  public static IElementType getOperationSign(HCLBinaryExpression expression) {
+  public static @NotNull IElementType getOperationSign(HCLBinaryExpression expression) {
     return expression.getNode().getFirstChildNode().getTreeNext().getElementType();
   }
 
-  @NotNull
-  public static HCLIdentifier getMethod(HCLMethodCallExpression expression) {
+  public static @NotNull HCLIdentifier getMethod(HCLMethodCallExpression expression) {
     return expression.getCallee();
   }
 
@@ -228,8 +198,7 @@ public final class HCLPsiImplUtilJ {
    return ReferenceProvidersRegistry.getReferencesFromProviders(select);
   }
 
-  @Nullable
-  public static PsiReference getReference(@NotNull HCLSelectExpression select) {
+  public static @Nullable PsiReference getReference(@NotNull HCLSelectExpression select) {
     PsiReference[] refs = getReferences(select);
     return refs.length != 0 ? refs[0] : null;
   }

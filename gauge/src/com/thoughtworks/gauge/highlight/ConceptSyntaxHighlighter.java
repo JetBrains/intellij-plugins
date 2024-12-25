@@ -30,9 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * Gauge concept (.cpt) file. It is unrelated to concepts within specification (.spec) files.
  */
 public final class ConceptSyntaxHighlighter implements SyntaxHighlighter {
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new ConceptLexer();
   }
 

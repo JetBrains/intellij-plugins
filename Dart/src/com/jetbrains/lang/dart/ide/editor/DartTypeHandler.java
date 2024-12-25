@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -29,9 +30,8 @@ public final class DartTypeHandler extends TypedHandlerDelegate {
   private static final TokenSet INVALID_INSIDE_REFERENCE =
     TokenSet.create(DartTokenTypes.SEMICOLON, DartTokenTypes.LBRACE, DartTokenTypes.RBRACE);
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(final char c, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, @NotNull final FileType fileType) {
+  public @NotNull Result beforeCharTyped(final char c, final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile file, final @NotNull FileType fileType) {
     myAfterTypeOrComponentName = false;
     myAfterDollarInStringInterpolation = false;
 
@@ -77,9 +77,8 @@ public final class DartTypeHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
-  @NotNull
   @Override
-  public Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+  public @NotNull Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     if (c == '<' && myAfterTypeOrComponentName) {
       myAfterTypeOrComponentName = false;
       EditorModificationUtil.insertStringAtCaret(editor, ">", false, 0);
@@ -103,13 +102,13 @@ public final class DartTypeHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
-  private static boolean isAfterTypeOrComponentName(@NotNull final PsiFile file, final int offset) {
+  private static boolean isAfterTypeOrComponentName(final @NotNull PsiFile file, final int offset) {
     final PsiElement element = file.findElementAt(offset - 1);
     final PsiElement previousElement = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(element, false);
     return PsiTreeUtil.getParentOfType(previousElement, DartType.class, DartComponentName.class) != null;
   }
 
-  private static boolean isAfterDollarInStringInterpolation(@Nullable final PsiElement elementAtOffsetMinusOne) {
+  private static boolean isAfterDollarInStringInterpolation(final @Nullable PsiElement elementAtOffsetMinusOne) {
     return elementAtOffsetMinusOne != null &&
            elementAtOffsetMinusOne.getNode().getElementType() == DartTokenTypes.SHORT_TEMPLATE_ENTRY_START;
   }

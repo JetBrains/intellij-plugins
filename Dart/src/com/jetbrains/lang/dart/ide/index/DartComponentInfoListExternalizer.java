@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.util.io.DataExternalizer;
@@ -16,7 +17,7 @@ import java.util.List;
 public class DartComponentInfoListExternalizer implements DataExternalizer<List<DartComponentInfo>> {
 
   @Override
-  public void save(@NotNull final DataOutput out, @NotNull final List<DartComponentInfo> infos) throws IOException {
+  public void save(final @NotNull DataOutput out, final @NotNull List<DartComponentInfo> infos) throws IOException {
     DataInputOutputUtil.writeINT(out, infos.size());
     for (DartComponentInfo componentInfo : infos) {
       final DartComponentType dartComponentType = componentInfo.getComponentType();

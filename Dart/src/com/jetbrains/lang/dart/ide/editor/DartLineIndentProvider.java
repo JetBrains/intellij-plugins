@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.formatting.Indent;
@@ -8,12 +9,13 @@ import com.intellij.psi.impl.source.codeStyle.SemanticEditorPosition;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.IndentCalculator;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider;
 import com.intellij.psi.tree.IElementType;
-import java.util.HashMap;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 
 import static com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider.JavaLikeElement.*;
 
@@ -45,9 +47,8 @@ public final class DartLineIndentProvider extends JavaLikeLangLineIndentProvider
     SYNTAX_MAP.put(DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT, LineComment);
   }
 
-  @Nullable
   @Override
-  protected SemanticEditorPosition.SyntaxElement mapType(@NotNull IElementType tokenType) {
+  protected @Nullable SemanticEditorPosition.SyntaxElement mapType(@NotNull IElementType tokenType) {
     return SYNTAX_MAP.get(tokenType);
   }
 
@@ -61,9 +62,8 @@ public final class DartLineIndentProvider extends JavaLikeLangLineIndentProvider
     return Indent.Type.NORMAL;
   }
 
-  @Nullable
   @Override
-  protected IndentCalculator getIndent(@NotNull Project project, @NotNull Editor editor, @Nullable Language language, int offset) {
+  protected @Nullable IndentCalculator getIndent(@NotNull Project project, @NotNull Editor editor, @Nullable Language language, int offset) {
     if (getPosition(editor, offset).matchesRule(position -> position.before().isAt(LeftParenthesis))) {
       // Need to skip a common logic and force formatter-based line indent provider to work, because
       // there may be different indents inside parentheses, see https://github.com/dart-lang/dart_style/issues/551

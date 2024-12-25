@@ -38,7 +38,7 @@ public class PerforceFileRevision implements VcsFileRevision {
   private final Project myProject;
   private final P4Connection myConnection;
 
-  public PerforceFileRevision(@NotNull P4Revision p4Revision, @NotNull final P4Connection connection, @NotNull Project project) {
+  public PerforceFileRevision(@NotNull P4Revision p4Revision, final @NotNull P4Connection connection, @NotNull Project project) {
     myP4Revision = p4Revision;
     myProject = project;
     myNumber = new PerforceVcsRevisionNumber(myP4Revision);
@@ -46,8 +46,7 @@ public class PerforceFileRevision implements VcsFileRevision {
   }
 
   @Override
-  @NotNull
-  public VcsRevisionNumber getRevisionNumber() {
+  public @NotNull VcsRevisionNumber getRevisionNumber() {
     return myNumber;
   }
 
@@ -85,9 +84,8 @@ public class PerforceFileRevision implements VcsFileRevision {
     return loadContent();
   }
 
-  @Nullable
   @Override
-  public RepositoryLocation getChangedRepositoryPath() {
+  public @Nullable RepositoryLocation getChangedRepositoryPath() {
     return null;
   }
 
@@ -108,14 +106,12 @@ public class PerforceFileRevision implements VcsFileRevision {
     return null;
   }
 
-  @NotNull
-  public P4Connection getConnection() {
+  public @NotNull P4Connection getConnection() {
     return myConnection;
   }
 
-  @Nullable
   @Override
-  public Charset getDefaultCharset() {
+  public @Nullable Charset getDefaultCharset() {
     if ("text".equals(myP4Revision.getType())) return Charset.defaultCharset();
     return null;
   }

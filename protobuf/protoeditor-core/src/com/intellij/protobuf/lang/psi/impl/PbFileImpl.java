@@ -52,9 +52,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     super(viewProvider, PbLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return PbFileType.INSTANCE;
   }
 
@@ -64,14 +63,12 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
   }
 
   @Override
-  @Nullable
-  public PbSyntaxStatement getSyntaxStatement() {
+  public @Nullable PbSyntaxStatement getSyntaxStatement() {
     return PsiTreeUtil.getChildOfType(this, PbSyntaxStatement.class);
   }
 
   @Override
-  @Nullable
-  public PbPackageStatement getPackageStatement() {
+  public @Nullable PbPackageStatement getPackageStatement() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
@@ -81,8 +78,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
   }
 
   @Override
-  @NotNull
-  public List<PbImportStatement> getImportStatements() {
+  public @NotNull List<PbImportStatement> getImportStatements() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
@@ -92,8 +88,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
   }
 
   @Override
-  @NotNull
-  public SyntaxLevel getSyntaxLevel() {
+  public @NotNull SyntaxLevel getSyntaxLevel() {
     PbSyntaxStatement statement = getSyntaxStatement();
     SyntaxLevel level = null;
     if (statement != null) {
@@ -103,8 +98,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
   }
 
   @Override
-  @NotNull
-  public QualifiedName getPackageQualifiedName() {
+  public @NotNull QualifiedName getPackageQualifiedName() {
     PbPackageStatement packageStatement = getPackageStatement();
     if (packageStatement != null) {
       PbPackageName packageName = packageStatement.getPackageName();
@@ -120,9 +114,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     return PbPsiUtil.EMPTY_QUALIFIED_NAME;
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     // The file itself doesn't declare a scope. Its package name elements, if defined, provide the
     // child scope for elements in the package.
     return PbPsiUtil.EMPTY_QUALIFIED_NAME;
@@ -133,35 +126,30 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     return this;
   }
 
-  @NotNull
   @Override
-  public List<PbStatement> getStatements() {
+  public @NotNull List<PbStatement> getStatements() {
     return PbPsiImplUtil.getStatements(this);
   }
 
-  @NotNull
   @Override
-  public List<PbOptionStatement> getOptionStatements() {
+  public @NotNull List<PbOptionStatement> getOptionStatements() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PbOptionStatement.class);
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.FILE_OPTIONS.forDescriptor(descriptor);
   }
 
-  @NotNull
   @Override
-  public Map<String, Collection<PbSymbol>> getSymbolMap() {
+  public @NotNull Map<String, Collection<PbSymbol>> getSymbolMap() {
     // The file's symbol map is equivalent to the symbol map for an empty package name. For example,
     // if the file's declared package is "com.foo.bar", its symbol map should contain only "com".
     return getPackageSymbolMap(PbPsiUtil.EMPTY_QUALIFIED_NAME);
   }
 
-  @NotNull
   @Override
-  public Map<String, Collection<PbSymbol>> getPackageSymbolMap(QualifiedName packageName) {
+  public @NotNull Map<String, Collection<PbSymbol>> getPackageSymbolMap(QualifiedName packageName) {
     QualifiedName declaredPackageName = getPackageQualifiedName();
     if (declaredPackageName.equals(packageName)) {
       // The file's full package name. Compute, cache, and return all of the non-package symbols
@@ -191,9 +179,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     }
   }
 
-  @NotNull
   @Override
-  public PbSymbolOwner getPrimarySymbolOwner() {
+  public @NotNull PbSymbolOwner getPrimarySymbolOwner() {
     PbPackageStatement packageStatement = getPackageStatement();
     if (packageStatement == null) {
       return this;
@@ -205,16 +192,14 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     return packageName;
   }
 
-  @NotNull
   @Override
-  public QualifiedName getExtensionOptionScope() {
+  public @NotNull QualifiedName getExtensionOptionScope() {
     // Unlike other owner types, files don't chop off the last component of the container scope.
     return getPackageQualifiedName();
   }
 
-  @NotNull
   @Override
-  public Map<QualifiedName, Collection<PbSymbol>> getLocalQualifiedSymbolMap() {
+  public @NotNull Map<QualifiedName, Collection<PbSymbol>> getLocalQualifiedSymbolMap() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
@@ -223,9 +208,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         .asMap();
   }
 
-  @NotNull
   @Override
-  public Map<QualifiedName, Collection<PbSymbol>> getExportedQualifiedSymbolMap() {
+  public @NotNull Map<QualifiedName, Collection<PbSymbol>> getExportedQualifiedSymbolMap() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
@@ -234,9 +218,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         .asMap();
   }
 
-  @NotNull
   @Override
-  public Map<QualifiedName, Collection<PbSymbol>> getFullQualifiedSymbolMap() {
+  public @NotNull Map<QualifiedName, Collection<PbSymbol>> getFullQualifiedSymbolMap() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->

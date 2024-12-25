@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.osmorc.settings;
 
 import com.intellij.openapi.options.Configurable;
@@ -18,21 +18,18 @@ import javax.swing.*;
 public class LibraryBundlingEditor implements SearchableConfigurable, Configurable.NoScroll {
   private LibraryBundlingEditorComponent myComponent;
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return OsmorcBundle.message("settings.application.bundling");
   }
 
-  @NotNull
   @Override
-  public String getHelpTopic() {
+  public @NotNull String getHelpTopic() {
     return "reference.settings.project.osgi.library.bundling";
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return getHelpTopic();
   }
 

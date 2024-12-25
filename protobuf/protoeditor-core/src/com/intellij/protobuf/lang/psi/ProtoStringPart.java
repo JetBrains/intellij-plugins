@@ -28,8 +28,7 @@ import org.jetbrains.annotations.NotNull;
 /** A shared interface implemented by elements that represent a proto-formatted string part. */
 public interface ProtoStringPart extends PsiElement {
 
-  @NotNull
-  default ProtoString getParsedString() {
+  default @NotNull ProtoString getParsedString() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
@@ -44,8 +43,7 @@ public interface ProtoStringPart extends PsiElement {
     return getParsedString().getInvalidEscapeRanges();
   }
 
-  @NotNull
-  default TextRange getTextRangeNoQuotes() {
+  default @NotNull TextRange getTextRangeNoQuotes() {
     return PbPsiImplUtil.getTextRangeNoQuotes(this);
   }
 }

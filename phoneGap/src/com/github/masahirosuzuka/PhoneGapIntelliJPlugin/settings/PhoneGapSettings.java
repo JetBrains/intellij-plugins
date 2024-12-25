@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
@@ -81,9 +81,8 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
   private State myState = new State();
 
-  @NotNull
   @Override
-  public State getState() {
+  public @NotNull State getState() {
     return myState;
   }
 
@@ -102,8 +101,7 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
   }
 
 
-  @Nullable
-  public String getExecutablePath() {
+  public @Nullable String getExecutablePath() {
     return myState.getExecutablePath();
   }
 
@@ -112,8 +110,7 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
     myState = state;
   }
 
-  @Nullable
-  private static String detectDefaultPath() {
+  private static @Nullable String detectDefaultPath() {
     return ContainerUtil.getFirstItem(PhoneGapUtil.getDefaultExecutablePaths());
   }
 }

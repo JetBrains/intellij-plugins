@@ -53,21 +53,18 @@ public class PbTextColorSettingsPage implements ColorSettingsPage {
       new AttributesDescriptor(PbIdeBundle.message("prototext.type.comment.directive"), PbTextSyntaxHighlighter.COMMENT_DIRECTIVE),
     };
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return PbIcons.TEXT_FILE;
   }
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new PbTextSyntaxHighlighter();
   }
 
-  @NotNull
   @Override
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     try {
       return ResourceUtil.readUrlAsString(getClass().getResource("/example.pb"))
         .replace("\r\n", "\n");
@@ -76,27 +73,23 @@ public class PbTextColorSettingsPage implements ColorSettingsPage {
     }
   }
 
-  @Nullable
   @Override
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return null;
   }
 
-  @NotNull
   @Override
-  public AttributesDescriptor[] getAttributeDescriptors() {
+  public @NotNull AttributesDescriptor[] getAttributeDescriptors() {
     return DESCRIPTORS;
   }
 
-  @NotNull
   @Override
-  public ColorDescriptor[] getColorDescriptors() {
+  public @NotNull ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return PbIdeBundle.message("prototext.name");
   }
 }

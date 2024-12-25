@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-import com.intellij.psi.PsiComment;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
+import com.intellij.psi.PsiComment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,8 +26,7 @@ import java.util.List;
 public interface PbCommentOwner extends PbElement {
 
   /** Returns comments that precede this element. */
-  @NotNull
-  default List<PsiComment> getLeadingComments() {
+  default @NotNull List<PsiComment> getLeadingComments() {
     return PbCommentUtil.collectLeadingComments(this);
   }
 
@@ -42,14 +41,12 @@ public interface PbCommentOwner extends PbElement {
    *   }
    * </pre>
    */
-  @NotNull
-  default List<PsiComment> getTrailingComments() {
+  default @NotNull List<PsiComment> getTrailingComments() {
     return PbCommentUtil.collectTrailingComments(this);
   }
 
   /** Returns leading and trailing comments combined. */
-  @NotNull
-  default List<PsiComment> getComments() {
+  default @NotNull List<PsiComment> getComments() {
     List<PsiComment> leadingComments = getLeadingComments();
     List<PsiComment> trailingComments = getTrailingComments();
     if (leadingComments.isEmpty()) {

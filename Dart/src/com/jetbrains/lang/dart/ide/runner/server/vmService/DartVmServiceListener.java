@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -28,12 +28,12 @@ import java.util.Objects;
 public class DartVmServiceListener implements VmServiceListener {
   private static final Logger LOG = Logger.getInstance(DartVmServiceListener.class.getName());
 
-  @NotNull private final DartVmServiceDebugProcess myDebugProcess;
-  @NotNull private final DartVmServiceBreakpointHandler myBreakpointHandler;
-  @Nullable private XSourcePosition myLatestSourcePosition;
+  private final @NotNull DartVmServiceDebugProcess myDebugProcess;
+  private final @NotNull DartVmServiceBreakpointHandler myBreakpointHandler;
+  private @Nullable XSourcePosition myLatestSourcePosition;
 
-  public DartVmServiceListener(@NotNull final DartVmServiceDebugProcess debugProcess,
-                               @NotNull final DartVmServiceBreakpointHandler breakpointHandler) {
+  public DartVmServiceListener(final @NotNull DartVmServiceDebugProcess debugProcess,
+                               final @NotNull DartVmServiceBreakpointHandler breakpointHandler) {
     myDebugProcess = debugProcess;
     myBreakpointHandler = breakpointHandler;
   }
@@ -44,7 +44,7 @@ public class DartVmServiceListener implements VmServiceListener {
   }
 
   @Override
-  public void received(@NotNull final String streamId, @NotNull final Event event) {
+  public void received(final @NotNull String streamId, final @NotNull Event event) {
     switch (event.getKind()) {
       case BreakpointAdded -> {
         // TODO Respond to breakpoints added by the observatory.
@@ -82,10 +82,10 @@ public class DartVmServiceListener implements VmServiceListener {
     }
   }
 
-  void onIsolatePaused(@NotNull final IsolateRef isolateRef,
-                       @Nullable final ElementList<Breakpoint> vmBreakpoints,
-                       @Nullable final InstanceRef exception,
-                       @Nullable final Frame vmTopFrame,
+  void onIsolatePaused(final @NotNull IsolateRef isolateRef,
+                       final @Nullable ElementList<Breakpoint> vmBreakpoints,
+                       final @Nullable InstanceRef exception,
+                       final @Nullable Frame vmTopFrame,
                        boolean atAsyncSuspension) {
     if (vmTopFrame == null) {
       myDebugProcess.getSession().positionReached(new XSuspendContext() {
@@ -151,7 +151,7 @@ public class DartVmServiceListener implements VmServiceListener {
     }
   }
 
-  private static boolean equalSourcePositions(@Nullable final XSourcePosition position1, @Nullable final XSourcePosition position2) {
+  private static boolean equalSourcePositions(final @Nullable XSourcePosition position1, final @Nullable XSourcePosition position2) {
     return position1 != null &&
            position2 != null &&
            position1.getFile().equals(position2.getFile()) &&
@@ -159,10 +159,9 @@ public class DartVmServiceListener implements VmServiceListener {
   }
 
 
-  @Nullable
-  private String evaluateExpression(final @NotNull String isolateId,
-                                    final @Nullable Frame vmTopFrame,
-                                    final @Nullable XExpression xExpression) {
+  private @Nullable String evaluateExpression(final @NotNull String isolateId,
+                                              final @Nullable Frame vmTopFrame,
+                                              final @Nullable XExpression xExpression) {
     final String evalText = xExpression == null ? null : xExpression.getExpression();
     if (vmTopFrame == null || StringUtil.isEmptyOrSpaces(evalText)) return null;
 
@@ -172,7 +171,7 @@ public class DartVmServiceListener implements VmServiceListener {
 
     myDebugProcess.getVmServiceWrapper().evaluateInFrame(isolateId, vmTopFrame, evalText, new XDebuggerEvaluator.XEvaluationCallback() {
       @Override
-      public void evaluated(@NotNull final XValue result) {
+      public void evaluated(final @NotNull XValue result) {
         if (result instanceof DartVmServiceValue) {
           evalResult.set(getSimpleStringPresentation(((DartVmServiceValue)result).getInstanceRef()));
         }
@@ -180,7 +179,7 @@ public class DartVmServiceListener implements VmServiceListener {
       }
 
       @Override
-      public void errorOccurred(@NotNull final String errorMessage) {
+      public void errorOccurred(final @NotNull String errorMessage) {
         evalResult.set("Failed to evaluate log expression [" + evalText + "]: " + errorMessage);
         semaphore.up();
       }
@@ -190,8 +189,7 @@ public class DartVmServiceListener implements VmServiceListener {
     return evalResult.get();
   }
 
-  @NotNull
-  private static String getSimpleStringPresentation(@NotNull final InstanceRef instanceRef) {
+  private static @NotNull String getSimpleStringPresentation(final @NotNull InstanceRef instanceRef) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
     return switch (instanceRef.getKind()) {
       case Null, Bool, Double, Int, String, Float32x4, Float64x2, Int32x4, StackTrace ->

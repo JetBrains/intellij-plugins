@@ -17,15 +17,15 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
 import com.intellij.protobuf.lang.resolve.ResolveFilters;
 import com.intellij.protobuf.lang.util.BuiltInType;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,9 +45,8 @@ abstract class PbTypeNameMixin extends PbQualifiedReferenceBase implements PbTyp
     return BuiltInType.getType(path.getSymbol().getText());
   }
 
-  @NotNull
   @Override
-  public ProtoSymbolPathDelegate getDefaultPathDelegate() {
+  public @NotNull ProtoSymbolPathDelegate getDefaultPathDelegate() {
     return new ProtoSymbolPathDelegate() {
       @Override
       public PsiReference getReference(ProtoSymbolPath path) {
@@ -73,20 +72,17 @@ abstract class PbTypeNameMixin extends PbQualifiedReferenceBase implements PbTyp
     };
   }
 
-  @NotNull
   @Override
-  public String getShortName() {
+  public @NotNull String getShortName() {
     return getSymbolPath().getSymbol().getText();
   }
 
-  @Nullable
   @Override
-  public PsiReference getEffectiveReference() {
+  public @Nullable PsiReference getEffectiveReference() {
     return getSymbolPath().getReference();
   }
 
-  @Nullable
-  private Condition<PbSymbol> getPackageOrTypeFilter() {
+  private @Nullable Condition<PbSymbol> getPackageOrTypeFilter() {
     // Types for Fields can have Messages or Enums.
     // For MapFields, keys can only be builtin types. The value type can be message or enum.
     // Types for "extend T" can only be MessageTypes

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -23,15 +23,13 @@ import java.util.Collection;
 import java.util.List;
 
 public final class BndLaunchUtil {
-  @NotNull
-  public static Run getRun(@NotNull File runFile) throws Exception {
+  public static @NotNull Run getRun(@NotNull File runFile) throws Exception {
     Workspace ws = Workspace.getWorkspaceWithoutException(runFile.getParentFile().getParentFile());
     return Run.createRun(ws, runFile);
   }
 
-  @NotNull
-  public static JavaParameters createJavaParameters(@NotNull BndRunConfigurationBase configuration,
-                                                    @NotNull ProjectLauncher launcher) throws CantRunException {
+  public static @NotNull JavaParameters createJavaParameters(@NotNull BndRunConfigurationBase configuration,
+                                                             @NotNull ProjectLauncher launcher) throws CantRunException {
     Project project = configuration.getProject();
 
     JavaParameters parameters = new JavaParameters();
@@ -55,8 +53,7 @@ public final class BndLaunchUtil {
     return c instanceof List ? (List<String>)c : new ArrayList<>(c);
   }
 
-  @Nullable
-  public static Boolean hasTestCases(@NotNull String path) {
+  public static @Nullable Boolean hasTestCases(@NotNull String path) {
     File file = new File(FileUtil.toSystemDependentName(path));
     if (file.isFile()) {
       try (Processor processor = new Processor()) {

@@ -30,7 +30,7 @@ import java.util.*;
 
 @Service(Service.Level.PROJECT)
 public final class PerforceLoginManager implements LoginSupport {
-  private final static Logger LOG = Logger.getInstance(PerforceLoginManager.class);
+  private static final Logger LOG = Logger.getInstance(PerforceLoginManager.class);
   private final AuthNotifier myAuthNotifier;
   private final DisabledLoginNotifier myDisabledLoginNotifier;
 
@@ -251,8 +251,7 @@ public final class PerforceLoginManager implements LoginSupport {
     return false;
   }
 
-  @Nullable
-  private LoginState loginUnderProgress(final AttemptsStateMachine machine, final String newPassword) {
+  private @Nullable LoginState loginUnderProgress(final AttemptsStateMachine machine, final String newPassword) {
     return runUnderProgress(PerforceBundle.message("login"), () -> machine.login(newPassword));
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -99,16 +99,14 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
       .withInsertHandler(getInsertHandler(element)).withTailText(tailText).withCaseSensitivity(false);
   }
 
-  @Nullable
-  private static InsertHandler<LookupElement> getInsertHandler(PsiNamedElement element) {
+  private static @Nullable InsertHandler<LookupElement> getInsertHandler(PsiNamedElement element) {
     if (CfmlPsiUtil.isFunctionDefinition(element)) {
       return CfmlMethodInsertHandler.getInstance();
     }
     return null;
   }
 
-  @Nullable
-  private static Icon getIcon(PsiElement element) {
+  private static @Nullable Icon getIcon(PsiElement element) {
     if (CfmlPsiUtil.isFunctionDefinition(element)) {
       return IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method);
     }

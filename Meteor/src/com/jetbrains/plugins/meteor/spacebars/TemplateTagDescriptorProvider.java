@@ -14,9 +14,8 @@ import org.jetbrains.annotations.Nullable;
 public final class TemplateTagDescriptorProvider implements XmlElementDescriptorProvider {
   private static final String TEMPLATE_TAG = "template";
 
-  @Nullable
   @Override
-  public XmlElementDescriptor getDescriptor(XmlTag tag) {
+  public @Nullable XmlElementDescriptor getDescriptor(XmlTag tag) {
     if (!tag.getName().equals(TEMPLATE_TAG)) {
       return null;
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.ExecutionException;
@@ -41,9 +41,8 @@ public final class DartRunner extends GenericProgramRunner {
   // Allow 5 seconds to connect to the observatory.
   private static final int OBSERVATORY_TIMEOUT_MS = Math.toIntExact(TimeUnit.SECONDS.toMillis(5));
 
-  @NotNull
   @Override
-  public String getRunnerId() {
+  public @NotNull String getRunnerId() {
     return "DartRunner";
   }
 
@@ -56,9 +55,8 @@ public final class DartRunner extends GenericProgramRunner {
             profile instanceof DartWebdevConfiguration);
   }
 
-  @Nullable
   @Override
-  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  protected @Nullable RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final String executorId = env.getExecutor().getId();
     if (!DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
       LOG.error("Unexpected executor id: " + executorId);
@@ -90,10 +88,9 @@ public final class DartRunner extends GenericProgramRunner {
     return OBSERVATORY_TIMEOUT_MS;
   }
 
-  @Nullable
-  private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
-                                                  final @NotNull ExecutionEnvironment env,
-                                                  final @Nullable String dasExecutionContextId) throws RuntimeConfigurationError,
+  private @Nullable RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
+                                                            final @NotNull ExecutionEnvironment env,
+                                                            final @Nullable String dasExecutionContextId) throws RuntimeConfigurationError,
                                                                                                        ExecutionException {
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
@@ -149,8 +146,7 @@ public final class DartRunner extends GenericProgramRunner {
     final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
     final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
       @Override
-      @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+      public @NotNull XDebugProcess start(final @NotNull XDebugSession session) throws ExecutionException {
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(project, contextFileOrDir);
         DartVmServiceDebugProcess debugProcess = new DartVmServiceDebugProcess(session,
                                                                                executionResult,
@@ -167,7 +163,7 @@ public final class DartRunner extends GenericProgramRunner {
     return debugSession.getRunContentDescriptor();
   }
 
-  private DartUrlResolver getDartUrlResolver(@NotNull final Project project, @NotNull final VirtualFile contextFileOrDir) {
+  private DartUrlResolver getDartUrlResolver(final @NotNull Project project, final @NotNull VirtualFile contextFileOrDir) {
     return DartUrlResolver.getInstance(project, contextFileOrDir);
   }
 }

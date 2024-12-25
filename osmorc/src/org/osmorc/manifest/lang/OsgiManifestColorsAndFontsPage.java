@@ -71,15 +71,13 @@ public final class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
     ADDITIONAL_HIGHLIGHTING.put("parameterSeparator", OsgiManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY);
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return OsmorcBundle.message("settings.colors.title");
   }
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return OsmorcIdeaIcons.Osgi;
   }
 
@@ -88,9 +86,8 @@ public final class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
     return ATTRIBUTE_DESCRIPTORS;
   }
 
-  @Nullable
   @Override
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ADDITIONAL_HIGHLIGHTING;
   }
 
@@ -99,15 +96,13 @@ public final class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return ManifestSyntaxHighlighterFactory.HIGHLIGHTER;
   }
 
-  @NotNull
   @Override
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return """
       Manifest-Version: 1.0
       Bundle-Name: Osmorc Test

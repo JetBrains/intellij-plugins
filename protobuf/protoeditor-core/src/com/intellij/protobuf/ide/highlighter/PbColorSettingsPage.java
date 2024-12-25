@@ -55,21 +55,18 @@ public class PbColorSettingsPage implements ColorSettingsPage {
                                PbSyntaxHighlighter.INVALID_STRING_ESCAPE),
     };
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return PbIcons.FILE;
   }
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new PbSyntaxHighlighter(true);
   }
 
-  @NotNull
   @Override
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     try {
       return StringUtil.convertLineSeparators(ResourceUtil.readUrlAsString(getClass().getResource("/example.proto")));
     } catch (IOException e) {
@@ -77,27 +74,23 @@ public class PbColorSettingsPage implements ColorSettingsPage {
     }
   }
 
-  @Nullable
   @Override
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return null;
   }
 
-  @NotNull
   @Override
-  public AttributesDescriptor[] getAttributeDescriptors() {
+  public @NotNull AttributesDescriptor[] getAttributeDescriptors() {
     return DESCRIPTORS;
   }
 
-  @NotNull
   @Override
-  public ColorDescriptor[] getColorDescriptors() {
+  public @NotNull ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return PbIdeBundle.message("plugin.name");
   }
 }

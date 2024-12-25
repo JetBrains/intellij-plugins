@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.util.indexing.*;
@@ -15,9 +15,8 @@ public final class DartSymbolIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_SYMBOL_INDEX = ID.create("DartSymbolIndex");
   private final DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
-  @NotNull
   @Override
-  public ID<String, Void> getName() {
+  public @NotNull ID<String, Void> getName() {
     return DART_SYMBOL_INDEX;
   }
 
@@ -26,21 +25,18 @@ public final class DartSymbolIndex extends ScalarIndexExtension<String> {
     return DartIndexUtil.INDEX_VERSION;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, Void, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, Void, FileContent> getIndexer() {
     return myDataIndexer;
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
@@ -51,8 +47,7 @@ public final class DartSymbolIndex extends ScalarIndexExtension<String> {
 
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
-    @NotNull
-    public Map<String, Void> map(@NotNull final FileContent inputData) {
+    public @NotNull Map<String, Void> map(final @NotNull FileContent inputData) {
       List<String> symbols = DartIndexUtil.indexFile(inputData).getSymbols();
       final Map<String, Void> result = new HashMap<>();
       for (String symbol : symbols) {

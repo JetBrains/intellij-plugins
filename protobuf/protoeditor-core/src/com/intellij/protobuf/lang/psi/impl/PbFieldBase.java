@@ -16,12 +16,12 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,9 +35,8 @@ abstract class PbFieldBase extends PbNamedElementBase implements PbField {
     super(node);
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     PsiElement id = getNameIdentifier();
     if (id != null) {
       return id.getText();
@@ -45,9 +44,8 @@ abstract class PbFieldBase extends PbNamedElementBase implements PbField {
     return null;
   }
 
-  @NotNull
   @Override
-  public List<PbOptionExpression> getOptions() {
+  public @NotNull List<PbOptionExpression> getOptions() {
     PbOptionList optionList = getOptionList();
     if (optionList == null) {
       return Collections.emptyList();
@@ -55,9 +53,8 @@ abstract class PbFieldBase extends PbNamedElementBase implements PbField {
     return optionList.getOptions();
   }
 
-  @Nullable
   @Override
-  public PbTypeName getExtendee() {
+  public @Nullable PbTypeName getExtendee() {
     PsiElement extendBody = getParent();
     if (extendBody == null) {
       return null;
@@ -69,9 +66,8 @@ abstract class PbFieldBase extends PbNamedElementBase implements PbField {
     return ((PbExtendDefinition) extendDefinition).getTypeName();
   }
 
-  @Nullable
   @Override
-  public PbOneofDefinition getOneof() {
+  public @Nullable PbOneofDefinition getOneof() {
     PsiElement oneofBody = getParent();
     if (oneofBody == null) {
       return null;
@@ -83,22 +79,19 @@ abstract class PbFieldBase extends PbNamedElementBase implements PbField {
     return (PbOneofDefinition) oneofDefinition;
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.FIELD_OPTIONS.forDescriptor(descriptor);
   }
 
   @Override
-  @Nullable
-  public QualifiedName getExtensionOptionScope() {
+  public @Nullable QualifiedName getExtensionOptionScope() {
     QualifiedName name = getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return PbIcons.FIELD;
   }
 
@@ -113,6 +106,5 @@ abstract class PbFieldBase extends PbNamedElementBase implements PbField {
     return CanonicalFieldLabel.OPTIONAL;
   }
 
-  @Nullable
-  abstract PbOptionList getOptionList();
+  abstract @Nullable PbOptionList getOptionList();
 }

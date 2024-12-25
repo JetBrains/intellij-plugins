@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
@@ -62,8 +62,7 @@ final class KarmaRunSettingsSerializationUtil {
     return builder.build();
   }
 
-  @NotNull
-  private static KarmaScopeKind readScopeKind(@NotNull Element element) {
+  private static @NotNull KarmaScopeKind readScopeKind(@NotNull Element element) {
     String value = JDOMExternalizerUtil.readCustomField(element, SCOPE_KIND);
     if (StringUtil.isNotEmpty(value)) {
       try {
@@ -75,8 +74,7 @@ final class KarmaRunSettingsSerializationUtil {
     return KarmaScopeKind.ALL;
   }
 
-  @NotNull
-  private static List<String> readTestNames(@NotNull Element parent) {
+  private static @NotNull List<String> readTestNames(@NotNull Element parent) {
     Element testNamesElement = parent.getChild(TEST_NAMES);
     if (testNamesElement == null) {
       return Collections.emptyList();

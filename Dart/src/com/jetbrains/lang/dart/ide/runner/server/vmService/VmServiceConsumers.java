@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import org.dartlang.vm.service.consumer.*;
@@ -18,31 +18,31 @@ public final class VmServiceConsumers {
     }
   };
 
-  private static abstract class ConsumerWrapper implements Consumer {
+  private abstract static class ConsumerWrapper implements Consumer {
     @Override
     public void onError(RPCError error) {
     }
   }
 
-  public static abstract class SuccessConsumerWrapper extends ConsumerWrapper implements SuccessConsumer {
+  public abstract static class SuccessConsumerWrapper extends ConsumerWrapper implements SuccessConsumer {
   }
 
-  public static abstract class VmConsumerWrapper extends ConsumerWrapper implements VMConsumer {
+  public abstract static class VmConsumerWrapper extends ConsumerWrapper implements VMConsumer {
   }
 
-  public static abstract class GetIsolateConsumerWrapper extends ConsumerWrapper implements GetIsolateConsumer {
+  public abstract static class GetIsolateConsumerWrapper extends ConsumerWrapper implements GetIsolateConsumer {
     @Override
     public void received(Sentinel response) {
     }
   }
 
-  public static abstract class BreakpointsConsumer {
+  public abstract static class BreakpointsConsumer {
     abstract void received(List<Breakpoint> breakpointResponses, List<RPCError> errorResponses);
 
     abstract void sourcePositionNotApplicable();
   }
 
-  public static abstract class InvokeConsumerWrapper implements InvokeConsumer {
+  public abstract static class InvokeConsumerWrapper implements InvokeConsumer {
     @Override
     public final void received(ErrorRef response) {
       noGoodResult();
@@ -58,10 +58,10 @@ public final class VmServiceConsumers {
       noGoodResult();
     }
 
-    abstract public void noGoodResult();
+    public abstract void noGoodResult();
   }
 
-  public static abstract class EmptyResumeConsumer extends ConsumerWrapper implements ResumeConsumer {
+  public abstract static class EmptyResumeConsumer extends ConsumerWrapper implements ResumeConsumer {
     @Override
     public void received(Sentinel response) {
     }

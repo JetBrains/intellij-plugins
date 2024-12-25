@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
@@ -47,16 +47,15 @@ import java.util.function.Consumer;
 
 public final class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
-  private final static Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
+  private static final Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
 
   CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
     setWorkingDirectory(PathMacroUtil.MODULE_WORKING_DIR);
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<>();
     group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new CucumberJavaApplicationConfigurable(getProject()));
     JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
@@ -116,14 +115,12 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
         return params;
       }
 
-      @NotNull
-      private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) {
+      private @NotNull ConsoleView createConsole(final @NotNull Executor executor, ProcessHandler processHandler) {
         @NonNls String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {
-          @NotNull
           @Override
-          public SMTestLocator getTestLocator() {
+          public @NotNull SMTestLocator getTestLocator() {
             return JavaTestLocator.INSTANCE;
           }
         };
@@ -134,9 +131,8 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
         return console;
       }
 
-      @NotNull
       @Override
-      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
+      public @NotNull ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
         myConsoleFilters.forEach((filter) -> console.addMessageFilter(filter));
@@ -191,14 +187,12 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
     super.checkConfiguration();
   }
 
-  @NotNull
   @Override
-  protected CucumberJavaConfigurationOptions getOptions() {
+  protected @NotNull CucumberJavaConfigurationOptions getOptions() {
     return (CucumberJavaConfigurationOptions)super.getOptions();
   }
 
-  @Nullable
-  public String getGlue() {
+  public @Nullable String getGlue() {
     if (myCucumberGlueProvider != null) {
       //noinspection SynchronizeOnThis
       synchronized (this) {
@@ -247,8 +241,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
     return getOptions().getGlue();
   }
 
-  @Nullable
-  public String getPrecalculatedGlue() {
+  public @Nullable String getPrecalculatedGlue() {
     return getOptions().getGlue();
   }
 
@@ -285,9 +278,8 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
     getOptions().setCucumberCoreVersion(cucumberCoreVersion);
   }
 
-  @Nullable
   @Override
-  public String suggestedName() {
+  public @Nullable String suggestedName() {
     return getOptions().getSuggestedName();
   }
 
@@ -300,15 +292,13 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
     return getName();
   }
 
-  @Nullable
   @Override
-  public LanguageRuntimeType<?> getDefaultLanguageRuntimeType() {
+  public @Nullable LanguageRuntimeType<?> getDefaultLanguageRuntimeType() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getDefaultTargetName() {
+  public @Nullable String getDefaultTargetName() {
     return null;
   }
 }

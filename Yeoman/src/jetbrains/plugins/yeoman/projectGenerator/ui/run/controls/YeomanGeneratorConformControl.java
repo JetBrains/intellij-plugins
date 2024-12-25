@@ -13,8 +13,7 @@ public class YeomanGeneratorConformControl implements YeomanGeneratorControl {
   public String type;
   @SerializedName("name")
   public String name;
-  @SerializedName("message") @Nls
-  public String message;
+  @SerializedName("message") public @Nls String message;
   @SerializedName("default")
   public boolean defaultValue;
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
@@ -153,10 +153,9 @@ public final class DartServerData {
     myExistingImports.put(filePathSD, existingImports);
   }
 
-  @NotNull
-  static DartNavigationRegion createDartNavigationRegion(@NotNull final DartAnalysisServerService service,
-                                                         @Nullable final VirtualFile file,
-                                                         @NotNull final NavigationRegion region) {
+  static @NotNull DartNavigationRegion createDartNavigationRegion(final @NotNull DartAnalysisServerService service,
+                                                                  final @Nullable VirtualFile file,
+                                                                  final @NotNull NavigationRegion region) {
     final int offset = service.getConvertedOffset(file, region.getOffset());
     final int length = service.getConvertedOffset(file, region.getOffset() + region.getLength()) - offset;
     final SmartList<DartNavigationTarget> targets = new SmartList<>();
@@ -270,7 +269,7 @@ public final class DartServerData {
   }
 
   @NotNull
-  List<DartError> getErrors(@NotNull final SearchScope scope) {
+  List<DartError> getErrors(final @NotNull SearchScope scope) {
     final List<DartError> errors = new ArrayList<>();
 
     synchronized (myErrorData) {
@@ -334,11 +333,11 @@ public final class DartServerData {
     return myOutlineData.get(fileInfo);
   }
 
-  void addOutlineListener(@NotNull final OutlineListener listener) {
+  void addOutlineListener(final @NotNull OutlineListener listener) {
     myEventDispatcher.addListener(listener);
   }
 
-  void removeOutlineListener(@NotNull final OutlineListener listener) {
+  void removeOutlineListener(final @NotNull OutlineListener listener) {
     myEventDispatcher.removeListener(listener);
   }
 
@@ -366,7 +365,7 @@ public final class DartServerData {
     return myExistingImports.get(filePathSD);
   }
 
-  private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
+  private void forceFileAnnotation(final @Nullable VirtualFile file, final boolean clearCache) {
     if (file != null) {
       final Project project = myService.getProject();
       if (clearCache) {
@@ -389,7 +388,7 @@ public final class DartServerData {
     myLocalFilesWithUnsentChanges.clear();
   }
 
-  void onFileClosed(@NotNull final VirtualFile file) {
+  void onFileClosed(final @NotNull VirtualFile file) {
     DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myService.getProject(), file);
     if (!(fileInfo instanceof DartLocalFileInfo localFileInfo)) return;
 
@@ -455,9 +454,9 @@ public final class DartServerData {
   /**
    * @return {@code true} if at least one region has been updated or deleted, {@code false} if nothing done at all
    */
-  private static boolean updateRegionsDeletingTouched(@NotNull final DartFileInfo fileInfo,
-                                                      @Nullable final List<? extends DartRegion> regions,
-                                                      @NotNull final DocumentEvent e) {
+  private static boolean updateRegionsDeletingTouched(final @NotNull DartFileInfo fileInfo,
+                                                      final @Nullable List<? extends DartRegion> regions,
+                                                      final @NotNull DocumentEvent e) {
     if (regions == null) return false;
 
     boolean regionUpdated = false;
@@ -508,8 +507,8 @@ public final class DartServerData {
     return regionUpdated;
   }
 
-  private static void updateRegionsUpdatingTouched(@Nullable final List<? extends DartRegion> regions,
-                                                   @NotNull final DocumentEvent e) {
+  private static void updateRegionsUpdatingTouched(final @Nullable List<? extends DartRegion> regions,
+                                                   final @NotNull DocumentEvent e) {
     if (regions == null) return;
 
     final int eventOffset = e.getOffset();
@@ -577,7 +576,7 @@ public final class DartServerData {
   public static final class DartHighlightRegion extends DartRegion {
     private final String type;
 
-    private DartHighlightRegion(final int offset, final int length, @NotNull final String type) {
+    private DartHighlightRegion(final int offset, final int length, final @NotNull String type) {
       super(offset, length);
       this.type = type.intern();
     }
@@ -661,7 +660,7 @@ public final class DartServerData {
   public static class DartNavigationRegion extends DartRegion {
     private final List<DartNavigationTarget> myTargets;
 
-    DartNavigationRegion(final int offset, final int length, @NotNull final List<DartNavigationTarget> targets) {
+    DartNavigationRegion(final int offset, final int length, final @NotNull List<DartNavigationTarget> targets) {
       super(offset, length);
       myTargets = targets;
     }
@@ -693,7 +692,7 @@ public final class DartServerData {
       return myFileInfo.findFile();
     }
 
-    public int getOffset(@NotNull final Project project, @Nullable final VirtualFile file) {
+    public int getOffset(final @NotNull Project project, final @Nullable VirtualFile file) {
       if (myConvertedOffset == -1) {
         myConvertedOffset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, myOriginalOffset);
       }
@@ -706,25 +705,23 @@ public final class DartServerData {
   }
 
   public static final class DartOverrideMember extends DartRegion {
-    @Nullable private final OverriddenMember mySuperclassMember;
-    @Nullable private final List<OverriddenMember> myInterfaceMembers;
+    private final @Nullable OverriddenMember mySuperclassMember;
+    private final @Nullable List<OverriddenMember> myInterfaceMembers;
 
     private DartOverrideMember(final int offset,
                                final int length,
-                               @Nullable final OverriddenMember superclassMember,
-                               @Nullable final List<OverriddenMember> interfaceMembers) {
+                               final @Nullable OverriddenMember superclassMember,
+                               final @Nullable List<OverriddenMember> interfaceMembers) {
       super(offset, length);
       mySuperclassMember = superclassMember;
       myInterfaceMembers = interfaceMembers;
     }
 
-    @Nullable
-    public OverriddenMember getSuperclassMember() {
+    public @Nullable OverriddenMember getSuperclassMember() {
       return mySuperclassMember;
     }
 
-    @Nullable
-    public List<OverriddenMember> getInterfaceMembers() {
+    public @Nullable List<OverriddenMember> getInterfaceMembers() {
       return myInterfaceMembers;
     }
   }

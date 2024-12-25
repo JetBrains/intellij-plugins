@@ -15,7 +15,7 @@ public class PerforceJob {
 
   private final Map<Integer, PerforceJobFieldValue> myStandardFields;
 
-  public PerforceJob(List<PerforceJobFieldValue> standardFields, @NotNull final P4Connection connection,
+  public PerforceJob(List<PerforceJobFieldValue> standardFields, final @NotNull P4Connection connection,
                      ConnectionKey key) {
     myKey = key;
     myStandardFields = new HashMap<>(standardFields.size(), 1);
@@ -38,8 +38,7 @@ public class PerforceJob {
     return getValueForStandardField(StandardJobFields.name);
   }
 
-  @NotNull
-  public P4Connection getConnection() {
+  public @NotNull P4Connection getConnection() {
     return myConnection;
   }
 

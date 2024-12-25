@@ -23,13 +23,12 @@ import org.jetbrains.annotations.Nullable;
 public final class CfmlSpellcheckingStrategy extends SpellcheckingStrategy implements DumbAware {
   private final Tokenizer<LeafPsiElement> myCfmlCommentTokenizer = TokenizerBase.create(CfmlCommentSplitter.INSTANCE);
 
-  @NotNull
   @Override
-  public Tokenizer getTokenizer(PsiElement element) {
+  public @NotNull Tokenizer getTokenizer(PsiElement element) {
     if (element instanceof CfmlStringLiteralExpression) {
       return new Tokenizer() {
         @Override
-        public void tokenize(@NotNull final PsiElement element, @NotNull TokenConsumer consumer) {
+        public void tokenize(final @NotNull PsiElement element, @NotNull TokenConsumer consumer) {
           consumer.consumeToken(element, new TextSplitter() {
             @Override
             public void split(@Nullable String text, @NotNull TextRange range, Consumer<TextRange> consumer) {

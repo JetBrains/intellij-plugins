@@ -87,8 +87,7 @@ public class OptionOccurrenceTracker {
    * @param message the message
    * @return the tracker
    */
-  @Nullable
-  public static OptionOccurrenceTracker forMessage(PbTextMessage message) {
+  public static @Nullable OptionOccurrenceTracker forMessage(PbTextMessage message) {
     return CachedValuesManager.getCachedValue(
         message,
         () -> Result.create(computeForMessage(message), PbCompositeModificationTracker.byElement(message)));
@@ -132,26 +131,22 @@ public class OptionOccurrenceTracker {
   }
 
   /** Returns the root occurrence. */
-  @NotNull
-  public Occurrence getRootOccurrence() {
+  public @NotNull Occurrence getRootOccurrence() {
     return root;
   }
 
   /** Return the occurrence for the given {@link PbOptionName}. */
-  @Nullable
-  public Occurrence getOccurrence(PbOptionName name) {
+  public @Nullable Occurrence getOccurrence(PbOptionName name) {
     return elementOccurrences.get(name).stream().findFirst().orElse(null);
   }
 
   /** Return the occurrences for the given {@link PbTextFieldName}. */
-  @NotNull
-  public Collection<Occurrence> getOccurrences(PbTextFieldName name) {
+  public @NotNull Collection<Occurrence> getOccurrences(PbTextFieldName name) {
     return elementOccurrences.get(name);
   }
 
   /** Return the occurrence containing the fields within the given {@link PbTextMessage}. */
-  @Nullable
-  public Occurrence getOccurrence(PbTextMessage message) {
+  public @Nullable Occurrence getOccurrence(PbTextMessage message) {
     return elementOccurrences.get(message).stream().findFirst().orElse(null);
   }
 

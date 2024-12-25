@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy.resolve.noncode;
 
 import com.intellij.psi.*;
@@ -62,8 +62,7 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
     }
   }
 
-  @Nullable
-  private static PsiType getWorldType(@NotNull final GroovyFile stepFile) {
+  private static @Nullable PsiType getWorldType(final @NotNull GroovyFile stepFile) {
     return CachedValuesManager.getCachedValue(stepFile, () -> {
       for (GrStatement statement : stepFile.getStatements()) {
         if (statement instanceof GrMethodCall && isWorldDeclaration((GrMethodCall)statement)) {
@@ -75,8 +74,7 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
     });
   }
 
-  @Nullable
-  private static GrClosableBlock getClosureArg(@NotNull GrMethodCall methodCall) {
+  private static @Nullable GrClosableBlock getClosureArg(@NotNull GrMethodCall methodCall) {
     final GrClosableBlock[] closures = methodCall.getClosureArguments();
     if (closures.length == 1) return closures[0];
     if (closures.length > 1) return null;

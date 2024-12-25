@@ -118,9 +118,8 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     return myContentPanel;
   }
 
-  @Nullable
   @Override
-  protected String getDimensionServiceKey() {
+  protected @Nullable String getDimensionServiceKey() {
     return CreateStepDefinitionFileDialog.class.getName();
   }
 

@@ -32,9 +32,8 @@ abstract class PbQualifiedReferenceBase extends PbElementBase implements PbQuali
     return getFirstChild().getNode().getElementType() == ProtoTokenTypes.DOT;
   }
 
-  @NotNull
   @Override
-  public String getReferenceString() {
+  public @NotNull String getReferenceString() {
     ProtoSymbolPath path = getSymbolPath();
     if (isFullyQualified()) {
       return "." + path.getQualifiedName().toString();
@@ -43,6 +42,5 @@ abstract class PbQualifiedReferenceBase extends PbElementBase implements PbQuali
     }
   }
 
-  @NotNull
-  public abstract ProtoSymbolPath getSymbolPath();
+  public abstract @NotNull ProtoSymbolPath getSymbolPath();
 }

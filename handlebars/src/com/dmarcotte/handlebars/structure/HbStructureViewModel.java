@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.structure;
 
 import com.dmarcotte.handlebars.psi.HbBlockWrapper;
@@ -22,9 +23,8 @@ class HbStructureViewModel extends TextEditorBasedStructureViewModel {
     return ourSuitableClasses;
   }
 
-  @NotNull
   @Override
-  public StructureViewTreeElement getRoot() {
+  public @NotNull StructureViewTreeElement getRoot() {
     return new HbTreeElementFile((HbPsiFile)getPsiFile());
   }
 }

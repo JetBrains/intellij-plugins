@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -79,22 +80,21 @@ public abstract class DartStringLiteralExpressionBase extends DartClassReference
   }
 
   @Override
-  public PsiLanguageInjectionHost updateText(@NotNull final String text) {
+  public PsiLanguageInjectionHost updateText(final @NotNull String text) {
     return ElementManipulators.handleContentChange(this, text);
   }
 
-  @NotNull
   @Override
-  public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
+  public @NotNull LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
     // TODO
     return LiteralTextEscaper.createSimple(this);
   }
 
   public static final class DartStringManipulator extends AbstractElementManipulator<DartStringLiteralExpression> {
     @Override
-    public DartStringLiteralExpression handleContentChange(@NotNull final DartStringLiteralExpression oldElement,
-                                                           @NotNull final TextRange range,
-                                                           @NotNull final String newContent) {
+    public DartStringLiteralExpression handleContentChange(final @NotNull DartStringLiteralExpression oldElement,
+                                                           final @NotNull TextRange range,
+                                                           final @NotNull String newContent) {
       // this check helps to avoid loosing text in case of concatenated strings + typing escape sequences; need proper fix
       final int expectedNewLength = oldElement.getTextLength() - range.getLength() + newContent.length();
 
@@ -111,9 +111,8 @@ public abstract class DartStringLiteralExpressionBase extends DartClassReference
       return oldElement;
     }
 
-    @NotNull
     @Override
-    public TextRange getRangeInElement(@NotNull final DartStringLiteralExpression element) {
+    public @NotNull TextRange getRangeInElement(final @NotNull DartStringLiteralExpression element) {
       // StringLiteralExpression may consist of several strings (that become concatenated). We want to return range of the first one. If none (e.g. "$a") - return zero-length range after quote
       PsiElement child = element.getFirstChild();
       while (child != null) {

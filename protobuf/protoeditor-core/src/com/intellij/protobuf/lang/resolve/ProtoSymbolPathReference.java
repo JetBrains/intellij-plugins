@@ -97,12 +97,12 @@ import java.util.function.Function;
  */
 public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
-  @NotNull private final ProtoSymbolPath symbolPath;
-  @NotNull private final PbSymbolResolver resolver;
-  @Nullable private final QualifiedName scope;
-  @NotNull private final Condition<PbSymbol> resolveFilter;
-  @Nullable private final Condition<PbSymbol> completionFilter;
-  @NotNull private final Function<PbSymbol, LookupElement> lookupElementFactory;
+  private final @NotNull ProtoSymbolPath symbolPath;
+  private final @NotNull PbSymbolResolver resolver;
+  private final @Nullable QualifiedName scope;
+  private final @NotNull Condition<PbSymbol> resolveFilter;
+  private final @Nullable Condition<PbSymbol> completionFilter;
+  private final @NotNull Function<PbSymbol, LookupElement> lookupElementFactory;
 
   public ProtoSymbolPathReference(
       @NotNull ProtoSymbolPath element,
@@ -317,8 +317,7 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
    * @param name The target qualified name.
    * @return a {@link PbResolveResult} if the element matches the name, else <code>null</code>.
    */
-  @Nullable
-  private static PbResolveResult resolveForElement(PbElement element, QualifiedName name) {
+  private static @Nullable PbResolveResult resolveForElement(PbElement element, QualifiedName name) {
     if (name == null) {
       return null;
     }

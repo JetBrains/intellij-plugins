@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable;
@@ -22,9 +23,8 @@ public final class PhoneGapConfigurationProvider extends ConfigurableProvider {
     myProject = project;
   }
 
-  @Nullable
   @Override
-  public Configurable createConfigurable() {
+  public @Nullable Configurable createConfigurable() {
     return new PhoneGapConfigurable(myProject);
   }
 

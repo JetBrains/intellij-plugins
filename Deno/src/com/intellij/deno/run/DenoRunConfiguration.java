@@ -71,8 +71,7 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
     applicationArguments = newArguments;
   }
   
-  @Nullable
-  public String getApplicationArguments() {
+  public @Nullable String getApplicationArguments() {
     return applicationArguments;
   }
 
@@ -96,9 +95,8 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
   public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DebuggableProcessRunConfigurationEditor<DenoRunConfiguration>(getProject()) {
 
-      @NotNull
       @Override
-      protected DebuggableProgramParametersPanel createEditor() {
+      protected @NotNull DebuggableProgramParametersPanel createEditor() {
         panel = new DebuggableProgramParametersPanel(getProject(), createExePathDescriptor(), createInputPathDescriptor()) {
 
           private LabeledComponent<RawCommandLineEditor> myApplicationParametersComponent;
@@ -163,9 +161,8 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
     };
   }
 
-  @NotNull
   @Override
-  public InetSocketAddress computeDebugAddress(RunProfileState state) throws ExecutionException {
+  public @NotNull InetSocketAddress computeDebugAddress(RunProfileState state) throws ExecutionException {
     return NodeDebugProgramRunnerKt.computeDebugAddress(this);
   }
 

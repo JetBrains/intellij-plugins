@@ -15,12 +15,12 @@
  */
 package com.intellij.protobuf.lang.psi;
 
+import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,14 +32,12 @@ import org.jetbrains.annotations.Nullable;
 public interface ProtoSymbolPath extends PsiElement, PsiNamedElement, PsiNameIdentifierOwner {
 
   /** Return this path's {@link ProtoSymbolPathContainer}. */
-  @Nullable
-  default ProtoSymbolPathContainer getPathContainer() {
+  default @Nullable ProtoSymbolPathContainer getPathContainer() {
     return PsiTreeUtil.getParentOfType(this, ProtoSymbolPathContainer.class);
   }
 
   /** Return a {@link QualifiedName} containing the path's components. */
-  @NotNull
-  default QualifiedName getQualifiedName() {
+  default @NotNull QualifiedName getQualifiedName() {
     ProtoSymbolPath qualifier = getQualifier();
     if (qualifier != null) {
       return qualifier.getQualifiedName().append(getSymbol().getText());
@@ -49,8 +47,7 @@ public interface ProtoSymbolPath extends PsiElement, PsiNamedElement, PsiNameIde
   }
 
   /** Return the qualifying {@link ProtoSymbolPath component}. */
-  @Nullable
-  default ProtoSymbolPath getQualifier() {
+  default @Nullable ProtoSymbolPath getQualifier() {
     return PsiTreeUtil.getChildOfType(this, ProtoSymbolPath.class);
   }
 

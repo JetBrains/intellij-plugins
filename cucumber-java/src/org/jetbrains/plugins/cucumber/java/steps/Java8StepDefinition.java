@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
@@ -10,9 +11,8 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition {
     super(element, module);
   }
 
-  @Nullable
   @Override
-  protected String getCucumberRegexFromElement(PsiElement element) {
+  protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
     if (!(element instanceof PsiMethodCallExpression)) {
       return null;
     }

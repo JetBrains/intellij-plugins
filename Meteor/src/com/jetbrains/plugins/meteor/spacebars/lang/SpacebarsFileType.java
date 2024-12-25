@@ -17,21 +17,18 @@ public final class SpacebarsFileType extends HbFileType {
   }
 
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "Spacebars";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return MeteorBundle.message("ui.filetype.spacebars.description");
   }
 
-  @NotNull
   @Override
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return FILE_EX_SPACEBARS;
   }
 }

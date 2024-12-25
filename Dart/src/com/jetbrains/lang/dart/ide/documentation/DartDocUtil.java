@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.openapi.project.Project;
@@ -76,8 +76,7 @@ public final class DartDocUtil {
     return generateDoc(element.getProject(), signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
   }
 
-  @NotNull
-  private static String formatSignature(@NotNull @NlsSafe String signature) {
+  private static @NotNull String formatSignature(@NotNull @NlsSafe String signature) {
     // Match the first open paren, "(", but ignore a starting "(new)" or "(const)" patterns.
     final int offsetToOpenParen = signature.indexOf('(', 1);
 
@@ -105,7 +104,7 @@ public final class DartDocUtil {
   /**
    * Split around the ", " pattern, when not in a generic or function parameter (inside a nested parenthesize.)
    */
-  private static String @NotNull [] signatureSplit(@NotNull final String str) {
+  private static String @NotNull [] signatureSplit(final @NotNull String str) {
     List<String> result = new SmartList<>();
 
     int beginningOffset = 0;
@@ -200,8 +199,7 @@ public final class DartDocUtil {
   /**
    * This method converts all in-line code blocks such as "[text]" and "[:text:]", that are not followed by "()" to "<code>text</code>".
    */
-  @NotNull
-  private static String handleInlineCodeBlocks(@NotNull final String text) {
+  private static @NotNull String handleInlineCodeBlocks(final @NotNull String text) {
     // This method does the following:
     // - Create a new StringBuilder
     // - Loops through the passed markdown text one character at a time, writing the char to the StringBuilder in most cases
@@ -295,8 +293,7 @@ public final class DartDocUtil {
   }
 
 
-  @Nullable
-  private static String getDocumentationText(final DartComponent dartComponent) {
+  private static @Nullable String getDocumentationText(final DartComponent dartComponent) {
     // PSI is not perfect currently, doc comment may be not part of the corresponding DartComponent element, so docs are searched for in several places:
     // - direct child of this DartComponent
     // - previous sibling (or previous sibling of parent element if this element is first child of its parent DartClassMembers)
@@ -339,8 +336,7 @@ public final class DartDocUtil {
     return null;
   }
 
-  @NotNull
-  private static String getMultilineDocCommentText(final @NotNull DartDocComment docComment) {
+  private static @NotNull String getMultilineDocCommentText(final @NotNull DartDocComment docComment) {
     final StringBuilder buf = new StringBuilder();
     boolean afterAsterisk = false;
 
@@ -371,8 +367,7 @@ public final class DartDocUtil {
     return buf.toString();
   }
 
-  @Nullable
-  private static String getSingleLineDocCommentsText(final PsiComment @NotNull [] comments) {
+  private static @Nullable String getSingleLineDocCommentsText(final PsiComment @NotNull [] comments) {
     StringBuilder buf = null;
 
     for (PsiComment comment : comments) {
@@ -404,9 +399,9 @@ public final class DartDocUtil {
     appendFunctionSignature(builder, component, dartClass.getName());
   }
 
-  private static void appendVariableSignature(@NotNull final StringBuilder builder,
-                                              @NotNull final DartComponent component,
-                                              @Nullable final DartType type) {
+  private static void appendVariableSignature(final @NotNull StringBuilder builder,
+                                              final @NotNull DartComponent component,
+                                              final @Nullable DartType type) {
     if (type == null) {
       builder.append("var ");
     }
@@ -417,7 +412,7 @@ public final class DartDocUtil {
     builder.append("<b>").append(component.getName()).append("</b>");
   }
 
-  private static void appendDartType(@NotNull final StringBuilder builder, @NotNull final DartType type) {
+  private static void appendDartType(final @NotNull StringBuilder builder, final @NotNull DartType type) {
     final DartReferenceExpression expression = type.getReferenceExpression();
     if (expression != null) {
       builder.append(StringUtil.escapeXmlEntities(expression.getText()));
@@ -441,7 +436,7 @@ public final class DartDocUtil {
     }
   }
 
-  private static void appendClassSignature(final StringBuilder builder, @NotNull final DartClass dartClass) {
+  private static void appendClassSignature(final StringBuilder builder, final @NotNull DartClass dartClass) {
     if (dartClass.isEnum()) {
       builder.append("enum <b>").append(dartClass.getName()).append("</b>");
       return;
@@ -472,7 +467,7 @@ public final class DartDocUtil {
     }
   }
 
-  private static void appendDartTypeList(final StringBuilder builder, @NotNull final List<DartType> dartTypes) {
+  private static void appendDartTypeList(final StringBuilder builder, final @NotNull List<DartType> dartTypes) {
     for (Iterator<DartType> iter = dartTypes.iterator(); iter.hasNext(); ) {
       appendDartType(builder, iter.next());
       if (iter.hasNext()) {
@@ -503,8 +498,8 @@ public final class DartDocUtil {
     appendFunctionSignature(builder, function, returnString);
   }
 
-  private static void appendFunctionSignature(@NotNull final StringBuilder builder,
-                                              @NotNull final DartComponent function,
+  private static void appendFunctionSignature(final @NotNull StringBuilder builder,
+                                              final @NotNull DartComponent function,
                                               final String returnType) {
     builder.append("<b>").append(function.getName()).append("</b>");
     if (!function.isGetter()) {

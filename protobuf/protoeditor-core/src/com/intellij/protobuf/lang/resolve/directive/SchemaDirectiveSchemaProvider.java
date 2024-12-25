@@ -24,9 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 /** Provides the root {@link PbMessageType} defined in directive comments, if any. */
 public class SchemaDirectiveSchemaProvider implements SchemaProvider {
-  @Nullable
   @Override
-  public SchemaInfo getSchemaInfo(PbTextFile file) {
+  public @Nullable SchemaInfo getSchemaInfo(PbTextFile file) {
     SchemaDirective comment = SchemaDirective.find(file);
     if (comment != null) {
       // Remove the missing schema notification if it's displayed.

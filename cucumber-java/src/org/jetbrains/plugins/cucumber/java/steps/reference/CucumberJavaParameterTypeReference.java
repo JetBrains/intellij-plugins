@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps.reference;
 
 
@@ -44,9 +44,8 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
   }
 
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     String parameterTypeName = getParameterTypeName();
     final Module module = ModuleUtilCore.findModuleForPsiElement(myElement);
     if (module != null) {
@@ -60,9 +59,8 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
     return null;
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return getParameterTypeName();
   }
 
@@ -83,8 +81,7 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
     return resolved != null && resolved.equals(element);
   }
 
-  @NotNull
-  private String getParameterTypeName() {
+  private @NotNull String getParameterTypeName() {
     return getRangeInElement().substring(myElement.getText());
   }
 }

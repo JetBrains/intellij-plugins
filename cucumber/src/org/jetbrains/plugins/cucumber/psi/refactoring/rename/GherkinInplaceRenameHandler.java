@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
 import com.intellij.openapi.editor.Editor;
@@ -17,9 +18,8 @@ public final class GherkinInplaceRenameHandler extends VariableInplaceRenameHand
     return element instanceof GherkinStepParameter || element instanceof GherkinTableCell;
   }
 
-  @Nullable
   @Override
-  protected VariableInplaceRenamer createRenamer(@NotNull PsiElement elementToRename, @NotNull Editor editor) {
+  protected @Nullable VariableInplaceRenamer createRenamer(@NotNull PsiElement elementToRename, @NotNull Editor editor) {
     return new GherkinInplaceRenamer((PsiNamedElement)elementToRename, editor);
   }
 }

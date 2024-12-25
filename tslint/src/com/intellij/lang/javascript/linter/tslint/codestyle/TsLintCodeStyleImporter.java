@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.codestyle;
 
 import com.intellij.execution.ExecutionException;
@@ -31,27 +31,23 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
     super(isForInitialImport);
   }
 
-  @NotNull
   @Override
-  protected Configurable createSettingsConfigurable(@NotNull Project project) {
+  protected @NotNull Configurable createSettingsConfigurable(@NotNull Project project) {
     return new TsLintConfigurable(project);
   }
 
-  @NotNull
   @Override
-  protected JSNpmLinterState getStoredState(Project project) {
+  protected @NotNull JSNpmLinterState getStoredState(Project project) {
     return TsLintConfiguration.getInstance(project).getExtendedState().getState();
   }
 
-  @NotNull
   @Override
-  protected String getNpmPackageName() {
+  protected @NotNull String getNpmPackageName() {
     return TslintUtil.PACKAGE_NAME;
   }
 
-  @NotNull
   @Override
-  protected String getToolName() {
+  protected @NotNull String getToolName() {
     return TsLintBundle.message("settings.javascript.linters.tslint.configurable.name");
   }
 
@@ -60,17 +56,15 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
     return parsedConfig != null && !parsedConfig.hasExtends();
   }
 
-  @Nullable
   @Override
-  protected TsLintConfigWrapper parseConfigFromFile(@NotNull PsiFile configPsi) {
+  protected @Nullable TsLintConfigWrapper parseConfigFromFile(@NotNull PsiFile configPsi) {
     return TsLintConfigWrapper.Companion.getConfigForFile(configPsi);
   }
 
-  @Nullable
   @Override
-  protected TsLintConfigWrapper computeEffectiveConfig(@NotNull PsiFile configPsi,
-                                                       @NotNull NodeJsInterpreter interpreter,
-                                                       @NotNull NodePackage linterPackage) throws ExecutionException {
+  protected @Nullable TsLintConfigWrapper computeEffectiveConfig(@NotNull PsiFile configPsi,
+                                                                 @NotNull NodeJsInterpreter interpreter,
+                                                                 @NotNull NodePackage linterPackage) throws ExecutionException {
 
     String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
     List<String> parameters =
@@ -83,9 +77,8 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
     return TsLintConfigWrapper.Companion.getConfigFromText(text);
   }
 
-  @NotNull
   @Override
-  protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
+  protected @NotNull ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
     Project project = configPsi.getProject();
     Collection<TsLintRule> rules = configWrapper.getRulesToApply(project);
     if (rules.isEmpty()) {

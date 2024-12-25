@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.moveCode;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -34,9 +35,9 @@ public final class DartComponentMover extends LineMover {
   }
 
   private static class CodeMover {
-    @NotNull final Editor editor;
-    @NotNull final PsiFile file;
-    @NotNull final MoveInfo info;
+    final @NotNull Editor editor;
+    final @NotNull PsiFile file;
+    final @NotNull MoveInfo info;
     final boolean isMovingDown;
     Pair<PsiElement, PsiElement> sourceComponents;
     Pair<PsiElement, PsiElement> targetComponents;
@@ -50,8 +51,7 @@ public final class DartComponentMover extends LineMover {
       this.isMovingDown = down;
     }
 
-    @Nullable
-    static Pair<PsiElement, PsiElement> findCommentRange(@NotNull PsiElement element) {
+    static @Nullable Pair<PsiElement, PsiElement> findCommentRange(@NotNull PsiElement element) {
       if (!isComment(element) && !(element instanceof PsiWhiteSpace)) return null;
       PsiElement first = findFinalComment(element, false);
       PsiElement last = findFinalComment(element, true);
@@ -197,8 +197,7 @@ public final class DartComponentMover extends LineMover {
       return new LineRange(startPosition.line, endLine);
     }
 
-    @NotNull
-    private static PsiElement findAttachedDeclaration(@NotNull PsiElement element) {
+    private static @NotNull PsiElement findAttachedDeclaration(@NotNull PsiElement element) {
       // Skip to the end of the comment (element) then return the next declaration if any, else element.
       PsiElement commentEnd = findFinalComment(element, true);
       if (isCommentSeparator(commentEnd.getNextSibling())) {
@@ -208,8 +207,7 @@ public final class DartComponentMover extends LineMover {
       return next == null ? element : (isComment(next) ? element : next);
     }
 
-    @NotNull
-    private static PsiElement findAttachedComment(@NotNull PsiElement element) {
+    private static @NotNull PsiElement findAttachedComment(@NotNull PsiElement element) {
       // Identify the first element that represents a comment prior to the given element.
       // The comment may be a single block comment or a series of line comments.
       // Do not mix types of comments. A line comment preceding a line-doc comment is not included.
@@ -226,8 +224,7 @@ public final class DartComponentMover extends LineMover {
       return element instanceof PsiWhiteSpace && StringUtil.countNewLines(element.getText()) > 1;
     }
 
-    @NotNull
-    private static PsiElement findFinalComment(@NotNull PsiElement element, boolean isForward) {
+    private static @NotNull PsiElement findFinalComment(@NotNull PsiElement element, boolean isForward) {
       // The element argument may be either a comment or a whitespace node. Find the end of the comment
       // moving forward if isForward, or backward, until something other than the same kind of comment is found.
       PsiElement target = element, sib = element;
@@ -277,8 +274,7 @@ public final class DartComponentMover extends LineMover {
       };
     }
 
-    @NotNull
-    private static CommentType commentTypeOf(@NotNull PsiElement element) {
+    private static @NotNull CommentType commentTypeOf(@NotNull PsiElement element) {
       IElementType type = element.getNode().getElementType();
       if (type == DartTokenTypesSets.SINGLE_LINE_COMMENT) {
         return CommentType.SINGLE_LINE_COMMENT;
@@ -339,7 +335,7 @@ public final class DartComponentMover extends LineMover {
       return PsiTreeUtil.getNonStrictParentOfType(element, DartUriBasedDirective.class, DartLibraryStatement.class);
     }
 
-    private static boolean isComment(@NotNull final PsiElement element) {
+    private static boolean isComment(final @NotNull PsiElement element) {
       final IElementType type = element.getNode().getElementType();
       return DartTokenTypesSets.COMMENTS.contains(type) || DartTokenTypesSets.DOC_COMMENT_CONTENTS.contains(type);
     }

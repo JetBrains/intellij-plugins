@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -52,28 +52,24 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  @Nullable
-  public ASTNode getKeyword() {
+  public @Nullable ASTNode getKeyword() {
     return getNode().findChildByType(GherkinTokenTypes.STEP_KEYWORD);
   }
 
   @Override
-  @NotNull
-  protected String getElementText() {
+  protected @NotNull String getElementText() {
     final ASTNode node = getNode();
     final ASTNode[] children = node.getChildren(TEXT_FILTER);
     return StringUtil.join(children, astNode -> astNode.getText(), "").trim();
   }
 
   @Override
-  @Nullable
-  public GherkinPystring getPystring() {
+  public @Nullable GherkinPystring getPystring() {
     return PsiTreeUtil.findChildOfType(this, GherkinPystring.class);
   }
 
   @Override
-  @Nullable
-  public GherkinTable getTable() {
+  public @Nullable GherkinTable getTable() {
     final ASTNode tableNode = getNode().findChildByType(GherkinElementTypes.TABLE);
     return tableNode == null ? null : (GherkinTable)tableNode.getPsi();
   }
@@ -100,8 +96,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  @NotNull
-  public List<String> getParamsSubstitutions() {
+  public @NotNull List<String> getParamsSubstitutions() {
     synchronized (LOCK) {
       if (mySubstitutions == null) {
         final ArrayList<String> substitutions = new ArrayList<>();
@@ -158,8 +153,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  @Nullable
-  public GherkinStepsHolder getStepHolder() {
+  public @Nullable GherkinStepsHolder getStepHolder() {
     final PsiElement parent = getParent();
     return parent != null ? (GherkinStepsHolder)parent : null;
   }
@@ -171,8 +165,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  @Nullable
-  public String getSubstitutedName() {
+  public @Nullable String getSubstitutedName() {
     final GherkinStepsHolder holder = getStepHolder();
     if (!(holder instanceof GherkinScenarioOutline outline)) {
       return getName();
@@ -188,14 +181,12 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return getElementText();
   }
 
-  @NotNull
   @Override
-  public Collection<AbstractStepDefinition> findDefinitions() {
+  public @NotNull Collection<AbstractStepDefinition> findDefinitions() {
     final List<AbstractStepDefinition> result = new ArrayList<>();
     for (final PsiReference reference : getReferences()) {
       if (reference instanceof CucumberStepReference) {
@@ -207,7 +198,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
 
   @Override
-  public boolean isRenameAllowed(@Nullable final String newName) {
+  public boolean isRenameAllowed(final @Nullable String newName) {
     final Collection<AbstractStepDefinition> definitions = findDefinitions();
     if (definitions.isEmpty()) {
       return false; // No sense to rename step with out of definitions

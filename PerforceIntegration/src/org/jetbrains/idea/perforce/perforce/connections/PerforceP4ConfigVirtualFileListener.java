@@ -21,7 +21,7 @@ import java.util.Objects;
 public class PerforceP4ConfigVirtualFileListener implements VirtualFileListener {
   private final PerforceConnectionManagerI myConnectionManager;
   private final Project myProject;
-  private final static Logger LOG = Logger.getInstance(PerforceP4ConfigVirtualFileListener.class);
+  private static final Logger LOG = Logger.getInstance(PerforceP4ConfigVirtualFileListener.class);
   private final P4EnvHelper myP4EnvHelper;
 
   public PerforceP4ConfigVirtualFileListener(@NotNull PerforceConnectionManagerI connectionManager,

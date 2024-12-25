@@ -54,9 +54,8 @@ final class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<Gau
     config.setRowsRange(rowsRange.getText());
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return configWindow;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.project.Project;
@@ -20,13 +20,12 @@ public class DartExceptionBreakpointHandler extends XBreakpointHandler<XBreakpoi
 
   private final DartVmServiceDebugProcess myDebugProcess;
 
-  public DartExceptionBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
+  public DartExceptionBreakpointHandler(final @NotNull DartVmServiceDebugProcess debugProcess) {
     super(DartExceptionBreakpointType.class);
     myDebugProcess = debugProcess;
   }
 
-  @NotNull
-  public static XBreakpoint<DartExceptionBreakpointProperties> getDefaultExceptionBreakpoint(@NotNull final Project project) {
+  public static @NotNull XBreakpoint<DartExceptionBreakpointProperties> getDefaultExceptionBreakpoint(final @NotNull Project project) {
     final XBreakpointManager bpManager = XDebuggerManager.getInstance(project).getBreakpointManager();
     final DartExceptionBreakpointType bpType = XBreakpointType.EXTENSION_POINT_NAME.findExtension(DartExceptionBreakpointType.class);
     assert bpType != null;
@@ -35,9 +34,8 @@ public class DartExceptionBreakpointHandler extends XBreakpointHandler<XBreakpoi
     return breakpoints.iterator().next();
   }
 
-  @NotNull
-  public static ExceptionPauseMode getBreakOnExceptionMode(@NotNull XDebugSession session,
-                                                           @Nullable final XBreakpoint<DartExceptionBreakpointProperties> bp) {
+  public static @NotNull ExceptionPauseMode getBreakOnExceptionMode(@NotNull XDebugSession session,
+                                                                    final @Nullable XBreakpoint<DartExceptionBreakpointProperties> bp) {
     if (session.areBreakpointsMuted()) {
       return ExceptionPauseMode.None;
     }
@@ -47,7 +45,7 @@ public class DartExceptionBreakpointHandler extends XBreakpointHandler<XBreakpoi
   }
 
   @Override
-  public void registerBreakpoint(@NotNull final XBreakpoint<DartExceptionBreakpointProperties> breakpoint) {
+  public void registerBreakpoint(final @NotNull XBreakpoint<DartExceptionBreakpointProperties> breakpoint) {
     final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
     if (vmServiceWrapper != null) {
       vmServiceWrapper.setExceptionPauseMode(getBreakOnExceptionMode(myDebugProcess.getSession(), breakpoint));
@@ -55,7 +53,7 @@ public class DartExceptionBreakpointHandler extends XBreakpointHandler<XBreakpoi
   }
 
   @Override
-  public void unregisterBreakpoint(@NotNull final XBreakpoint<DartExceptionBreakpointProperties> breakpoint, final boolean temporary) {
+  public void unregisterBreakpoint(final @NotNull XBreakpoint<DartExceptionBreakpointProperties> breakpoint, final boolean temporary) {
     registerBreakpoint(breakpoint);
   }
 }

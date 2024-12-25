@@ -10,9 +10,8 @@ public class PerforceOnlyRevisionNumber implements VcsRevisionNumber {
     myNumber = number;
   }
 
-  @NotNull
   @Override
-  public String asString() {
+  public @NotNull String asString() {
     return String.valueOf(myNumber);
   }
 

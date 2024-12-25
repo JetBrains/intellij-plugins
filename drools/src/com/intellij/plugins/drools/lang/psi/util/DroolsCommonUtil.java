@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -41,8 +41,7 @@ public final class DroolsCommonUtil {
     return expression instanceof DroolsStringLiteral && "mvel".equals(getInnerText((DroolsStringLiteral)expression));
   }
 
-  @Nullable
-  private static String getInnerText(@NotNull DroolsStringLiteral stringExpression) {
+  private static @Nullable String getInnerText(@NotNull DroolsStringLiteral stringExpression) {
     String text = stringExpression.getText();
     int textLength = text.length();
     if (StringUtil.endsWithChar(text, '\"')) {

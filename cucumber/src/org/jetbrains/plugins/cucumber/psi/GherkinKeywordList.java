@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.psi.tree.IElementType;
@@ -42,8 +42,7 @@ public final class GherkinKeywordList {
     }
   }
 
-  @NotNull
-  private static String capitalizeAndFixSpace(@NotNull String s) {
+  private static @NotNull String capitalizeAndFixSpace(@NotNull String s) {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);

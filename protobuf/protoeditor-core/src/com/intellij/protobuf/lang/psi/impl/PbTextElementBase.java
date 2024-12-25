@@ -28,9 +28,8 @@ abstract class PbTextElementBase extends ASTWrapperPsiElement implements PbTextE
     super(node);
   }
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return PbTextLanguage.INSTANCE;
   }
 }

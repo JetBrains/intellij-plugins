@@ -16,13 +16,13 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.protobuf.lang.psi.ProtoSymbolPath;
 import com.intellij.protobuf.lang.psi.ProtoSymbolPathContainer;
 import com.intellij.protobuf.lang.psi.ProtoSymbolPathDelegate;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,9 +33,8 @@ class PbTextSymbolPathMixin extends PbTextElementBase implements ProtoSymbolPath
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiElement getSymbol() {
+  public @NotNull PsiElement getSymbol() {
     return findNotNullChildByType(ProtoTokenTypes.IDENTIFIER_LITERAL);
   }
 
@@ -45,9 +44,8 @@ class PbTextSymbolPathMixin extends PbTextElementBase implements ProtoSymbolPath
     return name != null ? name.getTextOffset() : super.getTextOffset();
   }
 
-  @Nullable
   @Override
-  public PsiReference getReference() {
+  public @Nullable PsiReference getReference() {
     ProtoSymbolPathDelegate delegate = getPathDelegate();
     if (delegate != null) {
       return delegate.getReference(this);
@@ -55,9 +53,8 @@ class PbTextSymbolPathMixin extends PbTextElementBase implements ProtoSymbolPath
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiElement getNameIdentifier() {
+  public @Nullable PsiElement getNameIdentifier() {
     ProtoSymbolPathDelegate delegate = getPathDelegate();
     if (delegate != null) {
       return delegate.getNameIdentifier(this);
@@ -65,9 +62,8 @@ class PbTextSymbolPathMixin extends PbTextElementBase implements ProtoSymbolPath
     return null;
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     ProtoSymbolPathDelegate delegate = getPathDelegate();
     if (delegate != null) {
       return delegate.getName(this);
@@ -75,9 +71,8 @@ class PbTextSymbolPathMixin extends PbTextElementBase implements ProtoSymbolPath
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiElement setName(@NonNls @NotNull String name) {
+  public @Nullable PsiElement setName(@NonNls @NotNull String name) {
     ProtoSymbolPathDelegate delegate = getPathDelegate();
     if (delegate != null) {
       return delegate.setName(this, name);
@@ -85,8 +80,7 @@ class PbTextSymbolPathMixin extends PbTextElementBase implements ProtoSymbolPath
     throw new IncorrectOperationException();
   }
 
-  @Nullable
-  private ProtoSymbolPathDelegate getPathDelegate() {
+  private @Nullable ProtoSymbolPathDelegate getPathDelegate() {
     ProtoSymbolPathContainer container = getPathContainer();
     if (container != null) {
       return container.getPathDelegate();

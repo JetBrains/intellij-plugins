@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -25,11 +25,10 @@ public final class GherkinScenarioToScenarioOutlineInspection extends GherkinIns
     static final LocalQuickFix CONVERT_SCENARIO_TO_OUTLINE_FIX = new ConvertScenarioToOutlineFix();
   }
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+                                                 boolean isOnTheFly,
+                                                 @NotNull LocalInspectionToolSession session) {
     return new GherkinElementVisitor() {
       @Override
       public void visitScenario(GherkinScenario scenario) {
@@ -48,13 +47,12 @@ public final class GherkinScenarioToScenarioOutlineInspection extends GherkinIns
 
   private static class ConvertScenarioToOutlineFix implements LocalQuickFix {
     @Override
-    @NotNull
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return CucumberBundle.message("inspection.gherkin.scenario.with.examples.section.quickfix.name");
     }
 
     @Override
-    public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
+    public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       GherkinScenario scenario = (GherkinScenario)descriptor.getPsiElement();
       String language = GherkinUtil.getFeatureLanguage((GherkinFile)scenario.getContainingFile());
 

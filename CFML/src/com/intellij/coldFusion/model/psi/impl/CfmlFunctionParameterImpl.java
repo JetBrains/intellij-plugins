@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.coldFusion.model.psi.impl;
 
@@ -32,9 +32,8 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
     return null;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     final PsiElement parameterName = findChildByType(CfscriptTokenTypes.IDENTIFIER);
     if (parameterName != null) {
       return parameterName.getText();
@@ -72,16 +71,14 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
     return getNavigationElement();
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     final PsiElement parameterName = findChildByType(CfscriptTokenTypes.IDENTIFIER);
     return parameterName != null ? parameterName : super.getNavigationElement();
   }
 
   @Override
-  @NotNull
-  public String getlookUpString() {
+  public @NotNull String getlookUpString() {
     return getName();
   }
 }

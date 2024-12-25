@@ -47,7 +47,7 @@ public class PbTextAnnotator implements Annotator {
       Key.create("RESERVED_FIELDS_KEY");
 
   @Override
-  public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
+  public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     // We always annotate strings.
     if (element instanceof PbTextStringPart part) {
       SharedAnnotations.annotateStringPart(part, holder, getInvalidEscapeAttributes(part));

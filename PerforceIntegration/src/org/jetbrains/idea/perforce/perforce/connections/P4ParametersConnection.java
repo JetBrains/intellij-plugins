@@ -17,7 +17,7 @@ public class P4ParametersConnection extends AbstractP4Connection {
   private final ConnectionId myConnectionId;
   private final File myCwd;
 
-  public P4ParametersConnection(@NotNull P4ConnectionParameters parameters, @NotNull final ConnectionId connectionId) {
+  public P4ParametersConnection(@NotNull P4ConnectionParameters parameters, final @NotNull ConnectionId connectionId) {
     myParameters = parameters;
     myConnectionId = connectionId;
     myCwd = myConnectionId.myWorkingDir == null ? new File(".") : new File(myConnectionId.myWorkingDir);
@@ -28,15 +28,13 @@ public class P4ParametersConnection extends AbstractP4Connection {
     runP4CommandImpl(parameters, ArrayUtilRt.EMPTY_STRING_ARRAY, p4args, retVal, inputStream);
   }
 
-  @NotNull
   @Override
-  public File getWorkingDirectory() {
+  public @NotNull File getWorkingDirectory() {
     return myCwd;
   }
 
-  @NotNull
   @Override
-  public ConnectionKey getConnectionKey() {
+  public @NotNull ConnectionKey getConnectionKey() {
     //if parameters are empty, this means that default values from env are used, and all connections effectively have the same server/client/port
     return new ConnectionKey(StringUtil.notNullize(myParameters.getServer()), StringUtil.notNullize(myParameters.getClient()), StringUtil.notNullize(myParameters.getUser()));
   }

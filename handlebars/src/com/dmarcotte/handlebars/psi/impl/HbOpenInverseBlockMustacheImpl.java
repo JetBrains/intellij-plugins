@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.psi.HbOpenInverseBlockMustache;
@@ -13,9 +14,8 @@ public class HbOpenInverseBlockMustacheImpl extends HbOpenBlockMustacheImpl impl
     super(astNode);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return HandlebarsIcons.Elements.OpenInverse;
   }
 }

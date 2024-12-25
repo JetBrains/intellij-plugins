@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.google.common.collect.Maps;
@@ -32,20 +32,18 @@ import java.util.Map;
 public class DartSortMembersAction extends AbstractDartFileProcessingAction {
   private static final Logger LOG = Logger.getInstance(DartSortMembersAction.class.getName());
 
-  @NotNull
   @Override
-  protected String getActionTextForEditor() {
+  protected @NotNull String getActionTextForEditor() {
     return DartBundle.message("action.Dart.DartSortMembers.text");
   }
 
-  @NotNull
   @Override
-  protected String getActionTextForFiles() {
+  protected @NotNull String getActionTextForFiles() {
     return DartBundle.message("dart.sort.members.action.name.ellipsis"); // because with dialog
   }
 
   @Override
-  protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
+  protected void runOverEditor(final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
@@ -77,7 +75,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
   }
 
   @Override
-  protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
+  protected void runOverFiles(final @NotNull Project project, final @NotNull List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
       Messages.showInfoMessage(project, DartBundle.message("dart.sort.members.files.no.dart.files"),
                                DartBundle.message("action.Dart.DartSortMembers.text"));

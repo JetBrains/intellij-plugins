@@ -32,7 +32,7 @@ import java.util.List;
 
 public final class PerforceOutputMessageParser extends OutputMessageParser {
   private static final Logger LOG = Logger.getInstance(PerforceOutputMessageParser.class);
-  @NonNls private static final String CHANGE_PREFIX = "change";
+  private static final @NonNls String CHANGE_PREFIX = "change";
 
   private PerforceOutputMessageParser(final String output) throws IOException {
     super(output);
@@ -49,8 +49,7 @@ public final class PerforceOutputMessageParser extends OutputMessageParser {
     return result;
   }
 
-  @Nullable
-  private PerforceChange readNextOpened() {
+  private @Nullable PerforceChange readNextOpened() {
     if (myLines.isEmpty()) return null;
     myCurrentLine = myLines.remove(0);
     String originalLine = myCurrentLine;
@@ -78,7 +77,7 @@ public final class PerforceOutputMessageParser extends OutputMessageParser {
   }
 
   public static List<ResolvedFile> processResolvedOutput(final String resolved,
-                                                         @NotNull final Convertor<String, String> pathConvertor)
+                                                         final @NotNull Convertor<String, String> pathConvertor)
     throws IOException, VcsException {
     final ArrayList<ResolvedFile> result = new ArrayList<>();
     final PerforceOutputMessageParser parser = new PerforceOutputMessageParser(resolved);
@@ -90,8 +89,7 @@ public final class PerforceOutputMessageParser extends OutputMessageParser {
     return result;
   }
 
-  @Nullable
-  private ResolvedFile readNextResolved(@NotNull final Convertor<String, String> pathConvertor) throws IOException, VcsException {
+  private @Nullable ResolvedFile readNextResolved(final @NotNull Convertor<String, String> pathConvertor) throws IOException, VcsException {
     if (myLines.isEmpty()) return null;
     myCurrentLine = myLines.remove(0);
 

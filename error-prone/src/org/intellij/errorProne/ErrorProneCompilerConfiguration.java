@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.errorProne;
 
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -14,8 +14,7 @@ public class ErrorProneCompilerConfiguration implements PersistentStateComponent
   private final JpsJavaCompilerOptions mySettings = new JpsJavaCompilerOptions();
 
   @Override
-  @NotNull
-  public JpsJavaCompilerOptions getState() {
+  public @NotNull JpsJavaCompilerOptions getState() {
     return mySettings;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.highlight;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -20,7 +20,7 @@ import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighter
 public final class DroolsColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
-  @NonNls private static final Map<String, TextAttributesKey> ourTags = new HashMap<>();
+  private static final @NonNls Map<String, TextAttributesKey> ourTags = new HashMap<>();
 
   static {
     ATTRS = new AttributesDescriptor[]{
@@ -54,8 +54,7 @@ public final class DroolsColorsAndFontsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return DroolsBundle.DROOLS;
   }
 
@@ -75,14 +74,12 @@ public final class DroolsColorsAndFontsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new DroolsSyntaxHighlighter();
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return """
       /*
        * Copyright 2010 JBoss Inc

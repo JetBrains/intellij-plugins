@@ -40,8 +40,7 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
     this(p4Revision.getRevisionNumber(), p4Revision.getChangeNumber(), p4Revision.isBranched(), p4Revision.getDepotPath());
   }
 
-  @Nullable
-  public static PerforceVcsRevisionNumber createFromFStat(FStat fstat) {
+  public static @Nullable PerforceVcsRevisionNumber createFromFStat(FStat fstat) {
     try {
       return new PerforceVcsRevisionNumber(java.lang.Long.parseLong(fstat.haveRev) , java.lang.Long.parseLong(fstat.headChange), false, fstat.depotFile);
     }
@@ -50,9 +49,8 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
     }
   }
 
-  @NotNull
   @Override
-  public String asString() {
+  public @NotNull String asString() {
     return String.valueOf(myChangeNumber);
   }
 
@@ -67,8 +65,7 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
     return 0;
   }
 
-  @NotNull
-  public String getDepotPath() {
+  public @NotNull String getDepotPath() {
     return myDepotPath;
   }
 

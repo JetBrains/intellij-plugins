@@ -26,9 +26,8 @@ public interface PbOptionStatementOwner extends PbOptionOwner {
   @NotNull
   List<PbOptionStatement> getOptionStatements();
 
-  @NotNull
   @Override
-  default List<PbOptionExpression> getOptions() {
+  default @NotNull List<PbOptionExpression> getOptions() {
     return getOptionStatements()
         .stream()
         .map(PbOptionStatement::getOptionExpression)

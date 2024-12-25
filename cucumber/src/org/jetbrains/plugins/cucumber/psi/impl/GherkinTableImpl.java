@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -18,7 +18,7 @@ import java.util.List;
 public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTable {
   private static final TokenSet HEADER_ROW_TOKEN_SET = TokenSet.create(GherkinElementTypes.TABLE_HEADER_ROW);
 
-  public GherkinTableImpl(@NotNull final ASTNode node) {
+  public GherkinTableImpl(final @NotNull ASTNode node) {
     super(node);
   }
 
@@ -28,8 +28,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
   }
 
   @Override
-  @Nullable
-  public GherkinTableRow getHeaderRow() {
+  public @Nullable GherkinTableRow getHeaderRow() {
     final ASTNode node = getNode();
 
     final ASTNode tableNode = node.findChildByType(HEADER_ROW_TOKEN_SET);
@@ -37,8 +36,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
   }
 
   @Override
-  @NotNull
-  public List<GherkinTableRow> getDataRows() {
+  public @NotNull List<GherkinTableRow> getDataRows() {
     List<GherkinTableRow> result = new ArrayList<>();
     final GherkinTableRow[] rows = PsiTreeUtil.getChildrenOfType(this, GherkinTableRow.class);
     if (rows != null) {

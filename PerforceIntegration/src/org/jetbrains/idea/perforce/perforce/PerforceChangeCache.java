@@ -29,8 +29,7 @@ public class PerforceChangeCache {
     myPerforceManager = PerforceManager.getInstance(project);
   }
 
-  @Unmodifiable
-  public List<PerforceChange> getChanges(P4Connection connection, final long changeListNumber, @Nullable final VirtualFile vcsRoot) {
+  public @Unmodifiable List<PerforceChange> getChanges(P4Connection connection, final long changeListNumber, final @Nullable VirtualFile vcsRoot) {
     List<PerforceChange> all = myCache.get(createKey(connection, changeListNumber));
     if (all == null) {
       try {

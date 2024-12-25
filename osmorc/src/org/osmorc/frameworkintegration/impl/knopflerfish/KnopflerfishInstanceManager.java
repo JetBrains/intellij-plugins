@@ -45,9 +45,8 @@ public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManage
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("framework.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile("(log_api|cm_api|console_all|consoletty|frameworkcommands).*\\.jar");
 
-  @Nullable
   @Override
-  public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
+  public @Nullable String getVersion(@NotNull FrameworkInstanceDefinition instance) {
     Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
     if (bundles.size() == 1) {
       String path = bundles.iterator().next().getBundlePath();
@@ -65,9 +64,8 @@ public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManage
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
+  public @NotNull Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
     return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, KnopflerfishRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 5);
   }
 }

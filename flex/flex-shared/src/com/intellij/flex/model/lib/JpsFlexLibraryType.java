@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.lib;
 
 import org.jdom.Element;
@@ -20,7 +21,7 @@ public class JpsFlexLibraryType extends JpsElementTypeBase<JpsSimpleElement<JpsF
   public static JpsLibraryPropertiesSerializer<JpsSimpleElement<JpsFlexLibraryProperties>> createLibraryPropertiesSerializer() {
     return new JpsLibraryPropertiesSerializer<JpsSimpleElement<JpsFlexLibraryProperties>>(INSTANCE, ID) {
       @Override
-      public JpsSimpleElement<JpsFlexLibraryProperties> loadProperties(@Nullable final Element propertiesElement, @NotNull JpsPathMapper pathMapper) {
+      public JpsSimpleElement<JpsFlexLibraryProperties> loadProperties(final @Nullable Element propertiesElement, @NotNull JpsPathMapper pathMapper) {
         final String libraryId = propertiesElement == null ? null : propertiesElement.getAttributeValue(ID_ATTR);
         return JpsElementFactory.getInstance().createSimpleElement(new JpsFlexLibraryProperties(libraryId));
       }

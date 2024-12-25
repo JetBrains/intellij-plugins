@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
@@ -98,8 +98,7 @@ public final class PrettierUtil {
     return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
   }
 
-  @NotNull
-  public static Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
+  public static @NotNull Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
     HashSet<VirtualFile> results = new HashSet<>();
     VirtualFile baseDir = project.getBaseDir();
     if (baseDir == null) {
@@ -148,8 +147,7 @@ public final class PrettierUtil {
     }
   }
 
-  @Nullable
-  public static VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
+  public static @Nullable VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
     return JSLinterConfigFileUtil.findDistinctConfigInContentRoots(project, CONFIG_FILE_NAMES_WITH_PACKAGE_JSON, file -> {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
         PackageJsonData data = PackageJsonData.getOrCreate(file);
@@ -159,8 +157,7 @@ public final class PrettierUtil {
     });
   }
 
-  @Nullable
-  public static VirtualFile findSingleConfigInDirectory(@NotNull VirtualFile dir) {
+  public static @Nullable VirtualFile findSingleConfigInDirectory(@NotNull VirtualFile dir) {
     if (!dir.isDirectory()) {
       return null;
     }
@@ -172,8 +169,7 @@ public final class PrettierUtil {
    * returns config parsed from config file or package.json
    * returns null if package.json does not contain a dependency
    */
-  @Nullable
-  public static PrettierConfig parseConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+  public static @Nullable PrettierConfig parseConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     return ReadAction.compute(() -> {
       if (!isConfigFileOrPackageJson(virtualFile)) {
         return null;
@@ -211,8 +207,7 @@ public final class PrettierUtil {
     return null;
   }
 
-  @Nullable
-  public static PrettierConfig parseConfigFromJsonText(String text) {
+  public static @Nullable PrettierConfig parseConfigFromJsonText(String text) {
     try (JsonReader reader = new JsonReader(new StringReader(text))) {
       if (reader.peek() == JsonToken.STRING) {
         return null;

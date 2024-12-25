@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.psi.CfmlComponent;
@@ -15,13 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlComponentStub, CfmlComponent> {
-  public CfmlComponentElementType(@NotNull @NonNls final String debugName, @Nullable final Language language) {
+  public CfmlComponentElementType(final @NotNull @NonNls String debugName, final @Nullable Language language) {
     super(debugName, language);
   }
 
-  @NotNull
   @Override
-  public CfmlComponentStub createStub(@NotNull CfmlComponent psi, StubElement parentStub) {
+  public @NotNull CfmlComponentStub createStub(@NotNull CfmlComponent psi, StubElement parentStub) {
     return new CfmlComponentStubImpl(parentStub, this, psi.getName(),
                                      psi.isInterface(), psi.getSuperName(), psi.getInterfaceNames());
   }
@@ -38,8 +37,7 @@ public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlC
   }
 
   @Override
-  @NotNull
-  public CfmlComponentStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull CfmlComponentStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     String name = dataStream.readNameString();
     boolean isInterface = dataStream.readBoolean();
     String superclass = dataStream.readNameString();

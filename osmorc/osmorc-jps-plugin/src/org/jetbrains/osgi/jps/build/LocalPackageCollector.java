@@ -125,8 +125,7 @@ public final class LocalPackageCollector {
    * @param filename the filename
    * @return the package name.
    */
-  @NotNull
-  private static String getPackageName(@NotNull String filename) {
+  private static @NotNull String getPackageName(@NotNull String filename) {
     int n = filename.lastIndexOf(File.separatorChar);
     return n < 0 ? "." : filename.substring(0, n).replace(File.separatorChar, '.');
   }

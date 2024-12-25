@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.openapi.util.NlsSafe;
@@ -57,16 +57,15 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
     return null;
   }
 
-  @NotNull
-  protected Collection<SelectedBundle> collectBundles(@NotNull FrameworkInstanceDefinition instance,
-                                                      @NotNull FrameworkBundleType type,
-                                                      String @NotNull [] bundleDirs,
-                                                      @NotNull Pattern sysNamePattern,
-                                                      @Nullable String sysControlClass,
-                                                      int sysExpected,
-                                                      @Nullable Pattern shellNamePattern,
-                                                      @Nullable String shellControlClass,
-                                                      int shellExpected) {
+  protected @NotNull Collection<SelectedBundle> collectBundles(@NotNull FrameworkInstanceDefinition instance,
+                                                               @NotNull FrameworkBundleType type,
+                                                               String @NotNull [] bundleDirs,
+                                                               @NotNull Pattern sysNamePattern,
+                                                               @Nullable String sysControlClass,
+                                                               int sysExpected,
+                                                               @Nullable Pattern shellNamePattern,
+                                                               @Nullable String shellControlClass,
+                                                               int shellExpected) {
     String basePath = instance.getBaseFolder();
     if (basePath == null || !new File(basePath).isDirectory()) {
       return ContainerUtil.emptyList();

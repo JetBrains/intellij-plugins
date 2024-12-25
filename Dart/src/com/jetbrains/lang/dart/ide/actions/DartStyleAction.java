@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -41,24 +41,22 @@ import static com.intellij.openapi.util.text.StringUtil.isWhiteSpace;
 public class DartStyleAction extends AbstractDartFileProcessingAction {
   private static final Logger LOG = Logger.getInstance(DartStyleAction.class.getName());
 
-  @NotNull
   @Override
-  protected String getActionTextForEditor() {
+  protected @NotNull String getActionTextForEditor() {
     return DartBundle.message("action.Dart.DartStyle.text");
   }
 
-  @NotNull
   @Override
-  protected String getActionTextForFiles() {
+  protected @NotNull String getActionTextForFiles() {
     return DartBundle.message("dart.style.action.name.ellipsis"); // because with dialog
   }
 
   @Override
-  protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
+  protected void runOverEditor(final @NotNull Project project, final @NotNull Editor editor, final @NotNull PsiFile psiFile) {
     reformatRange(editor, psiFile, TextRange.from(0, psiFile.getTextLength()), false);
   }
 
-  public static TextRange reformatRangeAsPostFormatProcessor(@NotNull final PsiFile psiFile, @NotNull final TextRange range) {
+  public static TextRange reformatRangeAsPostFormatProcessor(final @NotNull PsiFile psiFile, final @NotNull TextRange range) {
     FileEditor[] fileEditors = FileEditorManager.getInstance(psiFile.getProject()).getEditors(psiFile.getVirtualFile());
     FileEditor fileEditor = fileEditors.length == 1 ? fileEditors[0] : null;
     Editor editor = fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
@@ -66,9 +64,9 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     return reformatRange(editor, psiFile, range, true);
   }
 
-  private static TextRange reformatRange(@Nullable final Editor editor,
-                                         @NotNull final PsiFile psiFile,
-                                         @NotNull final TextRange inputRange,
+  private static TextRange reformatRange(final @Nullable Editor editor,
+                                         final @NotNull PsiFile psiFile,
+                                         final @NotNull TextRange inputRange,
                                          final boolean runningAsPostFormatProcessor) {
     final Project project = psiFile.getProject();
     final VirtualFile file = psiFile.getVirtualFile();
@@ -153,7 +151,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
   }
 
   @Override
-  protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
+  protected void runOverFiles(final @NotNull Project project, final @NotNull List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
       Messages
         .showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("action.Dart.DartStyle.text"));
@@ -170,7 +168,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
   }
 
   // keep public to be accessible in 3rd party plugins
-  public static void runDartfmt(@NotNull final Project project, @NotNull final List<? extends VirtualFile> dartFiles) {
+  public static void runDartfmt(final @NotNull Project project, final @NotNull List<? extends VirtualFile> dartFiles) {
     final Map<VirtualFile, String> fileToNewContentMap = new HashMap<>();
     final int lineLength = getRightMargin(project);
 

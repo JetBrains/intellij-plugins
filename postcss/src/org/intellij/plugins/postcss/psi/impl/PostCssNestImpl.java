@@ -14,14 +14,13 @@ import org.intellij.plugins.postcss.psi.PostCssNest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final public class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
+public final class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
   PostCssNestImpl() {
     super(CssContextType.ANY, PostCssElementTypes.POST_CSS_NEST);
   }
 
-  @NotNull
   @Override
-  public ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return new AtRulePresentation(this, getPresentableText());
   }
 
@@ -31,21 +30,18 @@ final public class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest 
     return selectorList != null ? selectorList.getSelectors() : CssSelector.EMPTY_ARRAY;
   }
 
-  @Nullable
   @Override
-  public CssSelectorList getSelectorList() {
+  public @Nullable CssSelectorList getSelectorList() {
     return PsiTreeUtil.getChildOfType(this, CssSelectorList.class);
   }
 
-  @Nullable
   @Override
-  public CssBlock getBlock() {
+  public @Nullable CssBlock getBlock() {
     return PsiTreeUtil.getChildOfType(this, CssBlock.class);
   }
 
-  @NotNull
   @Override
-  public String getPresentableText() {
+  public @NotNull String getPresentableText() {
     return ("nest " + CssPsiUtil.getTokenText(getSelectorList())).trim();
   }
 

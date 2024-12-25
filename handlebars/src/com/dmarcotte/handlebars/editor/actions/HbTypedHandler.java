@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.HbLanguage;
@@ -30,9 +31,8 @@ public class HbTypedHandler extends TypedHandlerDelegate {
   public static final String OPEN_BRACE = "{";
   public static final String CLOSE_BRACES = "}}";
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
+  public @NotNull Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
     int offset = editor.getCaretModel().getOffset();
 
     if (offset == 0 || offset > editor.getDocument().getTextLength()) {
@@ -61,9 +61,8 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
-  @NotNull
   @Override
-  public Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+  public @NotNull Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     int offset = editor.getCaretModel().getOffset();
     FileViewProvider provider = file.getViewProvider();
 

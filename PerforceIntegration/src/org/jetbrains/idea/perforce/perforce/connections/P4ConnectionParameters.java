@@ -1,7 +1,6 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
 import com.google.common.base.MoreObjects;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -9,20 +8,13 @@ import java.util.List;
 
 public class P4ConnectionParameters {
   // server + port
-  @Nullable
-  private String myServer;
-  @Nullable
-  private String myUser;
-  @Nullable
-  private String myClient;
-  @Nullable
-  private String myPassword;
-  @Nullable
-  private String myCharset;
-  @Nullable  
-  private String myConfigFileName;
-  @Nullable 
-  private String myIgnoreFileName;
+  private @Nullable String myServer;
+  private @Nullable String myUser;
+  private @Nullable String myClient;
+  private @Nullable String myPassword;
+  private @Nullable String myCharset;
+  private @Nullable String myConfigFileName;
+  private @Nullable String myIgnoreFileName;
 
   private Throwable myException;
   private final List<String> myWarnings;
@@ -33,7 +25,7 @@ public class P4ConnectionParameters {
   }
 
   private P4ConnectionParameters(@Nullable String server, @Nullable String user, @Nullable String client, @Nullable String password,
-                                 @Nullable final String charset) {
+                                 final @Nullable String charset) {
     myServer = server;
     myUser = user;
     myClient = client;
@@ -50,8 +42,7 @@ public class P4ConnectionParameters {
     return myUser != null && myServer != null && myClient != null && myPassword != null;
   }
 
-  @Nullable
-  public String getServer() {
+  public @Nullable String getServer() {
     return myServer;
   }
 
@@ -59,8 +50,7 @@ public class P4ConnectionParameters {
     myServer = server;
   }
 
-  @Nullable
-  public String getUser() {
+  public @Nullable String getUser() {
     return myUser;
   }
 
@@ -68,8 +58,7 @@ public class P4ConnectionParameters {
     myUser = user;
   }
 
-  @Nullable
-  public String getClient() {
+  public @Nullable String getClient() {
     return myClient;
   }
 
@@ -77,8 +66,7 @@ public class P4ConnectionParameters {
     myClient = client;
   }
 
-  @Nullable
-  public String getPassword() {
+  public @Nullable String getPassword() {
     return myPassword;
   }
 
@@ -106,8 +94,7 @@ public class P4ConnectionParameters {
     myWarnings.add(warning);
   }
 
-  @Nullable
-  public String getCharset() {
+  public @Nullable String getCharset() {
     return myCharset;
   }
 
@@ -147,8 +134,7 @@ public class P4ConnectionParameters {
     myNoConfigFound = noConfigFound;
   }
 
-  @Nullable 
-  public String getConfigFileName() {
+  public @Nullable String getConfigFileName() {
     return myConfigFileName;
   }
 
@@ -156,7 +142,7 @@ public class P4ConnectionParameters {
     myConfigFileName = configFileName;
   }
 
-  @Nullable public String getIgnoreFileName() {
+  public @Nullable String getIgnoreFileName() {
     return myIgnoreFileName;
   }
 

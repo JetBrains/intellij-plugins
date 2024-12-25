@@ -23,16 +23,13 @@ public class PerforceOfflineNotification extends GenericNotifierImpl<Object, Obj
     return settings.ENABLED;
   }
 
-  @NotNull
   @Override
-  protected Object getKey(Object obj) {
+  protected @NotNull Object getKey(Object obj) {
     return obj;
   }
 
-  @NotNull
   @Override
-  @NlsContexts.NotificationContent
-  protected String getNotificationContent(Object obj) {
+  protected @NotNull @NlsContexts.NotificationContent String getNotificationContent(Object obj) {
     return PerforceBundle.message("connection.work.offline");
   }
 }

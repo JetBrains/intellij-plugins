@@ -62,9 +62,9 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
   private final MyZipper myZipper;
   private final ChangeListColumn[] myColumns = new ChangeListColumn[] {
     ChangeListColumn.NUMBER, ChangeListColumn.DATE, ChangeListColumn.NAME, new ClientColumn(), ChangeListColumn.DESCRIPTION };
-  @NonNls private static final String IS_OPENED_SIGNATURE = "is opened and not being changed";
-  @NonNls private static final String IS_OPENED_SIGNATURE2 = "- is opened for edit - not changed";
-  @NonNls private static final String MUST_BE_RESOLVED = "- must resolve";
+  private static final @NonNls String IS_OPENED_SIGNATURE = "is opened and not being changed";
+  private static final @NonNls String IS_OPENED_SIGNATURE2 = "- is opened for edit - not changed";
+  private static final @NonNls String MUST_BE_RESOLVED = "- must resolve";
 
   public PerforceCommittedChangesProvider(final Project project) {
     myProject = project;
@@ -73,14 +73,12 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
   }
 
   @Override
-  @NotNull
-  public PerforceChangeBrowserSettings createDefaultSettings() {
+  public @NotNull PerforceChangeBrowserSettings createDefaultSettings() {
     return new PerforceChangeBrowserSettings();
   }
 
   @Override
-  @NotNull
-  public VcsCommittedListsZipper getZipper() {
+  public @NotNull VcsCommittedListsZipper getZipper() {
     return myZipper;
   }
 
@@ -108,9 +106,8 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     }
   }
 
-  @NotNull
   @Override
-  public ChangesBrowserSettingsEditor<PerforceChangeBrowserSettings> createFilterUI(boolean showDateFilter) {
+  public @NotNull ChangesBrowserSettingsEditor<PerforceChangeBrowserSettings> createFilterUI(boolean showDateFilter) {
     final Collection<P4Connection> connections = PerforceSettings.getSettings(myProject).getAllConnections();
     if (connections.size() == 1) {
       return new PerforceVersionFilterComponent(myProject, connections.iterator().next(), showDateFilter);
@@ -118,9 +115,8 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     return new PerforceOnlyDatesVersionFilterComponent();
   }
 
-  @NotNull
   @Override
-  public RepositoryLocation getLocationFor(@NotNull FilePath root) {
+  public @NotNull RepositoryLocation getLocationFor(@NotNull FilePath root) {
     P4Connection connection = PerforceSettings.getSettings(myProject).getConnectionForFile(root.getIOFile());
     assert connection != null : "Null connection for " + root;
     String serverAddress = PerforceManager.getInstance(myProject).getClient(connection).getDeclaredServerPort();
@@ -156,9 +152,8 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     }
   }
 
-  @NotNull
   @Override
-  public List<PerforceChangeList> getCommittedChanges(PerforceChangeBrowserSettings settings, RepositoryLocation location, int maxCount)
+  public @NotNull List<PerforceChangeList> getCommittedChanges(PerforceChangeBrowserSettings settings, RepositoryLocation location, int maxCount)
     throws VcsException {
     PerforceSettings p4Settings = PerforceSettings.getSettings(myProject);
     if (!p4Settings.ENABLED) {
@@ -187,9 +182,8 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     return 0;
   }
 
-  @Nullable
   @Override
-  public Pair<PerforceChangeList, FilePath> getOneList(VirtualFile file, VcsRevisionNumber number) throws VcsException {
+  public @Nullable Pair<PerforceChangeList, FilePath> getOneList(VirtualFile file, VcsRevisionNumber number) throws VcsException {
     PerforceSettings p4Settings = PerforceSettings.getSettings(myProject);
     if (!p4Settings.ENABLED) {
       return null;
@@ -239,7 +233,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     return correctNameIfNeeded(changeListList.get(0), filePath, connection);
   }
 
-  private Pair<PerforceChangeList, FilePath> correctNameIfNeeded(final PerforceChangeList changeList, @NotNull final FilePath filePath,
+  private Pair<PerforceChangeList, FilePath> correctNameIfNeeded(final PerforceChangeList changeList, final @NotNull FilePath filePath,
                                                                  final P4Connection connection)
     throws VcsException {
     for (Change change : changeList.getChanges()) {
@@ -268,9 +262,8 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     list.writeToStream(stream);
   }
 
-  @NotNull
   @Override
-  public PerforceChangeList readChangeList(@NotNull RepositoryLocation location, @NotNull DataInput stream) throws IOException {
+  public @NotNull PerforceChangeList readChangeList(@NotNull RepositoryLocation location, @NotNull DataInput stream) throws IOException {
     final P4Connection connection;
     final PerforceClient perforceClient;
     try {
@@ -284,9 +277,8 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     return new PerforceChangeList(myProject, stream, connection, perforceClient, new PerforceChangeCache(myProject));
   }
 
-  @Nullable
   @Override
-  public Collection<FilePath> getIncomingFiles(@NotNull RepositoryLocation location) throws VcsException {
+  public @Nullable Collection<FilePath> getIncomingFiles(@NotNull RepositoryLocation location) throws VcsException {
     if (!Registry.is("p4.use.p4.sync.for.incoming.files"))
       return null;
 

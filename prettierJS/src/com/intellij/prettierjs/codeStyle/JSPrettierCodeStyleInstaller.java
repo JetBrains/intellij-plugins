@@ -64,8 +64,7 @@ final class JSPrettierCodeStyleInstaller implements PrettierCodeStyleInstaller {
     customSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH = false;
   }
 
-  @NotNull
-  private static JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierConfig.TrailingCommaOption option) {
+  private static @NotNull JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierConfig.TrailingCommaOption option) {
     return switch (option) {
       case none -> JSCodeStyleSettings.TrailingCommaOption.Remove;
       case all, es5 -> JSCodeStyleSettings.TrailingCommaOption.WhenMultiline;

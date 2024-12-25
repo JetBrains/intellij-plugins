@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.pages;
 
 import com.dmarcotte.handlebars.HbBundle;
@@ -34,15 +34,13 @@ public final class HbConfigurationPage implements SearchableConfigurable {
     myProject = project;
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "editor.preferences.handlebarsOptions";
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return HbBundle.message("hb.pages.options.title");
   }
 

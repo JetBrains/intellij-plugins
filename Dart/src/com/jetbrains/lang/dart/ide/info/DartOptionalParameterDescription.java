@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.psi.PsiElement;
@@ -15,10 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DartOptionalParameterDescription {
-  @NotNull
-  private final String myText;
-  @Nullable
-  private final String myValue;
+  private final @NotNull String myText;
+  private final @Nullable String myValue;
   private final boolean myIsPositional;
 
   public DartOptionalParameterDescription(@NotNull String text, @Nullable String value, boolean isPositional) {
@@ -58,8 +56,7 @@ public class DartOptionalParameterDescription {
     return firstChild != null && "[".equals(firstChild.getText());
   }
 
-  @NotNull
-  public String getText() {
+  public @NotNull String getText() {
     return myText;
   }
 

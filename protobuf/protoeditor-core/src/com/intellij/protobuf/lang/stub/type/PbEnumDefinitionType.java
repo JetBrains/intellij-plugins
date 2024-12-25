@@ -16,14 +16,14 @@
 package com.intellij.protobuf.lang.stub.type;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.io.StringRef;
 import com.intellij.protobuf.lang.psi.PbEnumDefinition;
 import com.intellij.protobuf.lang.psi.impl.PbEnumDefinitionImpl;
 import com.intellij.protobuf.lang.stub.PbEnumDefinitionStub;
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex;
 import com.intellij.protobuf.lang.stub.index.ShortNameIndex;
+import com.intellij.psi.stubs.*;
+import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -39,16 +39,14 @@ public class PbEnumDefinitionType extends IStubElementType<PbEnumDefinitionStub,
     return new PbEnumDefinitionImpl(stub, this);
   }
 
-  @NotNull
   @Override
-  public PbEnumDefinitionStub createStub(
+  public @NotNull PbEnumDefinitionStub createStub(
       @NotNull PbEnumDefinition psi, StubElement parentStub) {
     return new PbEnumDefinitionStub(parentStub, this, psi.getName());
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "protobuf.ENUM_DEFINITION";
   }
 
@@ -58,9 +56,8 @@ public class PbEnumDefinitionType extends IStubElementType<PbEnumDefinitionStub,
     dataStream.writeName(stub.getName());
   }
 
-  @NotNull
   @Override
-  public PbEnumDefinitionStub deserialize(
+  public @NotNull PbEnumDefinitionStub deserialize(
       @NotNull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     String name = null;

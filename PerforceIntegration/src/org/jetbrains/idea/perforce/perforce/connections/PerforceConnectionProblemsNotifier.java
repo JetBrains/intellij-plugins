@@ -201,16 +201,13 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
     return project.getService(PerforceConnectionProblemsNotifier.class);
   }
 
-  @NotNull
   @Override
-  protected Object getKey(Object obj) {
+  protected @NotNull Object getKey(Object obj) {
     return obj;
   }
 
-  @NotNull
   @Override
-  @NlsContexts.NotificationContent
-  protected String getNotificationContent(Object obj) {
+  protected @NotNull @NlsContexts.NotificationContent String getNotificationContent(Object obj) {
     if (myConnectionProblems) {
       return PerforceBundle.message("connection.server.not.available");
     }

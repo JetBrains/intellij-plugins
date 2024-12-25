@@ -27,10 +27,8 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public final class ConvertToStaticArgIntention extends ConvertArgTypeIntentionBase {
-  @Nls
-  @NotNull
   @Override
-  public String getText() {
+  public @Nls @NotNull String getText() {
     return GaugeBundle.message("gauge.convert.to.static.parameter");
   }
 
@@ -41,9 +39,8 @@ public final class ConvertToStaticArgIntention extends ConvertArgTypeIntentionBa
            || PsiTreeUtil.getParentOfType(element, ConceptDynamicArg.class) != null;
   }
 
-  @NotNull
   @Override
-  protected String getReplacementString(String paramText) {
+  protected @NotNull String getReplacementString(String paramText) {
     return "\"" + paramText + "\"";
   }
 }

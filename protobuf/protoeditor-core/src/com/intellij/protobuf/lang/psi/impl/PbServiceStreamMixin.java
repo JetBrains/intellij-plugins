@@ -16,8 +16,6 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.PbBlockBody;
@@ -25,6 +23,8 @@ import com.intellij.protobuf.lang.psi.PbMethodOptions;
 import com.intellij.protobuf.lang.psi.PbOptionStatement;
 import com.intellij.protobuf.lang.psi.PbServiceStream;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,22 +37,19 @@ abstract class PbServiceStreamMixin extends PbNamedElementBase implements PbServ
     super(node);
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.STREAM_OPTIONS.forDescriptor(descriptor);
   }
 
   @Override
-  @Nullable
-  public QualifiedName getExtensionOptionScope() {
+  public @Nullable QualifiedName getExtensionOptionScope() {
     QualifiedName name = getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }
 
-  @NotNull
   @Override
-  public List<PsiComment> getTrailingComments() {
+  public @NotNull List<PsiComment> getTrailingComments() {
     PbBlockBody options = getMethodOptions();
     if (options == null) {
       // No options defined; collect comments after the stream statement.
@@ -62,8 +59,7 @@ abstract class PbServiceStreamMixin extends PbNamedElementBase implements PbServ
   }
 
   @Override
-  @NotNull
-  public List<PbOptionStatement> getOptionStatements() {
+  public @NotNull List<PbOptionStatement> getOptionStatements() {
     PbMethodOptions methodOptions = getMethodOptions();
     if (methodOptions == null) {
       return Collections.emptyList();

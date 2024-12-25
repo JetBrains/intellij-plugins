@@ -51,13 +51,11 @@ public class JobsMasterDetails extends MasterDetailsComponent {
   }
 
   @Override
-  @Nls
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return PerforceBundle.message("configurable.JobsMasterDetails.display.name");
   }
 
-  @NotNull
-  public List<PerforceJob> getSelectedJobs() {
+  public @NotNull List<PerforceJob> getSelectedJobs() {
     final MyNode[] nodes = myTree.getSelectedNodes(MyNode.class, null);
     List<PerforceJob> result = new ArrayList<>();
     for (MyNode node : nodes) {
@@ -115,7 +113,7 @@ public class JobsMasterDetails extends MasterDetailsComponent {
     });
   }
 
-  public void fillTree(final List<PerforceJob> jobs, @Nullable final PerforceJob selectJob) {
+  public void fillTree(final List<PerforceJob> jobs, final @Nullable PerforceJob selectJob) {
     myRoot.removeAllChildren();
 
     int idx = -1;
@@ -192,7 +190,7 @@ public class JobsMasterDetails extends MasterDetailsComponent {
     private final SelfLoadingJobDetailsPanel mySelfLoadingJobDetailsPanel;
     private final PerforceJob myJob;
 
-    private MyConfigurable(final Project project, @NotNull final PerforceJob job) {
+    private MyConfigurable(final Project project, final @NotNull PerforceJob job) {
       mySelfLoadingJobDetailsPanel = new SelfLoadingJobDetailsPanel(project, job);
       myJob = job;
     }
@@ -217,8 +215,7 @@ public class JobsMasterDetails extends MasterDetailsComponent {
     }
 
     @Override
-    @Nls
-    public String getDisplayName() {
+    public @Nls String getDisplayName() {
       return myJob.getName();
     }
 

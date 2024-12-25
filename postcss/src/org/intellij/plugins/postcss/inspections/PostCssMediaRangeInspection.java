@@ -6,11 +6,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssElementVisitor;
 import com.intellij.psi.css.CssMediaFeature;
-import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
-import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +19,8 @@ import static com.intellij.psi.css.impl.CssElementTypes.*;
 public class PostCssMediaRangeInspection extends PostCssBaseInspection {
   private static final Logger LOG = Logger.getInstance(PostCssMediaRangeInspection.class);
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, final boolean isOnTheFly) {
     return new CssElementVisitor() {
       @Override
       public void visitMediaFeature(@NotNull CssMediaFeature mediaFeature) {
@@ -46,7 +43,7 @@ public class PostCssMediaRangeInspection extends PostCssBaseInspection {
     };
   }
 
-  private static int getComparisonOperatorDirection(@NotNull final PsiElement comparisonOperator) {
+  private static int getComparisonOperatorDirection(final @NotNull PsiElement comparisonOperator) {
     final IElementType type = comparisonOperator.getNode().getElementType();
 
     if (type == CSS_GT || type == CSS_GE) return 1;

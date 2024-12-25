@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.util;
 
 import com.intellij.execution.ExecutionResult;
@@ -48,8 +48,7 @@ public final class KarmaUtil {
   private KarmaUtil() {
   }
 
-  @NotNull
-  public static List<VirtualFile> listPossibleConfigFilesInProject(@NotNull Project project) {
+  public static @NotNull List<VirtualFile> listPossibleConfigFilesInProject(@NotNull Project project) {
     GlobalSearchScope contentScope = ProjectScope.getContentScope(project);
     GlobalSearchScope scope = contentScope.intersectWith(GlobalSearchScope.notScope(ProjectScope.getLibrariesScope(project)));
     List<VirtualFile> result = new ArrayList<>();
@@ -116,9 +115,8 @@ public final class KarmaUtil {
     return contentRoot != null;
   }
 
-  @NotNull
-  public static RunContentDescriptor createDefaultDescriptor(@NotNull ExecutionResult executionResult,
-                                                             @NotNull ExecutionEnvironment environment) {
+  public static @NotNull RunContentDescriptor createDefaultDescriptor(@NotNull ExecutionResult executionResult,
+                                                                      @NotNull ExecutionEnvironment environment) {
     ExecutionConsole console = executionResult.getExecutionConsole();
     KarmaServer server = console instanceof KarmaConsoleView ? ((KarmaConsoleView)console).getKarmaServer() : null;
     RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
@@ -126,8 +124,7 @@ public final class KarmaUtil {
     return withReusePolicy(descriptor, server);
   }
 
-  @NotNull
-  public static RunContentDescriptor withReusePolicy(@NotNull RunContentDescriptor descriptor, @Nullable KarmaServer karmaServer) {
+  public static @NotNull RunContentDescriptor withReusePolicy(@NotNull RunContentDescriptor descriptor, @Nullable KarmaServer karmaServer) {
     descriptor.setReusePolicy(new RunContentDescriptorReusePolicy() {
       @Override
       public boolean canBeReusedBy(@NotNull RunContentDescriptor newDescriptor) {

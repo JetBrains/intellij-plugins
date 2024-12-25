@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.openapi.module.Module;
@@ -20,9 +21,9 @@ class WebAppTemplate extends DartProjectTemplate {
   }
 
   @Override
-  public Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
-                                                 @NotNull final Module module,
-                                                 @NotNull final VirtualFile baseDir) throws IOException {
+  public Collection<VirtualFile> generateProject(final @NotNull String sdkRoot,
+                                                 final @NotNull Module module,
+                                                 final @NotNull VirtualFile baseDir) throws IOException {
     final String projectTitle = StringUtil.toTitleCase(module.getName());
     final String lowercaseName = StringUtil.toLowerCase(module.getName());
 

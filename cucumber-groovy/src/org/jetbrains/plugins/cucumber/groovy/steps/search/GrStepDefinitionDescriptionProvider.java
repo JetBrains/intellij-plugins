@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy.steps.search;
 
 import com.intellij.psi.ElementDescriptionLocation;
@@ -15,9 +16,8 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
  * @author Max Medvedev
  */
 public final class GrStepDefinitionDescriptionProvider implements ElementDescriptionProvider {
-  @Nullable
   @Override
-  public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+  public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
     if (location instanceof UsageViewNodeTextLocation || location instanceof UsageViewTypeLocation) {
       if (GrCucumberUtil.isStepDefinition(element) || element instanceof GrReferenceExpression && GrCucumberUtil.isStepDefinition(element.getParent())) {
         return CucumberBundle.message("step.definition") ;

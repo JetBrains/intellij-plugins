@@ -8,9 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public class PostCssDialect extends CssDialect {
   static final String DIALECT_NAME = "PostCSS";
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return DIALECT_NAME;
   }
 

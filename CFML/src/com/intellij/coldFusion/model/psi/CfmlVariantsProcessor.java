@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.coldFusion.model.psi;
 
@@ -72,7 +72,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
   }
 
   @Override
-  public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
+  public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
     // continue if not a definition
     if (!(element instanceof PsiNamedElement)) {
       return true;
@@ -189,8 +189,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
     return 0;
   }
 
-  @Nullable
-  protected abstract T execute(final PsiNamedElement element, final boolean error);
+  protected abstract @Nullable T execute(final PsiNamedElement element, final boolean error);
 
   public T[] getVariants(T[] array) {
     if (myMethods != null) {

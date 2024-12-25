@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
 import com.intellij.psi.PsiElement;
@@ -24,8 +25,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
-
 public final class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
@@ -46,8 +45,7 @@ public final class CucumberStepRenameProcessor extends RenamePsiElementProcessor
    * @param source regex to work with
    * @return List of strings. The first one is prepared regex, then static elements of the regex
    */
-  @NotNull
-  public static List<String> prepareRegexAndGetStaticTexts(@NotNull final String source) {
+  public static @NotNull List<String> prepareRegexAndGetStaticTexts(final @NotNull String source) {
     final ArrayList<String> result = new ArrayList<>();
     final StringBuilder preparedRegexp = new StringBuilder();
 
@@ -110,10 +108,9 @@ public final class CucumberStepRenameProcessor extends RenamePsiElementProcessor
     return result;
   }
 
-  @NotNull
-  private static String getNewStepName(@NotNull String oldStepName,
-                                       @NotNull Pattern oldStepDefPattern,
-                                       @NotNull List<String> newStaticTexts) {
+  private static @NotNull String getNewStepName(@NotNull String oldStepName,
+                                                @NotNull Pattern oldStepDefPattern,
+                                                @NotNull List<String> newStaticTexts) {
     final Matcher matcher = oldStepDefPattern.matcher(oldStepName);
     if (matcher.find()) {
       final ArrayList<String> values = new ArrayList<>();
@@ -170,11 +167,10 @@ public final class CucumberStepRenameProcessor extends RenamePsiElementProcessor
     }
   }
 
-  @NotNull
   @Override
-  public Collection<PsiReference> findReferences(@NotNull PsiElement element,
-                                                 @NotNull SearchScope searchScope,
-                                                 boolean searchInCommentsAndStrings) {
+  public @NotNull Collection<PsiReference> findReferences(@NotNull PsiElement element,
+                                                          @NotNull SearchScope searchScope,
+                                                          boolean searchInCommentsAndStrings) {
     return Arrays.asList(element.getReferences());
   }
 }

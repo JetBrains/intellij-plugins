@@ -32,9 +32,8 @@ public class PostCssStructureViewElementsProvider extends CssStructureViewElemen
     return false;
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssStructureViewElement> createStructureViewElements(@NotNull PsiElement element) {
+  public @NotNull Collection<? extends CssStructureViewElement> createStructureViewElements(@NotNull PsiElement element) {
     if (element.getLanguage() != PostCssLanguage.INSTANCE || shouldSkipElement(element)) {
       return Collections.emptyList();
     }

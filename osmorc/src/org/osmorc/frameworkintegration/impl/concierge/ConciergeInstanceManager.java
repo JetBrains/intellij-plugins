@@ -41,9 +41,8 @@ public class ConciergeInstanceManager extends AbstractFrameworkInstanceManager {
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("org.eclipse.concierge-[^-]+\\.jar");
   private static final Pattern SHELL_BUNDLE = Pattern.compile("org.eclipse.concierge.shell-.+\\.jar");
 
-  @NotNull
   @Override
-  public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
+  public @NotNull Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
     return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, ConciergeRunner.MAIN_CLASS, 1, SHELL_BUNDLE, null, 1);
   }
 }

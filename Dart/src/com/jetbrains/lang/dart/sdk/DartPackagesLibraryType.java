@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
@@ -20,8 +21,7 @@ public final class DartPackagesLibraryType extends LibraryType<DartPackagesLibra
   public static final PersistentLibraryKind<DartPackagesLibraryProperties> LIBRARY_KIND =
     new PersistentLibraryKind<>("DartPackagesLibraryType") {
       @Override
-      @NotNull
-      public DartPackagesLibraryProperties createDefaultProperties() {
+      public @NotNull DartPackagesLibraryProperties createDefaultProperties() {
         return new DartPackagesLibraryProperties();
       }
     };
@@ -31,28 +31,24 @@ public final class DartPackagesLibraryType extends LibraryType<DartPackagesLibra
   }
 
   @Override
-  @Nullable
-  public String getCreateActionName() {
+  public @Nullable String getCreateActionName() {
     return null;
   }
 
   @Override
-  @Nullable
-  public NewLibraryConfiguration createNewLibrary(@NotNull final JComponent parentComponent,
-                                                  @Nullable final VirtualFile contextDirectory,
-                                                  @NotNull final Project project) {
+  public @Nullable NewLibraryConfiguration createNewLibrary(final @NotNull JComponent parentComponent,
+                                                            final @Nullable VirtualFile contextDirectory,
+                                                            final @NotNull Project project) {
     return null;
   }
 
   @Override
-  @Nullable
-  public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<DartPackagesLibraryProperties> editorComponent) {
+  public @Nullable LibraryPropertiesEditor createPropertiesEditor(final @NotNull LibraryEditorComponent<DartPackagesLibraryProperties> editorComponent) {
     return null;
   }
 
   @Override
-  @Nullable
-  public Icon getIcon(DartPackagesLibraryProperties properties) {
+  public @Nullable Icon getIcon(DartPackagesLibraryProperties properties) {
     return DartIcons.Dart_16;
   }
 }

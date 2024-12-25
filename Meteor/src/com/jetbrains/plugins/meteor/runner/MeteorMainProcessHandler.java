@@ -33,8 +33,7 @@ public class MeteorMainProcessHandler extends KillableColoredProcessHandler {
     });
   }
 
-  @NotNull
-  public List<Pair<String, Key>> getLastMessage() {
+  public @NotNull List<Pair<String, Key>> getLastMessage() {
     synchronized (myLock) {
       return new ArrayList<>(myLastMessage);
     }

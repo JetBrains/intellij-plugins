@@ -67,9 +67,8 @@ public class YeomanSelectGeneratorWizardStep extends ModuleWizardStep implements
   public static YeomanProjectGeneratorOwnerPanel createOwnerPanel(final JScrollPane scrollPane, final JPanel ownerPanel) {
     return new YeomanProjectGeneratorOwnerPanel() {
 
-      @Nullable
       @Override
-      public ValidateHandler getValidateHandler() {
+      public @Nullable ValidateHandler getValidateHandler() {
         return null;
       }
 
@@ -88,9 +87,8 @@ public class YeomanSelectGeneratorWizardStep extends ModuleWizardStep implements
         //not implemented for IDEA
       }
 
-      @NotNull
       @Override
-      public JPanel getMainPanel() {
+      public @NotNull JPanel getMainPanel() {
         return ownerPanel;
       }
 
@@ -99,15 +97,13 @@ public class YeomanSelectGeneratorWizardStep extends ModuleWizardStep implements
         //not implemented for IDEA
       }
 
-      @NotNull
       @Override
-      public String getLocationTitle() {
+      public @NotNull String getLocationTitle() {
         return "yeoman-generated-project";
       }
 
-      @Nullable
       @Override
-      public LabeledComponent<TextFieldWithBrowseButton> getLocationComponent() {
+      public @Nullable LabeledComponent<TextFieldWithBrowseButton> getLocationComponent() {
         return null;
       }
 

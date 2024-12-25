@@ -38,9 +38,8 @@ abstract class GaugeFoldingBuilder implements FoldingBuilder {
     descriptors.add(new FoldingDescriptor(node, textRange));
   }
 
-  @Nullable
   @Override
-  public String getPlaceholderText(@NotNull ASTNode astNode) {
+  public @Nullable String getPlaceholderText(@NotNull ASTNode astNode) {
     return " ...";
   }
 
@@ -49,8 +48,7 @@ abstract class GaugeFoldingBuilder implements FoldingBuilder {
     return false;
   }
 
-  @NotNull
-  private static Integer getLength(ASTNode heading) {
+  private static @NotNull Integer getLength(ASTNode heading) {
     return heading.getText().length();
   }
 }

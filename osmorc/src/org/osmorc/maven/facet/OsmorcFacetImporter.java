@@ -181,8 +181,7 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
   /**
    * Computes the Bundle-Name value from the data given in the maven project.
    */
-  @NotNull
-  private String computeBundleName(MavenProject mavenProject) {
+  private @NotNull String computeBundleName(MavenProject mavenProject) {
     String bundleName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_NAME);
     if (!StringUtil.isEmpty(bundleName)) {
       return bundleName;
@@ -204,8 +203,7 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
   /**
    * Computes the Bundle-SymbolicName value from the data given in the maven project.
    */
-  @NotNull
-  private String computeSymbolicName(MavenProject mavenProject) {
+  private @NotNull String computeSymbolicName(MavenProject mavenProject) {
     String bundleSymbolicName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_SYMBOLICNAME);
     if (!StringUtil.isEmpty(bundleSymbolicName)) {
       return bundleSymbolicName;
@@ -233,8 +231,7 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
     return groupId + "." + artifactId;
   }
 
-  @Nullable
-  private static Map<String, String> cleanVersions(MavenPlugin plugin) {
+  private static @Nullable Map<String, String> cleanVersions(MavenPlugin plugin) {
     Element versionsNode = MavenJDOMUtil.findChildByPath(plugin.getGoalConfiguration("cleanVersions"), "versions");
     if (versionsNode == null) return null;
 
@@ -249,8 +246,7 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
     return versions;
   }
 
-  @NotNull
-  private static String substituteVersions(@NotNull String value, @Nullable Map<String, String> versions) {
+  private static @NotNull String substituteVersions(@NotNull String value, @Nullable Map<String, String> versions) {
     if (versions != null) {
       for (Map.Entry<String, String> entry : versions.entrySet()) {
         String property = "${" + entry.getKey() + "}";

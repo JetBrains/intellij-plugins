@@ -31,9 +31,8 @@ import org.jetbrains.annotations.Nullable;
  * the entire file (just as changing any non-comment, non-whitespace PSI would).
  */
 public class SchemaDirectiveChangeLocalityDetector implements ChangeLocalityDetector {
-  @Nullable
   @Override
-  public PsiElement getChangeHighlightingDirtyScopeFor(@NotNull PsiElement changedElement) {
+  public @Nullable PsiElement getChangeHighlightingDirtyScopeFor(@NotNull PsiElement changedElement) {
     if (changedElement instanceof PsiComment && PbTextLanguage.INSTANCE.is(changedElement.getLanguage())) {
       return changedElement.getContainingFile();
     }

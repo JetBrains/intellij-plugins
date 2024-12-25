@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.highlighting;
 
 import com.intellij.codeInspection.reference.EntryPoint;
@@ -14,9 +14,8 @@ import org.osmorc.util.OsgiPsiUtil;
 final class OsgiEntryPoint extends EntryPoint {
   public boolean ADD_ACTIVATORS_TO_ENTRIES = true;
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return OsmorcBundle.message("osgi.activator.entry.point");
   }
 

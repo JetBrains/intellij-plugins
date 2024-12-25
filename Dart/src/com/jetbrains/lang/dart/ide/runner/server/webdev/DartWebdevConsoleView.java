@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.configurations.CommandLineState;
@@ -22,9 +22,8 @@ public class DartWebdevConsoleView extends ConsoleViewImpl {
     // We need to filter input to this console without affecting other consoles, so we cannot use
     // a consoleFilterInputProvider.
     final TextConsoleBuilder builder = new TextConsoleBuilderImpl(project, GlobalSearchScope.allScope(project)) {
-      @NotNull
       @Override
-      protected ConsoleView createConsole() {
+      protected @NotNull ConsoleView createConsole() {
         return new DartWebdevConsoleView(project, getScope());
       }
     };
@@ -33,7 +32,7 @@ public class DartWebdevConsoleView extends ConsoleViewImpl {
     launcher.setConsoleBuilder(builder);
   }
 
-  public DartWebdevConsoleView(@NotNull final Project project, @NotNull final GlobalSearchScope searchScope) {
+  public DartWebdevConsoleView(final @NotNull Project project, final @NotNull GlobalSearchScope searchScope) {
     super(project, searchScope, true, false);
   }
 

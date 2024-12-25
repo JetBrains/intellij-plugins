@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
@@ -32,33 +32,28 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
     return this;
   }
 
-  @Nullable
-  public PsiElement getReferenceElement() {
+  public @Nullable PsiElement getReferenceElement() {
     return findChildByType(CfscriptTokenTypes.IDENTIFIER);
   }
 
-  @NotNull
-  public String getFunctionName() {
+  public @NotNull String getFunctionName() {
     PsiElement element = getReferenceElement();
     return element != null ? element.getText() : "";
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return getFunctionName();
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     PsiElement element = getReferenceElement();
     return element != null ? element : this;
   }
 
   @Override
-  @NotNull
-  public String getParametersAsString() {
+  public @NotNull String getParametersAsString() {
     return getFunctionInfo().getParametersListPresentableText();
   }
 
@@ -71,14 +66,12 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
     return CfmlFunctionParameterImpl.EMPTY_ARRAY;
   }
 
-  @Nullable
-  public CfmlParametersList getParametersList() {
+  public @Nullable CfmlParametersList getParametersList() {
     return findChildByClass(CfmlParametersList.class);
   }
 
   @Override
-  @Nullable
-  public PsiType getReturnType() {
+  public @Nullable PsiType getReturnType() {
     final PsiElement type = findChildByType(CfmlElementTypes.TYPE);
     return type != null ?
            new CfmlComponentType(type.getText(), getContainingFile(), getProject()) : null;
@@ -121,8 +114,7 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
   }
 
   @Override
-  @NotNull
-  public CfmlFunctionDescription getFunctionInfo() {
+  public @NotNull CfmlFunctionDescription getFunctionInfo() {
     return CfmlLookUpItemUtil.getFunctionDescription(this);
   }
 

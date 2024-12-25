@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.structure;
 
 import com.intellij.ide.structureView.StructureViewModel;
@@ -40,7 +40,7 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
   }
 
   private static final Filter myGlobalVarFilter = new Filter() {
-    @NonNls public static final String ID = "SHOW_VARIABLES";
+    public static final @NonNls String ID = "SHOW_VARIABLES";
 
     @Override
     public boolean isVisible(TreeElement treeNode) {
@@ -53,8 +53,7 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
     }
 
     @Override
-    @NotNull
-    public ActionPresentation getPresentation() {
+    public @NotNull ActionPresentation getPresentation() {
       return new ActionPresentationData(
         DroolsBundle.message("action.structure.view.show.variables"),
         null,
@@ -63,14 +62,13 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return ID;
     }
   };
 
   private static final Filter myFunctionFilter = new Filter() {
-    @NonNls public static final String ID = "SHOW_FUNCTIONS";
+    public static final @NonNls String ID = "SHOW_FUNCTIONS";
 
     @Override
     public boolean isVisible(TreeElement treeNode) {
@@ -83,8 +81,7 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
     }
 
     @Override
-    @NotNull
-    public ActionPresentation getPresentation() {
+    public @NotNull ActionPresentation getPresentation() {
       return new ActionPresentationData(
         DroolsBundle.message("action.structure.view.show.functions"),
         null,
@@ -93,14 +90,13 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return ID;
     }
   };
 
   private static final Filter myRuleFilter = new Filter() {
-    @NonNls public static final String ID = "SHOW_RULES";
+    public static final @NonNls String ID = "SHOW_RULES";
 
     @Override
     public boolean isVisible(TreeElement treeNode) {
@@ -113,8 +109,7 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
     }
 
     @Override
-    @NotNull
-    public ActionPresentation getPresentation() {
+    public @NotNull ActionPresentation getPresentation() {
       return new ActionPresentationData(
         DroolsBundle.message("action.structure.view.show.rules"),
         null,
@@ -123,8 +118,7 @@ public class DroolsStructureViewModel extends StructureViewModelBase implements 
     }
 
     @Override
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
       return ID;
     }
   };

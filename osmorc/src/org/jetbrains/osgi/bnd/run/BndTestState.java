@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -115,16 +115,14 @@ public class BndTestState extends JavaCommandLineState {
     return BndLaunchUtil.createJavaParameters(myConfiguration, launcher);
   }
 
-  @Nullable
   @Override
-  protected ConsoleView createConsole(@NotNull Executor executor) {
+  protected @Nullable ConsoleView createConsole(@NotNull Executor executor) {
     TestConsoleProperties consoleProperties = new MyTestConsoleProperties(this, executor);
     return SMTestRunnerConnectionUtil.createConsole(TEST_FRAMEWORK_NAME, consoleProperties);
   }
 
-  @NotNull
   @Override
-  protected OSProcessHandler startProcess() throws ExecutionException {
+  protected @NotNull OSProcessHandler startProcess() throws ExecutionException {
     OSProcessHandler processHandler = super.startProcess();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
@@ -154,10 +152,9 @@ public class BndTestState extends JavaCommandLineState {
       setPrintTestingStartedTime(false);
     }
 
-    @NotNull
     @Override
-    public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName,
-                                                                        @NotNull TestConsoleProperties consoleProperties) {
+    public @NotNull OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName,
+                                                                                 @NotNull TestConsoleProperties consoleProperties) {
       return new MyProcessOutputConsumer(testFrameworkName, consoleProperties, mySocket);
     }
 
@@ -385,8 +382,7 @@ public class BndTestState extends JavaCommandLineState {
       }
     }
 
-    @Nullable
-    private static Pair<String, String> parseTestName(@NotNull String line, boolean fromStart) {
+    private static @Nullable Pair<String, String> parseTestName(@NotNull String line, boolean fromStart) {
       int comma = fromStart ? 0 : line.indexOf(',', EVENT_TYPE_LEN);
       if (comma >= 0) {
         int paren = line.indexOf('(', comma + 1);
@@ -400,8 +396,7 @@ public class BndTestState extends JavaCommandLineState {
       return null;
     }
 
-    @NotNull
-    private static String fullTestName(@Nullable Pair<String, String> names, @NotNull String line) {
+    private static @NotNull String fullTestName(@Nullable Pair<String, String> names, @NotNull String line) {
       return names != null ? names.first + '.' + names.second : line.substring(EVENT_TYPE_LEN);
     }
 
@@ -419,8 +414,7 @@ public class BndTestState extends JavaCommandLineState {
       }
     }
 
-    @Nullable
-    private static Pair<String, String> matchComparison(@NotNull String message) {
+    private static @Nullable Pair<String, String> matchComparison(@NotNull String message) {
       for (Pattern pattern : Comparisons.PATTERNS) {
         Matcher matcher = pattern.matcher(message);
         if (matcher.find()) {

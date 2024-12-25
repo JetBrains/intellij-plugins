@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.filters.Filter;
@@ -13,17 +14,16 @@ import org.jetbrains.annotations.Nullable;
 
 // resolves paths relative to working dir that are reported by package:test or 'pub build'
 public class DartRelativePathsConsoleFilter implements Filter {
-  @NotNull private final Project myProject;
-  @NotNull private final String myBaseDirPath;
+  private final @NotNull Project myProject;
+  private final @NotNull String myBaseDirPath;
 
-  public DartRelativePathsConsoleFilter(@NotNull final Project project, @NotNull final String baseDirPath) {
+  public DartRelativePathsConsoleFilter(final @NotNull Project project, final @NotNull String baseDirPath) {
     myProject = project;
     myBaseDirPath = baseDirPath;
   }
 
   @Override
-  @Nullable
-  public Result applyFilter(@NotNull final String text, final int entireLength) {
+  public @Nullable Result applyFilter(final @NotNull String text, final int entireLength) {
     final String trimmedText = StringUtil.trimLeading(text);
     final Trinity<String, Integer, Integer> fileRelPathLineAndColumn = getFileRelPathLineAndColumn(trimmedText);
     if (fileRelPathLineAndColumn == null) return null;
@@ -41,8 +41,7 @@ public class DartRelativePathsConsoleFilter implements Filter {
                       new OpenFileHyperlinkInfo(myProject, file, line, column));
   }
 
-  @Nullable
-  public static Trinity<String, Integer, Integer> getFileRelPathLineAndColumn(@NotNull final String text) {
+  public static @Nullable Trinity<String, Integer, Integer> getFileRelPathLineAndColumn(final @NotNull String text) {
     // "web\anagram.dart:23:8:"
     // "  ../subdir/someFile.dart 73:29         main.<fn>"
     if (text.isEmpty()) return null;

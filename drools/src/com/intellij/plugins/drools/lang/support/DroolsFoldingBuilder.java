@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.support;
 
 import com.intellij.lang.ASTNode;
@@ -18,7 +18,7 @@ import java.util.List;
 public final class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
 
   @Override
-  public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull final ASTNode node, @NotNull final Document document) {
+  public FoldingDescriptor @NotNull [] buildFoldRegions(final @NotNull ASTNode node, final @NotNull Document document) {
     final PsiElement element = node.getPsi();
     if (element instanceof DroolsFile file) {
       List<FoldingDescriptor> descriptors = new ArrayList<>();
@@ -89,14 +89,14 @@ public final class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
   }
 
   @Override
-  public String getPlaceholderText(@NotNull final ASTNode node) {
+  public String getPlaceholderText(final @NotNull ASTNode node) {
     if (node.getElementType() == DroolsTokenTypes.RULE_STATEMENT) return "<~>";
 
     return "...";
   }
 
   @Override
-  public boolean isCollapsedByDefault(@NotNull final ASTNode node) {
+  public boolean isCollapsedByDefault(final @NotNull ASTNode node) {
     return false;
   }
 }

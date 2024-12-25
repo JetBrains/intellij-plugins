@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.project.Project;
@@ -27,9 +27,8 @@ import java.util.List;
 public class DartResolver implements ResolveCache.AbstractResolver<DartReference, List<? extends PsiElement>> {
   public static final DartResolver INSTANCE = new DartResolver();
 
-  @Nullable
   @Override
-  public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
+  public @Nullable List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
     reference = replaceQualifiedReferenceWithLast(reference);
     final PsiFile refPsiFile = reference.getContainingFile();
     int refOffset = reference.getTextRange().getStartOffset();
@@ -64,8 +63,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     return region != null ? getTargetElements(reference.getProject(), region) : null;
   }
 
-  @NotNull
-  public static List<? extends PsiElement> getTargetElements(@NotNull final Project project, @NotNull final DartNavigationRegion region) {
+  public static @NotNull List<? extends PsiElement> getTargetElements(final @NotNull Project project, final @NotNull DartNavigationRegion region) {
     final List<PsiElement> result = new SmartList<>();
     for (DartNavigationTarget target : region.getTargets()) {
       final PsiElement targetElement = getElementForNavigationTarget(project, target);
@@ -80,8 +78,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
    * When parameter information is requested for {@code items.insert(^)},
    * we are given {@code items.insert}, but we cannot resolve it, we need just {@code insert}.
    */
-  @NotNull
-  private static DartReference replaceQualifiedReferenceWithLast(@NotNull DartReference reference) {
+  private static @NotNull DartReference replaceQualifiedReferenceWithLast(@NotNull DartReference reference) {
     final PsiElement lastChild = reference.getLastChild();
     if (lastChild instanceof DartReference) {
       reference = (DartReference)lastChild;
@@ -89,8 +86,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     return reference;
   }
 
-  @Nullable
-  public static DartNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
+  public static @Nullable DartNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
     final VirtualFile refVirtualFile = DartResolveUtil.getRealVirtualFile(refPsiFile);
     if (refVirtualFile != null) {
       final List<DartServerData.DartNavigationRegion> regions =
@@ -100,8 +96,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     return null;
   }
 
-  @Nullable
-  public static PsiElement getElementForNavigationTarget(Project project, DartNavigationTarget target) {
+  public static @Nullable PsiElement getElementForNavigationTarget(Project project, DartNavigationTarget target) {
     VirtualFile targetFile = target.findFile();
     PsiFile file = targetFile != null ? PsiManager.getInstance(project).findFile(targetFile) : null;
     if (file != null) {
@@ -119,8 +114,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
    * Find the region with the given offset in the given list of sorted regions.
    * Returns the found region or null.
    */
-  @Nullable
-  public static DartNavigationRegion findRegion(@NotNull final List<? extends DartNavigationRegion> regions,
+  public static @Nullable DartNavigationRegion findRegion(final @NotNull List<? extends DartNavigationRegion> regions,
                                                 final int offset,
                                                 final int length) {
     int i = findOffsetIndex(regions, offset);
@@ -135,9 +129,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     return ObjectUtils.binarySearch(0, regions.size(), mid -> Integer.compare(regions.get(mid).getOffset(), offset));
   }
 
-  public static void processRegionsInRange(@NotNull final List<? extends DartNavigationRegion> regions,
-                                           @NotNull final TextRange range,
-                                           @NotNull final Processor<? super DartNavigationRegion> processor) {
+  public static void processRegionsInRange(final @NotNull List<? extends DartNavigationRegion> regions,
+                                           final @NotNull TextRange range,
+                                           final @NotNull Processor<? super DartNavigationRegion> processor) {
     if (regions.isEmpty()) return;
 
     // first find the first region that has minimal allowed offset

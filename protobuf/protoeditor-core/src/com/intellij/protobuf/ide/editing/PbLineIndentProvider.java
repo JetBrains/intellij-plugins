@@ -17,12 +17,12 @@ package com.intellij.protobuf.ide.editing;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.Language;
+import com.intellij.protobuf.lang.PbLanguage;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.impl.source.codeStyle.SemanticEditorPosition.SyntaxElement;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.protobuf.lang.PbLanguage;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,9 +45,8 @@ public class PbLineIndentProvider extends JavaLikeLangLineIndentProvider {
             .build();
   }
 
-  @Nullable
   @Override
-  protected SyntaxElement mapType(@NotNull IElementType tokenType) {
+  protected @Nullable SyntaxElement mapType(@NotNull IElementType tokenType) {
     return SYNTAX_MAP.get(tokenType);
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -97,27 +97,23 @@ public final class PhoneGapConfigurable implements Configurable {
       return state;
     }
 
-    @Nullable
-    private String getWorkingDirectory() {
+    private @Nullable String getWorkingDirectory() {
       return myWorkingDirectory.getText();
     }
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return PhoneGapBundle.message("configurable.PhoneGapConfigurable.display.name");
   }
 
-  @Nullable
   @Override
-  public String getHelpTopic() {
+  public @Nullable String getHelpTopic() {
     return "settings.javascript.phonegap.cordova";
   }
 
-  @Nullable
   @Override
-  public JComponent createComponent() {
+  public @Nullable JComponent createComponent() {
 
     if (myWrapper == null) {
       myExecutablePath = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);

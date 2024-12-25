@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.project.Project;
@@ -15,7 +16,7 @@ public interface StepDefinitionCreator {
    * @return PsiFile object of created file
    */
   @NotNull
-  PsiFile createStepDefinitionContainer(@NotNull final PsiDirectory dir, @NotNull final String name);
+  PsiFile createStepDefinitionContainer(final @NotNull PsiDirectory dir, final @NotNull String name);
 
   /**
    * Creates step definition
@@ -25,7 +26,7 @@ public interface StepDefinitionCreator {
    *                     number of templates in case of "Create All Step Definitions" action invoked
    * @return true if success, false otherwise
    */
-  default boolean createStepDefinition(@NotNull final GherkinStep step, @NotNull final PsiFile file, boolean withTemplate) {
+  default boolean createStepDefinition(final @NotNull GherkinStep step, final @NotNull PsiFile file, boolean withTemplate) {
     return false;
   }
 
@@ -34,19 +35,19 @@ public interface StepDefinitionCreator {
    * @param fileName name of file to check
    * @return true if name is valid, false otherwise
    */
-  default boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName) {
+  default boolean validateNewStepDefinitionFileName(final @NotNull Project project, final @NotNull String fileName) {
     return true;
   }
 
   @NotNull
-  String getDefaultStepDefinitionFolderPath(@NotNull final GherkinStep step);
+  String getDefaultStepDefinitionFolderPath(final @NotNull GherkinStep step);
 
   /**
    * @return step definition file path relative to step definition folder
    */
   @NlsSafe
   @NotNull
-  String getStepDefinitionFilePath(@NotNull final PsiFile file);
+  String getStepDefinitionFilePath(final @NotNull PsiFile file);
 
   /**
    * Provides default name of step definition file

@@ -2,7 +2,6 @@ package com.jetbrains.plugins.meteor.runner;
 
 
 import com.intellij.execution.CommonProgramRunConfigurationParameters;
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ui.CommonProgramParametersPanel;
 import com.intellij.ide.browsers.StartBrowserPanel;
 import com.intellij.openapi.options.ConfigurationException;
@@ -43,9 +42,8 @@ public class MeteorRunConfigurationEditor extends SettingsEditor<MeteorRunConfig
     myMeteorDebuggablePanel.applyTo(s);
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     myStartBrowserPanel = new StartBrowserPanel();
     myMeteorDebuggablePanel = new MeteorDebuggableProgramParametersPanel(myProject);
     JBTabbedPane mainPane = new JBTabbedPane();
@@ -69,9 +67,8 @@ public class MeteorRunConfigurationEditor extends SettingsEditor<MeteorRunConfig
       init();
     }
 
-    @NotNull
     @Override
-    protected Project getProject() {
+    protected @NotNull Project getProject() {
       return myProject;
     }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.config;
 
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
@@ -26,12 +27,11 @@ public class KarmaBasePathFinder {
     KarmaBasePathFinder.class.getSimpleName()
   );
 
-  @NotNull
-  public static KarmaBasePathFinder getInstance() {
+  public static @NotNull KarmaBasePathFinder getInstance() {
     return INSTANCE;
   }
 
-  public String fetchBasePath(@NotNull final JSFile jsFile) {
+  public String fetchBasePath(final @NotNull JSFile jsFile) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(jsFile.getProject());
     return cachedValuesManager.getCachedValue(
       jsFile,
@@ -44,8 +44,7 @@ public class KarmaBasePathFinder {
     );
   }
 
-  @Nullable
-  private static String buildBasePath(@NotNull JSFile jsFile) {
+  private static @Nullable String buildBasePath(@NotNull JSFile jsFile) {
     final Ref<String> basePathRef = Ref.create(null);
     JSElementVisitor visitor = new JSElementVisitor() {
       @Override

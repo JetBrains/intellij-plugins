@@ -20,24 +20,22 @@ import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Provides structure views for protobufs. */
 public class PbStructureViewFactory implements PsiStructureViewFactory {
 
-  @Nullable
   @Override
-  public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
+  public @Nullable StructureViewBuilder getStructureViewBuilder(final @NotNull PsiFile psiFile) {
     if (!(psiFile instanceof PbFile)) {
       return null;
     }
     return new TreeBasedStructureViewBuilder() {
-      @NotNull
       @Override
-      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+      public @NotNull StructureViewModel createStructureViewModel(@Nullable Editor editor) {
         return new PbStructureViewModel((PbFile) psiFile, editor);
       }
     };

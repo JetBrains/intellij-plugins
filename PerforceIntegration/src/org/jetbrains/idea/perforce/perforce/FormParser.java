@@ -16,11 +16,10 @@
 package org.jetbrains.idea.perforce.perforce;
 
 import com.intellij.openapi.util.text.LineTokenizer;
-
-import java.util.*;
-
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public final class FormParser {
   private static final String COMMENT_PREFIX = "#";
@@ -28,8 +27,7 @@ public final class FormParser {
   private final List<String> myLines;
   private final Map<String, List<String>> myResult = new LinkedHashMap<>();
   private String myCurrentField;
-  @Nullable
-  private final Set<String> myFieldsTakeEvenEmpty;
+  private final @Nullable Set<String> myFieldsTakeEvenEmpty;
 
   private FormParser(List<String> availableFields, List<String> lines, @Nullable Set<String> fieldsTakeEvenEmpty) {
     myAvailableFields = availableFields;

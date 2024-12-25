@@ -35,21 +35,18 @@ public final class MeteorConfigurable implements Configurable, Configurable.NoSc
     myProject = project;
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return MeteorBundle.message("settings.meteor.name");
   }
 
-  @Nullable
   @Override
-  public String getHelpTopic() {
+  public @Nullable String getHelpTopic() {
     return ID;
   }
 
-  @Nullable
   @Override
-  public JComponent createComponent() {
+  public @Nullable JComponent createComponent() {
     mySettings = MeteorSettings.getInstance();
     myExecutablePathField = MeteorUIUtil.createTextField(myProject);
     myExcludeMeteorLocalFolder = new JBCheckBox(MeteorBundle.message("settings.meteor.configurable.exclude-local"));

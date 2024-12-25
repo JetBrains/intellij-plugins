@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio;
 
+import com.intellij.clion.embedded.execution.custom.McuResetActionKt;
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
@@ -20,15 +21,14 @@ import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import com.jetbrains.cidr.ArchitectureType;
-import com.intellij.clion.embedded.execution.custom.McuResetActionKt;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
-import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
 import com.jetbrains.cidr.cpp.execution.debugger.peripheralview.SvdPanel;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment;
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains;
+import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain;
 import com.jetbrains.cidr.execution.CidrCoroutineHelper;
 import com.jetbrains.cidr.execution.CidrPathConsoleFilter;
 import com.jetbrains.cidr.execution.TrivialRunParameters;
@@ -60,25 +60,22 @@ public class PlatformioLauncher extends CLionLauncher {
     return false;
   }
 
-  @NotNull
   @Override
-  public Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
+  public @NotNull Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
   @Override
-  protected GeneralCommandLine createCommandLine(@NotNull CommandLineState state,
-                                                 @NotNull File runFile,
-                                                 @NotNull CPPEnvironment environment,
-                                                 boolean usePty,
-                                                 boolean emulateTerminal) {
+  protected @NotNull GeneralCommandLine createCommandLine(@NotNull CommandLineState state,
+                                                          @NotNull File runFile,
+                                                          @NotNull CPPEnvironment environment,
+                                                          boolean usePty,
+                                                          boolean emulateTerminal) {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
   @Override
-  public ProcessHandler createProcess(@NotNull CommandLineState state) throws ExecutionException {
+  public @NotNull ProcessHandler createProcess(@NotNull CommandLineState state) throws ExecutionException {
     return CidrCoroutineHelper.runOnEDT(() -> {
       ActionManager actionManager = ActionManager.getInstance();
       AnAction uploadAction = actionManager.getAction("target-platformio-upload");
@@ -93,8 +90,7 @@ public class PlatformioLauncher extends CLionLauncher {
   }
 
   @Override
-  @NotNull
-  public CidrDebugProcess createDebugProcess(@NotNull CommandLineState commandLineState, @NotNull XDebugSession xDebugSession)
+  public @NotNull CidrDebugProcess createDebugProcess(@NotNull CommandLineState commandLineState, @NotNull XDebugSession xDebugSession)
     throws ExecutionException {
     PlatformioUsagesCollector.DEBUG_START_EVENT_ID.log(getProject());
 
@@ -112,7 +108,7 @@ public class PlatformioLauncher extends CLionLauncher {
             .build();
         }
       };
-    @SystemIndependent final String projectPath = getProject().getBasePath();
+    final @SystemIndependent String projectPath = getProject().getBasePath();
     final VirtualFileSystem vfs = LocalFileSystem.getInstance();
     if (projectPath == null ||
         Objects.requireNonNull(vfs.findFileByPath(projectPath)).findChild(PlatformioFileType.FILE_NAME) == null) {
@@ -136,9 +132,8 @@ public class PlatformioLauncher extends CLionLauncher {
           CidrDebugProcess gdbDebugProcess = this;
           XDebugTabLayouter innerLayouter = super.createTabLayouter();
           return new XDebugTabLayouter() {
-            @NotNull
             @Override
-            public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
+            public @NotNull Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
               return innerLayouter.registerConsoleContent(ui, console);
             }
 

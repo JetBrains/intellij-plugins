@@ -27,8 +27,7 @@ interface PbEnumDefinitionBase extends PbElement {
   Multimap<String, PbEnumValue> getEnumValueMap();
 
   /** Returns the list of enum values. */
-  @NotNull
-  default Collection<PbEnumValue> getEnumValues() {
+  default @NotNull Collection<PbEnumValue> getEnumValues() {
     return getEnumValueMap().values();
   }
 }

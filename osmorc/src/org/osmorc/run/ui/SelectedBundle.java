@@ -85,8 +85,7 @@ public class SelectedBundle {
     return myBundleType == BundleType.Module;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myDisplayName;
   }
 
@@ -94,8 +93,7 @@ public class SelectedBundle {
     myDisplayName = displayName;
   }
 
-  @Nullable
-  public String getBundlePath() {
+  public @Nullable String getBundlePath() {
     return myBundlePath;
   }
 

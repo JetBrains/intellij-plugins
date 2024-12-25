@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.lang.ASTNode;
@@ -57,9 +57,8 @@ public final class UsefulPsiTreeUtil {
     return element instanceof PsiWhiteSpace || element instanceof PsiComment;
   }
 
-  @Nullable
-  public static List<PsiElement> getPathToParentOfType(@Nullable PsiElement element,
-                                                       @NotNull Class<? extends PsiElement> aClass) {
+  public static @Nullable List<PsiElement> getPathToParentOfType(@Nullable PsiElement element,
+                                                                 @NotNull Class<? extends PsiElement> aClass) {
     if (element == null) return null;
     final List<PsiElement> result = new ArrayList<>();
     while (element != null) {
@@ -74,21 +73,18 @@ public final class UsefulPsiTreeUtil {
     return null;
   }
 
-  @Nullable
-  public static PsiElement getNextSiblingSkippingWhiteSpacesAndComments(PsiElement sibling) {
+  public static @Nullable PsiElement getNextSiblingSkippingWhiteSpacesAndComments(PsiElement sibling) {
     return getSiblingSkippingCondition(
       sibling,
       PsiElement::getNextSibling, UsefulPsiTreeUtil::isWhitespaceOrComment, true
     );
   }
 
-  @Nullable
-  public static PsiElement getPrevSiblingSkipWhiteSpacesAndComments(@Nullable PsiElement sibling, boolean strictly) {
+  public static @Nullable PsiElement getPrevSiblingSkipWhiteSpacesAndComments(@Nullable PsiElement sibling, boolean strictly) {
     return getPrevSiblingSkippingCondition(sibling, UsefulPsiTreeUtil::isWhitespaceOrComment, strictly);
   }
 
-  @Nullable
-  public static ASTNode getPrevSiblingSkipWhiteSpacesAndComments(@Nullable ASTNode sibling) {
+  public static @Nullable ASTNode getPrevSiblingSkipWhiteSpacesAndComments(@Nullable ASTNode sibling) {
     if (sibling == null) return null;
     ASTNode result = sibling.getTreePrev();
     while (result != null && isWhitespaceOrComment(result.getPsi())) {
@@ -97,23 +93,20 @@ public final class UsefulPsiTreeUtil {
     return result;
   }
 
-  @Nullable
-  public static PsiElement getPrevSiblingSkipWhiteSpaces(@Nullable PsiElement sibling, boolean strictly) {
+  public static @Nullable PsiElement getPrevSiblingSkipWhiteSpaces(@Nullable PsiElement sibling, boolean strictly) {
     return getPrevSiblingSkippingCondition(sibling, element -> element instanceof PsiWhiteSpace, strictly);
   }
 
-  @Nullable
-  private static PsiElement getPrevSiblingSkippingCondition(@Nullable PsiElement sibling,
-                                                            Condition<? super PsiElement> condition,
-                                                            boolean strictly) {
+  private static @Nullable PsiElement getPrevSiblingSkippingCondition(@Nullable PsiElement sibling,
+                                                                      Condition<? super PsiElement> condition,
+                                                                      boolean strictly) {
     return getSiblingSkippingCondition(sibling, PsiElement::getPrevSibling, condition, strictly);
   }
 
-  @Nullable
-  private static PsiElement getSiblingSkippingCondition(@Nullable PsiElement sibling,
-                                                        Function<? super PsiElement, ? extends PsiElement> nextSibling,
-                                                        Condition<? super PsiElement> condition,
-                                                        boolean strictly) {
+  private static @Nullable PsiElement getSiblingSkippingCondition(@Nullable PsiElement sibling,
+                                                                  Function<? super PsiElement, ? extends PsiElement> nextSibling,
+                                                                  Condition<? super PsiElement> condition,
+                                                                  boolean strictly) {
     if (sibling == null) return null;
     if (sibling instanceof PsiFile) return sibling;
     PsiElement result = strictly ? nextSibling.fun(sibling) : sibling;

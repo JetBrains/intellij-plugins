@@ -29,18 +29,15 @@ public class BowerValidationInfo {
     myLinkText = linkText;
   }
 
-  @Nullable
-  public Component getComponent() {
+  public @Nullable Component getComponent() {
     return myComponent;
   }
 
-  @NotNull
-  public String getErrorHtmlDescription() {
+  public @NotNull String getErrorHtmlDescription() {
     return myErrorHtmlDescription;
   }
 
-  @Nullable
-  public String getLinkText() {
+  public @Nullable String getLinkText() {
     return myLinkText;
   }
 }

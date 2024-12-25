@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster;
 
@@ -33,8 +33,7 @@ public final class JdlCodeStyleSettings extends CustomCodeStyleSettings {
     DO_NOT_ALIGN(0, "formatter.align.properties.none"),
     ALIGN_ON_VALUE(1, "formatter.align.properties.align");
 
-    @PropertyKey(resourceBundle = JdlBundle.BUNDLE)
-    private final String myKey;
+    private final @PropertyKey(resourceBundle = JdlBundle.BUNDLE) String myKey;
     private final int myId;
 
     PropertyAlignment(int id, @NotNull @PropertyKey(resourceBundle = JdlBundle.BUNDLE) String key) {
@@ -42,8 +41,7 @@ public final class JdlCodeStyleSettings extends CustomCodeStyleSettings {
       myId = id;
     }
 
-    @NotNull
-    public String getDescription() {
+    public @NotNull String getDescription() {
       return JdlBundle.message(myKey);
     }
 

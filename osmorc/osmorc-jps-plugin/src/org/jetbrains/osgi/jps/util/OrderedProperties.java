@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.util;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,8 +12,7 @@ import java.util.*;
 public class OrderedProperties extends Properties {
   private final Set<Object> myKeys = new LinkedHashSet<>();
 
-  @NotNull
-  public static OrderedProperties fromMap(@NotNull Map<String, String> map) {
+  public static @NotNull OrderedProperties fromMap(@NotNull Map<String, String> map) {
     OrderedProperties result = new OrderedProperties();
     for (Map.Entry<String, String> entry : map.entrySet()) {
       result.setProperty(entry.getKey(), entry.getValue());
@@ -21,8 +20,7 @@ public class OrderedProperties extends Properties {
     return result;
   }
 
-  @NotNull
-  public Map<String, String> toMap() {
+  public @NotNull Map<String, String> toMap() {
     Map<String, String> result = new LinkedHashMap<>(size());
     for (String name : stringPropertyNames()) {
       result.put(name, getProperty(name));

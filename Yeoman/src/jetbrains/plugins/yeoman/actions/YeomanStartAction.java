@@ -20,9 +20,8 @@ public class YeomanStartAction extends AnAction {
         init();
       }
 
-      @Nullable
       @Override
-      protected JComponent createCenterPanel() {
+      protected @Nullable JComponent createCenterPanel() {
         final YeomanGeneratorsMain main = new YeomanInstalledGeneratorsMain();
         return main.getMainPanel();
       }

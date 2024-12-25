@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.config;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -44,8 +44,7 @@ public final class HbConfig {
     setBooleanPropertyValue(AUTO_COLLAPSE_BLOCKS, enabled);
   }
 
-  @NotNull
-  public static Language getCommenterLanguage() {
+  public static @NotNull Language getCommenterLanguage() {
     final Language id = Language.findLanguageByID(getStringPropertyValue(COMMENTER_LANGUAGE_ID));
     return id == null ? HTMLLanguage.INSTANCE : id;
   }
@@ -77,8 +76,7 @@ public final class HbConfig {
     return getProperties(project).getValue(property.getStringName(), property.getDefault());
   }
 
-  @NotNull
-  private static PropertiesComponent getProperties(@Nullable Project project) {
+  private static @NotNull PropertiesComponent getProperties(@Nullable Project project) {
     return project == null ? PropertiesComponent.getInstance() : PropertiesComponent.getInstance(project);
   }
 

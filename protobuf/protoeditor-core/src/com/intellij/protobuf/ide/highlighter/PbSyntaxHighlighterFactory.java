@@ -23,9 +23,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class PbSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
+  public @NotNull SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
     if (project != null && virtualFile != null) {
       return new PbSyntaxHighlighter();
     } else {

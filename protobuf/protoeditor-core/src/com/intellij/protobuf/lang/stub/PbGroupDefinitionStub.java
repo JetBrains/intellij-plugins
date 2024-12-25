@@ -15,11 +15,11 @@
  */
 package com.intellij.protobuf.lang.stub;
 
+import com.intellij.protobuf.lang.psi.PbGroupDefinition;
+import com.intellij.protobuf.lang.stub.type.PbGroupDefinitionType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.PbGroupDefinition;
-import com.intellij.protobuf.lang.stub.type.PbGroupDefinitionType;
 import org.jetbrains.annotations.Nullable;
 
 /** Stub element for {@link PbGroupDefinition}. */
@@ -36,21 +36,18 @@ public class PbGroupDefinitionStub extends StubBase<PbGroupDefinition>
     this.name = name;
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return this.name;
   }
 
-  @Nullable
   @Override
-  public QualifiedName getQualifiedName() {
+  public @Nullable QualifiedName getQualifiedName() {
     return StubMethods.getQualifiedName(this);
   }
 
-  @Nullable
   @Override
-  public QualifiedName getChildScope() {
+  public @Nullable QualifiedName getChildScope() {
     return StubMethods.getQualifiedName(this);
   }
 }

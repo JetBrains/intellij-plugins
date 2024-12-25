@@ -9,27 +9,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 class IntervalStatistics<Data, T extends Consumer<Data>, U extends Consumer<T>> {
-  private final static int ourMaxHistoryQueue = 10;
-  private final static int ourDefaultInterval = 600 * 1000;
+  private static final int ourMaxHistoryQueue = 10;
+  private static final int ourDefaultInterval = 600 * 1000;
 
   private final long myIntervalInMillis;
   private final int myHistoryQueueSize;
   private final Factory<? extends T> myFactory;
 
-  @NotNull
-  private final U myAverage;
-  @NotNull
-  private final LinkedList<Timed<T>> myRecentComplete = new LinkedList<>();
+  private final @NotNull U myAverage;
+  private final @NotNull LinkedList<Timed<T>> myRecentComplete = new LinkedList<>();
 
   private final Object myLock = new Object();
 
-  @NotNull
-  private Timed<T> myCurrent;
-  @Nullable
-  private final Runnable mySwitchListener;
+  private @NotNull Timed<T> myCurrent;
+  private final @Nullable Runnable mySwitchListener;
 
   protected IntervalStatistics(long intervalInMillis, int historyQueueSize, final Factory<? extends T> factory, final Factory<? extends U> averageFactory,
-                               @Nullable final Runnable switchListener) {
+                               final @Nullable Runnable switchListener) {
     mySwitchListener = switchListener;
     myIntervalInMillis = (intervalInMillis <= 0) ? ourDefaultInterval : intervalInMillis;
     myHistoryQueueSize = historyQueueSize <= 0 ? ourMaxHistoryQueue : historyQueueSize;
@@ -62,8 +58,7 @@ class IntervalStatistics<Data, T extends Consumer<Data>, U extends Consumer<T>> 
     myRecentComplete.addFirst(timed);
   }
 
-  @NotNull
-  public U getAverage() {
+  public @NotNull U getAverage() {
     return myAverage;
   }
 

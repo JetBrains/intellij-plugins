@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.run;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -26,8 +26,7 @@ public class JpsFlashRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlas
   }
 
   @Override
-  @NotNull
-  public JpsFlashRunnerParameters createCopy() {
+  public @NotNull JpsFlashRunnerParameters createCopy() {
     return new JpsFlashRunnerParameters(this);
   }
 
@@ -41,27 +40,24 @@ public class JpsFlashRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlas
     myOverrideMainClass = overrideMainClass;
   }
 
-  @NotNull
-  public String getOverriddenMainClass() {
+  public @NotNull String getOverriddenMainClass() {
     return myOverriddenMainClass;
   }
 
-  public void setOverriddenMainClass(@NotNull final String overriddenMainClass) {
+  public void setOverriddenMainClass(final @NotNull String overriddenMainClass) {
     myOverriddenMainClass = overriddenMainClass;
   }
 
-  @NotNull
-  public String getOverriddenOutputFileName() {
+  public @NotNull String getOverriddenOutputFileName() {
     return myOverriddenOutputFileName;
   }
 
-  public void setOverriddenOutputFileName(@NotNull final String overriddenOutputFileName) {
+  public void setOverriddenOutputFileName(final @NotNull String overriddenOutputFileName) {
     myOverriddenOutputFileName = overriddenOutputFileName;
   }
 
   @Override
-  @Nullable
-  public JpsFlexBuildConfiguration getBC(final JpsProject project) {
+  public @Nullable JpsFlexBuildConfiguration getBC(final JpsProject project) {
     final JpsFlexBuildConfiguration origBC = super.getBC(project);
 
     if (myOverrideMainClass && origBC != null) {

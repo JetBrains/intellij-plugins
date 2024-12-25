@@ -46,21 +46,18 @@ final class SpecColorSettingsPage implements ColorSettingsPage {
     new AttributesDescriptor(GaugeBundle.message("gauge.attribute.descriptor.tags"), HighlighterTokens.TAGS),
   };
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return null;
   }
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new SpecSyntaxHighlighter();
   }
 
-  @NotNull
   @Override
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return """
       # Specification Heading
       tags: first, secondThis comment explains what the spec intends to test
@@ -82,9 +79,8 @@ final class SpecColorSettingsPage implements ColorSettingsPage {
       """;
   }
 
-  @Nullable
   @Override
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return null;
   }
 
@@ -98,9 +94,8 @@ final class SpecColorSettingsPage implements ColorSettingsPage {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return GaugeBundle.message("gauge.specification");
   }
 }

@@ -53,9 +53,8 @@ public class PbTextLanguageSettingsForm implements ConfigurableUi<PbTextLanguage
     PbTextLanguageSettings.notifyUpdated(project);
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return panel;
   }
 

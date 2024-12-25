@@ -18,27 +18,25 @@ public final class PerforceRepositoryLocation extends DefaultRepositoryLocation 
   private P4Connection myConnection;
   private PerforceClient myClient;
 
-  private PerforceRepositoryLocation(@NotNull String URL, @Nullable final P4Connection connection, final @Nullable Project project) {
+  private PerforceRepositoryLocation(@NotNull String URL, final @Nullable P4Connection connection, final @Nullable Project project) {
     super(URL);
     assert (connection != null) || (project != null);
     myConnection = connection;
     myProject = project;
   }
 
-  private PerforceRepositoryLocation(@NotNull String URL, final String location, @Nullable final P4Connection connection, final @Nullable Project project) {
+  private PerforceRepositoryLocation(@NotNull String URL, final String location, final @Nullable P4Connection connection, final @Nullable Project project) {
     super(URL, location);
     assert (connection != null) || (project != null);
     myConnection = connection;
     myProject = project;
   }
 
-  @NotNull
-  public static PerforceRepositoryLocation create(@NotNull VirtualFile file, Project project) {
+  public static @NotNull PerforceRepositoryLocation create(@NotNull VirtualFile file, Project project) {
     return new PerforceRepositoryLocation(file.getPath(), null, project);
   }
 
-  @NotNull
-  public static PerforceRepositoryLocation create(@NotNull FilePath p, String location, Project project) {
+  public static @NotNull PerforceRepositoryLocation create(@NotNull FilePath p, String location, Project project) {
     return new PerforceRepositoryLocation(p.getPath(), location, null, project);
   }
 
@@ -63,8 +61,7 @@ public final class PerforceRepositoryLocation extends DefaultRepositoryLocation 
     return new PerforceRepositoryLocation(URL, location, getConnection(project, URL), project);
   }*/
 
-  @NotNull
-  private static P4Connection getConnection(final Project project, final String url) throws VcsException {
+  private static @NotNull P4Connection getConnection(final Project project, final String url) throws VcsException {
     final P4Connection connection = PerforceConnectionManager.getInstance(project).getConnectionForFile(new File(url));
     if (connection == null) {
       throw new VcsException(PerforceBundle.message("error.can.not.get.p4.connection", url));
@@ -72,24 +69,21 @@ public final class PerforceRepositoryLocation extends DefaultRepositoryLocation 
     return connection;
   }
 
-  @NotNull
-  public P4Connection getConnection() throws VcsException {
+  public @NotNull P4Connection getConnection() throws VcsException {
     if (myConnection != null) {
       return myConnection;
     }
     return getConnection(myProject, getURL());
   }
 
-  @NotNull
-  public PerforceClient getClient() throws VcsException {
+  public @NotNull PerforceClient getClient() throws VcsException {
     if (myClient == null) {
       return createClient(getConnection());
     }
     return myClient;
   }
 
-  @NotNull
-  private PerforceClient createClient(@NotNull final P4Connection connection) {
+  private @NotNull PerforceClient createClient(final @NotNull P4Connection connection) {
     return PerforceManager.getInstance(myProject).getClient(connection);
   }
 }

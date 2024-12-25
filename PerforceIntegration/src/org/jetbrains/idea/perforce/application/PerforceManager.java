@@ -60,8 +60,8 @@ public final class PerforceManager  {
 
   private final Map<P4Connection, PerforceClient> myClientMap = new HashMap<>();
 
-  private final static boolean ourTraceCalls = Boolean.getBoolean("perforce.trace.calls");
-  private final static String ourTracerProperties = System.getProperty("perforce.trace.calls.properties");
+  private static final boolean ourTraceCalls = Boolean.getBoolean("perforce.trace.calls");
+  private static final String ourTracerProperties = System.getProperty("perforce.trace.calls.properties");
   private TracerManager<P4Command> myTracer;
 
   private final ClientRootsCache myClientRootsCache;
@@ -161,8 +161,7 @@ public final class PerforceManager  {
                                TRACER_LOG, TracerProperties.outputInterval.getDefault());
   }
 
-  @Nullable
-  public ClientVersion getClientVersion() {
+  public @Nullable ClientVersion getClientVersion() {
     ClientVersion version = myClientVersion;
     if (version == null) {
       myClientVersion = version = PerforceRunner.getInstance(myProject).getClientVersion();
@@ -200,8 +199,7 @@ public final class PerforceManager  {
     return client;
   }
 
-  @Nullable
-  private Map<String, List<String>> getInfoOnlyCached(final P4Connection connection) throws VcsException {
+  private @Nullable Map<String, List<String>> getInfoOnlyCached(final P4Connection connection) throws VcsException {
     return myPerforceBaseInfoWorker.getCachedInfo(connection);
   }
 
@@ -210,13 +208,11 @@ public final class PerforceManager  {
   }
 
   // todo: wrong. we should take all roots, since we can belong to any
-  @Nullable
-  public String getClientRoot(@Nullable final P4Connection connection) throws VcsException {
+  public @Nullable String getClientRoot(final @Nullable P4Connection connection) throws VcsException {
     return ContainerUtil.getFirstItem(getClientRoots(connection));
   }
 
-  @NotNull
-  public List<String> getClientRoots(@Nullable P4Connection connection) throws VcsException {
+  public @NotNull List<String> getClientRoots(@Nullable P4Connection connection) throws VcsException {
     return ContainerUtil.filter(getCachedClients(connection).getAllRoots(), mainRootValue -> {
       File file = new File(mainRootValue);
       VirtualFile vf = myLfs.findFileByIoFile(file);
@@ -224,14 +220,14 @@ public final class PerforceManager  {
     });
   }
 
-  public long getServerVersionYear(@Nullable final P4Connection connection) throws VcsException {
+  public long getServerVersionYear(final @Nullable P4Connection connection) throws VcsException {
     final Map<String, List<String>> map = getCachedInfo(connection);
     final List<String> serverVersions = map.get(PerforceRunner.SERVER_VERSION);
     if (serverVersions == null || serverVersions.isEmpty()) return -1;
     return OutputMessageParser.parseServerVersion(serverVersions.get(0)).getVersionYear();
   }
 
-  public long getServerVersionYearCached(@Nullable final P4Connection connection) throws VcsException {
+  public long getServerVersionYearCached(final @Nullable P4Connection connection) throws VcsException {
     final Map<String, List<String>> map = getInfoOnlyCached(connection);
     if (map == null) return -1;
     final List<String> serverVersions = map.get(PerforceRunner.SERVER_VERSION);
@@ -239,14 +235,13 @@ public final class PerforceManager  {
     return OutputMessageParser.parseServerVersion(serverVersions.get(0)).getVersionYear();
   }
 
-  @Nullable
-  public ServerVersion getServerVersion(@Nullable final P4Connection connection) throws VcsException {
+  public @Nullable ServerVersion getServerVersion(final @Nullable P4Connection connection) throws VcsException {
     final List<String> serverVersions = getCachedInfo(connection).get(PerforceRunner.SERVER_VERSION);
     if (serverVersions == null || serverVersions.isEmpty()) return null;
     return OutputMessageParser.parseServerVersion(serverVersions.get(0));
   }
 
-  public boolean isUnderPerforceRoot(@NotNull final VirtualFile virtualFile) throws VcsException {
+  public boolean isUnderPerforceRoot(final @NotNull VirtualFile virtualFile) throws VcsException {
     final P4Connection connection = PerforceSettings.getSettings(myProject).getConnectionForFile(virtualFile);
     return getClientRoots(connection).stream().anyMatch(path -> isUnderClientRoot(virtualFile, path));
   }
@@ -262,13 +257,11 @@ public final class PerforceManager  {
     });
   }
 
-  @Nullable
-  private static String getRelativePath(String filePath, PerforceClient client) throws VcsException {
+  private static @Nullable String getRelativePath(String filePath, PerforceClient client) throws VcsException {
     return View.getRelativePath(P4File.unescapeWildcards(filePath), client.getName(), client.getViews());
   }
 
-  @Nullable
-  public static File getFileByDepotName(final String depotPath, PerforceClient client) throws VcsException {
+  public static @Nullable File getFileByDepotName(final String depotPath, PerforceClient client) throws VcsException {
 
     int revNumStart = depotPath.indexOf("#");
 
@@ -313,8 +306,7 @@ public final class PerforceManager  {
     return message.toString();
   }
 
-  @NotNull
-  public synchronized PerforceClient getClient(@NotNull final P4Connection connection) {
+  public synchronized @NotNull PerforceClient getClient(final @NotNull P4Connection connection) {
     PerforceClient client = myClientMap.get(connection);
     if (client == null) {
       client = new PerforceClientImpl(myProject, connection);
@@ -343,7 +335,7 @@ public final class PerforceManager  {
   }
 
   @Contract("null->null; !null->!null")
-  @Nullable public String getRawRoot(@Nullable final String convertedRoot) {
+  public @Nullable String getRawRoot(final @Nullable String convertedRoot) {
     return myClientRootsCache.getRaw(convertedRoot);
   }
 
@@ -353,8 +345,7 @@ public final class PerforceManager  {
     return result;
   }
 
-  @Nullable
-  public Object traceEnter(final P4Command command, final String commandPresentation) {
+  public @Nullable Object traceEnter(final P4Command command, final String commandPresentation) {
     if (myTracer != null) {
       return myTracer.start(command, commandPresentation);
     }

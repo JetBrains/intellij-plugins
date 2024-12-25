@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -21,14 +22,12 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   }
 
   @Override
-  @NotNull
-  public DartCommandLineRunnerParameters getRunnerParameters() {
+  public @NotNull DartCommandLineRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
   @Override
-  @NotNull
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartCommandLineConfigurationEditorForm(getProject());
   }
 
@@ -38,8 +37,7 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   }
 
   @Override
-  @Nullable
-  public String suggestedName() {
+  public @Nullable String suggestedName() {
     final String filePath = myRunnerParameters.getFilePath();
     return filePath == null ? null : PathUtil.getFileName(filePath);
   }

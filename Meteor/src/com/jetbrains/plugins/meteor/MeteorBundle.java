@@ -13,7 +13,7 @@ public final class MeteorBundle extends DynamicBundle {
     return ourInstance.getMessage(key, params);
   }
 
-  @NonNls public static final String BUNDLE = "messages.MeteorBundle";
+  public static final @NonNls String BUNDLE = "messages.MeteorBundle";
   private static final MeteorBundle ourInstance = new MeteorBundle();
 
   private MeteorBundle() {

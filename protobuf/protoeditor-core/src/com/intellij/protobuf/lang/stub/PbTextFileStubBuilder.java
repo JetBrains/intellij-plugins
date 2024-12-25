@@ -37,9 +37,8 @@ public class PbTextFileStubBuilder implements BinaryFileStubBuilder {
     return false;
   }
 
-  @Nullable
   @Override
-  public Stub buildStubTree(@NotNull FileContent fileContent) {
+  public @Nullable Stub buildStubTree(@NotNull FileContent fileContent) {
     return null;
   }
 

@@ -10,8 +10,7 @@ import java.util.*;
 
 public final class MeteorStubPath {
   
-  @NotNull
-  public static VirtualFile getLastMeteorLib() {
+  public static @NotNull VirtualFile getLastMeteorLib() {
     return Arrays.stream(getStubDir().getChildren())
       .filter(file1 -> file1.getName().endsWith(TypeScriptUtil.TYPESCRIPT_DECLARATIONS_FILE_EXTENSION))
       .map(VFWrapper::new)

@@ -16,12 +16,12 @@
 package com.intellij.protobuf.ide.spelling;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.psi.ProtoStringPart;
+import com.intellij.protobuf.lang.util.ProtoString;
 import com.intellij.psi.PsiElement;
 import com.intellij.spellchecker.inspections.PlainTextSplitter;
 import com.intellij.spellchecker.tokenizer.TokenConsumer;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
-import com.intellij.protobuf.lang.psi.ProtoStringPart;
-import com.intellij.protobuf.lang.util.ProtoString;
 import org.jetbrains.annotations.NotNull;
 
 /** A spellchecking {@link Tokenizer} for {@link ProtoStringPart} elements. */
@@ -35,9 +35,8 @@ public class StringPartTokenizer extends Tokenizer<ProtoStringPart> {
         element, parsed, false, 0, TextRange.allOf(parsed), PlainTextSplitter.getInstance());
   }
 
-  @NotNull
   @Override
-  public TextRange getHighlightingRange(PsiElement element, int offset, TextRange range) {
+  public @NotNull TextRange getHighlightingRange(PsiElement element, int offset, TextRange range) {
     if (!(element instanceof ProtoStringPart stringPart)) {
       return super.getHighlightingRange(element, offset, range);
     }

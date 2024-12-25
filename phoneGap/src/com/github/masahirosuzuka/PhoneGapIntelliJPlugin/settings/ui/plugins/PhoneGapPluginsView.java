@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -45,10 +46,10 @@ public class PhoneGapPluginsView {
     void forVersion(@Nls String version);
   }
 
-  public synchronized void setupService(@Nullable final String path,
-                           @NotNull final String workDir,
-                           @NotNull final PhoneGapConfigurable.RepositoryStore repositoryStore,
-                           @NotNull final VersionCallback callback) {
+  public synchronized void setupService(final @Nullable String path,
+                                        final @NotNull String workDir,
+                                        final @NotNull PhoneGapConfigurable.RepositoryStore repositoryStore,
+                                        final @NotNull VersionCallback callback) {
     packagesNotificationPanel.removeAllLinkHandlers();
     packagesNotificationPanel.hide();
     callback.forVersion("");

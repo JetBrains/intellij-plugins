@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FullSearchSpecificator implements JobsSearchSpecificator {
   // todo setting
-  public final static int ourMaxLines = 500;
+  public static final int ourMaxLines = 500;
   private final List<Pair<Parts, String>> myStandard = new ArrayList<>();
 
   public void addStandardConstraint(final Parts part, final String pattern) {

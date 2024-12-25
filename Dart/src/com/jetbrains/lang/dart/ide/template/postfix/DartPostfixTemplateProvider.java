@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.template.postfix;
 
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplate;
@@ -27,12 +27,11 @@ public final class DartPostfixTemplateProvider implements PostfixTemplateProvide
     TEMPLATE_CACHE.put(UNINITIALIZED_KEY, one);
   }
 
-  @Nullable
-  public static Set<PostfixTemplate> getTemplates(String version) {
+  public static @Nullable Set<PostfixTemplate> getTemplates(String version) {
     return TEMPLATE_CACHE.get(version);
   }
 
-  public static void initializeTemplates(@NotNull final DartAnalysisServerService service) {
+  public static void initializeTemplates(final @NotNull DartAnalysisServerService service) {
     String version = service.getSdkVersion();
     if (TEMPLATE_CACHE.get(version) != null) return;
 
@@ -51,15 +50,13 @@ public final class DartPostfixTemplateProvider implements PostfixTemplateProvide
     }
   }
 
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "builtin.dart";
   }
 
-  @NotNull
   @Override
-  public Set<PostfixTemplate> getTemplates() {
+  public @NotNull Set<PostfixTemplate> getTemplates() {
     // Find the largest initialized set. This may return templates that are not recognized
     // by the analysis server actually used for expansion, but at least the user will see
     // all possible templates.
@@ -85,9 +82,8 @@ public final class DartPostfixTemplateProvider implements PostfixTemplateProvide
   public void afterExpand(@NotNull PsiFile file, @NotNull Editor editor) {
   }
 
-  @NotNull
   @Override
-  public PsiFile preCheck(@NotNull PsiFile copyFile, @NotNull Editor realEditor, int currentOffset) {
+  public @NotNull PsiFile preCheck(@NotNull PsiFile copyFile, @NotNull Editor realEditor, int currentOffset) {
     // TODO(messick) See if we need to add a semicolon, like the Java implementation does.
     return copyFile;
   }

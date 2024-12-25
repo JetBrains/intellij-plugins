@@ -30,23 +30,20 @@ public class PbFileType extends LanguageFileType {
     super(PbLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     // Warning: this is conflated with Language#myID in several places...
     // They should be identical.
     return PbLanguage.INSTANCE.getID();
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return PbIdeBundle.message("plugin.name");
   }
 
-  @NotNull
   @Override
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return "proto";
   }
 

@@ -1,4 +1,5 @@
 
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.actions;
 
 import com.intellij.icons.AllIcons;
@@ -46,8 +47,7 @@ public class DartPopFrameAction extends AnAction implements DumbAware {
     }
   }
 
-  @Nullable
-  private static DartVmServiceStackFrame getStackFrame(@NotNull final AnActionEvent e) {
+  private static @Nullable DartVmServiceStackFrame getStackFrame(final @NotNull AnActionEvent e) {
     XDebugSession session = DebuggerUIUtil.getSession(e);
     if (session != null) {
       XStackFrame frame = session.getCurrentStackFrame();

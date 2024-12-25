@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.google.gson.*;
@@ -11,8 +11,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class DartDaemonParserUtil {
 
-  @Nullable
-  private static JsonObject parseDaemonLog(@NotNull final String text) throws JsonSyntaxException {
+  private static @Nullable JsonObject parseDaemonLog(final @NotNull String text) throws JsonSyntaxException {
     if (!text.startsWith("[{")) {
       return null;
     }
@@ -31,8 +30,7 @@ public final class DartDaemonParserUtil {
    * <p>
    * return the {@link String} <code>ws://127.0.0.1:36063/a-code</code>
    */
-  @Nullable
-  public static String getWsUri(@NotNull final String text) throws Exception {
+  public static @Nullable String getWsUri(final @NotNull String text) throws Exception {
     final JsonObject jsonObject = parseDaemonLog(text);
     if (jsonObject == null) {
       return null;
@@ -74,8 +72,7 @@ public final class DartDaemonParserUtil {
    * <p>
    * return the {@link String} <code>some log text</code> or <code>Counter is: 1</code>
    */
-  @Nullable
-  public static String getLogMessage(@NotNull final String text) {
+  public static @Nullable String getLogMessage(final @NotNull String text) {
     if (!text.startsWith("[{")) {
       return null;
     }

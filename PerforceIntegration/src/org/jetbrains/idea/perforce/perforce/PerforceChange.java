@@ -28,23 +28,21 @@ import java.io.File;
 
 
 public class PerforceChange extends PerforceAbstractChange {
-  private final static Logger LOG = Logger.getInstance(PerforceChange.class);
+  private static final Logger LOG = Logger.getInstance(PerforceChange.class);
   private final String myDepotPath;
   private long myRevision;
   private final long myChangeListNumber;
   private final String myChangeListDescription;
 
-  @Nullable
-  public static PerforceChange createOn(String fileString, PerforceClient client) throws VcsException {
+  public static @Nullable PerforceChange createOn(String fileString, PerforceClient client) throws VcsException {
     // must be called only in tests
     return createOn(fileString, client, -1, null);
   }
 
-  @Nullable
-  public static PerforceChange createOn(String fileString,
-                                        PerforceClient client,
-                                        long changeListNumber,
-                                        @Nullable String changeListDescription) throws VcsException {
+  public static @Nullable PerforceChange createOn(String fileString,
+                                                  PerforceClient client,
+                                                  long changeListNumber,
+                                                  @Nullable String changeListDescription) throws VcsException {
     fileString = fileString.trim();
     int typeIndex = fileString.indexOf("#");
     if (typeIndex < 0) {
@@ -98,8 +96,7 @@ public class PerforceChange extends PerforceAbstractChange {
   }
 
   @Override
-  @NonNls
-  public String toString() {
+  public @NonNls String toString() {
     return "PerforceChange[" + myDepotPath + "," + myType + "]";
   }
 

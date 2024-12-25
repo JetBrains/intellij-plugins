@@ -14,28 +14,25 @@ import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final public class PostCssCustomSelectorAtRuleImpl extends CssAtRuleImpl implements PostCssCustomSelectorAtRule {
+public final class PostCssCustomSelectorAtRuleImpl extends CssAtRuleImpl implements PostCssCustomSelectorAtRule {
   PostCssCustomSelectorAtRuleImpl() {
     super(CssContextType.ANY, PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
   }
 
-  @NotNull
   @Override
-  public ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     PostCssCustomSelector customSelector = getCustomSelector();
     return new AtRulePresentation(this, PostCssPsiUtil.isEmptyElement(customSelector)
                                         ? "custom-selector" : "custom-selector " + customSelector.getText());
   }
 
-  @Nullable
   @Override
-  public PostCssCustomSelector getCustomSelector() {
+  public @Nullable PostCssCustomSelector getCustomSelector() {
     return PsiTreeUtil.getChildOfType(this, PostCssCustomSelector.class);
   }
 
-  @Nullable
   @Override
-  public CssSelectorList getSelectorList() {
+  public @Nullable CssSelectorList getSelectorList() {
     return PsiTreeUtil.getChildOfType(this, CssSelectorList.class);
   }
 

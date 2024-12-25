@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
@@ -30,12 +30,11 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     myScopeType = currentScopeType;
   }
 
-  @NotNull
-  protected static FindUsagesHandler createFindUsageHandler(@NotNull final PsiElement element) {
+  protected static @NotNull FindUsagesHandler createFindUsageHandler(final @NotNull PsiElement element) {
     return new DartServerFindUsagesHandler(element);
   }
 
-  public static void collectDeclarations(@Nullable final PsiElement element, @NotNull final List<? super PsiElement> results) {
+  public static void collectDeclarations(final @Nullable PsiElement element, final @NotNull List<? super PsiElement> results) {
     if (element != null) {
       Condition<PsiElement> isExecutable = object -> {
         if (object == null) return false;
@@ -48,8 +47,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     }
   }
 
-  @NotNull
-  protected abstract List<PsiElement> getChildren(@NotNull PsiElement element);
+  protected abstract @NotNull List<PsiElement> getChildren(@NotNull PsiElement element);
 
   @Override
   protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
@@ -87,8 +85,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     return ArrayUtil.toObjectArray(descriptors);
   }
 
-  @NotNull
-  protected GlobalSearchScope getScope() {
+  protected @NotNull GlobalSearchScope getScope() {
     if (HierarchyBrowserBaseEx.SCOPE_CLASS.equals(myScopeType)) {
       Object root = getRootElement();
       if (root instanceof DartCallHierarchyNodeDescriptor rootElement) {

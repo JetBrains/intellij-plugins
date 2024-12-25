@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.openapi.util.Couple;
@@ -14,8 +14,7 @@ public class DartPositionInfo {
   public enum Type {
     FILE, DART, PACKAGE;
 
-    @Nullable
-    public static Type getType(final String type) {
+    public static @Nullable Type getType(final String type) {
       if ("file".equals(type)) return FILE;
       if ("dart".equals(type)) return DART;
       if ("package".equals(type)) return PACKAGE;
@@ -61,8 +60,7 @@ public class DartPositionInfo {
    WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL dart:core/string_buffer.dart WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
    inside WHATEVER_ELSE_STARTING_NOT_FROM_PATH_SYMBOL look for ':4:28' at the beginning or for 'line 3 pos 1' at any place
   */
-  @Nullable
-  public static DartPositionInfo parsePositionInfo(@NotNull String text) {
+  public static @Nullable DartPositionInfo parsePositionInfo(@NotNull String text) {
     if (text.startsWith("packages/")) {
       text = "packages:" + text.substring("packages/".length());
     }
@@ -97,16 +95,14 @@ public class DartPositionInfo {
     return new DartPositionInfo(type, FileUtil.toSystemIndependentName(path), urlStartIndex, urlEndIndex, line, column);
   }
 
-  @Nullable
-  public static Couple<Integer> parseLineAndColumn(@NotNull final String text) {
+  public static @Nullable Couple<Integer> parseLineAndColumn(final @NotNull String text) {
     Couple<Integer> result = parseLineAndColumnInColonFormat(text);
     return result != null ? result : parseLineAndColumnInTextFormat(text);
   }
 
   // WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL PREFIX PATH_ENDING_WITH_DOT_DART WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
   // Example:   'package:DartSample2/mylib.dart': error: line 7 pos 1: 'myLibPart' is already defined
-  @Nullable
-  private static Couple<Integer> parseUrlStartAndEnd(final String text, final String prefix) {
+  private static @Nullable Couple<Integer> parseUrlStartAndEnd(final String text, final String prefix) {
     final int pathStartIndex = text.indexOf(prefix);
     if (pathStartIndex < 0 ||
         pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
@@ -132,8 +128,7 @@ public class DartPositionInfo {
   }
 
   //   #0      min (dart:math:70)
-  @Nullable
-  private static Couple<Integer> parseDartLibUrlStartAndEnd(final String text) {
+  private static @Nullable Couple<Integer> parseDartLibUrlStartAndEnd(final String text) {
     final int pathStartIndex = text.indexOf("dart:");
     if (pathStartIndex < 0 ||
         pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
@@ -159,8 +154,7 @@ public class DartPositionInfo {
     return !Character.isLetterOrDigit(ch) && ch != '/' && ch != '.' && ch != '_';
   }
 
-  @Nullable
-  private static Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
+  private static @Nullable Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
     // "12 whatever, ":12 whatever", "12:34 whatever" or ":12:34 whatever"
     final Pair<Integer, String> lineAndRemainingText = parseNextIntSkippingColon(text);
     if (lineAndRemainingText == null) return null;
@@ -174,8 +168,7 @@ public class DartPositionInfo {
     }
   }
 
-  @Nullable
-  private static Couple<Integer> parseLineAndColumnInTextFormat(final @NotNull String text) {
+  private static @Nullable Couple<Integer> parseLineAndColumnInTextFormat(final @NotNull String text) {
     // "whatever line 12 pos 34 whatever"
     int index = text.indexOf("line ");
     if (index == -1) return null;
@@ -199,8 +192,7 @@ public class DartPositionInfo {
     }
   }
 
-  @Nullable
-  private static Pair<Integer, String> parseNextIntSkippingColon(final @NotNull String text) {
+  private static @Nullable Pair<Integer, String> parseNextIntSkippingColon(final @NotNull String text) {
     // "12 whatever or ": 12 whatever"
     int index = 0;
 

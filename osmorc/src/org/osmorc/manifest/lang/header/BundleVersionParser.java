@@ -62,9 +62,8 @@ public final class BundleVersionParser extends StandardHeaderParser {
     return false;
   }
 
-  @Nullable
   @Override
-  public Object getConvertedValue(@NotNull Header header) {
+  public @Nullable Object getConvertedValue(@NotNull Header header) {
     HeaderValue value = header.getHeaderValue();
     if (value instanceof HeaderValuePart) {
       try {

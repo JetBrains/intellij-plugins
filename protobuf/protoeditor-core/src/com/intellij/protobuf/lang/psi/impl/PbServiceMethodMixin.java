@@ -46,28 +46,24 @@ abstract class PbServiceMethodMixin extends PbStubbedNamedDefinitionBase<PbServi
     super(stub, type);
   }
 
-  @NotNull
   @Override
-  public QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
+  public @NotNull QualifiedName getDescriptorOptionsTypeName(Descriptor descriptor) {
     return DescriptorOptionType.METHOD_OPTIONS.forDescriptor(descriptor);
   }
 
   @Override
-  @Nullable
-  public QualifiedName getExtensionOptionScope() {
+  public @Nullable QualifiedName getExtensionOptionScope() {
     QualifiedName name = getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
+  public @Nullable Icon getIcon(int flags) {
     return PbIcons.SERVICE_METHOD;
   }
 
-  @NotNull
   @Override
-  public List<PsiComment> getTrailingComments() {
+  public @NotNull List<PsiComment> getTrailingComments() {
     PbBlockBody options = getMethodOptions();
     if (options == null) {
       // No options defined; collect comments after the method statement.
@@ -77,8 +73,7 @@ abstract class PbServiceMethodMixin extends PbStubbedNamedDefinitionBase<PbServi
   }
 
   @Override
-  @NotNull
-  public List<PbOptionStatement> getOptionStatements() {
+  public @NotNull List<PbOptionStatement> getOptionStatements() {
     PbMethodOptions methodOptions = getMethodOptions();
     if (methodOptions == null) {
       return Collections.emptyList();

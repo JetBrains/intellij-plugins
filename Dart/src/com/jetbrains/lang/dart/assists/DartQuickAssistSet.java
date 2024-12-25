@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.assists;
 
 import com.google.dart.server.utilities.general.ObjectUtilities;
@@ -24,7 +24,7 @@ public class DartQuickAssistSet {
     return ApplicationManager.getApplication().getService(DartQuickAssistSet.class);
   }
 
-  public synchronized List<SourceChange> getQuickAssists(@NotNull final Editor editor, @NotNull final PsiFile psiFile) {
+  public synchronized List<SourceChange> getQuickAssists(final @NotNull Editor editor, final @NotNull PsiFile psiFile) {
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
     final String filePath = psiFile.getVirtualFile().getPath();
     final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();

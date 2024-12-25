@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.actions;
 
 import com.intellij.codeInsight.editorActions.wordSelection.AbstractWordSelectioner;
@@ -25,7 +26,7 @@ import java.util.Set;
  * @author Dennis.Ushakov
  */
 public final class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
-  private final static Set<Pair<String, String>> START_END = new LinkedHashSet<>();
+  private static final Set<Pair<String, String>> START_END = new LinkedHashSet<>();
 
   static {
     START_END.add(Pair.create("'", "'"));
@@ -40,12 +41,11 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
     return e.getParent() instanceof GherkinStep || e.getParent() instanceof GherkinStepsHolder;
   }
 
-  @NotNull
   @Override
-  public List<TextRange> select(@NotNull final PsiElement e,
-                                @NotNull final CharSequence editorText,
-                                final int cursorOffset,
-                                @NotNull final Editor editor) {
+  public @NotNull List<TextRange> select(final @NotNull PsiElement e,
+                                         final @NotNull CharSequence editorText,
+                                         final int cursorOffset,
+                                         final @NotNull Editor editor) {
     final List<TextRange> result = new ArrayList<>();
     if (editor.getSettings().isCamelWords()) {
       result.addAll(super.select(e, editorText, cursorOffset, editor));
@@ -80,8 +80,7 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
     return result;
   }
 
-  @NotNull
-  private static List<TextRange> buildAdditionalRanges(@NotNull final List<TextRange> ranges, @NotNull final CharSequence editorText) {
+  private static @NotNull List<TextRange> buildAdditionalRanges(final @NotNull List<TextRange> ranges, final @NotNull CharSequence editorText) {
     final List<TextRange> result = new ArrayList<>();
     for (TextRange textRange : ranges) {
       if (textRange.isEmpty()) continue;
@@ -90,9 +89,9 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
     return result;
   }
 
-  private static void addRangesForText(@NotNull final List<TextRange> result,
-                                       @NotNull final TextRange textRange,
-                                       @NotNull final CharSequence charSequence) {
+  private static void addRangesForText(final @NotNull List<TextRange> result,
+                                       final @NotNull TextRange textRange,
+                                       final @NotNull CharSequence charSequence) {
     final int startOffset = textRange.getStartOffset();
     final int endOffset = textRange.getEndOffset();
     final String text = charSequence.subSequence(startOffset, endOffset).toString();

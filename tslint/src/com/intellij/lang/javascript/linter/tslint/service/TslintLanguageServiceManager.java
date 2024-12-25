@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -15,14 +15,12 @@ public final class TslintLanguageServiceManager extends MultiRootJSLinterLanguag
     super(project, TslintUtil.PACKAGE_NAME);
   }
 
-  @NotNull
-  public static TslintLanguageServiceManager getInstance(@NotNull Project project) {
+  public static @NotNull TslintLanguageServiceManager getInstance(@NotNull Project project) {
     return project.getService(TslintLanguageServiceManager.class);
   }
 
-  @NotNull
   @Override
-  protected TsLintLanguageService createServiceInstance(@NotNull NodePackage resolvedPackage, @NotNull VirtualFile workingDirectory) {
+  protected @NotNull TsLintLanguageService createServiceInstance(@NotNull NodePackage resolvedPackage, @NotNull VirtualFile workingDirectory) {
     return new TsLintLanguageService(myProject, resolvedPackage, workingDirectory);
   }
 }

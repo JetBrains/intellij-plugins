@@ -13,13 +13,13 @@ class MemoryAdderRemover implements AdderRemover {
   }
 
   @Override
-  public VcsException add(@NotNull final PerforceJob job, LocalChangeList list, Project project) {
+  public VcsException add(final @NotNull PerforceJob job, LocalChangeList list, Project project) {
     myPresentation.addJob(job);
     return null;
   }
 
   @Override
-  public VcsException remove(@NotNull final PerforceJob job, LocalChangeList list, Project project) {
+  public VcsException remove(final @NotNull PerforceJob job, LocalChangeList list, Project project) {
     myPresentation.removeSelectedJobs();
     return null;
   }

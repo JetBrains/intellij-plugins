@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -29,9 +30,8 @@ public class PhoneGapRunProfileState extends CommandLineState {
     this.phoneGapRunConfiguration = phoneGapRunConfiguration;
   }
 
-  @NotNull
   @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
+  protected @NotNull ProcessHandler startProcess() throws ExecutionException {
     PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
     String command = phoneGapRunConfiguration.getCommand();
     assert command != null;

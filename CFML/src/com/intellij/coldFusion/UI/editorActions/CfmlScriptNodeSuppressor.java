@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.ide.projectView.TreeStructureProvider;
@@ -20,8 +20,7 @@ public final class CfmlScriptNodeSuppressor implements TreeStructureProvider, Du
   private static final Key<String> MARKER = Key.create(CfmlScriptNodeSuppressor.class.getName() + ".MARKER");
 
   @Override
-  @NotNull
-  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent, @NotNull Collection<AbstractTreeNode<?>> children, ViewSettings settings) {
+  public @NotNull Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent, @NotNull Collection<AbstractTreeNode<?>> children, ViewSettings settings) {
     ArrayList<AbstractTreeNode<?>> result = new ArrayList<>();
     for (AbstractTreeNode child : children) {
       if (child.getValue() instanceof PsiFile) {

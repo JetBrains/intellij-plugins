@@ -26,9 +26,9 @@ public class MergedFileParser {
   private final StringBuffer myLocal = new StringBuffer();
   private final StringBuffer myLast = new StringBuffer();
   private final String mySource;
-  @NonNls private static final String ORIGINAL_PREFIX = ">>>> ORIGINAL";
-  @NonNls private static final String YOURS_PREFIX = "==== YOURS";
-  @NonNls private static final String THEIRS_PREFIX = "==== THEIRS";
+  private static final @NonNls String ORIGINAL_PREFIX = ">>>> ORIGINAL";
+  private static final @NonNls String YOURS_PREFIX = "==== YOURS";
+  private static final @NonNls String THEIRS_PREFIX = "==== THEIRS";
 
   public MergedFileParser(String dataWithMarkers) throws IOException {
     mySource = dataWithMarkers;

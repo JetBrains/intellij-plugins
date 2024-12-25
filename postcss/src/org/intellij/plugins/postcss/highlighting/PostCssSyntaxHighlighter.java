@@ -96,17 +96,15 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     }
   }
 
-  @NotNull
   @Override
-  public MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
+  public @NotNull MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
     MultiMap<IElementType, TextAttributesKey> map = MultiMap.create();
     map.putAllValues(mapping);
     return map;
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new PostCssHighlightingLexer(CssElementDescriptorFactory2.getInstance().getValueIdentifiers());
   }
 

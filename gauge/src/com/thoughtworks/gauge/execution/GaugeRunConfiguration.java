@@ -64,9 +64,8 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
     this.programParameters = new ApplicationConfiguration(name, project, ApplicationConfigurationType.getInstance());
   }
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new GaugeExecutionConfigurationSettingsEditor();
   }
 

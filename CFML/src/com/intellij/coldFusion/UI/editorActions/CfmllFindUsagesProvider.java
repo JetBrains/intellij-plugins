@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -17,20 +17,19 @@ import org.jetbrains.annotations.NotNull;
 public final class CfmllFindUsagesProvider implements FindUsagesProvider {
 
   @Override
-  public boolean canFindUsagesFor(@NotNull final PsiElement psiElement) {
+  public boolean canFindUsagesFor(final @NotNull PsiElement psiElement) {
     return psiElement instanceof CfmlReferenceExpression || (psiElement instanceof CfmlTagFunctionImpl) ||
            (psiElement instanceof CfmlTag && ((CfmlTag)psiElement).getTagName().equalsIgnoreCase("cfargument")) ||
            psiElement instanceof CfmlFunctionImpl || psiElement instanceof CfmlFunctionParameterImpl;
   }
 
   @Override
-  public String getHelpId(@NotNull final PsiElement psiElement) {
+  public String getHelpId(final @NotNull PsiElement psiElement) {
     return null;
   }
 
   @Override
-  @NotNull
-  public String getType(@NotNull final PsiElement element) {
+  public @NotNull String getType(final @NotNull PsiElement element) {
     return element instanceof CfmlReferenceExpression
            ? CfmlBundle.message("find.usages.descriptive.name.reference")
            : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl
@@ -39,8 +38,7 @@ public final class CfmllFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getDescriptiveName(@NotNull final PsiElement element) {
+  public @NotNull String getDescriptiveName(final @NotNull PsiElement element) {
     return element instanceof CfmlReferenceExpression
            ? CfmlBundle.message("find.usages.descriptive.name.reference")
            : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl
@@ -49,8 +47,7 @@ public final class CfmllFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getNodeText(@NotNull final PsiElement element, final boolean useFullName) {
+  public @NotNull String getNodeText(final @NotNull PsiElement element, final boolean useFullName) {
     return element.getText();
   }
 }

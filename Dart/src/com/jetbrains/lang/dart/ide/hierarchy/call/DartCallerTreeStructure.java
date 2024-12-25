@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
@@ -31,9 +32,8 @@ public class DartCallerTreeStructure extends DartCallHierarchyTreeStructure {
     }
   }
 
-  @NotNull
   @Override
-  protected List<PsiElement> getChildren(@NotNull PsiElement element) {
+  protected @NotNull List<PsiElement> getChildren(@NotNull PsiElement element) {
     final List<PsiElement> list = new ArrayList<>();
     getCallers(element, list, getScope());
     return list;

@@ -19,16 +19,14 @@ public final class BowerInstalledPackagesParser {
   private BowerInstalledPackagesParser() {
   }
 
-  @NotNull
-  public static List<BowerInstalledPackage> parse(@NotNull String jsonContent) throws IOException {
+  public static @NotNull List<BowerInstalledPackage> parse(@NotNull String jsonContent) throws IOException {
     try (JsonReader jsonReader = new JsonReader(new StringReader(jsonContent))) {
       JsonElement element = JsonParser.parseReader(jsonReader);
       return doParsePackages(element);
     }
   }
 
-  @NotNull
-  private static List<BowerInstalledPackage> doParsePackages(@NotNull JsonElement element) throws IOException {
+  private static @NotNull List<BowerInstalledPackage> doParsePackages(@NotNull JsonElement element) throws IOException {
     if (!element.isJsonObject()) {
       throw new IOException("Unexpected root element");
     }
@@ -51,8 +49,7 @@ public final class BowerInstalledPackagesParser {
     return packages;
   }
 
-  @Nullable
-  private static BowerInstalledPackage parsePackage(@NotNull JsonObject pkgObject) {
+  private static @Nullable BowerInstalledPackage parsePackage(@NotNull JsonObject pkgObject) {
     String name = null;
     String _release = null;
     String target = null;

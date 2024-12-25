@@ -24,7 +24,7 @@ public class BrowsePreviewDialog extends DialogWrapper {
 
   private JobsMasterDetails myTable;
 
-  public BrowsePreviewDialog(@NotNull final Project project, @NotNull final String jobViewQueryString, @NotNull final List<PerforceJob> jobs,
+  public BrowsePreviewDialog(final @NotNull Project project, final @NotNull String jobViewQueryString, final @NotNull List<PerforceJob> jobs,
                              final int maxCount) {
     super(project, true);
     myProject = project;

@@ -50,8 +50,7 @@ public class PyFileReferenceContext {
    * @param pyElement python element under consideration
    * @return resolved file + trailing qualifier if found, otherwise null
    */
-  @Nullable
-  static PyFileReferenceContext findContext(PsiElement pyElement) {
+  static @Nullable PyFileReferenceContext findContext(PsiElement pyElement) {
     PyReferenceExpression referenceExpression =
         PsiTreeUtil.getParentOfType(pyElement, PyReferenceExpression.class);
     List<String> reversedQualifiers = new ArrayList<>();

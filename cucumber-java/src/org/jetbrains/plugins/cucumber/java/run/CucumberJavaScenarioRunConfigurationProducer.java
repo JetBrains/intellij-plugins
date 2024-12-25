@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -34,9 +35,8 @@ public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFe
     return super.getNameFilter(context);
   }
 
-  @Nullable
   @Override
-  protected VirtualFile getFileToRun(ConfigurationContext context) {
+  protected @Nullable VirtualFile getFileToRun(ConfigurationContext context) {
     final PsiElement element = context.getPsiLocation();
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(element, GherkinScenario.class, GherkinScenarioOutline.class);
     final PsiFile psiFile = scenario != null ? scenario.getContainingFile() : null;
@@ -44,7 +44,7 @@ public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFe
   }
 
   @Override
-  protected String getConfigurationName(@NotNull final ConfigurationContext context) {
+  protected String getConfigurationName(final @NotNull ConfigurationContext context) {
     final PsiElement sourceElement = context.getPsiLocation();
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(sourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
 

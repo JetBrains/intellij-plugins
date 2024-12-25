@@ -107,9 +107,8 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
     parameters.setPath(myDirectoryOrFileField.getText());
   }
 
-  @NotNull
   @Override
-  protected JComponent createEditor() {
+  protected @NotNull JComponent createEditor() {
     return myPanel;
   }
 }

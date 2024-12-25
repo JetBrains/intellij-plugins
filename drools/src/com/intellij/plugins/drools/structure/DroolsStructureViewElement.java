@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.structure;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
@@ -37,15 +37,13 @@ public abstract class DroolsStructureViewElement implements StructureViewTreeEle
     return myElement instanceof NavigationItem && ((NavigationItem)myElement).canNavigateToSource();
   }
 
-  @NotNull
   @Override
-  public ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return this;
   }
 
-  @NotNull
   @Override
-  public String getAlphaSortKey() {
+  public @NotNull String getAlphaSortKey() {
     final String result = myElement instanceof NavigationItem ? ((NavigationItem)myElement).getName() : null;
     return result == null ? "" : result;
   }

@@ -46,8 +46,7 @@ public final class PbJavaGotoReferenceMatch {
    * @return If matches, return contextual information needed to resolve the reference to the
    *     original .proto element. Returns null if not a match.
    */
-  @Nullable
-  public static PbJavaGotoDeclarationContext isFromProto(PsiElement resolvedReference) {
+  public static @Nullable PbJavaGotoDeclarationContext isFromProto(PsiElement resolvedReference) {
     PsiNamedElement resolved = ObjectUtils.tryCast(resolvedReference, PsiNamedElement.class);
     if (resolved == null) {
       return null;
@@ -78,8 +77,7 @@ public final class PbJavaGotoReferenceMatch {
    * then it could just be the outermost {@link
    * PbDefinition}.
    */
-  @NotNull
-  private static PsiClass getFileClass(@NotNull PsiClass definitionClass) {
+  private static @NotNull PsiClass getFileClass(@NotNull PsiClass definitionClass) {
     PsiClass containingClass = definitionClass;
     while (true) {
       PsiClass next = containingClass.getContainingClass();

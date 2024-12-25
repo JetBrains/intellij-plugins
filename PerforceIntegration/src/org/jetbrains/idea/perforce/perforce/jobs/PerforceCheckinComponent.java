@@ -45,8 +45,8 @@ import java.util.Map;
 import static org.jetbrains.idea.perforce.application.PerforceCheckinEnvironment.LINKED_JOBS_KEY;
 
 public class PerforceCheckinComponent implements CheckinChangeListSpecificComponent, JobsTablePresentation {
-  @NotNull private final Project myProject;
-  @NotNull private final CommitContext myCommitContext;
+  private final @NotNull Project myProject;
+  private final @NotNull CommitContext myCommitContext;
   private JPanel myPanel;
 
   private LocalChangeList myCurrent;
@@ -241,11 +241,10 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
     }
   }
 
-  @Nullable("if canceled")
-  public static List<PerforceJob> getJobsUnderProgress(final JobsWorker worker,
-                                                        final JobsSearchSpecificator searchSpecificator,
-                                                        final P4Connection connection,
-                                                        final ConnectionKey key, final PerforceJobSpecification spec) {
+  public static @Nullable("if canceled") List<PerforceJob> getJobsUnderProgress(final JobsWorker worker,
+                                                                                final JobsSearchSpecificator searchSpecificator,
+                                                                                final P4Connection connection,
+                                                                                final ConnectionKey key, final PerforceJobSpecification spec) {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(
         () -> worker.getJobs(spec, searchSpecificator, connection, key), PerforceBundle.message("job.searching.jobs"), true, worker.getProject());
@@ -285,34 +284,34 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
     }
   }
 
-  private final static ColumnInfo<PerforceJob, String> JOB = new ColumnInfo<>(PerforceBundle.message("job")) {
+  private static final ColumnInfo<PerforceJob, String> JOB = new ColumnInfo<>(PerforceBundle.message("job")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       return perforceJob.getName();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> STATUS = new ColumnInfo<>(PerforceBundle.message("job.status")) {
+  private static final ColumnInfo<PerforceJob, String> STATUS = new ColumnInfo<>(PerforceBundle.message("job.status")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.status);
       return field == null ? null : field.getValue();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> USER = new ColumnInfo<>(PerforceBundle.message("job.user")) {
+  private static final ColumnInfo<PerforceJob, String> USER = new ColumnInfo<>(PerforceBundle.message("job.user")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.user);
       return field == null ? null : field.getValue();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> DATE = new ColumnInfo<>(PerforceBundle.message("job.date")) {
+  private static final ColumnInfo<PerforceJob, String> DATE = new ColumnInfo<>(PerforceBundle.message("job.date")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.date);
       return field == null ? null : field.getValue();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> DESCRIPTION = new ColumnInfo<>(PerforceBundle.message("job.description")) {
+  private static final ColumnInfo<PerforceJob, String> DESCRIPTION = new ColumnInfo<>(PerforceBundle.message("job.description")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.description);

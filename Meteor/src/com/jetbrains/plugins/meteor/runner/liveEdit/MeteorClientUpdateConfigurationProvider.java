@@ -12,16 +12,14 @@ import org.jetbrains.annotations.Nullable;
 
 public final class MeteorClientUpdateConfigurationProvider extends UpdateConfigurationProvider {
   private static final UpdateConfiguration UPDATE_CONFIGURATION = new UpdateConfiguration() {
-    @NotNull
     @Override
-    public UpdatePolicy getPolicy() {
+    public @NotNull UpdatePolicy getPolicy() {
       return UpdatePolicy.DISABLED;
     }
   };
 
-  @Nullable
   @Override
-  public UpdateConfiguration getConfiguration(@NotNull XDebugProcess debugProcess) {
+  public @Nullable UpdateConfiguration getConfiguration(@NotNull XDebugProcess debugProcess) {
     RunProfile runProfile = debugProcess.getSession().getRunProfile();
     return runProfile != null && isSupported(runProfile) ? UPDATE_CONFIGURATION : null;
   }

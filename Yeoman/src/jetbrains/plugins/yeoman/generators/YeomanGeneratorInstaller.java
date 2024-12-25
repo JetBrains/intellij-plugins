@@ -77,8 +77,7 @@ public class YeomanGeneratorInstaller {
     return true;
   }
 
-  @NotNull
-  private static File getModuleDirectory(YeomanGeneratorInfo info) {
+  private static @NotNull File getModuleDirectory(YeomanGeneratorInfo info) {
     final File file = new File(PathManager.getSystemPath(), LOCAL_GENERATORS_RELATIVE_PATH + File.separator + info.getName());
 
     FileUtil.createParentDirs(file);

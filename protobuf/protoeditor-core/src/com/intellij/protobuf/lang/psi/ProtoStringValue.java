@@ -31,9 +31,8 @@ public interface ProtoStringValue extends ProtoLiteral {
   @NotNull
   List<? extends ProtoStringPart> getStringParts();
 
-  @NotNull
   @Override
-  default String getValue() {
+  default @NotNull String getValue() {
     return CachedValuesManager.getCachedValue(
         this,
         () -> {
@@ -45,9 +44,8 @@ public interface ProtoStringValue extends ProtoLiteral {
         });
   }
 
-  @NotNull
   @Override
-  default String getAsString() {
+  default @NotNull String getAsString() {
     return getValue();
   }
 
@@ -57,8 +55,7 @@ public interface ProtoStringValue extends ProtoLiteral {
    * included. If the quotes are incomplete (missing end quote), the start and end offset will be
    * the same.
    */
-  @NotNull
-  default TextRange getTextRangeNoQuotes() {
+  default @NotNull TextRange getTextRangeNoQuotes() {
     return PbPsiImplUtil.getTextRangeNoQuotes(this);
   }
 }

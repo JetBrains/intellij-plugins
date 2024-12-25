@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
 
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
-  private final static Logger LOG = Logger.getInstance(TsLintLanguageService.class);
+  private static final Logger LOG = Logger.getInstance(TsLintLanguageService.class);
 
   private final @NotNull VirtualFile myWorkingDirectory;
   private final @NotNull NodePackage myNodePackage;
@@ -44,22 +44,19 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     myNodePackage = nodePackage;
   }
 
-  @NotNull
-  public NodePackage getNodePackage() {
+  public @NotNull NodePackage getNodePackage() {
     return myNodePackage;
   }
 
-  @Nullable
-  public CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
-                                                          @Nullable VirtualFile config,
-                                                          @Nullable String content,
-                                                          @NotNull TsLintState state) {
+  public @Nullable CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
+                                                                    @Nullable VirtualFile config,
+                                                                    @Nullable String content,
+                                                                    @NotNull TsLintState state) {
     return createHighlightFuture(virtualFile, config, state,
                                  (filePath, configPath) -> new GetErrorsCommand(filePath, configPath,StringUtil.notNullize(content)));
   }
 
-  @Nullable
-  public CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
+  public @Nullable CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
     VirtualFile config = TslintUtil.getConfig(state, myProject, virtualFile);
     //doesn't pass content (file should be saved before)
     return createHighlightFuture(virtualFile, config, state, FixErrorsCommand::new);
@@ -94,13 +91,11 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     return process.execute(command, createHighlightProcessor(path));
   }
 
-  @NotNull
-  private JSLanguageServiceCommandProcessor<List<TsLinterError>> createHighlightProcessor(@NotNull String path) {
+  private @NotNull JSLanguageServiceCommandProcessor<List<TsLinterError>> createHighlightProcessor(@NotNull String path) {
     return (object, answer) -> parseResults(answer, path, JSLanguageServiceUtil.getGson(this));
   }
 
-  @Nullable
-  private static List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path, @NotNull Gson gson) {
+  private static @Nullable List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path, @NotNull Gson gson) {
     final JsonObject element = answer.getElement();
     final JsonElement error = element.get("error");
     if (error != null) {
@@ -149,19 +144,17 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     return false;
   }
 
-  private static abstract class BaseCommand implements JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
+  private abstract static class BaseCommand implements JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
     public LocalFilePath filePath;
-    @Nullable
-    public LocalFilePath configPath;
+    public @Nullable LocalFilePath configPath;
 
     protected BaseCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath) {
       this.filePath = filePath;
       this.configPath = configPath;
     }
 
-    @NotNull
     @Override
-    public JSLanguageServiceObject toSerializableObject() {
+    public @NotNull JSLanguageServiceObject toSerializableObject() {
       return this;
     }
   }
@@ -173,9 +166,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       this.content = content;
     }
 
-    @NotNull
     @Override
-    public String getCommand() {
+    public @NotNull String getCommand() {
       return "GetErrors";
     }
   }
@@ -185,9 +177,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       super(filePath, configPath);
     }
 
-    @NotNull
     @Override
-    public String getCommand() {
+    public @NotNull String getCommand() {
       return "FixErrors";
     }
   }

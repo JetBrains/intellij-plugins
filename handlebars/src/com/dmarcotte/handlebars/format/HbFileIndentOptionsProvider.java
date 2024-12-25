@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.file.HbFileType;
@@ -14,11 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class HbFileIndentOptionsProvider extends FileIndentOptionsProvider {
-  @Nullable
   @Override
-  public CommonCodeStyleSettings.IndentOptions getIndentOptions(@NotNull Project project,
-                                                                @NotNull CodeStyleSettings settings,
-                                                                @NotNull VirtualFile file) {
+  public @Nullable CommonCodeStyleSettings.IndentOptions getIndentOptions(@NotNull Project project,
+                                                                          @NotNull CodeStyleSettings settings,
+                                                                          @NotNull VirtualFile file) {
     if (file.getFileType().equals(HbFileType.INSTANCE)) {
       FileViewProvider provider = PsiManagerEx.getInstanceEx(project).findViewProvider(file);
       if (provider instanceof TemplateLanguageFileViewProvider) {

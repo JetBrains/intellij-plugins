@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -23,9 +23,9 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   private String myType;
   private final String myText;
 
-  public CfmlImplicitVariable(@NotNull final PsiFile containingFile,
+  public CfmlImplicitVariable(final @NotNull PsiFile containingFile,
                               final PsiComment comment,
-                              @NotNull final String name) {
+                              final @NotNull String name) {
     super(containingFile);
     myComment = comment;
     myText = name;
@@ -41,20 +41,17 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   }
 
   @Override
-  @NotNull
-  public TextRange getTextRange() {
+  public @NotNull TextRange getTextRange() {
     return myComment.getTextRange();
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
   @Override
-  @NotNull
-  public PsiElement getNavigationElement() {
+  public @NotNull PsiElement getNavigationElement() {
     return myComment;
   }
 
@@ -78,8 +75,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   }
 
   @Override
-  @Nullable
-  public PsiType getPsiType() {
+  public @Nullable PsiType getPsiType() {
     if (myType == null) {
       return null;
     }
@@ -115,8 +111,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   }
 
   @Override
-  @NotNull
-  public String getlookUpString() {
+  public @NotNull String getlookUpString() {
     return myText;
   }
 }

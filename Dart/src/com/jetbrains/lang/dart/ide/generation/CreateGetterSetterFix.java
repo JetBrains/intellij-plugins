@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -76,8 +76,7 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   }
 
   @Override
-  @NotNull
-  protected String getNothingFoundMessage() {
+  protected @NotNull String getNothingFoundMessage() {
     return myStrategy.myNothingFoundMessageSupplier.get();
   }
 

@@ -18,11 +18,11 @@ package com.intellij.protobuf.ide.style;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
+import com.intellij.protobuf.ide.util.ResourceUtil;
+import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
-import com.intellij.protobuf.ide.util.ResourceUtil;
-import com.intellij.protobuf.lang.PbTextLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -30,9 +30,8 @@ import java.io.IOException;
 /** {@link LanguageCodeStyleSettingsProvider} for use with prototext files. */
 public class PbTextLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return PbTextLanguage.INSTANCE;
   }
 

@@ -31,8 +31,7 @@ public class QualifiedNameIndex extends StringStubIndexExtension<PbNamedElement>
   }
 
   @Override
-  @NotNull
-  public StubIndexKey<String, PbNamedElement> getKey() {
+  public @NotNull StubIndexKey<String, PbNamedElement> getKey() {
     return KEY;
   }
 

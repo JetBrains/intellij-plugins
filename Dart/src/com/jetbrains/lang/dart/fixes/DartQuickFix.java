@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.CommonBundle;
@@ -40,24 +40,22 @@ import java.util.List;
 
 public final class DartQuickFix implements IntentionAction, Comparable<IntentionAction> {
 
-  @NotNull private final DartQuickFixSet myQuickFixSet;
+  private final @NotNull DartQuickFixSet myQuickFixSet;
   private final int myIndex;
-  @Nullable private SourceChange mySourceChange;
+  private @Nullable SourceChange mySourceChange;
 
-  public DartQuickFix(@NotNull final DartQuickFixSet quickFixSet, final int index) {
+  public DartQuickFix(final @NotNull DartQuickFixSet quickFixSet, final int index) {
     myIndex = index;
     myQuickFixSet = quickFixSet;
   }
 
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return DartBundle.message("intention.family.name");
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     myQuickFixSet.ensureInitialized();
 
     if (mySourceChange == null) return "";
@@ -75,7 +73,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   }
 
   @Override
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     if (editor == null || file == null) {
       // not sure this can ever happen
       return;
@@ -145,7 +143,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   }
 
   @Override
-  public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
+  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
     if (editor == null || file == null) {
       // not sure this can ever happen
       return false;
@@ -174,7 +172,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     return true;
   }
 
-  void setSourceChange(@Nullable final SourceChange sourceChange) {
+  void setSourceChange(final @Nullable SourceChange sourceChange) {
     mySourceChange = sourceChange;
   }
 

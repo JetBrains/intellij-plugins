@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.configurations.*;
@@ -19,8 +19,7 @@ import static org.osmorc.i18n.OsmorcBundle.message;
 public final class BndRunConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "osgi.bnd.run";
 
-  @NotNull
-  public static BndRunConfigurationType getInstance() {
+  public static @NotNull BndRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(BndRunConfigurationType.class);
   }
 
@@ -35,7 +34,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
     return "reference.dialogs.rundebug.osgi.bnd.run";
   }
 
-  private static abstract class FactoryBase extends ConfigurationFactory {
+  private abstract static class FactoryBase extends ConfigurationFactory {
     private final @Nls String myName;
     private final NotNullLazyValue<? extends Icon> myIcon;
     private final String myId;
@@ -67,9 +66,8 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
       return BndProjectImporter.getWorkspace(project) != null;
     }
 
-    @Nullable
     @Override
-    public Class<? extends BaseState> getOptionsClass() {
+    public @Nullable Class<? extends BaseState> getOptionsClass() {
       return BndRunConfigurationOptions.class;
     }
   }
@@ -79,9 +77,8 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
       super(type, message("bnd.run.configuration.name"), "Run Launcher", createValue(() -> OsmorcIdeaIcons.BndLaunch));
     }
 
-    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+    public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new BndRunConfigurationBase.Launch(project, this, "");
     }
   }
@@ -91,9 +88,8 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
       super(type, message("bnd.test.configuration.name"), "Test Launcher (JUnit)", createValue(() -> OsmorcIdeaIcons.BndTest));
     }
 
-    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+    public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new BndRunConfigurationBase.Test(project, this, "");
     }
   }

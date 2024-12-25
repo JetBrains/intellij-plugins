@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -127,8 +127,7 @@ public final class FlexCommonUtils {
   }
 
 
-  @Nullable
-  public static String getBCSpecifier(final JpsFlexBuildConfiguration bc) {
+  public static @Nullable String getBCSpecifier(final JpsFlexBuildConfiguration bc) {
     if (!bc.isTempBCForCompilation()) return null;
     if (isFlexUnitBC(bc)) return "flexunit";
     if (isRLMTemporaryBC(bc)) return "module " + StringUtil.getShortName(bc.getMainClass());
@@ -157,8 +156,7 @@ public final class FlexCommonUtils {
     return RUN_CONFIG_TYPE_PREFIX + runConfigTypeId + RUN_CONFIG_NAME_PREFIX + runConfigName;
   }
 
-  @Nullable
-  public static Pair<String, String> getRunConfigTypeIdAndNameByBuildTargetId(final String buildTargetId) {
+  public static @Nullable Pair<String, String> getRunConfigTypeIdAndNameByBuildTargetId(final String buildTargetId) {
     if (buildTargetId.startsWith(RUN_CONFIG_TYPE_PREFIX)) {
       final int index = buildTargetId.indexOf(RUN_CONFIG_NAME_PREFIX);
       assert index > 0 : buildTargetId;
@@ -174,8 +172,7 @@ public final class FlexCommonUtils {
    * {@code Trinity.third} - forced debug status: {@code true} or {@code false} means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
    * {@code null} means that bc is compiled as is (i.e. as configured) without any modifications
    */
-  @Nullable
-  public static Trinity<String, String, Boolean> getModuleAndBCNameAndForcedDebugStatusByBuildTargetId(final String buildTargetId) {
+  public static @Nullable Trinity<String, String, Boolean> getModuleAndBCNameAndForcedDebugStatusByBuildTargetId(final String buildTargetId) {
     if (buildTargetId.startsWith(MODULE_PREFIX)) {
       final int bcIndex = buildTargetId.indexOf(BC_PREFIX);
       final int forceDebugIndex = buildTargetId.indexOf(FORCED_DEBUG_STATUS);
@@ -195,10 +192,9 @@ public final class FlexCommonUtils {
     return null;
   }
 
-  @Nullable
-  public static <P extends JpsElement> JpsTypedRunConfiguration<P> findRunConfiguration(final @NotNull JpsProject project,
-                                                                                        final @NotNull JpsRunConfigurationType<P> runConfigType,
-                                                                                        final @NotNull String runConfigName) {
+  public static @Nullable <P extends JpsElement> JpsTypedRunConfiguration<P> findRunConfiguration(final @NotNull JpsProject project,
+                                                                                                  final @NotNull JpsRunConfigurationType<P> runConfigType,
+                                                                                                  final @NotNull String runConfigName) {
     for (JpsTypedRunConfiguration<P> runConfig : project.getRunConfigurations(runConfigType)) {
       if (runConfigName.equals(runConfig.getName())) {
         return runConfig;
@@ -208,8 +204,7 @@ public final class FlexCommonUtils {
     return null;
   }
 
-  @NotNull
-  public static List<String> getOptionValues(final String commandLine, final String... optionAndAliases) {
+  public static @NotNull List<String> getOptionValues(final String commandLine, final String... optionAndAliases) {
     if (StringUtil.isEmpty(commandLine)) {
       return Collections.emptyList();
     }
@@ -293,8 +288,7 @@ public final class FlexCommonUtils {
     return dir == null ? "" : dir.getPath();
   }
 
-  @Nullable
-  public static String findXMLElement(final File file, final String xmlElement) {
+  public static @Nullable String findXMLElement(final File file, final String xmlElement) {
     try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
       return findXMLElement(inputStream, xmlElement);
     }
@@ -303,8 +297,7 @@ public final class FlexCommonUtils {
     }
   }
 
-  @Nullable
-  public static String findXMLElement(final InputStream is, final String xmlElement) {
+  public static @Nullable String findXMLElement(final InputStream is, final String xmlElement) {
     // xmlElement has format "<root_tag><child_tag>"
     final List<String> elementNames = StringUtil.split(StringUtil.replace(xmlElement, ">", ""), "<");
     if (elementNames.isEmpty()) return null;
@@ -337,8 +330,7 @@ public final class FlexCommonUtils {
     return getMaximumVersion(getTargetPlayers(sdkHome));
   }
 
-  @NotNull
-  public static String getMaximumVersion(final String[] versions) {
+  public static @NotNull String getMaximumVersion(final String[] versions) {
     String version = versions.length > 0 ? versions[0] : "";
     for (int i = 1; i < versions.length; i++) {
       if (StringUtil.compareVersionNumbers(versions[i], version) > 0) {
@@ -404,8 +396,7 @@ public final class FlexCommonUtils {
    *
    * @return {@code null} if entry should not be included at all
    */
-  @Nullable
-  public static LinkageType getSdkEntryLinkageType(final String swcPath, final JpsFlexBuildConfiguration bc) {
+  public static @Nullable LinkageType getSdkEntryLinkageType(final String swcPath, final JpsFlexBuildConfiguration bc) {
     final JpsSdk<?> sdk = bc.getSdk();
     LOG.assertTrue(sdk != null);
     return getSdkEntryLinkageType(sdk.getHomePath(), swcPath, bc.getNature(), bc.getDependencies().getTargetPlayer(),
@@ -417,8 +408,7 @@ public final class FlexCommonUtils {
    *
    * @return {@code null} if entry should not be included at all
    */
-  @Nullable
-  public static LinkageType getSdkEntryLinkageType(final String sdkHome,
+  public static @Nullable LinkageType getSdkEntryLinkageType(final String sdkHome,
                                                    final String swcPath,
                                                    final BuildConfigurationNature bcNature,
                                                    final String targetPlayer,
@@ -855,8 +845,7 @@ public final class FlexCommonUtils {
     return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
   }
 
-  @Nullable
-  public static String getPathRelativeToSourceRoot(final JpsModule module, final String _path) {
+  public static @Nullable String getPathRelativeToSourceRoot(final JpsModule module, final String _path) {
     final String path = FileUtil.toSystemIndependentName(_path);
     for (JpsModuleSourceRoot srcRoot : module.getSourceRoots()) {
       final String rootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
@@ -866,8 +855,7 @@ public final class FlexCommonUtils {
     return null;
   }
 
-  @Nullable
-  public static String getPathRelativeToContentRoot(final JpsModule module, final String path) {
+  public static @Nullable String getPathRelativeToContentRoot(final JpsModule module, final String path) {
     for (String rootUrl : module.getContentRootsList().getUrls()) {
       final String rootPath = JpsPathUtil.urlToPath(rootUrl);
       if (path.equals(rootPath)) return "";
@@ -901,8 +889,7 @@ public final class FlexCommonUtils {
     return StringUtil.replace(text, from, to);
   }
 
-  @Nullable
-  public static String getVersionOfAirSdkIncludedInFlexSdk(final String flexSdkHomePath) {
+  public static @Nullable String getVersionOfAirSdkIncludedInFlexSdk(final String flexSdkHomePath) {
     final File adtFile = new File(flexSdkHomePath + "/lib/adt.jar");
     if (!adtFile.isFile()) {
       return null;
@@ -965,8 +952,7 @@ public final class FlexCommonUtils {
     }
   }
 
-  @Nullable
-  public static String getAirVersion(final String sdkHomePath, final String sdkVersion) {
+  public static @Nullable String getAirVersion(final String sdkHomePath, final String sdkVersion) {
     final String version;
 
     if (sdkVersion != null && sdkVersion.startsWith(AIR_SDK_VERSION_PREFIX)) {
@@ -1021,8 +1007,7 @@ public final class FlexCommonUtils {
     return builder.toString();
   }
 
-  @Nullable
-  public static String parseAirVersionFromDescriptorFile(final String descriptorFilePath) {
+  public static @Nullable String parseAirVersionFromDescriptorFile(final String descriptorFilePath) {
     if (StringUtil.isEmpty(descriptorFilePath)) return null;
 
     try {

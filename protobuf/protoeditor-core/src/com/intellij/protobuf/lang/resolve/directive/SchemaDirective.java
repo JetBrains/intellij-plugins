@@ -83,8 +83,7 @@ public class SchemaDirective {
   }
 
   /** Returns the SchemaDirective for the given file, or <code>null</code> if one is not found. */
-  @Nullable
-  public static SchemaDirective find(PsiFile file) {
+  public static @Nullable SchemaDirective find(PsiFile file) {
     return CachedValuesManager.getCachedValue(
         file, () -> Result.create(findNoCache(file), PbCompositeModificationTracker.byElement(file)));
   }
@@ -139,26 +138,22 @@ public class SchemaDirective {
   }
 
   /** Returns the proto-file comment component. */
-  @Nullable
-  public SchemaComment getFileComment() {
+  public @Nullable SchemaComment getFileComment() {
     return fileComment;
   }
 
   /** Returns the proto-message comment component. */
-  @Nullable
-  public SchemaComment getMessageComment() {
+  public @Nullable SchemaComment getMessageComment() {
     return messageComment;
   }
 
   /** Returns the (possibly empty) list proto-import comments. */
-  @NotNull
-  public ImmutableList<? extends SchemaComment> getImportComments() {
+  public @NotNull ImmutableList<? extends SchemaComment> getImportComments() {
     return importComments;
   }
 
   /** Returns the {@link SchemaComment} for the given {@link PsiComment}. */
-  @Nullable
-  public SchemaComment getSchemaComment(PsiComment comment) {
+  public @Nullable SchemaComment getSchemaComment(PsiComment comment) {
     if (comment == null) {
       return null;
     }
@@ -177,8 +172,7 @@ public class SchemaDirective {
   }
 
   /** Returns the resolved {@link PbMessageType Message}, or <code>null</code>. */
-  @Nullable
-  public PbMessageType getMessage() {
+  public @Nullable PbMessageType getMessage() {
     if (messageComment == null) {
       return null;
     }

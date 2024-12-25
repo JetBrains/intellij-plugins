@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlUtil;
@@ -28,8 +28,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     final String name = CfmlPsiUtil.getPureAttributeValue(this, "name");
     final String nameFromFile = CfmlUtil.getFileName(this);
     return !StringUtil.isEmpty(nameFromFile) ? nameFromFile : (name != null ? name : "");
@@ -94,8 +93,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   @Override
-  @NotNull
-  public String getTagName() {
+  public @NotNull String getTagName() {
     PsiElement childByType = findChildByType(CfmlTokenTypes.CF_TAG_NAME);
     if (childByType != null) {
       if ("cfinterface".equalsIgnoreCase(childByType.getText())) {
@@ -115,8 +113,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   @Override
-  @Nullable
-  public String getSuperName() {
+  public @Nullable String getSuperName() {
     final PsiElement rEx = getAttributeValueElement("extends");
     return rEx == null ? null : rEx.getText();
   }
@@ -132,8 +129,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   @Override
-  @Nullable
-  public CfmlComponent getSuper() {
+  public @Nullable CfmlComponent getSuper() {
     return CfmlPsiUtil.getSuperComponent(this);
   }
 

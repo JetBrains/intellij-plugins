@@ -36,8 +36,8 @@ public class AddJobToChangeListDialog extends DialogWrapper {
   private final ConnectionKey myKey;
 
   private JPanel myResultsPanel;
-  private final static String NO_RESULTS = "NO_RESULTS";
-  private final static String FOUND_JOBS = "FOUND_JOBS";
+  private static final String NO_RESULTS = "NO_RESULTS";
+  private static final String FOUND_JOBS = "FOUND_JOBS";
   private JComponent myTableComponent;
   private JLabel myLimitExceededLabel;
 

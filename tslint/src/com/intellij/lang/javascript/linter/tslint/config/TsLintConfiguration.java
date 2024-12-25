@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
@@ -28,8 +28,7 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     myPackage = new JSLinterPackage(project, "tslint", true);
   }
 
-  @NotNull
-  public static TsLintConfiguration getInstance(@NotNull final Project project) {
+  public static @NotNull TsLintConfiguration getInstance(final @NotNull Project project) {
     return JSLinterConfiguration.getInstance(project, TsLintConfiguration.class);
   }
 
@@ -38,23 +37,20 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     storeLinterLocalPaths(state);
   }
 
-  @NotNull
   @Override
-  protected TsLintState loadPrivateSettings(@NotNull TsLintState state) {
+  protected @NotNull TsLintState loadPrivateSettings(@NotNull TsLintState state) {
     TsLintState.Builder builder = new TsLintState.Builder(state);
     restoreLinterLocalPaths(builder);
     return builder.build();
   }
 
-  @NotNull
   @Override
-  protected Class<? extends JSLinterInspection> getInspectionClass() {
+  protected @NotNull Class<? extends JSLinterInspection> getInspectionClass() {
     return TsLintInspection.class;
   }
 
-  @Nullable
   @Override
-  protected Element toXml(@NotNull TsLintState state) {
+  protected @Nullable Element toXml(@NotNull TsLintState state) {
     final Element root = new Element(TSLINT_ELEMENT_NAME);
     if (state.isCustomConfigFileUsed()) {
       root.setAttribute(IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME, Boolean.TRUE.toString());
@@ -74,9 +70,8 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     return root;
   }
 
-  @NotNull
   @Override
-  protected TsLintState fromXml(@NotNull Element element) {
+  protected @NotNull TsLintState fromXml(@NotNull Element element) {
     final TsLintState.Builder builder = new TsLintState.Builder();
     builder.setCustomConfigFileUsed(Boolean.parseBoolean(element.getAttributeValue(IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME)));
     String customConfigFilePath = StringUtil.notNullize(element.getAttributeValue(CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME));
@@ -99,9 +94,8 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     myPackage.force(state.getNodePackageRef());
   }
 
-  @NotNull
   @Override
-  protected TsLintState getDefaultState() {
+  protected @NotNull TsLintState getDefaultState() {
     return TsLintState.DEFAULT;
   }
 }

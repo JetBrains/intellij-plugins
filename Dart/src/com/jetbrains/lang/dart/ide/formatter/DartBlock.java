@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.*;
@@ -85,9 +85,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     return super.isIncomplete() || myNode.getElementType() == ARGUMENT_LIST;
   }
 
-  @NotNull
   @Override
-  public ChildAttributes getChildAttributes(final int newIndex) {
+  public @NotNull ChildAttributes getChildAttributes(final int newIndex) {
     final IElementType elementType = myNode.getElementType();
     final DartBlock previousBlock = newIndex == 0 ? null : getSubDartBlocks().get(newIndex - 1);
     final IElementType previousType = previousBlock == null ? null : previousBlock.getNode().getElementType();
@@ -137,7 +136,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     return new ChildAttributes(previousBlock.getIndent(), previousBlock.getAlignment());
   }
 
-  private static boolean isLastTokenInSwitchCase(@NotNull final List<DartBlock> blocks) {
+  private static boolean isLastTokenInSwitchCase(final @NotNull List<DartBlock> blocks) {
     int size = blocks.size();
     // No blocks.
     if (size == 0) {

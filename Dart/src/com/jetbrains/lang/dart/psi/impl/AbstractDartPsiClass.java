@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
+public abstract class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
 
   private CachedValue<Map<String, List<DartComponent>>> myMembersCache;
 
@@ -32,21 +32,18 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return this instanceof DartEnumDefinition;
   }
 
-  @NotNull
   @Override
-  public List<DartEnumConstantDeclaration> getEnumConstantDeclarationList() {
+  public @NotNull List<DartEnumConstantDeclaration> getEnumConstantDeclarationList() {
     return Collections.emptyList();
   }
 
   @Override
-  @Nullable
-  public DartTypeParameters getTypeParameters() {
+  public @Nullable DartTypeParameters getTypeParameters() {
     return null;
   }
 
   @Override
-  @NotNull
-  public DartClassResolveResult getSuperClassResolvedOrObjectClass() {
+  public @NotNull DartClassResolveResult getSuperClassResolvedOrObjectClass() {
     if (DartResolveUtil.OBJECT.equals(getName())) return DartClassResolveResult.EMPTY;
 
     final DartType superClass = getSuperClass();
@@ -54,9 +51,8 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
                               : DartResolveUtil.findCoreClass(this, DartResolveUtil.OBJECT);
   }
 
-  @Nullable
   @Override
-  public DartType getSuperClass() {
+  public @Nullable DartType getSuperClass() {
     final DartSuperclass superclass = PsiTreeUtil.getChildOfType(this, DartSuperclass.class);
     if (superclass != null) return superclass.getType();
 
@@ -66,9 +62,8 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return null;
   }
 
-  @NotNull
   @Override
-  public List<DartType> getImplementsList() {
+  public @NotNull List<DartType> getImplementsList() {
     final DartMixinApplication mixinApp = PsiTreeUtil.getChildOfType(this, DartMixinApplication.class);
     final DartInterfaces interfaces = mixinApp != null ? mixinApp.getInterfaces() : PsiTreeUtil.getChildOfType(this, DartInterfaces.class);
     if (interfaces != null) return DartResolveUtil.getTypes(interfaces.getTypeList());
@@ -76,9 +71,8 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<DartType> getMixinsList() {
+  public @NotNull List<DartType> getMixinsList() {
     final DartMixinApplication mixinApp = PsiTreeUtil.getChildOfType(this, DartMixinApplication.class);
 
     final DartMixins mixins = PsiTreeUtil.getChildOfType(mixinApp != null ? mixinApp : this, DartMixins.class);
@@ -93,23 +87,20 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return getTypeParameters() != null;
   }
 
-  @NotNull
   @Override
-  public List<DartComponent> getMethods() {
+  public @NotNull List<DartComponent> getMethods() {
     final List<DartComponent> components = DartResolveUtil.findNamedSubComponents(this);
     return DartResolveUtil.filterComponentsByType(components, DartComponentType.METHOD);
   }
 
-  @NotNull
   @Override
-  public List<DartComponent> getFields() {
+  public @NotNull List<DartComponent> getFields() {
     final List<DartComponent> components = DartResolveUtil.findNamedSubComponents(this);
     return DartResolveUtil.filterComponentsByType(components, DartComponentType.FIELD);
   }
 
-  @NotNull
   @Override
-  public List<DartComponent> getConstructors() {
+  public @NotNull List<DartComponent> getConstructors() {
     final List<DartComponent> components = DartResolveUtil.getNamedSubComponents(this);
     final String className = getName();
     if (className == null) {
@@ -123,9 +114,8 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return DartResolveUtil.findOperators(this);
   }
 
-  @Nullable
   @Override
-  public DartMethodDeclaration findOperator(final String operator, @Nullable final DartClass rightDartClass) {
+  public @Nullable DartMethodDeclaration findOperator(final String operator, final @Nullable DartClass rightDartClass) {
     return ContainerUtil.find(getOperators(), (Condition<PsiElement>)element -> {
       if (element instanceof DartMethodDeclaration method) {
         if (method.isOperator() && operator.equals(method.getName())) {
@@ -141,12 +131,12 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   }
 
   @Override
-  public DartComponent findFieldByName(@NotNull final String name) {
+  public DartComponent findFieldByName(final @NotNull String name) {
     return ContainerUtil.find(getFields(), component -> name.equals(component.getName()));
   }
 
   @Override
-  public DartComponent findMethodByName(@NotNull final String name) {
+  public DartComponent findMethodByName(final @NotNull String name) {
     return ContainerUtil.find(getMethods(), component -> name.equals(component.getName()));
   }
 
@@ -156,9 +146,8 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return membersByName.isEmpty() ? null : membersByName.iterator().next();
   }
 
-  @NotNull
   @Override
-  public List<DartComponent> findMembersByName(@NotNull final String name) {
+  public @NotNull List<DartComponent> findMembersByName(final @NotNull String name) {
     ensureMembersCacheInitialized();
     final List<DartComponent> components = myMembersCache.getValue().get(name);
     return components == null ? Collections.emptyList() : components;

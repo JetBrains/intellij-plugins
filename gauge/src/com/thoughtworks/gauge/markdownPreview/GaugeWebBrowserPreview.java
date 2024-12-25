@@ -27,8 +27,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
@@ -58,9 +58,8 @@ final class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
     return fileType instanceof SpecFileType || fileType instanceof ConceptFileType;
   }
 
-  @Nullable
   @Override
-  protected Url getUrl(@NotNull OpenInBrowserRequest request, @NotNull VirtualFile virtualFile) {
+  protected @Nullable Url getUrl(@NotNull OpenInBrowserRequest request, @NotNull VirtualFile virtualFile) {
     try {
       if (!request.isAppendAccessToken()) return null;
       GaugeSettingsModel settings = getGaugeSettings();
@@ -77,8 +76,7 @@ final class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
     return null;
   }
 
-  @Nullable
-  private static Url previewUrl(OpenInBrowserRequest request, VirtualFile virtualFile, GaugeSettingsModel settings)
+  private static @Nullable Url previewUrl(OpenInBrowserRequest request, VirtualFile virtualFile, GaugeSettingsModel settings)
     throws IOException, InterruptedException {
     ProcessBuilder builder = new ProcessBuilder(settings.getGaugePath(), GaugeConstants.DOCS, Spectacle.NAME, virtualFile.getPath());
     String projectName = request.getProject().getName();

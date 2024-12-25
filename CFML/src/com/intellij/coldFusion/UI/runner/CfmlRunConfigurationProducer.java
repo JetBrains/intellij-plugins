@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -28,12 +28,11 @@ import java.net.URL;
 
 final class CfmlRunConfigurationProducer extends LazyRunConfigurationProducer<CfmlRunConfiguration> {
   private static final Logger LOG = Logger.getInstance(CfmlRunConfigurationProducer.class);
-  public final static String WWW_ROOT = "wwwroot";
-  public final static String DEFAULT_HOST = "http://localhost:8500";
+  public static final String WWW_ROOT = "wwwroot";
+  public static final String DEFAULT_HOST = "http://localhost:8500";
 
-  @NotNull
   @Override
-  public ConfigurationFactory getConfigurationFactory() {
+  public @NotNull ConfigurationFactory getConfigurationFactory() {
     return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
   }
 
@@ -100,14 +99,12 @@ final class CfmlRunConfigurationProducer extends LazyRunConfigurationProducer<Cf
     return true;
   }
 
-  @NotNull
-  private static String generateName(PsiFile containingFile) {
+  private static @NotNull String generateName(PsiFile containingFile) {
     return StringUtil.isNotEmpty(containingFile.getVirtualFile().getPath()) ? PathUtil
       .getFileName(containingFile.getVirtualFile().getPath()) : "";
   }
 
-  @NotNull
-  private static String buildPageUrl(ConfigurationContext context, VirtualFile file) {
+  private static @NotNull String buildPageUrl(ConfigurationContext context, VirtualFile file) {
     String result;
     String absolutePageUrl = file.getUrl();
     int wwwrootIndex = absolutePageUrl.indexOf(WWW_ROOT);

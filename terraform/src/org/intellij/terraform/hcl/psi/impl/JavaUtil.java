@@ -21,8 +21,7 @@ public final class JavaUtil {
   public static final String ourEscapesTable = "\"\"\\\\b\bf\fn\nr\rt\tv\013a\007";
   public static final String ourEscapedSymbols = "\"\\\b\f\n\r\t\013\007";
 
-  @NotNull
-  public static List<Pair<TextRange, String>> getTextFragments(@NotNull HCLStringLiteral literal) {
+  public static @NotNull List<Pair<TextRange, String>> getTextFragments(@NotNull HCLStringLiteral literal) {
     List<Pair<TextRange, String>> result = literal.getFirstChild().getUserData(STRING_FRAGMENTS);
     if (result != null) return result;
     result = doGetTextFragments(literal.getText(), UtilKt.isInHCLFileWithInterpolations(literal), true);
@@ -31,16 +30,14 @@ public final class JavaUtil {
     return result;
   }
 
-  @NotNull
-  public static List<Pair<TextRange, String>> getTextFragments(@NotNull final HCLHeredocContent content) {
+  public static @NotNull List<Pair<TextRange, String>> getTextFragments(final @NotNull HCLHeredocContent content) {
     return CachedValuesManager.getCachedValue(content, () -> {
       List<Pair<TextRange, String>> result = doGetTextFragments(content.getText(), UtilKt.isInHCLFileWithInterpolations(content), false);
       return CachedValueProvider.Result.create(result, content);
     });
   }
 
-  @NotNull
-  static List<Pair<TextRange, String>> doGetTextFragments(@NotNull String text, boolean interpolations, boolean quotes) {
+  static @NotNull List<Pair<TextRange, String>> doGetTextFragments(@NotNull String text, boolean interpolations, boolean quotes) {
     List<Pair<TextRange, String>> result = new SmartList<>();
     final int length = text.length();
     int pos = quotes ? 1 : 0, unescapedSequenceStart = pos;

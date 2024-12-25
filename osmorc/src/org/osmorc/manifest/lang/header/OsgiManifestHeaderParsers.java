@@ -56,9 +56,8 @@ public final class OsgiManifestHeaderParsers implements HeaderParserProvider {
     }
   }
 
-  @NotNull
   @Override
-  public Map<String, HeaderParser> getHeaderParsers() {
+  public @NotNull Map<String, HeaderParser> getHeaderParsers() {
     return myParsers;
   }
 }

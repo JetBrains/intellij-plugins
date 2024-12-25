@@ -11,15 +11,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public final class PerforceChangeListHelper {
-  @NonNls private static final String DEFAULT_DESCRIPTION = "<none>";
+  private static final @NonNls String DEFAULT_DESCRIPTION = "<none>";
 
   public static String createSpecification(final String description,
                                            final long changeListNumber,
-                                           @Nullable final List<String> files,
-                                           @Nullable final String clientName,
-                                           @Nullable final String userName,
+                                           final @Nullable List<String> files,
+                                           final @Nullable String clientName,
+                                           final @Nullable String userName,
                                            final boolean forUpdate, boolean restricted) throws VcsException {
-    @NonNls final StringBuilder result = new StringBuilder();
+    final @NonNls StringBuilder result = new StringBuilder();
     result.append("Change:\t");
     if (changeListNumber == -1) {
       result.append("new");
@@ -69,7 +69,7 @@ public final class PerforceChangeListHelper {
   }
 
   public static long parseCreatedListNumber(final String output) {
-    @NonNls final String prefix = "Change";
+    final @NonNls String prefix = "Change";
     String copy = output;
     if (copy.startsWith(prefix)) {
       copy = copy.substring(prefix.length()).trim();

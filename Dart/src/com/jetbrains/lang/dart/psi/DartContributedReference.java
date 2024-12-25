@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.util.TextRange;
@@ -18,34 +18,31 @@ class DartContributedReference implements PsiPolyVariantReference {
 
   private static final DartContributedReferenceResolver RESOLVER = new DartContributedReferenceResolver();
 
-  @NotNull private final PsiElement myElement;
-  @NotNull private final DartServerData.DartNavigationRegion myNavigationRegion;
-  @NotNull private final TextRange myRefRange;
-  @NotNull private final String myRefText;
+  private final @NotNull PsiElement myElement;
+  private final @NotNull DartServerData.DartNavigationRegion myNavigationRegion;
+  private final @NotNull TextRange myRefRange;
+  private final @NotNull String myRefText;
 
-  DartContributedReference(@NotNull final PsiElement element,
+  DartContributedReference(final @NotNull PsiElement element,
                            final int elementStartOffsetInHost,
-                           @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
+                           final @NotNull DartServerData.DartNavigationRegion navigationRegion) {
     myElement = element;
     myNavigationRegion = navigationRegion;
     myRefRange = TextRange.from(navigationRegion.getOffset() - elementStartOffsetInHost, navigationRegion.getLength());
     myRefText = myRefRange.substring(element.getText());
   }
 
-  @NotNull
   @Override
-  public PsiElement getElement() {
+  public @NotNull PsiElement getElement() {
     return myElement;
   }
 
-  @NotNull
-  public DartServerData.DartNavigationRegion getNavigationRegion() {
+  public @NotNull DartServerData.DartNavigationRegion getNavigationRegion() {
     return myNavigationRegion;
   }
 
-  @NotNull
   @Override
-  public TextRange getRangeInElement() {
+  public @NotNull TextRange getRangeInElement() {
     return myRefRange;
   }
 
@@ -64,9 +61,8 @@ class DartContributedReference implements PsiPolyVariantReference {
     return DartResolveUtil.toCandidateInfoArray(elements);
   }
 
-  @NotNull
   @Override
-  public String getCanonicalText() {
+  public @NotNull String getCanonicalText() {
     return myRefText;
   }
 
@@ -94,7 +90,7 @@ class DartContributedReference implements PsiPolyVariantReference {
     implements ResolveCache.AbstractResolver<DartContributedReference, List<? extends PsiElement>> {
 
     @Override
-    public List<? extends PsiElement> resolve(@NotNull final DartContributedReference reference, boolean incompleteCode) {
+    public List<? extends PsiElement> resolve(final @NotNull DartContributedReference reference, boolean incompleteCode) {
       return DartResolver.getTargetElements(reference.getElement().getProject(), reference.getNavigationRegion());
     }
   }

@@ -42,9 +42,8 @@ public class EquinoxInstanceManager extends AbstractFrameworkInstanceManager {
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("org.eclipse.osgi_.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile(".*\\.gogo\\.(command|runtime|shell)_.*\\.jar");
 
-  @NotNull
   @Override
-  public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
+  public @NotNull Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
     if (type == FrameworkBundleType.SHELL && VersionComparatorUtil.compare(instance.getVersion(), "3.8") < 0) {
       return Collections.singleton(new SelectedBundle(SelectedBundle.BundleType.FrameworkBundle, "Equinox built-in console", null));
     }

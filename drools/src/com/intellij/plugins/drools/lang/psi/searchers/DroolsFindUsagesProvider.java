@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.searchers;
 
 import com.intellij.lang.findUsages.FindUsagesProvider;
@@ -20,8 +20,7 @@ public final class DroolsFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull @NonNls
-  public String getType(@NotNull final PsiElement element) {
+  public @NotNull @NonNls String getType(final @NotNull PsiElement element) {
     if (element instanceof PsiClass) return "class";
     if (element instanceof PsiMethod) return "method";
     if (element instanceof PsiField) return "field";
@@ -31,8 +30,7 @@ public final class DroolsFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getDescriptiveName(@NotNull final PsiElement element) {
+  public @NotNull String getDescriptiveName(final @NotNull PsiElement element) {
     if (element instanceof PsiNamedElement) {
       return StringUtil.notNullize(((PsiNamedElement)element).getName());
     }
@@ -40,8 +38,7 @@ public final class DroolsFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  @NotNull
-  public String getNodeText(@NotNull final PsiElement element, final boolean useFullName) {
+  public @NotNull String getNodeText(final @NotNull PsiElement element, final boolean useFullName) {
     final String name = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : null;
     return name != null ? name : element.getText();
   }

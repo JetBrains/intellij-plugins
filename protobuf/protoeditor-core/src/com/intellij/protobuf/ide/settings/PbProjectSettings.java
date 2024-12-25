@@ -108,8 +108,7 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     state.importPathEntries = importPathEntries == null ? Collections.emptyList() : importPathEntries;
   }
 
-  @NlsSafe
-  public String getDescriptorPath() {
+  public @NlsSafe String getDescriptorPath() {
     return state.descriptorPath;
   }
 
@@ -187,10 +186,8 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
    * that "something.proto" exists in "/mycompany/myproject/src/protos".
    */
   public static final class ImportPathEntry {
-    @NlsSafe
-    private String location;
-    @NlsSafe
-    private String prefix;
+    private @NlsSafe String location;
+    private @NlsSafe String prefix;
 
     public ImportPathEntry(String location, String prefix) {
       this.location = StringUtil.defaultIfEmpty(location, "");
@@ -249,7 +246,6 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     public boolean includeWellKnownProtos = true;
     public boolean indexBasedResolveEnabled = false;
     public List<ImportPathEntry> importPathEntries = new SmartList<>();
-    @NlsSafe
-    public String descriptorPath = "";
+    public @NlsSafe String descriptorPath = "";
   }
 }
