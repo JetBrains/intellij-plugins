@@ -39,7 +39,7 @@ class MdxJSLanguageParser(
       override fun parseStatement() {
         if (builder.tokenType == JSTokenTypes.XML_START_TAG_START) {
           val exprStatement = this.builder.mark()
-          if (myJavaScriptParser.expressionParser.parseExpressionOptional()) {
+          if (parser.expressionParser.parseExpressionOptional()) {
             exprStatement.done(JSElementTypes.EXPRESSION_STATEMENT)
             exprStatement.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT_NO_EXTRA_LINEBREAK,
                                                     WhitespacesBinders.DEFAULT_RIGHT_BINDER)

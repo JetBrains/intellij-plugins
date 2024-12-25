@@ -20,7 +20,7 @@ class VueJSExtraParser(
   private val parseArgumentListNoMarker: () -> Unit,
   private val parseScriptGeneric: () -> Unit,
 ) : JavaScriptParserBase<ES6Parser>(parser) {
-  private val statementParser get() = myJavaScriptParser.statementParser
+  private val statementParser get() = parser.statementParser
 
   fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?, expressionContent: IElementType) {
     val rootMarker = builder.mark()
@@ -104,7 +104,7 @@ class VueJSExtraParser(
     else {
       builder.advanceLexer()
     }
-    myJavaScriptParser.expressionParser.parseExpression()
+    parser.expressionParser.parseExpression()
     vForExpr.done(VueJSElementTypes.V_FOR_EXPRESSION)
   }
 
@@ -114,7 +114,7 @@ class VueJSExtraParser(
 
   private fun parseParametersExpression(exprType: IElementType, @Suppress("SameParameterValue") paramType: IElementType) {
     val parametersList = builder.mark()
-    val functionParser = object : ES6FunctionParser<ES6Parser>(myJavaScriptParser) {
+    val functionParser = object : ES6FunctionParser<ES6Parser>(parser) {
       override fun getParameterType(): IElementType = paramType
     }
     var first = true
@@ -164,7 +164,7 @@ class VueJSExtraParser(
           reported = true
           justReported = true
         }
-        if (!myJavaScriptParser.expressionParser.parseExpressionOptional()) {
+        if (!parser.expressionParser.parseExpressionOptional()) {
           if (!justReported) {
             val mark = builder.mark()
             builder.advanceLexer()
@@ -195,11 +195,11 @@ class VueJSExtraParser(
 
   private fun parseVariable(elementType: IElementType): Boolean {
     if (isIdentifierToken(builder.tokenType)) {
-      myJavaScriptParser.buildTokenElement(elementType)
+      parser.buildTokenElement(elementType)
       return true
     }
-    else if (myJavaScriptParser.functionParser.willParseDestructuringAssignment()) {
-      myJavaScriptParser.expressionParser.parseDestructuringElement(VueJSStubElementTypes.V_FOR_VARIABLE, false, false)
+    else if (parser.functionParser.willParseDestructuringAssignment()) {
+      parser.expressionParser.parseDestructuringElement(VueJSStubElementTypes.V_FOR_VARIABLE, false, false)
       return true
     }
     return false
@@ -215,7 +215,7 @@ class VueJSExtraParser(
       while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
         builder.advanceLexer()
         if (isIdentifierToken(builder.tokenType)) {
-          myJavaScriptParser.buildTokenElement(VueJSStubElementTypes.V_FOR_VARIABLE)
+          parser.buildTokenElement(VueJSStubElementTypes.V_FOR_VARIABLE)
         }
         i++
       }

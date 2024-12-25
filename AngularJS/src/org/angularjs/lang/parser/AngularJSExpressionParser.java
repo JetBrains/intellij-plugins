@@ -18,7 +18,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
   public AngularJSExpressionParser(AngularJSParser parser) {
     super(parser);
     myParser = parser;
-    myAngularJSMessageFormatParser = new AngularJSMessageFormatParser(myJavaScriptParser);
+    myAngularJSMessageFormatParser = new AngularJSMessageFormatParser(parser);
   }
 
   @Override

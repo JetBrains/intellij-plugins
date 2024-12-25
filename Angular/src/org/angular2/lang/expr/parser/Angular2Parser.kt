@@ -384,7 +384,7 @@ class Angular2Parser private constructor(
     override fun parsePropertyNoMarker(property: Marker): Boolean {
       val firstToken = builder.tokenType
       val secondToken = builder.lookAhead(1)
-      if (myJavaScriptParser!!.isIdentifierName(firstToken) &&  // Angular, in contrast to ECMAScript, accepts Reserved Words here
+      if (parser!!.isIdentifierName(firstToken) &&  // Angular, in contrast to ECMAScript, accepts Reserved Words here
           (secondToken === JSTokenTypes.COMMA || secondToken === JSTokenTypes.RBRACE)) {
         val ref = builder.mark()
         builder.advanceLexer()

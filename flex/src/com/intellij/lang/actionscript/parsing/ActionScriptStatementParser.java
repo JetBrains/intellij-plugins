@@ -27,7 +27,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       attribute.drop();
       return;
     }
-    myJavaScriptParser.getFunctionParser().parseAttributeBody();
+    parser.getFunctionParser().parseAttributeBody();
     attribute.done(JSStubElementTypes.ATTRIBUTE);
   }
 
@@ -41,7 +41,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       return false;
     }
 
-    myJavaScriptParser.getTypeParser().parseQualifiedTypeName();
+    parser.getTypeParser().parseQualifiedTypeName();
     return true;
   }
 
@@ -112,7 +112,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       return false;
     }
 
-    myJavaScriptParser.getTypeParser().parseQualifiedTypeName();
+    parser.getTypeParser().parseQualifiedTypeName();
 
     if (builder.getTokenType() == JSTokenTypes.EQ) {
       builder.advanceLexer();
@@ -123,7 +123,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
         builder.advanceLexer();
       }
       else if (tokenType == JSTokenTypes.STRING_LITERAL || tokenType == JSTokenTypes.IDENTIFIER) {
-        myJavaScriptParser.getExpressionParser().parseExpression();
+        parser.getExpressionParser().parseExpression();
       }
       else {
         builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.string.literal"));
@@ -148,7 +148,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
       if (checkMatches(builder, JSTokenTypes.NAMESPACE_KEYWORD, "javascript.parser.message.expected.namespace")) {
         if (checkMatches(builder, JSTokenTypes.EQ, "javascript.parser.message.expected.equal")) {
-          myJavaScriptParser.getExpressionParser().parseExpression();
+          parser.getExpressionParser().parseExpression();
         }
       }
     }
@@ -165,7 +165,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     PsiBuilder.Marker marker = builder.mark();
     if (!isBlockBodyContext()) {
       PsiBuilder.Marker modifierListMarker = builder.mark();
-      modifierListMarker.done(myJavaScriptParser.getFunctionParser().getAttributeListElementType());
+      modifierListMarker.done(parser.getFunctionParser().getAttributeListElementType());
     }
     return marker;
   }
@@ -185,13 +185,13 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     else {
       builder.advanceLexer();
 
-      if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName()) {
+      if (!parser.getTypeParser().parseQualifiedTypeName()) {
         builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
       }
 
       while (builder.getTokenType() == JSTokenTypes.COMMA) {
         builder.advanceLexer();
-        if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName()) {
+        if (!parser.getTypeParser().parseQualifiedTypeName()) {
           builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
           break;
         }
@@ -205,7 +205,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     final PsiBuilder.Marker _package = builder.mark();
     builder.advanceLexer();
     if (builder.getTokenType() == JSTokenTypes.IDENTIFIER) {
-      myJavaScriptParser.getTypeParser().parseQualifiedTypeName();
+      parser.getTypeParser().parseQualifiedTypeName();
     }
 
     if (builder.getTokenType() != JSTokenTypes.LBRACE) {
@@ -223,7 +223,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       builder.advanceLexer();
 
       final PsiBuilder.Marker nsAssignment = builder.mark();
-      if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName(true)) {
+      if (!parser.getTypeParser().parseQualifiedTypeName(true)) {
         builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
         nsAssignment.drop();
         return;
@@ -231,7 +231,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
       if (builder.getTokenType() == JSTokenTypes.EQ) {
         builder.advanceLexer();
-        if (!myJavaScriptParser.getTypeParser().parseQualifiedTypeName()) {
+        if (!parser.getTypeParser().parseQualifiedTypeName()) {
           builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
         }
 

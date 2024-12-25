@@ -31,7 +31,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
       LOG.error(builder.getTokenText());
     }
 
-    myJavaScriptParser.getStatementParser().parsePossiblyQualifiedName();
+    parser.getStatementParser().parsePossiblyQualifiedName();
   }
 
   @Override
@@ -93,12 +93,12 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
         if (builder.getTokenType() == JSTokenTypes.INCLUDE_KEYWORD) {
           hasSomethingInAttrList = true;
-          myJavaScriptParser.getStatementParser().parseIncludeDirective();
+          parser.getStatementParser().parseIncludeDirective();
         }
 
         if (builder.getTokenType() == JSTokenTypes.USE_KEYWORD && !doNotAllowAttributes) {
           hasSomethingInAttrList = true;
-          myJavaScriptParser.getStatementParser().parseUseNamespaceDirective();
+          parser.getStatementParser().parseUseNamespaceDirective();
         }
 
         if (builder.getTokenType() == JSTokenTypes.IDENTIFIER && !seenNs) {
@@ -113,7 +113,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
           if (!hadConditionalCompileBlock) {
             if (tokenType == JSTokenTypes.COLON_COLON &&
-                myJavaScriptParser.getExpressionParser().proceedWithNamespaceReference(identifier, false)) {
+                parser.getExpressionParser().proceedWithNamespaceReference(identifier, false)) {
               (identifier = identifier.precede()).done(JSElementTypes.REFERENCE_EXPRESSION);
               identifier.precede().done(JSElementTypes.CONDITIONAL_COMPILE_VARIABLE_REFERENCE);
               hadConditionalCompileBlock = true;
@@ -211,7 +211,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
             IElementType nextTokenType = builder.getTokenType();
             ident.rollbackTo();
             if (!JSTokenTypes.STRING_LITERALS.contains(nextTokenType)) {
-              myJavaScriptParser.getExpressionParser().parseSimpleExpression();
+              parser.getExpressionParser().parseSimpleExpression();
             }
             else {
               builder.advanceLexer();

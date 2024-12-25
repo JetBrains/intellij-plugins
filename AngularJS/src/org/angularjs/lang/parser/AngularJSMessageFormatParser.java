@@ -35,7 +35,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     //if (!myJavaScriptParser.getExpressionParser().parseQualifiedTypeName()) {
     myInsideSelectExpression = true;
     try {
-      if (!myJavaScriptParser.getExpressionParser().parseUnaryExpression()) {
+      if (!parser.getExpressionParser().parseUnaryExpression()) {
         return rollback(expr);
       }
     }
@@ -82,7 +82,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           if (JSTokenTypes.LBRACE == builder.lookAhead(1)) {
             builder.advanceLexer();
             builder.advanceLexer();
-            myJavaScriptParser.getExpressionParser().parseExpression();
+            parser.getExpressionParser().parseExpression();
             if (!expectDoubleRBrace(true)) {
               mark.drop();
               return false;
