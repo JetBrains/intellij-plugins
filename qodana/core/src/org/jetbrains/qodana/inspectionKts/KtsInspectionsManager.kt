@@ -66,7 +66,7 @@ fun isInspectionKtsEnabled(): Boolean {
 }
 
 const val INSPECTIONS_KTS_DIRECTORY = "inspections"
-internal const val INSPECTIONS_KTS_EXTENSION = "inspection.kts"
+const val INSPECTIONS_KTS_EXTENSION = "inspection.kts"
 
 private class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
   override fun inspections(project: Project): Flow<Set<DynamicInspectionDescriptor>> {
