@@ -13,6 +13,5 @@
     <orderEntry type="module" module-name="intellij.platform.ide.core" />
     <orderEntry type="module" module-name="intellij.qodana" />
     <orderEntry type="module" module-name="intellij.swagger" />
-    <orderEntry type="module" module-name="intellij.microservices" />
   </component>
 </module>

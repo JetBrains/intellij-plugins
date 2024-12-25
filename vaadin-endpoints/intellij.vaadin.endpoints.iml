@@ -16,7 +16,6 @@
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.java.indexing" />
     <orderEntry type="module" module-name="intellij.java.jam" />
-    <orderEntry type="module" module-name="intellij.microservices" />
     <orderEntry type="module" module-name="intellij.microservices.jvm" />
     <orderEntry type="module" module-name="intellij.java" />
   </component>
