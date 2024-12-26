@@ -213,8 +213,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val module = modules.firstOrNull() ?: return
 
     val filter = AngularCliFilter(project, cli.path)
-    val title = schematic.name
-    requireNotNull(title)
+    val title = checkNotNull(schematic.name)
     NpmPackageProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
                                         Function { pkg -> pkg.findBinFilePath("ng")?.toString() },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
