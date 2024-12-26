@@ -11,7 +11,7 @@ import training.featuresSuggester.SuggesterSupport
 import training.featuresSuggester.getParentByPredicate
 import training.featuresSuggester.getParentOfType
 
-class JavaScriptSuggesterSupport : SuggesterSupport {
+private class JavaScriptSuggesterSupport : SuggesterSupport {
   override fun isLoadedSourceFile(file: PsiFile): Boolean {
     return file is JSFileImpl && file.isContentsLoaded
   }

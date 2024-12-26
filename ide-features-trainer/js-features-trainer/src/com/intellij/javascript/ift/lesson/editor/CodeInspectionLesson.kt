@@ -12,7 +12,7 @@ import training.learn.course.KLesson
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
 
-class CodeInspectionLesson
+internal class CodeInspectionLesson
   : KLesson("The Power of Code Inspections", JsLessonsBundle.message("js.editor.code.inspection.title")) {
 
   private val sample = parseLessonSample("""

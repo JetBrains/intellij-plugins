@@ -18,7 +18,7 @@ import com.intellij.psi.formatter.xml.XmlPolicy
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 
-class MdxJsFormattingModelBuilder : JavascriptFormattingModelBuilder() {
+private class MdxJsFormattingModelBuilder : JavascriptFormattingModelBuilder() {
   override fun createModel(element: PsiElement, settings: CodeStyleSettings, mode: FormattingMode): FormattingModel {
     val dialect = JSLanguageUtil.getLanguageDialect(element)
     val alignment = element.node.getUserData(BLOCK_ALIGNMENT)
