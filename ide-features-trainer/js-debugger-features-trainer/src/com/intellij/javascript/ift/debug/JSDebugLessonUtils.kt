@@ -9,13 +9,13 @@ import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import training.dsl.LessonContext
 import training.dsl.TaskRuntimeContext
 
-fun LessonContext.setLanguageLevel() {
+internal fun LessonContext.setLanguageLevel() {
   prepareRuntimeTask(ModalityState.nonModal()) {
     JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
   }
 }
 
-fun TaskRuntimeContext.lineContainsBreakpoint(line: Int): Boolean {
+internal fun TaskRuntimeContext.lineContainsBreakpoint(line: Int): Boolean {
   val document = editor.document
   val breakpoint = DocumentMarkupModel.forDocument(document, project, true).allHighlighters
     .filter {

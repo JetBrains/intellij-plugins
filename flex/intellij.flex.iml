@@ -19,6 +19,7 @@
     <orderEntry type="module" module-name="intellij.javascript.frontback" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.javascript" />
+    <orderEntry type="module" module-name="intellij.javascript.frontback.impl" />
     <orderEntry type="module" module-name="intellij.javascript.debugger" />
     <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="module" module-name="intellij.platform.duplicatesDetector" />

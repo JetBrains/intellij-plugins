@@ -25,7 +25,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.Angular2HtmlBlockParameters
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
-class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlCompositePsiElement(type), Angular2HtmlBlock {
 
   override fun getName(): String =

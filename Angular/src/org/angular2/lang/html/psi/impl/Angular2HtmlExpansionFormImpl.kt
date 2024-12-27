@@ -7,7 +7,7 @@ import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlExpansionForm
 
-class Angular2HtmlExpansionFormImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlExpansionFormImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlCompositePsiElement(type), Angular2HtmlExpansionForm {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {

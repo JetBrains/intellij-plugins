@@ -11,7 +11,7 @@ import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
 
-class Angular2HtmlPropertyBindingImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlPropertyBindingImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlPropertyBindingBase(type), Angular2HtmlPropertyBinding {
   override fun getReferences(hints: PsiReferenceService.Hints): Array<PsiReference> {
     if (bindingType == PropertyBindingType.CLASS) {

@@ -8,7 +8,7 @@ import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 
-interface Angular2HtmlTokenTypes : XmlTokenType {
+internal interface Angular2HtmlTokenTypes : XmlTokenType {
   companion object {
     @JvmField
     val INTERPOLATION_START = Angular2HtmlTokenType("NG:INTERPOLATION_START")

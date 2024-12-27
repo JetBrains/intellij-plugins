@@ -16,8 +16,8 @@ import com.intellij.psi.util.*
 import org.yaml.snakeyaml.Yaml
 
 private val LOG = Logger.getInstance(TsLintConfigWrapper::class.java)
-class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
 
+internal class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
   fun hasExtends(): Boolean = extends.isNotEmpty()
 
   private fun getOption(name: String): TslintJsonOption? = rules[name]

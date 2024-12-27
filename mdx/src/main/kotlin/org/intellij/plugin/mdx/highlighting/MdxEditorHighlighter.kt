@@ -9,7 +9,7 @@ import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugins.markdown.lang.MarkdownElementType
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
-class MdxEditorHighlighter(colors: EditorColorsScheme)
+internal class MdxEditorHighlighter(colors: EditorColorsScheme)
   : LayeredLexerEditorHighlighter(MdxSyntaxHighlighter(), colors) {
   init {
     val outerHighlighter = ECMA6SyntaxHighlighterFactory.ECMA6SyntaxHighlighter(JS_WITH_JSX, false)

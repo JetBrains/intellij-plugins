@@ -18,6 +18,6 @@ class AstroLanguage private constructor()
 
   companion object {
     @JvmField
-    val INSTANCE = AstroLanguage()
+    val INSTANCE: AstroLanguage = AstroLanguage()
   }
 }

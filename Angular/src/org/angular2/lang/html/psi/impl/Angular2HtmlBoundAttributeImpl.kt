@@ -11,7 +11,7 @@ import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.jetbrains.annotations.NonNls
 
-open class Angular2HtmlBoundAttributeImpl(elementType: Angular2HtmlElementTypes.Angular2ElementType)
+internal open class Angular2HtmlBoundAttributeImpl(elementType: Angular2HtmlElementTypes.Angular2ElementType)
   : XmlAttributeImpl(elementType), Angular2HtmlBoundAttribute {
   override fun getNameElement(): XmlElement? {
     val result = super.getNameElement()

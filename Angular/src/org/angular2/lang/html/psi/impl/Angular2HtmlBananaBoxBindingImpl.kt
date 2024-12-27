@@ -7,7 +7,7 @@ import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
-class Angular2HtmlBananaBoxBindingImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlBananaBoxBindingImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlPropertyBindingBase(type), Angular2HtmlBananaBoxBinding {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {

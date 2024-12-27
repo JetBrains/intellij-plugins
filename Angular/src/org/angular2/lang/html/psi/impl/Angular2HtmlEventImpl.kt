@@ -11,7 +11,7 @@ import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase
 
-class Angular2HtmlEventImpl(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlEvent {
+internal class Angular2HtmlEventImpl(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlEvent {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {
       is Angular2HtmlElementVisitor -> {

@@ -12,14 +12,10 @@ import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.tree.IFileElementType
 
-class MdxJSParserDefinition : ECMA6ParserDefinition() {
-  companion object {
-    private val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
-  }
+private val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
 
-  override fun getFileNodeType(): IFileElementType {
-    return FILE
-  }
+internal class MdxJSParserDefinition : ECMA6ParserDefinition() {
+  override fun getFileNodeType(): IFileElementType = FILE
 
   override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
     return MdxJSLanguageParser(builder)
@@ -27,7 +23,7 @@ class MdxJSParserDefinition : ECMA6ParserDefinition() {
 }
 
 
-class MdxJSLanguageParser(
+internal class MdxJSLanguageParser(
   builder: PsiBuilder,
 ) : ES6Parser(
   ECMA_SCRIPT_6,

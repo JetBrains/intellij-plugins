@@ -11,7 +11,7 @@ import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlLet
 
-class Angular2HtmlLetImpl(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlLet {
+internal class Angular2HtmlLetImpl(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlLet {
   override fun getNameElement(): XmlElement? {
     val res = super.getNameElement()
     return if (res == null && firstChild.node.elementType === Angular2HtmlVarAttrTokenType.LET) {

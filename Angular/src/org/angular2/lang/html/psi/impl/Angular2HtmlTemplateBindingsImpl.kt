@@ -10,7 +10,7 @@ import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
 
-class Angular2HtmlTemplateBindingsImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlTemplateBindingsImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlTemplateBindings {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {

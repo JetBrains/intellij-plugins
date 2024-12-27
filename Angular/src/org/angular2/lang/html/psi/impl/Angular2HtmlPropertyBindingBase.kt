@@ -8,7 +8,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBinding
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.PropertyBindingType
 
-abstract class Angular2HtmlPropertyBindingBase(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type) {
+internal abstract class Angular2HtmlPropertyBindingBase(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type) {
   val propertyName: String
     get() = attributeInfo.name
   val bindingType: PropertyBindingType

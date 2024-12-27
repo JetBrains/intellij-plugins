@@ -10,8 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 
-class VueJSHighlighterFactory : SyntaxHighlighterFactory() {
-
+private class VueJSHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     return VueJSSyntaxHighlighter()
   }

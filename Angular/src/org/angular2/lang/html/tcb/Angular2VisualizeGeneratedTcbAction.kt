@@ -19,8 +19,7 @@ import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.Angular2HtmlDialect
 
-class Angular2VisualizeGeneratedTcbAction : AnAction() {
-
+private class Angular2VisualizeGeneratedTcbAction : AnAction() {
   override fun getActionUpdateThread(): ActionUpdateThread =
     ActionUpdateThread.BGT
 
@@ -74,6 +73,5 @@ class Angular2VisualizeGeneratedTcbAction : AnAction() {
           .showNotModal()
       }
     }
-
   }
 }

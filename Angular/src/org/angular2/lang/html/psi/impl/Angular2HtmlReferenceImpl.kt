@@ -11,7 +11,7 @@ import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlReference
 
-class Angular2HtmlReferenceImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlReferenceImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlReference {
   override fun getNameElement(): XmlElement? {
     val res = super.getNameElement()

@@ -7,7 +7,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
-class Angular2HtmlBlockContentsImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+internal class Angular2HtmlBlockContentsImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlCompositePsiElement(type), Angular2HtmlBlockContents {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {
