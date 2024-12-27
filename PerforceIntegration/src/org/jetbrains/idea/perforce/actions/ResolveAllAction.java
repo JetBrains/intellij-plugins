@@ -113,7 +113,7 @@ public class ResolveAllAction extends DumbAwareAction {
           }
         }
       }, PerforceBundle.message("message.searching.for.files.to.resolve"), false, project);
-      if (filesToResolveUnderProject.size() == 0) {
+      if (filesToResolveUnderProject.isEmpty()) {
         Messages.showInfoMessage(PerforceBundle.message("message.text.no.files.to.resolve"),
                                  PerforceBundle.message("message.title.resolve"));
       }

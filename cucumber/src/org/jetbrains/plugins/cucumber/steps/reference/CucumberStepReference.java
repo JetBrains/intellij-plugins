@@ -99,7 +99,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     List<CucumberJvmExtensionPoint> frameworks = CucumberJvmExtensionPoint.EP_NAME.getExtensionList();
     Collection<String> stepVariants =
       frameworks.stream().map(e -> e.getStepName(myStep)).filter(Objects::nonNull).collect(Collectors.toSet());
-    if (stepVariants.size() == 0) {
+    if (stepVariants.isEmpty()) {
       return ResolveResult.EMPTY_ARRAY;
     }
 

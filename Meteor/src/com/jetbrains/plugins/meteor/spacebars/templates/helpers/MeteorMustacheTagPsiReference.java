@@ -144,17 +144,17 @@ public class MeteorMustacheTagPsiReference extends PsiPolyVariantReferenceBase<H
 
 
 
-    if (allPossibleHelpers.size() == 0) return ResolveResult.EMPTY_ARRAY;
+    if (allPossibleHelpers.isEmpty()) return ResolveResult.EMPTY_ARRAY;
 
     final String templateName = getTemplateName(myElement);
     if (templateName != null) {
       List<JSPsiElementBase> items = ContainerUtil.findAll(allPossibleHelpers, item -> isTemplateQualifier(item, templateName));
-      if (items.size() > 0) return convertToResolveResult(items);
+      if (!items.isEmpty()) return convertToResolveResult(items);
     }
 
     List<JSPsiElementBase> items = ContainerUtil.findAll(allPossibleHelpers, item -> isGlobalHelperQualifier(item));
 
-    if (items.size() > 0) {
+    if (!items.isEmpty()) {
       return convertToResolveResult(items);
     }
 

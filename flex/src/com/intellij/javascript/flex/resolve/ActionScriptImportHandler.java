@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -92,7 +92,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
                                        context1 instanceof JSPackageStatement ? qName + "." :
                                        qName.substring( 0, qName.lastIndexOf('.') + 1);
 
-            if (packageName.length() != 0) {
+            if (!packageName.isEmpty()) {
               final PsiElement byQName = JSClassResolver.findClassFromNamespace(packageName + name1, context1);
 
               if (byQName instanceof JSQualifiedNamedElement) {

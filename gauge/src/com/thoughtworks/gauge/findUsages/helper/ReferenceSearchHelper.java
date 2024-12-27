@@ -83,7 +83,7 @@ public class ReferenceSearchHelper {
   }
 
   private static String getStepText(String text, PsiElement element) {
-    String stepText = text.length() > 0 && text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
+    String stepText = !text.isEmpty() && text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
     return SpecPsiImplUtil.getStepValueFor(element, stepText, false).getStepText();
   }
 }

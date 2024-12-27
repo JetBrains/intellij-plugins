@@ -97,7 +97,7 @@ public class PerforceDiffProvider extends DiffProviderEx implements DiffMixin {
   }
 
   private static boolean isInvalidRevision(final String revision) {
-    return revision == null || revision.length() == 0 || revision.equals(REVISION_NONE);
+    return revision == null || revision.isEmpty() || revision.equals(REVISION_NONE);
   }
 
   @Override

@@ -279,7 +279,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
           final List<String> lines = StringUtil.split(result, "\n");
           for (String line : lines) {
             if (line.startsWith(ERROR)) {
-              if (errorBuf.length() > 0) errorBuf.append("\n");
+              if (!errorBuf.isEmpty()) errorBuf.append("\n");
               errorBuf.append(line);
             }
           }

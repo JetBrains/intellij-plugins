@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import java.util.*;
@@ -11,7 +12,7 @@ class ResponseLineIterator implements Iterator<String> {
     StringTokenizer tokenizer = new StringTokenizer(commandOutput, "\r\n");
     while (tokenizer.hasMoreElements()) {
       String s = tokenizer.nextToken().trim();
-      if (s.length() == 0) continue;
+      if (s.isEmpty()) continue;
       lines.add(s);
     }
   }

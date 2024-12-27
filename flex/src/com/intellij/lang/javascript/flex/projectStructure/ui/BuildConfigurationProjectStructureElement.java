@@ -123,7 +123,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
       final StringBuilder buf = new StringBuilder();
       for (ModifiableFlexBuildConfiguration bc : bcs) {
         if (bc != myBc) {
-          if (buf.length() > 0) buf.append(", ");
+          if (!buf.isEmpty()) buf.append(", ");
           buf.append(FlexBundle.message("0.module.1", bc.getName(), editor.getModule(bc).getName()));
         }
       }

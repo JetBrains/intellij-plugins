@@ -77,7 +77,7 @@ public class KarmaTestLocationProvider implements SMTestLocator {
     PsiElement psiElement = findJasmineElement(project, suiteNames, testName);
     if (psiElement == null) {
       String moduleName = null;
-      if (suiteNames.size() == 0) {
+      if (suiteNames.isEmpty()) {
         moduleName = DefaultQUnitModuleStructure.NAME;
       }
       else if (suiteNames.size() == 1) {

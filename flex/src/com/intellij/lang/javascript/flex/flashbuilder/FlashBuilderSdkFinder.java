@@ -219,7 +219,7 @@ public class FlashBuilderSdkFinder {
       }
     }
 
-    if (fbDirs.size() == 0) return null;
+    if (fbDirs.isEmpty()) return null;
     if (fbDirs.size() == 1) return fbDirs.get(0).getPath();
 
     // check the most recent

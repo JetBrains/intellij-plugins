@@ -64,7 +64,7 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
       }
     }
 
-    return result == null || result.size() == 0 ? null : new MeteorCompositeChangeApplier(result);
+    return result == null || result.isEmpty() ? null : new MeteorCompositeChangeApplier(result);
   }
 
   private static @Nullable MeteorProjectApplier processCreate(@NotNull VFileCreateEvent event) {

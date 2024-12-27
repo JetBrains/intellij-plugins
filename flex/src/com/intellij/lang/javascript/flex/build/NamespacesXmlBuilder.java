@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
@@ -60,7 +61,7 @@ public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
     if (NAMESPACE_LOCATION.equals(getLocation())) {
       final String uri = myNamespaceUri.toString().trim();
       final String manifest = myManifest.toString().trim();
-      if (uri.length() > 0 && manifest.length() > 0) {
+      if (!uri.isEmpty() && !manifest.isEmpty()) {
         myNamespacesAndManifests.add(Pair.create(uri, manifest));
       }
     }

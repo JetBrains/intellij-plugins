@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -126,7 +126,7 @@ public final class CompilerConfigGenerator {
 
   private void addMandatoryOptions(final Element rootElement) {
     if (!BCUtils.isRLMTemporaryBC(myBC) && !BCUtils.isRuntimeStyleSheetBC(myBC) &&
-        BCUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && myBC.getRLMs().size() > 0) {
+        BCUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && !myBC.getRLMs().isEmpty()) {
       addOption(rootElement, CompilerOptionInfo.LINK_REPORT_INFO, getLinkReportFilePath(myModule, myBC.getName()));
     }
 
@@ -292,14 +292,14 @@ public final class CompilerConfigGenerator {
   private void addNamespaces(final Element rootElement) {
     final StringBuilder namespaceBuilder = new StringBuilder();
     FlexSdkUtils.processStandardNamespaces(myBC, (namespace, relativePath) -> {
-      if (namespaceBuilder.length() > 0) {
+      if (!namespaceBuilder.isEmpty()) {
         namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
       }
       namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
         .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
     });
 
-    if (namespaceBuilder.length() == 0) return;
+    if (namespaceBuilder.isEmpty()) return;
     final CompilerOptionInfo info = CompilerOptionInfo.getOptionInfo("compiler.namespaces.namespace");
     addOption(rootElement, info, namespaceBuilder.toString());
   }
@@ -530,14 +530,14 @@ public final class CompilerConfigGenerator {
     }
 
     for (final String sourcePath : sourcePathsWithLocaleToken) {
-      if (sourcePathBuilder.length() > 0) {
+      if (!sourcePathBuilder.isEmpty()) {
         sourcePathBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
       }
       sourcePathBuilder.append(sourcePath);
     }
 
     for (final String sourcePath : sourcePathsWithoutLocaleToken) {
-      if (sourcePathBuilder.length() > 0) {
+      if (!sourcePathBuilder.isEmpty()) {
         sourcePathBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
       }
       sourcePathBuilder.append(sourcePath);
@@ -586,11 +586,11 @@ public final class CompilerConfigGenerator {
         final int tabIndex = listEntry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
         assert tabIndex != -1 : namespaces;
         final String namespace = listEntry.substring(0, tabIndex);
-        if (buf.length() > 0) buf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        if (!buf.isEmpty()) buf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         buf.append(namespace);
       }
 
-      if (buf.length() > 0) {
+      if (!buf.isEmpty()) {
         addOption(rootElement, CompilerOptionInfo.INCLUDE_NAMESPACES_INFO, buf.toString());
       }
     }
@@ -675,7 +675,7 @@ public final class CompilerConfigGenerator {
 
         final String packageText = VfsUtilCore.getRelativePath(file.getParent(), sourceRoot, '.');
         assert packageText != null : sourceRoot.getPath() + ": " + file.getPath();
-        final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
+        final String qName = (!packageText.isEmpty() ? packageText + "." : "") + file.getNameWithoutExtension();
 
         if (isSourceFileWithPublicDeclaration(myModule, file, qName)) {
           addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);

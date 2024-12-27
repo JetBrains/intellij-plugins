@@ -440,7 +440,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
     private void prepareForMxmlEventAttributeValue(final XmlAttribute xmlAttribute, final String eventType) {
       eventClassFqn = eventType;
       methodBody = StringUtil.notNullize(xmlAttribute.getValue()).trim();
-      if (methodBody.length() > 0 && !methodBody.endsWith(";") && !methodBody.endsWith("}")) methodBody += ";";
+      if (!methodBody.isEmpty() && !methodBody.endsWith(";") && !methodBody.endsWith("}")) methodBody += ";";
 
       final XmlTag xmlTag = xmlAttribute.getParent();
       final String eventName = xmlAttribute.getName();

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -82,7 +82,7 @@ public final class AngularJSAttributeDescriptorsProvider implements XmlAttribute
   }
 
   private static boolean tagAndAttrMatches(XmlTag tag, CharSequence requiredTagAndDirective) {
-    if (requiredTagAndDirective.length() == 0) {
+    if (requiredTagAndDirective.isEmpty()) {
       return true;
     }
     int indexOfEquals = Strings.indexOf(requiredTagAndDirective, '=');
@@ -94,7 +94,7 @@ public final class AngularJSAttributeDescriptorsProvider implements XmlAttribute
     }
     CharSequence requiredAttr =
       StringUtil.trim(new CharSequenceSubSequence(requiredTagAndDirective, indexOfEquals + 1, requiredTagAndDirective.length()));
-    if (requiredAttr.length() == 0) {
+    if (requiredAttr.isEmpty()) {
       return true;
     }
     for (XmlAttribute attr : tag.getAttributes()) {

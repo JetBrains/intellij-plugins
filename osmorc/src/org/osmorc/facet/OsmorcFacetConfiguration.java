@@ -341,7 +341,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
         ProjectSettings projectSettings = ProjectSettings.getInstance(myFacet.getModule().getProject());
         if (projectSettings != null) {
           String bundlesOutputPath = projectSettings.getBundlesOutputPath();
-          if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
+          if (bundlesOutputPath != null && !bundlesOutputPath.trim().isEmpty()) {
             yield bundlesOutputPath + "/" + nullSafeLocation;
           }
         }

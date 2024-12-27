@@ -139,7 +139,7 @@ public class RevisionGraphAction extends DumbAwareAction {
             Notifications.Bus.notify(
               new Notification(PerforceVcs.getKey().getName(),
                                PerforceBundle.message("p4vc.running.problems"),
-                               PerforceBundle.message("p4vc.running.problems.message", cmd, exitCode, (output.length() > 0 ? PerforceBundle
+                               PerforceBundle.message("p4vc.running.problems.message", cmd, exitCode, (!output.isEmpty() ? PerforceBundle
                                  .message("p4vc.running.problems.output", output) : "")),
                                NotificationType.ERROR));
           }

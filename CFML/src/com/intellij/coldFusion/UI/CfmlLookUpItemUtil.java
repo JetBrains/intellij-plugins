@@ -33,7 +33,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
       .withInsertHandler(new ParenthesesInsertHandler<>() {
         @Override
         protected boolean placeCaretInsideParentheses(final InsertionContext context, final LookupElement item) {
-          return functionDescription.getParameters().size() != 0;
+          return !functionDescription.getParameters().isEmpty();
         }
 
         @Override
@@ -91,7 +91,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
       tailText = ".";
     }
 
-    if (prefix != null && prefix.length() != 0 && !StringUtil.toLowerCase(name).startsWith(StringUtil.toLowerCase(prefix))) {
+    if (prefix != null && !prefix.isEmpty() && !StringUtil.toLowerCase(name).startsWith(StringUtil.toLowerCase(prefix))) {
       name = prefix + "." + name;
     }
 

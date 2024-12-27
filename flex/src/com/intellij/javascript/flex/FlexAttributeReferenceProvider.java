@@ -247,7 +247,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
 
               final ASTNode oldValueNode = myElement.getValueNode();
               final String oldText = oldValueNode.getText();
-              char quoteChar = oldText.length() > 0 ? oldText.charAt(0) : '"';
+              char quoteChar = !oldText.isEmpty() ? oldText.charAt(0) : '"';
               if (quoteChar != '\'' && quoteChar != '"') {
                 quoteChar = '"';
               }

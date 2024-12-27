@@ -118,7 +118,7 @@ public final class CfmlUtil {
     }
     if (getCfmlLangInfo(project).getTagAttributes().get(tagName) != null &&
         getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes() != null) {
-      return getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes().size() != 0;
+      return !getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes().isEmpty();
     }
     return false;
   }

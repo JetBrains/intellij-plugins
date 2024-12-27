@@ -168,7 +168,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
   @Override
   public boolean validate() throws ConfigurationException {
     final String path = myInitialPathComponent.getComponent().getText().trim();
-    if (path.length() == 0) {
+    if (path.isEmpty()) {
       throw new ConfigurationException(FlexBundle.message("specify.flash.builder.workspace.or.project.dir"), CommonBundle.getErrorTitle());
     }
     final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);

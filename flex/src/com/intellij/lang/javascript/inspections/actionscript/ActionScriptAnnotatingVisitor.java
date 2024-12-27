@@ -12,7 +12,10 @@ import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.DialectOptionHolder;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -461,7 +464,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     final PsiFile containingFile = packageStatement.getContainingFile();
     final String expected = JSResolveUtil.getExpectedPackageNameFromFile(containingFile.getVirtualFile(), containingFile.getProject());
 
-    if (expected != null && (s == null && expected.length() != 0 || s != null && !expected.equals(s))) {
+    if (expected != null && (s == null && !expected.isEmpty() || s != null && !expected.equals(s))) {
       final ASTNode nameIdentifier = packageStatement.findNameIdentifier();
       myHolder.newAnnotation(HighlightSeverity.ERROR,
                              FlexBundle.message(

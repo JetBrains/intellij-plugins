@@ -106,7 +106,7 @@ public final class FStat {
     //
     // resolve the status and local
     //
-    if (headRev.length() > 0 && haveRev.length() == 0) {
+    if (!headRev.isEmpty() && haveRev.isEmpty()) {
       local = LOCAL_NOT_LOCAL;
       if (headAction.equals(FileChange.DELETE_ACTION)) {
         status = STATUS_DELETED;
@@ -116,7 +116,7 @@ public final class FStat {
       }
     }
     else {
-      if (headRev.length() == 0) {
+      if (headRev.isEmpty()) {
         status = STATUS_ONLY_LOCAL;
       }
       else {
@@ -124,7 +124,7 @@ public final class FStat {
       }
     }
 
-    if (action.length() == 0) {
+    if (action.isEmpty()) {
       local = LOCAL_CHECKED_IN;
     }
     else if (FileChange.ADD_ACTION.equals(action)) {
@@ -155,7 +155,7 @@ public final class FStat {
     String s;
     try {
       while ((s = rdr.readLine()) != null) {
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
           break; // empty lines separate multiple fstat results
         }
         // check first "... "
@@ -229,7 +229,7 @@ public final class FStat {
     StringBuilder currentBuffer = new StringBuilder();
     final HashMap<File, String> result = new HashMap<>();
     while ((line = reader.readLine()) != null) {
-      if (line.length() == 0) {
+      if (line.isEmpty()) {
         if (file != null) {
           result.put(file, currentBuffer.toString());
           currentBuffer = new StringBuilder();

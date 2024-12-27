@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.util.ArrayUtilRt;
@@ -17,8 +17,8 @@ public class FlashPlayerVersionForm {
     final String minor = myPlayerVersionMinorTextField.getText().trim();
     final String revision = myPlayerVersionRevisionTextField.getText().trim();
     return major +
-           ((minor.length() > 0 || revision.length() > 0) ? "." + (minor.length() > 0 ? minor : "0") : "") +
-           (revision.length() > 0 ? "." + revision : "");
+           ((!minor.isEmpty() || !revision.isEmpty()) ? "." + (!minor.isEmpty() ? minor : "0") : "") +
+           (!revision.isEmpty() ? "." + revision : "");
   }
 
   public String getPlayerVersionMajor(){

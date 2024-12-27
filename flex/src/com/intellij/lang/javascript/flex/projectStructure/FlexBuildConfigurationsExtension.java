@@ -79,7 +79,7 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
       }
     }
 
-    return configurables.size() > 0;
+    return !configurables.isEmpty();
   }
 
   @Override

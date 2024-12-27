@@ -98,6 +98,6 @@ public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<O
       }
     }
 
-    return headersToDetect.size() == 0;
+    return headersToDetect.isEmpty();
   }
 }

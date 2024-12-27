@@ -82,7 +82,7 @@ final class CustomRenameHandler implements RenameHandler {
     //Finding text from annotation
     if (isMethod(element)) {
       List<String> values = getGaugeStepAnnotationValues((PsiMethod)element);
-      if (values.size() == 0) {
+      if (values.isEmpty()) {
         return;
       }
       else if (values.size() == 1) {

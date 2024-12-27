@@ -216,7 +216,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     String message = validateInputData();
 
     if (message != null) {
-      if (message.length() != 0) {
+      if (!message.isEmpty()) {
         CommonRefactoringUtil
           .showErrorMessage(StringUtil.capitalizeWords(JavaScriptBundle.message("move.members.refactoring.name"), true), message, null, myProject);
       }

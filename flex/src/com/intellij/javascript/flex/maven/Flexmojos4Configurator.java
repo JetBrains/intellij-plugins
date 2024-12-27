@@ -67,7 +67,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
 
     final List<RLMInfo> result = new ArrayList<>();
     for (final Element moduleElement : modulesElement.getChildren()) {
-      if (moduleElement.getChildren().size() > 0) {
+      if (!moduleElement.getChildren().isEmpty()) {
         final String mainClassRelativePath = moduleElement.getChildText("sourceFile", moduleElement.getNamespace());
         final String finalName = moduleElement.getChildText("finalName", moduleElement.getNamespace());
         final String destinationPath = moduleElement.getChildText("destinationPath", moduleElement.getNamespace());

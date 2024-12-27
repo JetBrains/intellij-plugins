@@ -32,7 +32,7 @@ public final class PerforceInfoAndClient {
 
   private static String extractClient(Map<String, List<String>> infoMap) throws VcsException {
     final List<String> clientValue = infoMap.get(PerforceRunner.CLIENT_NAME);
-    if (clientValue == null || clientValue.size() == 0) {
+    if (clientValue == null || clientValue.isEmpty()) {
       throw new VcsException(PerforceBundle.message("error.no.client.name.in.info.specification.found"));
     }
 

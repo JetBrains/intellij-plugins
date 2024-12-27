@@ -104,7 +104,7 @@ public class ILIntroduceDialog extends DialogWrapper {
 
   public @Nullable String getName() {
     final Object item = myNameComboBox.getEditor().getItem();
-    if ((item instanceof String) && ((String) item).length() > 0) {
+    if ((item instanceof String) && !((String)item).isEmpty()) {
       return ((String) item).trim();
     }
     return null;

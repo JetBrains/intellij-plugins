@@ -24,7 +24,7 @@ public abstract class DroolsLhsPatternBindVariableImpl extends DroolsAbstractVar
   @Override
   public @NotNull PsiType getType() {
     final Set<PsiClass> psiClasses = DroolsResolveUtil.getPatternBindType(this.getLhsPatternList());
-    return psiClasses.size() == 0 ? (PsiPrimitiveType)PsiTypes.nullType()
-                                  : JavaPsiFacade.getElementFactory(getProject()).createType(psiClasses.iterator().next());
+    return psiClasses.isEmpty() ? (PsiPrimitiveType)PsiTypes.nullType()
+                                : JavaPsiFacade.getElementFactory(getProject()).createType(psiClasses.iterator().next());
   }
 }

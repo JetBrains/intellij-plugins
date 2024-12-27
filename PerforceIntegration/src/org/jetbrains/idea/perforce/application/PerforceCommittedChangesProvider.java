@@ -289,7 +289,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     final DefaultRepositoryLocation repLocation = (DefaultRepositoryLocation)location;
     final P4File file = P4File.create(new File(repLocation.getURL()));
     ExecResult result = myRunner.previewSync(file);
-    if (result.getExitCode() != 0 || result.getStderr().length() > 0) {
+    if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
       if (result.getStderr().contains(PerforceRunner.FILES_UP_TO_DATE)) {
         return Collections.emptyList();
       }

@@ -48,7 +48,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
       if (parent.getContext() != null) {
         final String mxmlPackage = ActionScriptResolveUtil.findPackageForMxml(parent);
         if (mxmlPackage != null) {
-          return mxmlPackage + (mxmlPackage.length() > 0 ? "." : "") + parent.getContext().getContainingFile().getName();
+          return mxmlPackage + (!mxmlPackage.isEmpty() ? "." : "") + parent.getContext().getContainingFile().getName();
         }
       }
       else {
@@ -123,7 +123,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     if (qName == null) return null;
     StringBuilder result = new StringBuilder();
     String packageName = StringUtil.getPackageName(qName);
-    if (packageName.length() > 0) result.append(packageName).append("\n");
+    if (!packageName.isEmpty()) result.append(packageName).append("\n");
 
     result.append("namespace");
 

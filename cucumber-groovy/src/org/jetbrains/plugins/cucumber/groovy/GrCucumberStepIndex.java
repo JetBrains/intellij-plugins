@@ -62,7 +62,7 @@ public final class GrCucumberStepIndex extends CucumberStepIndex {
             LighterASTNode expressionList = methodNameAndArgumentList.get(1);
             if (expressionList.getTokenType() == ARGUMENT_LIST) {
               List<LighterASTNode> expressionListChildren = LightTreeUtil.getChildrenOfType(lighterAst, expressionList, UNARY_EXPRESSION);
-              if (expressionListChildren.size() > 0) {
+              if (!expressionListChildren.isEmpty()) {
                 LighterASTNode expressionParameter = expressionListChildren.get(0);
                 result.add(expressionParameter.getStartOffset());
               }

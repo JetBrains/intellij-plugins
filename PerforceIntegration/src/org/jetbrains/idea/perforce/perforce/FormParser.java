@@ -58,7 +58,7 @@ public final class FormParser {
       }
 
       if (myCurrentField != null &&
-          ((myFieldsTakeEvenEmpty != null && myFieldsTakeEvenEmpty.contains(myCurrentField)) || value.length() > 0)) {
+          ((myFieldsTakeEvenEmpty != null && myFieldsTakeEvenEmpty.contains(myCurrentField)) || !value.isEmpty())) {
         if (!myResult.containsKey(myCurrentField)) {
           myResult.put(myCurrentField, new ArrayList<>());
         }

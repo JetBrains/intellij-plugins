@@ -125,7 +125,7 @@ public class PerforceChangeListListener implements ChangeListListener {
 
   private static String getP4Description(final ChangeList list) {
     String description = list.getComment().trim();
-    if (description.length() == 0) description = list.getName();
+    if (description.isEmpty()) description = list.getName();
     return description;
   }
 

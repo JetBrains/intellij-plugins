@@ -103,7 +103,7 @@ public class PerforceNumberNameSynchronizer implements PersistentStateComponent<
 
   private static String getP4Description(final ChangeList list, final PerforceNumberNameMap map) {
     String description = list.getComment().trim();
-    if (description.length() == 0) return list.getName();
+    if (description.isEmpty()) return list.getName();
     return map.getNumber(description) != null ? list.getName() : description;
   }
 

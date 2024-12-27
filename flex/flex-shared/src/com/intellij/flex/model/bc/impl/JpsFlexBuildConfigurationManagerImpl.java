@@ -120,7 +120,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     //  throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     //}
     final JpsElementCollection<JpsFlexBuildConfiguration> bcs = myContainer.getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE);
-    LOG.assertTrue(bcs.getElements().size() == 0);
+    LOG.assertTrue(bcs.getElements().isEmpty());
 
     for (JpsFlexBCState configurationState : state.CONFIGURATIONS) {
       JpsFlexBuildConfigurationImpl bc = new JpsFlexBuildConfigurationImpl(configurationState.NAME);

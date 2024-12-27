@@ -60,7 +60,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   protected @NotNull String getCommandName() {
     StringBuilder s = new StringBuilder();
     for (JSQualifiedNamedElement element : myElements) {
-      if (s.length() > 0) {
+      if (!s.isEmpty()) {
         s.append(", ");
       }
       s.append(new JSNamedElementPresenter(element).describeWithQualifiedName());

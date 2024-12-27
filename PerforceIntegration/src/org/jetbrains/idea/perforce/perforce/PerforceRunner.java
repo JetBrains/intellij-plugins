@@ -1023,10 +1023,10 @@ public final class PerforceRunner implements PerforceRunnerI {
     appendTArg(arguments, connection);
     arguments.append("-l");
 
-    if (client != null && client.length() > 0) {
+    if (client != null && !client.isEmpty()) {
       arguments.append("-c").append(client);
     }
-    if (user != null && user.length() > 0) {
+    if (user != null && !user.isEmpty()) {
       arguments.append("-u").append(user);
     }
     if (maxCount > 0) {
@@ -1829,7 +1829,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       }
       else {
         String stdErr = errorOutput.trim();
-        if (stdErr.length() > 0) {
+        if (!stdErr.isEmpty()) {
           boolean hasErrors = false;
           for (String s : stdErr.split("\n")) {
             if (StringUtil.isNotEmpty(s) && !StringUtil.toLowerCase(s).contains(NO_FILES_RESOLVED_MESSAGE)) {

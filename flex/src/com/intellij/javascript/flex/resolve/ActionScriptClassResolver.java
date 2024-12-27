@@ -169,7 +169,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
     PsiElement result = resultFromSourceContent != null ? resultFromSourceContent : resultFromLibraries;
     if (result == null) {
       String className = link.substring(link.lastIndexOf('.') + 1);
-      if (className.length() > 0 && !isBuiltInClassName(className) &&
+      if (!className.isEmpty() && !isBuiltInClassName(className) &&
           (Character.isLetter(className.charAt(0)) || '_' == className.charAt(0))) {
         // TODO optimization, remove when packages will be properly handled
         result = findClassByQNameViaHelper(link, project, className, searchScope);

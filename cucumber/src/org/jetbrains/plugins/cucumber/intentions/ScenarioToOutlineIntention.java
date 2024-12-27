@@ -104,7 +104,7 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
 
   private static String replaceVarNames(String stepName, AbstractStepDefinition definition, Map<String, String> examples) {
     final List<String> varNames = definition.getVariableNames();
-    if (varNames.size() > 0) {
+    if (!varNames.isEmpty()) {
       final Pattern pattern = definition.getPattern();
 
       if (pattern != null) {
@@ -134,7 +134,7 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
   private static String buildExamplesSection(Map<String, String> examples, String keyword) {
     StringBuilder builder = new StringBuilder(keyword);
     builder.append(":\n");
-    if (examples.size() > 0) {
+    if (!examples.isEmpty()) {
       for (String key : examples.keySet()) {
         builder.append("|").append(key);
       }

@@ -46,7 +46,7 @@ public final class StepCollector {
     Stream.concat(conceptFiles.stream(), specFiles.stream()).forEach(f -> {
       Collection<Integer> values =
         Objects.requireNonNullElse(FileBasedIndex.getInstance().getSingleEntryIndexData(GaugeFileStubIndex.NAME, f, project), Collections.emptyList());
-      if (values.size() > 0) {
+      if (!values.isEmpty()) {
         getSteps(PsiManager.getInstance(project).findFile(f), values);
       }
     });

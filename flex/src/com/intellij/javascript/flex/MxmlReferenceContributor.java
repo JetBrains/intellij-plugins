@@ -8,8 +8,8 @@ import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
@@ -508,7 +508,7 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
       final String value = ((XmlAttributeValue)xmlElement).getValue();
       final String trimmedText = value.trim();
       final int index = xmlElement.getText().indexOf(trimmedText);
-      return index < 0 || trimmedText.length() == 0
+      return index < 0 || trimmedText.isEmpty()
              ? Pair.create(value, ((XmlAttributeValue)xmlElement).getValueTextRange())
              : Pair.create(trimmedText, new TextRange(index, index + trimmedText.length()));
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.completion;
 
 import com.intellij.codeInsight.completion.*;
@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
+import com.intellij.plugins.drools.JbossDroolsIcons;
 import com.intellij.plugins.drools.lang.lexer.DroolsTokenTypeSets;
 import com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes;
 import com.intellij.plugins.drools.lang.psi.*;
@@ -18,7 +19,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.plugins.drools.JbossDroolsIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -58,7 +58,7 @@ public final class DroolsCompletionContributor extends CompletionContributor {
                  if (droolsRule.getLhs() == null) {
                    final List<DroolsRhs> rhs = droolsRule.getRhsList();
 
-                   if (rhs.size() == 0 ||
+                   if (rhs.isEmpty() ||
                        (rhs.size() == 1 &&
                         rhs.iterator().next().getTextRange().getStartOffset() > position.getTextRange().getStartOffset())) {
                      result.addElement(LookupElementBuilder.create("when").bold());

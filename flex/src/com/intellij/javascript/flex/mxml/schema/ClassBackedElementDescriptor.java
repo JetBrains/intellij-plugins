@@ -16,13 +16,9 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
-import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor;
@@ -387,7 +383,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   XmlElementDescriptor getClassIfDynamic(final String localName, PsiElement element) {
     if (isDynamicClass(element)) {
       return new ClassBackedElementDescriptor(
-        localName.length() > 0 && Character.isUpperCase(localName.charAt(0)) ? localName : OBJECT_CLASS_NAME, context, project, true);
+        !localName.isEmpty() && Character.isUpperCase(localName.charAt(0)) ? localName : OBJECT_CLASS_NAME, context, project, true);
     }
     return null;
   }
@@ -609,7 +605,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
             }
           }
 
-          if (propertyType != null && propertyType.length() > 0 &&
+          if (propertyType != null && !propertyType.isEmpty() &&
               ( Character.isUpperCase(propertyType.charAt(0)) || propertyType.indexOf('.') >= 0 ) &&
               !STRING_CLASS_NAME.equals(propertyType) &&
               !NUMBER_CLASS_NAME.equals(propertyType) &&
@@ -803,7 +799,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     for(XmlTag subtag:tag.getSubTags()) {
       final String s = subtag.getLocalName();
 
-      if (s.length() > 0 && Character.isLowerCase(s.charAt(0))) {
+      if (!s.isEmpty() && Character.isLowerCase(s.charAt(0))) {
         if (tag.getAttributeValue(s) != null) {
           final List<XmlElement> elements = new ArrayList<>();
           collectLowerCasedElements(elements, tag.getAttributes());
@@ -890,7 +886,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       if (a instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(a.getName())) continue;
 
       final String name = a instanceof XmlTag ? ((XmlTag)a).getLocalName() : a.getName();
-      if (name != null && name.length() > 0 && Character.isLowerCase(name.charAt(0))) elements.add(a);
+      if (name != null && !name.isEmpty() && Character.isLowerCase(name.charAt(0))) elements.add(a);
     }
   }
 
@@ -1286,7 +1282,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     int packageIndex = className.lastIndexOf(name);
     String packageName = packageIndex > 0? className.substring(0, packageIndex - 1):"";
-    if (packageName.length() > 0) packageName += ".*";
+    if (!packageName.isEmpty()) packageName += ".*";
     else packageName = "*";
     XmlNSDescriptor nsDescriptor = tag.getPrefixByNamespace(packageName) != null ? tag.getNSDescriptor(packageName, true):null;
 
@@ -1326,7 +1322,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
 
-    if (prefix == null || prefix.length() == 0) return name;
+    if (prefix == null || prefix.isEmpty()) return name;
     return prefix + ":" + name;
   }
 

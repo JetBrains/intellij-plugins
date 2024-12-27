@@ -8,8 +8,8 @@ import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -56,7 +56,7 @@ public final class FlexMxmlColorAnnotator implements Annotator {
 
     final String value = attribute.getValue();
 
-    if (value == null || value.length() == 0) {
+    if (value == null || value.isEmpty()) {
       return;
     }
 

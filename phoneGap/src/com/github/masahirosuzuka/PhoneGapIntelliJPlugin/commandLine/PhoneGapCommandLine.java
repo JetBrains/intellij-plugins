@@ -252,7 +252,7 @@ public final class PhoneGapCommandLine {
     }
     List<String> plugins = Arrays.stream(out.split("\n"))
       .map(StringUtil::trim)
-      .filter(el -> el.length() > 0 && AsciiUtil.isLetter(el.charAt(0)))
+      .filter(el -> !el.isEmpty() && AsciiUtil.isLetter(el.charAt(0)))
       .collect(Collectors.toList());
 
     String item = ContainerUtil.getFirstItem(plugins);

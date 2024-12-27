@@ -132,7 +132,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       configuration.setProgramParameters(getSMFormatterOptions(configuration.getCucumberCoreVersion()));
     }
 
-    if (configuration.getNameFilter() != null && configuration.getNameFilter().length() > 0) {
+    if (configuration.getNameFilter() != null && !configuration.getNameFilter().isEmpty()) {
       final String newProgramParameters = configuration.getProgramParameters() + " --name \"" + configuration.getNameFilter() + "\"";
       configuration.setProgramParameters(newProgramParameters);
     }

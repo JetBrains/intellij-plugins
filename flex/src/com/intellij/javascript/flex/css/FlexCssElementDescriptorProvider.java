@@ -12,8 +12,8 @@ import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -63,8 +63,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForFile;
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
@@ -187,7 +187,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
       }
     }
     Set<String> namesFromSelectors = null;
-    if (selectors.size() > 0 && !containsGlobalSelectors(selectors)) {
+    if (!selectors.isEmpty() && !containsGlobalSelectors(selectors)) {
       namesFromSelectors = new LinkedHashSet<>();
       for (CssSimpleSelector selector : selectors) {
 
@@ -253,7 +253,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
       List<Set<FlexStyleIndexInfo>> lists = FileBasedIndex.getInstance().getValues(FlexStyleIndex.INDEX_ID, propertyName, scope);
       List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
       List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope, module);
-      if (infos.size() > 0) {
+      if (!infos.isEmpty()) {
         return Collections.singletonList(new FlexCssPropertyDescriptor(infos));
       }
     }
@@ -272,7 +272,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     }
     Module module = findModuleForPsiElement(context);
     List<CssSimpleSelector> simpleSelectors = findSimpleSelectorsAbove(context);
-    if (simpleSelectors.size() > 0 && !containsGlobalSelectors(simpleSelectors)) {
+    if (!simpleSelectors.isEmpty() && !containsGlobalSelectors(simpleSelectors)) {
       if (module != null) {
         return getPropertyDescriptorsDynamically(simpleSelectors, module);
       }
@@ -424,7 +424,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     for (Iterator<CssPropertyDescriptor> iterator = result.iterator(); iterator.hasNext();) {
       CssPropertyDescriptor propertyDescriptor = iterator.next();
       List<Set<FlexStyleIndexInfo>> values = fileBasedIndex.getValues(FlexStyleIndex.INDEX_ID, propertyDescriptor.getPropertyName(), scope);
-      if (values.size() == 0) {
+      if (values.isEmpty()) {
         iterator.remove();
       }
     }
@@ -477,7 +477,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
 
   private static PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
-    if (elements != null && elements.size() > 0) {
+    if (elements != null && !elements.isEmpty()) {
       List<PsiElement> result = new ArrayList<>();
       Set<String> qNames = new LinkedHashSet<>();
       for (JSQualifiedNamedElement c : elements) {

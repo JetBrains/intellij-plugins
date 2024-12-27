@@ -32,7 +32,7 @@ public final class CucumberTableInspection extends GherkinInspection {
       @Override
       public void visitScenarioOutline(GherkinScenarioOutline outline) {
         final List<GherkinExamplesBlock> examples = outline.getExamplesBlocks();
-        if (examples.size() > 0) {
+        if (!examples.isEmpty()) {
           Collection<String> columnNames = collectUsedColumnNames(outline);
           for (GherkinExamplesBlock block : examples) {
             checkTable(block.getTable(), columnNames, holder);

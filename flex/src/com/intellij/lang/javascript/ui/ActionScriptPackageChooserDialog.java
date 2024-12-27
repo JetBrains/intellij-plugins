@@ -85,7 +85,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
             Object object = node.getUserObject();
             if (object instanceof VirtualFile) {
               String name = PlatformPackageUtil.getPackageName((VirtualFile)object, myProject);
-              setText(name.length() > 0 ? StringUtil.getShortName(name) : IdeCoreBundle.message("node.default"));
+              setText(!name.isEmpty() ? StringUtil.getShortName(name) : IdeCoreBundle.message("node.default"));
             }
           }
           return this;
@@ -208,7 +208,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     final VirtualFile parentPackage = aPackage.getParent();
     if (parentPackage == null || PlatformPackageUtil.getPackageName(parentPackage, myProject) == null) {
       final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)myModel.getRoot();
-      if (qualifiedPackageName.length() == 0) {
+      if (qualifiedPackageName.isEmpty()) {
         rootNode.setUserObject(aPackage);
         return rootNode;
       }
@@ -268,7 +268,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
                        new InputValidator() {
                          @Override
                          public boolean checkInput(final String inputString) {
-                           return inputString != null && inputString.length() > 0;
+                           return inputString != null && !inputString.isEmpty();
                          }
 
                          @Override

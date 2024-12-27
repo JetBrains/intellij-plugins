@@ -159,7 +159,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
   @Override
   public boolean validateNewStepDefinitionFileName(final @NotNull Project project, final @NotNull String name) {
-    if (name.length() == 0) return false;
+    if (name.isEmpty()) return false;
     if (!Character.isJavaIdentifierStart(name.charAt(0))) return false;
     for (int i = 1; i < name.length(); i++) {
       if (!Character.isJavaIdentifierPart(name.charAt(i))) return false;

@@ -229,7 +229,7 @@ public final class HbFormattingModelBuilder extends TemplateLanguageFormattingMo
     @Override
     public Indent getIndent() {
       // ignore whitespace
-      if (myNode.getText().trim().length() == 0) {
+      if (myNode.getText().trim().isEmpty()) {
         return Indent.getNoneIndent();
       }
 

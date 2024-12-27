@@ -114,7 +114,7 @@ public final class CompilerConfigGeneratorRt {
 
   private void addMandatoryOptions(final Element rootElement) {
     if (!FlexCommonUtils.isRLMTemporaryBC(myBC) && !FlexCommonUtils.isRuntimeStyleSheetBC(myBC) &&
-        FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && myBC.getRLMs().size() > 0) {
+        FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && !myBC.getRLMs().isEmpty()) {
       addOption(rootElement, CompilerOptionInfo.LINK_REPORT_INFO, getLinkReportFilePath(myBC));
     }
 

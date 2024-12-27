@@ -43,7 +43,7 @@ public final class FileManager {
 
     for (VirtualFile javaVFile : javaVirtualFiles) {
       PsiFile file = PsiManager.getInstance(module.getProject()).findFile(javaVFile);
-      if (file != null && PsiTreeUtil.findChildrenOfType(file, PsiClass.class).size() > 0) {
+      if (file != null && !PsiTreeUtil.findChildrenOfType(file, PsiClass.class).isEmpty()) {
         javaFiles.add(file);
       }
     }

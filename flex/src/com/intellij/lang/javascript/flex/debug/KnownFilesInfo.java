@@ -34,7 +34,7 @@ public final class KnownFilesInfo {
     final BidirectionalMap<String, String> filePathToId = myWorkerToFilePathToIdMap.get(worker);
     final List<String> paths = filePathToId == null ? null : filePathToId.getKeysByValue(id);
 
-    return paths != null && paths.size() > 0 ? paths.get(0) : null;
+    return paths != null && !paths.isEmpty() ? paths.get(0) : null;
   }
 
   public @Nullable String getIdByFilePath(final String filePath) {

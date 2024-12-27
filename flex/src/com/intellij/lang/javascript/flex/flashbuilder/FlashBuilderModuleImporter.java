@@ -213,7 +213,7 @@ public class FlashBuilderModuleImporter {
 
     final StringBuilder localesBuf = new StringBuilder();
     for (String locale : locales) {
-      if (localesBuf.length() > 0) {
+      if (!localesBuf.isEmpty()) {
         localesBuf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
       }
       localesBuf.append(locale);
@@ -238,7 +238,7 @@ public class FlashBuilderModuleImporter {
                                                                  : getAbsolutePathWithLinksHandled(fbProject, manifestPath);
 
 
-        if (nsBuf.length() > 0) {
+        if (!nsBuf.isEmpty()) {
           nsBuf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         }
         nsBuf.append(nsAndManifestPath.first).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);

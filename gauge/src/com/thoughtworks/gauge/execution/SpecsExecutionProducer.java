@@ -68,7 +68,7 @@ final class SpecsExecutionProducer extends LazyRunConfigurationProducer<GaugeRun
     }
 
     List<String> specsToExecute = getSpecs(selectedFiles);
-    if (specsToExecute.size() == 0) {
+    if (specsToExecute.isEmpty()) {
       return false;
     }
     configuration.setName(DEFAULT_CONFIGURATION_NAME);

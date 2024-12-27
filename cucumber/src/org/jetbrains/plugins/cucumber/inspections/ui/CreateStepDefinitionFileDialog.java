@@ -124,7 +124,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
   }
 
   private static boolean isValidPath(@NotNull String path) {
-    while (path.length() > 0) {
+    while (!path.isEmpty()) {
       if (!PathUtil.isValidFileName(PathUtil.getFileName(path))) {
         return false;
       }

@@ -101,7 +101,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
         Collections.addAll(constantSet, constants);
       }
     }
-    if (constantSet.size() > 0) {
+    if (!constantSet.isEmpty()) {
       for (String constant : constantSet) {
         String constantName = constant.trim();
         children.add(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor(constantName, constantName, 1, 1, null));
@@ -119,7 +119,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
         Collections.addAll(constantSet, constants);
       }
     }
-    if (constantSet.size() > 0) {
+    if (!constantSet.isEmpty()) {
       //CssPropertyValueImpl value = new FlexCssPropertyValue(false, true);
       for (String constant : constantSet) {
         children.add(new FlexCssPropertyValue(constant.trim()));
@@ -473,7 +473,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     addValuesFromEnumerations(infos, children);
     addValuesFromTypes(infos, formats, children);
     CssPropertyValueImpl value = null;
-    if (children.size() >= 1) {
+    if (!children.isEmpty()) {
       value = new FlexCssPropertyValue(shorthand, false);
       for (CssPropertyValue child : children) {
         value.addChild(child);

@@ -139,7 +139,7 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
     }
 
     public long submit(String comment, @Nullable List<PerforceJob> p4jobs) throws VcsException {
-      if (myChanges.size() == 0) return -1;
+      if (myChanges.isEmpty()) return -1;
       long changeListID = createSingleChangeListForConnection();
       long submittedRevision = myRunner.submitForConnection(myConnection, myChanges, changeListID, comment, p4jobs);
       if (changeListID == -1) {

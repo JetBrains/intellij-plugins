@@ -33,7 +33,7 @@ public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
 
   @Override
   public String getTooltip() {
-    return "<html><b>" + (myPackage.length() > 0 ? myPackage : FlexBundle.message("top.level")) + "</b></html>";
+    return "<html><b>" + (!myPackage.isEmpty() ? myPackage : FlexBundle.message("top.level")) + "</b></html>";
   }
 
   @Override

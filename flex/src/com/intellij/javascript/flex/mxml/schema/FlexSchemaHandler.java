@@ -3,8 +3,8 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -53,7 +53,7 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
 
   @Override
   public @Nullable XmlFile getSchema(final @NotNull @NonNls String url, final Module module, final @NotNull PsiFile baseFile) {
-    return url.length() > 0 && FlexSupportLoader.isFlexMxmFile(baseFile)
+    return !url.isEmpty() && FlexSupportLoader.isFlexMxmFile(baseFile)
            ? getFakeSchemaReference(url, module, baseFile.getResolveScope())
            : null;
   }
@@ -267,7 +267,7 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
         final int endIndex = (dotIndex == -1)
                              ? (slashIndex == -1 ? path.length() : slashIndex)
                              : (slashIndex == -1 ? dotIndex : Math.min(dotIndex, slashIndex));
-        if (path.length() > 0 && endIndex > 0) {
+        if (!path.isEmpty() && endIndex > 0) {
           prefix = path.substring(0, endIndex);
         }
       }

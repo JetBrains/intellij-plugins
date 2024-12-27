@@ -80,7 +80,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       }
     }
 
-    if (analyzer.getProperty(Constants.WAB) == null && bundleClassPath.length() > 0) {
+    if (analyzer.getProperty(Constants.WAB) == null && !bundleClassPath.isEmpty()) {
       // set explicit default before merging dependency classpath
       if (analyzer.getProperty(Constants.BUNDLE_CLASSPATH) == null) {
         analyzer.setProperty(Constants.BUNDLE_CLASSPATH, ".");
@@ -107,13 +107,13 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
   private static void addInlinePaths(MavenArtifact dependency, String inline, Collection<String> inlinePaths) {
     File path = dependency.getFile();
     if (path.exists()) {
-      if ("true".equalsIgnoreCase(inline) || inline.length() == 0) {
+      if ("true".equalsIgnoreCase(inline) || inline.isEmpty()) {
         inlinePaths.add(path.getPath());
       }
       else {
         String[] filters = inline.split("\\|");
         for (String filter : filters) {
-          if (filter.length() > 0) {
+          if (!filter.isEmpty()) {
             inlinePaths.add(path + "!/" + filter);
           }
         }
@@ -156,7 +156,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
         targetFilePath = targetFilePath.replace(File.separatorChar, '/');
       }
 
-      if (includeResource.length() > 0) {
+      if (!includeResource.isEmpty()) {
         includeResource.append(',');
       }
 
@@ -164,13 +164,13 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       includeResource.append('=');
       includeResource.append(sourceFile);
 
-      if (bundleClassPath.length() > 0) {
+      if (!bundleClassPath.isEmpty()) {
         bundleClassPath.append(',');
       }
 
       bundleClassPath.append(targetFilePath);
 
-      if (embeddedArtifacts.length() > 0) {
+      if (!embeddedArtifacts.isEmpty()) {
         embeddedArtifacts.append(',');
       }
 
@@ -185,7 +185,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
   }
 
   private static void inlineDependency(String path, StringBuilder includeResource) {
-    if (includeResource.length() > 0) {
+    if (!includeResource.isEmpty()) {
       includeResource.append(',');
     }
 
@@ -200,7 +200,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       if (instruction.contains(MAVEN_DEPENDENCIES)) {
         // if there are no embedded dependencies, we do a special treatment and replace
         // every occurrence of MAVEN_DEPENDENCIES and a following comma with an empty string
-        if (mavenDependencies.length() == 0) {
+        if (mavenDependencies.isEmpty()) {
           String cleanInstruction = ImporterUtil.removeTagFromInstruction(instruction, MAVEN_DEPENDENCIES);
           analyzer.setProperty(directiveName, cleanInstruction);
         }
@@ -209,7 +209,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
           analyzer.setProperty(directiveName, mergedInstruction);
         }
       }
-      else if (mavenDependencies.length() > 0) {
+      else if (!mavenDependencies.isEmpty()) {
         if (Constants.INCLUDE_RESOURCE.equalsIgnoreCase(directiveName)) {
           // dependencies should be prepended so they can be overwritten by local resources
           analyzer.setProperty(directiveName, mavenDependencies + ',' + instruction);
@@ -223,7 +223,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       }
       // otherwise leave instruction unchanged
     }
-    else if (mavenDependencies.length() > 0) {
+    else if (!mavenDependencies.isEmpty()) {
       analyzer.setProperty(directiveName, mavenDependencies);
     }
     // otherwise leave instruction unchanged

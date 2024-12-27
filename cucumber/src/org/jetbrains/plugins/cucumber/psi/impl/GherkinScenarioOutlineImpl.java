@@ -60,7 +60,7 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
     final List<GherkinExamplesBlock> examplesBlocks = scenarioOutline.getExamplesBlocks();
     for (GherkinExamplesBlock examplesBlock : examplesBlocks) {
       GherkinTable table = examplesBlock.getTable();
-      if (table == null || table.getHeaderRow() == null || table.getDataRows().size() == 0) {
+      if (table == null || table.getHeaderRow() == null || table.getDataRows().isEmpty()) {
         continue;
       }
       List<GherkinTableCell> headerCells = table.getHeaderRow().getPsiCells();

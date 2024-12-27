@@ -153,7 +153,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     if (!doStarTypeDumpInExtends()) {
       final String ns = slotInfo.name.hasNamespace() ? slotInfo.name.getNsName(slotInfo) : null;
 
-      if (ns != null && ns.length() > 0) attr += ns;
+      if (ns != null && !ns.isEmpty()) attr += ns;
       else attr+="public";
       attr += " ";
     }
@@ -231,7 +231,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
   }
 
   protected static String quote(final String s) {
-    if (s.length() == 0) return s;
+    if (s.isEmpty()) return s;
     final StringBuilder b = new StringBuilder(s.length());
 
     for(int i = 0; i < s.length(); ++i) {

@@ -74,12 +74,12 @@ public final class CucumberStepRenameProcessor extends RenamePsiElementProcessor
         else if (lexer.getTokenType() == RegExpTT.CLASS_BEGIN) {
           elementsWaitingToClose.push(RegExpTT.CLASS_END);
         }
-        else if (elementsWaitingToClose.size() > 0 && lexer.getTokenType() == elementsWaitingToClose.peek()) {
+        else if (!elementsWaitingToClose.isEmpty() && lexer.getTokenType() == elementsWaitingToClose.peek()) {
           elementsWaitingToClose.pop();
         }
       }
       else {
-        if (elementsWaitingToClose.size() == 0) {
+        if (elementsWaitingToClose.isEmpty()) {
           if (previous != null && previous != RegExpTT.CHARACTER && insideAddedGroup) {
             insideAddedGroup = false;
             preparedRegexp.append(')');

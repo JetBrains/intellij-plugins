@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -33,7 +33,7 @@ public final class FlexCssUtil {
     for (int i = 0; i < propertyName.length(); i++) {
       char c = propertyName.charAt(i);
       char c1 = Character.toLowerCase(c);
-      if (c1 != c && result.length() > 0) {
+      if (c1 != c && !result.isEmpty()) {
         result.append('-');
       }
       result.append(c1);

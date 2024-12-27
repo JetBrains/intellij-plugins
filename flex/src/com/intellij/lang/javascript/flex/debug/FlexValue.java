@@ -420,7 +420,7 @@ class FlexValue extends XValue {
 
         while (tokenizer.hasMoreElements()) {
           final String s = tokenizer.nextToken().trim();
-          if (s.length() == 0) continue;
+          if (s.isEmpty()) continue;
           final int delimIndex = s.indexOf(FlexStackFrame.DELIM);
           if (delimIndex == -1) {
             FlexDebugProcess.log("Unrecognized string:" + s);
@@ -438,7 +438,7 @@ class FlexValue extends XValue {
 
           String evaluatedPath = myExpression;
 
-          if (fieldName.length() > 0 && Character.isDigit(fieldName.charAt(0))) {
+          if (!fieldName.isEmpty() && Character.isDigit(fieldName.charAt(0))) {
             evaluatedPath += "[\"" + fieldName + "\"]";
           }
           else {

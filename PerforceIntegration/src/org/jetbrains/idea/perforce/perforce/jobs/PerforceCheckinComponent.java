@@ -186,7 +186,7 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
 
     private void searchByJobviewAndFilter() {
       final String text = myField.getText().trim();
-      if (text.length() > 0) {
+      if (!text.isEmpty()) {
         ensureDefaultConnections();
 
         if (myCurrent != null) {

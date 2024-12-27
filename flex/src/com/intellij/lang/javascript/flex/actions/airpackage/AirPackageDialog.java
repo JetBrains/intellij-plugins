@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -321,7 +322,7 @@ public class AirPackageDialog extends DialogWrapper {
     final Collection<Pair<Module, FlexBuildConfiguration>> deselectedBCs = myTree.getDeselectedBCs();
     final StringBuilder buf = new StringBuilder();
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : deselectedBCs) {
-      if (buf.length() > 0) buf.append('\n');
+      if (!buf.isEmpty()) buf.append('\n');
       buf.append(moduleAndBC.first.getName()).append('\t').append(moduleAndBC.second.getName());
     }
     params.deselectedBCs = buf.toString();

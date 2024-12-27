@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -31,7 +32,7 @@ class Multiname {
   }
 
   boolean hasNotEmptyNs() {
-    return nsset != null && nsset.length > 0 && nsset[0] != null && nsset[0].length() > 0;
+    return nsset != null && nsset.length > 0 && nsset[0] != null && !nsset[0].isEmpty();
   }
 
   public boolean hasNamespace() {
@@ -87,7 +88,7 @@ class Multiname {
 
   public String getNsName(MemberInfo mi) {
     String ns = nsset[0];
-    if (ns.length() == 0) return PUBLIC_NS_IN_SOURCE;
+    if (ns.isEmpty()) return PUBLIC_NS_IN_SOURCE;
     if (Abc.PRIVATE_NS.equals(ns)) return ns;
     if (mi.parentTraits.name == mi.name) return PUBLIC_NS_IN_SOURCE;
 
@@ -112,7 +113,7 @@ class Multiname {
             ns.length() == parentNs.length() + parentName.name.length() + 1
           ) {
           return "";
-        } else if (i == -1 && ns.equals(parentName.name) && parentNs.length() == 0) {
+        } else if (i == -1 && ns.equals(parentName.name) && parentNs.isEmpty()) {
           return "";
         }
       }

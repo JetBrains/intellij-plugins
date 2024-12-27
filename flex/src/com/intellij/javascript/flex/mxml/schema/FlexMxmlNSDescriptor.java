@@ -135,7 +135,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
       }
 
       String name = elementDescriptor.getName();
-      if (name.length() > 0 /*&& Character.isUpperCase(name.charAt(0))*/) results.add(elementDescriptor);
+      if (!name.isEmpty() /*&& Character.isUpperCase(name.charAt(0))*/) results.add(elementDescriptor);
     }
     return results.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }

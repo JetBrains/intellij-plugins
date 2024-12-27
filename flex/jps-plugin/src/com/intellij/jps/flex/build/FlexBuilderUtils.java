@@ -194,7 +194,7 @@ final class FlexBuilderUtils {
     replacementMap.put(FlexCommonUtils.HEIGHT_MACRO, "100%");
 
     final List<String> versionParts = StringUtil.split(targetPlayer, ".");
-    replacementMap.put(FlexCommonUtils.VERSION_MAJOR_MACRO, versionParts.size() >= 1 ? versionParts.get(0) : "0");
+    replacementMap.put(FlexCommonUtils.VERSION_MAJOR_MACRO, !versionParts.isEmpty() ? versionParts.get(0) : "0");
     replacementMap.put(FlexCommonUtils.VERSION_MINOR_MACRO, versionParts.size() >= 2 ? versionParts.get(1) : "0");
     replacementMap.put(FlexCommonUtils.VERSION_REVISION_MACRO, versionParts.size() >= 3 ? versionParts.get(2) : "0");
 

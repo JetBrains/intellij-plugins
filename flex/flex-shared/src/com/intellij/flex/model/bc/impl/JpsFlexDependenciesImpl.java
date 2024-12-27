@@ -186,7 +186,7 @@ final class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDepen
     myFrameworkLinkage = LinkageType.valueOf(state.FRAMEWORK_LINKAGE, DEFAULT_FRAMEWORK_LINKAGE);
 
     final JpsElementCollection<JpsFlexDependencyEntry> entries = myContainer.getChild(ENTRIES_ROLE);
-    assert entries.getElements().size() == 0;
+    assert entries.getElements().isEmpty();
 
     for (State.EntryState entryState : state.ENTRIES) {
       final LinkageType linkageType = LinkageType.valueOf(entryState.DEPENDENCY_TYPE.LINKAGE_TYPE, DEFAULT_FRAMEWORK_LINKAGE);

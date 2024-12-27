@@ -116,7 +116,7 @@ public class OutputMessageParser {
       reader = new LineNumberReader(new StringReader(output));
       String line;
       while ((line = reader.readLine()) != null) {
-        if (line.length() > 0) {
+        if (!line.isEmpty()) {
           myLines.add(line);
         }
       }
@@ -203,7 +203,7 @@ public class OutputMessageParser {
       if (!line.startsWith("\t")) return;
       myLines.remove(0);
       line = line.substring(1).trim();
-      if (result.length() > 0) {
+      if (!result.isEmpty()) {
         result.append("\n");
       }
       result.append(line);

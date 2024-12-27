@@ -68,8 +68,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public final class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
   public static final String CONDITIONAL_COMPILER_DEFINITION_NAME = "FlexCompilerOptions.ConditionalCompilerDefinitionName";
@@ -582,7 +582,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
       }
       final StringBuilder b = new StringBuilder();
       for (String entry : StringUtil.split(rawValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
-        if (b.length() > 0) b.append(", ");
+        if (!b.isEmpty()) b.append(", ");
         b.append(entry, 0, entry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR));
       }
 

@@ -92,7 +92,7 @@ public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl i
     DroolsSuperType superType = getSuperType();
     if (superType != null) {
       Set<PsiClass> psiClasses = DroolsResolveUtil.resolveQualifiedIdentifier(superType.getQualifiedName().getQualifiedIdentifier());
-      if (psiClasses.size() > 0) {
+      if (!psiClasses.isEmpty()) {
         return psiClasses.iterator().next();
       }
     }

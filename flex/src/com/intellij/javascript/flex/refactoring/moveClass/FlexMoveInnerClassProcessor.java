@@ -161,7 +161,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     JSRefactoringUtil.deleteWithNoPostponedFormatting(myElement);
 
 
-    if (myPackageName.length() > 0) {
+    if (!myPackageName.isEmpty()) {
       for (UsageInfo usage : usagesToProcess) {
         if (usage instanceof NonCodeUsageInfo || usage.getFile() != sourceFile) continue;
         final PsiElement element = usage.getElement();

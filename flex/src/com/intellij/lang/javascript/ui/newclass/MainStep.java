@@ -330,7 +330,7 @@ public class MainStep extends AbstractWizardStepEx {
     }
 
     String text = getPackageName();
-    if (text.length() == 0) {
+    if (text.isEmpty()) {
       return true;
     }
     else {

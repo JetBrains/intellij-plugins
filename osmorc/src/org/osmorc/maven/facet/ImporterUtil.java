@@ -43,7 +43,7 @@ public final class ImporterUtil {
     for (String clause1 : clauses) {
       String clause = clause1.trim();
       if (!tag.equals(clause)) {
-        if (buf.length() > 0) {
+        if (!buf.isEmpty()) {
           buf.append(',');
         }
         buf.append(clause);

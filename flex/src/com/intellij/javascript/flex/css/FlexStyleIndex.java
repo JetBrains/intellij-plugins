@@ -155,7 +155,7 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
 
   private static @Nullable String readUTF(@NotNull DataInput in) throws IOException {
     String s = IOUtil.readUTF(in);
-    return s.length() == 0 ? null : s;
+    return s.isEmpty() ? null : s;
   }
 
   private static void indexAttributes(PsiElement element, final String classQName, final boolean inClass, final Map<String, Set<FlexStyleIndexInfo>> map) {
@@ -190,7 +190,7 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
   private static @NotNull String getQualifiedNameByMxmlFile(@NotNull VirtualFile file, @NotNull Project project) {
     String name = FileUtilRt.getNameWithoutExtension(file.getName());
     final String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file, project);
-    if (packageName != null && packageName.length() > 0) {
+    if (packageName != null && !packageName.isEmpty()) {
       return packageName + "." + name;
     }
     return name;

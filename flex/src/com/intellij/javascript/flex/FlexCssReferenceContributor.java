@@ -7,8 +7,8 @@ import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.CssClassValueReference;
 import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
@@ -124,7 +124,7 @@ public final class FlexCssReferenceContributor extends PsiReferenceContributor {
       @Override
       public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         String styleName = CssClassValueReference.getValue(element);
-        if (styleName.length() > 0) {
+        if (!styleName.isEmpty()) {
           return new PsiReference[]{new CssClassValueReference(element)};
         }
         return PsiReference.EMPTY_ARRAY;

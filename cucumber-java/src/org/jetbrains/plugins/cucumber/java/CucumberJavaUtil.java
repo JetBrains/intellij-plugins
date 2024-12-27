@@ -135,7 +135,7 @@ public final class CucumberJavaUtil {
 
   public static boolean isStepDefinition(final @NotNull PsiMethod method) {
     List<PsiAnnotation> stepAnnotations = getCucumberStepAnnotations(method);
-    return stepAnnotations.size() > 0;
+    return !stepAnnotations.isEmpty();
   }
 
   public static boolean isHook(final @NotNull PsiMethod method) {
@@ -149,7 +149,7 @@ public final class CucumberJavaUtil {
   public static boolean isStepDefinitionClass(final @NotNull PsiClass clazz) {
     PsiMethod[] methods = clazz.getAllMethods();
     for (PsiMethod method : methods) {
-      if (getCucumberStepAnnotations(method).size() > 0 || getCucumberHookAnnotation(method) != null) return true;
+      if (!getCucumberStepAnnotations(method).isEmpty() || getCucumberHookAnnotation(method) != null) return true;
     }
     return false;
   }

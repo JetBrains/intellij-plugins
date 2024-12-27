@@ -74,8 +74,8 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     final GherkinTableRow headerRow = table.getHeaderRow();
     assert headerRow != null;
     final List<GherkinTableCell> cells = headerRow.getPsiCells();
-    final int firstCellOffset =  cells.size() > 0 && cells.get(0).getTextLength() > 0 ?
-                                 cells.get(0).getTextOffset() : headerRow.getTextOffset() + 1;
+    final int firstCellOffset = !cells.isEmpty() && cells.get(0).getTextLength() > 0 ?
+                                cells.get(0).getTextOffset() : headerRow.getTextOffset() + 1;
 
     final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;

@@ -169,7 +169,7 @@ public final class GaugeUtil {
 
   public static boolean isGaugeElement(PsiElement element) {
     return StepUtil.isMethod(element)
-           ? StepUtil.getGaugeStepAnnotationValues((PsiMethod)element).size() > 0
+           ? !StepUtil.getGaugeStepAnnotationValues((PsiMethod)element).isEmpty()
            : (StepUtil.isConcept(element) || StepUtil.isStep(element));
   }
 

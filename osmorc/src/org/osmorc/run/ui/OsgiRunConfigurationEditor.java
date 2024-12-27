@@ -237,7 +237,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     boolean useUserDefinedFields = !osgiRunConfiguration.isGenerateWorkingDir();
     myWorkingDirField.setText(osgiRunConfiguration.getWorkingDir());
-    if (myWorkingDirField.getText().length() == 0) {
+    if (myWorkingDirField.getText().isEmpty()) {
       final CompilerProjectExtension extension = CompilerProjectExtension.getInstance(myProject);
       if (extension != null) {
         final VirtualFilePointer outputDirPointer = extension.getCompilerOutputPointer();

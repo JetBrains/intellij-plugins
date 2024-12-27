@@ -90,7 +90,7 @@ public class JobSearchParametersPanel {
 
   private static boolean notEmpty(final JTextField f) {
     final String t = f.getText();
-    return t != null && t.trim().length() > 0;
+    return t != null && !t.trim().isEmpty();
   }
 
   public JobsSearchSpecificator createSpecificator() {

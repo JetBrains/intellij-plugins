@@ -45,7 +45,7 @@ public class YeomanInstalledGeneratorsMain extends YeomanGeneratorsMain {
     myInstallGenerators.setMnemonic(J);
     myInstallGenerators.addActionListener(createInstallGeneratorsActionListener());
     myInstallGenerators.setMargin(JBUI.emptyInsets());
-    if (myInstalledGenerators.size() > 0) {
+    if (!myInstalledGenerators.isEmpty()) {
       myGeneratorTable.getSelectionModel().addSelectionInterval(0, 0);
     }
 

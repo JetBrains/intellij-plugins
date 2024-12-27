@@ -45,7 +45,7 @@ public final class ImplUsageProvider implements ImplicitUsageProvider {
 
   private static boolean isClassUsed(PsiClassImpl element) {
     for (PsiMethod psiMethod : element.getMethods()) {
-      if (StepUtil.getGaugeStepAnnotationValues(psiMethod).size() > 0 || HookUtil.isHook(psiMethod)) return true;
+      if (!StepUtil.getGaugeStepAnnotationValues(psiMethod).isEmpty() || HookUtil.isHook(psiMethod)) return true;
     }
     return false;
   }

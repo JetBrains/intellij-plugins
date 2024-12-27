@@ -307,13 +307,13 @@ public final class FlexSdkUtils {
         properties.load(inputStream);
 
         final String configuredJavaHome = properties.getProperty("java.home");
-        if (configuredJavaHome != null && configuredJavaHome.trim().length() > 0) {
+        if (configuredJavaHome != null && !configuredJavaHome.trim().isEmpty()) {
           javaHome = configuredJavaHome;
           customJavaHomeSet = true;
         }
 
         final String javaArgs = properties.getProperty("java.args");
-        if (javaArgs != null && javaArgs.trim().length() > 0) {
+        if (javaArgs != null && !javaArgs.trim().isEmpty()) {
           additionalJavaArgs = javaArgs;
           final Matcher matcher = FlexCommonUtils.XMX_PATTERN.matcher(javaArgs);
           if (matcher.matches()) {
@@ -325,7 +325,7 @@ public final class FlexSdkUtils {
         }
 
         final String classpathFromJvmConfig = properties.getProperty("java.class.path");
-        if (classpathFromJvmConfig != null && classpathFromJvmConfig.trim().length() > 0) {
+        if (classpathFromJvmConfig != null && !classpathFromJvmConfig.trim().isEmpty()) {
           classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) + classpathFromJvmConfig;
         }
         //jvm.config also has properties which are not handled here: 'env' and 'java.library.path'; though not sure that there's any sense in them

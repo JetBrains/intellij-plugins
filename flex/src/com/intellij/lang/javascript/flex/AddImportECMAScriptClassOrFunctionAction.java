@@ -105,7 +105,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
         final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
 
         isAvailableCalculated = true;
-        isAvailable = candidates.size() > 0;
+        isAvailable = !candidates.isEmpty();
         String text;
 
         if (isAvailable) {

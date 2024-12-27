@@ -333,7 +333,7 @@ public class BndWrapper {
       builder.setProperties(bndFile);
       builder.setPedantic(false);
       List<Builder> subs = builder.getSubBuilders();
-      if (subs.size() > 0 && subs.get(0) != builder) {
+      if (!subs.isEmpty() && subs.get(0) != builder) {
         return ContainerUtil.map(subs, sub -> sub.getBsn() + ".jar");
       }
     }

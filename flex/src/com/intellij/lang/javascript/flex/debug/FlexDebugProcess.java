@@ -599,7 +599,7 @@ public class FlexDebugProcess extends XDebugProcess {
             log(ex);
           }
         }
-        else if (line.length() > 0 &&
+        else if (!line.isEmpty() &&
                  Character.isDigit(line.charAt(0))) {  // we are on new location: e.g. " 119           trace('\x30 \123')"
           if (!encounteredNonsuspendableBreakpoint) insertCommand(new DumpSourceLocationCommand(this));
         }
@@ -1188,7 +1188,7 @@ public class FlexDebugProcess extends XDebugProcess {
         stdcontent = false;
         break;
       }
-      if (s.length() > 0 && Character.isDigit(s.charAt(0))) {
+      if (!s.isEmpty() && Character.isDigit(s.charAt(0))) {
         sendCommand(new DumpSourceLocationCommand(this));
       }
       else if (!handleStdResponse(line, iterator)) {
@@ -1259,7 +1259,7 @@ public class FlexDebugProcess extends XDebugProcess {
           (allowEmptyMarker ||
            lastText.indexOf(WAITING_PLAYER_MARKER_1, lastTextMarkerScanningStart) >= 0 ||
            lastText.indexOf(WAITING_PLAYER_MARKER_2, lastTextMarkerScanningStart) >= 0) &&
-          lastText.length() > 0) {
+          !lastText.isEmpty()) {
         i = lastText.length();
         marker = "";
       }
@@ -1269,7 +1269,7 @@ public class FlexDebugProcess extends XDebugProcess {
         lastText.delete(0, i + marker.length());
         lastTextMarkerScanningStart = 0;
         if (isBlank(lastText)) lastText.setLength(0);
-        setSuspended(marker.length() != 0);
+        setSuspended(!marker.isEmpty());
         return result;
       }
       else {

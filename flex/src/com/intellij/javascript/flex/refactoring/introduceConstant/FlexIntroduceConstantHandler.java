@@ -91,7 +91,7 @@ public class FlexIntroduceConstantHandler extends JSBaseIntroduceHandler<JSEleme
 
     if (!StringUtil.isEmpty(qName) &&
         !myIntroducingInTheSameClass &&
-        StringUtil.getPackageName(qName).length() > 0
+        !StringUtil.getPackageName(qName).isEmpty()
       ) {
       myShortRefIsAmbigousOrUnequal = JSResolveUtil.shortReferenceIsAmbiguousOrUnequal(
         JSResolveUtil.getShortTypeName(qName, true), context.expressionDescriptor.first, qName, true);

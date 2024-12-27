@@ -99,7 +99,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
           Double.parseDouble(value);
           doQoute=false;
         } catch (NumberFormatException ex) {}
-      } else if (value.length() > 0 && (Character.isDigit(ch = value.charAt(0)) || (ch == '-' && value.length() > 1 && Character.isDigit(value.charAt(1))))) {
+      } else if (!value.isEmpty() && (Character.isDigit(ch = value.charAt(0)) || (ch == '-' && value.length() > 1 && Character.isDigit(value.charAt(1))))) {
         try {
           Integer.parseInt(value);
           doQoute=false;
@@ -226,7 +226,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     s += "native ";
 
     String nsName = member.name.getNsName(member);
-    if (nsName != null && nsName.length() > 0) s += nsName + " ";
+    if (nsName != null && !nsName.isEmpty()) s += nsName + " ";
 
     if (member.isFinal) s+= "final ";
     if (member.isOverride) s+= "override ";

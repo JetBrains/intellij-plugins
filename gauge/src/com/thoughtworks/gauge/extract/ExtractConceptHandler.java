@@ -40,7 +40,7 @@ final class ExtractConceptHandler {
     this.psiFile = psiFile;
     try {
       List<PsiElement> steps = getSteps(editor, this.psiFile);
-      if (steps.size() == 0) {
+      if (steps.isEmpty()) {
         throw new RuntimeException("Cannot Extract to Concept, selected text contains invalid elements");
       }
       ExtractConceptInfoCollector collector = new ExtractConceptInfoCollector(editor, builder.getTextToTableMap(), steps, project);

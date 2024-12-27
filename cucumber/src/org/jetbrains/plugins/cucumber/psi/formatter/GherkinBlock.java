@@ -211,6 +211,6 @@ public class GherkinBlock implements ASTBlock {
 
   @Override
   public boolean isLeaf() {
-    return myLeaf || getSubBlocks().size() == 0;
+    return myLeaf || getSubBlocks().isEmpty();
   }
 }

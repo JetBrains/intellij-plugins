@@ -29,7 +29,7 @@ public final class CustomFindUsagesHandlerFactory extends FindUsagesHandlerFacto
   @Override
   public boolean canFindUsages(@NotNull PsiElement psiElement) {
     if (psiElement instanceof PsiMethod) {
-      return StepUtil.getGaugeStepAnnotationValues((PsiMethod)psiElement).size() > 0;
+      return !StepUtil.getGaugeStepAnnotationValues((PsiMethod)psiElement).isEmpty();
     }
     return psiElement instanceof SpecStepImpl || psiElement instanceof ConceptStepImpl;
   }

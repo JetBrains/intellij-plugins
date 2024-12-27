@@ -317,7 +317,7 @@ public class FlexStackFrame extends XStackFrame {
         return CommandOutputProcessingMode.DONE;
       }
 
-      if (getText().contains("\n") && s.length() == 0) { // implicit set command was issued with empty result
+      if (getText().contains("\n") && s.isEmpty()) { // implicit set command was issued with empty result
         return CommandOutputProcessingMode.PROCEEDING;
       }
       dispatchResult(s);
@@ -516,7 +516,7 @@ public class FlexStackFrame extends XStackFrame {
 
         while (tokenizer.hasMoreElements()) {
           final String token = tokenizer.nextToken();
-          if (token.length() == 0) continue;
+          if (token.isEmpty()) continue;
 
           if (token.charAt(0) == '\r' || token.charAt(0) == '\n') {
             // Tokenizer delimiter may be a part of String variable value
@@ -577,7 +577,7 @@ public class FlexStackFrame extends XStackFrame {
     }
 
     private static String removeTrailingNewLines(final StringBuilder builder) {
-      while (builder.length() > 0 && ((builder.charAt(builder.length() - 1) == '\r') || builder.charAt(builder.length() - 1) == '\n')) {
+      while (!builder.isEmpty() && ((builder.charAt(builder.length() - 1) == '\r') || builder.charAt(builder.length() - 1) == '\n')) {
         builder.deleteCharAt(builder.length() - 1);
       }
       return builder.toString();

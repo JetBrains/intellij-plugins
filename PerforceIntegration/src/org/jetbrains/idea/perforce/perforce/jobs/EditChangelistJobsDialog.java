@@ -194,7 +194,7 @@ public class EditChangelistJobsDialog extends DialogWrapper {
         @Override
         public void perform() {
           final String text = myField.getText().trim();
-          if (text.length() > 0) {
+          if (!text.isEmpty()) {
             final List<PerforceJob> jobs = PerforceCheckinComponent.getJobsUnderProgress(myWorker, new ByNamesConstraint(Collections.singletonList(text)), myConnection, myKey, mySpecification);
             if (jobs == null) {
               return;

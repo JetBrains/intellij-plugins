@@ -389,7 +389,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     final String shortName = element instanceof JSClass ? StringUtil.getShortName(qName) : PACKAGE;
     String packageName = StringUtil.getPackageName(qName);
     packageName = packageName.replace('.', '/');
-    return packageName.length() > 0 ? packageName + "/" + shortName + HTML_EXTENSION : shortName + HTML_EXTENSION;
+    return !packageName.isEmpty() ? packageName + "/" + shortName + HTML_EXTENSION : shortName + HTML_EXTENSION;
   }
 
   private static List<String> findUrlsForClass(JSQualifiedNamedElement aClass) {
@@ -583,7 +583,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
 
   private static String getLinkToResolve(JSQualifiedNamedElement origin, String link) {
     String originQname = origin.getQualifiedName();
-    if (link.length() == 0) {
+    if (link.isEmpty()) {
       return originQname;
     }
     else if (StringUtil.startsWithChar(link, '#')) {
@@ -615,8 +615,8 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
         else {
           linkFilename = linkFile.substring(0, linkFile.lastIndexOf("."));
         }
-        if (linkFilename.length() > 0) {
-          qname = (prefix.length() > 0 ? prefix + "." : prefix) + linkFilename.replaceAll("/", ".");
+        if (!linkFilename.isEmpty()) {
+          qname = (!prefix.isEmpty() ? prefix + "." : prefix) + linkFilename.replaceAll("/", ".");
         }
         else {
           qname = prefix;
@@ -626,7 +626,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
         qname = linkFile;
       }
 
-      return linkAnchor != null ? (qname.length() > 0 ? qname + "." : qname) + linkAnchor : qname;
+      return linkAnchor != null ? (!qname.isEmpty() ? qname + "." : qname) + linkAnchor : qname;
     }
   }
 
