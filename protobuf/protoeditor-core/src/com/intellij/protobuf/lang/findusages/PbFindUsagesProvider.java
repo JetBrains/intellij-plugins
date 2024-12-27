@@ -27,18 +27,16 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Helps find usages (basic support for usages within .proto files). */
 public class PbFindUsagesProvider implements FindUsagesProvider {
-
   @Override
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
     return psiElement instanceof PbSymbol;
   }
 
   @Override
-  public @Nullable String getHelpId(@NotNull PsiElement psiElement) {
+  public @NotNull String getHelpId(@NotNull PsiElement psiElement) {
     return HelpID.FIND_OTHER_USAGES;
   }
 
@@ -94,7 +92,7 @@ public class PbFindUsagesProvider implements FindUsagesProvider {
   }
 
   @Override
-  public @Nullable WordsScanner getWordsScanner() {
+  public @NotNull WordsScanner getWordsScanner() {
     PbParserDefinition parserDefinition = new PbParserDefinition();
     return new DefaultWordsScanner(
         parserDefinition.createLexer(null),

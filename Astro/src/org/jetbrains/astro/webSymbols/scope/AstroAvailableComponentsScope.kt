@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.indexing.FileBasedIndexImpl
+import com.intellij.util.indexing.FileBasedIndexEx
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
@@ -19,7 +19,7 @@ import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.symbols.AstroComponent
 
-class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
+internal class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == ASTRO_COMPONENTS
@@ -29,7 +29,7 @@ class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache
     val files = if (ApplicationManager.getApplication().isUnitTestMode)
       FileTypeIndex.getFiles(AstroFileType, GlobalSearchScope.projectScope(project))
     else
-      FileBasedIndexImpl.disableUpToDateCheckIn<Collection<VirtualFile>, Exception> {
+      FileBasedIndexEx.disableUpToDateCheckIn<Collection<VirtualFile>, Exception> {
         FileTypeIndex.getFiles(AstroFileType, GlobalSearchScope.projectScope(project))
       }
     files.forEach { vf ->

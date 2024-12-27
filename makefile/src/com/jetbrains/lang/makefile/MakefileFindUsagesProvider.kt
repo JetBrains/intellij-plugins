@@ -1,13 +1,16 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.lang.cacheBuilder.*
-import com.intellij.lang.findUsages.*
-import com.intellij.psi.*
-import com.intellij.psi.tree.*
-import com.jetbrains.lang.makefile.psi.*
-import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.intellij.lang.cacheBuilder.DefaultWordsScanner
+import com.intellij.lang.findUsages.FindUsagesProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
+import com.jetbrains.lang.makefile.psi.MakefileNamedElement
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CHARS
+import com.jetbrains.lang.makefile.psi.MakefileTypes.COMMENT
+import com.jetbrains.lang.makefile.psi.MakefileVariable
 
-class MakefileFindUsagesProvider : FindUsagesProvider {
+private class MakefileFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(CHARS), TokenSet.create(COMMENT), TokenSet.EMPTY)
 
   override fun canFindUsagesFor(element: PsiElement) =

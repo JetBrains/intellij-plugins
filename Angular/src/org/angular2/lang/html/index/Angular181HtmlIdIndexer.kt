@@ -3,4 +3,4 @@ package org.angular2.lang.html.index
 
 import org.angular2.lang.html.Angular181HtmlLanguage
 
-class Angular181HtmlIdIndexer : Angular2HtmlIdIndexer(Angular181HtmlLanguage)
+private class Angular181HtmlIdIndexer : Angular2HtmlIdIndexer(Angular181HtmlLanguage)

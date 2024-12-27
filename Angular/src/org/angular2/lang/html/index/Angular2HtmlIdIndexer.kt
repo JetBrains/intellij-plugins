@@ -9,8 +9,7 @@ import com.intellij.psi.impl.cache.impl.id.LexingIdIndexer
 import com.intellij.util.indexing.FileContent
 import org.angular2.lang.html.Angular2HtmlLanguage
 
-open class Angular2HtmlIdIndexer(val language: Language) : LexingIdIndexer {
-
+internal open class Angular2HtmlIdIndexer(val language: Language) : LexingIdIndexer {
   @Suppress("unused")
   constructor() : this(Angular2HtmlLanguage)
 
