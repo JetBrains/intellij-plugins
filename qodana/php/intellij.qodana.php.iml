@@ -17,6 +17,7 @@
     <orderEntry type="module" module-name="intellij.qodana.coverage" />
     <orderEntry type="module" module-name="intellij.php" />
     <orderEntry type="module" module-name="intellij.php.impl" />
+    <orderEntry type="module" module-name="intellij.php.frontback" />
     <orderEntry type="module" module-name="intellij.taintAnalysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.platform.coverage" />

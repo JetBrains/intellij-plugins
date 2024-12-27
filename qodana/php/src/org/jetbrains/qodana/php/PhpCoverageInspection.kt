@@ -20,7 +20,7 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
-class PhpCoverageInspection : CoverageInspectionBase() {
+private class PhpCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
   var fileThreshold = 50
 
