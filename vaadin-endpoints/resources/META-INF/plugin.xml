@@ -16,7 +16,6 @@
   <dependencies>
     <plugin id="com.intellij.java"/>
     <plugin id="com.intellij.properties"/>
-    <plugin id="com.intellij.modules.microservices"/>
     <plugin id="com.intellij.microservices.jvm"/>
     <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>
