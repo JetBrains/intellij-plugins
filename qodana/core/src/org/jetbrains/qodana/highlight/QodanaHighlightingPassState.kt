@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 private val QODANA_HIGHLIGHTING_PASS_STATE = Key.create<QodanaHighlightingPassState>("Qodana.Highlighting.Pass.State")
 
-class QodanaHighlightingPassState(
+internal class QodanaHighlightingPassState(
   private val project: Project,
   private val editor: EditorEx,
 ) {

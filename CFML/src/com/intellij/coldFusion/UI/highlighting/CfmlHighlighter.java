@@ -27,10 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Lera Nikolaenko
- */
-public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
+public final class CfmlHighlighter extends LayeredLexerEditorHighlighter {
   public CfmlHighlighter(final @Nullable Project project,
                          final @Nullable VirtualFile virtualFile,
                          final @NotNull EditorColorsScheme colors) {

@@ -71,7 +71,7 @@ import javax.swing.event.HyperlinkListener;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class ReformatWithPrettierAction extends AnAction implements DumbAware {
+public final class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
   private static final long EDT_TIMEOUT_MS = 2000;
 

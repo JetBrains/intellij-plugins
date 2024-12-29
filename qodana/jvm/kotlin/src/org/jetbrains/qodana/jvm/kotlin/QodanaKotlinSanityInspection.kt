@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.qodana.QodanaBundle
 
-class QodanaKotlinSanityInspection : LocalInspectionTool() {
+private class QodanaKotlinSanityInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     if (isOnTheFly) {
       return PsiElementVisitor.EMPTY_VISITOR

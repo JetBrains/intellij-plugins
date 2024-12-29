@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.UI.highlighting.CfmlHighlighter;
@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class CfmlEditorHighlighterProvider implements EditorHighlighterProvider {
+final class CfmlEditorHighlighterProvider implements EditorHighlighterProvider {
   @Override
   public EditorHighlighter getEditorHighlighter(@Nullable Project project,
                                                 @NotNull FileType fileType, @Nullable VirtualFile virtualFile,
