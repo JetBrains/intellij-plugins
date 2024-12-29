@@ -12,8 +12,7 @@ import com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DroolsEditorHighlighter extends LayeredLexerEditorHighlighter{
-
+public final class DroolsEditorHighlighter extends LayeredLexerEditorHighlighter{
   private final @Nullable VirtualFile myVirtualFile;
 
   public DroolsEditorHighlighter(final @Nullable Project project,

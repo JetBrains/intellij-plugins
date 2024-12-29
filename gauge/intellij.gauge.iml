@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
     <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.properties.psi.impl" />
     <orderEntry type="module-library">
       <library name="com.thoughtworks.gauge:gauge-java" type="repository">

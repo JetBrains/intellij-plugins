@@ -4,8 +4,8 @@ import com.intellij.execution.filters.Filter
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor.NpxCommand
-import com.intellij.lang.javascript.frameworks.nextjs.NextJsBundle
 import com.intellij.lang.javascript.frameworks.ReactLikeProjectGenerator
+import com.intellij.lang.javascript.frameworks.nextjs.NextJsBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.util.Key
@@ -19,7 +19,7 @@ import javax.swing.Icon
 private const val CREATE_NEXT_APP = "create-next-app"
 private val ARGUMENTS = Key.create<Array<String>>("create.next.args")
 
-class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGenerator {
+private class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGenerator {
 
   override fun getDescription(): String = NextJsBundle.message("create.next.app.description")
   override fun getName(): String = NextJsBundle.message("create.next.app.name")

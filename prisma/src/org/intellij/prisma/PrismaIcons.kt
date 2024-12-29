@@ -1,10 +1,11 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma
 
 import com.intellij.icons.AllIcons
 import com.intellij.util.PlatformIcons
 import javax.swing.Icon
 
-object PrismaIcons {
+internal object PrismaIcons {
 
   val PRISMA = icons.PrismaIcons.Prisma
 

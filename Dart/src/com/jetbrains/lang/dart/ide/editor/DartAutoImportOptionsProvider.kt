@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor
 
 import com.intellij.application.options.editor.AutoImportOptionsProvider
@@ -12,8 +12,7 @@ import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings
 
-class DartAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(), AutoImportOptionsProvider {
-
+private class DartAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(), AutoImportOptionsProvider {
   override fun Panel.createContent() {
     group(DartBundle.message("dart.title")) {
       row(DartBundle.message("label.update.imports.on.paste")) {

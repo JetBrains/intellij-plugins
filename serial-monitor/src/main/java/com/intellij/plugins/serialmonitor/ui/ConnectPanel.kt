@@ -27,7 +27,7 @@ import javax.swing.event.ListSelectionListener
 
 internal val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::javaClass.name)
 
-class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f, 0.1f, 0.9f) {
+internal class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f, 0.1f, 0.9f) {
 
   private val ports = ConnectableList(this)
   private var disposable: Disposable = Disposer.newDisposable()

@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BowerView {
+public final class BowerView {
   private final Project myProject;
   private final JPanel myComponent;
   private final NodePackageField myBowerPackageField;

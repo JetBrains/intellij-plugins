@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class YeomanConfigurable implements Configurable, Configurable.NoScroll {
+public final class YeomanConfigurable implements Configurable, Configurable.NoScroll {
   private final YeomanGlobalSettings myYeomanGlobalSettings;
   private NodeJsInterpreterField myNodeTextField;
   private TextFieldWithHistoryWithBrowseButton myYeomanPackageField;

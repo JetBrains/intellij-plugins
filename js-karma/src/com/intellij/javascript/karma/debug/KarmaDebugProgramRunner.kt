@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.debug
 
 import com.google.common.collect.BiMap
@@ -56,7 +56,7 @@ import java.nio.charset.StandardCharsets
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
-class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
+internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
   override fun getRunnerId(): String = "KarmaJavaScriptTestRunnerDebug"
 
   override fun canRun(executorId: String, profile: RunProfile): Boolean =

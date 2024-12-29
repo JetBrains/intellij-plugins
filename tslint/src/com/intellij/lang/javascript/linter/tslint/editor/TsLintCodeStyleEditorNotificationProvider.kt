@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.editor
 
 import com.intellij.CommonBundle
@@ -8,9 +8,7 @@ import com.intellij.lang.javascript.linter.tslint.TslintUtil
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper
 import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -20,8 +18,7 @@ import com.intellij.ui.EditorNotifications
 import java.util.function.Function
 import javax.swing.JComponent
 
-class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : EditorNotificationProvider {
-
+private class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : EditorNotificationProvider {
   private val NOTIFICATION_DISMISSED_PROPERTY = "tslint.code.style.apply.dismiss"
 
   private fun isNotificationDismissed(file: VirtualFile): Boolean {

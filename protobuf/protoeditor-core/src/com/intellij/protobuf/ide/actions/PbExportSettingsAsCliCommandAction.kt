@@ -15,7 +15,7 @@ import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.io.URLUtil
 import java.awt.datatransfer.StringSelection
 
-class PbExportSettingsAsCliCommandAction : DumbAwareAction(
+internal class PbExportSettingsAsCliCommandAction : DumbAwareAction(
   PbIdeBundle.messagePointer("action.export.as.cli.argument.name"),
   AllIcons.Actions.Copy
 ) {

@@ -18,7 +18,7 @@ import javax.swing.JComponent
 /**
  * @author Dmitry_Cherkas, Ilia Motornyi
  */
-class EditSettingsAction(private val myName: @Nls String, private val serialMonitor: SerialMonitor) :
+internal class EditSettingsAction(private val myName: @Nls String, private val serialMonitor: SerialMonitor) :
   DumbAwareAction(SerialMonitorBundle.message("edit-settings.title"),
                   SerialMonitorBundle.message("edit-settings.tooltip"),
                   AllIcons.General.Settings) {

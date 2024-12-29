@@ -5,15 +5,15 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.highlighter.EditorHighlighter
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import org.intellij.plugins.postcss.PostCssBundle
-import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.bind
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
+import org.intellij.plugins.postcss.PostCssBundle
 import org.intellij.plugins.postcss.PostCssFileType
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
-class PostCssStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
+internal class PostCssStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
   private var isInlineStyle = true
 
   private val panel = panel {

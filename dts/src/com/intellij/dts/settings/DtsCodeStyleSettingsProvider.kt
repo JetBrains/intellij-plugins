@@ -9,8 +9,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 
-
-class DtsCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+private class DtsCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   private class MainPanel(currentSettings: CodeStyleSettings, settings: CodeStyleSettings) :
     TabbedLanguageCodeStylePanel(DtsLanguage, currentSettings, settings)
 
