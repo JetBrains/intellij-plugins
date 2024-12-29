@@ -680,7 +680,7 @@ const props = {seeMe: {}}
   }
 
   fun testStdTagsInspections() {
-    myFixture.enableInspections(HtmlRequiredTitleElementInspection(), HtmlRequiredAltAttributeInspection())
+    myFixture.enableInspections(HtmlRequiredTitleElementInspection::class.java, HtmlRequiredAltAttributeInspection::class.java)
     doTest()
   }
 
