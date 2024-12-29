@@ -23,6 +23,7 @@ jvm_library(
     "@community//platform/statistics",
     "@community//platform/ide-core-impl",
     "@community//platform/platform-util-io:ide-util-io",
+    "//CIDR/cidr-debugger",
     "@community//platform/util/jdom",
   ],
   runtime_deps = [

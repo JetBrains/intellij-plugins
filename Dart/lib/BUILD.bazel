@@ -8,7 +8,7 @@ java_import(
 )
 
 java_import(
-  name = "weberknecht-0_1_5",
+  name = "weberknecht-0-1-5",
   jars = ["weberknecht-0.1.5.jar"],
   visibility = ["//visibility:public"]
 )

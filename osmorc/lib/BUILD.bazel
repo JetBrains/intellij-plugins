@@ -8,7 +8,7 @@ java_import(
 )
 
 java_import(
-  name = "org_osgi_namespace_contract-1_0_0",
+  name = "org-osgi-namespace-contract-1-0-0",
   jars = [
     "org.osgi.namespace.contract-1.0.0.jar",
     "org.osgi.namespace.implementation-1.0.0.jar",

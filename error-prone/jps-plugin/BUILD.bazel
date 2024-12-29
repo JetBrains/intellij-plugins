@@ -12,10 +12,12 @@ jvm_library(
   module_name = "intellij.errorProne.jps",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
-  javac_opts = "@community//:j11",
   kotlinc_opts = "@community//:k11",
   deps = [
     "@community//jps/jps-builders:build",
+    "@community//platform/util",
+    "@community//jps/jps-builders-6:build-javac-rt",
+    "@lib//:jetbrains-annotations",
     "@community//jps/model-serialization",
   ],
   runtime_deps = [":errorProne-jps_resources"]
@@ -25,11 +27,13 @@ jvm_library(
   name = "errorProne-jps_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
-  javac_opts = "@community//:j11",
   kotlinc_opts = "@community//:k11",
   associates = [":errorProne-jps"],
   deps = [
     "@community//jps/jps-builders:build",
+    "@community//platform/util",
+    "@community//jps/jps-builders-6:build-javac-rt",
+    "@lib//:jetbrains-annotations",
     "@community//jps/model-serialization",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

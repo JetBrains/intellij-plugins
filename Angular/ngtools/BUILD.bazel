@@ -9,6 +9,7 @@ jvm_library(
   deps = [
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/projectModel-impl",
     "//contrib/Angular:angular",
     "@community//platform/testFramework",
     "//WebStorm:webstorm",

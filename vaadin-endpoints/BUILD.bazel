@@ -20,7 +20,6 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//java/java-indexing-api:indexing",
     "//platform/jam-support:java-jam",
-    "//plugins/microservices/microservices",
     "//plugins/microservices/microservices-jvm:jvm",
     "@community//java/openapi:java",
   ],

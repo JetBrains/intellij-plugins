@@ -21,12 +21,14 @@ jvm_library(
   deps = [
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//platform/platform-impl:ide-impl",
     "@community//platform/smRunner",
     "@lib//:guava",
     "//plugins/js-test-common:javascript-testing",
     "@lib//:gson",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/sdk/backend:javascript-debugger-backend",
+    "//plugins/JavaScriptLanguage:javascript",
     "@community//xml/impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//plugins/coverage-common:coverage",
@@ -40,7 +42,6 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
   ],
-  exports = ["@community//platform/smRunner"],
   runtime_deps = [
     ":karma_resources",
     ":karma_resources_1",
@@ -55,6 +56,8 @@ jvm_library(
   deps = [
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/smRunner",
     "@community//platform/smRunner:smRunner_test_lib",
     "@lib//:guava",
@@ -62,6 +65,7 @@ jvm_library(
     "@lib//:gson",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/sdk/backend:javascript-debugger-backend",
+    "//plugins/JavaScriptLanguage:javascript",
     "@community//xml/impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//plugins/coverage-common:coverage",
@@ -79,7 +83,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
-    "//plugins/JavaScriptLanguage/testFramework-JavaScript:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
   ],
   runtime_deps = [
     ":karma_resources",

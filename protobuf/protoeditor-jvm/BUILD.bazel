@@ -37,6 +37,8 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
     "@lib//:guava",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-impl",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-ui",

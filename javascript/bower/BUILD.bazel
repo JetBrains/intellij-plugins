@@ -21,6 +21,7 @@ jvm_library(
     "@community//platform/ide-core",
     "@community//platform/lang-impl",
     "@community//spellchecker",
+    "@community//platform/platform-impl:ide-impl",
     "@community//platform/util/jdom",
     "@community//platform/core-ui",
     "@community//json",

@@ -17,6 +17,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-impl",
+    "@community//platform/platform-impl:ide-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
   ],
   runtime_deps = [":tsr_resources"]
@@ -32,6 +33,10 @@ jvm_test(
     "@community//java/testFramework",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-impl",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl",
   ],
   runtime_deps = [":tsr_resources"]

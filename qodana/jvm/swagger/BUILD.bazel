@@ -18,7 +18,6 @@ jvm_library(
     "@community//platform/ide-core",
     "//contrib/qodana",
     "//plugins/frameworks/swagger",
-    "//plugins/microservices/microservices",
   ],
   runtime_deps = [":qodana-jvm-swagger_resources"]
 )

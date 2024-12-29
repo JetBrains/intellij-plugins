@@ -14,6 +14,8 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/dts/pp",
+    "@community//platform/util/progress",
+    "@community//platform/platform-impl:ide-impl",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/lang-api:lang",
@@ -35,6 +37,9 @@ jvm_test(
   deps = [
     "//contrib/dts/pp",
     "//contrib/dts/pp:pp_test_lib",
+    "@community//platform/util/progress",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/lang-api:lang",

@@ -18,11 +18,12 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//plugins/yaml/editing",
     "@community//json",
+    "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-impl",
     "@lib//:guava",
     "@lib//:x_stream",
     "@community//platform/core-ui",
-    "@ultimate_lib//:cloud_formation_intellij_aws_cloudformation_meta",
+    "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
   ],
   runtime_deps = [":cloudFormation_resources"]
 )
@@ -39,6 +40,8 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//plugins/yaml/editing",
     "@community//json",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",
     "@lib//:guava",
     "@lib//:x_stream",
@@ -46,7 +49,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
     "@lib//:commons-lang3",
-    "@ultimate_lib//:cloud_formation_intellij_aws_cloudformation_meta",
+    "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
   ],
   runtime_deps = [":cloudFormation_resources"]
 )

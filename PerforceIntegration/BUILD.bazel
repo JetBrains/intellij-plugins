@@ -16,6 +16,7 @@ jvm_library(
     "@community//platform/util",
     "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
     "@community//platform/vcs-api:vcs",
+    "@community//platform/core-impl",
     "@community//platform/util/concurrency",
     "@community//platform/vcs-impl",
     "@community//platform/platform-impl:ide-impl",
@@ -48,6 +49,7 @@ jvm_library(
   srcs = glob(["testSource/**/*.kt", "testSource/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:junit4",
+    "@community//platform/core-impl",
     "//contrib/PerforceIntegration:vcs-perforce",
     "@community//platform/vcs-api:vcs",
     "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
@@ -55,6 +57,7 @@ jvm_library(
     "@community//platform/vcs-impl:vcs-impl_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/diff-api:diff",
     "@community//platform/util:util-tests_test_lib",
     "@community//platform/vcs-tests:vcs-testFramework",
     "@community//platform/platform-util-io:ide-util-io",
