@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.include.FileIncludeProvider;
+import com.intellij.psi.impl.include.FileIncludeIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
@@ -115,7 +115,7 @@ public class RoutingTest extends BasePlatformTestCase {
   }
 
   public void testNgAppResolve() {
-    FileIncludeProvider.EP_NAME.getExtensionList();
+    FileIncludeIndex.FILE_INCLUDE_PROVIDER_EP_NAME.getExtensionList();
     myFixture.configureByFiles("ngAppRouting.html", "myAppDefinition.js", "myAppUsage.js", "otherMyAppDefinition.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-app=\"my<caret>App\"", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
