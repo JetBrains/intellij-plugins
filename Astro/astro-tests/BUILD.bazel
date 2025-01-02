@@ -19,6 +19,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-impl",
+    "@community//plugins/htmltools:html-tools",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//CSS/css-psi-impl:css-psi",

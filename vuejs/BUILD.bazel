@@ -24,6 +24,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "//plugins/JavaScriptLanguage/javascript-frontback",
     "@community//xml/xml-psi-api:psi",
+    "//CSS/frontback/css-api:css-frontback",
     "@community//platform/lang-api:lang",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/ide-core-impl",

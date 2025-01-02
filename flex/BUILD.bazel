@@ -17,6 +17,7 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/lang-api:lang",
+    "//CSS/frontback/css-api:css-frontback",
     "//plugins/JavaScriptLanguage/javascript-frontback",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//plugins/JavaScriptLanguage:javascript",

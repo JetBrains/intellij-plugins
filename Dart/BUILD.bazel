@@ -77,7 +77,7 @@ jvm_library(
     "@community//spellchecker:spellchecker_test_lib",
     "@community//plugins/coverage-common:coverage",
     "@community//plugins/coverage-common:coverage_test_lib",
-    "//idea-tests:idea-ultimate-tests_test_lib",
+    "//idea-tests:ultimate-tests_test_lib",
     "//plugins/WebComponents:webComponents",
     "//plugins/WebComponents:webComponents_test_lib",
     "@lib//:guava",

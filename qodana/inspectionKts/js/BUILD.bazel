@@ -45,7 +45,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/qodana-test-framework:qodana-testFramework",
-    "//idea-tests:idea-ultimate-tests_test_lib",
+    "//idea-tests:ultimate-tests_test_lib",
     "@community//plugins/dev/intellij.dev:dev",
     "@community//platform/util:util-ui",
   ],
