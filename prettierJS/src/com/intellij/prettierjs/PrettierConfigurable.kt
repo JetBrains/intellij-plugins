@@ -176,15 +176,12 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       }.enabledIf(!disabledConfiguration.selected)
 
       row {
-        codeStyleModifierCheckBox = checkBox(PrettierBundle.message("prettier.checkbox.enable.support"))
+        codeStyleModifierCheckBox = checkBox(PrettierBundle.message("prettier.checkbox.code.style.modification"))
           .bindSelected({ prettierState.configurationMode != ConfigurationMode.DISABLED && prettierState.codeStyleSettingsModifierEnabled }, { prettierState.codeStyleSettingsModifierEnabled = it })
           .component
 
         val helpLabel = ContextHelpLabel.create(
-          PrettierBundle.message(
-            "prettier.checkbox.enable.support.help.text",
-            ApplicationNamesInfo.getInstance().fullProductName
-          )
+          PrettierBundle.message("prettier.checkbox.code.style.modification.help.text")
         )
         helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
         cell(helpLabel)
