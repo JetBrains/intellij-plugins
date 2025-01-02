@@ -147,8 +147,8 @@ class SerialMonitor(private val project: Project,
     val connection = duplexConsoleView.connection
     myHardwareControls = panel {
       row {
-        val rtsCheckbox = checkBox("RTS")
-        val dtrCheckbox = checkBox("DTR")
+        val rtsCheckbox = checkBox(SerialMonitorBundle.message("hardware.flow.control.rts"))
+        val dtrCheckbox = checkBox(SerialMonitorBundle.message("hardware.flow.control.dtr"))
 
         fun Cell<JBCheckBox>.changesBind(prop: KMutableProperty1<SerialConnection, Boolean>, connection: SerialConnection) {
           this.whenStateChangedFromUi(this@SerialMonitor) {
@@ -172,10 +172,10 @@ class SerialMonitor(private val project: Project,
         val statusIcon = IconUtil.colorize(AllIcons.Debugger.Db_set_breakpoint, JBColor.green, true)
         myHardwareStatusComponents.cts = icon(statusIcon).gap(RightGap.SMALL)
           .component
-        label("CTS")
+        label(SerialMonitorBundle.message("hardware.flow.control.cts"))
         myHardwareStatusComponents.dsr = icon(statusIcon).gap(RightGap.SMALL)
           .component
-        label("DSR")
+        label(SerialMonitorBundle.message("hardware.flow.control.dsr"))
       }
     }
 
