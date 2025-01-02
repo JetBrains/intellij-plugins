@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.webcore.util.JsonUtil
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -33,8 +34,17 @@ class PrettierLanguageServiceImpl(
   init {
     project.getMessageBus().connect(this).subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
       override fun after(events: List<VFileEvent>) {
-        if (events.any { it !is VFileContentChangeEvent || PrettierUtil.isConfigFileOrPackageJson(it.file) }) {
+        if (
+          events.any {
+            it !is VFileContentChangeEvent
+            || PrettierUtil.isConfigFileOrPackageJson(it.file)
+            || PrettierUtil.EDITOR_CONFIG_FILE_NAME == it.file.name
+          }
+        ) {
           flushConfigCache = true
+          if (PrettierConfiguration.getInstance(project).codeStyleSettingsModifierEnabled && events.any { it.isFromSave }) {
+            CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
+          }
         }
       }
     })
@@ -63,6 +73,24 @@ class PrettierLanguageServiceImpl(
     }
   }
 
+  override fun resolveConfig(
+    filePath: String,
+    prettierPackage: NodePackage,
+  ): CompletableFuture<PrettierLanguageService.ResolveConfigResult?>? {
+    val filePath = JSLanguageServiceUtil.normalizeNameAndPath(filePath)
+    val process = process
+    if (process == null || !process.isValid) {
+      return CompletableFuture.completedFuture(
+        PrettierLanguageService.ResolveConfigResult.error(PrettierBundle.message("service.not.started.message")))
+    }
+
+    val command = ResolveConfigCommand(myProject, filePath, prettierPackage, flushConfigCache)
+    return process.execute(command) { _, response: JSLanguageServiceAnswer ->
+      flushConfigCache = false
+      parseResolveConfigResponse(response)
+    }
+  }
+
   private fun parseReformatResponse(response: JSLanguageServiceAnswer, forceLineBreakAtEof: Boolean): PrettierLanguageService.FormatResult {
     val jsonObject = response.element
     val error = JsonUtil.getChildAsString(jsonObject, "error")
@@ -83,6 +111,19 @@ class PrettierLanguageServiceImpl(
       formattedResult += '\n'
     }
     return PrettierLanguageService.FormatResult.formatted(formattedResult)
+  }
+
+  private fun parseResolveConfigResponse(response: JSLanguageServiceAnswer): PrettierLanguageService.ResolveConfigResult {
+    val jsonObject = response.element
+    val error = JsonUtil.getChildAsString(jsonObject, "error")
+    if (error?.isNotEmpty() == true) {
+      return PrettierLanguageService.ResolveConfigResult.error(error)
+    }
+
+    val config = JsonUtil.getChildAsObject(jsonObject, "config")
+    val prettierConfig = PrettierConfig.createFromJson(config)
+
+    return PrettierLanguageService.ResolveConfigResult.config(prettierConfig)
   }
 
   override fun createLanguageServiceQueue(): JSLanguageServiceQueue =
@@ -157,6 +198,25 @@ class PrettierLanguageServiceImpl(
 
     override fun toSerializableObject(): JSLanguageServiceObject = this
     override val command: String = "reformat"
+    override fun getPresentableText(project: Project): String = PrettierBundle.message("progress.title")
+  }
+
+  @Suppress("unused")
+  private class ResolveConfigCommand(
+    project: Project,
+    filePath: String,
+    prettierPackage: NodePackage,
+    val flushConfigCache: Boolean,
+  ) : JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
+    val path: LocalFilePath = LocalFilePath.create(FileUtil.toSystemDependentName(filePath))
+    val prettierPath: LocalFilePath =
+      LocalFilePath.create((prettierPackage as? YarnPnpNodePackage)?.name ?: prettierPackage.systemDependentPath)
+    val packageJsonPath: LocalFilePath? = LocalFilePath.create((prettierPackage as? YarnPnpNodePackage)?.let {
+      FileUtil.toSystemDependentName(it.getPackageJsonPath(project)!!)
+    })
+
+    override fun toSerializableObject(): JSLanguageServiceObject = this
+    override val command: String = "resolveConfig"
     override fun getPresentableText(project: Project): String = PrettierBundle.message("progress.title")
   }
 }

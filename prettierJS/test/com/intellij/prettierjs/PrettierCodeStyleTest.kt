@@ -221,17 +221,17 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
 
   fun testNested() {
     val settings = getCodeStyleSettingsForFile("root.js")
-    val indentOptions = settings.getCommonSettings(JavascriptLanguage.INSTANCE).indentOptions
+    val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
     assertEquals(20, indentOptions?.INDENT_SIZE)
 
     val nestedSettings = getCodeStyleSettingsForFile("subdir/nested.js")
-    val nestedIndentOptions = nestedSettings.getCommonSettings(JavascriptLanguage.INSTANCE).indentOptions
+    val nestedIndentOptions = nestedSettings.getCommonSettings(JavascriptLanguage).indentOptions
     assertEquals(10, nestedIndentOptions?.INDENT_SIZE)
   }
 
   fun noDependencyFormatOutOfScope() {
     val settings = getCodeStyleSettingsForFile("index.js")
-    val indentOptions = settings.getCommonSettings(JavascriptLanguage.INSTANCE).indentOptions
+    val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
     assertEquals(12, indentOptions?.INDENT_SIZE)
   }
 
@@ -240,7 +240,7 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
       PrettierConfiguration.getInstance(project).state.formatFilesOutsideDependencyScope = false
 
       val settings = getCodeStyleSettingsForFile("index.js")
-      val indentOptions = settings.getCommonSettings(JavascriptLanguage.INSTANCE).indentOptions
+      val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
       assertEquals(4, indentOptions?.INDENT_SIZE)
     }
     finally {

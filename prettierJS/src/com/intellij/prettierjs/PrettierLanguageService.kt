@@ -20,6 +20,11 @@ interface PrettierLanguageService {
     range: TextRange?,
   ): CompletableFuture<FormatResult?>?
 
+  fun resolveConfig(
+    filePath: String,
+    prettierPackage: NodePackage,
+  ): CompletableFuture<ResolveConfigResult?>?
+
   companion object {
     @JvmStatic
     fun getInstance(project: Project, contextFile: VirtualFile, prettierPackage: NodePackage): PrettierLanguageService {
@@ -53,6 +58,19 @@ interface PrettierLanguageService {
       fun error(error: String): FormatResult = FormatResult(null, error, false, false)
 
       fun formatted(result: String): FormatResult = FormatResult(result, null, false, false)
+    }
+  }
+
+  class ResolveConfigResult private constructor(
+    @JvmField val config: PrettierConfig?,
+    @JvmField val error: String?,
+  ) {
+    companion object {
+      @JvmStatic
+      fun error(error: String): ResolveConfigResult = ResolveConfigResult(null, error)
+
+      @JvmStatic
+      fun config(config: PrettierConfig): ResolveConfigResult = ResolveConfigResult(config, null)
     }
   }
 }
