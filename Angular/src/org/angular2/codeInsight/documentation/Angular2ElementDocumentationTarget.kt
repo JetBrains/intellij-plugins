@@ -45,7 +45,7 @@ import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import org.jetbrains.annotations.Nls
 
-class Angular2ElementDocumentationTarget private constructor(
+internal class Angular2ElementDocumentationTarget private constructor(
   @NlsSafe val name: String,
   val location: PsiElement?,
   val elements: List<Angular2Element>,

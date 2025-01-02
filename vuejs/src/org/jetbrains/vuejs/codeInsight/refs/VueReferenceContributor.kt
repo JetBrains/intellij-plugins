@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor
@@ -19,8 +19,7 @@ import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
-class VueReferenceContributor : PsiReferenceContributor() {
-
+private class VueReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     registrar.registerReferenceProvider(STYLE_PATTERN, STYLE_REF_PROVIDER)
 
@@ -61,7 +60,7 @@ private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
   }
 }
 
-val STATIC_FILE_REF_PROVIDER = object : PsiReferenceProvider() {
+internal val STATIC_FILE_REF_PROVIDER = object : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
     val result = mutableListOf<PsiReference>()
     StaticPathReferenceProvider(FileType.EMPTY_ARRAY).apply {

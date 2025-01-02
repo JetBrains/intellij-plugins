@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -29,9 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
-public final class FlexCssReferenceContributor extends PsiReferenceContributor {
-
-
+final class FlexCssReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(CssString.class).and(new FilterPattern(new ElementFilter() {

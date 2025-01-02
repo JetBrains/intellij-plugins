@@ -14,7 +14,7 @@ import com.intellij.xml.util.CheckDtdReferencesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 
-class AstroInspectionsProvider : InspectionToolProvider {
+internal class AstroInspectionsProvider : InspectionToolProvider {
   override fun getInspectionClasses(): Array<Class<out LocalInspectionTool>> =
     arrayOf(
       HtmlDeprecatedAttributeInspection::class.java,

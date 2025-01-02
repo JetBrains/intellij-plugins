@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.css.frontback" />
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.css.psi" />
     <orderEntry type="module" module-name="intellij.css.analysis" />

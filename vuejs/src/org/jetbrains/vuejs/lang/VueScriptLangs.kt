@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.injected.editor.VirtualFileWindow
@@ -22,8 +22,8 @@ import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
 
-object VueScriptLangs {
-  val LANG_MODE = Key.create<LangMode>("LANG_MODE")
+internal object VueScriptLangs {
+  internal val LANG_MODE = Key.create<LangMode>("LANG_MODE")
 
   fun createLexer(langMode: LangMode, project: Project?): Lexer {
     if (langMode == LangMode.HAS_TS) {
@@ -89,12 +89,12 @@ enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElement
 
   val canonicalAttrValue: String get() = if (this == HAS_TS) "ts" else "js"
 
-  val scriptEmbedmentInfo = VueTagEmbeddedContentProvider.VueScriptEmbedmentInfo(scriptElementType)
+  internal val scriptEmbedmentInfo = VueTagEmbeddedContentProvider.VueScriptEmbedmentInfo(scriptElementType)
 
-  val astMarkerToken = VueLangModeMarkerElementType(this)
+  internal val astMarkerToken = VueLangModeMarkerElementType(this)
 
   companion object {
-    val DEFAULT = NO_TS
+    val DEFAULT: LangMode = NO_TS
 
     val knownAttrValues: Set<String?>
 

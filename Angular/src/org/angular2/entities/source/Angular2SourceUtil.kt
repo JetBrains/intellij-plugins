@@ -37,7 +37,6 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
 import org.angular2.entities.*
-import org.angular2.index.TS_CLASS_TOKENS
 import org.angular2.index.resolveComponentsFromIndex
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
@@ -47,8 +46,7 @@ import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import java.util.*
 import java.util.function.BiPredicate
 
-object Angular2SourceUtil {
-
+internal object Angular2SourceUtil {
   @JvmStatic
   fun getNgContentSelectors(template: PsiFile?): List<Angular2DirectiveSelector> =
     if (template is PsiFileImpl) {

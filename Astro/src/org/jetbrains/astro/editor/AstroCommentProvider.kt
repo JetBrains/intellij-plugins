@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.editor
 
 import com.intellij.lang.Commenter
@@ -23,7 +23,7 @@ import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.psi.AstroContentRoot
 
-class AstroCommentProvider : MultipleLangCommentProvider {
+private class AstroCommentProvider : MultipleLangCommentProvider {
   override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter {
     val minimalElement = editor.caretModel.currentCaret
       .let { findMinimalElementContainingRange(file, it.selectionStart, it.selectionEnd) }

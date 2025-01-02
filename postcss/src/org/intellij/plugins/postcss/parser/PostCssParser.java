@@ -15,7 +15,7 @@ import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PostCssParser extends CssParser2 {
+public final class PostCssParser extends CssParser2 {
   private boolean myRulesetSeen;
   private boolean myAmpersandAllowed;
   private IElementType myAdditionalIdent;

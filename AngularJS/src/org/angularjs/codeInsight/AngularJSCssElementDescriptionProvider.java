@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.css.CssDialectMappings;
@@ -19,8 +19,7 @@ import static com.intellij.util.ArrayUtilRt.EMPTY_STRING_ARRAY;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angularjs.index.AngularJSDirectivesSupport.findTagDirectives;
 
-public final class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
-
+final class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
   @Override
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null || !context.isValid()) return false;

@@ -25,8 +25,7 @@ import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.jetbrains.annotations.NonNls
 
-class Angular2CssInclusionContext : CssInclusionContext() {
-
+private class Angular2CssInclusionContext : CssInclusionContext() {
   override fun getContextFiles(current: PsiFile): Array<PsiFile> {
     return getComponentContext(current)?.cssFiles ?: PsiFile.EMPTY_ARRAY
   }
