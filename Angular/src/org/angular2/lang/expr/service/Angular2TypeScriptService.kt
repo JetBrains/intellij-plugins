@@ -20,7 +20,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
-import com.intellij.lang.typescript.tsc.awaitFutureShort
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
@@ -271,7 +270,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // Ensure that transpiled template is up-to-date
       refreshTranspiledTemplateIfNeeded(componentVirtualFile)
 
-      val filePath = awaitFutureShort(getFilePath(componentVirtualFile)) ?: return@withServiceTraceSpan null
+      val filePath = JSLanguageServiceUtil.awaitFuture(getFilePath(componentVirtualFile), JSLanguageServiceUtil.getShortTimeout())
+                     ?: return@withServiceTraceSpan null
 
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
