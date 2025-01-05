@@ -20,6 +20,7 @@ jvm_library(
     "@community//java/java-analysis-api:analysis",
     "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
     "@community//plugins/dev/intellij.java.dev:java-dev",
+    "@community//platform/analysis-api:analysis",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/core-ui",
     "//contrib/qodana",

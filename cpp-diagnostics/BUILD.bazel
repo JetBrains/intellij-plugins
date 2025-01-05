@@ -19,6 +19,7 @@ jvm_library(
     "//platform/ssh-ui",
     "@community//platform/core-impl",
     "@community//platform/util-ex",
+    "@community//platform/analysis-api:analysis",
     "//CIDR/cidr-util",
     "@community//platform/platform-impl:ide-impl",
   ],
