@@ -46,6 +46,7 @@
     <orderEntry type="library" name="jsoup" level="project" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.yaml.editing" />
+    <orderEntry type="module" module-name="intellij.platform.externalProcessAuthHelper" />
     <orderEntry type="module" module-name="intellij.json" />
     <orderEntry type="module" module-name="intellij.platform.editor.ex" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
@@ -67,6 +68,7 @@
     <orderEntry type="library" name="kotlinx-coroutines-core" level="project" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.dvcs.impl" />
     <orderEntry type="library" name="jline" level="project" />
     <orderEntry type="module" module-name="intellij.qodana.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />

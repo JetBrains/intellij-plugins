@@ -15,6 +15,7 @@
     <orderEntry type="module" module-name="intellij.java.analysis" />
     <orderEntry type="module" module-name="intellij.dev.codeInsight" />
     <orderEntry type="module" module-name="intellij.java.dev" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.dev.psiViewer" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.qodana" />

@@ -14,10 +14,9 @@ import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 
-data class GitStatusEntry(val status: String, val path: String, val filePath: FilePath)
+internal data class GitStatusEntry(val status: String, val path: String, val filePath: FilePath)
 
-
-suspend fun getStatus(project: Project): List<GitStatusEntry> {
+internal suspend fun getStatus(project: Project): List<GitStatusEntry> {
   val repository = GitRepositoryManager.getInstance(project).repositories.firstOrNull()
                    ?: throw QodanaException("Repository root is not detected")
   val root = repository.root
@@ -39,7 +38,7 @@ suspend fun getStatus(project: Project): List<GitStatusEntry> {
   }
 }
 
-suspend fun restoreTrackedFiles(project: Project) {
+internal suspend fun restoreTrackedFiles(project: Project) {
   val repository = GitRepositoryManager.getInstance(project).repositories.firstOrNull()
                    ?: throw QodanaException("Repository root is not detected")
 
@@ -62,7 +61,7 @@ suspend fun restoreTrackedFiles(project: Project) {
   }
 }
 
-suspend fun resetHardLocal(project: Project, root: VirtualFile) {
+internal suspend fun resetHardLocal(project: Project, root: VirtualFile) {
   val handler = GitLineHandler(project, root, GitCommand.RESET)
   handler.addParameters("--hard")
   handler.endOptions()
