@@ -28,7 +28,10 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.TextFieldWithStoredHistory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLoadingPanel
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.RightGap
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.whenStateChangedFromUi
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
@@ -169,7 +172,10 @@ class SerialMonitor(private val project: Project,
         dtrCheckbox.component.isSelected = connection.dtr
         dtrCheckbox.changesBind(SerialConnection::dtr, connection)
 
-        val statusIcon = IconUtil.colorize(AllIcons.Debugger.Db_set_breakpoint, JBColor.green, true)
+        // Use the same color as progress bar, which is a nice green for the default color schemes
+        val statusColor = JBColor.namedColor("ProgressBar.passedColor", JBColor.GREEN)
+        // Use the ThreadAtBreakpoint icon to get a circle
+        val statusIcon = IconUtil.colorize(AllIcons.Debugger.ThreadAtBreakpoint, statusColor)
         myHardwareStatusComponents.cts = icon(statusIcon).gap(RightGap.SMALL)
           .component
         label(SerialMonitorBundle.message("hardware.flow.control.cts"))
