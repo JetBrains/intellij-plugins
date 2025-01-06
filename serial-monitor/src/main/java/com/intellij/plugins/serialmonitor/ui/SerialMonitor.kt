@@ -150,8 +150,12 @@ class SerialMonitor(private val project: Project,
     val connection = duplexConsoleView.connection
     myHardwareControls = panel {
       row {
-        val rtsCheckbox = checkBox(SerialMonitorBundle.message("hardware.flow.control.rts"))
-        val dtrCheckbox = checkBox(SerialMonitorBundle.message("hardware.flow.control.dtr"))
+        val rtsCheckbox = checkBox(SerialMonitorBundle.message("hardware.flow.control.rts")).applyToComponent {
+          toolTipText = SerialMonitorBundle.message("hardware.flow.control.rts.tooltip")
+        }
+        val dtrCheckbox = checkBox(SerialMonitorBundle.message("hardware.flow.control.dtr")).applyToComponent {
+          toolTipText = SerialMonitorBundle.message("hardware.flow.control.dtr.tooltip")
+        }
 
         fun Cell<JBCheckBox>.changesBind(prop: KMutableProperty1<SerialConnection, Boolean>, connection: SerialConnection) {
           this.whenStateChangedFromUi(this@SerialMonitor) {
@@ -176,12 +180,26 @@ class SerialMonitor(private val project: Project,
         val statusColor = JBColor.namedColor("ProgressBar.passedColor", JBColor.GREEN)
         // Use the ThreadAtBreakpoint icon to get a circle
         val statusIcon = IconUtil.colorize(AllIcons.Debugger.ThreadAtBreakpoint, statusColor)
-        myHardwareStatusComponents.cts = icon(statusIcon).gap(RightGap.SMALL)
+
+        myHardwareStatusComponents.cts = icon(statusIcon)
+          .gap(RightGap.SMALL)
+          .applyToComponent {
+            toolTipText = SerialMonitorBundle.message("hardware.flow.control.cts.tooltip")
+          }
           .component
-        label(SerialMonitorBundle.message("hardware.flow.control.cts"))
-        myHardwareStatusComponents.dsr = icon(statusIcon).gap(RightGap.SMALL)
+        label(SerialMonitorBundle.message("hardware.flow.control.cts")).applyToComponent {
+            toolTipText = SerialMonitorBundle.message("hardware.flow.control.cts.tooltip")
+        }
+
+        myHardwareStatusComponents.dsr = icon(statusIcon)
+          .gap(RightGap.SMALL)
+          .applyToComponent {
+            toolTipText = SerialMonitorBundle.message("hardware.flow.control.dsr.tooltip")
+          }
           .component
-        label(SerialMonitorBundle.message("hardware.flow.control.dsr"))
+        label(SerialMonitorBundle.message("hardware.flow.control.dsr")).applyToComponent {
+          toolTipText = SerialMonitorBundle.message("hardware.flow.control.dsr.tooltip")
+        }
       }
     }
 
