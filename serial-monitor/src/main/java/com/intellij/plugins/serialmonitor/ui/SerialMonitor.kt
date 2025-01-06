@@ -24,6 +24,7 @@ import com.intellij.plugins.serialmonitor.service.SerialPortService.SerialConnec
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.TextFieldWithStoredHistory
 import com.intellij.ui.components.JBCheckBox
@@ -176,10 +177,11 @@ class SerialMonitor(private val project: Project,
         dtrCheckbox.component.isSelected = connection.dtr
         dtrCheckbox.changesBind(SerialConnection::dtr, connection)
 
-        // Use the same color as progress bar, which is a nice green for the default color schemes
-        val statusColor = JBColor.namedColor("ProgressBar.passedColor", JBColor.GREEN)
+        // Green7 works for default themes, fallback to pure green otherwise, which works for HighContrast
+        @Suppress("UnregisteredNamedColor")
+        val statusColor = JBColor.namedColor("ColorPalette.Green7", ColorUtil.fromHex("#00FF00"))
         // Use the ThreadAtBreakpoint icon to get a circle
-        val statusIcon = IconUtil.colorize(AllIcons.Debugger.ThreadAtBreakpoint, statusColor)
+        val statusIcon = IconUtil.colorize(AllIcons.Debugger.ThreadAtBreakpoint, statusColor, true)
 
         myHardwareStatusComponents.cts = icon(statusIcon)
           .gap(RightGap.SMALL)
