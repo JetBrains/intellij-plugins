@@ -1,5 +1,6 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
@@ -15,13 +16,19 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.util.SmartList
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
-import org.angular2.entities.*
+import org.angular2.entities.Angular2ClassBasedDirective
+import org.angular2.entities.Angular2ClassBasedEntity
+import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
+import org.angular2.entities.Angular2Pipe
+import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
+import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.DiagnosticKind
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -223,7 +230,8 @@ internal class Environment(
           .forEach { (name, property) ->
             if (property.isSignalProperty) {
               signalInputs.add(name)
-            } else {
+            }
+            else {
               plainInputs.add(name)
             }
           }
@@ -353,7 +361,15 @@ internal class OutOfBandDiagnosticRecorder {
         "angular.inspection.unresolved-pipe.message",
         pipeName?.withColor(NG_PIPE, pipeExpression) ?: ""
       ),
-      highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+      highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL,
+      quickFixProvider = {
+        val referenceExpression = pipeExpression.methodExpression as? Angular2PipeReferenceExpression
+                                  ?: return@registerDiagnostics LocalQuickFix.EMPTY_ARRAY
+        val myFixes = SmartList<LocalQuickFix>()
+        Angular2FixesFactory.addUnresolvedDeclarationFixes(referenceExpression, myFixes)
+        myFixes.toTypedArray()
+      },
+    )
   }
 
   fun deferredPipeUsedEagerly(id: TemplateId, pipe: Angular2PipeExpression) {
@@ -391,9 +407,10 @@ internal class OutOfBandDiagnosticRecorder {
     message: String,
     category: String? = null,
     highlightType: ProblemHighlightType? = null,
+    quickFixProvider: () -> Array<LocalQuickFix>? = { null },
   ) {
     diagnostics.add(DiagnosticData(
-      kind, range.startOffset, range.length, message, category, highlightType
+      kind, range.startOffset, range.length, message, category, highlightType, quickFixProvider
     ))
   }
 
@@ -418,7 +435,11 @@ internal data class DiagnosticData(
   override val message: String,
   override val category: String? = null,
   override val highlightType: ProblemHighlightType? = null,
+  private val quickFixProvider: () -> Array<LocalQuickFix>? = { null },
 ) : Angular2TemplateTranspiler.Diagnostic {
   override fun offsetBy(offset: Int): Angular2TemplateTranspiler.Diagnostic =
     copy(startOffset = startOffset + offset)
+
+  override val quickFixes: Array<LocalQuickFix>?
+    get() = quickFixProvider()
 }

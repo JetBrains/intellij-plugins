@@ -1,5 +1,6 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.lang.javascript.service.withServiceTraceSpan
@@ -152,6 +153,7 @@ object Angular2TemplateTranspiler {
     val message: @InspectionMessage String
     val category: String? /* JSAnnotationError.*_CATEGORY */
     val highlightType: ProblemHighlightType?
+    val quickFixes: Array<LocalQuickFix>?
 
     fun offsetBy(offset: Int): Diagnostic
   }
