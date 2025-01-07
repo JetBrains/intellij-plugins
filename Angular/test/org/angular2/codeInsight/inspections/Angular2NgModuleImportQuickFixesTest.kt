@@ -2,9 +2,11 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
+import com.intellij.javascript.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
@@ -12,6 +14,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageEditorUtil
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.testFramework.IndexingTestUtil.Companion.waitUntilIndexesAreReady
 import com.intellij.testFramework.PsiTestUtil
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.webSymbols.checkListByFile
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
@@ -19,21 +22,22 @@ import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
+import org.angular2.inspections.AngularUnresolvedPipeInspection
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import java.io.IOException
-import java.util.*
 
 /**
  * Also tests completion InsertHandlers.
  */
-class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport", false) {
+class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport", true) {
 
   fun testNgFor() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "*ng<caret>For",
-                    "Import Angular entity...",
-                    "CommonModule - \"@angular/common\"")
+                    "Import CommonModule",
+                    "CommonModule - \"@angular/common\"",
+                    modules = ANGULAR_13)
   }
 
   fun testNgForCompletion() {
@@ -41,15 +45,17 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "*ngFor=\"let item of items\"",
                      "*ngFo\nlet item of items",
-                     "CommonModule - \"@angular/common\"")
+                     "CommonModule - \"@angular/common\"",
+                     modules = ANGULAR_13)
   }
 
   fun testNgClass() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "[ng<caret>Class]",
-                    "Import Angular entity...",
-                    "CommonModule - \"@angular/common\"")
+                    "Import CommonModule",
+                    "CommonModule - \"@angular/common\"",
+                    modules = ANGULAR_13)
   }
 
   fun testNgClassCompletion() {
@@ -57,15 +63,17 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "[ngClass]=\"'my'\"",
                      "[ngCl\n'my'",
-                     "CommonModule - \"@angular/common\"")
+                     "CommonModule - \"@angular/common\"",
+                     modules = ANGULAR_13)
   }
 
   fun testLowercasePipe() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "lower<caret>case",
-                    "Import Angular entity...",
-                    "CommonModule - \"@angular/common\"")
+                    "Import CommonModule",
+                    "CommonModule - \"@angular/common\"",
+                    modules = ANGULAR_13)
   }
 
   fun testLowercasePipeCompletion() {
@@ -73,7 +81,8 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "lowercase",
                      "lo\n",
-                     "CommonModule - \"@angular/common\"")
+                     "CommonModule - \"@angular/common\"",
+                     modules = ANGULAR_13)
   }
 
   fun testImportDirective() {
@@ -148,8 +157,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "test.html",
                     "[ngValue<caret>]",
                     "Import Angular entity...",
-                    "FormsModule - \"@angular/forms\"",
-                    ANGULAR_8)
+                    "FormsModule - \"@angular/forms\"")
   }
 
   fun testFormsModule2() {
@@ -157,8 +165,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "test.html",
                     "ng<caret>Model",
                     "Import Angular entity...",
-                    "FormsModule - \"@angular/forms\"",
-                    ANGULAR_8)
+                    "FormsModule - \"@angular/forms\"")
   }
 
   fun testFormsModule3() {
@@ -167,7 +174,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "[ng<caret>Model]",
                     "Import FormsModule",
                     null,
-                    ANGULAR_8,
                     checkQuickFixList = true)
   }
 
@@ -176,8 +182,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "test.html",
                     "[(ng<caret>Model)]",
                     "Import FormsModule",
-                    null,
-                    ANGULAR_8)
+                    null)
   }
 
   fun testFormsModuleCompletion1() {
@@ -185,8 +190,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
-                     "FormsModule - \"@angular/forms\"",
-                     ANGULAR_8)
+                     "FormsModule - \"@angular/forms\"")
   }
 
   fun testFormsModuleCompletion2() {
@@ -194,8 +198,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "ngModel ",
                      "ngMod\n ",
-                     "FormsModule - \"@angular/forms\"",
-                     ANGULAR_8)
+                     "FormsModule - \"@angular/forms\"")
   }
 
   fun testFormsModuleCompletion3() {
@@ -203,8 +206,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "[ngModel]=\"foo\"",
                      "[ngMod\nfoo",
-                     "FormsModule - \"@angular/forms\"",
-                     ANGULAR_8)
+                     "FormsModule - \"@angular/forms\"")
   }
 
   fun testFormsModuleCompletion4() {
@@ -212,8 +214,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "[(ngModel)]=\"foo\"",
                      "[(ngMod\nfoo",
-                     "FormsModule - \"@angular/forms\"",
-                     ANGULAR_8)
+                     "FormsModule - \"@angular/forms\"")
   }
 
   fun testReactiveFormsModule1() {
@@ -221,8 +222,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "test.html",
                     "[ngValue<caret>]",
                     "Import Angular entity...",
-                    "ReactiveFormsModule - \"@angular/forms\"",
-                    ANGULAR_8)
+                    "ReactiveFormsModule - \"@angular/forms\"")
   }
 
   fun testReactiveFormsModule2() {
@@ -230,8 +230,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "test.html",
                     "ng<caret>Model",
                     "Import Angular entity...",
-                    "ReactiveFormsModule - \"@angular/forms\"",
-                    ANGULAR_8)
+                    "ReactiveFormsModule - \"@angular/forms\"")
   }
 
   fun testReactiveFormsModuleCompletion1() {
@@ -239,8 +238,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
-                     "ReactiveFormsModule - \"@angular/forms\"",
-                     ANGULAR_8)
+                     "ReactiveFormsModule - \"@angular/forms\"")
   }
 
   fun testReactiveFormsModuleCompletion2() {
@@ -248,8 +246,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "test.html",
                      "ngModel ",
                      "ngMod\n ",
-                     "ReactiveFormsModule - \"@angular/forms\"",
-                     ANGULAR_8)
+                     "ReactiveFormsModule - \"@angular/forms\"")
   }
 
   fun testLocalLib() {
@@ -313,9 +310,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
 
   fun testImportDirectiveFromInterpolationBinding() {
     doMultiFileTest("hero-search.component.html",
-                    "Import RouterLink",
-                    modules = ANGULAR_16
-    )
+                    "Import RouterLink")
   }
 
   fun testImportStandalonePseudoModuleToStandaloneComponent() {
@@ -357,11 +352,10 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     mainFile: String,
     intention: String,
     importName: String? = null,
-    modules: Array<out Angular2TestModule> = ANGULAR_4,
     configure: () -> Unit = {},
   ) {
     doMultiFileTest(getTestName(true), mainFile, null,
-                    intention, importName, modules, configure = configure)
+                    intention, importName, configure = configure)
   }
 
   private fun doMultiFileTest(
@@ -370,14 +364,14 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     signature: String?,
     intention: String,
     importName: String?,
-    modules: Array<out Angular2TestModule> = ANGULAR_4,
+    modules: Array<out Angular2TestModule> = ANGULAR_16,
     checkQuickFixList: Boolean = false,
     expectedImports: Set<String> = emptySet(),
-    configure: () -> Unit = {},
+    configure: (() -> Unit)? = null,
   ) {
     initInspections()
-    doConfiguredTest(*modules, dir = true, dirName = testName, configureFileName = mainFile, checkResult = true) {
-      configure()
+    doConfiguredTest(*modules, dir = true, dirName = testName, configureFileName = mainFile, checkResult = true,
+                     configurators = buildConfiguratorsList(configure)) {
       setUpEditor(signature, importName, expectedImports)
       if (checkQuickFixList) {
         myFixture.availableIntentions // load intentions
@@ -404,11 +398,11 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     toRemove: String,
     toType: String,
     importToSelect: String?,
-    modules: Array<out Angular2TestModule> = ANGULAR_4,
-    configure: () -> Unit = {},
+    modules: Array<out Angular2TestModule> = ANGULAR_16,
+    configure: (() -> Unit)? = null,
   ) {
-    doConfiguredTest(*modules, dir = true, dirName = testName, configureFileName = mainFile, checkResult = true) {
-      configure()
+    doConfiguredTest(*modules, dir = true, dirName = testName, configureFileName = mainFile, checkResult = true,
+                     configurators = buildConfiguratorsList(configure)) {
       setUpEditor("<caret>$toRemove", importToSelect, emptySet())
       myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective")
       myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
@@ -418,6 +412,15 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
       myFixture.type(toType)
     }
   }
+
+  private fun buildConfiguratorsList(configure: (() -> Unit)? = null): List<WebFrameworkTestConfigurator> =
+    if (configure != null)
+      listOf(object : WebFrameworkTestConfigurator {
+        override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
+          configure()
+        }
+      })
+    else emptyList()
 
   @Throws(IOException::class)
   private fun setUpEditor(
@@ -449,7 +452,8 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
       AngularUndefinedBindingInspection::class.java,
       AngularUndefinedTagInspection::class.java,
       AngularInvalidTemplateReferenceVariableInspection::class.java,
-      TypeScriptUnresolvedReferenceInspection::class.java
+      TypeScriptUnresolvedReferenceInspection::class.java,
+      AngularUnresolvedPipeInspection::class.java,
     )
   }
 
@@ -463,10 +467,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
 
 
   companion object {
-    private val ANGULAR_4 = arrayOf(Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
-                                    Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0)
-    private val ANGULAR_8 = arrayOf(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+    private val ANGULAR_13 = arrayOf(Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5)
     private val ANGULAR_16 = arrayOf(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                                      Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.ANGULAR_ROUTER_16_2_8)
 
