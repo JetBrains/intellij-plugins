@@ -167,6 +167,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
                    ?: return@withServiceTraceSpan emptyList()
     return@withServiceTraceSpan errors.map { error ->
       if (error is TypeScriptLanguageServiceAnnotationResult) {
+        if (error.line < 0) return@map error
         val textRange = error.getTextRange(document)
                         ?: return@map error
         val nameMap = file.nameMaps[templateFile]
