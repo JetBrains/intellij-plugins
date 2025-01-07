@@ -1052,10 +1052,6 @@ private class TcbDirectiveOutputsOp(
         // on the directive's output field to let type information flow into the handler function's
         // `$event` parameter.
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, EventParamType.Infer)
-          // Make sure that expression is mapped only once
-          .applyIf(output.type == ParsedEventType.TwoWay || !tcb.markAttributeExpressionAsTranspiled(output)) {
-            Expression { withIgnoreMappings({ append(this@applyIf) }) }
-          }
         this.scope.addStatement {
           append(outputField).append(".subscribe(").append(handler).append(");")
         }
@@ -2782,6 +2778,10 @@ private fun tcbCreateEventHandler(
       }
     }
   }
+    // Make sure that expression is mapped only once
+    .applyIf(event.type == ParsedEventType.TwoWay || !tcb.markAttributeExpressionAsTranspiled(event)) {
+      Expression { withIgnoreMappings({ append(this@applyIf) }) }
+    }
 }
 
 /**
