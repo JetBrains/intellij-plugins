@@ -45,7 +45,7 @@ abstract class AngularTcbOutOfBandInspectionBase(private val kind: DiagnosticKin
       val commonElement = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, startOffset + it.length, PsiElement::class.java)
                           ?: return@mapNotNull null
       val startOffsetInTheElement = startOffset - commonElement.startOffset
-      ProblemDescriptorImpl(commonElement, commonElement, it.message, null,
+      ProblemDescriptorImpl(commonElement, commonElement, it.message, it.quickFixes,
                             it.highlightType ?: ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             false, TextRange(startOffsetInTheElement, startOffsetInTheElement + it.length), isOnTheFly)
     }.toTypedArray()
