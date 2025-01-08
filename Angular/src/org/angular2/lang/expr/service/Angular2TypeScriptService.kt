@@ -248,8 +248,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
-      if (element !is JSElement && element.parent !is JSElement) null else super.getElementType(element, virtualFile, projectFile)
+    override fun getElementType(element: PsiElement, isContextual: Boolean, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
+      if (element !is JSElement && element.parent !is JSElement) null
+      else super.getElementType(element, isContextual, virtualFile, projectFile)
 
     override suspend fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
       super.commitDocumentsBeforeGetElementType(element, virtualFile)

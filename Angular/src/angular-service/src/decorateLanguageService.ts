@@ -86,6 +86,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     fileName: string,
     startOffset: number,
     endOffset: number,
+    isContextual: boolean,
     forceReturnType: boolean,
     cancellationToken: TS.CancellationToken,
     reverseMapper?: ReverseMapper,
@@ -102,12 +103,12 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     if (serviceScript && sourceFile && generatedFile) {
       const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, startOffset, endOffset, (it) => it.types);
       if (generatedRange !== undefined) {
-        return webStormGetElementType(ts, targetScript.id, generatedRange[0], generatedRange[1], forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
+        return webStormGetElementType(ts, targetScript.id, generatedRange[0], generatedRange[1], isContextual, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
       }
       return undefined;
     }
     else {
-      return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, cancellationToken, reverseMapper)
+      return webStormGetElementType(ts, fileName, startOffset, endOffset, isContextual, forceReturnType, cancellationToken, reverseMapper)
     }
   }
 
@@ -148,7 +149,7 @@ export function decorateNgLanguageServiceExtensions(
       return undefined
     }
 
-    return webStormGetElementType(ts, fileName, startOffset, endOffset, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
+    return webStormGetElementType(ts, fileName, startOffset, endOffset, false, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 }
 
