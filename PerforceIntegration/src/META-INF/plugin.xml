@@ -91,6 +91,11 @@
       <action id="Perforce.Toolbar.PerforceToolbarWidgetAction" class="org.jetbrains.idea.perforce.actions.PerforceToolbarWidgetAction"/>
       <add-to-group group-id="MainToolbarLeft" relative-to-action="MainToolbarGeneralActionsGroup" anchor="before"/>
     </group>
+
+    <action id="PerforceCommittedChanges.Filter" class="org.jetbrains.idea.perforce.actions.PerforceFilterCommittedAction">
+      <add-to-group group-id="CommittedChangesToolbar" relative-to-action="CommittedChanges.Refresh" anchor="after"/>
+    </action>
+
   </actions>
 
   <extensionPoints>

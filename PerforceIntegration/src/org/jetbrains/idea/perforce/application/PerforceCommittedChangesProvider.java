@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.changesBrowser.PerforceChangeBrowserSettings;
+import org.jetbrains.idea.perforce.changesBrowser.PerforceChangeBrowserSettingsService;
 import org.jetbrains.idea.perforce.changesBrowser.PerforceOnlyDatesVersionFilterComponent;
 import org.jetbrains.idea.perforce.changesBrowser.PerforceVersionFilterComponent;
 import org.jetbrains.idea.perforce.perforce.*;
@@ -74,7 +75,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
 
   @Override
   public @NotNull PerforceChangeBrowserSettings createDefaultSettings() {
-    return new PerforceChangeBrowserSettings();
+    return PerforceChangeBrowserSettingsService.getInstance(myProject).getSettings();
   }
 
   @Override
