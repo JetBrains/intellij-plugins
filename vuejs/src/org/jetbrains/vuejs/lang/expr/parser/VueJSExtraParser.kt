@@ -115,7 +115,7 @@ class VueJSExtraParser(
   private fun parseParametersExpression(exprType: IElementType, @Suppress("SameParameterValue") paramType: IElementType) {
     val parametersList = builder.mark()
     val functionParser = object : ES6FunctionParser<ES6Parser>(parser) {
-      override fun getParameterType(): IElementType = paramType
+      override val parameterType: IElementType = paramType
     }
     var first = true
     while (!builder.eof()) {
