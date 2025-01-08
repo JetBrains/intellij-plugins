@@ -16,7 +16,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.util.text.StringUtil.shortenTextWithEllipsis
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.ui.ContextHelpLabel
@@ -28,11 +28,8 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.layout.not
 import com.intellij.ui.layout.selected
-import com.intellij.util.text.SemVer
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 import java.awt.event.ItemEvent
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
@@ -236,23 +233,15 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
     override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
 
-    override fun getCommentAccordingToStoredState() =
-      PrettierConfiguration.getInstance(project).let { getComment(it.getPackage(null).getVersion(project), it.filesPattern) }
+    override fun getCommentAccordingToStoredState() = getComment(PrettierConfiguration.getInstance(project).filesPattern)
 
-    override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) =
-      getComment(configurable.packageField.selectedRef.constantPackage?.getVersion(project),
-                 configurable.runForFilesField.text.trim())
+    override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) = getComment(configurable.runForFilesField.text.trim())
 
-    private fun getComment(prettierVersion: @Nullable SemVer?, filesPattern: @NotNull String): ActionOnSaveComment? {
-      if (prettierVersion == null) {
-        val message = PrettierBundle.message("run.on.save.prettier.package.not.specified.warning")
-        // no need to show warning if Prettier is not enabled in this project
-        return if (isActionOnSaveEnabled) ActionOnSaveComment.warning(message) else ActionOnSaveComment.info(message)
-      }
+    private fun getComment(filesPattern: String): ActionOnSaveComment? {
+      if (!isActionOnSaveEnabled) return null
 
-      return ActionOnSaveComment.info(PrettierBundle.message("run.on.save.prettier.version.and.files.pattern",
-                                                             shorten(prettierVersion.rawVersion, 15),
-                                                             shorten(filesPattern, 40)))
+      val filesPatternShortened = shortenTextWithEllipsis(filesPattern, 40, 0, true)
+      return ActionOnSaveComment.info(PrettierBundle.message("run.on.save.comment.run.for.files", filesPatternShortened))
     }
 
     override fun isActionOnSaveEnabledAccordingToStoredState() = PrettierConfiguration.getInstance(project).isRunOnSave
@@ -264,7 +253,5 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     }
 
     override fun getActionLinks() = listOf(createGoToPageInSettingsLink(CONFIGURABLE_ID))
-
-    private fun shorten(s: String, max: Int) = StringUtil.shortenTextWithEllipsis(s, max, 0, true)
   }
 }
