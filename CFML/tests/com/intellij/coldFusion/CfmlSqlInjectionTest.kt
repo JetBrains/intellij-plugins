@@ -144,6 +144,7 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   TestCase.assertNotNull(manager)
 
   manager.addDataSource(dataSource)
+  UIUtil.dispatchAllInvocationEvents()
   Disposer.register(testRootDisposable, Disposable {
     manager.removeDataSource(dataSource)
     UIUtil.dispatchAllInvocationEvents()
