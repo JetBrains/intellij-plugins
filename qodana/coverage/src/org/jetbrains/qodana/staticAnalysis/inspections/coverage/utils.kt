@@ -164,7 +164,7 @@ fun isUnderLocalChangesOnOldCode(context: QodanaGlobalInspectionContext): Boolea
   return context.coverageComputationState().isFirstStage()
 }
 
-internal fun isLocalChanges(context: QodanaGlobalInspectionContext): Boolean {
+fun isLocalChanges(context: QodanaGlobalInspectionContext): Boolean {
   return context.coverageComputationState().isIncrementalAnalysis()
 }
 
