@@ -1,6 +1,7 @@
 package org.angular2.web.scopes
 
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryHelper
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryHelper.getStandardHtmlElementSymbolsScope
 import com.intellij.html.webSymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
@@ -90,10 +91,11 @@ class HostBindingsScope(private val decorator: ES6Decorator) : WebSymbolsScope {
         StandardPropertyAndEventsScope(file),
         DirectiveElementSelectorsScope(file),
         DirectiveAttributeSelectorsScope(file),
+        getStandardHtmlElementSymbolsScope(file.project)
       )
-      val directive = Angular2EntitiesProvider.getDirective(decorator)
-      if (directive != null) {
-        val elementNames = directive.selector.simpleSelectors.mapNotNull { it.elementName?.trim()?.takeIf { it.isNotEmpty() && it != "*" } }
+      val elementNames = Angular2EntitiesProvider.getDirective(decorator)?.selector?.simpleSelectors
+        ?.mapNotNull { it.elementName?.trim()?.takeIf { it.isNotEmpty() && it != "*" } }
+      if (!elementNames.isNullOrEmpty()) {
         elementNames.forEach {
           scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))
         }
@@ -103,6 +105,8 @@ class HostBindingsScope(private val decorator: ES6Decorator) : WebSymbolsScope {
       }
       else {
         scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))
+        executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName("div"), additionalScope = scope.toList())
+          .forEach { scope.add(it) }
       }
       CachedValueProvider.Result.create(Pair(executor, scope.toList()), PsiModificationTracker.MODIFICATION_COUNT)
     }

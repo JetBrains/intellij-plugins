@@ -107,7 +107,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         var decorator: ES6Decorator? = null
         if (element.parent.asSafely<JSProperty>()?.name == Angular2DecoratorUtil.HOST_PROP
             && element.parentOfType<ES6Decorator>()
-              ?.takeIf { Angular2DecoratorUtil.isAngularEntityDecorator(it, COMPONENT_DEC, DIRECTIVE_DEC) }
+              ?.takeIf { Angular2DecoratorUtil.isAngularEntityDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
               ?.also { decorator = it } != null
         )
           listOf(HostBindingsScope(decorator!!))

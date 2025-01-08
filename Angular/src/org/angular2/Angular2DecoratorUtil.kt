@@ -183,12 +183,16 @@ object Angular2DecoratorUtil {
   }
 
   @JvmStatic
-  fun isAngularEntityDecorator(decorator: ES6Decorator, vararg names: String): Boolean {
+  fun isAngularEntityDecorator(decorator: ES6Decorator, vararg names: String): Boolean =
+    isAngularEntityDecorator(decorator, false, *names)
+
+  @JvmStatic
+  fun isAngularEntityDecorator(decorator: ES6Decorator, allowAbstractClasses: Boolean, vararg names: String): Boolean {
     val decoratorName = decorator.decoratorName
     return (decoratorName != null
             && contains(decoratorName, *names)
             && (decoratorName != DIRECTIVE_DEC || getObjectLiteralInitializer(decorator) != null)
-            && (getClassForDecoratorElement(decorator)?.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) != true)
+            && (allowAbstractClasses || getClassForDecoratorElement(decorator)?.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) != true)
            )
            && Angular2LangUtil.isAngular2Context(decorator)
            && hasAngularImport(decoratorName, decorator.containingFile)

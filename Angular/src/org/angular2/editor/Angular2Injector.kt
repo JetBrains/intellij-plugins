@@ -168,7 +168,7 @@ class Angular2Injector : MultiHostInjector {
                                       fileExtension: String?) {
     val decorator = PsiTreeUtil.getContextOfType(ancestor, ES6Decorator::class.java)
     if (decorator != null) {
-      if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC)) {
+      if (isAngularEntityDecorator(decorator, true, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC)) {
         inject(registrar, context, language, fileExtension)
         JSFormattableInjectionUtil.setReformattableInjection(context, language)
       }
