@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -60,6 +60,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   private static final @NonNls String PRETTIER_FILES_PATTERN_DEFAULT = "**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,vue,astro}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
+  private static final @NotNull NodePackage EMPTY_PACKAGE = PKG_DESC.createPackage("");
 
   private final @NotNull Project myProject;
   private @NotNull State myState = new State();
@@ -95,9 +96,22 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return this;
   }
 
+  /**
+   * The only allowed usage of this method is in {@link PrettierConfigurable#createPanel()} for the `packageField` binding.
+   * This method is necessary for the correct 'Apply' button state on the Prettier page in Settings:
+   * it must be exactly the opposite of {@code PrettierConfiguration#withLinterPackage()}.
+   */
+  NodePackageRef getPackageRefForPackageFieldBindingInConfigurable() {
+    String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
+    if (value != null && !value.isBlank()) {
+      return NodePackageRef.create(PKG_DESC.createPackage(value));
+    }
+    return NodePackageRef.create(EMPTY_PACKAGE);
+  }
+
   public @NotNull NodePackage getPackage(@Nullable PsiElement context) {
     if (isDisabled()) {
-      return PKG_DESC.createPackage("");
+      return EMPTY_PACKAGE;
     }
     if (getConfigurationMode() == ConfigurationMode.MANUAL) {
       String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
@@ -125,7 +139,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
       }
       return pkg;
     }
-    return PKG_DESC.createPackage("");
+    return EMPTY_PACKAGE;
   }
 
   public @Nullable VirtualFile findIgnoreFile(@NotNull VirtualFile source) {

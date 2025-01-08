@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
 import com.intellij.ide.actionsOnSave.*
@@ -122,7 +122,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
             cell(packageField)
               .align(AlignX.FILL)
               .bind({ it.selectedRef }, { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
-                    MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
+                    MutableProperty({ prettierConfiguration.packageRefForPackageFieldBindingInConfigurable },
+                                    { prettierConfiguration.withLinterPackage(it) })
               )
           }
           row(PrettierBundle.message("prettier.ignore.path.field.label")) {
