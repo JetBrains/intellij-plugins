@@ -3,6 +3,7 @@ package org.angular2.web.scopes
 
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.model.Pointer
+import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
@@ -15,6 +16,7 @@ import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.web.*
 
 private val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
@@ -26,32 +28,36 @@ private val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
   HTML_ATTRIBUTES
 )
 
-class MatchedDirectivesScope(tag: XmlTag)
-  : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+abstract class MatchedDirectivesScope<T: PsiElement> (dataHolder: T)
+  : WebSymbolsScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
 
-  override fun createPointer(): Pointer<MatchedDirectivesScope> {
-    val tag = dataHolder.createSmartPointer()
-    return Pointer {
-      tag.dereference()?.let { MatchedDirectivesScope(it) }
+    companion object {
+      fun createFor (tag: XmlTag): MatchedDirectivesScope<XmlTag> =
+        MatchedDirectivesScopeOnTag(tag)
+
+      fun createFor(location: PsiElement, tagName: String): MatchedDirectivesScope<PsiElement> =
+        MatchedDirectivesScopeForTagName(location, tagName)
     }
-  }
+
+  abstract val isTemplateTagContext: Boolean
+
+  abstract fun matchDirectives(): List<Angular2Directive>
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind in providedKinds
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
-    Angular2ApplicableDirectivesProvider(dataHolder)
-      .matched.forEach { directive ->
-        directive.exportAs.forEach { consumer(it.value) }
-        collectSymbols(directive) { symbol ->
-          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, WebSymbol.Priority.HIGHEST))
-        }
+    matchDirectives().forEach { directive ->
+      directive.exportAs.forEach { consumer(it.value) }
+      collectSymbols(directive, isTemplateTagContext) { symbol ->
+        consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, WebSymbol.Priority.HIGHEST))
       }
+    }
   }
 
-  private fun collectSymbols(directive: Angular2Directive, consumer: (Angular2Symbol) -> Unit) {
-    if (!directive.directiveKind.isRegular && !isTemplateTag(dataHolder)) {
+  protected fun collectSymbols(directive: Angular2Directive, isTemplateTagContext: Boolean, consumer: (Angular2Symbol) -> Unit) {
+    if (!directive.directiveKind.isRegular && !isTemplateTagContext) {
       return
     }
 
@@ -64,4 +70,39 @@ class MatchedDirectivesScope(tag: XmlTag)
       Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
     }
   }
+
+  private class MatchedDirectivesScopeOnTag(tag: XmlTag) : MatchedDirectivesScope<XmlTag>(tag) {
+
+    override val isTemplateTagContext: Boolean
+      get() = isTemplateTag(dataHolder)
+
+    override fun matchDirectives(): List<Angular2Directive> =
+      Angular2ApplicableDirectivesProvider(dataHolder)
+        .matched
+
+    override fun createPointer(): Pointer<MatchedDirectivesScopeOnTag> {
+      val tag = dataHolder.createSmartPointer()
+      return Pointer {
+        tag.dereference()?.let { MatchedDirectivesScopeOnTag(it) }
+      }
+    }
+  }
+
+  private class MatchedDirectivesScopeForTagName(location: PsiElement, private val tagName: String) : MatchedDirectivesScope<PsiElement>(location) {
+    override val isTemplateTagContext: Boolean
+      get() = isTemplateTag(tagName)
+
+    override fun matchDirectives(): List<Angular2Directive> =
+      Angular2ApplicableDirectivesProvider(dataHolder.project, tagName, false, Angular2DirectiveSimpleSelector(tagName), null)
+        .matched
+
+    override fun createPointer(): Pointer<MatchedDirectivesScopeForTagName> {
+      val location = dataHolder.createSmartPointer()
+      val tagName = this.tagName
+      return Pointer {
+        location.dereference()?.let { MatchedDirectivesScopeForTagName(it, tagName) }
+      }
+    }
+  }
+
 }

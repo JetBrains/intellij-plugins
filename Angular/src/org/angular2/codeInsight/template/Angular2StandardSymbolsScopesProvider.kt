@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.template
 
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
@@ -18,6 +19,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.types.Angular2EventType
+import org.angular2.lang.types.Angular2HostEventType
 import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.function.Consumer
@@ -30,7 +32,8 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
       var attribute = hostElement
       while (attribute != null
              && attribute !is XmlAttribute
-             && attribute !is XmlTag) {
+             && attribute !is XmlTag
+             && attribute !is JSProperty) {
         attribute = attribute.parent
       }
       if (attribute is XmlAttribute) {
@@ -38,6 +41,11 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
           attribute.name, attribute.parent)
         if (info.type == Angular2AttributeType.EVENT) {
           result.add(Angular2EventScope(attribute))
+        }
+      } else if (attribute is JSProperty) {
+        val info = Angular2AttributeNameParser.parse(attribute.name ?: return result)
+        if (info.type == Angular2AttributeType.EVENT) {
+          result.add(Angular2HostEventScope(attribute))
         }
       }
     }
@@ -94,6 +102,19 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
     }
   }
 
+  private class Angular2HostEventScope : Angular2TemplateScope {
+
+    private val myEvent: JSProperty
+
+    constructor(event: JSProperty) : super(null) {
+      myEvent = event
+    }
+
+    override fun resolve(consumer: Consumer<in ResolveResult>) {
+      consumer.accept(JSResolveResult(Angular2HostEventImplicitElement(myEvent)))
+    }
+  }
+
   private class Angular2EventImplicitElement(attribute: XmlAttribute)
     : JSLocalImplicitElementImpl(`$EVENT`, Angular2EventType(attribute), attribute, JSImplicitElement.Type.Variable) {
 
@@ -101,6 +122,24 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
       if (this === other) return true
       if (other == null || javaClass != other.javaClass) return false
       val element = other as Angular2EventImplicitElement?
+      if (myName != element!!.myName) return false
+      if (myProvider != element.myProvider) return false
+      return myKind == element.myKind
+    }
+
+    override fun hashCode(): Int {
+      return Objects.hash(javaClass, myName, myProvider, myKind)
+    }
+  }
+
+
+  private class Angular2HostEventImplicitElement(property: JSProperty)
+    : JSLocalImplicitElementImpl(`$EVENT`, Angular2HostEventType(property), property, JSImplicitElement.Type.Variable) {
+
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other == null || javaClass != other.javaClass) return false
+      val element = other as Angular2HostEventImplicitElement?
       if (myName != element!!.myName) return false
       if (myProvider != element.myProvider) return false
       return myKind == element.myKind

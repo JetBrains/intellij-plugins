@@ -99,6 +99,7 @@ class HostBindingsScope(private val decorator: ES6Decorator) : WebSymbolsScope {
         }
         val scopeList = scope.toList()
         elementNames.flatMapTo(scope) { executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName(it), additionalScope = scopeList) }
+        elementNames.mapTo(scope) { MatchedDirectivesScope.createFor(decorator, it) }
       }
       else {
         scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))

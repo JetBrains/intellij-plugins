@@ -62,7 +62,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           OneTimeBindingsScope(it),
           StandardPropertyAndEventsScope(it.containingFile),
           NgContentSelectorsScope(it),
-          MatchedDirectivesScope(it),
+          MatchedDirectivesScope.createFor(it),
           I18NAttributesScope(it),
         ))
       }
