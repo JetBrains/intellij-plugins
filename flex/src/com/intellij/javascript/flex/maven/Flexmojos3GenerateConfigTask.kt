@@ -123,7 +123,7 @@ internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
               val outputFilePath = FlexmojosImporter.getOutputFilePath(mavenProject)
               val lastSlashIndex = outputFilePath.lastIndexOf("/")
               val outputFileName = outputFilePath.substring(lastSlashIndex + 1)
-              val outputFolderPath = outputFilePath.substring(0, max(0.0, lastSlashIndex.toDouble()).toInt())
+              val outputFolderPath = outputFilePath.substring(0, max(0, lastSlashIndex))
 
               var outputFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputFilePath)
               if (outputFile == null) {

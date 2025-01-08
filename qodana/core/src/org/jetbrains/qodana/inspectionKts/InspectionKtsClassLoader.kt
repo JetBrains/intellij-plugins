@@ -27,7 +27,7 @@ internal class InspectionKtsClassLoader : ClassLoader(null) {
     val p0 = name.indexOf("$")
     val hasBase = p0 > 0
     val p1 = if (hasBase) name.indexOf("$", p0 + 1) else -1
-    val base = if (hasBase) name.substring(0, max(p0.toDouble(), p1.toDouble()).toInt()) else name
+    val base = if (hasBase) name.substring(0, max(p0, p1)) else name
     val hash = StringHash.calc(base)
 
     var c: Class<*>? = null
