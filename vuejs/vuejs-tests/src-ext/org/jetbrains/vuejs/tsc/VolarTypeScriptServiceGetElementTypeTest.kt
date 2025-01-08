@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.tsc
 
 import com.intellij.lang.javascript.JSTestUtils
@@ -13,7 +13,6 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -43,11 +42,11 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
     }
   }
 
-  override fun calculateType(element: PsiElement, useTsc: Boolean): JSType? {
+  override fun calculateType(element: PsiElement): JSType? {
     waitUntilFileOpenedByLspServer(project, file.virtualFile)
 
-    return super.calculateType(element, useTsc).also {
-      UsefulTestCase.assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
+    return super.calculateType(element).also {
+      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
     }
   }
 
@@ -89,7 +88,7 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
     """.trimIndent()
     myFixture.configureByText("a.vue", vueCode)
     val element = JSTestUtils.findElementByText(myFixture, "a:number = 42", JSVariable::class.java)
-    val jsType = calculateType(element, true)
+    val jsType = calculateType(element)
     TestCase.assertNotNull(jsType)
     JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
       val unwrapRefType = VueUnwrapRefType(jsType!!, element).substitute()
