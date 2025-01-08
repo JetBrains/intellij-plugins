@@ -40,7 +40,7 @@ import javax.swing.JCheckBox
 import javax.swing.JRadioButton
 import javax.swing.text.JTextComponent
 
-const val CONFIGURABLE_ID = "settings.javascript.prettier"
+const val CONFIGURABLE_ID: String = "settings.javascript.prettier"
 
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
   PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", CONFIGURABLE_ID) {
@@ -94,7 +94,14 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
             PrettierUtil.IGNORE_FILE_NAME
           )
 
-          val helpLabel = ContextHelpLabel.create("$autoConfigHelpText $runOnSaveTooltip<br/><br/>$ignorePathHelpText")
+          val helpLabel = ContextHelpLabel.create(
+            PrettierBundle.message(
+              "prettier.automatic.configuration.tooltip.help",
+              autoConfigHelpText,
+              runOnSaveTooltip,
+              ignorePathHelpText
+            )
+          )
           helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
           cell(helpLabel)
         }
@@ -181,7 +188,10 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
           .component
 
         val helpLabel = ContextHelpLabel.create(
-          PrettierBundle.message("prettier.checkbox.code.style.modification.help.text")
+          PrettierBundle.message(
+            "prettier.checkbox.code.style.modification.help.text",
+            ApplicationNamesInfo.getInstance().fullProductName
+          )
         )
         helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
         cell(helpLabel)
