@@ -348,9 +348,8 @@ class Angular2Parser private constructor(
       else super.getCurrentBinarySignPriority(allowIn, advance)
     }
 
-    override fun getSafeAccessOperator(): IElementType? {
-      return JSTokenTypes.ELVIS
-    }
+    override val safeAccessOperator: IElementType
+      get() = JSTokenTypes.ELVIS
 
     override fun isReferenceQualifierSeparator(tokenType: IElementType?): Boolean {
       return tokenType === JSTokenTypes.DOT || tokenType === safeAccessOperator
