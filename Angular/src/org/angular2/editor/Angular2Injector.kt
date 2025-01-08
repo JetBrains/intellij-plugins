@@ -22,6 +22,7 @@ import com.intellij.util.NullableFunction
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.HOST_PROP
 import org.angular2.Angular2DecoratorUtil.STYLES_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
 import org.angular2.Angular2DecoratorUtil.VIEW_DEC
@@ -82,12 +83,11 @@ class Angular2Injector : MultiHostInjector {
     }
 
     if (parent is JSProperty && parent.parent is JSObjectLiteralExpression) {
-      val name = parent.name
-                 ?: return
-      val fileExtension = getExpressionFileExtension(context.textLength, name, true)
-                          ?: return
       val ancestor = parent.parent.parent
-      if (isPropertyWithName(ancestor, "host")) {
+      if (isPropertyWithName(ancestor, HOST_PROP)) {
+        val name = parent.name ?: return
+        val fileExtension = getExpressionFileExtension(context.textLength, name, true)
+                            ?: return
         injectIntoDecoratorExpr(registrar, context, ancestor, Angular2Language, fileExtension)
       }
     }

@@ -26,7 +26,8 @@
           "value": {
             "required": true,
             "kind": "plain"
-          }
+          },
+          "ng-host-binding": false
         },
         {
           "name": "ngSkipHydration",
@@ -34,7 +35,8 @@
           "description": "You can add the `ngSkipHydration` attribute to a component's tag in order to skip hydrating the entire component. This is useful for component, which may not work properly with hydration enabled due to issues, like [Direct DOM Manipulation](https://angular.dev/guide/hydration#direct-dom-manipulation).",
           "value": {
             "kind": "no-value"
-          }
+          },
+          "ng-host-binding": false
         }
       ]
     }

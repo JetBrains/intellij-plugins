@@ -1,9 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
@@ -12,12 +11,16 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
@@ -33,10 +36,12 @@ import org.angular2.web.scopes.*
 
 class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
-  override fun getScope(project: Project,
-                        location: PsiElement?,
-                        context: WebSymbolsContext,
-                        allowResolve: Boolean): List<WebSymbolsScope> =
+  override fun getScope(
+    project: Project,
+    location: PsiElement?,
+    context: WebSymbolsContext,
+    allowResolve: Boolean,
+  ): List<WebSymbolsScope> =
     if (context.framework == Angular2Framework.ID && location != null) {
       when (location) {
         is JSElement -> calculateJavaScriptScopes(location)
@@ -98,6 +103,17 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         listOfNotNull(DirectivePropertyMappingCompletionScope(element),
                       element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
       }
+      is JSObjectLiteralExpression -> {
+        var decorator: ES6Decorator? = null
+        if (element.parent.asSafely<JSProperty>()?.name == Angular2DecoratorUtil.HOST_PROP
+            && element.parentOfType<ES6Decorator>()
+              ?.takeIf { Angular2DecoratorUtil.isAngularEntityDecorator(it, COMPONENT_DEC, DIRECTIVE_DEC) }
+              ?.also { decorator = it } != null
+        )
+          listOf(HostBindingsScope(decorator!!))
+        else
+          emptyList()
+      }
       else -> emptyList()
     }
 }
@@ -106,6 +122,7 @@ const val PROP_BINDING_PATTERN = "ng-binding-pattern"
 const val PROP_ERROR_SYMBOL = "ng-error-symbol"
 const val PROP_SYMBOL_DIRECTIVE = "ng-symbol-directive"
 const val PROP_SCOPE_PROXIMITY = "scope-proximity"
+const val PROP_HOST_BINDING = "ng-host-binding"
 
 const val EVENT_ATTR_PREFIX = "on"
 

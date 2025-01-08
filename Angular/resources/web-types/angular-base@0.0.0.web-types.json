@@ -80,7 +80,8 @@
           "priority": "high",
           "value": {
             "required": false
-          }
+          },
+          "ng-host-binding": false
         },
         {
           "name": "ngNonBindable",
@@ -89,7 +90,8 @@
           "priority": "high",
           "value": {
             "kind": "no-value"
-          }
+          },
+          "ng-host-binding": false
         },
         {
           "name": "ngProjectAs",
@@ -99,7 +101,8 @@
           "value": {
             "required": true,
             "type": "string"
-          }
+          },
+          "ng-host-binding": false
         },
         {
           "name": "Angular directive attribute selector",
@@ -310,6 +313,7 @@
             "kind": "expression"
           },
           "ng-binding-pattern": true,
+          "ng-host-binding": false,
           "pattern": {
             "items": "/js/ng-structural-directives",
             "or": [
@@ -371,6 +375,7 @@
         {
           "name": "Reference variable declaration",
           "virtual": true,
+          "ng-host-binding": false,
           "pattern": {
             "items": "ng-reference-declaration",
             "priority": "lowest",
@@ -438,6 +443,7 @@
           "doc-url": "https://angular.io/guide/i18n-common-prepare",
           "virtual": true,
           "ng-binding-pattern": true,
+          "ng-host-binding": false,
           "pattern": {
             "items": "/html/ng-i18n-attributes",
             "template": [

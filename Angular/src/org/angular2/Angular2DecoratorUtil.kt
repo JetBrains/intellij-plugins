@@ -52,6 +52,7 @@ object Angular2DecoratorUtil {
   const val EXPORTS_PROP: String = "exports"
   const val DECLARATIONS_PROP: String = "declarations"
   const val ENTRY_COMPONENTS_PROP: String = "entryComponents"
+  const val HOST_PROP: String = "host"
   const val HOST_DIRECTIVES_PROP: String = "hostDirectives"
   const val BOOTSTRAP_PROP: String = "bootstrap"
   const val TEMPLATE_URL_PROP: String = "templateUrl"
