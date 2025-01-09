@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -845,7 +845,7 @@ public final class CompilerConfigGeneratorRt {
 
   // This method is used by external build process. At IDE side FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory() is used
   private static String getPathToFlexUnitTempDirectory(final ProjectDescriptor projectDescriptor) {
-    return FileUtil.toSystemIndependentName(projectDescriptor.dataManager.getDataPaths().getDataStorageRoot().getPath()) + "/tmp";
+    return FileUtilRt.toSystemIndependentName(projectDescriptor.dataManager.getDataPaths().getDataStorageDir().toString()) + "/tmp";
   }
 
   private static String getPathToFlexUnitMainClass(final ProjectDescriptor projectDescriptor,
