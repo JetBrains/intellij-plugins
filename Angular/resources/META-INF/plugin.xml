@@ -207,6 +207,7 @@
     <lang.importOptimizer language="TypeScript" id="Angular2"
                           implementationClass="org.angular2.codeInsight.imports.Angular2TypeScriptImportsOptimizer"
                           order="before TypeScript"/>
+    <annotator language="TypeScript" implementationClass="org.angular2.editor.Angular2Annotator"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
