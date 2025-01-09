@@ -123,11 +123,11 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
-            "delegate": "ng-event-binding-items",
+            "items": "/html/ng-event-bindings",
             "or": [
               [
                 "(",
-                "#item",
+                "#item:event",
                 ")"
               ],
               [
@@ -138,7 +138,7 @@
                   ]
                 },
                 "#...",
-                "#item"
+                "#item:event"
               ],
               [
                 {
@@ -150,7 +150,7 @@
                 "#...",
                 "on-",
                 "#...",
-                "#item"
+                "#item:event"
               ],
               [
                 {
@@ -161,34 +161,10 @@
                 },
                 "#...",
                 "(",
-                "#item",
+                "#item:event",
                 ")"
               ]
             ]
-          },
-          "ng-event-binding-items": {
-            "ng-binding-pattern": true,
-            "pattern": {
-              "or": [
-                {
-                  "items": [
-                    "/js/events",
-                    "/js/ng-directive-outputs"
-                  ],
-                  "priority": "high",
-                  "template": [
-                    "#item:event"
-                  ]
-                },
-                {
-                  "items": "/js/ng-custom-events",
-                  "priority": "normal",
-                  "template": [
-                    "#item:event"
-                  ]
-                }
-              ]
-            }
           }
         },
         {
@@ -625,6 +601,33 @@
             ]
           },
           "hide-from-completion": true
+        }
+      ],
+      "ng-event-bindings": [
+        {
+          "name": "Event Binding",
+          "ng-binding-pattern": true,
+          "pattern": {
+            "or": [
+              {
+                "items": [
+                  "/js/events",
+                  "/js/ng-directive-outputs"
+                ],
+                "priority": "high",
+                "template": [
+                  "#item:event"
+                ]
+              },
+              {
+                "items": "/js/ng-custom-events",
+                "priority": "normal",
+                "template": [
+                  "#item:event"
+                ]
+              }
+            ]
+          }
         }
       ]
     },

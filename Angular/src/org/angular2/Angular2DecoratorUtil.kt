@@ -18,6 +18,7 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.util.PsiTreeUtil.getContextOfType
 import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
 import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentOfTypes
 import com.intellij.util.ArrayUtil.contains
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
@@ -54,6 +55,8 @@ object Angular2DecoratorUtil {
   const val DECLARATIONS_PROP: String = "declarations"
   const val ENTRY_COMPONENTS_PROP: String = "entryComponents"
   const val HOST_PROP: String = "host"
+  const val HOST_BINDING_DEC: String = "HostBinding"
+  const val HOST_LISTENER_DEC: String = "HostListener"
   const val HOST_DIRECTIVES_PROP: String = "hostDirectives"
   const val BOOTSTRAP_PROP: String = "bootstrap"
   const val TEMPLATE_URL_PROP: String = "templateUrl"
@@ -232,6 +235,19 @@ object Angular2DecoratorUtil {
       ?.name == HOST_PROP
     && property.parentOfType<ES6Decorator>()
       ?.let { isAngularEntityDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) } == true
+
+  fun isHostBindingDecoratorLiteral(literal: JSLiteralExpression): Boolean =
+    literal.parentOfTypes(ES6Decorator::class, JSProperty::class, JSExecutionScope::class)
+      ?.asSafely<ES6Decorator>()
+      ?.decoratorName == HOST_BINDING_DEC
+
+  fun isHostListenerDecoratorEventLiteral(literal: JSLiteralExpression): Boolean =
+    literal
+      .parent.asSafely<JSArgumentList>()
+      ?.takeIf { it.arguments.getOrNull(0) == literal }
+      ?.parentOfTypes(ES6Decorator::class, JSProperty::class, JSExecutionScope::class)
+      ?.asSafely<ES6Decorator>()
+      ?.decoratorName == HOST_LISTENER_DEC
 
   private fun JSExpression.unwrapParenthesis(): JSExpression? =
     JSUtils.unparenthesize(this)
