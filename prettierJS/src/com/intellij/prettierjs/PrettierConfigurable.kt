@@ -233,15 +233,23 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
     override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
 
-    override fun getCommentAccordingToStoredState() = getComment(PrettierConfiguration.getInstance(project).filesPattern)
+    override fun isApplicableAccordingToStoredState(): Boolean =
+      PrettierConfiguration.getInstance(project).configurationMode != ConfigurationMode.DISABLED
 
-    override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) = getComment(configurable.runForFilesField.text.trim())
+    override fun isApplicableAccordingToUiState(configurable: PrettierConfigurable): Boolean =
+      !configurable.disabledConfiguration.isSelected
+
+    override fun getCommentAccordingToStoredState(): ActionOnSaveComment? =
+      getComment(PrettierConfiguration.getInstance(this.project).filesPattern)
+
+    override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) =
+      getComment(configurable.runForFilesField.text.trim())
 
     private fun getComment(filesPattern: String): ActionOnSaveComment? {
-      if (!isActionOnSaveEnabled) return null
+      if (!isSaveActionApplicable) return ActionOnSaveComment.info(PrettierBundle.message("run.on.save.comment.disabled"))
 
-      val filesPatternShortened = shortenTextWithEllipsis(filesPattern, 40, 0, true)
-      return ActionOnSaveComment.info(PrettierBundle.message("run.on.save.comment.run.for.files", filesPatternShortened))
+      val filesPatternShortened = shortenTextWithEllipsis(filesPattern, 60, 0, true)
+      return ActionOnSaveComment.info(PrettierBundle.message("run.on.save.comment.files", filesPatternShortened))
     }
 
     override fun isActionOnSaveEnabledAccordingToStoredState() = PrettierConfiguration.getInstance(project).isRunOnSave
