@@ -280,7 +280,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       val projectFileName = TypeScriptConfigUtil.getProjectFileName(transpiledFile.originalFile.originalFile)
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
       return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeToJSType(
-        transpiledFile.originalFile, null, args, Angular2GetGeneratedElementTypeCommand(args))
+        transpiledFile.originalFile, null, Angular2GetGeneratedElementTypeCommand(args))
     }
   }
 
