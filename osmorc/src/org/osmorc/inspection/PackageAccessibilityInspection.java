@@ -24,7 +24,6 @@
  */
 package org.osmorc.inspection;
 
-import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.options.OptPane;
@@ -39,6 +38,7 @@ import com.intellij.packageDependencies.DependencyVisitorFactory;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.JavaPsiAnnotationUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,7 +118,7 @@ public final class PackageAccessibilityInspection extends AbstractBaseJavaLocalI
   private static Problem checkAccessibility(PsiClass targetClass, OsmorcFacet facet) {
     // ignores annotations invisible at runtime
     if (targetClass.isAnnotationType()) {
-      RetentionPolicy retention = AnnotationsHighlightUtil.getRetentionPolicy(targetClass);
+      RetentionPolicy retention = JavaPsiAnnotationUtil.getRetentionPolicy(targetClass);
       if (retention == RetentionPolicy.SOURCE || retention == RetentionPolicy.CLASS) {
         return null;
       }
