@@ -11,4 +11,5 @@ class Angular2MetadataNodeModuleIndex : Angular2IndexBase<Angular2MetadataNodeMo
 }
 
 @JvmField
-val Angular2MetadataNodeModuleIndexKey = StubIndexKey.createIndexKey<String, Angular2MetadataNodeModule>("angular2.metadata.node.index")
+val Angular2MetadataNodeModuleIndexKey: StubIndexKey<String, Angular2MetadataNodeModule> =
+  StubIndexKey.createIndexKey<String, Angular2MetadataNodeModule>("angular2.metadata.node.index")

@@ -230,5 +230,5 @@ class AngularCliGenerateAction : DumbAwareAction() {
                                          && AngularCliUtil.findAngularCliFolder(project, file) != null
   }
 
-  override fun getActionUpdateThread() = ActionUpdateThread.BGT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

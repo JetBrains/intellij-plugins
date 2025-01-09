@@ -44,6 +44,6 @@ interface Angular2Directive : Angular2Declaration {
   override fun createPointer(): Pointer<out Angular2Directive>
 
   companion object {
-    val EMPTY_ARRAY = arrayOfNulls<Angular2Directive>(0)
+    val EMPTY_ARRAY: Array<Angular2Directive?> = arrayOfNulls<Angular2Directive>(0)
   }
 }

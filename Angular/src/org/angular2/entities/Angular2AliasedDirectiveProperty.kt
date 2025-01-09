@@ -55,7 +55,7 @@ class Angular2AliasedDirectiveProperty(
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = delegate.qualifiedKind
 
-  val originalName
+  val originalName: String
     get() = delegate.name
 
   override fun createPointer(): Pointer<out Angular2AliasedDirectiveProperty> {

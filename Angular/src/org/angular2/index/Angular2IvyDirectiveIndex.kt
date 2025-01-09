@@ -11,4 +11,5 @@ class Angular2IvyDirectiveIndex : Angular2IndexBase<TypeScriptClass>() {
 }
 
 @JvmField
-val Angular2IvyDirectiveIndexKey = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.directive.index")
+val Angular2IvyDirectiveIndexKey: StubIndexKey<String, TypeScriptClass> =
+  StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.directive.index")

@@ -100,13 +100,13 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
   companion object {
 
     @NonNls
-    val NG_MODULE_PROP = "ngModule"
+    val NG_MODULE_PROP: String = "ngModule"
 
     /**
      * See [ModuleWithProviders](https://angular.io/api/core/ModuleWithProviders)
      */
     @NonNls
-    val MODULE_WITH_PROVIDERS_CLASS = "ModuleWithProviders"
+    val MODULE_WITH_PROVIDERS_CLASS: String = "ModuleWithProviders"
 
     @NonNls
     private val KEYS_PREFIX = "angular.moduleResolver."

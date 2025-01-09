@@ -11,4 +11,5 @@ class Angular2SourceDirectiveIndex : Angular2IndexBase<JSImplicitElementProvider
 }
 
 @JvmField
-val Angular2SourceDirectiveIndexKey = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.directive.index")
+val Angular2SourceDirectiveIndexKey: StubIndexKey<String, JSImplicitElementProvider> =
+  StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.directive.index")

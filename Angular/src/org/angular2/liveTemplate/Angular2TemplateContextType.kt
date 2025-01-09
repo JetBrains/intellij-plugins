@@ -7,5 +7,5 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.Angular2HtmlFile
 
 class Angular2TemplateContextType : TemplateContextType(Angular2Bundle.message("angular.live.template.context.template")) {
-  override fun isInContext(context: TemplateActionContext) = context.file is Angular2HtmlFile
+  override fun isInContext(context: TemplateActionContext): Boolean = context.file is Angular2HtmlFile
 }

@@ -67,7 +67,7 @@ class Angular2SourceModule(decorator: ES6Decorator, implicitElement: JSImplicitE
 
   companion object {
     @JvmField
-    val symbolCollector = object : Angular2ModuleResolver.SymbolCollector<ES6Decorator> {
+    val symbolCollector: Angular2ModuleResolver.SymbolCollector<ES6Decorator> = object : Angular2ModuleResolver.SymbolCollector<ES6Decorator> {
       override fun <U : Angular2Entity> collect(source: ES6Decorator,
                                                 propertyName: String,
                                                 symbolClazz: Class<U>): Result<Angular2ResolvedSymbolsSet<U>> {

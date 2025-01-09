@@ -21,7 +21,7 @@ class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
     get() = queryExecutor.runListSymbolsQuery(NG_DEFER_ON_TRIGGERS, true, additionalScope = listOf(this))
 
   companion object {
-    const val PRIMARY_EXPRESSION = "\$primary-expression"
+    const val PRIMARY_EXPRESSION: String = "\$primary-expression"
   }
 
   class Factory : WebTypesSymbolFactory {

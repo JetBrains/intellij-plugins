@@ -202,7 +202,7 @@ open class Angular2HtmlLexer(
   }
 
   companion object {
-    const val IS_WITHIN_EXPANSION_FORM_STATE = 0x1 shl 28
+    const val IS_WITHIN_EXPANSION_FORM_STATE: Int = 0x1 shl 28
 
     private val TOKENS_TO_MERGE = TokenSet.create(XmlTokenType.XML_COMMENT_CHARACTERS, XmlTokenType.XML_WHITE_SPACE,
                                                   XmlTokenType.XML_REAL_WHITE_SPACE,

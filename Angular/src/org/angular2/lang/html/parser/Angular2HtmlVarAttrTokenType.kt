@@ -74,12 +74,12 @@ class Angular2HtmlVarAttrTokenType(debugName: String,
 
   companion object {
     @JvmField
-    val REFERENCE = Angular2HtmlVarAttrTokenType("NG:REFERENCE_TOKEN", Angular2HtmlStubElementTypes.REFERENCE_VARIABLE) {
+    val REFERENCE: Angular2HtmlVarAttrTokenType = Angular2HtmlVarAttrTokenType("NG:REFERENCE_TOKEN", Angular2HtmlStubElementTypes.REFERENCE_VARIABLE) {
       RefPrefixTokenParser()
     }
 
     @JvmField
-    val LET = Angular2HtmlVarAttrTokenType("NG:LET_TOKEN", Angular2HtmlStubElementTypes.LET_VARIABLE) {
+    val LET: Angular2HtmlVarAttrTokenType = Angular2HtmlVarAttrTokenType("NG:LET_TOKEN", Angular2HtmlStubElementTypes.LET_VARIABLE) {
       LetPrefixTokenParser()
     }
   }

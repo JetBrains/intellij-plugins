@@ -21,7 +21,7 @@ class AngularIntroduceLetVariableIntention : JSIntroduceVariableIntention() {
     text = Angular2Bundle.message("angular.intention.introduce.let.variable.name")
   }
 
-  override fun createIntroduceVariableHandler() =
+  override fun createIntroduceVariableHandler(): AngularIntroduceLetVariableHandler =
     AngularIntroduceLetVariableHandler()
 
   override fun isGenerallyApplicable(selectionModel: SelectionModel, expression: JSExpression?): Boolean =

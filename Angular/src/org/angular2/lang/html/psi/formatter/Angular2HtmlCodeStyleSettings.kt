@@ -10,16 +10,16 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 class Angular2HtmlCodeStyleSettings(settings: CodeStyleSettings) : CustomCodeStyleSettings("Angular2HtmlCodeStyleSettings", settings) {
 
   @JvmField
-  var SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
+  var SPACES_WITHIN_INTERPOLATION_EXPRESSIONS: Boolean = true
 
   @WrapConstant
   @JvmField
-  var INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
+  var INTERPOLATION_WRAP: Int = CommonCodeStyleSettings.DO_NOT_WRAP
 
   @JvmField
-  var INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
+  var INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER: Boolean = true
 
   @JvmField
-  var INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
+  var INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER: Boolean = true
 
 }

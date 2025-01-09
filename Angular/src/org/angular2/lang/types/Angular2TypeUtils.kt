@@ -88,7 +88,7 @@ object Angular2TypeUtils {
       TypeScriptTypeParser.buildTypeFromClass(cls, false)
     }
 
-  val TypeScriptClass.possiblyGenericJsType
+  val TypeScriptClass.possiblyGenericJsType: JSType
     get() = if (typeParameters.isNotEmpty())
       JSTypeUtils.createNotSubstitutedGenericType(this, jsType)
     else

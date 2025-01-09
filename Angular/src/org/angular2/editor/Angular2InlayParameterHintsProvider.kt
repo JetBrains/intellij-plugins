@@ -48,11 +48,11 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
   }
 
   object Options {
-    val NAMES_FOR_LITERAL_ARGS = Option(
+    val NAMES_FOR_LITERAL_ARGS: Option = Option(
       "angular.show.names.for.literal.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.literal.args"), true)
-    val NAMES_FOR_ALL_ARGS = Option(
+    val NAMES_FOR_ALL_ARGS: Option = Option(
       "angular.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
-    val NAMES_FOR_PIPES = Option(
+    val NAMES_FOR_PIPES: Option = Option(
       "angular.show.names.for.pipes", Angular2Bundle.messagePointer("angular.inlay.params.option.pipe.arguments"), true)
   }
 

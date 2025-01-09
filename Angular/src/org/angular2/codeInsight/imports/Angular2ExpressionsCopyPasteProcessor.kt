@@ -170,7 +170,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   object Util {
-    fun isExpressionContext(context: PsiElement) =
+    fun isExpressionContext(context: PsiElement): Boolean =
       (if (context is ASTWrapperPsiElement) context.firstChild else context)
         .parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
         .let { it != null && it is JSExecutionScope }

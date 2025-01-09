@@ -123,19 +123,19 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
   companion object {
 
     @JvmField
-    val ACTION_EXPR = Angular2EmbeddedExprTokenType(
+    val ACTION_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
       "NG:ACTION_EXPR", ExpressionType.ACTION)
 
     @JvmField
-    val BINDING_EXPR = Angular2EmbeddedExprTokenType(
+    val BINDING_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
       "NG:BINDING_EXPR", ExpressionType.BINDING)
 
     @JvmField
-    val INTERPOLATION_EXPR = Angular2EmbeddedExprTokenType(
+    val INTERPOLATION_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
       "NG:INTERPOLATION_EXPR", ExpressionType.INTERPOLATION)
 
     @JvmField
-    val SIMPLE_BINDING_EXPR = Angular2EmbeddedExprTokenType(
+    val SIMPLE_BINDING_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
       "NG:SIMPLE_BINDING_EXPR", ExpressionType.SIMPLE_BINDING)
 
     @JvmStatic

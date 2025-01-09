@@ -139,35 +139,35 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 }
 
-const val PROP_BINDING_PATTERN = "ng-binding-pattern"
-const val PROP_ERROR_SYMBOL = "ng-error-symbol"
-const val PROP_SYMBOL_DIRECTIVE = "ng-symbol-directive"
-const val PROP_SCOPE_PROXIMITY = "scope-proximity"
-const val PROP_HOST_BINDING = "ng-host-binding"
+const val PROP_BINDING_PATTERN: String = "ng-binding-pattern"
+const val PROP_ERROR_SYMBOL: String = "ng-error-symbol"
+const val PROP_SYMBOL_DIRECTIVE: String = "ng-symbol-directive"
+const val PROP_SCOPE_PROXIMITY: String = "scope-proximity"
+const val PROP_HOST_BINDING: String = "ng-host-binding"
 
-const val EVENT_ATTR_PREFIX = "on"
+const val EVENT_ATTR_PREFIX: String = "on"
 
-const val ATTR_NG_NON_BINDABLE = "ngNonBindable"
-const val ATTR_SELECT = "select"
+const val ATTR_NG_NON_BINDABLE: String = "ngNonBindable"
+const val ATTR_SELECT: String = "select"
 
-const val ELEMENT_NG_CONTAINER = "ng-container"
-const val ELEMENT_NG_CONTENT = "ng-content"
-const val ELEMENT_NG_TEMPLATE = "ng-template"
+const val ELEMENT_NG_CONTAINER: String = "ng-container"
+const val ELEMENT_NG_CONTENT: String = "ng-content"
+const val ELEMENT_NG_TEMPLATE: String = "ng-template"
 
-val NG_PROPERTY_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-property-bindings")
-val NG_EVENT_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-event-bindings")
-val NG_CLASS_LIST = WebSymbolQualifiedKind(NAMESPACE_CSS, "ng-class-list")
-val NG_STRUCTURAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-structural-directives")
-val NG_DIRECTIVE_ONE_TIME_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-one-time-bindings")
-val NG_DIRECTIVE_INPUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-inputs")
-val NG_DIRECTIVE_OUTPUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-outputs")
-val NG_DIRECTIVE_IN_OUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-in-outs")
-val NG_DIRECTIVE_ATTRIBUTES = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attributes")
-val NG_DIRECTIVE_EXPORTS_AS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-exports-as")
-val NG_DIRECTIVE_ELEMENT_SELECTORS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-element-selectors")
-val NG_DIRECTIVE_ATTRIBUTE_SELECTORS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attribute-selectors")
-val NG_I18N_ATTRIBUTES = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-i18n-attributes")
-val NG_BLOCKS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-blocks")
-val NG_BLOCK_PARAMETERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
-val NG_BLOCK_PARAMETER_PREFIXES = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameter-prefixes")
-val NG_DEFER_ON_TRIGGERS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-defer-on-triggers")
+val NG_PROPERTY_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-property-bindings")
+val NG_EVENT_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-event-bindings")
+val NG_CLASS_LIST: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_CSS, "ng-class-list")
+val NG_STRUCTURAL_DIRECTIVES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-structural-directives")
+val NG_DIRECTIVE_ONE_TIME_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-one-time-bindings")
+val NG_DIRECTIVE_INPUTS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-inputs")
+val NG_DIRECTIVE_OUTPUTS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-outputs")
+val NG_DIRECTIVE_IN_OUTS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-in-outs")
+val NG_DIRECTIVE_ATTRIBUTES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attributes")
+val NG_DIRECTIVE_EXPORTS_AS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-exports-as")
+val NG_DIRECTIVE_ELEMENT_SELECTORS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-element-selectors")
+val NG_DIRECTIVE_ATTRIBUTE_SELECTORS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attribute-selectors")
+val NG_I18N_ATTRIBUTES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-i18n-attributes")
+val NG_BLOCKS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-blocks")
+val NG_BLOCK_PARAMETERS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
+val NG_BLOCK_PARAMETER_PREFIXES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameter-prefixes")
+val NG_DEFER_ON_TRIGGERS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-defer-on-triggers")

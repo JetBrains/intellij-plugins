@@ -7,11 +7,11 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 interface Angular2HighlighterColors {
   companion object {
     @JvmField
-    val NG_SIGNAL = TextAttributesKey.createTextAttributesKey(
+    val NG_SIGNAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
       "NG.SIGNAL", TypeScriptHighlighter.TS_INSTANCE_MEMBER_FUNCTION)
 
     @JvmField
-    val NG_VARIABLE = TextAttributesKey.createTextAttributesKey(
+    val NG_VARIABLE: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
       "NG.VARIABLE", TypeScriptHighlighter.TS_LOCAL_VARIABLE)
   }
 }

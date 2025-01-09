@@ -166,8 +166,10 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
 
     companion object {
 
-      val providedKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS, NG_STRUCTURAL_DIRECTIVES,
-                                NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS, NG_DIRECTIVE_ATTRIBUTES)
+      val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
+        NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS, NG_STRUCTURAL_DIRECTIVES,
+        NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS, NG_DIRECTIVE_ATTRIBUTES,
+      )
 
       private fun fillNamesAndProperties(
         map: MutableMap<String, Angular2Symbol>,

@@ -28,7 +28,7 @@ fun configureAngularSettingsService(project: Project, disposable: Disposable, se
 @State(name = "AngularSettings", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
 class AngularSettings(val project: Project) : SimplePersistentStateComponent<AngularSettingsState>(AngularSettingsState()) {
 
-  var serviceType
+  var serviceType: AngularServiceSettings
     get() = state.innerServiceType
     set(value) {
       val prevServiceType = state.innerServiceType
@@ -57,9 +57,9 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
 }
 
 class AngularSettingsState : BaseState() {
-  var innerServiceType by enum(AngularServiceSettings.DISABLED)
-  var packageName by string(defaultPackageKey)
-  var useTypesFromServer by property(false)
+  var innerServiceType: AngularServiceSettings by enum(AngularServiceSettings.DISABLED)
+  var packageName: String? by string(defaultPackageKey)
+  var useTypesFromServer: Boolean by property(false)
 }
 
 enum class AngularServiceSettings {

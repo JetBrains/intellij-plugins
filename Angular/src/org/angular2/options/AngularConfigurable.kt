@@ -11,6 +11,7 @@ import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.not
 import org.angular2.lang.Angular2Bundle
+import org.jetbrains.annotations.Nls
 
 class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable, Configurable.Beta {
   private val settings = getAngularSettings(project)
@@ -45,5 +46,5 @@ class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(),
 
   override fun getHelpTopic(): String = "settings.angular"
 
-  override fun getDisplayName() = Angular2Bundle.message("angular.configurable.name.angular.template")
+  override fun getDisplayName(): @Nls String = Angular2Bundle.message("angular.configurable.name.angular.template")
 }

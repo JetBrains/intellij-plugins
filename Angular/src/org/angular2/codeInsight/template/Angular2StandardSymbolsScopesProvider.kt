@@ -153,9 +153,9 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
   companion object {
 
     @NonNls
-    const val `$ANY` = "\$any"
+    const val `$ANY`: String = "\$any"
 
     @NonNls
-    const val `$EVENT` = "\$event"
+    const val `$EVENT`: String = "\$event"
   }
 }

@@ -38,6 +38,6 @@ interface Angular2Module : Angular2Entity, Angular2ImportsOwner {
 
   companion object {
 
-    val EMPTY_ARRAY = arrayOfNulls<Angular2Module>(0)
+    val EMPTY_ARRAY: Array<Angular2Module?> = arrayOfNulls<Angular2Module>(0)
   }
 }

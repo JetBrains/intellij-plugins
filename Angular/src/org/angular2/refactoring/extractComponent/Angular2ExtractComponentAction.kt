@@ -17,11 +17,11 @@ class Angular2ExtractComponentAction : BaseRefactoringAction() {
     setInjectedContext(true)
   }
 
-  override fun isAvailableInEditorOnly() = true
+  override fun isAvailableInEditorOnly(): Boolean = true
 
-  override fun isEnabledOnElements(elements: Array<out PsiElement>) = true
+  override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean = true
 
-  override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext) = true
+  override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext): Boolean = true
 
   override fun isAvailableForLanguage(language: Language?): Boolean = language?.isKindOf(Angular2HtmlLanguage) == true
                                                                       && !language.isKindOf(Angular2SvgLanguage)

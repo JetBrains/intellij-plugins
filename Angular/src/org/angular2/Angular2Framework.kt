@@ -63,7 +63,7 @@ class Angular2Framework : WebFramework() {
   ): WebSymbolElementDescriptor =
     Angular2ElementDescriptor(info, tag)
 
-  override fun getAttributeNameCodeCompletionFilter(tag: XmlTag) =
+  override fun getAttributeNameCodeCompletionFilter(tag: XmlTag): Angular2AttributeNameCodeCompletionFilter =
     Angular2AttributeNameCodeCompletionFilter(tag)
 
   override fun getNames(
@@ -83,7 +83,7 @@ class Angular2Framework : WebFramework() {
 
   companion object {
 
-    const val ID = "angular"
+    const val ID: String = "angular"
 
   }
 }

@@ -36,7 +36,7 @@ open class Angular2MetadataEntityStub<Psi : PsiElement> : Angular2MetadataClassS
   companion object {
     @JvmStatic
     @NonNls
-    protected val NAME = "name"
+    protected val NAME: String = "name"
 
     @NonNls
     private val DECORATOR_FIELD_PREFIX = "___dec."

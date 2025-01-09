@@ -56,10 +56,10 @@ object Angular2LangUtil {
     return angular2Framework.isInContext(context, project)
   }
 
-  fun isAngular2HtmlFileType(fileType: FileType?) =
+  fun isAngular2HtmlFileType(fileType: FileType?): Boolean =
     fileType is LanguageFileType && fileType.language.let { it is Angular2HtmlDialect && !it.svgDialect }
 
-  fun isAngular2SvgFileType(fileType: FileType?) =
+  fun isAngular2SvgFileType(fileType: FileType?): Boolean =
     fileType is LanguageFileType && fileType.language.let { it is Angular2HtmlDialect && it.svgDialect }
 
   private fun getTemplateSyntax(contextProvider: () -> String?): Angular2TemplateSyntax =

@@ -270,7 +270,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
     : Settings(settings.myInterpreterRef, settings.myPackage)
 
   companion object {
-    const val NG_EXECUTABLE = "ng"
+    const val NG_EXECUTABLE: String = "ng"
   }
 }
 

@@ -85,9 +85,9 @@ open class AngularProjectImpl(override val name: String,
                               angularCliFolder: VirtualFile)
   : AngularProject(angularCliFolder) {
 
-  override val rootDir = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
+  override val rootDir: VirtualFile? = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
 
-  override val sourceDir
+  override val sourceDir: VirtualFile?
     get() = ngProject.sourceRoot.let {
       if (it != null)
         angularCliFolder.findFileByRelativePath(it)
@@ -97,14 +97,14 @@ open class AngularProjectImpl(override val name: String,
 
   override val cssResolveRootDir: VirtualFile? get() = rootDir
 
-  override val indexHtmlFile get() = resolveFile(ngProject.targets?.build?.options?.index)
+  override val indexHtmlFile: VirtualFile? get() = resolveFile(ngProject.targets?.build?.options?.index)
 
-  override val globalStyleSheets
+  override val globalStyleSheets: List<VirtualFile>
     get() = ngProject.targets?.build?.options?.styles
               ?.mapNotNull { rootDir?.findFileByRelativePath(it) }
             ?: emptyList()
 
-  override val stylePreprocessorIncludeDirs
+  override val stylePreprocessorIncludeDirs: List<VirtualFile>
     get() = ngProject.targets?.build?.options?.stylePreprocessorOptions?.includePaths
               ?.mapNotNull { angularCliFolder.findFileByRelativePath(it) }
             ?: emptyList()
@@ -112,9 +112,9 @@ open class AngularProjectImpl(override val name: String,
   override val tsConfigFile: VirtualFile?
     get() = resolveFile(ngProject.targets?.build?.options?.tsConfig)
 
-  override val karmaConfigFile get() = resolveFile(ngProject.targets?.test?.options?.karmaConfig)
+  override val karmaConfigFile: VirtualFile? get() = resolveFile(ngProject.targets?.test?.options?.karmaConfig)
 
-  override val protractorConfigFile get() = resolveFile(ngProject.targets?.e2e?.options?.protractorConfig)
+  override val protractorConfigFile: VirtualFile? get() = resolveFile(ngProject.targets?.e2e?.options?.protractorConfig)
 
   override fun resolveFile(filePath: String?): VirtualFile? {
     return filePath?.let { path ->

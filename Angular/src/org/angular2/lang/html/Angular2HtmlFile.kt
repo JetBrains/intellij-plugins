@@ -18,7 +18,7 @@ import org.angular2.entities.source.Angular2SourceUtil
 class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileElementType)
   : HtmlFileImpl(viewProvider, fileElementType), JSControlFlowScope, JSConfigProvider {
 
-  override fun isTopmostControlFlowScope() = true
+  override fun isTopmostControlFlowScope(): Boolean = true
 
   override fun subtreeChanged() {
     super.subtreeChanged()

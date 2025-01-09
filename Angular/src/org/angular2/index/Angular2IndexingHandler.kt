@@ -418,9 +418,9 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
   companion object {
 
-    const val NG_MODULE_INDEX_NAME = "ngModule"
+    const val NG_MODULE_INDEX_NAME: String = "ngModule"
 
-    const val NG_PSEUDO_MODULE_DECLARATION_MARKER = "a2pmd"
+    const val NG_PSEUDO_MODULE_DECLARATION_MARKER: String = "a2pmd"
   }
 }
 
@@ -444,8 +444,8 @@ private const val MODULE_TYPE = "M;;;"
 
 private const val STYLESHEET_INDEX_PREFIX = "ss/"
 
-val TS_CLASS_TOKENS = TokenSet.create(JSStubElementTypes.TYPESCRIPT_CLASS,
-                                      JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION)
+val TS_CLASS_TOKENS: TokenSet = TokenSet.create(JSStubElementTypes.TYPESCRIPT_CLASS,
+                                                JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION)
 
 private val STUBBED_PROPERTIES = setOf(
   TEMPLATE_URL_PROP, STYLE_URLS_PROP, STYLE_URL_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)

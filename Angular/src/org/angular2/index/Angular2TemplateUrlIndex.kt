@@ -11,4 +11,5 @@ class Angular2TemplateUrlIndex : Angular2IndexBase<JSImplicitElementProvider>() 
 }
 
 @JvmField
-val Angular2TemplateUrlIndexKey = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.templateUrl.index")
+val Angular2TemplateUrlIndexKey: StubIndexKey<String, JSImplicitElementProvider> =
+  StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.templateUrl.index")

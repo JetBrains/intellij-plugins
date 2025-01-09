@@ -43,6 +43,6 @@ interface Angular2FrameworkHandler {
 
   companion object {
     @JvmField
-    val EP_NAME = ExtensionPointName.create<Angular2FrameworkHandler>("org.angular2.frameworkHandler")
+    val EP_NAME: ExtensionPointName<Angular2FrameworkHandler> = ExtensionPointName.create<Angular2FrameworkHandler>("org.angular2.frameworkHandler")
   }
 }

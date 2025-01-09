@@ -115,7 +115,7 @@ abstract class Angular2MetadataDirectiveStubBase<Psi : PsiElement> : Angular2Met
     private val HAS_ATTRIBUTES = BooleanStructureElement()
 
     @JvmStatic
-    protected val FLAGS_STRUCTURE = FlagsStructure(
+    protected val FLAGS_STRUCTURE: FlagsStructure = FlagsStructure(
       Angular2MetadataClassStubBase.FLAGS_STRUCTURE,
       HAS_EXPORT_AS,
       HAS_ATTRIBUTES

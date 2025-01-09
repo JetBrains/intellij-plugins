@@ -76,16 +76,16 @@ class Angular2AttributeValueProvider : HtmlAttributeValueProvider() {
   companion object {
 
     @NonNls
-    const val NG_CLASS_ATTR = "ngClass"
+    const val NG_CLASS_ATTR: String = "ngClass"
 
     @NonNls
-    const val SRC_ATTR = "src"
+    const val SRC_ATTR: String = "src"
 
     @NonNls
-    const val IMG_TAG = "img"
+    const val IMG_TAG: String = "img"
 
     @NonNls
-    const val NG_SRC_ATTR = "ngSrc"
+    const val NG_SRC_ATTR: String = "ngSrc"
 
   }
 

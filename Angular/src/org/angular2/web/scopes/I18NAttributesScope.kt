@@ -69,7 +69,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
   companion object {
 
     @NonNls
-    val I18N_ATTR = "i18n"
+    val I18N_ATTR: String = "i18n"
 
     @JvmStatic
     fun isI18nCandidate(info: Angular2AttributeNameParser.AttributeInfo): Boolean {

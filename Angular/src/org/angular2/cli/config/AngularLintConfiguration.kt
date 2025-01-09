@@ -54,7 +54,7 @@ class AngularLintConfiguration(private val project: Project,
   }
 
   companion object {
-    fun createGlobMatcher(globString: String) = try {
+    fun createGlobMatcher(globString: String): Minimatch? = try {
       Minimatch(globString)
     }
     catch (e: Exception) {

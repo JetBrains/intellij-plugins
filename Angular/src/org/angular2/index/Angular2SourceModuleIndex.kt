@@ -11,4 +11,5 @@ class Angular2SourceModuleIndex : Angular2IndexBase<JSImplicitElementProvider>()
 }
 
 @JvmField
-val Angular2SourceModuleIndexKey = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.module.index")
+val Angular2SourceModuleIndexKey: StubIndexKey<String, JSImplicitElementProvider> =
+  StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.module.index")

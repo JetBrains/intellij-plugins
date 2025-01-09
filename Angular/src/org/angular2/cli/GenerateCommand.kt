@@ -2,7 +2,7 @@
 package org.angular2.cli
 
 class GenerateCommand {
-  var kind = GenerateCommandKind.WRITE
+  var kind: GenerateCommandKind = GenerateCommandKind.WRITE
   var path: String = ""
   var to: String? = null
   var content: String? = null

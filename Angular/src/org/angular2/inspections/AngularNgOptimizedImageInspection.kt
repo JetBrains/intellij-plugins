@@ -42,11 +42,11 @@ import org.angular2.lang.html.psi.PropertyBindingType
 class AngularNgOptimizedImageInspection : LocalInspectionTool() {
   companion object {
 
-    const val WIDTH_ATTR = "width"
+    const val WIDTH_ATTR: String = "width"
 
-    const val FILL_ATTR = "fill"
+    const val FILL_ATTR: String = "fill"
 
-    const val HEIGHT_ATTR = "height"
+    const val HEIGHT_ATTR: String = "height"
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

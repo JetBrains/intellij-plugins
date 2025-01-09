@@ -39,11 +39,11 @@ import org.angular2.lang.html.psi.*
  */
 class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
   companion object {
-    const val NG_TEMPLATE_CONTEXT_GUARD = "ngTemplateContextGuard"
-    const val NG_TEMPLATE_GUARD_PREFIX = "ngTemplateGuard_"
+    const val NG_TEMPLATE_CONTEXT_GUARD: String = "ngTemplateContextGuard"
+    const val NG_TEMPLATE_GUARD_PREFIX: String = "ngTemplateGuard_"
 
     private val CUSTOM_GUARD = Key.create<JSElement>("CUSTOM_GUARD")
-    const val BINDING_GUARD = "binding" // See interface TemplateGuardMeta in Angular sources
+    const val BINDING_GUARD: String = "binding" // See interface TemplateGuardMeta in Angular sources
   }
 
   private val visitedNodes = mutableSetOf<PsiElement>()

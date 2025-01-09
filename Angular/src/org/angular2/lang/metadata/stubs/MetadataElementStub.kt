@@ -110,96 +110,96 @@ abstract class MetadataElementStub<Psi : PsiElement> : StubBase<Psi> {
   companion object {
     @NonNls
     @JvmStatic
-    protected val SYMBOL_TYPE = "__symbolic"
+    protected val SYMBOL_TYPE: String = "__symbolic"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_REFERENCE = "reference"
+    protected val SYMBOL_REFERENCE: String = "reference"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_PROPERTY = "property"
+    protected val SYMBOL_PROPERTY: String = "property"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_FUNCTION = "function"
+    protected val SYMBOL_FUNCTION: String = "function"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_METHOD = "method"
+    protected val SYMBOL_METHOD: String = "method"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_CALL = "call"
+    protected val SYMBOL_CALL: String = "call"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_CLASS = "class"
+    protected val SYMBOL_CLASS: String = "class"
 
     @NonNls
     @JvmStatic
-    protected val SYMBOL_SPREAD = "spread"
+    protected val SYMBOL_SPREAD: String = "spread"
 
     @NonNls
     @JvmStatic
-    protected val PARAMETER_DECORATORS = "parameterDecorators"
+    protected val PARAMETER_DECORATORS: String = "parameterDecorators"
 
     @NonNls
     @JvmStatic
-    protected val DECORATORS = "decorators"
+    protected val DECORATORS: String = "decorators"
 
     @NonNls
     @JvmStatic
-    protected val EXPRESSION = "expression"
+    protected val EXPRESSION: String = "expression"
 
     @NonNls
     @JvmStatic
-    protected val ARGUMENTS = "arguments"
+    protected val ARGUMENTS: String = "arguments"
 
     @NonNls
     @JvmStatic
-    protected val MEMBERS = "members"
+    protected val MEMBERS: String = "members"
 
     @NonNls
     @JvmStatic
-    protected val STATICS = "statics"
+    protected val STATICS: String = "statics"
 
     @NonNls
     @JvmStatic
-    protected val EXTENDS = "extends"
+    protected val EXTENDS: String = "extends"
 
     @NonNls
     @JvmStatic
-    protected val CONSTRUCTOR = "__ctor__"
+    protected val CONSTRUCTOR: String = "__ctor__"
 
     @NonNls
     @JvmStatic
-    protected val REFERENCE_NAME = "name"
+    protected val REFERENCE_NAME: String = "name"
 
     @NonNls
     @JvmStatic
-    protected val REFERENCE_MODULE = "module"
+    protected val REFERENCE_MODULE: String = "module"
 
     @NonNls
     @JvmStatic
-    protected val FUNCTION_VALUE = "value"
+    protected val FUNCTION_VALUE: String = "value"
 
     @NonNls
     @JvmStatic
-    protected val STRING_TYPE = "#string"
+    protected val STRING_TYPE: String = "#string"
 
     @NonNls
     @JvmStatic
-    protected val ARRAY_TYPE = "#array"
+    protected val ARRAY_TYPE: String = "#array"
 
     @NonNls
     @JvmStatic
-    protected val OBJECT_TYPE = "#object"
+    protected val OBJECT_TYPE: String = "#object"
 
     private val HAS_MEMBER_NAME = BooleanStructureElement()
 
     @JvmStatic
-    protected val FLAGS_STRUCTURE = FlagsStructure(
+    protected val FLAGS_STRUCTURE: FlagsStructure = FlagsStructure(
       HAS_MEMBER_NAME
     )
 

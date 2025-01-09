@@ -11,4 +11,5 @@ class Angular2IvyModuleIndex : Angular2IndexBase<TypeScriptClass>() {
 }
 
 @JvmField
-val Angular2IvyModuleIndexKey = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.module.index")
+val Angular2IvyModuleIndexKey: StubIndexKey<String, TypeScriptClass> =
+  StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.module.index")

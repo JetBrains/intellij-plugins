@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter.Comp
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
@@ -73,13 +74,13 @@ object Angular2HighlightingUtils {
   fun Angular2BlockParameterSymbol.htmlName(context: PsiElement): String =
     name.withColor(TextAttributesKind.NG_EXPRESSION_PREFIX, context)
 
-  fun String.withNameColor(element: PsiElement) =
+  fun String.withNameColor(element: PsiElement): @NlsSafe String =
     highlightName(element, this)
 
-  fun String.withColor(attributes: TextAttributesKind, context: PsiElement) =
+  fun String.withColor(attributes: TextAttributesKind, context: PsiElement): @NlsSafe String =
     applyAttributes(context.project, this, attributes.key)
 
-  fun String.withColor(language: Language, context: PsiElement) =
+  fun String.withColor(language: Language, context: PsiElement): @NlsSafe String =
     highlightWithLexer(context.project, this, language)
 
   fun renderCode(vararg items: Pair<String, TextAttributesKind?>, context: PsiElement): String =

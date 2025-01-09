@@ -22,9 +22,9 @@ class Angular2CliFramework private constructor() : FrameworkType(ID) {
 
   companion object {
     @JvmField
-    val INSTANCE = Angular2CliFramework()
+    val INSTANCE: Angular2CliFramework = Angular2CliFramework()
 
     @NonNls
-    const val ID = "AngularCLI"
+    const val ID: String = "AngularCLI"
   }
 }

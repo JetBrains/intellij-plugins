@@ -193,7 +193,7 @@ open class Angular2MetadataClassStubBase<Psi : PsiElement> : Angular2MetadataEle
     private val HAS_OUTPUT_MAPPINGS = BooleanStructureElement()
 
     @JvmStatic
-    protected val FLAGS_STRUCTURE = FlagsStructure(
+    protected val FLAGS_STRUCTURE: FlagsStructure = FlagsStructure(
       Angular2MetadataElementStub.FLAGS_STRUCTURE,
       IS_STRUCTURAL_DIRECTIVE_FLAG,
       IS_REGULAR_DIRECTIVE_FLAG,

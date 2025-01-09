@@ -33,18 +33,18 @@ import kotlin.math.max
 object Angular2EntityUtils {
 
   @NonNls
-  const val ELEMENT_REF = "ElementRef"
+  const val ELEMENT_REF: String = "ElementRef"
 
   @NonNls
-  const val TEMPLATE_REF = "TemplateRef"
+  const val TEMPLATE_REF: String = "TemplateRef"
 
   @NonNls
-  const val VIEW_CONTAINER_REF = "ViewContainerRef"
+  const val VIEW_CONTAINER_REF: String = "ViewContainerRef"
 
-  const val NG_ACCEPT_INPUT_TYPE_PREFIX = "ngAcceptInputType_"
+  const val NG_ACCEPT_INPUT_TYPE_PREFIX: String = "ngAcceptInputType_"
 
   private const val INDEX_ELEMENT_NAME_PREFIX = ">"
-  const val anyElementDirectiveIndexName = "E"
+  const val anyElementDirectiveIndexName: String = "E"
   private const val INDEX_ATTRIBUTE_NAME_PREFIX = "="
 
   @JvmStatic

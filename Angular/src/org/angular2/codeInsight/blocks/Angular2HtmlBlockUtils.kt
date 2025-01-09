@@ -19,46 +19,46 @@ import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.web.NG_BLOCKS
 
-const val BLOCK_IF = "if"
-const val BLOCK_ELSE_IF = "else if"
-const val BLOCK_ELSE = "else"
-const val BLOCK_SWITCH = "switch"
-const val BLOCK_CASE = "case"
-const val BLOCK_DEFAULT = "default"
-const val BLOCK_FOR = "for"
-const val BLOCK_EMPTY = "empty"
-const val BLOCK_DEFER = "defer"
-const val BLOCK_ERROR = "error"
-const val BLOCK_PLACEHOLDER = "placeholder"
-const val BLOCK_LOADING = "loading"
-const val BLOCK_LET = "let"
+const val BLOCK_IF: String = "if"
+const val BLOCK_ELSE_IF: String = "else if"
+const val BLOCK_ELSE: String = "else"
+const val BLOCK_SWITCH: String = "switch"
+const val BLOCK_CASE: String = "case"
+const val BLOCK_DEFAULT: String = "default"
+const val BLOCK_FOR: String = "for"
+const val BLOCK_EMPTY: String = "empty"
+const val BLOCK_DEFER: String = "defer"
+const val BLOCK_ERROR: String = "error"
+const val BLOCK_PLACEHOLDER: String = "placeholder"
+const val BLOCK_LOADING: String = "loading"
+const val BLOCK_LET: String = "let"
 
-val BLOCKS_WITH_PRIMARY_EXPRESSION = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR, BLOCK_LET)
+val BLOCKS_WITH_PRIMARY_EXPRESSION: Set<String> = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR, BLOCK_LET)
 
-const val PARAMETER_AS = "as"
-const val PARAMETER_LET = "let"
-const val PARAMETER_ON = "on"
-const val PARAMETER_WHEN = "when"
-const val PARAMETER_NEVER = "never"
-const val PARAMETER_TRACK = "track"
+const val PARAMETER_AS: String = "as"
+const val PARAMETER_LET: String = "let"
+const val PARAMETER_ON: String = "on"
+const val PARAMETER_WHEN: String = "when"
+const val PARAMETER_NEVER: String = "never"
+const val PARAMETER_TRACK: String = "track"
 
-const val PARAMETER_PREFIX_PREFETCH = "prefetch"
-const val PARAMETER_PREFIX_HYDRATE = "hydrate"
+const val PARAMETER_PREFIX_PREFETCH: String = "prefetch"
+const val PARAMETER_PREFIX_HYDRATE: String = "hydrate"
 
 object Angular2HtmlBlockUtils {
 
   private val WHITESPACES = Regex("[ \t]+")
 
-  fun String.toCanonicalBlockName() =
+  fun String.toCanonicalBlockName(): String =
     removePrefix("@").replace(WHITESPACES, " ")
 
 }
 
-fun isJSReferenceInForBlockLetParameterAssignment(ref: JSReferenceExpression) =
+fun isJSReferenceInForBlockLetParameterAssignment(ref: JSReferenceExpression): Boolean =
   ref.parent is Angular2BlockParameterVariableImpl
   && ref.parent.parent?.parent.let { it is Angular2BlockParameter && it.name == PARAMETER_LET && it.block?.getName() == BLOCK_FOR }
 
-fun isJSReferenceAfterEqInForBlockLetParameterAssignment(ref: JSReferenceExpression) =
+fun isJSReferenceAfterEqInForBlockLetParameterAssignment(ref: JSReferenceExpression): Boolean =
   isJSReferenceInForBlockLetParameterAssignment(ref)
   && ref
     .siblings(false, false)

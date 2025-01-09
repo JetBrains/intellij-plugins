@@ -8,6 +8,6 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 
 class Angular2BaseLiveTemplateContextType : TemplateContextType(Angular2Bundle.message("angular.live.template.context.angular")), JSLikeTemplateContextType {
-  override fun isInContext(context: TemplateActionContext) =
+  override fun isInContext(context: TemplateActionContext): Boolean =
     context.file.findElementAt(context.startOffset)?.let { Angular2LangUtil.isAngular2Context(it) } ?: false
 }

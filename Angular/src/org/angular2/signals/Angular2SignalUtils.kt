@@ -42,7 +42,7 @@ object Angular2SignalUtils {
       TypeScriptFunction::class.java
     )
 
-  fun supportsSignals(context: PsiElement?) =
+  fun supportsSignals(context: PsiElement?): Boolean =
     signalTypeAlias(context) != null
 
   fun isSignal(targetElement: PsiElement?, place: PsiElement?, writable: Boolean = false): Boolean {

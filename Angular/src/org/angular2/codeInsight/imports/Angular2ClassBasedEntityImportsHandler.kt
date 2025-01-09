@@ -12,7 +12,7 @@ import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil
 
 class Angular2ClassBasedEntityImportsHandler : Angular2ImportsHandler {
 
-  override fun accepts(entity: Angular2Entity) =
+  override fun accepts(entity: Angular2Entity): Boolean =
     entity is Angular2ClassBasedEntity
 
   override fun insertImport(editor: Editor?,

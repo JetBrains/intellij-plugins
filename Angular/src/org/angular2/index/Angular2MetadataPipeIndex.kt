@@ -11,4 +11,5 @@ class Angular2MetadataPipeIndex : Angular2IndexBase<Angular2MetadataPipe>() {
 }
 
 @JvmField
-val Angular2MetadataPipeIndexKey = StubIndexKey.createIndexKey<String, Angular2MetadataPipe>("angular2.metadata.pipe.index")
+val Angular2MetadataPipeIndexKey: StubIndexKey<String, Angular2MetadataPipe> =
+  StubIndexKey.createIndexKey<String, Angular2MetadataPipe>("angular2.metadata.pipe.index")

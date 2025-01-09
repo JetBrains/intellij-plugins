@@ -34,7 +34,7 @@ object Angular2EntitiesProvider {
   private val EP_NAME = ExtensionPointName<Angular2EntitiesSource>("org.angular2.entitiesSource")
   private val entitySources get() = EP_NAME.extensionList.asSequence()
 
-  const val TRANSFORM_METHOD = "transform"
+  const val TRANSFORM_METHOD: String = "transform"
 
   @JvmStatic
   fun getEntity(element: PsiElement?): Angular2Entity? =

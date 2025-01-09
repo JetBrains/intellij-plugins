@@ -59,7 +59,7 @@ object Angular2FixesFactory {
   @TestOnly
   @NonNls
   @JvmField
-  val DECLARATION_TO_CHOOSE = Key.create<String>("declaration.to.choose")
+  val DECLARATION_TO_CHOOSE: Key<String> = Key.create<String>("declaration.to.choose")
 
   fun getCreateInputTransformFixes(attribute: XmlAttribute, expressionType: String): List<LocalQuickFix> {
     val descriptor = attribute.descriptor.asSafely<Angular2AttributeDescriptor>() ?: return emptyList()

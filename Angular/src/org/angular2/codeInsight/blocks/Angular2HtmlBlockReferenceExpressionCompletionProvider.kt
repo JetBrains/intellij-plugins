@@ -35,7 +35,7 @@ object Angular2HtmlBlockReferenceExpressionCompletionProvider {
     return false
   }
 
-  fun canAddCompletions(ref: JSReferenceExpression) =
+  fun canAddCompletions(ref: JSReferenceExpression): Boolean =
     addOfKeyword(ref) || addEq(ref)
 
   private fun addOfKeyword(ref: JSReferenceExpression) =

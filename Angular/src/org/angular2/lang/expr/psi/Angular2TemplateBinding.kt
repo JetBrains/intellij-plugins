@@ -24,6 +24,6 @@ interface Angular2TemplateBinding : JSStatement {
   val expression: JSExpression?
 
   companion object {
-    val EMPTY_ARRAY = emptyArray<Angular2TemplateBinding>()
+    val EMPTY_ARRAY: Array<Angular2TemplateBinding> = emptyArray<Angular2TemplateBinding>()
   }
 }

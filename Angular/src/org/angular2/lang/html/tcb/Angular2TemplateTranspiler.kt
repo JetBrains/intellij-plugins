@@ -153,7 +153,7 @@ object Angular2TemplateTranspiler {
 
     fun offsetBy(generatedOffset: Int = 0, sourceOffset: Int = 0): SourceMapping
 
-    val ignored get() = flags.isEmpty() && diagnosticsOffset == null
+    val ignored: Boolean get() = flags.isEmpty() && diagnosticsOffset == null
   }
 
   interface ContextVarMapping {

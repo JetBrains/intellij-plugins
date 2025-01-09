@@ -11,4 +11,5 @@ class Angular2MetadataFunctionIndex : Angular2IndexBase<Angular2MetadataFunction
 }
 
 @JvmField
-val Angular2MetadataFunctionIndexKey = StubIndexKey.createIndexKey<String, Angular2MetadataFunction>("angular2.metadata.function.index")
+val Angular2MetadataFunctionIndexKey: StubIndexKey<String, Angular2MetadataFunction> =
+  StubIndexKey.createIndexKey<String, Angular2MetadataFunction>("angular2.metadata.function.index")

@@ -106,7 +106,7 @@ interface Angular2ElementTypes: Angular2StubElementTypes {
       Angular2ElementType("NG:BLOCK_PARAMETER_STATEMENT") { node -> Angular2BlockParameterImpl(node) }
 
     @JvmField
-    val PROPERTY_NAMES = TokenSet.orSet(IDENTIFIER_NAMES, TokenSet.create(STRING_LITERAL))
+    val PROPERTY_NAMES: TokenSet = TokenSet.orSet(IDENTIFIER_NAMES, TokenSet.create(STRING_LITERAL))
 
     @JvmStatic
     fun createTemplateBindingStatement(key: String, isVar: Boolean, name: String?): IElementType {
