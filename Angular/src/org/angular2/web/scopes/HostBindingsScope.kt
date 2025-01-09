@@ -6,10 +6,13 @@ import com.intellij.html.webSymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
+import com.intellij.psi.css.StylesheetFile
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.css.getWebSymbolsCssScopeForTagClasses
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING
 
@@ -33,14 +36,19 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
   companion object {
     internal fun buildSubScope(executor: WebSymbolsQueryExecutor, location: ES6Decorator): List<WebSymbolsScope> {
       val file = location.containingFile
+      val directive = Angular2EntitiesProvider.getDirective(location)
+      val relatedStylesheets = (directive as? Angular2Component)?.cssFiles?.filterIsInstance<StylesheetFile>()
+                               ?: emptyList()
       val scope = mutableSetOf<WebSymbolsScope>(
         StandardPropertyAndEventsScope(file),
         DirectiveElementSelectorsScope(file),
         DirectiveAttributeSelectorsScope(file),
-        getStandardHtmlElementSymbolsScope(file.project)
+        getStandardHtmlElementSymbolsScope(file.project),
+        getWebSymbolsCssScopeForTagClasses(location, relatedStylesheets)
       )
-      val elementNames = Angular2EntitiesProvider.getDirective(location)?.selector?.simpleSelectors
+      val elementNames = directive?.selector?.simpleSelectors
         ?.mapNotNull { it.elementName?.trim()?.takeIf { it.isNotEmpty() && it != "*" } }
+
       if (!elementNames.isNullOrEmpty()) {
         elementNames.forEach {
           scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))

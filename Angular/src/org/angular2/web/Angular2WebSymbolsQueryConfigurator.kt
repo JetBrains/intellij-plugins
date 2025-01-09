@@ -8,13 +8,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
-import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_CSS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
@@ -24,6 +24,7 @@ import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.isHostBindingDecoratorLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.Angular2Framework
@@ -105,14 +106,8 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         }
       }
       is JSLiteralExpression -> {
-        val isHostBinding = isHostBindingDecoratorLiteral(element)
-        val isHostListener = isHostListenerDecoratorEventLiteral(element)
         listOfNotNull(DirectivePropertyMappingCompletionScope(element),
-                      element
-                        .takeIf { isHostBinding || isHostListener}
-                        ?.parentOfType<TypeScriptClass>()
-                        ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
-                        ?.let { HostBindingsScope(mapOf(WebSymbol.JS_STRING_LITERALS to if (isHostBinding) NG_PROPERTY_BINDINGS else NG_EVENT_BINDINGS), it) },
+                      getHostBindingsScopeForLiteral(element),
                       element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
       }
       is JSObjectLiteralExpression -> {
@@ -128,6 +123,20 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       }
       else -> emptyList()
     }
+
+  private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
+    val mapping = when {
+      isHostBindingDecoratorLiteral(element) -> NG_PROPERTY_BINDINGS
+      isHostListenerDecoratorEventLiteral(element) -> NG_EVENT_BINDINGS
+      isHostBindingClassValueLiteral(element) -> NG_CLASS_LIST
+      else -> return null
+    }
+
+    return element
+      .parentOfType<TypeScriptClass>()
+      ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
+      ?.let { HostBindingsScope(mapOf(WebSymbol.JS_STRING_LITERALS to mapping), it) }
+  }
 }
 
 const val PROP_BINDING_PATTERN = "ng-binding-pattern"
@@ -147,6 +156,7 @@ const val ELEMENT_NG_TEMPLATE = "ng-template"
 
 val NG_PROPERTY_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-property-bindings")
 val NG_EVENT_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-event-bindings")
+val NG_CLASS_LIST = WebSymbolQualifiedKind(NAMESPACE_CSS, "ng-class-list")
 val NG_STRUCTURAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-structural-directives")
 val NG_DIRECTIVE_ONE_TIME_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-one-time-bindings")
 val NG_DIRECTIVE_INPUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-inputs")

@@ -249,6 +249,11 @@ object Angular2DecoratorUtil {
       ?.asSafely<ES6Decorator>()
       ?.decoratorName == HOST_LISTENER_DEC
 
+  fun isHostBindingClassValueLiteral(literal: JSLiteralExpression): Boolean =
+    literal.parent.asSafely<JSProperty>()?.let {
+      it.value == literal && isHostBinding(it) && it.name == "class"
+    } == true
+
   private fun JSExpression.unwrapParenthesis(): JSExpression? =
     JSUtils.unparenthesize(this)
 }

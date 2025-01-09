@@ -740,6 +740,26 @@
           "deprecated": true,
           "description": "Applying the `::ng-deep` pseudo-class to any CSS rule completely disables view-encapsulation for that rule. Any style with `::ng-deep` applied becomes a global style. In order to scope the specified style to the current component and all its descendants, be sure to include the `:host` selector before `::ng-deep`. If the `::ng-deep` combinator is used without the `:host` pseudo-class selector, the style can bleed into other components."
         }
+      ],
+      "ng-class-list": [
+        {
+          "name": "CSS class list",
+          "pattern": {
+            "items": "/css/classes",
+            "template": [
+              "#item",
+              {
+                "required": false,
+                "repeat": true,
+                "unique": true,
+                "template": [
+                  " ",
+                  "#item"
+                ]
+              }
+            ]
+          }
+        }
       ]
     }
   }
