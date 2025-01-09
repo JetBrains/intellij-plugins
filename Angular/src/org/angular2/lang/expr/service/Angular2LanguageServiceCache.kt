@@ -9,8 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.expr.service.protocol.commands.toAngular2TranspiledTemplateRequestArgs
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -28,9 +28,9 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
   private fun getUpdateTemplateServiceObject(input: Angular2TranspiledTemplateCommand): ServiceObjectWithCacheUpdate? {
     val templateFile = PsiManager.getInstance(myProject).findFile(input.templateFile)
                        ?: return null
-    val componentFile = Angular2TranspiledComponentFileBuilder.findComponentFile(templateFile)
+    val componentFile = Angular2TranspiledDirectiveFileBuilder.findDirectiveFile(templateFile)
     val componentVirtualFile = componentFile?.virtualFile ?: return null
-    val newContents = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
+    val newContents = Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(componentFile)
 
     if (newContents == null) {
       transpiledComponentCache.remove(componentVirtualFile)
@@ -52,7 +52,7 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
     )
   }
 
-  private class TranspiledComponentInfo(contents: TranspiledComponentFile) {
+  private class TranspiledComponentInfo(contents: TranspiledDirectiveFile) {
     val contentsHash: Long = StringHash.calc(contents.generatedCode)
     val timestamps: Map<String, Long> = contents.fileMappings.values.associateBy({ it.fileName }, { it.sourceFile.modificationStamp })
 

@@ -47,7 +47,7 @@ import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.function.BiFunction
 import java.util.function.Predicate
@@ -330,7 +330,7 @@ internal class BindingsTypeResolver private constructor(
     }
 
     private fun analyzeService(directives: List<Angular2Directive>, element: PsiElement, nameRange: TextRange, service: Angular2TypeScriptService): AnalysisResult? {
-      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(element)
+      val (transpiledComponentFile, templateFile) = getTranspiledDirectiveAndTopLevelSourceFile(element)
                                                     ?: return null
 
       val injectedLanguageManager = InjectedLanguageManager.getInstance(element.project)

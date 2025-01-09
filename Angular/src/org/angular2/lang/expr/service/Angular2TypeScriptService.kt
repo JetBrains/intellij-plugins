@@ -6,6 +6,9 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
@@ -41,6 +44,7 @@ import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
+import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
@@ -50,9 +54,9 @@ import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElem
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.html.Angular2HtmlDialect
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.AngularSettings
@@ -84,6 +88,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
     if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
       Angular2EntitiesProvider.findTemplateComponent(file) != null
+      || InjectedLanguageManager.getInstance(file.project).getInjectionHost(file)?.asSafely<JSLiteralExpression>()
+        ?.parent?.asSafely<JSProperty>()
+        ?.parent?.asSafely<JSObjectLiteralExpression>()
+        ?.parent?.asSafely<JSProperty>()
+        ?.name == Angular2DecoratorUtil.HOST_PROP
     else
       super.isAcceptableForHighlighting(file)
 
@@ -95,7 +104,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> =
     readAction {
-      val (transpiledComponentFile, templateFile) = getTranspiledComponentAndTopLevelTemplateFile(file)
+      val (transpiledComponentFile, templateFile) = getTranspiledDirectiveAndTopLevelSourceFile(file)
                                                     ?: return@readAction errors
       translateNamesInErrors(errors, transpiledComponentFile, templateFile)
     }
@@ -161,7 +170,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     return !isDeferOnReferenceExpression(element)
   }
 
-  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledComponentFile, templateFile: PsiFile): List<JSAnnotationError> = withServiceTraceSpan("translateNamesInErrors") {
+  private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledDirectiveFile, templateFile: PsiFile): List<JSAnnotationError> = withServiceTraceSpan("translateNamesInErrors") {
     val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
                    ?: return@withServiceTraceSpan emptyList()
     return@withServiceTraceSpan errors.map { error ->
@@ -213,14 +222,14 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     element is LeafPsiElement
     && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language }
 
-  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledComponentFile? = withServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
+  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledDirectiveFile? = withServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
     JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
       if (DumbService.isDumb(project)) return@nonBlockingReadActionWithTimeout null
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
       // on server cache locking leading to tests instability.
-      val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+      val result = Angular2TranspiledDirectiveFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
       runBlockingCancellable {
         process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
       }
@@ -228,13 +237,13 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
-  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
+  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledDirectiveFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
     readAction {
       // Updating the cache can cause the transpiled template to be (re)built,
       // so let's build the template first and ensure that it doesn't change
       // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
       // on server cache locking leading to tests instability.
-      val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+      val result = Angular2TranspiledDirectiveFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
       runBlockingCancellable {
         process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
       }
@@ -259,7 +268,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       }
     }
 
-    override fun getGeneratedElementType(transpiledFile: TranspiledComponentFile, templateFile: PsiFile, generatedRange: TextRange): JSType? = withServiceTraceSpan("getGeneratedElementType", myLifecycleSpan) {
+    override fun getGeneratedElementType(transpiledFile: TranspiledDirectiveFile, templateFile: PsiFile, generatedRange: TextRange): JSType? = withServiceTraceSpan("getGeneratedElementType", myLifecycleSpan) {
       val componentVirtualFile = transpiledFile.originalFile.originalFile.virtualFile
                                  ?: return@withServiceTraceSpan null
       val evaluationLocation = InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(templateFile.originalFile).virtualFile

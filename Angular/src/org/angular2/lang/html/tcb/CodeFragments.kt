@@ -1,5 +1,6 @@
 package org.angular2.lang.html.tcb
 
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
@@ -57,6 +58,23 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       override val nameMappings: List<Pair<Int, Map<String, String>>> = this@Expression.nameMappings
     }
 
+  fun asTranspiledHostBindings(
+    cls: TypeScriptClass,
+    inlineCodeRanges: List<TextRange>,
+    diagnostics: Set<Angular2TemplateTranspiler.Diagnostic>,
+  ): Angular2TemplateTranspiler.TranspiledHostBindings =
+    object : Angular2TemplateTranspiler.TranspiledHostBindings {
+      override val cls: TypeScriptClass = cls
+      override val inlineCodeRanges: List<TextRange> = inlineCodeRanges
+      override val generatedCode: String = code.toString()
+      override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
+      override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
+      override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
+      override val diagnostics: Set<Angular2TemplateTranspiler.Diagnostic> = diagnostics
+      override val nameMappings: List<Pair<Int, Map<String, String>>> = this@Expression.nameMappings
+    }
+
+
   interface ExpressionBuilder {
     val isIgnoreDiagnostics: Boolean
 
@@ -99,6 +117,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportReversedTypes: Boolean = supportTypes,
       builder: ExpressionBuilder.() -> Unit,
     )
+
+    fun withMappingsOffset(offset: Int, builder: ExpressionBuilder.() -> Unit)
 
     fun withSupportReverseTypes(builder: ExpressionBuilder.() -> Unit)
 
@@ -303,6 +323,42 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           if (supportReversedTypes) add(SourceMappingFlag.REVERSE_TYPES)
         }
 
+    override fun withMappingsOffset(offset: Int, builder: ExpressionBuilder.() -> Unit) {
+      if (offset == 0) {
+        this.builder()
+        return
+      }
+      val subBuilder = ExpressionBuilderImpl()
+      subBuilder.ignoreMappings = ignoreMappings
+      subBuilder.supportReversedTypes = supportReversedTypes
+      subBuilder.builder()
+      val generatedOffset = this.code.length
+      subBuilder.sourceMappings.mapTo(this.sourceMappings) { sourceMapping ->
+        sourceMapping.copy(
+          sourceOffset = sourceMapping.sourceOffset + offset,
+          generatedOffset = sourceMapping.generatedOffset + generatedOffset,
+          diagnosticsOffset = sourceMapping.diagnosticsOffset?.let { it + offset },
+        )
+      }
+      subBuilder.contextVarMappings.mapTo(this.contextVarMappings) { contextVarMapping ->
+        contextVarMapping.copy(
+          elementNameOffset = contextVarMapping.elementNameOffset + offset,
+          generatedOffset = contextVarMapping.generatedOffset + generatedOffset,
+        )
+      }
+      subBuilder.directiveVarMappings.mapTo(this.directiveVarMappings) { directiveVarMapping ->
+        directiveVarMapping.copy(
+          elementNameOffset = directiveVarMapping.elementNameOffset + offset,
+          generatedOffset = directiveVarMapping.generatedOffset + generatedOffset,
+        )
+      }
+      subBuilder.nameMappings.mapTo(this.nameMappings) { nameMapping ->
+        Pair(nameMapping.first + offset, nameMapping.second)
+      }
+      nameMappings.addAll(subBuilder.nameMappings)
+      this.code.append(subBuilder.code)
+    }
+
     override fun withIgnoreMappings(builder: ExpressionBuilder.() -> Unit) {
       ignoreMappings = true
       this.builder()
@@ -393,7 +449,7 @@ internal data class DirectiveVarMappingData(
 private fun rangeToText(text: String, range: TextRange) =
   "«${text.substring(range.startOffset, range.endOffset)}» [${range.startOffset}]"
 
-fun Angular2TranspiledComponentFileBuilder.TranspiledComponentFile.verifyMappings() {
+fun Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile.verifyMappings() {
 
   // check for unique mapping for types
   val typeMappings = MultiMap<Pair<PsiFile, TextRange>, TextRange>()

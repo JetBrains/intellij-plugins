@@ -1,0 +1,35 @@
+/* Angular type checking code */
+
+/* TCB for hostBindings.ts */
+
+function _tcb1(this: ChipComponent) {
+var _t1 = document.createElement("div");
+(this.small);
+var _t2 = document.createElement("div");
+({'oy-chip--small' : this.small});
+}
+/* TCB for host bindings of AppClicksDirective */
+
+function _tcb_host_1(this: AppClicksDirective) {
+var _t1 = document.createElement("div");
+($event: any): any => {
+this.onClick();
+this.foo();
+};
+}
+/* TCB for host bindings of ChipComponent */
+
+function _tcb_host_2(this: ChipComponent) {
+var _t1 = document.createElement("oy-chip");
+(this.small);
+(12);
+($event: any): any => {
+this.onKeyDown($event);
+};
+($event: any): any => {
+this.onKeyDown($event);
+};
+($event: any): any => {
+this.foo($event);
+};
+}

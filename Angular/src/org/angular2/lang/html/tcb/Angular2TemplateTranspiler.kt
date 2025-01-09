@@ -3,6 +3,7 @@ package org.angular2.lang.html.tcb
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.util.InspectionMessage
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
@@ -11,6 +12,7 @@ import org.angular2.entities.Angular2ClassBasedComponent
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
+import org.angular2.lang.html.tcb.Expression.ExpressionBuilder
 import java.util.*
 
 object Angular2TemplateTranspiler {
@@ -41,29 +43,7 @@ object Angular2TemplateTranspiler {
 
       val cls = (component as? Angular2ClassBasedComponent)?.typeScriptClass
       if (cls != null) {
-        val typeParameters = cls.typeParameters
-        if (typeParameters.isNotEmpty()) {
-          append("<")
-          typeParameters.forEachIndexed { i, param ->
-            if (i > 0) {
-              append(", ")
-            }
-            append(param.text)
-          }
-          append(">")
-        }
-        append("(this: ").append(cls.name ?: "never")
-        if (typeParameters.isNotEmpty()) {
-          append("<")
-          typeParameters.forEachIndexed { i, param ->
-            if (i > 0) {
-              append(", ")
-            }
-            append(param.name ?: "never")
-          }
-          append(">")
-        }
-        append(") ")
+        emitMethodDeclarationWithParametrizedThis(cls)
       }
       else {
         append("() ")
@@ -76,18 +56,79 @@ object Angular2TemplateTranspiler {
     }.asTranspiledTemplate(boundTarget.templateFile, context.oobRecorder.getDiagnostics())
   }
 
+  internal fun transpileHostBindings(
+    fileContext: FileContext,
+    cls: TypeScriptClass,
+    tcbId: String,
+  ): TranspiledHostBindings? = withServiceTraceSpan("transpileHostBindings") {
+    val boundTarget = BoundTarget(null)
+    val context = Context(
+      fileContext as Environment,
+      OutOfBandDiagnosticRecorder(), tcbId,
+      boundTarget,
+    )
+    val (hostBindings, inlineCodeRanges) = buildHostBindingsAst(cls)
+                       ?: return@withServiceTraceSpan null
+    val scope = Scope.forNodes(context, null, null, listOf(hostBindings), null)
+    val statements = scope.render()
+
+    return@withServiceTraceSpan Expression {
+      append("function _tcb_host_${context.id}")
+      emitMethodDeclarationWithParametrizedThis(cls)
+      codeBlock {
+        for (it in statements) {
+          appendStatement(it)
+        }
+      }
+    }.asTranspiledHostBindings(cls, inlineCodeRanges, context.oobRecorder.getDiagnostics())
+  }
+
+  private fun ExpressionBuilder.emitMethodDeclarationWithParametrizedThis(cls: TypeScriptClass) {
+    val typeParameters = cls.typeParameters
+    if (typeParameters.isNotEmpty()) {
+      append("<")
+      typeParameters.forEachIndexed { i, param ->
+        if (i > 0) {
+          append(", ")
+        }
+        append(param.text)
+      }
+      append(">")
+    }
+    append("(this: ").append(cls.name ?: "never")
+    if (typeParameters.isNotEmpty()) {
+      append("<")
+      typeParameters.forEachIndexed { i, param ->
+        if (i > 0) {
+          append(", ")
+        }
+        append(param.name ?: "never")
+      }
+      append(">")
+    }
+    append(") ")
+  }
+
   interface FileContext {
     fun getCommonCode(): String
   }
 
-  interface TranspiledTemplate {
-    val templateFile: Angular2HtmlFile
+  interface TranspiledCode {
     val generatedCode: String
     val sourceMappings: List<SourceMapping>
     val contextVarMappings: List<ContextVarMapping>
     val directiveVarMappings: List<DirectiveVarMapping>
     val diagnostics: Set<Diagnostic>
     val nameMappings: List<Pair<Int, Map<String, String>>>
+  }
+
+  interface TranspiledTemplate : TranspiledCode {
+    val templateFile: Angular2HtmlFile
+  }
+
+  interface TranspiledHostBindings : TranspiledCode {
+    val cls: TypeScriptClass
+    val inlineCodeRanges: List<TextRange>
   }
 
   @Suppress("unused")

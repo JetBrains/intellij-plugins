@@ -13,9 +13,12 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.blocks.*
@@ -122,6 +125,7 @@ internal data class TmplAstBoundAttribute(
   override val keySpan: TextRange?,
   val type: BindingType,
   val value: JSExpression?,
+  val valueMappingOffset: Int,
   override val sourceSpan: TextRange,
   val isStructuralDirective: Boolean = false,
 ) : TmplAstAttribute
@@ -130,7 +134,6 @@ internal class TmplAstTextAttribute(
   override val name: String,
   override val keySpan: TextRange?,
   val value: String,
-  val valueSpan: TextRange?,
   override val sourceSpan: TextRange,
 ) : TmplAstAttribute
 
@@ -143,10 +146,11 @@ internal class TmplAstBoundEvent(
   override val keySpan: TextRange?,
   val type: ParsedEventType,
   val handler: List<JSElement>,
-  val handlerSpan: TextRange,
+  val handlerMappingOffset: Int,
   val target: String?,
   val phase: String?,
   override val sourceSpan: TextRange,
+  val fromHostBinding: Boolean = false,
 ) : TmplAstAttribute
 
 internal interface TmplAstBlockNode : TmplAstNode {
@@ -305,11 +309,13 @@ internal enum class ParsedEventType {
   TwoWay,
 }
 
-internal class BoundTarget(component: Angular2Component) {
+internal class BoundTarget(component: Angular2Component?) {
 
   private val referenceMap: Map<Any?, TemplateEntity>
 
-  val pipes: Map<String, Angular2Pipe> = Angular2DeclarationsScope(component).importsOwner
+  val pipes: Map<String, Angular2Pipe> = component
+                                           ?.let { Angular2DeclarationsScope(it) }
+                                           ?.importsOwner
                                            ?.declarationsInScope?.filterIsInstance<Angular2Pipe>()?.associateBy { it.getName() }
                                          ?: emptyMap()
 
@@ -319,7 +325,7 @@ internal class BoundTarget(component: Angular2Component) {
 
   init {
     val referenceMap = mutableMapOf<Any, TemplateEntity>()
-    templateFile = component.templateFile as? Angular2HtmlFile
+    templateFile = component?.templateFile as? Angular2HtmlFile
     templateRoots = templateFile?.let {
       buildTmplAst(it, object : ReferenceResolver {
         override fun set(element: PsiElement, localSymbol: TemplateEntity) {
@@ -513,6 +519,58 @@ private interface ReferenceResolver {
   operator fun set(implicitSymbol: WebSymbol, source: PsiElement, localSymbol: TemplateEntity)
 }
 
+internal fun buildHostBindingsAst(
+  cls: TypeScriptClass,
+): Pair<TmplAstNode, List<TextRange>>? {
+  val decorator = Angular2DecoratorUtil.findDecorator(cls, true, Angular2DecoratorUtil.COMPONENT_DEC, Angular2DecoratorUtil.DIRECTIVE_DEC)
+  val hostBindings = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.HOST_PROP)?.value?.asSafely<JSObjectLiteralExpression>()
+                     ?: return null
+
+  val directive = Angular2EntitiesProvider.getDirective(decorator)
+  val elementName = directive?.selector?.simpleSelectors
+                      ?.map { it.elementName?.trim()?.takeIf { it.isNotEmpty() && it != "*" } }?.distinct()
+                      ?.takeIf { it.size == 1 }?.firstOrNull()
+                    ?: "div"
+  val inlineCodeRanges = mutableListOf<TextRange>()
+  val inputs = mutableMapOf<String, TmplAstBoundAttribute>()
+  val outputs = mutableMapOf<String, TmplAstBoundEvent>()
+  val attributes = mutableMapOf<String, TmplAstTextAttribute>()
+  for (property in hostBindings.properties) {
+    val attributeName = property.name?.let { Angular2AttributeNameParser.parse(it) } ?: continue
+    val quotedLiteral = property.value.asSafely<JSLiteralExpression>()?.takeIf { it.isQuotedLiteral }
+                        ?: continue
+    val valueTextRange = quotedLiteral.textRange.let { TextRange(it.startOffset + 1, it.endOffset - 1) }
+    when (attributeName.type) {
+      REGULAR -> {
+        attributes[attributeName.name] =
+          TmplAstTextAttribute(attributeName.name, property.nameIdentifier?.textRange, quotedLiteral.stringValue ?: continue,
+                               property.textRange)
+      }
+      EVENT -> {
+        inlineCodeRanges.add(valueTextRange)
+        outputs[attributeName.name] =
+          TmplAstBoundEvent(attributeName.name, property.nameIdentifier?.textRange,
+                            (attributeName as Angular2AttributeNameParser.EventInfo).tmplParsedEventType,
+                            Angular2InjectionUtils.findInjectedAngularExpression(quotedLiteral, Angular2Action::class.java)?.statements?.toList()
+                            ?: emptyList(), valueTextRange.startOffset, null, null, property.textRange, true)
+      }
+      PROPERTY_BINDING -> {
+        inlineCodeRanges.add(valueTextRange)
+        inputs[attributeName.name] =
+          TmplAstBoundAttribute(attributeName.name, property.nameIdentifier?.textRange,
+                                (attributeName as Angular2AttributeNameParser.PropertyBindingInfo).tmplAstBindingType,
+                                Angular2InjectionUtils.findInjectedAngularExpression(quotedLiteral, Angular2SimpleBinding::class.java)?.expression,
+                                valueTextRange.startOffset, valueTextRange, false)
+      }
+      else -> {}
+    }
+  }
+  return if (inputs.isNotEmpty() || outputs.isNotEmpty() || attributes.isNotEmpty())
+    Pair(TmplAstElement(elementName, null, emptySet(), inputs, outputs, attributes, emptyMap(), null, emptyList()), inlineCodeRanges)
+  else
+    null
+}
+
 private fun buildTmplAst(
   file: Angular2HtmlFile,
   referenceResolver: ReferenceResolver,
@@ -563,6 +621,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           keySpan = attr.nameElement.textRange,
           type = (info as Angular2AttributeNameParser.PropertyBindingInfo).tmplAstBindingType,
           value = Angular2Binding.get(attr)?.expression,
+          valueMappingOffset = 0,
           sourceSpan = attr.textRange
         ))
       })
@@ -576,7 +635,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           attr.nameElement?.textRange,
           (info as Angular2AttributeNameParser.EventInfo).tmplParsedEventType,
           Angular2Action.get(attr)?.statements?.toList() ?: emptyList(),
-          attr.valueTextRange,
+          0,
           null,
           info.animationPhase?.name,
           attr.textRange
@@ -588,7 +647,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           attr.nameElement?.textRange,
           ParsedEventType.TwoWay,
           listOfNotNull(Angular2Binding.get(attr)?.expression),
-          attr.valueTextRange,
+          0,
           null,
           null,
           attr.textRange
@@ -601,7 +660,6 @@ private fun XmlTag.toTmplAstDirectiveContainer(
         name = info.name,
         keySpan = attr.nameElement.textRange,
         value = attr.value ?: "",
-        valueSpan = attr.valueTextRange,
         sourceSpan = attr.textRange,
       )
     })
@@ -763,11 +821,11 @@ private fun buildInfo(
       .filter { !it.keyIsVar() }
       .map {
         Pair(it.key, TmplAstBoundAttribute(it.key, it.keyElement?.textRange ?: attributeNameRange,
-                                           BindingType.Property, it.expression, it.textRange, true))
+                                           BindingType.Property, it.expression, 0, it.textRange, true))
       }
       .applyIf(!hasDefaultBinding) {
         this + Pair(templateName, TmplAstBoundAttribute(templateName, attributeNameRange, BindingType.Property,
-                                                        null, attributeNameRange, true))
+                                                        null, 0, attributeNameRange, true))
       }
       .toMap(),
     variables = templateBindings.asSequence()

@@ -15,7 +15,7 @@ import com.intellij.psi.util.startOffset
 import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.DiagnosticKind
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
 
 abstract class AngularTcbOutOfBandInspectionBase(private val kind: DiagnosticKind) : LocalInspectionTool() {
 
@@ -24,7 +24,7 @@ abstract class AngularTcbOutOfBandInspectionBase(private val kind: DiagnosticKin
         || TypeScriptServiceHolder.getForElement(file)?.service !is Angular2TypeScriptService)
       return null
 
-    val (transpiledFile, topLevelTemplateFile) = Angular2TranspiledComponentFileBuilder.getTranspiledComponentAndTopLevelTemplateFile(file)
+    val (transpiledFile, topLevelTemplateFile) = Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile(file)
                                                  ?: return null
 
     val diagnostics = transpiledFile.diagnostics[topLevelTemplateFile]

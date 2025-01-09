@@ -34,7 +34,7 @@ import javax.swing.JPanel
 import javax.swing.event.AncestorEvent
 
 internal class Angular2TranspiledTemplateInspector(
-  transpiledTemplate: Angular2TranspiledComponentFileBuilder.TranspiledComponentFile,
+  transpiledTemplate: Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile,
   project: Project,
   disposable: Disposable
 ) {

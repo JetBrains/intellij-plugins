@@ -265,9 +265,9 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
             // The expression has already been checked in the type constructor invocation, so
             // it should be ignored when used within a template guard.
             Expression {
-              withIgnoreMappings({
-                                   append(it)
-                                 })
+              withIgnoreMappings {
+                append(it)
+              }
             }
           }
 
@@ -279,7 +279,7 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
             // Call the guard function on the directive with the directive instance and that
             // expression.
             val guardInvoke = Expression {
-              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange)
+              append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}", boundInput.value?.textRange?.shiftRight(boundInput.valueMappingOffset))
               append("($dirInstId, ")
               append(expr)
               append(")")
@@ -979,7 +979,7 @@ private class TcbUnclaimedInputsOp(
         continue
       }
 
-      val expr = widenBinding(tcbExpression(binding.value, this.tcb, this.scope), this.tcb)
+      val expr = widenBinding(tcbExpression(binding.value, this.tcb, this.scope, binding.valueMappingOffset), this.tcb)
 
       if (this.tcb.env.config.checkTypeOfDomBindings && isPropertyBinding) {
         if (binding.name != "style" && binding.name != "class") {
@@ -1117,7 +1117,7 @@ private class TcbUnclaimedOutputsOp(
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, eventType)
         this.scope.addStatement(handler)
       }
-      else if (this.tcb.env.config.checkTypeOfDomEvents) {
+      else if (this.tcb.env.config.checkTypeOfDomEvents && !output.fromHostBinding) {
         // If strict checking of DOM events is enabled, generate a call to `addEventListener` on
         // the element instance so that TypeScript's type inference for
         // `HTMLElement.addEventListener` using `HTMLElementEventMap` to infer an accurate type for
@@ -2177,8 +2177,10 @@ private data class TcbBoundAttributeInput(
  * Process an `AST` expression and convert it into a `Expression`, generating references to the
  * correct identifiers in the current scope.
  */
-private fun tcbExpression(ast: JSExpression?, tcb: Context, scope: Scope): Expression = Expression {
-  TcbExpressionTranslator(tcb, scope, this).translate(ast)
+private fun tcbExpression(ast: JSExpression?, tcb: Context, scope: Scope, offset: Int = 0): Expression = Expression {
+  withMappingsOffset(offset) {
+    TcbExpressionTranslator(tcb, scope, this).translate(ast)
+  }
 }
 
 private open class TcbExpressionTranslator(
@@ -2619,7 +2621,7 @@ private fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, t
       attr.value == null || attr.value is JSEmptyExpression ->
         Expression("undefined")
       else ->
-        tcbExpression(attr.value, tcb, scope)
+        tcbExpression(attr.value, tcb, scope, attr.valueMappingOffset)
     }
   }
   else {
@@ -2729,7 +2731,7 @@ private fun tcbCreateEventHandler(
   eventType: `EventParamType|JSType`,
 ): Expression {
   val handlers = event.handler.map { handler ->
-    tcbEventHandlerExpression(handler, tcb, scope)
+    tcbEventHandlerExpression(handler, event.handlerMappingOffset, tcb, scope)
   }
 
   // Obtain all guards that have been applied to the scope and its parents, as they have to be
@@ -2789,8 +2791,10 @@ private fun tcbCreateEventHandler(
  * `Expression`, with special handling of the `$event` variable that can be used within event
  * bindings.
  */
-private fun tcbEventHandlerExpression(ast: JSElement?, tcb: Context, scope: Scope): Expression = Expression {
-  TcbEventHandlerTranslator(tcb, scope, this).translate(ast)
+private fun tcbEventHandlerExpression(ast: JSElement?, offset: Int, tcb: Context, scope: Scope): Expression = Expression {
+  withMappingsOffset(offset) {
+    TcbEventHandlerTranslator(tcb, scope, this).translate(ast)
+  }
 }
 
 private fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, inputs: Map<String, TmplAstBoundAttribute>, tcb: Context): Boolean {

@@ -8,7 +8,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
 
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", true) {
 
@@ -97,6 +97,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_FORMS_17_3_0,
   )
 
+  fun testHostBindings() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
@@ -106,7 +110,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
       Angular2TsConfigFile(strictTemplates = true)
     )) {
       val componentFile = myFixture.file
-      val transpiledFile = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(componentFile)
+      val transpiledFile = Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(componentFile)
                            ?: throw IllegalStateException("Cannot build transpiled file")
 
       val fileText = componentFile.text

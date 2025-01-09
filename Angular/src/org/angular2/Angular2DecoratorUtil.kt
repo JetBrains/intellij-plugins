@@ -82,19 +82,25 @@ object Angular2DecoratorUtil {
   @StubSafe
   @JvmStatic
   fun findDecorator(attributeListOwner: JSAttributeListOwner, vararg names: String): ES6Decorator? {
+    return findDecorator(attributeListOwner, false, *names)
+  }
+
+  @StubSafe
+  @JvmStatic
+  fun findDecorator(attributeListOwner: JSAttributeListOwner, allowAbstractClasses: Boolean, vararg names: String): ES6Decorator? {
     val list = attributeListOwner.attributeList
     if (list == null || names.isEmpty()) {
       return null
     }
     for (decorator in getStubChildrenOfTypeAsList(list, ES6Decorator::class.java)) {
-      if (isAngularEntityDecorator(decorator, *names)) {
+      if (isAngularEntityDecorator(decorator, allowAbstractClasses, *names)) {
         return decorator
       }
     }
     if (attributeListOwner is TypeScriptClassExpression) {
       val context = attributeListOwner.getContext() as? JSAttributeListOwner
       if (context != null) {
-        return findDecorator(context, *names)
+        return findDecorator(context, allowAbstractClasses, *names)
       }
     }
     return null

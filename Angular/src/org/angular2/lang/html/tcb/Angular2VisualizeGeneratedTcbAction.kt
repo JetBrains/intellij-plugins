@@ -50,7 +50,7 @@ private class Angular2VisualizeGeneratedTcbAction : AnAction() {
     element.manager.dropPsiCaches()
     runWithModalProgressBlocking(element.project, "Building TCBs") {
       val transpiledTemplate =
-        readAction { Angular2TranspiledComponentFileBuilder.getTranspiledComponentFile(component.sourceElement.containingFile ?: return@readAction null)}
+        readAction { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(component.sourceElement.containingFile ?: return@readAction null)}
         ?: return@runWithModalProgressBlocking
 
 

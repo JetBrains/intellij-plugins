@@ -3,6 +3,7 @@ package org.angular2
 
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.DumbService
@@ -59,5 +60,15 @@ object Angular2InjectionUtils {
       return PsiTreeUtil.getParentOfType(injection, expressionClass)
     }
     return null
+  }
+
+  @JvmStatic
+  fun <T : Angular2EmbeddedExpression> findInjectedAngularExpression(
+    literal: JSLiteralExpression,
+    expressionClass: Class<T>,
+  ): T? {
+    val injection = InjectedLanguageManager.getInstance(literal.project).findInjectedElementAt(
+      literal.containingFile, literal.textOffset + 1)
+    return PsiTreeUtil.getParentOfType(injection, expressionClass)
   }
 }

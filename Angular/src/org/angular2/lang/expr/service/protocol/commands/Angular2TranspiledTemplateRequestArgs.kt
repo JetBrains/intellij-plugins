@@ -9,8 +9,8 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder
-import org.angular2.lang.html.tcb.Angular2TranspiledComponentFileBuilder.TranspiledComponentFile
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 import java.util.*
 
 class Angular2TranspiledTemplateRequestArgs private constructor(
@@ -48,7 +48,7 @@ class Angular2TcbMappingInfo(
   @JvmField val flags: List<Int>,
 )
 
-internal fun TranspiledComponentFile.toAngular2TranspiledTemplateRequestArgs(project: Project, virtualFile: VirtualFile): Angular2TranspiledTemplateRequestArgs {
+internal fun TranspiledDirectiveFile.toAngular2TranspiledTemplateRequestArgs(project: Project, virtualFile: VirtualFile): Angular2TranspiledTemplateRequestArgs {
 
   val psiDocumentManager = PsiDocumentManager.getInstance(project)
   val fileDocumentManager = FileDocumentManager.getInstance()
@@ -93,7 +93,7 @@ internal fun TranspiledComponentFile.toAngular2TranspiledTemplateRequestArgs(pro
   )
 }
 
-private fun Angular2TranspiledComponentFileBuilder.FileMappings.toCodeMapping(
+private fun Angular2TranspiledDirectiveFileBuilder.FileMappings.toCodeMapping(
   sourceMappingOffsets: NavigableMap<Int, Int>?,
   generatedMappingOffsets: NavigableMap<Int, Int>?,
 ): Angular2TcbMappingInfo {
