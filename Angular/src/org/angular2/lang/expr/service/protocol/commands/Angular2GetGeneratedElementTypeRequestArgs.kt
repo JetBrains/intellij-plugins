@@ -10,4 +10,6 @@ data class Angular2GetGeneratedElementTypeRequestArgs(
   override val forceReturnType: Boolean = false,
 ) : TypeScriptGetElementTypeRequestArgsBase {
 
+  override val isContextual: Boolean
+    get() = false
 }
