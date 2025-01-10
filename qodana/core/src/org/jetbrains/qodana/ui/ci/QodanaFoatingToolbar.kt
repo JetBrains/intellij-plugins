@@ -31,12 +31,7 @@ private class QodanaCopyFloatingToolbarComponent(
   CopyActionGroup(),
   editor.contentComponent,
   editor.disposable
-) {
-
-  override val autoHideable: Boolean = false
-
-  override fun isComponentOnHold(): Boolean = true
-}
+)
 
 class CopyActionGroup : DefaultActionGroup() {
   val action = CopyAction()
