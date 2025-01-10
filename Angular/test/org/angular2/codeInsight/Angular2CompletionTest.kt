@@ -229,6 +229,31 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
       it.priority >= 100
     }
 
+  fun testHostBindingJSProperty1() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts") {
+      it.lookupString.startsWith("ti")
+      || it.lookupString.startsWith("[s")
+      || it.lookupString.startsWith("(cl")
+    }
+
+  fun testHostBindingJSProperty2() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testHostBindingCssClass1() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testHostBindingCssClass2() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testHostBindingDecorator1() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testHostBindingDecorator2() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
+
+  fun testHostListenerDecorator() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =

@@ -1,0 +1,5 @@
+clang (typeText='string'; priority=100.0; bold; typeGreyed)
+auxclick (typeText='MouseEvent'; priority=50.0; typeGreyed)
+click (typeText='MouseEvent'; priority=50.0; typeGreyed)
+close (typeText='Event'; priority=50.0; typeGreyed)
+dblclick (typeText='MouseEvent'; priority=50.0; typeGreyed)
