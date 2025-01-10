@@ -1,10 +1,10 @@
 class com.xmxmxm.manager.clazz {
-  var <TYPO>ty<caret>ppo</TYPO>:uint;
-  var x:String = "A string with spelling <TYPO>errrror</TYPO>";
+  var <TYPO descr="Typo: In word 'typpo'">ty<caret>ppo</TYPO>:uint;
+  var x:String = "A string with spelling <TYPO descr="Typo: In word 'errrror'">errrror</TYPO>";
   function foo():void {
     typpo = 1;
 
-    var v:String = "foo\bline\fline\nline\rline\t<TYPO>line\u12abline</TYPO>\xabline" +
-        "<TYPO>typoo</TYPO>\b<TYPO>typoo</TYPO>\f<TYPO>typoo</TYPO>\n<TYPO>typoo</TYPO>\r<TYPO>typoo</TYPO>\t<TYPO>typoo\u12abtypoo</TYPO>\xab<TYPO>typoo</TYPO>";
+    var v:String = "foo\bline\fline\nline\rline\tline\u12abline\xabline" +
+        "<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\b<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\f<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\n<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\r<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\t<TYPO descr="Typo: In word 'typoo\u12abtypoo'">typoo\u12abtypoo</TYPO>\xab<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>";
   }
 }
