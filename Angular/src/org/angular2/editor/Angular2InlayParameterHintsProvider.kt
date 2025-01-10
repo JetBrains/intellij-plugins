@@ -19,12 +19,16 @@ import org.angular2.lang.expr.psi.Angular2PipeExpression
 
 class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider({ true }) {
 
+  override fun getShowNameForLiteralArgsOption(): Option {
+    return Options.NAMES_FOR_LITERAL_ARGS
+  }
+
   override fun getShowNameForAllArgsOption(): Option {
     return Options.NAMES_FOR_ALL_ARGS
   }
 
   override fun getSupportedOptions(): List<Option> {
-    return listOf(showNameForAllArgsOption, Options.NAMES_FOR_PIPES)
+    return listOf(showNameForLiteralArgsOption, showNameForAllArgsOption, Options.NAMES_FOR_PIPES)
   }
 
   override fun isSuitableCallExpression(expression: JSCallLikeExpression?): Boolean {
@@ -44,6 +48,8 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
   }
 
   object Options {
+    val NAMES_FOR_LITERAL_ARGS = Option(
+      "angular.show.names.for.literal.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.literal.args"), true)
     val NAMES_FOR_ALL_ARGS = Option(
       "angular.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
     val NAMES_FOR_PIPES = Option(
