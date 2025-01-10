@@ -20,6 +20,7 @@ import org.angular2.css.Angular2CssClassTest
 import org.angular2.css.Angular2CssCompletionTest
 import org.angular2.css.Angular2CssHighlightingTest
 import org.angular2.css.Angular2CssInspectionsTest
+import org.angular2.css.Angular2CssUsageHighlightingTest
 import org.angular2.lang.expr.Angular2LexerSpecTest
 import org.angular2.lang.expr.Angular2LexerTest
 import org.angular2.lang.expr.Angular2ParserSpecTest
@@ -95,6 +96,7 @@ import org.junit.runners.Suite
   Angular2CssInspectionsTest::class,
   Angular2ReSharperTestSuite::class,
   Angular2CssHighlightingTest::class,
+  Angular2CssUsageHighlightingTest::class,
 
   // Deprecated tests follow
   Angular2AttributesTest::class,
