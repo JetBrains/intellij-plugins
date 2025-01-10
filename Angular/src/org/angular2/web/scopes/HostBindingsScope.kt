@@ -27,6 +27,9 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
     }
   }
 
+  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    mappings.containsKey(qualifiedKind)
+
   override fun acceptSymbol(symbol: WebSymbol): Boolean =
     (symbol.properties[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
 

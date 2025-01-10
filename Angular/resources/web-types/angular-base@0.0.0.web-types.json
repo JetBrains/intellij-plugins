@@ -749,11 +749,13 @@
             "template": [
               "#item",
               {
+                "items": "/css/classes",
                 "required": false,
                 "repeat": true,
                 "unique": true,
                 "template": [
                   " ",
+                  "#...",
                   "#item"
                 ]
               }
