@@ -25,8 +25,6 @@ class QodanaCopyFloatingToolbar(editor: EditorImpl) : JPanel() {
 
       override fun isComponentOnHold(): Boolean = true
 
-      override fun installMouseMotionWatcher() = Unit
-
       init {
         init(editor.contentComponent)
       }
