@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package com.intellij.jhipster.uml;
 
@@ -7,8 +7,8 @@ import com.intellij.diagram.DiagramBuilder;
 import com.intellij.jhipster.JdlIconsMapping;
 import com.intellij.jhipster.psi.JdlFile;
 import com.intellij.jhipster.uml.model.*;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
@@ -24,7 +24,7 @@ import javax.swing.*;
 final class JdlUmlElementManager extends AbstractDiagramElementManager<JdlNodeData> {
   @Override
   public @Nullable JdlNodeData findInDataContext(@NotNull DataContext dataContext) {
-    var file = PlatformCoreDataKeys.PSI_FILE.getData(dataContext);
+    var file = CommonDataKeys.PSI_FILE.getData(dataContext);
     if (!(file instanceof JdlFile)) return null;
 
     var virtualFile = file.getVirtualFile();

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.formatter;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -201,7 +201,7 @@ public class CfmlBlock extends TemplateLanguageBlock {
           }
           else if (prevBlockType == CfmlElementTypes.TAG || prevBlockType == CfmlElementTypes.ARGUMENT_TAG
                    ||
-                   prevBlockType == CfmlElementTypes.COMPONENT_TAG ||
+                   prevBlockType == CfmlStubElementTypes.COMPONENT_TAG ||
                    prevBlockType == CfmlElementTypes.FUNCTION_TAG ||
                    prevBlockType == CfmlElementTypes.SCRIPT_TAG) {
             indent = Indent.getNormalIndent();

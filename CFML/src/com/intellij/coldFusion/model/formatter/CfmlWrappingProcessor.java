@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.formatter;
 
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
@@ -20,7 +6,6 @@ import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.formatting.Wrap;
 import com.intellij.formatting.WrapType;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.WrappingUtil;
@@ -50,7 +35,7 @@ public class CfmlWrappingProcessor extends CfmlFormatterUtil {
       ASTNode superParent = myNode.getTreeParent();
       if (superParent != null) {
         if ((superParent.getElementType() == CfmlElementTypes.FUNCTION_CALL_EXPRESSION) &&
-            mySettings.CALL_PARAMETERS_WRAP != CodeStyleSettings.DO_NOT_WRAP) {
+            mySettings.CALL_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
           if (myNode.getFirstChildNode() == child) {
             if (mySettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE) {
               return Wrap.createWrap(WrapType.NORMAL, true);
@@ -65,7 +50,7 @@ public class CfmlWrappingProcessor extends CfmlFormatterUtil {
           return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), true);
         }
         if ((superParent.getElementType() == CfmlElementTypes.FUNCTION_DEFINITION) &&
-            mySettings.METHOD_PARAMETERS_WRAP != CodeStyleSettings.DO_NOT_WRAP) {
+            mySettings.METHOD_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
           if (myNode.getFirstChildNode() == child) {
             if (mySettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE) {
               return Wrap.createWrap(WrapType.NORMAL, true);
@@ -79,7 +64,7 @@ public class CfmlWrappingProcessor extends CfmlFormatterUtil {
       }
     }
     if (parentType == CfmlElementTypes.FUNCTION_CALL_EXPRESSION) {
-      if (mySettings.CALL_PARAMETERS_WRAP != CodeStyleSettings.DO_NOT_WRAP) {
+      if (mySettings.CALL_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
         if (childType == CfscriptTokenTypes.R_BRACKET) {
           return Wrap.createWrap(mySettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE ? WrapType.NORMAL : WrapType.NONE, true);
         }
@@ -91,7 +76,7 @@ public class CfmlWrappingProcessor extends CfmlFormatterUtil {
     // For
     //
     if ((parentType == CfmlElementTypes.FOREXPRESSION) &&
-        mySettings.FOR_STATEMENT_WRAP != CodeStyleSettings.DO_NOT_WRAP) {
+        mySettings.FOR_STATEMENT_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
       return createChildWrap(child, mySettings.FOR_STATEMENT_WRAP, mySettings.FOR_STATEMENT_LPAREN_ON_NEXT_LINE,
                              mySettings.FOR_STATEMENT_RPAREN_ON_NEXT_LINE);
     }
@@ -107,7 +92,7 @@ public class CfmlWrappingProcessor extends CfmlFormatterUtil {
     //Binary expressions
     //
 
-    if (mySettings.BINARY_OPERATION_WRAP != CodeStyleSettings.DO_NOT_WRAP && CfmlElementTypes.BINARY_EXPRESSION == parentType) {
+    if (mySettings.BINARY_OPERATION_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP && CfmlElementTypes.BINARY_EXPRESSION == parentType) {
       if ((mySettings.BINARY_OPERATION_SIGN_ON_NEXT_LINE && CfmlFormatterUtil.isBinaryOperator(childType)) ||
           (!mySettings.BINARY_OPERATION_SIGN_ON_NEXT_LINE && isRightOperand(child))) {
         return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.BINARY_OPERATION_WRAP), true);
@@ -116,7 +101,7 @@ public class CfmlWrappingProcessor extends CfmlFormatterUtil {
     //
     // Assignment
     //
-    if (mySettings.ASSIGNMENT_WRAP != CodeStyleSettings.DO_NOT_WRAP && (parentType == CfmlElementTypes.ASSIGNMENT)) {
+    if (mySettings.ASSIGNMENT_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP && (parentType == CfmlElementTypes.ASSIGNMENT)) {
       if (!CfmlFormatterUtil.isAssignmentOperator(childType)) {
         if (FormatterUtil.isPrecededBy(child, CfmlFormatterUtil.ASSIGNMENT_OPERATORS) &&
             mySettings.PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE) {

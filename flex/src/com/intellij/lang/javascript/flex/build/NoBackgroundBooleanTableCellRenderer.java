@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ public class NoBackgroundBooleanTableCellRenderer extends JCheckBox implements T
 
   public NoBackgroundBooleanTableCellRenderer() {
     super();
-    setHorizontalAlignment(JLabel.CENTER);
+    setHorizontalAlignment(SwingConstants.CENTER);
   }
 
   @Override

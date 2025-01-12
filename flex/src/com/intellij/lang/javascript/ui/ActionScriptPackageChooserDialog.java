@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.ui;
 
 import com.intellij.CommonBundle;
@@ -127,7 +127,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
 
     ActionToolbar toolBar = ActionManager.getInstance().createActionToolbar("ASPackageChooser", group, true);
     panel.add(toolBar.getComponent(), BorderLayout.NORTH);
-    toolBar.getComponent().setAlignmentX(JComponent.LEFT_ALIGNMENT);
+    toolBar.getComponent().setAlignmentX(Component.LEFT_ALIGNMENT);
 
     return panel;
   }

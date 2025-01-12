@@ -1,9 +1,10 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.parsers;
 
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
+import com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
@@ -34,7 +35,7 @@ public class CfmlParser implements PsiParser {
 
   public static IElementType getElementTypeForTag(@NotNull String tagName) {
     if ("cfcomponent".equals(StringUtil.toLowerCase(tagName)) || "cfinterface".equals(StringUtil.toLowerCase(tagName))) {
-      return CfmlElementTypes.COMPONENT_TAG;
+      return CfmlStubElementTypes.COMPONENT_TAG;
     }
     else if ("cffunction".equals(StringUtil.toLowerCase(tagName))) {
       return CfmlElementTypes.FUNCTION_TAG;

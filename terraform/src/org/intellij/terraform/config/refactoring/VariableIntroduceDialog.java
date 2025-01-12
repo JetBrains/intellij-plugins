@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.refactoring;
 
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
@@ -70,7 +71,8 @@ public class VariableIntroduceDialog extends DialogWrapper {
     });
 
     myContentPane.registerKeyboardAction(e -> IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(
-        () -> IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true)), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        () -> IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true)), KeyStroke.getKeyStroke(KeyEvent.VK_N,
+                                                                                                              InputEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     for (@NlsSafe String possibleName : possibleNames) {
       myNameComboBox.addItem(possibleName);
