@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections
 
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
+import com.intellij.lang.javascript.inspections.JSInspection
 import com.intellij.lang.javascript.presentable.JSFormatUtil
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter
 import com.intellij.lang.javascript.psi.JSElement
@@ -45,13 +45,12 @@ import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.signals.Angular2SignalUtils
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 
-class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
+class AngularInaccessibleSymbolInspection : JSInspection() {
 
-  override fun buildVisitor(
-    holder: ProblemsHolder,
-    isOnTheFly: Boolean,
-    session: LocalInspectionToolSession,
-  ): PsiElementVisitor {
+  override fun getElementsToOptimizeForTSServiceHighlighting(): Set<Class<out PsiElement>> =
+    setOf(JSReferenceExpression::class.java, Angular2HtmlPropertyBinding::class.java)
+
+  override fun createVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
     val fileLang = holder.file.language
     if (fileLang.isKindOf(Angular2HtmlLanguage) || Angular2Language.`is`(fileLang)) {
       return object : Angular2ElementVisitor() {

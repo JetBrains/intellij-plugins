@@ -1,11 +1,11 @@
-import {Component, NgModule, Input, Directive, Output, EventEmitter, input} from '@angular/core';
+import {Component, Input, Directive, Output, EventEmitter, input} from '@angular/core';
 
 @Directive({standalone: true, selector: '[foo]'})
 export class TestDir {
     @Input()
     protected protectedField!: string;
     @Input()
-    private privateField!: string;
+    private <weak_warning descr="TS6133: 'privateField' is declared but its value is never read.">privateField</weak_warning>!: string;
     @Input()
     readonly readonlyField!: string;
     readonly readonlySignalField = input<string>();
@@ -31,19 +31,19 @@ export class TestDir2 {
     selector: 'cmp',
     template: `
       <div foo
-           <error descr="Cannot assign to input readonlyField because it is a read-only property">[readonlyField]</error>="value"
+           <error descr="TS2540: Cannot assign to 'readonlyField' because it is a read-only property.">[readonlyField]</error>="value"
            [readonlySignalField]="value"
-           <error descr="Field protectedField is protected and it is only accessible within class TestDir and its subclasses">[protectedField]</error>="value"
-           <error descr="Field privateField is private and it is only accessible within class TestDir">[privateField]</error>="value"
+           <error descr="TS2445: Property 'protectedField' is protected and only accessible within class 'TestDir' and its subclasses.">[protectedField]</error>="value"
+           <error descr="TS2341: Property 'privateField' is private and only accessible within class 'TestDir'.">[privateField]</error>="value"
 
            (readonlyEvent)="foo()"
            (protectedEvent)="foo()"
            (privateEvent)="foo()"
       ></div>
       <cmp
-              <error descr="Cannot assign to input readonlyField because it is a read-only property">[readonlyField]</error>="readonlyField"
+              <error descr="TS2540: Cannot assign to 'readonlyField' because it is a read-only property.">[readonlyField]</error>="readonlyField"
               [protectedField]="protectedField"
-              <error descr="Field privateField is private and it is only accessible within class TestComponent">[privateField]</error>="<error descr="Field privateField is private and it is only accessible within class TestComponent">privateField</error>"
+              <error descr="TS2341: Property 'privateField' is private and only accessible within class 'TestComponent'.">[privateField]</error>="<error descr="TS2341: Property 'privateField' is private and only accessible within class 'TestComponent'.">privateField</error>"
 
               (readonlyEvent)="foo()"
               (protectedEvent)="foo()"

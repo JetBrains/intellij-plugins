@@ -3,26 +3,26 @@ import {Component} from "@angular/core"
 
 @Component({
   template: `
-    {{ <error descr="Field privateUsed is private and it is only accessible within class MyComponent when using the AOT compiler">privateUsed</error> }}
+    {{ <error descr="TS2341: Property 'privateUsed' is private and only accessible within class 'MyComponent'.">privateUsed</error> }}
     {{ protectedUsed }}
     {{ publicUsed }}
 
-    <div (click)="<error descr="Property privateUsedSet is private and it is only accessible within class MyComponent when using the AOT compiler">privateUsedSet</error> = 12"></div>
+    <div (click)="<error descr="TS2341: Property 'privateUsedSet' is private and only accessible within class 'MyComponent'.">privateUsedSet</error> = 12"></div>
     <div (click)="protectedUsedSet = 12"></div>
     <div (click)="publicUsedSet = 12"></div>
 
-    {{ <error descr="Property privateUsedGet is private and it is only accessible within class MyComponent when using the AOT compiler">privateUsedGet</error> }}
+    {{ <error descr="TS2341: Property 'privateUsedGet' is private and only accessible within class 'MyComponent'.">privateUsedGet</error> }}
     {{ protectedUsedGet }}
     {{ publicUsedGet }}
 
-    {{ <error descr="Method privateUsedFun is private and it is only accessible within class MyComponent when using the AOT compiler">privateUsedFun</error>() }}
+    {{ <error descr="TS2341: Property 'privateUsedFun' is private and only accessible within class 'MyComponent'.">privateUsedFun</error>() }}
     {{ protectedUsedFun() }}
     {{ publicUsedFun() }}
   `
 })
 export class MyComponent {
   private privateUsed: string;
-  private privateUnused: string;
+  private <weak_warning descr="TS6133: 'privateUnused' is declared but its value is never read.">privateUnused</weak_warning>: string;
 
   protected protectedUsed: string;
   protected protectedUnused: string;
@@ -30,26 +30,26 @@ export class MyComponent {
   publicUsed: string;
   publicUnused: string;
 
-  private set privateUsedSet(value) {}
-  private set privateUnusedSet(value) {}
+  private set privateUsedSet(<weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning>: any) {}
+  private set <weak_warning descr="TS6133: 'privateUnusedSet' is declared but its value is never read.">privateUnusedSet</weak_warning>(<weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning>: any) {}
 
-  protected set protectedUsedSet(value) {}
-  protected set protectedUnusedSet(value) {}
+  protected set protectedUsedSet(<weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning>: any) {}
+  protected set protectedUnusedSet(<weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning>: any) {}
 
-  public set publicUsedSet(value) {}
-  public set publicUnusedSet(value) {}
+  public set publicUsedSet(<weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning>: any) {}
+  public set publicUnusedSet(<weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning>: any) {}
 
-  private get privateUsedGet() {}
-  private get privateUnusedGet() {}
+  private get <error descr="TS2378: A 'get' accessor must return a value.">privateUsedGet</error>() {}
+  private get <error descr="TS2378: A 'get' accessor must return a value.">privateUnusedGet</error>() {}
 
-  protected get protectedUsedGet() {}
-  protected get protectedUnusedGet() {}
+  protected get <error descr="TS2378: A 'get' accessor must return a value.">protectedUsedGet</error>() {}
+  protected get <error descr="TS2378: A 'get' accessor must return a value.">protectedUnusedGet</error>() {}
 
-  public get publicUsedGet() {}
-  public get publicUnusedGet() {}
+  public get <error descr="TS2378: A 'get' accessor must return a value.">publicUsedGet</error>() {}
+  public get <error descr="TS2378: A 'get' accessor must return a value.">publicUnusedGet</error>() {}
 
   private privateUsedFun() {}
-  private privateUnusedFun() {}
+  private <weak_warning descr="TS6133: 'privateUnusedFun' is declared but its value is never read.">privateUnusedFun</weak_warning>() {}
 
   protected protectedUsedFun() {}
   protected protectedUnusedFun() {}
