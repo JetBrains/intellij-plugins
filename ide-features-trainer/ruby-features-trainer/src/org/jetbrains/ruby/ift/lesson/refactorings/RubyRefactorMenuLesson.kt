@@ -48,17 +48,18 @@ class RubyRefactorMenuLesson
         restoreIfModifiedOrMoved()
         test { actions(it) }
       }
-      task(RefactoringBundle.message("push.members.down.title")) {
-        text(RubyLessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(it), code("meow()")))
+      task {
+        val pushMembersText = RefactoringBundle.message("push.members.down.title")
+        text(RubyLessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(pushMembersText), code("meow()")))
         trigger("MemberPushDown") { checkMethodMoved(project) }
         restoreState(delayMillis = defaultRestoreDelay) {
           previous.ui?.isShowing != true && !checkInsidePushDownDialog()
         }
         test {
           ideFrame {
-            jList("$it...").clickItem("$it...")
+            jList("$pushMembersText...").clickItem("$pushMembersText...")
           }
-          dialog(it) {
+          dialog(pushMembersText) {
             button("Refactor").click()
           }
         }

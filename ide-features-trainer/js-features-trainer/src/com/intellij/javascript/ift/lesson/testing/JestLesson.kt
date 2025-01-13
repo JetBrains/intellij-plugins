@@ -55,7 +55,7 @@ class JestLesson
           }
         }
 
-        task("editRunConfigurations") {
+        task {
           val editConfiguration = strong(ActionsBundle.message("group.RunMenu.text").dropMnemonic() + 
                                          " > " + 
                                          ExecutionBundle.message("edit.configuration.action").dropMnemonic())

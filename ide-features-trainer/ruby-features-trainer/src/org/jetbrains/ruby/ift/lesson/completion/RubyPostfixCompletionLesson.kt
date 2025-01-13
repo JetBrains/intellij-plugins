@@ -61,13 +61,14 @@ end
         }
       }
 
-      task("string_array.length > 1") {
-        text(RubyLessonsBundle.message("ruby.postfix.completion.choose.target", code(it)))
+      task {
+        val itemText = "string_array.length > 1"
+        text(RubyLessonsBundle.message("ruby.postfix.completion.choose.target", code(itemText)))
         stateCheck { editor.document.text == result }
         restoreByUi()
         test(waitEditorToBeReady = false) {
           ideFrame {
-            jList(it).click()
+            jList(itemText).click()
           }
         }
       }
