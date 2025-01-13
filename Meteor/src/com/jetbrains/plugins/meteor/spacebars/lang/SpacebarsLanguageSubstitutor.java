@@ -9,8 +9,7 @@ import com.jetbrains.plugins.meteor.MeteorFacade;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class SpacebarsLanguageSubstitutor extends HbLanguageSubstitutor {
-
+final class SpacebarsLanguageSubstitutor extends HbLanguageSubstitutor {
   public static final String METEOR_ANGULAR_EXTENSION = ".ng.html";
 
   @Override

@@ -6,11 +6,13 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssBlock;
 import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.css.impl.CssElementTypes;
+import com.intellij.psi.css.impl.util.completion.CssDumbAwareCompletionContributor;
 import com.intellij.psi.css.impl.util.completion.provider.PropertyNamesCompletionProvider;
 import com.intellij.psi.css.impl.util.completion.provider.TagsCompletionProvider;
 import com.intellij.psi.css.util.CssCompletionUtil;
@@ -20,32 +22,30 @@ import org.intellij.plugins.postcss.completion.handler.PostCssOneLineAtRuleInser
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.or;
-import static com.intellij.psi.css.impl.util.completion.CssDumbAwareCompletionContributor.*;
 
-public class PostCssDumbAwareCompletionContributor extends CompletionContributor implements DumbAware {
+public final class PostCssDumbAwareCompletionContributor extends CompletionContributor implements DumbAware {
   private static final PostCssOneLineAtRuleInsertHandler ONE_LINE_STATEMENT_HANDLER = new PostCssOneLineAtRuleInsertHandler();
 
   public PostCssDumbAwareCompletionContributor() {
-    extend(CompletionType.BASIC, selector().andNot(elementInsidePropertyAtRule()), new TagsCompletionProvider());
+    extend(CompletionType.BASIC, selector().andNot(CssDumbAwareCompletionContributor.elementInsidePropertyAtRule()), new TagsCompletionProvider());
     extend(CompletionType.BASIC, propertyDeclaration(), new PropertyNamesCompletionProvider());
   }
 
   private static ElementPattern<? extends PsiElement> propertyDeclaration() {
     return inPostCssFile(CssElementTypes.CSS_IDENT)
-      .andOr(propertyName(),
-             psiElement().withParent(CssSimpleSelector.class).inside(CssBlock.class)
-               .afterLeafSkipping(or(emptyElement(), spaceElement()), blockStartOrEnd())
-               .beforeLeafSkipping(or(emptyElement(), spaceElement()), blockStartOrEnd()));
+      .andOr(CssDumbAwareCompletionContributor.propertyName(),
+             PlatformPatterns.psiElement().withParent(CssSimpleSelector.class).inside(CssBlock.class)
+               .afterLeafSkipping(or(CssDumbAwareCompletionContributor.emptyElement(), CssDumbAwareCompletionContributor.spaceElement()), CssDumbAwareCompletionContributor.blockStartOrEnd())
+               .beforeLeafSkipping(or(CssDumbAwareCompletionContributor.emptyElement(), CssDumbAwareCompletionContributor.spaceElement()), CssDumbAwareCompletionContributor.blockStartOrEnd()));
   }
 
   private static PsiElementPattern.Capture<PsiElement> selector() {
-    return inPostCssFile(CssElementTypes.CSS_IDENT).andOr(propertyName(), propertyName());
+    return inPostCssFile(CssElementTypes.CSS_IDENT).andOr(CssDumbAwareCompletionContributor.propertyName(), CssDumbAwareCompletionContributor.propertyName());
   }
 
   private static PsiElementPattern.Capture<PsiElement> inPostCssFile(@NotNull IElementType type) {
-    return psiElement(type).inside(psiElement(PostCssStubElementTypes.POST_CSS_STYLESHEET));
+    return PlatformPatterns.psiElement(type).inside(PlatformPatterns.psiElement(PostCssStubElementTypes.POST_CSS_STYLESHEET));
   }
 
   @Override

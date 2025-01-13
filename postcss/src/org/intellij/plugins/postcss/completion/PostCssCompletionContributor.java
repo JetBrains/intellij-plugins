@@ -28,8 +28,8 @@ import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-public class PostCssCompletionContributor extends CompletionContributor {
-  public PostCssCompletionContributor() {
+class PostCssCompletionContributor extends CompletionContributor {
+  PostCssCompletionContributor() {
     extend(CompletionType.BASIC, customSelector(), new PseudoSelectorsCompletionProvider());
   }
 

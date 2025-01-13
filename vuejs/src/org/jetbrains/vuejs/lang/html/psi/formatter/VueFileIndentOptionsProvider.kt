@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.psi.formatter
 
 import com.intellij.lang.html.HTMLLanguage
@@ -11,8 +11,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.isVueFile
 
-class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
-
+private class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
   override fun getIndentOptionsByPsiFile(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
     if (file.language is VueLanguage) {
       if (file.isVueFile) {

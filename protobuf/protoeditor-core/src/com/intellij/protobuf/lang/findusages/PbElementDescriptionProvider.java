@@ -25,8 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Provides the title for the find usages tool window. */
-public class PbElementDescriptionProvider implements ElementDescriptionProvider {
-
+final class PbElementDescriptionProvider implements ElementDescriptionProvider {
   @Override
   public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
     if (location instanceof UsageViewLongNameLocation) {

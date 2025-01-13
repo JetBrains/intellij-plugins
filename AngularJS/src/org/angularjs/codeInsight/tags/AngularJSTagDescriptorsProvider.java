@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.codeInsight.tags;
 
 import com.intellij.codeInsight.completion.XmlTagInsertHandler;
@@ -16,18 +17,13 @@ import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSDirectivesSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static org.angularjs.index.AngularJSDirectivesSupport.findTagDirectives;
-
-/**
- * @author Dennis.Ushakov
- */
-public final class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
-
+final class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
     if (!(xmlTag instanceof HtmlTag)
@@ -37,7 +33,7 @@ public final class AngularJSTagDescriptorsProvider implements XmlElementDescript
 
     final Project project = xmlTag.getProject();
     Language language = xmlTag.getContainingFile().getLanguage();
-    findTagDirectives(project, null).forEach(directive -> {
+    AngularJSDirectivesSupport.findTagDirectives(project, null).forEach(directive -> {
       addLookupItem(language, elements, directive);
     });
   }

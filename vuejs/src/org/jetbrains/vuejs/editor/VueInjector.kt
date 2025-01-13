@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.editor
 
 import com.intellij.lang.injection.MultiHostInjector
@@ -44,7 +44,7 @@ import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 
-class VueInjector : MultiHostInjector {
+internal class VueInjector : MultiHostInjector {
   internal object Holder {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 

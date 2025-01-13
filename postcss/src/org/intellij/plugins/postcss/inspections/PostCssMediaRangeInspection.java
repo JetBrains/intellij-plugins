@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssElementVisitor;
 import com.intellij.psi.css.CssMediaFeature;
+import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
@@ -14,9 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.intellij.psi.css.impl.CssElementTypes.*;
-
-public class PostCssMediaRangeInspection extends PostCssBaseInspection {
+public final class PostCssMediaRangeInspection extends PostCssBaseInspection {
   private static final Logger LOG = Logger.getInstance(PostCssMediaRangeInspection.class);
 
   @Override
@@ -46,9 +45,9 @@ public class PostCssMediaRangeInspection extends PostCssBaseInspection {
   private static int getComparisonOperatorDirection(final @NotNull PsiElement comparisonOperator) {
     final IElementType type = comparisonOperator.getNode().getElementType();
 
-    if (type == CSS_GT || type == CSS_GE) return 1;
-    if (type == CSS_LT || type == CSS_LE) return -1;
-    if (type == CSS_EQ) return 0;
+    if (type == CssElementTypes.CSS_GT || type == CssElementTypes.CSS_GE) return 1;
+    if (type == CssElementTypes.CSS_LT || type == CssElementTypes.CSS_LE) return -1;
+    if (type == CssElementTypes.CSS_EQ) return 0;
 
     LOG.error("Expected comparison operator, got " + type);
     return 0;

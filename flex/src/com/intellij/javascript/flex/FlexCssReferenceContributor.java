@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
@@ -26,8 +27,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
 final class FlexCssReferenceContributor extends PsiReferenceContributor {
   @Override
@@ -102,7 +101,7 @@ final class FlexCssReferenceContributor extends PsiReferenceContributor {
                 PsiFile file = cssDeclaration.getContainingFile();
                 if (file != null) {
                   if (file.getFileType() == CssFileType.INSTANCE) {
-                    Module module = findModuleForPsiElement(cssDeclaration);
+                    Module module = ModuleUtilCore.findModuleForPsiElement(cssDeclaration);
                     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
                   }
                   return FlexSupportLoader.isFlexMxmFile(file);

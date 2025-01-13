@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.openapi.project.DumbAware;
@@ -14,7 +14,7 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartClassMemberGroupingRule extends SingleParentUsageGroupingRule implements DumbAware {
+public final class DartClassMemberGroupingRule extends SingleParentUsageGroupingRule implements DumbAware {
   @Override
   protected @Nullable UsageGroup getParentGroupFor(@NotNull Usage usage, UsageTarget @NotNull [] targets) {
     PsiElement psiElement = usage instanceof PsiElementUsage ? ((PsiElementUsage)usage).getElement() : null;

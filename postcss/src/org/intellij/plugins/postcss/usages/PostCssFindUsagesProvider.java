@@ -17,12 +17,10 @@ import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.PostCssSimpleVariableDeclaration;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class PostCssFindUsagesProvider implements FindUsagesProvider {
-
+public final class PostCssFindUsagesProvider implements FindUsagesProvider {
   @Override
-  public @Nullable WordsScanner getWordsScanner() {
+  public @NotNull WordsScanner getWordsScanner() {
     return new DefaultWordsScanner(new PostCssLexer(), TokenSet.create(CssElementTypes.CSS_IDENT), PostCssTokenTypes.POST_CSS_COMMENTS,
                                    TokenSet.create(CssElementTypes.CSS_STRING_TOKEN));
   }

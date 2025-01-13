@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.lang;
 
 import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
@@ -18,10 +19,7 @@ import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Dennis.Ushakov
- */
-public final class AngularJSErrorFilter extends HighlightErrorFilter {
+final class AngularJSErrorFilter extends HighlightErrorFilter {
   @Override
   public boolean shouldHighlightErrorElement(@NotNull PsiErrorElement error) {
     final Project project = error.getProject();

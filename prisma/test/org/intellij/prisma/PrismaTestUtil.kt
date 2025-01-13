@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma
 
 import com.intellij.lang.html.HTMLLanguage
@@ -12,10 +12,9 @@ import java.io.File
 
 private const val PRISMA_TEST_DATA_PATH = "/prisma/testData"
 
-fun getPrismaTestDataPath(): String =
-  getContribPath() + PRISMA_TEST_DATA_PATH
+internal fun getPrismaTestDataPath(): String = getContribPath() + PRISMA_TEST_DATA_PATH
 
-fun getPrismaRelativeTestDataPath(): String = "/contrib$PRISMA_TEST_DATA_PATH"
+internal fun getPrismaRelativeTestDataPath(): String = "/contrib$PRISMA_TEST_DATA_PATH"
 
 private fun getContribPath(): String {
   val homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy()
@@ -25,9 +24,10 @@ private fun getContribPath(): String {
   else homePath
 }
 
-fun reformatDocumentation(project: Project, text: String): String =
-  WriteCommandAction.runWriteCommandAction(project, Computable {
+internal fun reformatDocumentation(project: Project, text: String): String {
+  return WriteCommandAction.runWriteCommandAction(project, Computable {
     PsiFileFactory.getInstance(project).createFileFromText("doc.html", HTMLLanguage.INSTANCE, text)
       .let { CodeStyleManager.getInstance(project).reformat(it) }
       .text
   })
+}

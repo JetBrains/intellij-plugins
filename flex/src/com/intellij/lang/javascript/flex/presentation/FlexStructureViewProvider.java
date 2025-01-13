@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.structureView.*;
@@ -26,11 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Maxim.Mossienko
- */
-public final class FlexStructureViewProvider implements XmlStructureViewBuilderProvider {
-
+final class FlexStructureViewProvider implements XmlStructureViewBuilderProvider {
   @Override
   public StructureViewBuilder createStructureViewBuilder(final @NotNull XmlFile file) {
     if (!FlexSupportLoader.isFlexMxmFile(file)) return null;
@@ -48,7 +44,7 @@ public final class FlexStructureViewProvider implements XmlStructureViewBuilderP
     };
   }
 
-  static class FlexStructureViewClassElement extends JSStructureViewElement {
+  static final class FlexStructureViewClassElement extends JSStructureViewElement {
     private final XmlFile myFile;
 
     FlexStructureViewClassElement(@NotNull JSClass clazz) {

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
-class MdxFileType private constructor() : LanguageFileType(MdxLanguage) {
+internal class MdxFileType private constructor() : LanguageFileType(MdxLanguage) {
   override fun getName(): String {
     return "MDX"
   }

@@ -23,7 +23,7 @@ import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
-class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
+private class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
 
   override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {
     if (charTyped == '@' && Angular2TemplateSyntax.of(file)?.enableBlockSyntax == true) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.ide.util.PsiNavigationSupport;
@@ -46,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
+public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   private final JSQualifiedNamedElement myElement;
   private final PsiDirectory myTargetDirectory;
   private final @NotNull String myClassName;

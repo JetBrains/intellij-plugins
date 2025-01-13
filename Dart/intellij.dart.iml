@@ -39,10 +39,13 @@
     <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="module" module-name="intellij.platform.coverage" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.coverage.agent" />
     <orderEntry type="module" module-name="intellij.webComponents" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.usageView" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="module" module-name="intellij.xml.frontback" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" name="commons-lang3" level="project" />
     <orderEntry type="module-library">

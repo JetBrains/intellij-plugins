@@ -13,7 +13,7 @@ import org.angular2.index.isPipe
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 
-class Angular2ElementDescriptionProvider : ElementDescriptionProvider {
+private class Angular2ElementDescriptionProvider : ElementDescriptionProvider {
   override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
     val type = getTypeDescription(element)
     if (type != null) {

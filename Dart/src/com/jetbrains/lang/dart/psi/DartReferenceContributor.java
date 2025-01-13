@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.lang.html.HTMLLanguage;
@@ -27,7 +27,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
 import static com.intellij.patterns.StandardPatterns.or;
 
-public final class DartReferenceContributor extends PsiReferenceContributor {
+final class DartReferenceContributor extends PsiReferenceContributor {
   private static final Logger LOG = Logger.getInstance(DartReferenceContributor.class);
 
   @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.*;
@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class KarmaCoverageEngine extends CoverageEngine {
-
+public final class KarmaCoverageEngine extends CoverageEngine {
   public static final String ID = "KarmaJavaScriptTestRunnerCoverage";
 
   @Override
