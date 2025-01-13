@@ -26,6 +26,8 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/lang-api:lang",
+    "@community//RegExpSupport:regexp",
+    "@community//xml/xml-frontback:frontback",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",

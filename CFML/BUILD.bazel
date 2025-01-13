@@ -61,6 +61,7 @@ jvm_library(
     "@community//java/testFramework",
     "@community//platform/smRunner",
     "@community//platform/smRunner:smRunner_test_lib",
+    "@community//java/java-runtime:rt",
     "//dbe/database/impl",
     "//idea-tests:ultimate-tests_test_lib",
     "@community//spellchecker",
