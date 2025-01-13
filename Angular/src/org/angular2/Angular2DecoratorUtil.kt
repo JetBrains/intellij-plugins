@@ -2,6 +2,7 @@
 package org.angular2
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.injections.JSInjectionUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -228,6 +229,11 @@ object Angular2DecoratorUtil {
            ?: JSStubBasedPsiTreeUtil.getChildrenByType(context, TS_CLASS_TOKENS)
              .firstOrNull() as? TypeScriptClass
   }
+
+  fun isHostBindingExpression(context: PsiElement): Boolean =
+    InjectedLanguageManager.getInstance(context.project).getInjectionHost(context)?.asSafely<JSLiteralExpression>()
+      ?.parent?.asSafely<JSProperty>()
+      ?.let { isHostBinding(it) } == true
 
   fun isHostBinding(property: JSProperty): Boolean =
     property.parent?.asSafely<JSObjectLiteralExpression>()

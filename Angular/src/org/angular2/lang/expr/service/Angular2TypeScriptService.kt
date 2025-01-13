@@ -6,8 +6,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
@@ -43,7 +41,7 @@ import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
-import org.angular2.Angular2DecoratorUtil.isHostBinding
+import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
@@ -87,9 +85,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
     if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
       Angular2EntitiesProvider.findTemplateComponent(file) != null
-      || InjectedLanguageManager.getInstance(file.project).getInjectionHost(file)?.asSafely<JSLiteralExpression>()
-        ?.parent?.asSafely<JSProperty>()
-        ?.let { isHostBinding(it) } == true
+      || isHostBindingExpression(file)
     else
       super.isAcceptableForHighlighting(file)
 

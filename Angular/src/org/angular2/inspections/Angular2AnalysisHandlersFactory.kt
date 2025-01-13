@@ -9,10 +9,7 @@ import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
-import com.intellij.lang.javascript.psi.JSExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSThisExpression
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.validation.*
 import com.intellij.lang.typescript.validation.TypeScriptTypeChecker
@@ -41,12 +38,14 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
   override fun <T : Any?> getTypeChecker(problemReporter: JSProblemReporter<T>): JSTypeChecker =
     object : TypeScriptTypeChecker(problemReporter) {
 
-      override fun getFixes(expr: JSExpression?,
-                            declaredJSType: JSType,
-                            elementToChangeTypeOf: PsiElement?,
-                            expressionJSType: JSType,
-                            context: ProcessingContext?,
-                            holder: DialectOptionHolder?): Collection<LocalQuickFix> {
+      override fun getFixes(
+        expr: JSExpression?,
+        declaredJSType: JSType,
+        elementToChangeTypeOf: PsiElement?,
+        expressionJSType: JSType,
+        context: ProcessingContext?,
+        holder: DialectOptionHolder?,
+      ): Collection<LocalQuickFix> {
         val quickFixes = super.getFixes(expr, declaredJSType, elementToChangeTypeOf, expressionJSType, context, holder)
         expr?.parent?.asSafely<Angular2Binding>()?.enclosingAttribute?.let {
           return Angular2FixesFactory.getCreateInputTransformFixes(it, expressionJSType.substitute(expr).getTypeText(CODE)) + quickFixes
@@ -57,27 +56,6 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
 
   override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker =
     object : TypeScriptReferenceChecker(reporter) {
-      override fun addCreateFromUsageFixesForCall(methodExpression: JSReferenceExpression,
-                                                  isNewExpression: Boolean,
-                                                  resolveResults: Array<ResolveResult>,
-                                                  quickFixes: MutableList<in LocalQuickFix>) {
-        if (methodExpression is Angular2PipeReferenceExpression) {
-          // TODO Create pipe from usage
-          return
-        }
-        val qualifier = methodExpression.qualifier
-        if (qualifier == null || qualifier is JSThisExpression) {
-          val componentClass = Angular2SourceUtil.findComponentClass(methodExpression)
-          if (componentClass != null && methodExpression.referenceName != null) {
-            quickFixes.add(CreateComponentMethodIntentionAction(methodExpression))
-            if (Angular2SignalUtils.supportsSignals(componentClass)) {
-              quickFixes.add(CreateComponentSignalIntentionAction(methodExpression))
-            }
-          }
-          return
-        }
-        super.addCreateFromUsageFixesForCall(methodExpression, isNewExpression, resolveResults, quickFixes)
-      }
 
       @InspectionMessage
       override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression, isNewExpression: Boolean): String {
@@ -89,39 +67,12 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
         }
         else super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression)
       }
-
-      override fun reportUnresolvedReference(resolveResults: Array<ResolveResult>,
-                                             referenceExpression: JSReferenceExpression,
-                                             quickFixes: MutableList<LocalQuickFix>,
-                                             @InspectionMessage message: String,
-                                             isFunction: Boolean,
-                                             inTypeContext: Boolean) {
-        super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction, inTypeContext)
-      }
-
-      override fun addCreateFromUsageFixes(referenceExpression: JSReferenceExpression,
-                                           resolveResults: Array<ResolveResult>,
-                                           quickFixes: MutableList<in LocalQuickFix>,
-                                           inTypeContext: Boolean,
-                                           ecma: Boolean): Boolean {
-        val qualifier = referenceExpression.qualifier
-        if (qualifier == null || qualifier is JSThisExpression) {
-          val componentClass = Angular2SourceUtil.findComponentClass(referenceExpression)
-          if (componentClass != null && referenceExpression.referenceName != null) {
-            quickFixes.add(CreateComponentFieldIntentionAction(referenceExpression))
-            if (referenceExpression.parentOfType<Angular2EmbeddedExpression>() is Angular2Action) {
-              quickFixes.add(CreateDirectiveOutputIntentionAction(referenceExpression, referenceExpression.referenceName!!))
-            }
-          }
-          return inTypeContext
-        }
-        return super.addCreateFromUsageFixes(referenceExpression, resolveResults, quickFixes, inTypeContext, ecma)
-      }
-
     }
 
-  override fun createKeywordHighlighterVisitor(holder: HighlightInfoHolder,
-                                               dialectOptionHolder: DialectOptionHolder): JSKeywordHighlighterVisitor =
+  override fun createKeywordHighlighterVisitor(
+    holder: HighlightInfoHolder,
+    dialectOptionHolder: DialectOptionHolder,
+  ): JSKeywordHighlighterVisitor =
     object : TypeScriptKeywordHighlighterVisitor(holder) {
       override fun visitElement(element: PsiElement) {
         when (element) {
@@ -138,5 +89,4 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
         }
       }
     }
-
 }

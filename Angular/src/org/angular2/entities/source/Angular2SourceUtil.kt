@@ -34,6 +34,7 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
 import org.angular2.entities.*
@@ -244,6 +245,12 @@ internal object Angular2SourceUtil {
 
   @JvmStatic
   fun findComponentClass(templateContext: PsiElement): TypeScriptClass? {
+    if (templateContext.language is Angular2Language
+        && isHostBindingExpression(templateContext)) {
+      return Angular2DecoratorUtil.getClassForDecoratorElement(
+        InjectedLanguageManager.getInstance(templateContext.project).getInjectionHost(templateContext)
+      )
+    }
     return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode })
       WebJSResolveUtil.disableIndexUpToDateCheckIn(templateContext) {
         findComponentClasses(templateContext).firstOrNull()
