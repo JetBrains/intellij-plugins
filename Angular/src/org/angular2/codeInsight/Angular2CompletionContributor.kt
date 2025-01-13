@@ -4,7 +4,6 @@ package org.angular2.codeInsight
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.completion.*
@@ -58,11 +57,6 @@ import org.jetbrains.annotations.NonNls
 
 class Angular2CompletionContributor : CompletionContributor() {
   init {
-
-    extend(CompletionType.BASIC,
-           psiElement().with(language(Angular2Language)),
-           CssInBindingExpressionCompletionProvider())
-
     extend(CompletionType.BASIC,
            psiElement().with(language(Angular2Language)),
            TemplateExpressionCompletionProvider())

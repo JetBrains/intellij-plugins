@@ -79,11 +79,16 @@ public final class Angular2TestUtil {
   }
 
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    assertUnresolvedReference(signature, fixture, false, false);
+  }
+
+  public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture,
+                                               Boolean okWithNoRef, Boolean allowSelfReference) {
     var symbols = WebTestUtil.multiResolveWebSymbolReference(fixture, signature);
     if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.getProperties().get(PROP_ERROR_SYMBOL) == Boolean.TRUE)) {
       return;
     }
-    WebTestUtil.assertUnresolvedReference(fixture, signature);
+    WebTestUtil.assertUnresolvedReference(fixture, signature, okWithNoRef, allowSelfReference);
   }
 
   public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture,

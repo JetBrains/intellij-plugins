@@ -12,6 +12,7 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.css.getWebSymbolsCssScopeForTagClasses
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import com.intellij.webSymbols.utils.WebSymbolsIsolatedMappingScope
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING

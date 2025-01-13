@@ -20,6 +20,7 @@ import org.angular2.css.Angular2CssClassTest
 import org.angular2.css.Angular2CssCompletionTest
 import org.angular2.css.Angular2CssHighlightingTest
 import org.angular2.css.Angular2CssInspectionsTest
+import org.angular2.css.Angular2CssRenameTest
 import org.angular2.css.Angular2CssUsageHighlightingTest
 import org.angular2.lang.expr.Angular2LexerSpecTest
 import org.angular2.lang.expr.Angular2LexerTest
@@ -94,6 +95,7 @@ import org.junit.runners.Suite
   Angular2CssClassTest::class,
   Angular2CssCompletionTest::class,
   Angular2CssInspectionsTest::class,
+  Angular2CssRenameTest::class,
   Angular2ReSharperTestSuite::class,
   Angular2CssHighlightingTest::class,
   Angular2CssUsageHighlightingTest::class,
