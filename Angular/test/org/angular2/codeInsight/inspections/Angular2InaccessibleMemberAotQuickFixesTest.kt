@@ -7,7 +7,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
 
-class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol", false) {
+class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol", true) {
 
   fun testPrivateFieldFix() {
     doMultiFileTest("private.html", "private<caret>Used")
@@ -35,26 +35,26 @@ class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspection
 
   fun testPrivateInputFix() {
     doMultiFileTest("private-input.ts", "[private<caret>Field]", "public",
-                    configFile = Angular2TsConfigFile())
+                    strict = true)
   }
 
   fun testProtectedInputFix() {
     doMultiFileTest("protected-input.ts", "[protected<caret>Field]", "public",
-                    configFile = Angular2TsConfigFile())
+                    strict = true)
   }
 
   fun testReadonlyInputFix() {
     doMultiFileTest("readonly-input.ts", "[readonly<caret>Field]", hint = "Remove readonly modifier",
-                    configFile = Angular2TsConfigFile())
+                    strict = true)
   }
 
   private fun doMultiFileTest(
     fileName: String, signature: String, accessType: String = "protected", hint: String = "Make '$accessType'",
-    configFile: Angular2TsConfigFile? = null,
+    strict: Boolean = false,
   ) {
     myFixture.enableInspections(AngularInaccessibleSymbolInspection::class.java)
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5, dir = true, configureFileName = fileName,
-                     checkResult = true, configurators = listOfNotNull(configFile)) {
+                     checkResult = true, configurators = listOfNotNull(Angular2TsConfigFile(strict))) {
       setCaresAboutInjection(false)
       moveToOffsetBySignature(signature)
       val intentionAction = filterAvailableIntentions(hint)
