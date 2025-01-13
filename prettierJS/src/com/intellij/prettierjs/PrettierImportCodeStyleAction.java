@@ -13,8 +13,6 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.EditorNotificationProvider;
-import com.intellij.ui.EditorNotifications;
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import com.intellij.util.concurrency.annotations.RequiresReadLock;
 import org.jetbrains.annotations.NotNull;
@@ -75,14 +73,5 @@ public class PrettierImportCodeStyleAction extends AnAction implements DumbAware
     if (psiFile == null) return;
 
     new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
-    updateEditorNotifications(psiFile.getProject());
-  }
-
-  private static void updateEditorNotifications(@NotNull Project project) {
-    PrettierCodeStyleEditorNotificationProvider provider =
-      EditorNotificationProvider.EP_NAME.findExtension(PrettierCodeStyleEditorNotificationProvider.class, project);
-    if (provider != null) {
-      EditorNotifications.getInstance(project).updateNotifications(provider);
-    }
   }
 }
