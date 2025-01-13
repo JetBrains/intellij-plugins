@@ -1,23 +1,13 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.inspections
 
-import com.intellij.javascript.web.configure
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.webSymbols.moveToOffsetBySignature
-import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
-import org.angular2.Angular2TestUtil
 
-class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return Angular2TestUtil.getBaseTestDataPath() + "inspections/inaccessibleSymbol"
-  }
-
-  override fun getTestRoot(): String {
-    return "/"
-  }
+class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol", false) {
 
   fun testPrivateFieldFix() {
     doMultiFileTest("private.html", "private<caret>Used")
@@ -44,34 +34,33 @@ class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTest
   }
 
   fun testPrivateInputFix() {
-    myFixture.configure(Angular2TsConfigFile())
-    doMultiFileTest("private-input.ts", "[private<caret>Field]", "public")
+    doMultiFileTest("private-input.ts", "[private<caret>Field]", "public",
+                    configFile = Angular2TsConfigFile())
   }
 
   fun testProtectedInputFix() {
-    myFixture.configure(Angular2TsConfigFile())
-    doMultiFileTest("protected-input.ts", "[protected<caret>Field]", "public")
+    doMultiFileTest("protected-input.ts", "[protected<caret>Field]", "public",
+                    configFile = Angular2TsConfigFile())
   }
 
   fun testReadonlyInputFix() {
-    myFixture.configure(Angular2TsConfigFile())
-    doMultiFileTest("readonly-input.ts", "[readonly<caret>Field]", hint = "Remove readonly modifier")
+    doMultiFileTest("readonly-input.ts", "[readonly<caret>Field]", hint = "Remove readonly modifier",
+                    configFile = Angular2TsConfigFile())
   }
 
-  private fun doMultiFileTest(fileName: String, signature: String, accessType: String = "protected", hint: String = "Make '$accessType'") {
-    doTest { _: VirtualFile?, _: VirtualFile? ->
-      myFixture.enableInspections(AngularInaccessibleSymbolInspection::class.java)
-      myFixture.configureFromTempProjectFile(fileName)
-      myFixture.setCaresAboutInjection(false)
-      myFixture.moveToOffsetBySignature(signature)
-      val intentionAction = myFixture.filterAvailableIntentions(hint)
+  private fun doMultiFileTest(
+    fileName: String, signature: String, accessType: String = "protected", hint: String = "Make '$accessType'",
+    configFile: Angular2TsConfigFile? = null,
+  ) {
+    myFixture.enableInspections(AngularInaccessibleSymbolInspection::class.java)
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5, dir = true, configureFileName = fileName,
+                     checkResult = true, configurators = listOfNotNull(configFile)) {
+      setCaresAboutInjection(false)
+      moveToOffsetBySignature(signature)
+      val intentionAction = filterAvailableIntentions(hint)
                               .firstOrNull()
                             ?: throw IllegalStateException("\"$hint\" not in " + myFixture.availableIntentions.map { it.text })
-      myFixture.launchAction(intentionAction)
-      WriteAction.run<Throwable> {
-        myFixture.tempDirFixture.getFile("tsconfig.json")
-          ?.delete(Any())
-      }
+      launchAction(intentionAction)
     }
   }
 }
