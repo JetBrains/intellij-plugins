@@ -6,6 +6,7 @@ import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
@@ -105,7 +106,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
         JSTypeSourceFactory.createTypeSource(templateFile)
       else
         Angular2TypeUtils.createJSTypeSourceForXmlElement(templateFile)
-      val tagClass = WebJSTypesUtil.getHtmlElementClassType(typeSource, tagName)
+      val tagClass = withTypeEvaluationLocation(templateFile) { WebJSTypesUtil.getHtmlElementClassType(typeSource, tagName) }
       val elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource).asRecordType(templateFile)
 
       val allowedElementProperties = DomElementSchemaRegistry.getElementProperties(tagNamespace, tagName).toMutableSet()

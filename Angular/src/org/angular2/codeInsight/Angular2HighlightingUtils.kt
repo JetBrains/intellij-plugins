@@ -3,6 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter
@@ -97,6 +98,7 @@ object Angular2HighlightingUtils {
 
   @JvmStatic
   fun <T : Angular2Entity> renderEntityList(entities: Collection<T>): String {
+    JSTypeEvaluationLocationProvider.assertLocationIsSet()
     val result = StringBuilder()
     var i = -1
     for (entity in entities) {

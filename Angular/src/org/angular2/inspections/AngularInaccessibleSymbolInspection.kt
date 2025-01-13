@@ -4,6 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.presentable.JSFormatUtil
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter
 import com.intellij.lang.javascript.psi.JSElement
@@ -46,9 +47,11 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
 
-  override fun buildVisitor(holder: ProblemsHolder,
-                            isOnTheFly: Boolean,
-                            session: LocalInspectionToolSession): PsiElementVisitor {
+  override fun buildVisitor(
+    holder: ProblemsHolder,
+    isOnTheFly: Boolean,
+    session: LocalInspectionToolSession,
+  ): PsiElementVisitor {
     val fileLang = holder.file.language
     if (fileLang.isKindOf(Angular2HtmlLanguage) || Angular2Language.`is`(fileLang)) {
       return object : Angular2ElementVisitor() {
@@ -103,7 +106,7 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
                   AngularChangeModifierQuickFix(minAccessType, inputOwner.name))
               }
               else if (input.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true
-                       && !Angular2SignalUtils.isSignal(input, null)) {
+                       && !withTypeEvaluationLocation(element) { Angular2SignalUtils.isSignal(input, null) }) {
                 holder.registerProblem(
                   element.nameElement,
                   Angular2Bundle.htmlMessage(

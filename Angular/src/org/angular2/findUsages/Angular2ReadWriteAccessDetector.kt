@@ -2,6 +2,7 @@
 package org.angular2.findUsages
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.findUsages.JSDefaultReadWriteAccessDetector
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector
 import com.intellij.psi.PsiElement
@@ -16,7 +17,8 @@ object Angular2ReadWriteAccessDetector : JSDefaultReadWriteAccessDetector(), JSD
     val result = super.getExpressionAccess(expression)
     if (result == ReadWriteAccessDetector.Access.Read && expression.parent is Angular2Binding) {
       val attr = PsiTreeUtil.findFirstParent(expression) { it is Angular2HtmlBoundAttribute }
-      if (attr is Angular2HtmlBananaBoxBinding && !Angular2SignalUtils.isSignal(expression, expression, writable = true)) {
+      if (attr is Angular2HtmlBananaBoxBinding
+          && !withTypeEvaluationLocation(expression) { Angular2SignalUtils.isSignal(expression, expression, writable = true) }) {
         return ReadWriteAccessDetector.Access.ReadWrite
       }
     }

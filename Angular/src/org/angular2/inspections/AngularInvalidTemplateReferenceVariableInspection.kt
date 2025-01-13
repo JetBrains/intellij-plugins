@@ -4,6 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.SmartList
@@ -55,7 +56,7 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
             Angular2Bundle.htmlMessage("angular.inspection.invalid-template-ref-var.message.ambiguous-name",
                                        EXPORT_AS_PROP.withColor(NG_EXPORT_AS, attribute),
                                        exportName.withColor(TS_PROPERTY, attribute),
-                                       renderEntityList(matching)))
+                                       withTypeEvaluationLocation(attribute) { renderEntityList(matching) }))
         }
       }
     }

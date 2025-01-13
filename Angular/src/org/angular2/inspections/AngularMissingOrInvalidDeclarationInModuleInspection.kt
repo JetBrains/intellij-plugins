@@ -4,6 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.openapi.project.Project
@@ -60,7 +61,7 @@ class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool
                 classIdentifier,
                 Angular2Bundle.htmlMessage("angular.inspection.invalid-declaration-in-module.message.declared-in-many",
                                            entity.htmlClassName,
-                                           renderEntityList(modules)))
+                                           withTypeEvaluationLocation(decorator) { renderEntityList(modules) }))
             }
           }
         }

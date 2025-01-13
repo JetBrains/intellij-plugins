@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.highlighting.JSHighlightDescriptor
 import com.intellij.lang.javascript.highlighting.JSHighlighter
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -24,7 +25,7 @@ enum class Angular2HighlightDescriptor(val attributesKey: TextAttributesKey, pri
   companion object {
     fun getFor(resolve: PsiElement, place: PsiElement): Angular2HighlightDescriptor? =
       when {
-        Angular2LangUtil.isAngular2Context(place) && (Angular2SignalUtils.isSignal(resolve, place)) ->
+        Angular2LangUtil.isAngular2Context(place) && withTypeEvaluationLocation(place) { Angular2SignalUtils.isSignal(resolve, place) } ->
           SIGNAL
         resolve is Angular2TemplateVariableImpl
         || resolve is Angular2HtmlAttrVariable

@@ -2,6 +2,7 @@
 package org.angular2.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils
@@ -30,14 +31,14 @@ class AngularAmbiguousComponentTagInspection : AngularHtmlLikeTemplateLocalInspe
       if (!components.isEmpty()) {
         holder.registerProblem(tag, startTag, Angular2Bundle.htmlMessage(
           "angular.inspection.ambiguous-component-tag.message.embedded",
-          renderEntityList(components)))
+          withTypeEvaluationLocation(tag) { renderEntityList(components) }))
       }
     }
     else {
       if (components.size > 1) {
         holder.registerProblem(tag, startTag, Angular2Bundle.htmlMessage(
           "angular.inspection.ambiguous-component-tag.message.many-components",
-          renderEntityList(components)))
+          withTypeEvaluationLocation(tag) { renderEntityList(components) }))
       }
     }
   }
@@ -52,7 +53,7 @@ class AngularAmbiguousComponentTagInspection : AngularHtmlLikeTemplateLocalInspe
       if (!components.isEmpty()) {
         holder.registerProblem(attribute, Angular2Bundle.htmlMessage(
           "angular.inspection.ambiguous-component-tag.message.embedded",
-          renderEntityList(components)))
+          withTypeEvaluationLocation(attribute) { renderEntityList(components) }))
       }
     }
   }

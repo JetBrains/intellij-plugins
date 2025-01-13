@@ -3,11 +3,11 @@ package org.jetbrains.vuejs.lang.html.psi.impl
 
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.TypeScriptMergedTypeImplicitElement
 import com.intellij.lang.javascript.psi.types.JSArrayTypeImpl
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
@@ -34,8 +34,10 @@ import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
 
 class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, VueRefAttribute {
 
-  constructor(stub: VueRefAttributeStubImpl,
-              nodeType: IStubElementType<out VueRefAttributeStubImpl, out VueRefAttributeImpl>) : super(stub, nodeType)
+  constructor(
+    stub: VueRefAttributeStubImpl,
+    nodeType: IStubElementType<out VueRefAttributeStubImpl, out VueRefAttributeImpl>,
+  ) : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)
 
@@ -71,7 +73,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
               .takeIf { it.isNotEmpty() }
               ?.map { it.thisType }
               ?.let { JSCompositeTypeFactory.createUnionType(source, it) }
-            ?: WebJSTypesUtil.getHtmlElementClassType(source, containingTagName))
+            ?: withTypeEvaluationLocation(this) { WebJSTypesUtil.getHtmlElementClassType(source, containingTagName) })
       .let { if (isList) JSArrayTypeImpl(it, it.source) else it }
   }
 

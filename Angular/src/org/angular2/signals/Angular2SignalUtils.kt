@@ -2,6 +2,7 @@
 package org.angular2.signals
 
 import com.intellij.javascript.web.js.WebJSResolveUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
@@ -47,6 +48,7 @@ object Angular2SignalUtils {
 
   fun isSignal(targetElement: PsiElement?, place: PsiElement?, writable: Boolean = false): Boolean {
     if (targetElement == null) return false
+    JSTypeEvaluationLocationProvider.assertLocationIsSet()
     val signalTypeAlias = if (writable) writableSignalInterface(targetElement) else signalTypeAlias(targetElement)
     if (signalTypeAlias == targetElement) return false
 
