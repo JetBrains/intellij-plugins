@@ -102,10 +102,14 @@ class Navigation: UITableViewController {
     prepareSample(sample)
 
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateTODOToolWindow")
-      text(SwiftLessonsBundle.message("swift.navigation.todo.activate", action("ActivateTODOToolWindow")))
+      text(SwiftLessonsBundle.message("swift.navigation.todo.activate",
+                                      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
+                                      action("ActivateTODOToolWindow")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.intellij.ide.todo.SetTodoFilterAction$1")
       text(SwiftLessonsBundle.message("swift.navigation.todo.custom", icon(AllIcons.General.Filter)))
     }
@@ -116,7 +120,9 @@ class Navigation: UITableViewController {
       text(SwiftLessonsBundle.message("swift.navigation.todo.bookmark", action("ToggleBookmark")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateBookmarksToolWindow")
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       text(SwiftLessonsBundle.message("swift.navigation.todo.all.bookmarks", action("ActivateBookmarksToolWindow")))
     }
     task {

@@ -47,6 +47,7 @@ class TestExample: UIViewController {
       text(SwiftLessonsBundle.message("swift.rdt.test.suite", action("RunClass")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.intellij.util.config.DumbAwareToggleInvertedBooleanProperty")
       text(SwiftLessonsBundle.message("swift.rdt.test.show", icon(AllIcons.RunConfigurations.ShowPassed)))
     }
@@ -82,6 +83,7 @@ class TestExample: UIViewController {
       text(SwiftLessonsBundle.message("swift.rdt.test.failing", action("RunClass")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.intellij.util.config.DumbAwareToggleInvertedBooleanProperty")
       text(SwiftLessonsBundle.message("swift.rdt.test.filter.failed", icon(AllIcons.RunConfigurations.ShowPassed)))
     }
@@ -91,15 +93,18 @@ class TestExample: UIViewController {
       text(SwiftLessonsBundle.message("swift.rdt.test.delete.failed", code("XCTAssert(false)"), action("EditorDeleteLine")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.jetbrains.cidr.execution.testing.unit.AppCodeOCUnitRerunFailedTestsAction")
       text(SwiftLessonsBundle.message("swift.rdt.test.rerun.failed", icon(AllIcons.RunConfigurations.RerunFailedTests)))
     }
     caret(5, 5)
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("RunClass", "com.intellij.execution.testframework.ToolbarPanel\$SortByDurationAction")
       text(SwiftLessonsBundle.message("swift.rdt.test.additional", icon(AllIcons.RunConfigurations.SortbyDuration), icon(AllIcons.ObjectBrowser.Sorted), action("RunClass")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.intellij.execution.testframework.sm.runner.history.actions.ImportTestsFromHistoryAction")
       text(SwiftLessonsBundle.message("swift.rdt.test.history", icon(AllIcons.Vcs.History)))
     }

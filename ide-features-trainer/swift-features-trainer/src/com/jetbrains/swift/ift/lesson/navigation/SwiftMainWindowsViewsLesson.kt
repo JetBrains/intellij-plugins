@@ -102,7 +102,9 @@ class Navigation: UITableViewController {
     prepareSample(sample)
     text(SwiftLessonsBundle.message("swift.navigation.windows.intro"))
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateProjectToolWindow")
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       text(SwiftLessonsBundle.message("swift.navigation.windows.project", action("ActivateProjectToolWindow")))
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.project2"))
@@ -113,6 +115,7 @@ class Navigation: UITableViewController {
     text(SwiftLessonsBundle.message("swift.navigation.windows.project.settings.more"))
     text(SwiftLessonsBundle.message("swift.navigation.windows.files", code(".xcworkspace"), code(".xcproject")))
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.intellij.ui.content.tabs.TabbedContentAction\$MyNextTabAction")
       text(SwiftLessonsBundle.message("swift.navigation.windows.files.activate", shortcut("⇧⌘]")))
     }
@@ -120,8 +123,11 @@ class Navigation: UITableViewController {
     text(SwiftLessonsBundle.message("swift.navigation.windows.return.to.editor", action("EditorEscape")))
     text(SwiftLessonsBundle.message("swift.navigation.windows.structure", code("//TODO"), code("//FIXME"), code("#pragma mark"), code("//MARK")))
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateStructureToolWindow")
-      text(SwiftLessonsBundle.message("swift.navigation.windows.structure.activate", action("ActivateStructureToolWindow")))
+      text(SwiftLessonsBundle.message("swift.navigation.windows.structure.activate",
+                                      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
+                                      action("ActivateStructureToolWindow")))
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.jump.to.source", action("EditSource")))
     task {
@@ -167,9 +173,11 @@ class Navigation: UITableViewController {
       text(SwiftLessonsBundle.message("swift.navigation.windows.breakpoints", action("ViewBreakpoints")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateVersionControlToolWindow")
       text(SwiftLessonsBundle.message("swift.navigation.windows.init.git", action("Vcs.QuickListPopupAction"),
-                                 action("ActivateVersionControlToolWindow")))
+                                      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
+                                      action("ActivateVersionControlToolWindow")))
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.vcs.window"))
   }

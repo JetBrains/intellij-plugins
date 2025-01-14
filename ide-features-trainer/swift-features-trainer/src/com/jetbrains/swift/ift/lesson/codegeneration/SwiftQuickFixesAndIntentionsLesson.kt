@@ -97,6 +97,7 @@ class QuickFixes: NSObject {
       text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.go.next.warning", action("GotoNextError")))
     }
     task {
+      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // no Action ID available
       triggers("com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer\$addActionsRow$1")
       text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.redundant", code("@objc")))
     }
