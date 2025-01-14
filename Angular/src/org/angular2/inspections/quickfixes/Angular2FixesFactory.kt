@@ -4,6 +4,7 @@ package org.angular2.inspections.quickfixes
 import com.intellij.codeInsight.hint.QuestionAction
 import com.intellij.codeInsight.navigation.getPsiElementPopup
 import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl
 import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -61,7 +62,7 @@ object Angular2FixesFactory {
   @JvmField
   val DECLARATION_TO_CHOOSE: Key<String> = Key.create<String>("declaration.to.choose")
 
-  fun getCreateInputTransformFixes(attribute: XmlAttribute, expressionType: String): List<LocalQuickFix> {
+  fun getCreateInputTransformFixes(attribute: XmlAttribute, expressionType: String): List<LocalQuickFixAndIntentionActionOnPsiElement> {
     val descriptor = attribute.descriptor.asSafely<Angular2AttributeDescriptor>() ?: return emptyList()
     val propertyName = descriptor.info
                          .takeIf {
@@ -74,7 +75,7 @@ object Angular2FixesFactory {
     if (input == null || input.transformParameterType != null)
       return emptyList()
 
-    val quickFixes = SmartList<LocalQuickFix>()
+    val quickFixes = SmartList<LocalQuickFixAndIntentionActionOnPsiElement>()
     when (JSCompositeTypeFactory.optimizeTypeIfComposite(input.type,
                                                          JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)) {
       is JSBooleanType -> quickFixes.add(AddInputTransformFunctionQuickFix(BooleanAttribute, propertyName, expressionType, input.owner))

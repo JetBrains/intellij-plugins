@@ -424,6 +424,7 @@
     <!-- Angular2 TypeScript contributions -->
     <frameworkSpecificHandler language="TypeScript" implementationClass="org.angular2.lang.Angular2TSFrameworkSpecificHandler"/>
     <languageServiceProvider implementation="org.angular2.lang.expr.service.Angular2LanguageServiceProvider" order="first"/>
+    <languageServiceQuickFixProvider implementation="org.angular2.lang.expr.service.Angular2LanguageServiceQuickFixProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
