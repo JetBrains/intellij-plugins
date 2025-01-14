@@ -37,6 +37,7 @@ jvm_library(
     "@community//plugins/kotlin/scripting",
     "@community//platform/util-class-loader:util-classLoader",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/backend/workspace",
   ],
   runtime_deps = [
     ":qodana-inspectionKts-kotlin_resources",

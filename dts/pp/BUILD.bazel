@@ -21,7 +21,10 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
   ],
-  runtime_deps = [":pp_resources"]
+  runtime_deps = [
+    ":pp_resources",
+    "@community//platform/backend",
+  ]
 )
 
 jvm_library(
