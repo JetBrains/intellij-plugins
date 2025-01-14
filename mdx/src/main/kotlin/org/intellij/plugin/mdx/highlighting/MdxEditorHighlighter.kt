@@ -12,7 +12,7 @@ import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 internal class MdxEditorHighlighter(colors: EditorColorsScheme)
   : LayeredLexerEditorHighlighter(MdxSyntaxHighlighter(), colors) {
   init {
-    val outerHighlighter = ECMA6SyntaxHighlighterFactory.ECMA6SyntaxHighlighter(JS_WITH_JSX, false)
+    val outerHighlighter = ECMA6SyntaxHighlighterFactory.ECMA6SyntaxHighlighter(JS_WITH_JSX)
     registerLayer(MarkdownElementType.platformType(MdxTokenTypes.JSX_BLOCK_CONTENT), LayerDescriptor(outerHighlighter, "\n;"))
     registerLayer(MarkdownTokenTypes.HTML_TAG, LayerDescriptor(outerHighlighter, ""))
   }

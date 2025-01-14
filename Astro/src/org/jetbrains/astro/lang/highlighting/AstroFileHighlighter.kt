@@ -32,7 +32,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
   companion object {
     private val keys: MutableMap<IElementType, Array<TextAttributesKey>> = HashMap()
     private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_1_5)
-    private val ourTsHighlighter = TypeScriptHighlighter(false)
+    private val ourTsHighlighter = TypeScriptHighlighter()
     private val ourTsKeyMap: MutableMap<Pair<TextAttributesKey, IElementType>, TextAttributesKey> = ConcurrentHashMap()
 
     private fun put(token: IElementType, vararg keysArr: TextAttributesKey) {

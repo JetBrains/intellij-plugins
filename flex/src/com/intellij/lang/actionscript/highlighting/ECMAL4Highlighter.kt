@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlTokenType
 /**
  * Allows to have separate highlighting settings for ECMAScript L4 (aka ActionScript).
  */
-class ECMAL4Highlighter : JSHighlighter(ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER, false) {
+class ECMAL4Highlighter : JSHighlighter(ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER) {
   override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     if (ourDocAttributeMap.containsKey(tokenType)) {
       return pack(

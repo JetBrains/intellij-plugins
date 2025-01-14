@@ -11,7 +11,7 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 
-class Angular2SyntaxHighlighter : TypeScriptHighlighter(Angular2Language.optionHolder, false) {
+class Angular2SyntaxHighlighter : TypeScriptHighlighter(Angular2Language.optionHolder) {
 
   override fun getHighlightingLexer(): Lexer =
     Angular2Lexer(Angular2Lexer.RegularBinding)
