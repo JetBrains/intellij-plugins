@@ -345,7 +345,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       }
 
       text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
-      VirtualFile ignoreVFile = PrettierConfiguration.getInstance(project).findIgnoreFile(currentVFile);
+      VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(project, currentVFile);
       if (ignoreVFile != null) {
         ignoreFilePath.set(ignoreVFile.getPath());
       }

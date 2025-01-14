@@ -7,14 +7,11 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
-import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import org.jetbrains.annotations.ApiStatus;
@@ -23,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static com.intellij.prettierjs.PrettierUtil.IGNORE_FILE_NAME;
 
 @Service(Service.Level.PROJECT)
 @State(name = "PrettierConfiguration", storages = @Storage("prettier.xml"))
@@ -142,29 +137,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return EMPTY_PACKAGE;
   }
 
-  public @Nullable VirtualFile findIgnoreFile(@NotNull VirtualFile source) {
-    if (isDisabled()) {
-      return null;
-    }
-
-    var ignorePath = getCustomIgnorePath();
-
-    if (isAutomatic() || ignorePath.isBlank()) {
-      return findAutoIgnoreFile(source);
-    }
-
-    return LocalFileSystem.getInstance().findFileByPath(ignorePath);
-  }
-
-  private @Nullable VirtualFile findAutoIgnoreFile(@NotNull VirtualFile source) {
-    var fileDir = source.getParent();
-    if (fileDir == null) {
-      return null;
-    }
-
-    return JSProjectUtil.findFileUpToContentRoot(myProject, fileDir, IGNORE_FILE_NAME);
-  }
-
   public boolean isRunOnSave() {
     return !isDisabled() && myState.runOnSave;
   }
@@ -209,7 +181,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return this.myState.configurationMode == defaultState.configurationMode;
   }
 
-  private boolean isAutomatic() {
+  public boolean isAutomatic() {
     return getConfigurationMode() == ConfigurationMode.AUTOMATIC;
   }
 

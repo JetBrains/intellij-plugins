@@ -14,7 +14,6 @@ import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
 import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
@@ -23,7 +22,6 @@ import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
-import com.intellij.lang.javascript.service.protocol.LocalFilePath;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -34,10 +32,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -282,23 +279,29 @@ public final class PrettierUtil {
     }
   }
 
-  public static @NotNull Pair<LocalFilePath, LocalFilePath> createPackagePath(@NotNull Project project,
-                                                                              @NotNull NodePackage prettierPackage) {
-    String packagePath;
-    String packageJsonPath;
-    if (prettierPackage instanceof YarnPnpNodePackage pnpPkg) {
-      packagePath = pnpPkg.getName();
-      packageJsonPath = pnpPkg.getPackageJsonPath(project);
-      if (packageJsonPath == null) {
-        throw new IllegalStateException("Cannot find package.json for " + pnpPkg);
-      }
-      packageJsonPath = FileUtil.toSystemDependentName(packageJsonPath);
+  public static @Nullable VirtualFile findIgnoreFile(@NotNull Project project, @NotNull VirtualFile source) {
+    var configuration = PrettierConfiguration.getInstance(project);
+
+    if (configuration.isDisabled()) {
+      return null;
     }
-    else {
-      packagePath = prettierPackage.getSystemDependentPath();
-      packageJsonPath = null;
+
+    var ignorePath = configuration.getCustomIgnorePath();
+
+    if (configuration.isAutomatic() || ignorePath.isBlank()) {
+      return findAutoIgnoreFile(project, source);
     }
-    return Pair.create(LocalFilePath.create(packagePath), LocalFilePath.create(packageJsonPath));
+
+    return LocalFileSystem.getInstance().findFileByPath(ignorePath);
+  }
+
+  private static @Nullable VirtualFile findAutoIgnoreFile(@NotNull Project project, @NotNull VirtualFile source) {
+    var fileDir = source.getParent();
+    if (fileDir == null) {
+      return null;
+    }
+
+    return JSProjectUtil.findFileUpToContentRoot(project, fileDir, IGNORE_FILE_NAME);
   }
 
   public interface ErrorHandler {
