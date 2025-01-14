@@ -14,11 +14,6 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.BulkFileListener
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.webcore.util.JsonUtil
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -28,27 +23,6 @@ class PrettierLanguageServiceImpl(
   project: Project,
   private val workDir: VirtualFile,
 ) : JSLanguageServiceBase(project), PrettierLanguageService {
-  @Volatile
-  private var flushConfigCache = false
-
-  init {
-    project.getMessageBus().connect(this).subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
-      override fun after(events: List<VFileEvent>) {
-        if (
-          events.any {
-            it !is VFileContentChangeEvent
-            || PrettierUtil.isConfigFileOrPackageJson(it.file)
-            || PrettierUtil.EDITOR_CONFIG_FILE_NAME == it.file.name
-          }
-        ) {
-          flushConfigCache = true
-          if (PrettierConfiguration.getInstance(project).codeStyleSettingsModifierEnabled && events.any { it.isFromSave }) {
-            CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
-          }
-        }
-      }
-    })
-  }
 
   override fun format(
     filePath: String,
@@ -66,9 +40,8 @@ class PrettierLanguageServiceImpl(
     // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
     // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
     val forceLineBreakAtEof = range != null && range.endOffset < text.length && text.endsWith("\n")
-    val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, flushConfigCache)
+    val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, false)
     return process.execute(command) { _, response: JSLanguageServiceAnswer ->
-      flushConfigCache = false
       parseReformatResponse(response, forceLineBreakAtEof)
     }
   }
@@ -84,9 +57,8 @@ class PrettierLanguageServiceImpl(
         PrettierLanguageService.ResolveConfigResult.error(PrettierBundle.message("service.not.started.message")))
     }
 
-    val command = ResolveConfigCommand(myProject, filePath, prettierPackage, flushConfigCache)
+    val command = ResolveConfigCommand(myProject, filePath, prettierPackage, false)
     return process.execute(command) { _, response: JSLanguageServiceAnswer ->
-      flushConfigCache = false
       parseResolveConfigResponse(response)
     }
   }

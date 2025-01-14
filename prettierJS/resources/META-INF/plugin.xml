@@ -36,7 +36,6 @@
       implementation="com.intellij.prettierjs.codeStyle.PrettierCodeStyleSettingsModifier"
       order="first, before org.editorconfig.EditorConfigCodeStyleSettingsModifier"/>
     <dependencySupport kind="javascript" coordinate="npm:prettier" displayName="Prettier"/>
-    <projectService serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceManager"/>
     <projectConfigurable
       parentId="Settings.JavaScript"
       id="settings.javascript.prettier"
