@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.cli
 
 import com.intellij.execution.filters.Filter
@@ -19,9 +19,7 @@ import org.jetbrains.vuejs.VuejsIcons
 import java.io.File
 import javax.swing.Icon
 
-
 class NuxtProjectGenerator : NpmPackageProjectGenerator() {
-
   private val NUXT_CLI_PACKAGE_NAME = "nuxi@latest"
   private val CREATE_COMMAND = "init"
 
@@ -40,7 +38,6 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
   override fun getIcon(): Icon {
     return VuejsIcons.Nuxt
   }
-
 
   override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {}
 
@@ -85,9 +82,11 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
   override fun generateInTemp(): Boolean = true
 
   // trigger npm install
-  override fun postInstall(project: Project,
-                           baseDir: VirtualFile,
-                           workingDir: File): Runnable {
+  override fun postInstall(
+    project: Project,
+    baseDir: VirtualFile,
+    workingDir: File,
+  ): Runnable {
     return Runnable {
       ApplicationManager.getApplication().executeOnPooledThread {
         val packageJson = baseDir.findChild(PackageJsonUtil.FILE_NAME)
