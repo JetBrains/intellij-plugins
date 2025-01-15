@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -50,7 +51,7 @@ public class PbUsageTypeProvider implements UsageTypeProvider {
   }
 
   @Override
-  public @Nullable UsageType getUsageType(PsiElement element) {
+  public @Nullable UsageType getUsageType(@NotNull PsiElement element) {
     PbTypeName typeParent = PsiTreeUtil.getParentOfType(element, PbTypeName.class);
     if (typeParent != null) {
       if (PsiTreeUtil.getParentOfType(typeParent, PbField.class) != null) {
