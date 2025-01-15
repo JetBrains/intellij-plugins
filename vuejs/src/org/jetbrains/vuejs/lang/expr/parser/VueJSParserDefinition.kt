@@ -21,7 +21,7 @@ private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INST
 class VueJSParserDefinition : JavascriptParserDefinition() {
   object Util {
     fun createLexer(project: Project?): Lexer {
-      val configured = JSRootConfiguration.getInstance(project).languageLevel.dialect.optionHolder
+      val configured = JSRootConfiguration.getInstance(project!!).languageLevel.dialect.optionHolder
       return JSFlexAdapter(if (configured.isECMA6) DialectOptionHolder.JS_WITHOUT_JSX else configured)
     }
   }
