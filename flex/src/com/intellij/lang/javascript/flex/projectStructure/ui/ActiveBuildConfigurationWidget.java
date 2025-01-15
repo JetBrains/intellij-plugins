@@ -49,21 +49,37 @@ public final class ActiveBuildConfigurationWidget {
 
   private @Nullable MyWidget myWidget;
 
+  private final ModuleType<?> myFlexModuleType = FlexModuleType.getInstance();
+  private int myFlexModulesCount = 0;
+
   public ActiveBuildConfigurationWidget(final Project project) {
     myProject = project;
 
     myProject.getMessageBus().connect(myProject).subscribe(ModuleListener.TOPIC, new ModuleListener() {
       @Override
       public void modulesAdded(@NotNull Project project, @NotNull List<? extends Module> modules) {
+        for (Module module : modules) {
+          if (isFlexModule(module)) {
+            myFlexModulesCount++;
+          }
+        }
         showOrHideWidget(false);
       }
 
       @Override
       public void moduleRemoved(final @NotNull Project project, final @NotNull Module module) {
+        if (isFlexModule(module)) {
+          myFlexModulesCount--;
+        }
         showOrHideWidget(false);
       }
     });
 
+    for (Module module : ModuleManager.getInstance(project).getModules()) {
+      if (isFlexModule(module)) {
+        myFlexModulesCount++;
+      }
+    }
     showOrHideWidget(false);
   }
 
@@ -93,12 +109,11 @@ public final class ActiveBuildConfigurationWidget {
   }
 
   private boolean shouldShowWidget() {
-    for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-      if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-        return true;
-      }
-    }
-    return false;
+    return myFlexModulesCount > 0;
+  }
+
+  private boolean isFlexModule(Module module) {
+    return ModuleType.get(module) == myFlexModuleType;
   }
 
   private static final class MyWidget extends EditorBasedWidget implements CustomStatusBarWidget, StatusBarWidget.Multiframe {
