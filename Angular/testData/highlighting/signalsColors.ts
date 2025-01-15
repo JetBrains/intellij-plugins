@@ -15,7 +15,7 @@ export interface <symbolName descr="interface">Movie</symbolName> {
 }
 
 <info descr="decorator">@</info><info descr="decorator">Component</info>({
-   <symbolName descr="instance field">selector</symbolName>: 'app-root',
+   <symbolName descr="instance field">selector</symbolName>: '<symbolName textAttributesKey="HTML_TAG_NAME">app-root</symbolName>',
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
     {{
         this.<symbolName descr="ng-signal">movieSig</symbolName>,

@@ -2,10 +2,10 @@
 import {<symbolName descr="identifiers//exported function">Component</symbolName>} <info descr="null">from</info> '@angular/core';
 
 <info descr="decorator">@</info><info descr="decorator">Component</info>({
-   <symbolName descr="instance field">selector</symbolName>: 'robot-profile',
+   <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="" textAttributesKey="HTML_TAG_NAME">robot-profile</symbolName>',
    <symbolName descr="instance field">standalone</symbolName>: true,
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
-      @for (<symbolName descr="ng-variable">foo</symbolName> <info descr="null">of</info> <symbolName descr="instance field">bar</symbolName>; track <symbolName descr="ng-variable">foo</symbolName>) {
+      @for (<symbolName descr="ng-variable">foo</symbolName> <info textAttributesKey="TS.KEYWORD">of</info> <symbolName descr="instance field">bar</symbolName>; track <symbolName descr="ng-variable">foo</symbolName>) {
       }
     </inject>`
  })

@@ -16,12 +16,8 @@ import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
 import junit.framework.TestCase
-import org.angular2.Angular2TemplateInspectionsProvider
-import org.angular2.Angular2TestCase
-import org.angular2.Angular2TestModule
+import org.angular2.*
 import org.angular2.Angular2TestModule.*
-import org.angular2.Angular2TsConfigFile
-import org.angular2.Angular2TsExpectedConfigFiles
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import java.io.File
 import java.io.IOException
@@ -135,19 +131,14 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testComplexFormControls() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
                                                     extension = "ts", strictTemplates = true)
 
-  fun testSignalsColors() {
-    doConfiguredTest(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
-                     extension = "ts", configureFileName = "$testName.${"ts"}",
-                     configurators = listOf(Angular2TsConfigFile(strictTemplates = false))) {
-      JSTestUtils.checkHighlightingWithSymbolNames(myFixture, true, true, true)
-    }
-  }
+  fun testSignalsColors() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
+                                              extension = "ts", strictTemplates = true, checkSymbolNames = true)
 
   fun testSignalsColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, dir = true,
-                                                  configureFileName = "signalsColors.html", checkInformation = true)
+                                                  configureFileName = "signalsColors.html", checkSymbolNames = true)
 
   fun testTemplateColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
-                                                   configureFileName = "colors.html", checkInformation = true)
+                                                   configureFileName = "colors.html", checkSymbolNames = true)
 
   // TODO WEB-67260 - fix issues with RainbowColors
   fun _testRainbowColorsHtml() = doConfiguredTest(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
@@ -185,7 +176,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
                                                  strictTemplates = true, extension = "ts")
 
   fun testForBlockSemanticOfHighlighting() = checkHighlighting(ANGULAR_CORE_17_3_0,
-                                                               strictTemplates = true, extension = "ts", checkInformation = true)
+                                                               strictTemplates = true, extension = "ts", checkSymbolNames = true)
 
   fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_3_0,
                                                 strictTemplates = true, extension = "ts")
@@ -194,7 +185,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
                                                      strictTemplates = true, extension = "ts")
 
   fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_3_0,
-                                                               strictTemplates = true, extension = "html", checkInformation = true)
+                                                               strictTemplates = true, extension = "html", checkSymbolNames = true)
 
   // TODO WEB-67260 - improve error highlighting
   fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_3_0, configureFileName = "test.html",
@@ -293,7 +284,16 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
   fun testHostBindingsSyntax() =
-    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkInformation = true)
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
+
+  fun testDirectiveSelectorsSyntax() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
+
+  fun testBindingsSyntax() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
+
+  fun testHostDirectivesSyntax() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
   override fun setUp() {
     super.setUp()
@@ -307,13 +307,16 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     strictTemplates: Boolean = false,
     extension: String = "html",
     configureFileName: String = "$testName.$extension",
-    checkInformation: Boolean = false,
+    checkSymbolNames: Boolean = false,
+    checkInformation: Boolean = checkSymbolNames,
   ) {
     doConfiguredTest(*modules, dir = dir, extension = extension, configureFileName = configureFileName,
                      configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates))
     ) {
       if (checkInjections)
         loadInjectionsAndCheckHighlighting(checkInformation)
+      else if (checkSymbolNames)
+        checkHighlightingWithSymbolNames(true, checkInformation, true)
       else
         checkHighlighting(true, checkInformation, true)
     }

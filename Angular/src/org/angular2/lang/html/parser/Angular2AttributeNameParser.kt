@@ -29,7 +29,7 @@ object Angular2AttributeNameParser {
   fun parseBound(name: String, tagName: String): AttributeInfo {
     val info = parse(name)
     return if (info.type != Angular2AttributeType.REGULAR) info
-    else PropertyBindingInfo(mapToHtmlProp(info.name, tagName), info.isCanonical,
+    else PropertyBindingInfo(mapToHtmlProp(info.name, tagName), 0, info.isCanonical,
                              false, PropertyBindingType.PROPERTY)
   }
 
@@ -45,46 +45,46 @@ object Angular2AttributeNameParser {
     val normalizedName = normalizeAttributeName(name)
     return when {
       normalizedName.startsWith("bindon-") -> {
-        parsePropertyBindingCanonical(normalizedName.substring(7), true, tagName)
+        parsePropertyBindingCanonical(normalizedName.substring(7), 7, true, tagName)
       }
       normalizedName.startsWith("[(") && normalizedName.endsWith(")]") -> {
-        parsePropertyBindingShort(normalizedName.substring(2, normalizedName.length - 2), true, tagName)
+        parsePropertyBindingShort(normalizedName.substring(2, normalizedName.length - 2), 2, true, tagName)
       }
       normalizedName.startsWith("bind-") -> {
-        parsePropertyBindingCanonical(normalizedName.substring(5), false, tagName)
+        parsePropertyBindingCanonical(normalizedName.substring(5), 5, false, tagName)
       }
       normalizedName.startsWith("[") && normalizedName.endsWith("]") -> {
-        parsePropertyBindingShort(normalizedName.substring(1, normalizedName.length - 1), false, tagName)
+        parsePropertyBindingShort(normalizedName.substring(1, normalizedName.length - 1), 1, false, tagName)
       }
       normalizedName.startsWith("on-") -> {
-        parseEvent(normalizedName.substring(3), true)
+        parseEvent(normalizedName.substring(3), 3, true)
       }
       normalizedName.startsWith("(") && normalizedName.endsWith(")") -> {
-        parseEvent(normalizedName.substring(1, normalizedName.length - 1), false)
+        parseEvent(normalizedName.substring(1, normalizedName.length - 1), 1, false)
       }
       normalizedName.startsWith("*") -> {
-        parseTemplateBindings(normalizedName.substring(1))
+        parseTemplateBindings(normalizedName.substring(1), 1)
       }
       normalizedName.startsWith("let-") -> {
-        parseLet(normalizedName, normalizedName.substring(4), isTemplateTag(tagName))
+        parseLet(normalizedName, normalizedName.substring(4), 4, isTemplateTag(tagName))
       }
       normalizedName.startsWith("#") -> {
-        parseReference(normalizedName, normalizedName.substring(1), false)
+        parseReference(normalizedName, normalizedName.substring(1), 1, false)
       }
       normalizedName.startsWith("ref-") -> {
-        parseReference(normalizedName, normalizedName.substring(4), true)
+        parseReference(normalizedName, normalizedName.substring(4), 4, true)
       }
       normalizedName.startsWith("@") -> {
-        PropertyBindingInfo(normalizedName.substring(1), false, false, PropertyBindingType.ANIMATION)
+        PropertyBindingInfo(normalizedName.substring(1), 1, false, false, PropertyBindingType.ANIMATION)
       }
       normalizedName == ATTR_SELECT && tagName == ELEMENT_NG_CONTENT -> {
-        AttributeInfo(normalizedName, false, Angular2AttributeType.NG_CONTENT_SELECTOR)
+        AttributeInfo(normalizedName, 0, false, Angular2AttributeType.NG_CONTENT_SELECTOR)
       }
       normalizedName.startsWith("i18n-") -> {
-        AttributeInfo(normalizedName.substring(5), false, Angular2AttributeType.I18N)
+        AttributeInfo(normalizedName.substring(5), 5, false, Angular2AttributeType.I18N)
       }
       else -> {
-        AttributeInfo(normalizedName, false, Angular2AttributeType.REGULAR)
+        AttributeInfo(normalizedName, 0, false, Angular2AttributeType.REGULAR)
       }
     }
   }
@@ -96,62 +96,65 @@ object Angular2AttributeNameParser {
     else name
   }
 
-  private fun parsePropertyBindingShort(name: String, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
+  private fun parsePropertyBindingShort(name: String, nameOffset: Int, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
     return when {
       !bananaBoxBinding && name.startsWith("@") -> {
-        PropertyBindingInfo(name.substring(1), false, false, PropertyBindingType.ANIMATION)
+        PropertyBindingInfo(name.substring(1), nameOffset + 1, false, false, PropertyBindingType.ANIMATION)
       }
-      else -> parsePropertyBindingRest(name, false, bananaBoxBinding, tagName)
+      else -> parsePropertyBindingRest(name, nameOffset, false, bananaBoxBinding, tagName)
     }
   }
 
-  private fun parsePropertyBindingCanonical(name: String, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
+  private fun parsePropertyBindingCanonical(name: String, nameOffset: Int, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
     return when {
       !bananaBoxBinding && name.startsWith("animate-") -> {
-        PropertyBindingInfo(name.substring(8), true, false, PropertyBindingType.ANIMATION)
+        PropertyBindingInfo(name.substring(8), nameOffset + 8, true, false, PropertyBindingType.ANIMATION)
       }
-      else -> parsePropertyBindingRest(name, true, bananaBoxBinding, tagName)
+      else -> parsePropertyBindingRest(name, nameOffset, true, bananaBoxBinding, tagName)
     }
   }
 
-  private fun parsePropertyBindingRest(name: String, isCanonical: Boolean, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
+  private fun parsePropertyBindingRest(name: String, nameOffset: Int, isCanonical: Boolean, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
     return when {
       name.startsWith("attr.") -> {
-        PropertyBindingInfo(name.substring(5), isCanonical, bananaBoxBinding, PropertyBindingType.ATTRIBUTE)
+        PropertyBindingInfo(name.substring(5), nameOffset + 5, isCanonical, bananaBoxBinding, PropertyBindingType.ATTRIBUTE)
       }
       name.startsWith("class.") -> {
-        PropertyBindingInfo(name.substring(6), isCanonical, bananaBoxBinding, PropertyBindingType.CLASS)
+        PropertyBindingInfo(name.substring(6), nameOffset + 6, isCanonical, bananaBoxBinding, PropertyBindingType.CLASS)
       }
       name.startsWith("style.") -> {
-        PropertyBindingInfo(name.substring(6), isCanonical, bananaBoxBinding, PropertyBindingType.STYLE)
+        PropertyBindingInfo(name.substring(6), nameOffset + 6, isCanonical, bananaBoxBinding, PropertyBindingType.STYLE)
       }
-      else -> PropertyBindingInfo(mapToHtmlProp(name, tagName), isCanonical, bananaBoxBinding, PropertyBindingType.PROPERTY)
+      else -> PropertyBindingInfo(mapToHtmlProp(name, tagName), nameOffset, isCanonical, bananaBoxBinding, PropertyBindingType.PROPERTY)
     }
   }
 
-  private fun parseEvent(name: String, isCanonical: Boolean): AttributeInfo {
+  private fun parseEvent(name: String, nameOffset: Int, isCanonical: Boolean): AttributeInfo {
+    val additionalOffset: Int
     val eventName = when {
       name.startsWith("@") -> {
+        additionalOffset = 1
         name.substring(1)
       }
       name.startsWith("animate-") -> {
+        additionalOffset = 8
         name.substring(8)
       }
       else -> {
-        return EventInfo(name, isCanonical)
+        return EventInfo(name, nameOffset, isCanonical)
       }
     }
-    return parseAnimationEvent(eventName, isCanonical)
+    return parseAnimationEvent(eventName, nameOffset + additionalOffset, isCanonical)
   }
 
-  private fun parseTemplateBindings(name: String): AttributeInfo {
-    return AttributeInfo(name, false, Angular2AttributeType.TEMPLATE_BINDINGS)
+  private fun parseTemplateBindings(name: String, nameOffset: Int): AttributeInfo {
+    return AttributeInfo(name, nameOffset, false, Angular2AttributeType.TEMPLATE_BINDINGS)
   }
 
-  private fun parseAnimationEvent(name: String, isCanonical: Boolean): AttributeInfo {
+  private fun parseAnimationEvent(name: String, nameOffset: Int, isCanonical: Boolean): AttributeInfo {
     val dot = name.indexOf('.')
     if (dot < 0) {
-      return EventInfo(name, isCanonical, AnimationPhase.INVALID,
+      return EventInfo(name, nameOffset, isCanonical, AnimationPhase.INVALID,
                        Angular2Bundle.message("angular.parse.template.animation-trigger-missing-phase-value",
                                               name))
     }
@@ -159,44 +162,44 @@ object Angular2AttributeNameParser {
     val eventName = name.substring(0, dot)
     return when (phase) {
       "done" -> {
-        EventInfo(eventName, isCanonical, AnimationPhase.DONE)
+        EventInfo(eventName, nameOffset, isCanonical, AnimationPhase.DONE)
       }
       "start" -> {
-        EventInfo(eventName, isCanonical, AnimationPhase.START)
+        EventInfo(eventName, nameOffset, isCanonical, AnimationPhase.START)
       }
-      else -> EventInfo(eventName, isCanonical, AnimationPhase.INVALID,
+      else -> EventInfo(eventName, nameOffset, isCanonical, AnimationPhase.INVALID,
                         Angular2Bundle.message("angular.parse.template.animation-trigger-wrong-output-phase",
                                                phase, eventName.substring(0, dot)))
     }
   }
 
-  private fun parseLet(attrName: String, varName: String, isInTemplateTag: Boolean): AttributeInfo {
+  private fun parseLet(attrName: String, varName: String, nameOffset: Int, isInTemplateTag: Boolean): AttributeInfo {
     return when {
       !isInTemplateTag -> {
-        AttributeInfo(attrName, false, Angular2AttributeType.REGULAR,
+        AttributeInfo(attrName, 0, false, Angular2AttributeType.REGULAR,
                       Angular2Bundle.message("angular.parse.template.let-only-on-ng-template"))
       }
       varName.contains("-") -> {
-        AttributeInfo(attrName, false, Angular2AttributeType.REGULAR,
+        AttributeInfo(attrName, 0, false, Angular2AttributeType.REGULAR,
                       Angular2Bundle.message("angular.parse.template.let-dash-not-allowed-in-name"))
       }
       varName.isEmpty() -> {
-        AttributeInfo(attrName, false, Angular2AttributeType.REGULAR)
+        AttributeInfo(attrName, 0, false, Angular2AttributeType.REGULAR)
       }
-      else -> AttributeInfo(varName, false, Angular2AttributeType.LET)
+      else -> AttributeInfo(varName, nameOffset, false, Angular2AttributeType.LET)
     }
   }
 
-  private fun parseReference(attrName: String, refName: String, isCanonical: Boolean): AttributeInfo {
+  private fun parseReference(attrName: String, refName: String, nameOffset: Int, isCanonical: Boolean): AttributeInfo {
     return when {
       refName.contains("-") -> {
-        AttributeInfo(attrName, false, Angular2AttributeType.REGULAR,
+        AttributeInfo(attrName, 0, false, Angular2AttributeType.REGULAR,
                       Angular2Bundle.message("angular.parse.template.ref-var-dash-not-allowed-in-name"))
       }
       refName.isEmpty() -> {
-        AttributeInfo(attrName, false, Angular2AttributeType.REGULAR)
+        AttributeInfo(attrName, 0, false, Angular2AttributeType.REGULAR)
       }
-      else -> AttributeInfo(refName, isCanonical, Angular2AttributeType.REFERENCE)
+      else -> AttributeInfo(refName, nameOffset, isCanonical, Angular2AttributeType.REFERENCE)
     }
   }
 
@@ -207,6 +210,7 @@ object Angular2AttributeNameParser {
       name
 
   open class AttributeInfo @JvmOverloads constructor(val name: String,
+                                                     val nameOffset: Int,
                                                      val isCanonical: Boolean,
                                                      val type: Angular2AttributeType,
                                                      val error: @Nls String? = null) {
@@ -221,13 +225,14 @@ object Angular2AttributeNameParser {
     }
   }
 
-  class PropertyBindingInfo constructor(
+  class PropertyBindingInfo(
     name: String,
+    nameOffset: Int,
     isCanonical: Boolean,
     bananaBoxBinding: Boolean,
     val bindingType: PropertyBindingType,
   )
-    : AttributeInfo(name, isCanonical,
+    : AttributeInfo(name, nameOffset, isCanonical,
                     if (bananaBoxBinding) Angular2AttributeType.BANANA_BOX_BINDING else Angular2AttributeType.PROPERTY_BINDING) {
 
     override fun isEquivalent(otherInfo: AttributeInfo?): Boolean {
@@ -252,14 +257,14 @@ object Angular2AttributeNameParser {
     val animationPhase: AnimationPhase?
     val eventType: Angular2HtmlEvent.EventType
 
-    constructor(name: String, isCanonical: Boolean) : super(name, isCanonical, Angular2AttributeType.EVENT) {
+    constructor(name: String, nameOffset: Int, isCanonical: Boolean) : super(name, nameOffset, isCanonical, Angular2AttributeType.EVENT) {
       eventType = Angular2HtmlEvent.EventType.REGULAR
       animationPhase = null
     }
 
     @JvmOverloads
-    constructor(name: String, isCanonical: Boolean, animationPhase: AnimationPhase, error: @Nls String? = null)
-      : super(name, isCanonical, Angular2AttributeType.EVENT, error) {
+    constructor(name: String, nameOffset: Int, isCanonical: Boolean, animationPhase: AnimationPhase, error: @Nls String? = null)
+      : super(name, nameOffset, isCanonical, Angular2AttributeType.EVENT, error) {
 
       this.animationPhase = animationPhase
       eventType = Angular2HtmlEvent.EventType.ANIMATION

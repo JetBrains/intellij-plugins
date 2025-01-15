@@ -1,27 +1,27 @@
-import {Component} <info textAttributesKey="TS.KEYWORD">from</info> '@angular/core';
+import {Component} from '@angular/core';
 
-<info textAttributesKey="TS.DECORATOR">@</info><info textAttributesKey="TS.DECORATOR">Component</info>({
+@Component({
    selector: 'oy-chip',
    template: ``,
-   styles: `<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">
-        .<info textAttributesKey="CSS.CLASS_NAME">oy-chip</info> {
-            &.<info textAttributesKey="CSS.CLASS_NAME">oy-chip--small</info> {
+   styles: `
+        .oy-chip {
+            &.oy-chip--small {
             }
-            &<warning descr="Selector oy-chip--unused is never used">.<info textAttributesKey="CSS.CLASS_NAME">oy-chip--unused</info></warning> {
+            &<warning descr="Selector oy-chip--unused is never used">.oy-chip--unused</warning> {
             }
         }
-        <warning descr="Selector oy-chip-unused is never used">.<info textAttributesKey="CSS.CLASS_NAME">oy-chip-unused</info></warning> {
-            
+        <warning descr="Selector oy-chip-unused is never used">.oy-chip-unused</warning> {
+
         }
-        :host(.<info textAttributesKey="CSS.CLASS_NAME">something</info>) {
-            color: <info textAttributesKey="INFORMATION_ATTRIBUTES">red</info>;
+        :host(.something) {
+            color: red;
         }
-        :host(<warning descr="Selector unused is never used">.<info textAttributesKey="CSS.CLASS_NAME">unused</info></warning>) {
-            color: <info textAttributesKey="INFORMATION_ATTRIBUTES">red</info>;
+        :host(<warning descr="Selector unused is never used">.unused</warning>) {
+            color: red;
         }
-    </inject>`,
+    `,
    host: {
-     '<info textAttributesKey="HTML_ATTRIBUTE_NAME">class</info>': '<info textAttributesKey="CSS.CLASS_NAME">oy-chip oy-chip--small something</info>',
+     'class': 'oy-chip oy-chip--small something',
    },
  })
 export class ChipComponent {

@@ -1,6 +1,6 @@
 <li <warning descr="Attribute attr is not allowed here">attr</warning>="value"
     *ngFor="let <symbolName descr="ng-variable">hero</symbolName> of <symbolName descr="instance field">heroes</symbolName> as <symbolName descr="ng-variable">test</symbolName>"
-    [class.selected]="<symbolName descr="ng-variable">hero</symbolName> === <symbolName descr="instance field">selectedHero</symbolName>"
+    [class.<symbolName descr="" textAttributesKey="CSS.CLASS_NAME">selected</symbolName>]="<symbolName descr="ng-variable">hero</symbolName> === <symbolName descr="instance field">selectedHero</symbolName>"
     (click)="<error descr="TS2339: Property 'onSelect' does not exist on type 'AppComponent'.">onSelect</error>(<symbolName descr="ng-variable">hero</symbolName>)">
   {{<symbolName descr="ng-variable">hero</symbolName>.<symbolName descr="instance field">name</symbolName>}}
   {{<symbolName descr="ng-variable">test</symbolName>}}
@@ -15,4 +15,4 @@
 
 <span *ngIf="true; else <symbolName descr="ng-variable">other</symbolName>">Test</span>
 
-<ng-template #<symbolName descr="ng-variable">other</symbolName>>Test 2</ng-template>
+<<symbolName descr="Custom tag name">ng-template</symbolName> #<symbolName descr="ng-variable">other</symbolName>>Test 2</<symbolName descr="Custom tag name">ng-template</symbolName>>

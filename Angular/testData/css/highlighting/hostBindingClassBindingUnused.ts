@@ -1,32 +1,32 @@
-import {Component, Input} <info textAttributesKey="TS.KEYWORD">from</info> '@angular/core';
+import {Component, Input} from '@angular/core';
 
-<info textAttributesKey="TS.DECORATOR">@</info><info textAttributesKey="TS.DECORATOR">Component</info>({
+@Component({
    selector: 'oy-chip',
    template: ``,
-   styles: `<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">
-        .<info textAttributesKey="CSS.CLASS_NAME">oy-chip</info> {
-            &.<info textAttributesKey="CSS.CLASS_NAME">oy-chip--small</info> {
+   styles: `
+        .oy-chip {
+            &.oy-chip--small {
             }
-            &<warning descr="Selector oy-chip--unused is never used">.<info textAttributesKey="CSS.CLASS_NAME">oy-chip--unused</info></warning> {
+            &<warning descr="Selector oy-chip--unused is never used">.oy-chip--unused</warning> {
             }
         }
-        <warning descr="Selector oy-chip-unused is never used">.<info textAttributesKey="CSS.CLASS_NAME">oy-chip-unused</info></warning> {
-            
+        <warning descr="Selector oy-chip-unused is never used">.oy-chip-unused</warning> {
+
         }
-        :host(.<info textAttributesKey="CSS.CLASS_NAME">something</info>) {
-            color: <info textAttributesKey="INFORMATION_ATTRIBUTES">red</info>;
+        :host(.something) {
+            color: red;
         }
-        :host(<warning descr="Selector unused is never used">.<info textAttributesKey="CSS.CLASS_NAME">unused</info></warning>) {
-            color: <info textAttributesKey="INFORMATION_ATTRIBUTES">red</info>;
+        :host(<warning descr="Selector unused is never used">.unused</warning>) {
+            color: red;
         }
-    </inject>`,
+    `,
    host: {
-     '<info textAttributesKey="NG.PROPERTY_BINDING_ATTR_NAME">[class.oy-chip--small]</info>': '<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">small</inject>',
-     '<info textAttributesKey="NG.PROPERTY_BINDING_ATTR_NAME">[class.oy-chip]</info>': '<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">small</inject>',
-     '<info textAttributesKey="NG.PROPERTY_BINDING_ATTR_NAME">[class.something]</info>': '<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">small</inject>'
+     '[class.oy-chip--small]': 'small',
+     '[class.oy-chip]': 'small',
+     '[class.something]': 'small'
    },
  })
 export class ChipComponent {
-  <info textAttributesKey="TS.DECORATOR">@</info><info textAttributesKey="TS.DECORATOR">Input</info>('small')
-  public small: <info textAttributesKey="TS.PRIMITIVE.TYPES">boolean</info> = false;
+  @Input('small')
+  public small: boolean = false;
 }

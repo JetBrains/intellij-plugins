@@ -208,6 +208,7 @@
                           implementationClass="org.angular2.codeInsight.imports.Angular2TypeScriptImportsOptimizer"
                           order="before TypeScript"/>
     <annotator language="TypeScript" implementationClass="org.angular2.editor.Angular2Annotator"/>
+    <annotator language="Angular2" implementationClass="org.angular2.editor.Angular2Annotator"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
@@ -342,6 +343,7 @@
     <braceMatcher filetype="Angular17Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
+    <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <lang.syntaxHighlighter language="Angular2"

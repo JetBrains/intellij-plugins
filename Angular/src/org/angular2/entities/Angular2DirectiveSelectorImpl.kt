@@ -50,7 +50,7 @@ class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
   override val text: String
     get() = myText ?: "<null>"
 
-  val psiParent: PsiElement
+  override val psiParent: PsiElement
     get() = if (myElement is Angular2MetadataDirectiveBase<*>) myLazyParent!!.value else myElement
 
   override val simpleSelectors: List<Angular2DirectiveSimpleSelector>

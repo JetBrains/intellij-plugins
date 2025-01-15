@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.css
 
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -31,8 +32,6 @@ class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting", false) {
     vararg modules: Angular2TestModule,
     extension: String = "css"
   ) {
-    doConfiguredTest(*modules, configureFileName = "$testName.$extension") {
-      checkHighlighting(true, true, true)
-    }
+    checkHighlighting(*modules, configureFileName = "$testName.$extension")
   }
 }
