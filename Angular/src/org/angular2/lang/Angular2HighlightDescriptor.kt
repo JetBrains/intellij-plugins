@@ -12,13 +12,14 @@ import org.angular2.lang.expr.psi.impl.Angular2TemplateVariableImpl
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.signals.Angular2SignalUtils
 
-enum class Angular2HighlightDescriptor(val attributesKey: TextAttributesKey, private val debugName: String) : JSHighlightDescriptor {
+enum class Angular2HighlightDescriptor(
+  val attributesKey: TextAttributesKey,
+  override val debugName: String,
+) : JSHighlightDescriptor {
 
   SIGNAL(Angular2HighlighterColors.NG_SIGNAL, "ng-signal"),
   VARIABLE(Angular2HighlighterColors.NG_VARIABLE, "ng-variable"),
   ;
-
-  override fun getDebugName(): String = debugName
 
   override fun getAttributesKey(highlighter: JSHighlighter): TextAttributesKey = attributesKey
 
