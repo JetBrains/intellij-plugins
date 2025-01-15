@@ -1,9 +1,9 @@
 package org.intellij.prisma.ide.documentation
 
 import com.intellij.openapi.util.NlsSafe
-import org.intellij.prisma.lang.psi.PrismaVirtualDocumentationComment
+import org.intellij.prisma.lang.psi.PrismaDocComment
 
-class PrismaDocumentationRenderer(private val element: PrismaVirtualDocumentationComment?) {
+class PrismaDocumentationRenderer(private val element: PrismaDocComment?) {
 
   @NlsSafe
   fun render(): String? {

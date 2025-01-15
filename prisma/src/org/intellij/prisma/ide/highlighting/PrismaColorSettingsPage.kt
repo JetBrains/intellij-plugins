@@ -31,12 +31,20 @@ class PrismaColorSettingsPage : ColorSettingsPage {
 
 private val DESCRIPTORS = arrayOf(
   AttributesDescriptor(
-    OptionsBundle.messagePointer("options.language.defaults.doc.comment"),
-    PrismaColors.DOC_COMMENT
+    PrismaBundle.messagePointer("prisma.color.settings.inline.doc.comment"),
+    PrismaColors.TRIPLE_COMMENT
   ),
   AttributesDescriptor(
     OptionsBundle.messagePointer("options.language.defaults.line.comment"),
-    PrismaColors.LINE_COMMENT
+    PrismaColors.DOUBLE_COMMENT
+  ),
+  AttributesDescriptor(
+    OptionsBundle.messagePointer("options.language.defaults.block.comment"),
+    PrismaColors.BLOCK_COMMENT
+  ),
+  AttributesDescriptor(
+    OptionsBundle.messagePointer("options.language.defaults.doc.comment"),
+    PrismaColors.DOC_COMMENT
   ),
   AttributesDescriptor(
     OptionsBundle.messagePointer("options.language.defaults.string"),
@@ -104,18 +112,20 @@ private val ADDITIONAL_DESCRIPTORS = mapOf(
 )
 
 private val DEMO_TEXT = """
-    /// Doc
-    /// Comment
+    /// Inline doc comment
     generator <tn>client</tn> {
       <fn>provider</fn> = "prisma-client-js"
     }
     
-    // Line comment
+    // Comment
     datasource <tn>db</tn> {
       <fn>provider</fn> = "sqlite" // property comment
       <fn>url</fn>      = "file:./dev.db"
     }
     
+    /**
+     * Multiline doc comment
+     */
     model <tn>User</tn> {
       <fn>id</fn>    <tr>Int</tr>     <attr>@id</attr> <attr>@default</attr>(<func>autoincrement</func>())
       <fn>email</fn> <tr>String</tr>  <attr>@unique</attr>
@@ -123,6 +133,7 @@ private val DEMO_TEXT = """
       <fn>posts</fn> <tr>Post</tr>[]
     }
     
+    /* Block comment */
     model <tn>Post</tn> {
       <fn>id</fn>        <tr>Int</tr>      <attr>@id</attr> <attr>@default</attr>(<func>autoincrement</func>())
       <fn>createdAt</fn> <tr>DateTime</tr> <attr>@default</attr>(<func>now</func>())

@@ -104,7 +104,7 @@ PRISMA_FILE
               PsiErrorElement:'!' or '(' expected, got 'sdd'
                 <empty list>
       PsiWhiteSpace(' ')
-      PsiComment(LINE_COMMENT)('// invalid')
+      PsiComment(DOUBLE_COMMENT)('// invalid')
       PsiWhiteSpace('\n  ')
       PrismaFieldDeclarationImpl(FIELD_DECLARATION)
         PsiElement(IDENTIFIER)('sdd')

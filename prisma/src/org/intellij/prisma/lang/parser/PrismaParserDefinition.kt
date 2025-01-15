@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import org.intellij.prisma.lang.lexer.PrismaLexer
 import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.impl.PrismaDocCommentImpl
 
 class PrismaParserDefinition : ParserDefinition {
   override fun createLexer(project: Project?): Lexer = PrismaLexer()
@@ -24,7 +25,11 @@ class PrismaParserDefinition : ParserDefinition {
 
   override fun getStringLiteralElements(): TokenSet = PRISMA_STRINGS
 
-  override fun createElement(node: ASTNode?): PsiElement = PrismaElementTypes.Factory.createElement(node)
+  override fun createElement(node: ASTNode): PsiElement {
+    val type = node.elementType
+    if (type == DOC_COMMENT) return PrismaDocCommentImpl(node)
+    return PrismaElementTypes.Factory.createElement(node)
+  }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile = PrismaFile(viewProvider)
 }

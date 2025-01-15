@@ -1,0 +1,12 @@
+/**
+ * A `User` model.
+ * Contains multiple fields.
+ * Defines a table structure in the database.
+ */
+model User {
+  /**
+   * An `ID` field
+   * for the `User` model.
+   */
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}

@@ -13,7 +13,6 @@ public interface PrismaLiteralExpression extends PrismaExpression {
   @Nullable
   PsiElement getStringLiteral();
 
-  @Nullable
-  Object getValue();
+  @Nullable Object getValue();
 
 }

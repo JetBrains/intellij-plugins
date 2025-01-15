@@ -7,11 +7,9 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocCommentBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
 import org.intellij.prisma.ide.schema.PrismaSchemaPath
 import org.intellij.prisma.lang.psi.*
-import org.intellij.prisma.lang.psi.isFieldExpression
 import java.util.function.Consumer
 
 class PrismaDocumentationProvider : AbstractDocumentationProvider() {
@@ -20,7 +18,7 @@ class PrismaDocumentationProvider : AbstractDocumentationProvider() {
   }
 
   override fun generateRenderedDoc(comment: PsiDocCommentBase): String? {
-    val docComment = comment as? PrismaVirtualDocumentationComment ?: return null
+    val docComment = comment as? PrismaDocComment ?: return null
     return PrismaDocumentationRenderer(docComment).render()
   }
 
@@ -28,7 +26,7 @@ class PrismaDocumentationProvider : AbstractDocumentationProvider() {
     editor: Editor,
     file: PsiFile,
     contextElement: PsiElement?,
-    targetOffset: Int
+    targetOffset: Int,
   ): PsiElement? {
     val path = contextElement?.let { PrismaSchemaPath.adjustPathElement(it) }
     if (acceptCustomElement(path)) {
@@ -62,38 +60,10 @@ class PrismaDocumentationProvider : AbstractDocumentationProvider() {
       .mapNotNull { it as? PsiComment }
       .toList()
 
-    return groupComments(comments).firstOrNull()
+    return groupDocComments(comments).firstOrNull()
   }
 
   override fun collectDocComments(file: PsiFile, sink: Consumer<in PsiDocCommentBase>) {
-    val comments = PsiTreeUtil
-      .findChildrenOfType(file, PsiComment::class.java)
-      .filter { it.isDocComment && !it.isTrailingComment }
-
-    groupComments(comments).forEach {
-      sink.accept(it)
-    }
-  }
-
-  private fun groupComments(comments: List<PsiComment>): List<PrismaVirtualDocumentationComment> {
-    if (comments.isEmpty()) {
-      return emptyList()
-    }
-
-    val docComments = mutableListOf<PrismaVirtualDocumentationComment>()
-    var i = comments.lastIndex
-    while (i >= 0) {
-      val comment = comments[i]
-      val block = comment.collectPrecedingDocComments(false)
-
-      if (block.isNotEmpty()) {
-        docComments.add(PrismaVirtualDocumentationComment(block))
-        i = comments.indexOf(block.first()) - 1
-      }
-      else {
-        i--
-      }
-    }
-    return docComments
+    buildDocComments(file).forEach { sink.accept(it) }
   }
 }

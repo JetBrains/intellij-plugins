@@ -103,8 +103,8 @@ class PrismaSpacingProcessor(private val block: AbstractBlock, context: PrismaFo
     node2: ASTNode?,
     type2: IElementType
   ): Spacing? {
-    val prevMeaningfulNode = FormatterUtil.getPrevious(node1, WHITE_SPACE, LINE_COMMENT, DOC_COMMENT)
-    val nextMeaningfulNode = FormatterUtil.getNext(node2, WHITE_SPACE, LINE_COMMENT, DOC_COMMENT)
+    val prevMeaningfulNode = FormatterUtil.getPrevious(node1, WHITE_SPACE, *PRISMA_COMMENTS.types)
+    val nextMeaningfulNode = FormatterUtil.getNext(node2, WHITE_SPACE, *PRISMA_COMMENTS.types)
     val prevMeaningfulType = prevMeaningfulNode?.elementType
     val nextMeaningfulType = nextMeaningfulNode?.elementType
 

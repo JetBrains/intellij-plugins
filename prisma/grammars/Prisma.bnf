@@ -46,8 +46,9 @@
     IDENTIFIER      = 'regexp:[a-zA-Z][a-zA-Z0-9\-_]*'
     WHITE_SPACE     = 'regexp:\s+'
 
-    DOC_COMMENT     = 'regexp:///.*'
-    LINE_COMMENT    = 'regexp://.*'
+    TRIPLE_COMMENT     = 'regexp:///.*'
+    DOUBLE_COMMENT     = 'regexp://.*'
+    BLOCK_COMMENT      = 'regexp:/\*([^*]|\*+[^*/])*(\*+/)?'
   ]
 
   extends('FunctionCall|ArrayExpression|LiteralExpression|PathExpression')=Expression

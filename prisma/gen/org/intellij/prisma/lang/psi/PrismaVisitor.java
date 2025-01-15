@@ -4,6 +4,16 @@ package org.intellij.prisma.lang.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.StubBasedPsiElement;
+import org.intellij.prisma.lang.psi.stubs.PrismaKeyValueStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaViewDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaEnumValueDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaFieldDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaGeneratorDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaDatasourceDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaTypeAliasStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaEnumDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaModelDeclarationStub;
+import org.intellij.prisma.lang.psi.stubs.PrismaTypeDeclarationStub;
 
 public class PrismaVisitor extends PsiElementVisitor {
 
