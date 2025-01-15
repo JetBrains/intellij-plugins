@@ -1,0 +1,9 @@
+/**
+ * A `User` model.
+ *
+ * Contains multiple fields.
+ * Defines a table structure in the database.
+ */
+model Us<caret>er {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}

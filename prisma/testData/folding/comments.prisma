@@ -1,0 +1,33 @@
+<fold text='///...'>/// A database.</fold>
+datasource db <fold text='{...}'>{
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}</fold>
+
+<fold text='///...'>/// Some
+/// Comment</fold>
+
+<fold text='///...'>/// A generator definition.
+///
+/// Defines a provider type.</fold>
+generator client <fold text='{...}'>{
+  provider = "prisma-client-js"
+}</fold>
+
+<fold text='/**...*/'>/**
+ * Dangling doc comment.
+ */</fold>
+
+<fold text='/**...*/'>/**
+ * A `User` model.
+ *
+ * Contains multiple fields.
+ * Defines a table structure in the database.
+ */</fold>
+model User <fold text='{...}'>{
+  <fold text='/**...*/'>/**
+   * An `ID` field
+   * for the `User` model.
+   */</fold>
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}</fold>

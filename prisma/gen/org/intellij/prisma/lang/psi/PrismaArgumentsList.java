@@ -10,7 +10,6 @@ public interface PrismaArgumentsList extends PrismaElement {
   @NotNull
   List<PrismaArgument> getArguments();
 
-  @Nullable
-  PrismaNamedArgument findArgumentByName(@NotNull String name);
+  @Nullable PrismaNamedArgument findArgumentByName(@NotNull String name);
 
 }

@@ -26,4 +26,6 @@ class PrismaParserTest : ParsingTestCase(
   fun testPathExpression() = doTest(true, true)
 
   fun testViewDeclaration() = doTest(true, true)
+
+  fun testComments() = doTest(true, true)
 }

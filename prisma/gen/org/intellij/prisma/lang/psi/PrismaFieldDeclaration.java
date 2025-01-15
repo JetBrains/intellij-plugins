@@ -18,7 +18,6 @@ public interface PrismaFieldDeclaration extends StubBasedPsiElement<PrismaFieldD
   @NotNull
   PsiElement getIdentifier();
 
-  @Nullable
-  String getNativeType();
+  @Nullable String getNativeType();
 
 }

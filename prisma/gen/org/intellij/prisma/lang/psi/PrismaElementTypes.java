@@ -45,11 +45,12 @@ public interface PrismaElementTypes {
 
   IElementType AT = new PrismaTokenType("@");
   IElementType ATAT = new PrismaTokenType("@@");
+  IElementType BLOCK_COMMENT = new PrismaTokenType("BLOCK_COMMENT");
   IElementType COLON = new PrismaTokenType(":");
   IElementType COMMA = new PrismaTokenType(",");
   IElementType DATASOURCE = new PrismaTokenType("datasource");
-  IElementType DOC_COMMENT = new PrismaTokenType("DOC_COMMENT");
   IElementType DOT = new PrismaTokenType(".");
+  IElementType DOUBLE_COMMENT = new PrismaTokenType("DOUBLE_COMMENT");
   IElementType ENUM = new PrismaTokenType("enum");
   IElementType EQ = new PrismaTokenType("=");
   IElementType EXCL = new PrismaTokenType("!");
@@ -57,7 +58,6 @@ public interface PrismaElementTypes {
   IElementType IDENTIFIER = new PrismaTokenType("IDENTIFIER");
   IElementType LBRACE = new PrismaTokenType("{");
   IElementType LBRACKET = new PrismaTokenType("[");
-  IElementType LINE_COMMENT = new PrismaTokenType("LINE_COMMENT");
   IElementType LPAREN = new PrismaTokenType("(");
   IElementType MODEL = new PrismaTokenType("model");
   IElementType NUMERIC_LITERAL = new PrismaTokenType("NUMERIC_LITERAL");
@@ -66,6 +66,7 @@ public interface PrismaElementTypes {
   IElementType RBRACKET = new PrismaTokenType("]");
   IElementType RPAREN = new PrismaTokenType(")");
   IElementType STRING_LITERAL = new PrismaTokenType("STRING_LITERAL");
+  IElementType TRIPLE_COMMENT = new PrismaTokenType("TRIPLE_COMMENT");
   IElementType TYPE = new PrismaTokenType("type");
   IElementType UNSUPPORTED = new PrismaTokenType("Unsupported");
   IElementType VIEW = new PrismaTokenType("view");

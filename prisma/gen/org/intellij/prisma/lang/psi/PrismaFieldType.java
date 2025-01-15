@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface PrismaFieldType extends PrismaTypeSignature {
 
-  @NotNull
-  PrismaTypeReference getTypeReference();
+  @NotNull PrismaTypeReference getTypeReference();
 
 }

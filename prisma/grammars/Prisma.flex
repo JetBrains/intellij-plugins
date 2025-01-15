@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import static com.intellij.psi.TokenType.*;
 
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
+import static org.intellij.prisma.lang.psi.PrismaDocTokenTypes.*;
 
 %%
 
@@ -40,8 +41,12 @@ IDENTIFIER       = {NAME_START} ({NAME_BODY})*
 STRING_LITERAL   = \"([^\\\"\r\n]|\\[^\r\n])*\"?
 NUMERIC_LITERAL  = "-"? {DIGIT}+ ("." {DIGIT}+)?
 
-DOC_COMMENT = "///" .*
-LINE_COMMENT = "//" .*
+TRIPLE_COMMENT   = "///" .*
+DOUBLE_COMMENT   = "//" .*
+
+BLOCK_COMMENT    = ("/*"{COMMENT_TAIL})|"/*"
+DOC_COMMENT      = "/*""*"+([^"/""*"]{COMMENT_TAIL})?
+COMMENT_TAIL     = ([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 
 %state DECL, BLOCK
 
@@ -56,29 +61,31 @@ LINE_COMMENT = "//" .*
     "datasource"       { yybegin(DECL); return DATASOURCE; }
 }
 
-"Unsupported"      { return UNSUPPORTED; }
+"Unsupported"          { return UNSUPPORTED; }
 
-"{"                { yybegin(BLOCK); return LBRACE; }
-"}"                { yybegin(YYINITIAL); return RBRACE; }
-"("                { return LPAREN; }
-")"                { return RPAREN; }
-"["                { return LBRACKET; }
-"]"                { return RBRACKET; }
-"="                { return EQ; }
-"."                { return DOT; }
-":"                { return COLON; }
-"?"                { return QUEST; }
-"!"                { return EXCL; }
-"@"                { return AT; }
-"@@"               { return ATAT; }
-","                { return COMMA; }
+"{"                    { yybegin(BLOCK); return LBRACE; }
+"}"                    { yybegin(YYINITIAL); return RBRACE; }
+"("                    { return LPAREN; }
+")"                    { return RPAREN; }
+"["                    { return LBRACKET; }
+"]"                    { return RBRACKET; }
+"="                    { return EQ; }
+"."                    { return DOT; }
+":"                    { return COLON; }
+"?"                    { return QUEST; }
+"!"                    { return EXCL; }
+"@"                    { return AT; }
+"@@"                   { return ATAT; }
+","                    { return COMMA; }
 
-{IDENTIFIER}       { return IDENTIFIER; }
-{NUMERIC_LITERAL}  { return NUMERIC_LITERAL; }
-{STRING_LITERAL}   { return STRING_LITERAL; }
-{WHITE_SPACE}      { handleNewLine(); return WHITE_SPACE; }
+{IDENTIFIER}           { return IDENTIFIER; }
+{NUMERIC_LITERAL}      { return NUMERIC_LITERAL; }
+{STRING_LITERAL}       { return STRING_LITERAL; }
+{WHITE_SPACE}          { handleNewLine(); return WHITE_SPACE; }
 
-{DOC_COMMENT}      { return DOC_COMMENT; }
-{LINE_COMMENT}     { return LINE_COMMENT; }
+{TRIPLE_COMMENT}       { return TRIPLE_COMMENT; }
+{DOUBLE_COMMENT}       { return DOUBLE_COMMENT; }
+{DOC_COMMENT}          { return DOC_COMMENT; }
+{BLOCK_COMMENT}        { return BLOCK_COMMENT; }
 
-[^]                { return BAD_CHARACTER; }
+[^]                    { return BAD_CHARACTER; }

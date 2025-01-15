@@ -71,6 +71,10 @@ class PrismaFormatterServiceTest : PrismaServiceTestBase() {
     doPrismaFmtFormatterTest()
   }
 
+  fun testDocComment() {
+    doFormatterTest()
+  }
+
   private fun doInternalFormatterTest() {
     doFormatterTest(true, false)
   }

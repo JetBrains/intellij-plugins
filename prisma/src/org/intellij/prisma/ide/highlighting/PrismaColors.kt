@@ -4,8 +4,10 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey
 
 object PrismaColors {
+  val TRIPLE_COMMENT = createTextAttributesKey("PRISMA_TRIPLE_COMMENT", DefaultLanguageHighlighterColors.DOC_COMMENT)
+  val DOUBLE_COMMENT = createTextAttributesKey("PRISMA_DOUBLE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+  val BLOCK_COMMENT = createTextAttributesKey("PRISMA_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT)
   val DOC_COMMENT = createTextAttributesKey("PRISMA_DOC_COMMENT", DefaultLanguageHighlighterColors.DOC_COMMENT)
-  val LINE_COMMENT = createTextAttributesKey("PRISMA_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
   val STRING_LITERAL = createTextAttributesKey("PRISMA_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
   val KEYWORD = createTextAttributesKey("PRISMA_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
   val IDENTIFIER = createTextAttributesKey("PRISMA_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)

@@ -1,0 +1,35 @@
+// A database.
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+/// A generator definition.
+///
+/// Defines a provider type.
+generator client {
+  provider = "prisma-client-js"
+}
+
+/**
+ * A `User` model.
+ *
+ * Contains multiple fields.
+ * Defines a table structure in the database.
+ */
+model User {
+  /**
+   * An `ID` field
+   * for the `User` model.
+   */
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+/*
+  A role enum
+*/
+enum Role {
+  ADMIN /**/
+  USER
+  GUEST /***/
+}

@@ -16,6 +16,10 @@ class PrismaIndentProcessor {
       return Indent.getNoneIndent()
     }
 
+    if (elementType == DOC_COMMENT_LEADING_ASTERISK || elementType == DOC_COMMENT_END) {
+      return Indent.getSpaceIndent(1, true)
+    }
+
     val parentType = parent.elementType
     if (parentType in PRISMA_BLOCKS) {
       if (elementType in PRISMA_BRACES) {
@@ -36,6 +40,10 @@ class PrismaIndentProcessor {
   }
 
   fun getChildIndent(node: ASTNode): Indent? {
+    if (node.elementType == DOC_COMMENT) {
+      return Indent.getSpaceIndent(1)
+    }
+
     return when (node.psi) {
       is PsiFile -> Indent.getNoneIndent()
       is PrismaFieldDeclarationBlock, is PrismaKeyValueBlock, is PrismaEnumDeclarationBlock -> Indent.getNormalIndent()
