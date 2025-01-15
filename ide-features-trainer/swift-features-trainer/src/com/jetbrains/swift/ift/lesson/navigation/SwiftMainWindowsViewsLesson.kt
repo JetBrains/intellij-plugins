@@ -154,6 +154,7 @@ class Navigation: UITableViewController {
       text(SwiftLessonsBundle.message("swift.navigation.windows.stop", action("Stop")))
     }
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "MasterViewController.swift")
       text(SwiftLessonsBundle.message("swift.navigation.windows.go.to.file", code("MasterViewController.swift"), action("GotoFile")))
     }

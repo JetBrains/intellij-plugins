@@ -38,6 +38,7 @@ class ExtractMethod: UIViewController {
 
     select(11, 9, 18, 43)
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("SwiftExtractFunction")
       text(SwiftLessonsBundle.message("swift.refactoring.extract.function.intro", code("setup"), action("ExtractMethod"),  LessonUtil.rawEnter()))
     }
@@ -50,6 +51,7 @@ class ExtractMethod: UIViewController {
     text(SwiftLessonsBundle.message("swift.refactoring.extract.function.change.params", icon(AllIcons.General.ArrowUp),
                                     icon(AllIcons.General.ArrowDown)))
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("SwiftExtractFunction")
       text(SwiftLessonsBundle.message("swift.refactoring.extract.function.exec.again", action("ExtractMethod")))
     }

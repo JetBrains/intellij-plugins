@@ -36,6 +36,7 @@ class Rename: UIViewController {
 
     text(SwiftLessonsBundle.message("swift.refactoring.rename.any"))
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "MasterViewController.swift")
       text(SwiftLessonsBundle.message("swift.refactoring.rename.go.to.file", code("MasterViewController.swift"), action("GotoFile")))
     }

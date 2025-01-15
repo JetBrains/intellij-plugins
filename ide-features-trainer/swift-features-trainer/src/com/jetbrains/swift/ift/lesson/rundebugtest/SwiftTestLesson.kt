@@ -36,6 +36,7 @@ class TestExample: UIViewController {
     prepareSample(sample)
 
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "LearnProjectTests.swift")
       text(SwiftLessonsBundle.message("swift.rdt.test.prepare", code("LearnProjectTests.swift"), action("GotoFile")))
     }
@@ -70,6 +71,7 @@ class TestExample: UIViewController {
       text(SwiftLessonsBundle.message("swift.rdt.test.stop.debug", action("Stop")))
     }
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "LearnProjectTests.swift")
       text(SwiftLessonsBundle.message("swift.rdt.test.go.back", code("LearnProjectTests.swift"), action("GotoFile")))
     }

@@ -39,6 +39,7 @@ class ExtractClosure: UIViewController {
 
     text(SwiftLessonsBundle.message("swift.refactoring.extract.closure.intro"))
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("Refactorings.QuickListPopupAction", "SwiftIntroduceClosureVariable")
       text(SwiftLessonsBundle.message("swift.refactoring.extract.closure.exec", action("Refactorings.QuickListPopupAction")))
     }

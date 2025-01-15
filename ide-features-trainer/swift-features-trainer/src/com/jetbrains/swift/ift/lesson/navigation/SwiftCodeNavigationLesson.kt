@@ -42,17 +42,20 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
 
     text(SwiftLessonsBundle.message("swift.navigation.code.intro"))
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoClass", "DetailViewController.swift")
       text(SwiftLessonsBundle.message("swift.navigation.code.class", code("DetailViewController"), action("GotoClass"), code("dvc"),
                                       LessonUtil.rawEnter()))
     }
     text(SwiftLessonsBundle.message("swift.navigation.code.fuzzy"))
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "AppDelegate.swift")
       text(SwiftLessonsBundle.message("swift.navigation.code.file", code("AppDelegate.swift"), action("GotoFile"), code("ad"),
                                       LessonUtil.rawEnter()))
     }
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoSymbol", "MasterViewController.swift")
       text(SwiftLessonsBundle.message("swift.navigation.code.symbol", code("detailViewController"), code("MasterViewController"),
                                       action("GotoSymbol"), code("dvc"), LessonUtil.rawEnter()))
@@ -60,6 +63,7 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
     text(SwiftLessonsBundle.message("swift.navigation.code.non.project.files"))
     caret(5, 20)
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoDeclaration", "DetailViewController.swift")
       text(SwiftLessonsBundle.message("swift.navigation.code.declaration", code("DetailViewController?"), action("GotoDeclaration")))
     }
@@ -69,6 +73,7 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
       text(SwiftLessonsBundle.message("swift.navigation.code.implementation", action("GotoDeclaration"), action("GotoImplementation"), code("UIViewController")))
     }
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "Navigation.swift")
       text(SwiftLessonsBundle.message("swift.navigation.code.go.back", code("Navigation.swift"), action("GotoFile")))
     }

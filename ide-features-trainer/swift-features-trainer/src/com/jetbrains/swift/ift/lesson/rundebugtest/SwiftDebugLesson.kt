@@ -36,6 +36,7 @@ class DebugExample: UIViewController {
 
     text(SwiftLessonsBundle.message("swift.rdt.debug.intro"))
     task {
+      @Suppress("InjectedReferences", "UnresolvedPluginConfigReference")
       triggers("GotoFile", "MasterViewController.swift")
       text(SwiftLessonsBundle.message("swift.rdt.debug.prepare", code("MasterViewController.swift"), action("GotoFile")))
     }
