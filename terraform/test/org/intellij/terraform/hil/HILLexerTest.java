@@ -3,7 +3,6 @@ package org.intellij.terraform.hil;
 
 import com.intellij.lexer.Lexer;
 import org.intellij.terraform.BaseLexerTestCase;
-import org.intellij.terraform.hil.psi.HILLexer;
 import org.jetbrains.annotations.NotNull;
 
 public class HILLexerTest extends BaseLexerTestCase {

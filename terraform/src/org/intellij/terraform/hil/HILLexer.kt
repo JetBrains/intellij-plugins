@@ -1,9 +1,9 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.hil.psi
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.intellij.terraform.hil
 
 import com.intellij.lexer.FlexAdapter
-import org.intellij.terraform.hil.psi._HILLexer.INTERPOLATION
-import org.intellij.terraform.hil.psi._HILLexer.STRING
+import org.intellij.terraform.hil._HILLexer.INTERPOLATION
+import org.intellij.terraform.hil._HILLexer.STRING
 
 class HILLexer : FlexAdapter(_HILLexer()) {
   companion object {

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hil.HILElementTypes
-import org.intellij.terraform.hil.psi.HILLexer
+import org.intellij.terraform.hil.HILLexer
 import org.intellij.terraform.hil.psi.ILProperty
 import org.intellij.terraform.hil.psi.ILVariable
 

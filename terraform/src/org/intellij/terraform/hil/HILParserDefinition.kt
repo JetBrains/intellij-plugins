@@ -4,29 +4,32 @@ package org.intellij.terraform.hil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ParserDefinition
+import com.intellij.lang.ParserDefinition.SpaceRequirements
+import com.intellij.lang.PsiParser
+import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
-import org.intellij.terraform.hil.psi.HILLexer
 import org.intellij.terraform.hil.psi.ILPsiFile
 import org.jetbrains.annotations.NotNull
 
 class HILParserDefinition : ParserDefinition {
+  private val FILE = IFileElementType(HILLanguage)
 
-  override fun createLexer(project: Project) = HILLexer()
+  override fun createLexer(project: Project): Lexer = HILLexer()
 
-  override fun createParser(project: Project) = HILParser()
+  override fun createParser(project: Project): PsiParser = HILParser()
 
-  override fun getFileNodeType() = FILE
+  override fun getFileNodeType(): IFileElementType = FILE
 
   override fun getCommentTokens(): TokenSet {
     return TokenSet.EMPTY
   }
 
-  override fun getStringLiteralElements() = HILTokenTypes.STRING_LITERALS
+  override fun getStringLiteralElements(): TokenSet = HILTokenTypes.STRING_LITERALS
 
   override fun createElement(node: ASTNode): PsiElement {
     val type = node.elementType
@@ -43,9 +46,5 @@ class HILParserDefinition : ParserDefinition {
     return ILPsiFile(viewProvider)
   }
 
-  override fun spaceExistenceTypeBetweenTokens(left: ASTNode?, right: ASTNode?) = ParserDefinition.SpaceRequirements.MAY
-
-  companion object {
-    val FILE: IFileElementType = IFileElementType(HILLanguage)
-  }
+  override fun spaceExistenceTypeBetweenTokens(left: ASTNode?, right: ASTNode?): SpaceRequirements = SpaceRequirements.MAY
 }

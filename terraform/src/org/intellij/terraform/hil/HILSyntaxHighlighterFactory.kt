@@ -17,7 +17,6 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import org.intellij.terraform.hcl.HCLSyntaxHighlighter
 import org.intellij.terraform.hil.HILElementTypes.*
-import org.intellij.terraform.hil.psi.HILLexer
 
 open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
