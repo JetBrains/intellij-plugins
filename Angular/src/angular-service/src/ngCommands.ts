@@ -23,12 +23,23 @@ export function registerProtocolHandlers(
         return customHandlers[command](ts, session, projectService, request)
       }
       catch (e) {
-        if ((e as Error).isOperationCancelledError) {
-          return {
-            responseRequired: true,
-            response: {
-              cancelled: true
-            }
+        let ideErrorKind = (e as Error).ideKind
+        if (ideErrorKind) {
+          switch (ideErrorKind) {
+            case "OperationCancelledException":
+              return {
+                responseRequired: true,
+                response: {
+                  cancelled: true
+                }
+              }
+            default:
+              return {
+                responseRequired: true,
+                response: {
+                  error: ideErrorKind
+                }
+              }
           }
         }
         else {
@@ -92,7 +103,7 @@ function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverl
 function ngGetGeneratedElementTypeHandler(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
                                           _session: ts.server.Session,
                                           projectService: ts.server.ProjectService,
-                                          request: ts.server.protocol.Request){
+                                          request: ts.server.protocol.Request) {
 
   const requestArguments = request.arguments as GetGeneratedElementTypeArguments
 
