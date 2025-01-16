@@ -1,10 +1,9 @@
 <idea-plugin package="com.intellij.tsr">
-    <id>com.intellij.tsr</id>
+  <id>org.strangeway.tsr</id>
+  <name>ToString Reader</name>
+  <vendor>JetBrains</vendor>
 
-    <name>ToString Reader</name>
-    <vendor>JetBrains</vendor>
-
-    <description><![CDATA[
+  <description><![CDATA[
     This plugin tries to simplify reading of toString() output for Java objects.
     <br/>
     There is no such language called ToString, so we tried to implement parser and highlighter of common patterns used for toString() in Java:
@@ -23,20 +22,20 @@
     Follow author in Twitter: <a href="https://twitter.com/Yuriy_Artamonov">&#64;Yuriy Artamonov</a>
     ]]></description>
 
-    <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.platform</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <fileType name="ToString" language="ToString" implementationClass="com.intellij.tsr.TslFileType"
-                  extensions="toString"/>
-        <lang.parserDefinition language="ToString" implementationClass="com.intellij.tsr.psi.TslParserDefinition"/>
-        <lang.braceMatcher language="ToString" implementationClass="com.intellij.tsr.TslPairedBraceMatcher"/>
-        <lang.quoteHandler language="ToString" implementationClass="com.intellij.tsr.TslQuoteHandler"/>
-        <lang.syntaxHighlighterFactory language="ToString" implementationClass="com.intellij.tsr.TslSyntaxHighlighterFactory"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="ToString" language="ToString" implementationClass="com.intellij.tsr.TslFileType"
+              extensions="toString"/>
+    <lang.parserDefinition language="ToString" implementationClass="com.intellij.tsr.psi.TslParserDefinition"/>
+    <lang.braceMatcher language="ToString" implementationClass="com.intellij.tsr.TslPairedBraceMatcher"/>
+    <lang.quoteHandler language="ToString" implementationClass="com.intellij.tsr.TslQuoteHandler"/>
+    <lang.syntaxHighlighterFactory language="ToString" implementationClass="com.intellij.tsr.TslSyntaxHighlighterFactory"/>
 
-        <annotator language="ToString" implementationClass="com.intellij.tsr.TslAnnotator"/>
+    <annotator language="ToString" implementationClass="com.intellij.tsr.TslAnnotator"/>
 
-        <colorSettingsPage implementation="com.intellij.tsr.TslColorSettingsPage"/>
-        <lang.foldingBuilder language="ToString" implementationClass="com.intellij.tsr.TslFoldingBuilder"/>
-        <lang.formatter language="ToString" implementationClass="com.intellij.tsr.TslFormattingModelBuilder"/>
-    </extensions>
+    <colorSettingsPage implementation="com.intellij.tsr.TslColorSettingsPage"/>
+    <lang.foldingBuilder language="ToString" implementationClass="com.intellij.tsr.TslFoldingBuilder"/>
+    <lang.formatter language="ToString" implementationClass="com.intellij.tsr.TslFormattingModelBuilder"/>
+  </extensions>
 </idea-plugin>
