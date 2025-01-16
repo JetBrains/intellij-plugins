@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 {
   elementTypeHolderClass = 'org.intellij.terraform.hil.HILElementTypes'
   tokenTypeClass = 'org.intellij.terraform.hil.HILTokenType'
@@ -34,6 +35,7 @@
     TILDA='~'
 
     OP_DOT='.'
+    COLON_COLON='::'
 
     // Operators
     OP_PLUS='+'
@@ -105,6 +107,7 @@ ILExpression ::=
   | ILBinaryMultiplyExpression
 
   | ILMethodCallExpression
+  | ILDefinedMethodExpression
   | ILUnaryExpression
   | ILSelectExpression
   | ILIndexSelectExpression
@@ -256,6 +259,8 @@ ILMethodCallExpression ::= ILExpression ILParameterList
   ]
   implements="org.intellij.terraform.hcl.psi.common.MethodCallExpression<org.intellij.terraform.hil.psi.ILExpression>"
 }
+
+ILDefinedMethodExpression ::= "provider" '::' identifier '::' ILMethodCallExpression
 
 ILLiteralExpression ::= literal /*| identifier*/ | number | 'true' | 'false' | 'null' {
   name="Literal"

@@ -85,6 +85,10 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     // visitConditionalExpression(o);
   }
 
+  public void visitILDefinedMethodExpression(@NotNull ILDefinedMethodExpression o) {
+    visitILExpression(o);
+  }
+
   public void visitILExpression(@NotNull ILExpression o) {
     visitBaseExpression(o);
   }

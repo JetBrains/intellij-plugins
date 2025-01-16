@@ -24,6 +24,7 @@ public interface HILElementTypes {
   IElementType IL_BINARY_RELATIONAL_EXPRESSION = new HILElementType("IL_BINARY_RELATIONAL_EXPRESSION");
   IElementType IL_COLLECTION_VALUE = new HILElementType("IL_COLLECTION_VALUE");
   IElementType IL_CONDITIONAL_EXPRESSION = new HILElementType("IL_CONDITIONAL_EXPRESSION");
+  IElementType IL_DEFINED_METHOD_EXPRESSION = new HILElementType("IL_DEFINED_METHOD_EXPRESSION");
   IElementType IL_EXPRESSION = new HILElementType("IL_EXPRESSION");
   IElementType IL_EXPRESSION_HOLDER = new HILElementType("IL_EXPRESSION_HOLDER");
   IElementType IL_INDEX_SELECT_EXPRESSION = new HILElementType("IL_INDEX_SELECT_EXPRESSION");
@@ -42,6 +43,7 @@ public interface HILElementTypes {
   IElementType IL_UNARY_EXPRESSION = new HILElementType("IL_UNARY_EXPRESSION");
   IElementType IL_VARIABLE = new HILElementType("IL_VARIABLE");
 
+  IElementType COLON_COLON = new HILTokenType("::");
   IElementType COMMA = new HILTokenType(",");
   IElementType DOLLAR = new HILTokenType("$");
   IElementType DOUBLE_QUOTED_STRING = new HILTokenType("DOUBLE_QUOTED_STRING");
@@ -135,6 +137,9 @@ public interface HILElementTypes {
       }
       else if (type == IL_CONDITIONAL_EXPRESSION) {
         return new ILConditionalExpressionImpl(node);
+      }
+      else if (type == IL_DEFINED_METHOD_EXPRESSION) {
+        return new ILDefinedMethodExpressionImpl(node);
       }
       else if (type == IL_EXPRESSION_HOLDER) {
         return new ILExpressionHolderImpl(node);
