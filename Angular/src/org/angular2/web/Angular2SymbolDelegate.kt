@@ -8,10 +8,14 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbolDelegate
 import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 
 abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : WebSymbolDelegate<T>(delegate), Angular2Symbol {
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
+
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = delegate.qualifiedKind
 
   override val namespace: SymbolNamespace
     get() = qualifiedKind.namespace

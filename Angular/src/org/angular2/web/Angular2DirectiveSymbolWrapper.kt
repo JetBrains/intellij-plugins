@@ -13,7 +13,6 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -53,11 +52,8 @@ open class Angular2DirectiveSymbolWrapper private constructor(
       super.attributeValue
     }
 
-  override fun createPointer(): Pointer<out Angular2SymbolDelegate<Angular2Symbol>> =
+  override fun createPointer(): Pointer<out Angular2DirectiveSymbolWrapper> =
     createPointer(::Angular2DirectiveSymbolWrapper)
-
-  override val qualifiedKind: WebSymbolQualifiedKind
-    get() = delegate.qualifiedKind
 
   override val properties: Map<String, Any>
     get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)
