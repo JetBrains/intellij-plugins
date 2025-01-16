@@ -67,7 +67,6 @@ class NavigationLesson
             focusOwner?.javaClass.toString().contains("structureView.newStructureView.StructureViewComponent")
           }
         }
-        @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
         task("ActivateStructureToolWindow") {
           text(JsLessonsBundle.message("js.editor.navigation.activate.structure", strong(UIBundle.message("tool.window.name.structure")), code("giveTreat"), action("EditorEnter"), action(it)))
           stateCheck {

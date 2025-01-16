@@ -102,9 +102,7 @@ class Navigation: UITableViewController {
     prepareSample(sample)
     text(SwiftLessonsBundle.message("swift.navigation.windows.intro"))
     task {
-      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateProjectToolWindow")
-      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       text(SwiftLessonsBundle.message("swift.navigation.windows.project", action("ActivateProjectToolWindow")))
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.project2"))
@@ -123,10 +121,8 @@ class Navigation: UITableViewController {
     text(SwiftLessonsBundle.message("swift.navigation.windows.return.to.editor", action("EditorEscape")))
     text(SwiftLessonsBundle.message("swift.navigation.windows.structure", code("//TODO"), code("//FIXME"), code("#pragma mark"), code("//MARK")))
     task {
-      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateStructureToolWindow")
       text(SwiftLessonsBundle.message("swift.navigation.windows.structure.activate",
-                                      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
                                       action("ActivateStructureToolWindow")))
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.jump.to.source", action("EditSource")))
@@ -174,10 +170,8 @@ class Navigation: UITableViewController {
       text(SwiftLessonsBundle.message("swift.navigation.windows.breakpoints", action("ViewBreakpoints")))
     }
     task {
-      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
       triggers("ActivateVersionControlToolWindow")
       text(SwiftLessonsBundle.message("swift.navigation.windows.init.git", action("Vcs.QuickListPopupAction"),
-                                      @Suppress("UnresolvedPluginConfigReference", "InjectedReferences") // todo IJPL-165055
                                       action("ActivateVersionControlToolWindow")))
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.vcs.window"))
