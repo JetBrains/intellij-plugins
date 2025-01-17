@@ -3,13 +3,20 @@ package com.intellij.javascript.karma.runConfiguration
 
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration
+import com.intellij.javascript.karma.execution.KarmaRunSettings
+import com.intellij.javascript.karma.runConfiguration.infrastructure.KarmaRunConfigurationRunner
 import com.intellij.javascript.karma.scope.KarmaScopeKind
 import com.intellij.javascript.testFramework.runConfigurations.JsTestsRunConfigurationProducerTest
+import com.intellij.javascript.testFramework.runConfigurations.queries.FileQuery
 
-class KarmaRunConfigurationProducerTest: JsTestsRunConfigurationProducerTest<KarmaRunConfigurationProducerTest.KarmaSettingsFixture>() {
+class KarmaRunConfigurationProducerTest:
+  JsTestsRunConfigurationProducerTest<KarmaRunConfigurationProducerTest.KarmaSettingsFixture, KarmaRunConfiguration, KarmaRunSettings.Builder>()
+{
   override fun getBasePath() = "/contrib/js-karma/testData/runConfiguration/configurationProducer"
 
   override fun getRunConfigurationClass(): Class<*>? = KarmaRunConfiguration::class.java
+
+  override fun createRunConfigurationRunner(): KarmaRunConfigurationRunner = KarmaRunConfigurationRunner()
 
   // Jasmine
   fun `test forFile`() {
