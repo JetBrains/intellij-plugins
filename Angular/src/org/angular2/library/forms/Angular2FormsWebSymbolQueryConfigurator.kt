@@ -23,7 +23,8 @@ import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
-import org.angular2.library.forms.scopes.Angular2FormGroupGetCallScope
+import org.angular2.library.forms.scopes.Angular2FormGroupGetCallArrayLiteralScope
+import org.angular2.library.forms.scopes.Angular2FormGroupGetCallLiteralScope
 import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
 
 class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -55,7 +56,9 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
       else if (file.language.let { it !is Angular2Language && it is JSLanguageDialect && it.optionHolder.isTypeScript }) {
         if (location is JSLiteralExpression && location.isQuotedLiteral || location is JSReferenceExpression && location.qualifier == null) {
           findFormGroupForGetCallParameter(location)
-            ?.let { return listOf(Angular2FormGroupGetCallScope(it)) }
+            ?.let { return listOf(Angular2FormGroupGetCallLiteralScope(it)) }
+          findFormGroupForGetCallParameterArray(location)
+            ?.let { return listOf(Angular2FormGroupGetCallArrayLiteralScope(it, location)) }
         }
       }
     }
@@ -108,6 +111,11 @@ fun findFormGroupForGetCallParameter(element: JSExpression): Angular2FormGroup? 
     ?.takeIf { it.referenceName == "get" }
     ?.qualifier?.asSafely<JSReferenceExpression>()
     ?.let { Angular2FormsComponent.getFor(it)?.getFormGroupFor(it) }
+
+fun findFormGroupForGetCallParameterArray(element: JSExpression): Angular2FormGroup? =
+  element
+    .parent.asSafely<JSArrayLiteralExpression>()
+    ?.let { findFormGroupForGetCallParameter(it) }
 
 val NG_FORM_GROUP_FIELDS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-form-group-fields")
 

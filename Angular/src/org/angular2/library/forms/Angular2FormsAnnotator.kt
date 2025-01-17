@@ -21,7 +21,8 @@ class Angular2FormsAnnotator : Annotator {
   }
 
   private fun annotateJSStringLiteral(expression: JSLiteralExpression, holder: AnnotationHolder) {
-    if (findFormGroupForGetCallParameter(expression) != null) {
+    if (findFormGroupForGetCallParameter(expression) != null
+        || findFormGroupForGetCallParameterArray(expression) != null) {
       var offset = expression.textRange.startOffset + 1
       var start = 0
       val text = expression.stringValue ?: return

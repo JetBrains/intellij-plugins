@@ -20,12 +20,13 @@ import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.qualifiedKind
+import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.Angular2Framework
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 
-class Angular2FormGroupGetCallScope(private val formGroup: Angular2FormGroup) : WebSymbolsScope {
+class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGroup) : WebSymbolsScope {
 
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
@@ -39,7 +40,7 @@ class Angular2FormGroupGetCallScope(private val formGroup: Angular2FormGroup) : 
   override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getCodeCompletions(qualifiedName, params, scope)
-        .filter { it.name != "." && (!it.name.endsWith(".") || it.symbol?.qualifiedKind == NG_FORM_GROUP_PROPS) }
+        .filter { it.name != "." && (!it.name.endsWith(".") || it.symbol?.unwrapMatchedSymbols()?.lastOrNull()?.qualifiedKind == NG_FORM_GROUP_PROPS) }
     else
       formGroup.getCodeCompletions(qualifiedName, params, scope)
 
@@ -53,12 +54,12 @@ class Angular2FormGroupGetCallScope(private val formGroup: Angular2FormGroup) : 
     val formGroupPtr = formGroup.createPointer()
     return Pointer {
       val formGroup = formGroupPtr.dereference() ?: return@Pointer null
-      Angular2FormGroupGetCallScope(formGroup)
+      Angular2FormGroupGetCallLiteralScope(formGroup)
     }
   }
 
   override fun equals(other: Any?): Boolean =
-    other === this || (other is Angular2FormGroupGetCallScope && other.formGroup == formGroup)
+    other === this || (other is Angular2FormGroupGetCallLiteralScope && other.formGroup == formGroup)
 
   override fun hashCode(): Int =
     formGroup.hashCode()
