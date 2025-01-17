@@ -29,20 +29,23 @@ class Angular2FormsAnnotator : Annotator {
       do {
         val dotIndex = text.indexOf('.', start)
         if (dotIndex >= 0) {
+          @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
           holder
-            .newSilentAnnotation(HighlightSeverity.INFORMATION)
+            .newAnnotation(HighlightSeverity.INFORMATION, "dot")
             .range(TextRange(offset + dotIndex, offset + dotIndex + 1))
             .textAttributes(TypeScriptHighlighter.TS_DOT)
             .create()
         }
         val end = if (dotIndex < 0) text.length else dotIndex
+        @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
         holder
-          .newSilentAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY)
+          .newAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, "form control")
           .range(TextRange(offset + start, offset + end))
           .textAttributes(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
           .create()
         start = end + 1
-      } while (start < text.length)
+      }
+      while (start < text.length)
     }
   }
 
@@ -53,7 +56,8 @@ class Angular2FormsAnnotator : Annotator {
         ?.valueTextRange
         ?.takeIf { it.length > 0 }
         ?.let {
-          holder.newSilentAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY)
+          @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
+          holder.newAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, "form control")
             .range(it)
             .textAttributes(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
             .create()

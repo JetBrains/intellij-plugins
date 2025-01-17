@@ -1,0 +1,1 @@
+bar (typeText=null; priority=10.0; typeGreyed)

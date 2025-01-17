@@ -1,0 +1,38 @@
+package org.angular2.library.forms
+
+import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
+
+class Angular2FormsCodeCompletionTest : Angular2TestCase("library/forms/completion") {
+
+  fun testNestedFormGroupControlAttribute() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "formGroupName=\"<caret>name\"",
+      "formControlName=\"<caret>email\"",
+      "formControlName=\"<caret>first\"",
+      "formGroupName=\"<caret>foo\"",
+      "formControlName=\"<caret>bar\"",
+      "formControlName=\"<caret>baz\"",
+    ))
+
+  fun testNestedFormGroupGetLiteral() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "get('<caret>name')",
+      "get('name.<caret>first')",
+      "get('name.first<caret>')",
+      "get('name.first<caret>.')",
+      "get('name.first.<caret>')",
+      "get('name.foo.<caret>bar')",
+      "get('email.<caret>')",
+      "get('foo.<caret>')",
+    ))
+
+  fun testNestedFormGroupGetArrayLiteral() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "get(['<caret>name', 'foo', 'bar'])",
+      "get(['name', '<caret>foo', 'bar'])",
+      "get(['name', 'foo', '<caret>bar'])",
+      "get(['email', '<caret>first'])",
+      "get(['foo', '<caret>first'])",
+    ))
+}

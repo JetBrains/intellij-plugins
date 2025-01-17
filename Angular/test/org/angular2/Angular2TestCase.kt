@@ -2,6 +2,7 @@
 package org.angular2
 
 import com.intellij.javascript.web.WebFrameworkTestCase
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
@@ -9,6 +10,11 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.SyntaxTraverser
+import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
 import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings
@@ -17,7 +23,7 @@ import kotlin.reflect.KClass
 
 abstract class Angular2TestCase(
   override val testCasePath: String,
-  private val useTsc: Boolean,
+  private val useTsc: Boolean = true,
 ) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
   private var expectedServerClass: KClass<out TypeScriptService> = Angular2TypeScriptService::class
@@ -62,5 +68,17 @@ abstract class Angular2TestCase(
     finally {
       expectedServerClass = Angular2TypeScriptService::class
     }
+  }
+
+  protected fun loadInjectionsAndCheckHighlighting(checkInformation: Boolean) {
+    val data = ExpectedHighlightingData(
+      myFixture.getEditor().getDocument(), true, true, checkInformation, true)
+    data.init()
+    runInEdtAndWait { PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments() }
+    val injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.getProject())
+    // We need to ensure that injections are cached before we check deprecated highlighting
+    SyntaxTraverser.psiTraverser(myFixture.getFile())
+      .forEach { if (it is PsiLanguageInjectionHost) injectedLanguageManager.getInjectedPsiFiles(it) }
+    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
   }
 }

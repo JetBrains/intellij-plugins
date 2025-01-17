@@ -28,6 +28,7 @@ import org.angular2.lang.expr.Angular2ParserSpecTest
 import org.angular2.lang.expr.Angular2ParserTest
 import org.angular2.lang.html.*
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
+import org.angular2.library.forms.Angular2FormsTestSuite
 import org.angular2.resharper.Angular2ReSharperTestSuite
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -99,6 +100,9 @@ import org.junit.runners.Suite
   Angular2ReSharperTestSuite::class,
   Angular2CssHighlightingTest::class,
   Angular2CssUsageHighlightingTest::class,
+
+  // Library suites follow
+  Angular2FormsTestSuite::class,
 
   // Deprecated tests follow
   Angular2AttributesTest::class,
