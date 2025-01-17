@@ -8,6 +8,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -351,7 +352,9 @@ internal object Angular2SourceUtil {
       actualDirectRefs = directRefs
     }
     for (ref in expressionToCheck.references) {
-      val el = ref.resolve()
+      val el = JSTypeEvaluationLocationProvider.withTypeEvaluationLocationForced(expressionToCheck) {
+        ref.resolve()
+      }
       if (actualDirectRefs) {
         if (el is PsiFile) {
           return el
