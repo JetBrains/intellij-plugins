@@ -27,7 +27,14 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
 
   companion object {
     private val providedSymbolKinds: Set<WebSymbolQualifiedKind> = setOf(NG_FORM_CONTROL_PROPS, NG_FORM_GROUP_PROPS)
+    private const val PROP_SOURCE_SYMBOL = "source-symbol"
   }
+
+  fun getNearestFormGroup(): Angular2FormGroup? =
+    getRootScope()
+      ?.let { findBestMatchingScope(it) }
+      ?.properties[PROP_SOURCE_SYMBOL]
+      ?.asSafely<Angular2FormGroup>()
 
   override val rootPsiElement: PsiFile
     get() = location.containingFile
@@ -97,7 +104,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
           ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
 
       if (symbol != null) {
-        holder.pushScope(tag, providedSymbolKinds)
+        holder.pushScope(tag, mapOf(PROP_SOURCE_SYMBOL to symbol), providedSymbolKinds)
         holder.addSymbols(symbol.members)
       }
       super.visitXmlTag(tag)

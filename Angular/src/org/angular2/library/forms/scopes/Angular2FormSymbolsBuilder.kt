@@ -29,9 +29,10 @@ class Angular2FormSymbolsBuilder(private val consumer: (WebSymbol) -> Unit) : JS
                       ?: return null
     return when (controlKind) {
       FORM_CONTROL_CONSTRUCTOR -> if (source is JSProperty) Angular2FormControlImpl(source) else null
-      FORM_GROUP_CONSTRUCTOR -> Angular2FormGroupImpl(
-        source, buildFormSymbolsFromObjectLiteral(expression.arguments.getOrNull(0)?.asSafely<JSObjectLiteralExpression>()
-      ))
+      FORM_GROUP_CONSTRUCTOR -> {
+        val initializer = expression.arguments.getOrNull(0)?.asSafely<JSObjectLiteralExpression>()
+        Angular2FormGroupImpl(source, initializer, buildFormSymbolsFromObjectLiteral(initializer))
+      }
       else -> null
     }
   }
