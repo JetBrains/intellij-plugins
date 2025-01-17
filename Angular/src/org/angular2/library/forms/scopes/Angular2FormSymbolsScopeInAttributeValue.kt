@@ -1,8 +1,7 @@
 package org.angular2.library.forms.scopes
 
+import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSThisExpression
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -16,7 +15,6 @@ import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.Angular2Framework
-import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
@@ -44,15 +42,13 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
 
   override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?
     get() = provider@{ file, holder ->
-      val formComponentScope = Angular2SourceUtil.findComponentClass(file)?.let { Angular2FormComponentScope(it) }
-                               ?: return@provider null
-
+      val formsComponent = Angular2FormsComponent.getFor(file)
+                           ?: return@provider null
       val queryExecutor = WebSymbolsQueryExecutorFactory.createCustom {
-        addRootScope(formComponentScope)
         setFramework(Angular2Framework.ID)
       }
       return@provider Angular2FormSymbolsScopesBuilder(
-        queryExecutor, holder
+        queryExecutor, formsComponent, holder
       )
     }
 
@@ -74,44 +70,50 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
 
   private class Angular2FormSymbolsScopesBuilder(
     private val queryExecutor: WebSymbolsQueryExecutor,
+    private val formsComponent: Angular2FormsComponent,
     private val holder: WebSymbolsPsiScopesHolder,
   ) : Angular2HtmlRecursiveElementVisitor() {
 
     override fun visitXmlTag(tag: XmlTag) {
-      val formGroupField = tag
-        .attributes
-        .find {
-          Angular2AttributeNameParser.parse(it.name, tag)
-            .asSafely<Angular2AttributeNameParser.PropertyBindingInfo>()
-            ?.takeIf { it.bindingType == PropertyBindingType.PROPERTY }
-            ?.name == FORM_GROUP_BINDING
+      val formGroupBinding = findFormGroupBinding(tag)
+      val formGroupName = findFormGroupNameFromAttribute(tag)
+      val symbol = formGroupBinding
+                     ?.asSafely<JSReferenceExpression>()
+                     ?.let { formsComponent.getFormGroupFor(it) }
+                   ?: formGroupName
+                     ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
+                     ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
+
+      if (formGroupBinding != null || formGroupName != null) {
+        holder.pushScope(tag, symbol?.let { mapOf(PROP_SOURCE_SYMBOL to it) } ?: emptyMap(), providedSymbolKinds)
+        symbol?.members?.let { holder.addSymbols(it) }
+        try {
+          super.visitXmlTag(tag)
         }
-        ?.let { Angular2Binding.get(it) }
-        ?.expression
-        ?.asSafely<JSReferenceExpression>()
-        ?.takeIf { it.qualifier == null || it.qualifier is JSThisExpression }
-        ?.resolve()
-        ?.asSafely<TypeScriptField>()
-      val symbol =
-        formGroupField?.name
-          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_FIELDS.withName(it)) }
-          ?.firstNotNullOfOrNull { (it as? Angular2FormGroup)?.takeIf { it.source == formGroupField } }
-
-        ?: tag.attributes
-          .find { it.name == FORM_GROUP_NAME_ATTRIBUTE }
-          ?.value
-          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
-          ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
-
-      if (symbol != null) {
-        holder.pushScope(tag, mapOf(PROP_SOURCE_SYMBOL to symbol), providedSymbolKinds)
-        holder.addSymbols(symbol.members)
+        finally {
+          holder.popScope()
+        }
       }
-      super.visitXmlTag(tag)
-      if (symbol != null) {
-        holder.popScope()
+      else {
+        super.visitXmlTag(tag)
       }
     }
+
+    private fun findFormGroupBinding(tag: XmlTag): JSExpression? = tag
+      .attributes
+      .find {
+        Angular2AttributeNameParser.parse(it.name, tag)
+          .asSafely<Angular2AttributeNameParser.PropertyBindingInfo>()
+          ?.takeIf { it.bindingType == PropertyBindingType.PROPERTY }
+          ?.name == FORM_GROUP_BINDING
+      }
+      ?.let { Angular2Binding.get(it) }
+      ?.expression
+
+    private fun findFormGroupNameFromAttribute(tag: XmlTag): String? =
+      tag.attributes
+        .find { it.name == FORM_GROUP_NAME_ATTRIBUTE }
+        ?.value
 
     override fun visitXmlAttribute(attribute: XmlAttribute) {
     }

@@ -21,6 +21,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
+import com.intellij.webSymbols.query.WebSymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
@@ -103,7 +104,11 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     /* Do not support reference resolution */
-    emptyList()
+    if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
+      // Provide an empty symbol match to avoid unresolved reference on the string literal
+      listOf(WebSymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, WebSymbolNameSegment.create(0,0)))
+    else
+      emptyList()
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,

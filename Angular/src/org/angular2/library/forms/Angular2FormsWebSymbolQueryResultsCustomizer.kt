@@ -31,10 +31,7 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
       matches
 
   override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? =
-    if (qualifiedKind == NG_FORM_CONTROL_PROPS || qualifiedKind == NG_FORM_GROUP_PROPS)
-      item.withIcon(AllIcons.Nodes.Property)
-    else
-      item
+    item
 
   override fun getModificationCount(): Long = 0
 

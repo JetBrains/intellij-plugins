@@ -27,7 +27,7 @@ export <info>abstract</info> class <symbolName descr="classes//exported class">A
    <symbolName descr="instance field">template</symbolName>: `<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">
         <div [class.<symbolName textAttributesKey="CSS.CLASS_NAME">oy-chip--small</symbolName>]="<symbolName descr="instance field">small</symbolName>"></div>
         <div [ngClass]="{'<symbolName textAttributesKey="CSS.CLASS_NAME">oy-chip--small</symbolName>' : <symbolName descr="instance field">small</symbolName>}"></div>
-        <div [ngClass]="['<symbolName textAttributesKey="CSS.CLASS_NAME">oy-chip--small</symbolName>', '<symbolName textAttributesKey="CSS.CLASS_NAME">small</symbolName>']"></div>
+        <div [ngClass]="['<symbolName textAttributesKey="CSS.CLASS_NAME">oy-chip--small</symbolName>', '<warning descr="Unrecognized name"><symbolName textAttributesKey="CSS.CLASS_NAME">small</symbolName></warning>']"></div>
     </inject>`,
    <symbolName descr="instance field">standalone</symbolName>: true,
    <symbolName descr="instance field">styles</symbolName>: `<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">
