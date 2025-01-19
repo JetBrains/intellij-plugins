@@ -192,6 +192,7 @@ jvm_library(
     "@lib//:kotlinx-serialization-json",
     "@community//plugins/IntelliLang:langInjection",
     "@community//platform/platform-impl/ui:ide-ui",
+    "@community//platform/statistics/testFramework",
   ],
   runtime_deps = [":qodana_resources"]
 )

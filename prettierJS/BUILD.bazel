@@ -77,6 +77,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
+    "@community//platform/statistics/testFramework",
   ],
   runtime_deps = [":prettierJS_resources"]
 )
