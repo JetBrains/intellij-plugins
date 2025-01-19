@@ -20,6 +20,18 @@ abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
 
   var text: String by textField::text
 
+  protected val textField = ExtendableTextField()
+  protected val customDelimitersField = JTextField(HbConfig.getCustomDelimiters())
+
+  textField.border = null
+  configureCustomDelimitersField()
+
+  private fun configureCustomDelimitersField() {
+    customDelimitersField.addActionListener {
+      HbConfig.setCustomDelimiters(customDelimitersField.text)
+    }
+  }
+
   protected fun configure() {
     val editor = object : BasicComboBoxEditor() {
       override fun createEditorComponent(): JTextField {
