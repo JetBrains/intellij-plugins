@@ -13,7 +13,7 @@ import com.intellij.webSymbols.references.WebSymbolReferenceProblem
 import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.library.forms.*
 import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
-import org.angular2.library.forms.scopes.resolveFormGroupSymbolForGetCallArrayLiteral
+import org.angular2.library.forms.scopes.resolveFormSymbolForGetCallArrayLiteral
 
 class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixProvider {
   override fun getQuickFixes(
@@ -41,7 +41,8 @@ class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixP
       val formGroup = if (errorPosition == 0)
         findFormGroupForGetCallParameter(element)
         ?: findFormGroupForGetCallParameterArray(element)
-          ?.let { resolveFormGroupSymbolForGetCallArrayLiteral(it, element) }
+          ?.let { resolveFormSymbolForGetCallArrayLiteral(it, element) }
+          ?.asSafely<Angular2FormGroup>()
       else {
         val prevSegment = symbol.nameSegments.find { errorPosition - 1 <= it.end }
         prevSegment?.symbols?.firstNotNullOfOrNull { it as? Angular2FormGroup }

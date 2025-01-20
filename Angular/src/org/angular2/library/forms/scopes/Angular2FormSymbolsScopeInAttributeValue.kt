@@ -86,7 +86,14 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
 
       if (formGroupBinding != null || formGroupName != null) {
         holder.pushScope(tag, symbol?.let { mapOf(PROP_SOURCE_SYMBOL to it) } ?: emptyMap(), providedSymbolKinds)
-        symbol?.members?.let { holder.addSymbols(it) }
+        if (symbol != null) {
+          holder.addSymbols(symbol.members)
+        }
+        else {
+          holder.addSymbol(Angular2UnknownFormGroup)
+          holder.addSymbol(Angular2UnknownFormControl)
+        }
+
         try {
           super.visitXmlTag(tag)
         }
@@ -121,6 +128,5 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     override fun visitXmlText(text: XmlText) {
     }
   }
-
 }
 

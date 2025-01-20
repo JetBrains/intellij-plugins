@@ -14,10 +14,11 @@ import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import org.angular2.library.forms.Angular2FormAbstractControl
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
-import java.util.Objects
+import java.util.*
 
 class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2FormGroup, private val location: JSExpression) : WebSymbolsScope {
 
@@ -28,21 +29,21 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
     if (qualifiedKind == JS_STRING_LITERALS)
       listOf(formGroupGetPathRefSymbol)
     else
-      findGroupFormSymbol()?.getSymbols(qualifiedKind, params, scope)
+      findFormSymbol()?.getSymbols(qualifiedKind, params, scope)
       ?: emptyList()
 
   override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getCodeCompletions(qualifiedName, params, scope)
     else
-      findGroupFormSymbol()?.getCodeCompletions(qualifiedName, params, scope)
+      findFormSymbol()?.getCodeCompletions(qualifiedName, params, scope)
       ?: emptyList()
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getMatchingSymbols(qualifiedName, params, scope)
     else
-      findGroupFormSymbol()?.getMatchingSymbols(qualifiedName, params, scope)
+      findFormSymbol()?.getMatchingSymbols(qualifiedName, params, scope)
       ?: emptyList()
 
   override fun createPointer(): Pointer<out WebSymbolsScope> {
@@ -55,8 +56,9 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
     }
   }
 
-  private fun findGroupFormSymbol(): Angular2FormGroup? =
-    resolveFormGroupSymbolForGetCallArrayLiteral(formGroup, location)
+  private fun findFormSymbol(): WebSymbol? =
+    resolveFormSymbolForGetCallArrayLiteral(formGroup, location)
+    ?: Angular2UnknownFormGroup
 
   override fun equals(other: Any?): Boolean =
     other === this || (other is Angular2FormGroupGetCallArrayLiteralScope && other.formGroup == formGroup && other.location == location)
@@ -75,11 +77,12 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
 
 }
 
-fun resolveFormGroupSymbolForGetCallArrayLiteral(root: Angular2FormGroup, literal: JSExpression): Angular2FormGroup? {
+fun resolveFormSymbolForGetCallArrayLiteral(root: Angular2FormGroup, literal: JSExpression): Angular2FormAbstractControl? {
   val path = buildPath(literal) ?: return null
-  var result = root
+  var result: Angular2FormAbstractControl = root
   for (name in path) {
-    result = result.members.find { it.name == name } as? Angular2FormGroup
+    if (result !is Angular2FormGroup) return null
+    result = result.members.find { it.name == name }
              ?: return null
   }
   return result

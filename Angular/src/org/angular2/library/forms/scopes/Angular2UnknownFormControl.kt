@@ -1,0 +1,38 @@
+package org.angular2.library.forms.scopes
+
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.NlsSafe
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import org.angular2.Angular2Framework
+import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+
+object Angular2UnknownFormControl : WebSymbol {
+
+  override val name: @NlsSafe String
+    get() = "Unknown form control"
+
+  override val pattern: WebSymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch(".*")
+
+  override val namespace: @NlsSafe SymbolNamespace
+    get() = WebSymbol.Companion.NAMESPACE_JS
+
+  override val kind: @NlsSafe SymbolKind
+    get() = NG_FORM_CONTROL_PROPS.kind
+
+  override val origin: WebSymbolOrigin =
+    WebSymbolOrigin.Companion.create(Angular2Framework.Companion.ID)
+
+  override val priority: WebSymbol.Priority?
+    get() = WebSymbol.Priority.LOWEST
+
+  override val properties: Map<String, Any> =
+    mapOf(WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION to true)
+
+  override fun createPointer(): Pointer<out WebSymbol> =
+    Pointer.hardPointer(this)
+}
