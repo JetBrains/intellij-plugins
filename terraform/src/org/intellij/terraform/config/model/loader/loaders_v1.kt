@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.Function
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader.Companion.LOG
 
 object BaseLoaderV1 : BaseLoader {
@@ -163,7 +162,7 @@ object BaseLoaderV1 : BaseLoader {
 }
 
 abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
-  override fun isSupportedType(type: String) = type == "provider"
+  override fun isSupportedType(type: String): Boolean = type == "provider"
 
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
@@ -227,7 +226,7 @@ abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadat
 }
 
 abstract class ProvisionerLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
-  override fun isSupportedType(type: String) = type == "provisioner"
+  override fun isSupportedType(type: String): Boolean = type == "provisioner"
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
     val provisioner_schema = json.obj("schemas") ?: json
@@ -248,7 +247,7 @@ abstract class ProvisionerLoader(protected val base: BaseLoader) : VersionedMeta
 }
 
 abstract class BackendLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
-  override fun isSupportedType(type: String) = type == "backend"
+  override fun isSupportedType(type: String): Boolean = type == "backend"
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val backend_schema = json.obj("schemas") ?: json
     val model = context.model
@@ -269,20 +268,20 @@ abstract class BackendLoader(protected val base: BaseLoader) : VersionedMetadata
 }
 
 class ProviderLoaderV1 : ProviderLoader(BaseLoaderV1) {
-  override fun isSupportedVersion(version: String) = version == base.version
+  override fun isSupportedVersion(version: String): Boolean = version == base.version
 }
 
 class ProvisionerLoaderV1 : ProvisionerLoader(BaseLoaderV1) {
-  override fun isSupportedVersion(version: String) = version == base.version
+  override fun isSupportedVersion(version: String): Boolean = version == base.version
 }
 
 class BackendLoaderV1 : BackendLoader(BaseLoaderV1) {
-  override fun isSupportedVersion(version: String) = version == base.version
+  override fun isSupportedVersion(version: String): Boolean = version == base.version
 }
 
 class FunctionsLoaderV1 : VersionedMetadataLoader {
-  override fun isSupportedType(type: String) = type == "functions"
-  override fun isSupportedVersion(version: String) = version == "1"
+  override fun isSupportedType(type: String): Boolean = type == "functions"
+  override fun isSupportedVersion(version: String): Boolean = version == "1"
 
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
@@ -307,7 +306,7 @@ class FunctionsLoaderV1 : VersionedMetadataLoader {
       if (variadic) {
         va = VariadicArgument(BaseLoaderV1.parseType(context, v.string("VariadicType")))
       }
-      model.functions.add(Function(k.pool(context), returnType, *args.toTypedArray(), variadic = va))
+      model.functions.add(TfFunction(k.pool(context), returnType, *args.toTypedArray(), variadic = va))
     }
   }
 

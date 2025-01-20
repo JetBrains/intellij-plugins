@@ -55,6 +55,7 @@ class TerraformMetadataLoader {
     model.provisioners.addAll(another.provisioners.filter { tmp.getProvisionerType(it.type) == null })
     model.backends.addAll(another.backends.filter { tmp.getBackendType(it.type) == null })
     model.functions.addAll(another.functions.filter { tmp.getFunction(it.name) == null })
+    model.providerDefinedFunctions.addAll(another.providerDefinedFunctions.filter { tmp.getFunction(it.name) == null })
   }
 
   fun buildModel(): TypeModel {
@@ -64,7 +65,8 @@ class TerraformMetadataLoader {
       model.providers,
       model.provisioners,
       model.backends,
-      model.functions
+      model.functions,
+      model.providerDefinedFunctions
     )
   }
 

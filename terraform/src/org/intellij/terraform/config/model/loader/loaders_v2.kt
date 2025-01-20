@@ -9,12 +9,11 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.TerraformParserDefinition
 import org.intellij.terraform.config.inspection.TypeSpecificationValidator
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.Function
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader.Companion.LOG
 import org.intellij.terraform.hcl.HCLParser
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
-import java.util.Locale
+import java.util.*
 
 object BaseLoaderV2 : BaseLoader {
   override val version: String
@@ -254,20 +253,20 @@ object BaseLoaderV2 : BaseLoader {
 }
 
 class ProviderLoaderV2 : ProviderLoader(BaseLoaderV2) {
-  override fun isSupportedVersion(version: String) = version == base.version
+  override fun isSupportedVersion(version: String): Boolean = version == base.version
 }
 
 class ProvisionerLoaderV2 : ProvisionerLoader(BaseLoaderV2) {
-  override fun isSupportedVersion(version: String) = version == base.version
+  override fun isSupportedVersion(version: String): Boolean = version == base.version
 }
 
 class BackendLoaderV2 : BackendLoader(BaseLoaderV2) {
-  override fun isSupportedVersion(version: String) = version == base.version
+  override fun isSupportedVersion(version: String): Boolean = version == base.version
 }
 
 class FunctionsLoaderV2 : VersionedMetadataLoader {
-  override fun isSupportedType(type: String) = type == "functions"
-  override fun isSupportedVersion(version: String) = version == "2"
+  override fun isSupportedType(type: String): Boolean = type == "functions"
+  override fun isSupportedVersion(version: String): Boolean = version == "2"
 
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val base = BaseLoaderV2
@@ -294,10 +293,10 @@ class FunctionsLoaderV2 : VersionedMetadataLoader {
         VariadicArgument(name = it.string("Name"), type = base.parseType(context, it.string("Type")))
       }
 
-      model.functions.add(Function(
+      model.functions.add(TfFunction(
         name = name.pool(context),
-        ret = returnType,
-        arguments = *args.toTypedArray(),
+        returnType = returnType,
+        arguments = args.toTypedArray(),
         variadic = va
       ))
     }

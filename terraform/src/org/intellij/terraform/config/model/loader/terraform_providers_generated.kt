@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.model.*
-import java.util.Locale
+import java.util.*
 
 object TFBaseLoader {
   /*
@@ -308,15 +308,21 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
       }
       provider as ObjectNode
       model.loaded[providerKey] = fileName
-      val info = provider.obj("provider")?.let { parseProviderInfo(context, coordinates.name, coordinates.namespace, it, json) } ?: ProviderType(coordinates.name, emptyList(), coordinates.namespace)
-      model.providers.add(info)
+      val providerInfo = provider.obj("provider")?.let { parseProviderInfo(context, coordinates.name, coordinates.namespace, it, json) } ?: ProviderType(coordinates.name, emptyList(), coordinates.namespace)
+      model.providers.add(providerInfo)
+
       val resources = provider.obj("resource_schemas")
       val dataSources = provider.obj("data_source_schemas")
       if (resources == null && dataSources == null) {
         TerraformMetadataLoader.LOG.warn("No resources nor data-sources defined for provider '$providerFullName' in file '$fileName'")
       }
-      resources?.let { it.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, info) } }
-      dataSources?.let { it.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, info) } }
+      resources?.let { it.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, providerInfo) } }
+      dataSources?.let { it.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, providerInfo) } }
+
+      val providerDefinedFunctions = provider.obj("functions")
+      providerDefinedFunctions?.let {
+        it.fields()?.asSequence()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
+      }
     }
   }
 
@@ -342,6 +348,26 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name)
                             ?: throw IllegalArgumentException("can't parse schema parseDataSourceInfo $name, entry = $entry")
     return DataSourceType(name, info, parsed.properties.values.toList(), parsed)
+  }
+
+  private fun parseProviderFunctionInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): TfFunction? {
+    val name = entry.key.pool(context)
+    val objectNode = entry.value as? ObjectNode ?: return null
+
+    val description = objectNode.string("description")
+    val returnType = objectNode.string("return_type").orEmpty()
+    val parameters = objectNode.array("parameters")
+      ?.mapNotNull { it as? ObjectNode }
+      ?.map { Argument(TypeImpl(it.string("type").orEmpty()), it.string("name")) }
+      ?.toTypedArray().orEmpty()
+
+    return TfFunction(
+      name,
+      TypeImpl(returnType),
+      arguments = parameters,
+      description = description,
+      providerType = info.type
+    )
   }
 }
 

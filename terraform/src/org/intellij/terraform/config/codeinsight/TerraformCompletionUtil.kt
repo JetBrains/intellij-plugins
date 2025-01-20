@@ -15,7 +15,6 @@ import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.Function
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.Icons
@@ -61,7 +60,7 @@ object TerraformCompletionUtil {
       }
     })
 
-  fun createFunction(function: Function): LookupElementBuilder = LookupElementBuilder.create(function.name)
+  fun createFunction(function: TfFunction): LookupElementBuilder = LookupElementBuilder.create(function.name)
     .withInsertHandler(FunctionInsertHandler)
     .withRenderer(
       object : LookupElementRenderer<LookupElement?>() {

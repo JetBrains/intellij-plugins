@@ -5,7 +5,7 @@ import com.intellij.lang.Language;
 import org.intellij.terraform.TerraformTestUtils;
 import org.intellij.terraform.config.CompletionTestCase;
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil;
-import org.intellij.terraform.config.model.Function;
+import org.intellij.terraform.config.model.TfFunction;
 import org.intellij.terraform.config.model.TypeModelProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,8 +43,8 @@ public class HILCompletionTest extends CompletionTestCase {
   @NotNull
   private static SortedSet<String> getGlobalAvailable() {
     final TreeSet<String> result = new TreeSet<>();
-    final Collection<Function> functions = TypeModelProvider.getGlobalModel().getFunctions();
-    for (Function function : functions) {
+    final Collection<TfFunction> functions = TypeModelProvider.getGlobalModel().getFunctions();
+    for (TfFunction function : functions) {
       result.add(function.getName());
     }
     result.addAll(TerraformCompletionUtil.INSTANCE.getGlobalScopes());

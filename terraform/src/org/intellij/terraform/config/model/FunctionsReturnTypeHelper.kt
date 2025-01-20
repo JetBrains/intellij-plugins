@@ -88,7 +88,7 @@ object FunctionsReturnTypeHelper {
         }
       }
       val function = TypeModelProvider.getModel(e).getFunction(method)
-      function?.ret
+      function?.returnType
     } else {
       null
     }
