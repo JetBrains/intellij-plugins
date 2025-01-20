@@ -4,6 +4,6 @@
   "main": "index.js",
   "private": true,
   "devDependencies": {
-    "prettier": "latest"
+    "prettier": "3.4.2"
   }
 }
