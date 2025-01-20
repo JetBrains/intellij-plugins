@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.findUsages
 
 import com.intellij.lang.ecmascript6.findUsages.JSFindReferencesResultProcessor
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -115,7 +114,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             optimizer.searchQuery(
               QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
                                  false, PairProcessor { reference, _ ->
-                if (reference is JSReferenceExpression && reference.parent.let { it is ES6Property && it.isShorthanded }) {
+                if (reference is JSReferenceExpression && reference.parent.let { it is JSProperty && it.isShorthanded }) {
                   val innerCollector = SearchRequestCollector(optimizer.searchSession)
                   optimizer.searchQuery(
                     QuerySearchRequest(ReferencesSearch.search(reference.parent, LocalSearchScope(reference.containingFile)),

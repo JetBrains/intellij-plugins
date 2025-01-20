@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
@@ -1707,7 +1706,7 @@ export default class UsageComponent extends Vue {
 """)
     val target = myFixture.resolveToWebSymbolSource("<<caret>LongComponent/>")
     TestCase.assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
-    assertInstanceOf(target, ES6Property::class.java)
+    assertInstanceOf(target, JSProperty::class.java)
     myFixture.checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
   }
 

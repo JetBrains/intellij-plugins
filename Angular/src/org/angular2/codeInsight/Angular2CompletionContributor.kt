@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.Language
-import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRIORITY
@@ -189,7 +188,7 @@ class Angular2CompletionContributor : CompletionContributor() {
       else if (
         ref is JSReferenceExpressionImpl
         && (ref.qualifier == null || ref.qualifier is JSThisExpression)
-        && ref.parent !is ES6Property
+        && ref.parent !is JSProperty
       ) {
         val contributedElements = HashSet<String>()
         val localNames = HashSet<String>()
