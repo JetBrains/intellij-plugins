@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -110,6 +111,7 @@
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]

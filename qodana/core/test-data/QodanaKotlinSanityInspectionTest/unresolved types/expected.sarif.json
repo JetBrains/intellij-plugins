@@ -68,6 +68,7 @@
             "properties": {
               "ideaSeverity": "ERROR",
               "qodanaSeverity": "Critical",
+              "problemType": "REGULAR",
               "tags": [
                 "kotlin"
               ]
@@ -124,6 +125,7 @@
             "properties": {
               "ideaSeverity": "ERROR",
               "qodanaSeverity": "Critical",
+              "problemType": "REGULAR",
               "tags": [
                 "kotlin"
               ]
@@ -180,6 +182,7 @@
             "properties": {
               "ideaSeverity": "ERROR",
               "qodanaSeverity": "Critical",
+              "problemType": "REGULAR",
               "tags": [
                 "kotlin"
               ]
@@ -236,6 +239,7 @@
             "properties": {
               "ideaSeverity": "ERROR",
               "qodanaSeverity": "Critical",
+              "problemType": "REGULAR",
               "tags": [
                 "kotlin"
               ]

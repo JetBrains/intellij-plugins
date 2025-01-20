@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
             "tags": [
               "kotlin",
               "UNRESOLVED_REFERENCE"
@@ -111,6 +112,7 @@
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
             "tags": [
               "kotlin",
               "UNRESOLVED_REFERENCE"
@@ -168,6 +170,7 @@
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
             "tags": [
               "kotlin",
               "UNRESOLVED_REFERENCE"

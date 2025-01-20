@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -110,6 +111,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -166,6 +168,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -222,6 +225,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -278,6 +282,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -334,6 +339,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -390,6 +396,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -446,6 +453,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -502,6 +510,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -558,6 +567,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -614,6 +624,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -670,6 +681,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -726,6 +738,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -782,6 +795,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]
@@ -838,6 +852,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "go"
             ]

@@ -9,9 +9,12 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.model.*
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
+import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.getArtifactLocation
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
@@ -54,7 +57,22 @@ abstract class GlobalFlowOutputConsumer: GlobalOutputConsumer {
   private class FlowProblem(val element: Element) : Problem {
     override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
       macroManager.collapsePathsRecursively(element)
-      return convertFlowFromXmlFormat(element, macroManager)
+      return convertFlowFromXmlFormat(element, macroManager).apply {
+        properties = (properties ?: PropertyBag()).apply {
+          when (ruleId) {
+            "PhpVulnerablePathsInspection", "JvmTaintAnalysis" -> {
+              if (!graphs.isNullOrEmpty()) {
+                this[PROBLEM_TYPE] = ProblemType.TAINT
+              } else {
+                throw QodanaException("Graphs are empty for taint inspection: $ruleId.")
+              }
+            }
+            else -> {
+              this[PROBLEM_TYPE] = ProblemType.REGULAR
+            }
+          }
+        }
+      }
     }
 
     override fun getFile(): String? = element.getChildText("file")

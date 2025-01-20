@@ -88,6 +88,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "DUPLICATES",
             "tags": [
               "ECMAScript 6"
             ]

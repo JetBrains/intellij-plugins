@@ -68,6 +68,7 @@
             "properties": {
               "ideaSeverity": "ERROR",
               "qodanaSeverity": "Critical",
+              "problemType": "REGULAR",
               "tags": [
                 "JAVA"
               ]

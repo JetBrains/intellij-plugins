@@ -12,6 +12,7 @@ import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter.toSarifLocation
+import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
 
@@ -39,6 +40,10 @@ internal class XmlProblem(private val element: Element,
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
         ?.map { it.toSarifLocation(macroManager, result) }
         ?.toSet()
+      if (result.properties?.containsKey(PROBLEM_TYPE) == false) {
+        props[PROBLEM_TYPE] = ProblemType.REGULAR
+        result.properties = props
+      }
     }
   }
 

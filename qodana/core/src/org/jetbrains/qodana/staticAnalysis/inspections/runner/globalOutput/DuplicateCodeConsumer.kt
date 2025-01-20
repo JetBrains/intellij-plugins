@@ -11,9 +11,11 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.Message
+import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer.Companion.consumeOutputXmlFile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
@@ -133,6 +135,11 @@ private class DuplicatesProblem(val element: Element): Problem {
     val sarif = mainResult ?: return null
     return sarif
       .withLocations(locs)
+      .apply {
+        properties = (properties ?: PropertyBag()).apply {
+          this[PROBLEM_TYPE] = ProblemType.DUPLICATES
+        }
+      }
       .withPartialFingerprints()
   }
 

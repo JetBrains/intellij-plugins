@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "TypeScript"
             ]
@@ -110,6 +111,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -166,6 +168,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -222,6 +225,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "TypeScript"
             ]
@@ -278,6 +282,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -334,6 +339,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "TypeScript"
             ]
@@ -390,6 +396,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -446,6 +453,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -502,6 +510,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -558,6 +567,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "ECMAScript 6"
             ]
@@ -614,6 +624,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "ECMAScript 6"
             ]
@@ -670,6 +681,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -726,6 +738,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -782,6 +795,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -838,6 +852,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JavaScript"
             ]
@@ -894,6 +909,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "ECMAScript 6"
             ]

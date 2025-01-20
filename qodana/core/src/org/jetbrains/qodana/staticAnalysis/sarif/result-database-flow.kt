@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 
@@ -55,6 +56,9 @@ private fun QodanaToolResultDatabase.updateRelatedLocations(result: Result) {
     relatedResults.flatMap { it.locations }
   }.toSet()
   result.relatedLocations = result.relatedLocations?.plus(locations) ?: locations
+  if (result.ruleId == "VulnerableLibrariesLocal" && result.relatedLocations?.isNotEmpty() == true) {
+    result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.VULNERABLE_API_WITH_RELATED_LOCATIONS
+  }
 }
 
 private fun processSameHash(resultJsons: List<String>, messageReporter: QodanaMessageReporter): Result? {

@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -110,6 +111,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -166,6 +168,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -222,6 +225,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -278,6 +282,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -334,6 +339,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -390,6 +396,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -446,6 +453,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -502,6 +510,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -558,6 +567,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -614,6 +624,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -670,6 +681,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -726,6 +738,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -782,6 +795,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -838,6 +852,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -894,6 +909,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]
@@ -950,6 +966,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "PHP"
             ]

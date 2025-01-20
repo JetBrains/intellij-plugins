@@ -512,6 +512,7 @@
             ],
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "TAINT",
             "sink": {
               "text": "$param",
               "fqn": "\\echo",
@@ -855,6 +856,7 @@
             ],
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "TAINT",
             "sink": {
               "text": "$param",
               "fqn": "\\echo",

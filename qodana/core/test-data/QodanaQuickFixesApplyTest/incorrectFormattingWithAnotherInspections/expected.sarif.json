@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -110,6 +111,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -166,6 +168,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -222,6 +225,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -278,6 +282,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -334,6 +339,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -390,6 +396,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -446,6 +453,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -502,6 +510,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -558,6 +567,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -614,6 +624,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -670,6 +681,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -726,6 +738,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -782,6 +795,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
@@ -838,6 +852,7 @@
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
+            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
