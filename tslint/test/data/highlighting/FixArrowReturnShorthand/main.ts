@@ -1,1 +1,1 @@
-var f = () => <error><caret>{</error> return {foo: 1};};
+var f = () => <error descr="TSLint: This arrow function body can be simplified by omitting the curly braces and the keyword 'return', and wrapping the object literal in parentheses. (arrow-return-shorthand)"><caret>{ return {foo: 1};}</error>;
