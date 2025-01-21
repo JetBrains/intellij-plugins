@@ -133,7 +133,7 @@ JSFile:test.object.action
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace(' ')
-        ES6Property
+        JSProperty
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('a')
         PsiWhiteSpace(' ')
@@ -145,7 +145,7 @@ JSFile:test.object.action
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace(' ')
-        ES6Property
+        JSProperty
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('break')
         PsiWhiteSpace(' ')

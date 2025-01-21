@@ -122,7 +122,7 @@ JSFile:test.js._.int
         PsiErrorElement:Expression expected
           <empty list>
       PsiWhiteSpace(' ')
-      ES6Property
+      JSProperty
         JSReferenceExpression
           PsiElement(JS:IN_KEYWORD)('in')
       PsiElement(JS:RBRACE)('}')

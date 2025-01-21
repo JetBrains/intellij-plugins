@@ -29,7 +29,7 @@ HtmlFile:test.{{.}}.#@injected@#.html
                   <empty list>
               JSObjectLiteralExpression
                 PsiElement(JS:LBRACE)('{')
-                ES6Property
+                JSProperty
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('bar')
                 PsiElement(JS:RBRACE)('}')

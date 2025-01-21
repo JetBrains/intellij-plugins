@@ -61,7 +61,7 @@ JSFile:test.nested.binding
               PsiElement(JS:RPAR)(')')
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          ES6Property
+          JSProperty
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('hello')
           PsiWhiteSpace(' ')
