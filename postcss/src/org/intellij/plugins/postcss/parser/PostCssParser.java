@@ -15,8 +15,6 @@ import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.psi.css.impl.parsing.BasicCssParser.SELECTORS_HIERARCHY_TOKENS;
-
 public final class PostCssParser extends CssParser2 {
   private boolean myRulesetSeen;
   private boolean myAmpersandAllowed;
