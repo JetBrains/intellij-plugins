@@ -46,6 +46,10 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
               Angular2FormSymbolsScopeInAttributeValue(attribute),
               SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL),
             )
+            FORM_ARRAY_NAME_ATTRIBUTE -> return listOf(
+              Angular2FormSymbolsScopeInAttributeValue(attribute),
+              SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL),
+            )
             FORM_GROUP_NAME_ATTRIBUTE -> return listOf(
               Angular2FormSymbolsScopeInAttributeValue(attribute),
               SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL),
@@ -68,6 +72,11 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
   private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingWebSymbol.create(
     WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form Control Name", WebSymbolOrigin.empty(),
     NG_FORM_CONTROL_PROPS,
+  )
+
+  private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingWebSymbol.create(
+    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form Array Name", WebSymbolOrigin.empty(),
+    NG_FORM_ARRAY_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingWebSymbol.create(
@@ -121,11 +130,22 @@ val NG_FORM_GROUP_FIELDS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESP
 
 val NG_FORM_CONTROL_PROPS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-form-control-props")
 val NG_FORM_GROUP_PROPS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-form-group-props")
+val NG_FORM_ARRAY_PROPS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-form-array-props")
+
+val NG_FORM_ANY_CONTROL_PROPS: Set<WebSymbolQualifiedKind> = setOf(
+  NG_FORM_CONTROL_PROPS,
+  NG_FORM_ARRAY_PROPS,
+  NG_FORM_GROUP_PROPS,
+)
 
 const val FORM_CONTROL_NAME_ATTRIBUTE: String = "formControlName"
 const val FORM_GROUP_NAME_ATTRIBUTE: String = "formGroupName"
+const val FORM_ARRAY_NAME_ATTRIBUTE: String = "formArrayName"
+
+val FORM_ANY_CONTROL_NAME_ATTRIBUTES: Set<String> = setOf(FORM_CONTROL_NAME_ATTRIBUTE, FORM_GROUP_NAME_ATTRIBUTE, FORM_ARRAY_NAME_ATTRIBUTE)
 
 const val FORM_GROUP_BINDING: String = "formGroup"
 
 const val FORM_CONTROL_CONSTRUCTOR: String = "FormControl"
 const val FORM_GROUP_CONSTRUCTOR: String = "FormGroup"
+const val FORM_ARRAY_CONSTRUCTOR: String = "FormArray"

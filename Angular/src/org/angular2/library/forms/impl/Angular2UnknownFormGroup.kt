@@ -1,4 +1,4 @@
-package org.angular2.library.forms.scopes
+package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
@@ -9,6 +9,8 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import org.angular2.Angular2Framework
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
+import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 
 object Angular2UnknownFormGroup : WebSymbol {
@@ -21,18 +23,20 @@ object Angular2UnknownFormGroup : WebSymbol {
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     when (qualifiedKind) {
       NG_FORM_CONTROL_PROPS -> listOf(Angular2UnknownFormControl)
+      NG_FORM_GROUP_FIELDS -> listOf(Angular2UnknownFormArray)
       NG_FORM_GROUP_PROPS -> listOf(this)
       else -> emptyList()
     }
 
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind == NG_FORM_GROUP_PROPS || qualifiedKind == NG_FORM_CONTROL_PROPS
+    qualifiedKind in NG_FORM_ANY_CONTROL_PROPS
 
   override val priority: WebSymbol.Priority?
     get() = WebSymbol.Priority.LOWEST
 
   override val properties: Map<String, Any> =
-    mapOf(WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION to true)
+    mapOf(WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION to true,
+          WebSymbol.Companion.PROP_DOC_HIDE_PATTERN to true)
 
   override val namespace: @NlsSafe SymbolNamespace
     get() = WebSymbol.Companion.NAMESPACE_JS

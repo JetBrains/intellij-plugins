@@ -16,8 +16,8 @@ import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
 import org.angular2.library.forms.Angular2FormAbstractControl
 import org.angular2.library.forms.Angular2FormGroup
-import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
-import org.angular2.library.forms.NG_FORM_GROUP_PROPS
+import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
+import org.angular2.library.forms.impl.Angular2UnknownFormGroup
 import java.util.*
 
 class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2FormGroup, private val location: JSExpression) : WebSymbolsScope {
@@ -71,7 +71,8 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
 
   companion object {
     private val formGroupGetPathRefSymbol = ReferencingWebSymbol.create(
-      JS_STRING_LITERALS, "FormGroup.get() controls", WebSymbolOrigin.empty(), NG_FORM_GROUP_PROPS, NG_FORM_CONTROL_PROPS
+      JS_STRING_LITERALS, "FormGroup.get() controls", WebSymbolOrigin.empty(),
+      *NG_FORM_ANY_CONTROL_PROPS.toTypedArray()
     )
   }
 

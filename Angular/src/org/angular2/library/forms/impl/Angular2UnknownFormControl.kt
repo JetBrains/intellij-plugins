@@ -1,4 +1,4 @@
-package org.angular2.library.forms.scopes
+package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
@@ -31,7 +31,8 @@ object Angular2UnknownFormControl : WebSymbol {
     get() = WebSymbol.Priority.LOWEST
 
   override val properties: Map<String, Any> =
-    mapOf(WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION to true)
+    mapOf(WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION to true,
+          WebSymbol.Companion.PROP_DOC_HIDE_PATTERN to true)
 
   override fun createPointer(): Pointer<out WebSymbol> =
     Pointer.hardPointer(this)

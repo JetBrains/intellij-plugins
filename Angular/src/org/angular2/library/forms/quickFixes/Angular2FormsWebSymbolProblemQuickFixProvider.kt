@@ -11,7 +11,10 @@ import com.intellij.webSymbols.WebSymbolNameSegment
 import com.intellij.webSymbols.inspections.WebSymbolsProblemQuickFixProvider
 import com.intellij.webSymbols.references.WebSymbolReferenceProblem
 import com.intellij.webSymbols.utils.nameSegments
-import org.angular2.library.forms.*
+import org.angular2.library.forms.Angular2FormGroup
+import org.angular2.library.forms.FORM_ANY_CONTROL_NAME_ATTRIBUTES
+import org.angular2.library.forms.findFormGroupForGetCallParameter
+import org.angular2.library.forms.findFormGroupForGetCallParameterArray
 import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
 import org.angular2.library.forms.scopes.resolveFormSymbolForGetCallArrayLiteral
 
@@ -27,7 +30,7 @@ class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixP
       return emptyList()
 
     if (element is XmlAttributeValue
-        && element.parent.asSafely<XmlAttribute>()?.let { it.name == FORM_GROUP_NAME_ATTRIBUTE || it.name == FORM_CONTROL_NAME_ATTRIBUTE } == true
+        && element.parent.asSafely<XmlAttribute>()?.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES
     ) {
       val formGroup = Angular2FormSymbolsScopeInAttributeValue(element.parent as XmlAttribute)
         .getNearestFormGroup()
@@ -51,6 +54,7 @@ class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixP
         return listOf(
           CreateFormGroupPropertyQuickFix(formGroup, segment.getName(symbol), "Control"),
           CreateFormGroupPropertyQuickFix(formGroup, segment.getName(symbol), "Group"),
+          CreateFormGroupPropertyQuickFix(formGroup, segment.getName(symbol), "Array"),
         )
       }
     }

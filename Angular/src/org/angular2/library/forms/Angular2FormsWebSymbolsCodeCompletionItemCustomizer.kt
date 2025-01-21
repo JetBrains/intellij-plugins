@@ -16,9 +16,14 @@ class Angular2FormsWebSymbolsCodeCompletionItemCustomizer : WebSymbolCodeComplet
     qualifiedKind: WebSymbolQualifiedKind,
     location: PsiElement,
   ): WebSymbolCodeCompletionItem? =
-    if (qualifiedKind == NG_FORM_CONTROL_PROPS || qualifiedKind == NG_FORM_GROUP_PROPS
-        || item.symbol?.qualifiedKind?.let { it == NG_FORM_CONTROL_PROPS || it == NG_FORM_GROUP_PROPS } == true)
+    if (item.symbol?.qualifiedKind in NG_FORM_ANY_CONTROL_PROPS)
       item.withIcon(AllIcons.Nodes.Property)
+        .withTypeText(when (item.symbol?.qualifiedKind) {
+          NG_FORM_CONTROL_PROPS -> FORM_CONTROL_CONSTRUCTOR
+          NG_FORM_GROUP_PROPS -> FORM_GROUP_CONSTRUCTOR
+          NG_FORM_ARRAY_PROPS -> FORM_ARRAY_CONSTRUCTOR
+          else -> null
+        })
     else
       item
 }

@@ -69,16 +69,4 @@ abstract class Angular2TestCase(
       expectedServerClass = Angular2TypeScriptService::class
     }
   }
-
-  protected fun loadInjectionsAndCheckHighlighting(checkInformation: Boolean) {
-    val data = ExpectedHighlightingData(
-      myFixture.getEditor().getDocument(), true, true, checkInformation, true)
-    data.init()
-    runInEdtAndWait { PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments() }
-    val injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.getProject())
-    // We need to ensure that injections are cached before we check deprecated highlighting
-    SyntaxTraverser.psiTraverser(myFixture.getFile())
-      .forEach { if (it is PsiLanguageInjectionHost) injectedLanguageManager.getInjectedPsiFiles(it) }
-    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
-  }
 }

@@ -12,8 +12,8 @@ import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.angular2.Angular2Framework
 import org.angular2.library.forms.Angular2FormControl
-import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
-import org.angular2.library.forms.NG_FORM_GROUP_PROPS
+import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
+import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 
 abstract class Angular2FormAbstractControlImpl(
   override val source: PsiElement,
@@ -37,6 +37,7 @@ abstract class Angular2FormAbstractControlImpl(
     get() = WebSymbolRenameTarget.create(this)
 
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind == NG_FORM_CONTROL_PROPS || qualifiedKind == NG_FORM_GROUP_PROPS
+    qualifiedKind in NG_FORM_ANY_CONTROL_PROPS
+    || qualifiedKind == NG_FORM_GROUP_FIELDS
 
 }

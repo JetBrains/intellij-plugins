@@ -37,12 +37,7 @@ class Angular2FormsAnnotator : Annotator {
             .create()
         }
         val end = if (dotIndex < 0) text.length else dotIndex
-        @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
-        holder
-          .newAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, "form control")
-          .range(TextRange(offset + start, offset + end))
-          .textAttributes(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
-          .create()
+        highlightFormControlReference(holder, TextRange(offset + start, offset + end), text.substring(start, end))
         start = end + 1
       }
       while (start < text.length)
@@ -50,18 +45,22 @@ class Angular2FormsAnnotator : Annotator {
   }
 
   private fun annotateXmlAttribute(attribute: XmlAttribute, holder: AnnotationHolder) {
-    if (attribute.name.let { it == FORM_GROUP_NAME_ATTRIBUTE || it == FORM_CONTROL_NAME_ATTRIBUTE }
-        && attribute.containingFile is Angular2HtmlFile) {
+    if (attribute.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES && attribute.containingFile is Angular2HtmlFile) {
       attribute.valueElement
         ?.valueTextRange
         ?.takeIf { it.length > 0 }
         ?.let {
-          @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
-          holder.newAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, "form control")
-            .range(it)
-            .textAttributes(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
-            .create()
+          highlightFormControlReference(holder, it, attribute.value ?: "")
         }
     }
+  }
+
+  private fun highlightFormControlReference(holder: AnnotationHolder, textRange: TextRange, text: String) {
+    val isNumber = text.toIntOrNull() != null
+    @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
+    holder.newAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, if (isNumber) "form array control" else "form control")
+      .range(textRange)
+      .textAttributes(if (isNumber) TypeScriptHighlighter.TS_NUMBER else TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
+      .create()
   }
 }

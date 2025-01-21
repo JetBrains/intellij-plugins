@@ -1,1 +1,1 @@
-bar (typeText=null; priority=0.0; typeGreyed)
+bar (typeText='FormControl'; priority=0.0; typeGreyed)

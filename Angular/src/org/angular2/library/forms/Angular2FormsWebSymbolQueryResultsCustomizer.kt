@@ -1,6 +1,5 @@
 package org.angular2.library.forms
 
-import com.intellij.icons.AllIcons
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.psi.PsiElement
@@ -25,7 +24,7 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
 
   override fun apply(matches: List<WebSymbol>, strict: Boolean, qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
     if (qualifiedName.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-        && (qualifiedName.name == FORM_GROUP_NAME_ATTRIBUTE || qualifiedName.name == FORM_CONTROL_NAME_ATTRIBUTE))
+        && (qualifiedName.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES))
       matches.map { it.remapFormControlNameSymbol() }
     else
       matches

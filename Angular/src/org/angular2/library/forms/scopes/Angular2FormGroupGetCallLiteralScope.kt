@@ -3,6 +3,7 @@ package org.angular2.library.forms.scopes
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.containers.Stack
+import com.intellij.util.containers.map2Array
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
@@ -23,7 +24,7 @@ import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.Angular2Framework
 import org.angular2.library.forms.Angular2FormGroup
-import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 
 class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGroup) : WebSymbolsScope {
@@ -87,8 +88,9 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
       override val pattern: WebSymbolsPattern?
         get() = createComplexPattern(
           ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
-            WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = NG_FORM_GROUP_PROPS),
-            WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = NG_FORM_CONTROL_PROPS),
+            *NG_FORM_ANY_CONTROL_PROPS.map2Array {
+              WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
+            }
           )),
           false,
           createPatternSequence(
@@ -96,8 +98,9 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
             createComplexPattern(
               ComplexPatternOptions(
                 symbolsResolver = WebSymbolsPatternReferenceResolver(
-                  WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = NG_FORM_GROUP_PROPS),
-                  WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = NG_FORM_CONTROL_PROPS),
+                  *NG_FORM_ANY_CONTROL_PROPS.map2Array {
+                    WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
+                  }
                 ),
                 repeats = true,
                 isRequired = false,

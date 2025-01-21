@@ -35,4 +35,30 @@ class Angular2FormsCodeCompletionTest : Angular2TestCase("library/forms/completi
       "get(['email', '<caret>first'])",
       "get(['foo', '<caret>first'])",
     ))
+
+  fun testNestedFormArrayControlAttribute() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "formArrayName=\"<caret>first\"",
+      "formControlName=\"<caret>12\"",
+      "formGroupName=\"<caret>group\"",
+      "formArrayName=\"<caret>members\"",
+      "formControlName=\"<caret>23\"",
+    ))
+
+  fun testNestedFormArrayGetArrayLiteral() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "get(['<caret>first', '12'])",
+      "get(['first', '<caret>12'])",
+      "get(['group', '<caret>members', '12'])",
+      "get(['group', 'members', '<caret>12'])",
+    ))
+
+  fun testNestedFormArrayGetLiteral() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "get('<caret>first.12')",
+      "get('first.<caret>12')",
+      "get('group.<caret>members.12')",
+      "get('group.members.<caret>12')",
+    ))
+
 }

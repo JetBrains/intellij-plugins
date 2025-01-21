@@ -27,6 +27,12 @@ class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes")
       Angular2Bundle.message("angular.quickfix.forms.create-form-ctrl-in-form-group.name", "first", "Group", "name")
     )
 
+  fun testNestedFormGroupFromArrayNameAttribute() =
+    doQuickFixTest(
+      "formArrayName=\"fi<caret>rst\"",
+      Angular2Bundle.message("angular.quickfix.forms.create-form-ctrl-in-form-group.name", "first", "Array", "name")
+    )
+
   fun testNestedFormGroupFromCallLiteralControl() =
     doQuickFixTest(
       "this.form.get('name.fi<caret>rst');",
@@ -37,6 +43,12 @@ class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes")
     doQuickFixTest(
       "this.form.get('name.fi<caret>rst');",
       Angular2Bundle.message("angular.quickfix.forms.create-form-ctrl-in-form-group.name", "first", "Group", "name")
+    )
+
+  fun testNestedFormGroupFromCallLiteralArray() =
+    doQuickFixTest(
+      "this.form.get('name.fi<caret>rst');",
+      Angular2Bundle.message("angular.quickfix.forms.create-form-ctrl-in-form-group.name", "first", "Array", "name")
     )
 
   fun testNestedFormGroupFromCallArrayLiteralControl() =
@@ -51,6 +63,12 @@ class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes")
       Angular2Bundle.message("angular.quickfix.forms.create-form-ctrl-in-form-group.name", "foo", "Group", "name")
     )
 
+  fun testNestedFormGroupFromCallArrayLiteralArray() =
+    doQuickFixTest(
+      "this.form.get(['name', 'fo<caret>o', 'bar'])",
+      Angular2Bundle.message("angular.quickfix.forms.create-form-ctrl-in-form-group.name", "foo", "Array", "name")
+    )
+
   private fun doQuickFixTest(
     signature: String,
     quickFixName: String,
@@ -58,7 +76,7 @@ class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes")
     extension: String = "ts"
   ) = doConfiguredTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0,
                        dir = dir, checkResult = true, extension = extension) {
-    loadInjectionsAndCheckHighlighting(false)
+    checkHighlightingEx(checkInjections = true)
     moveToOffsetBySignature(signature)
     launchAction(findSingleIntention(quickFixName))
   }

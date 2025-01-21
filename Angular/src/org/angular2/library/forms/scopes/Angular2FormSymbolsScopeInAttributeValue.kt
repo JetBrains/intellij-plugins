@@ -20,11 +20,14 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.library.forms.*
+import org.angular2.library.forms.impl.Angular2FormArrayControl
+import org.angular2.library.forms.impl.Angular2UnknownFormArray
+import org.angular2.library.forms.impl.Angular2UnknownFormControl
+import org.angular2.library.forms.impl.Angular2UnknownFormGroup
 
 class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : WebSymbolsStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
 
   companion object {
-    private val providedSymbolKinds: Set<WebSymbolQualifiedKind> = setOf(NG_FORM_CONTROL_PROPS, NG_FORM_GROUP_PROPS)
     private const val PROP_SOURCE_SYMBOL = "source-symbol"
   }
 
@@ -38,7 +41,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     get() = location.containingFile
 
   override val providedSymbolKinds: Set<WebSymbolQualifiedKind>
-    get() = Companion.providedSymbolKinds
+    get() = NG_FORM_ANY_CONTROL_PROPS
 
   override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?
     get() = provider@{ file, holder ->
@@ -61,9 +64,8 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
 
   override fun findBestMatchingScope(rootScope: WebSymbolsPsiScope): WebSymbolsPsiScope? =
     super.findBestMatchingScope(rootScope)?.let {
-      if ((it.source as? XmlTag)?.attributes?.contains(location) == true) {
+      if ((it.source as? XmlTag)?.attributes?.contains(location) == true)
         it.parent
-      }
       else
         it
     }
@@ -77,21 +79,30 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     override fun visitXmlTag(tag: XmlTag) {
       val formGroupBinding = findFormGroupBinding(tag)
       val formGroupName = findFormGroupNameFromAttribute(tag)
-      val symbol = formGroupBinding
-                     ?.asSafely<JSReferenceExpression>()
-                     ?.let { formsComponent.getFormGroupFor(it) }
-                   ?: formGroupName
-                     ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
-                     ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
+      val formArrayName = findFormArrayNameFromAttribute(tag)
+      val symbol =
+        formGroupBinding
+          ?.asSafely<JSReferenceExpression>()
+          ?.let { formsComponent.getFormGroupFor(it) }
+        ?: formGroupName
+          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
+          ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
+        ?: formArrayName
+          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_ARRAY_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
+          ?.firstNotNullOfOrNull { it as? Angular2FormArray }
 
-      if (formGroupBinding != null || formGroupName != null) {
-        holder.pushScope(tag, symbol?.let { mapOf(PROP_SOURCE_SYMBOL to it) } ?: emptyMap(), providedSymbolKinds)
-        if (symbol != null) {
+      if (formGroupBinding != null || formGroupName != null || formArrayName != null) {
+        holder.pushScope(tag, symbol?.let { mapOf(PROP_SOURCE_SYMBOL to it) } ?: emptyMap(), NG_FORM_ANY_CONTROL_PROPS)
+        if (symbol is Angular2FormGroup) {
           holder.addSymbols(symbol.members)
+        }
+        else if (symbol is Angular2FormArray) {
+          holder.addSymbol(Angular2FormArrayControl)
         }
         else {
           holder.addSymbol(Angular2UnknownFormGroup)
           holder.addSymbol(Angular2UnknownFormControl)
+          holder.addSymbol(Angular2UnknownFormArray)
         }
 
         try {
@@ -120,6 +131,11 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     private fun findFormGroupNameFromAttribute(tag: XmlTag): String? =
       tag.attributes
         .find { it.name == FORM_GROUP_NAME_ATTRIBUTE }
+        ?.value
+
+    private fun findFormArrayNameFromAttribute(tag: XmlTag): String? =
+      tag.attributes
+        .find { it.name == FORM_ARRAY_NAME_ATTRIBUTE }
         ?.value
 
     override fun visitXmlAttribute(attribute: XmlAttribute) {

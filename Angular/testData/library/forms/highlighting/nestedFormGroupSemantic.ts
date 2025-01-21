@@ -10,7 +10,7 @@ import {<symbolName descr="identifiers//exported variable">FormControl</symbolNa
                 <div formGroupName="<symbolName descr="form control">foo</symbolName>">
                     <input formControlName="<symbolName descr="form control">bar</symbolName>" placeholder="Last name"/>
                 </div>
-                <div formGroupName="<warning descr="Unrecognized name"><symbolName descr="form control">bar</symbolName></warning>">
+                <div formGroupName="<symbolName descr="form control">bar</symbolName>">
                     <input formControlName="<symbolName descr="form control">baz</symbolName>" placeholder="Last name"/>
                 </div>
             </div>
@@ -37,12 +37,12 @@ export class <symbolName descr="classes//exported class">NestedFormGroupComp</sy
 
   <symbolName descr="instance method">check</symbolName>() {
     this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>(['<symbolName descr="form control">name</symbolName>', '<symbolName descr="form control">foo</symbolName>', '<symbolName descr="form control">bar</symbolName>'])
-    this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>(['<symbolName descr="form control">email</symbolName>', '<warning descr="Unrecognized name"><symbolName descr="form control">first</symbolName></warning>'])
+    this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>(['<symbolName descr="form control">email</symbolName>', '<symbolName descr="form control">first</symbolName>'])
     this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>('<symbolName descr="form control">name</symbolName>');
     this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>('<symbolName descr="form control">name</symbolName><info descr="dot">.</info><symbolName descr="form control">first</symbolName>');
     this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>('<symbolName descr="form control">name</symbolName><info descr="dot">.</info><symbolName descr="form control">first</symbolName>');
     this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>('<symbolName descr="form control">name</symbolName><info descr="dot">.</info><symbolName descr="form control">foo</symbolName><info descr="dot">.</info><symbolName descr="form control">bar</symbolName>');
-    this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>('<symbolName descr="form control">name</symbolName><info descr="dot">.</info><warning descr="Unrecognized name"><symbolName descr="form control">bar</symbolName></warning>');
+    this.<symbolName descr="instance field">form</symbolName>.<symbolName descr="instance method">get</symbolName>('<symbolName descr="form control">name</symbolName><info descr="dot">.</info><symbolName descr="form control">bar</symbolName>');
 
     this.<symbolName descr="instance field">foo</symbolName>.<symbolName descr="instance method">get</symbolName>('name');
   }
