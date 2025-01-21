@@ -4,7 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
-import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -53,7 +53,7 @@ private class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
       val offset = editor.caretModel.offset
       if (offset >= 2) {
         val iterator = editor.highlighter.createIterator(offset - 2)
-        while (!iterator.atEnd() && JSExtendedLanguagesTokenSetProvider.WHITE_SPACES.contains(iterator.tokenType)) {
+        while (!iterator.atEnd() && JSElementTypes.WHITE_SPACES.contains(iterator.tokenType)) {
           iterator.retreat()
         }
         if (!iterator.atEnd() && iterator.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME) {
