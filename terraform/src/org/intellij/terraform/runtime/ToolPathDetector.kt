@@ -8,7 +8,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.install.getBinaryName
@@ -21,6 +23,18 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
 
   companion object {
     fun getInstance(project: Project): ToolPathDetector = project.service<ToolPathDetector>()
+  }
+
+  fun detectPathAndUpdateSettingsAsync(settings: TfToolSettings, execName: String): Deferred<TfToolSettings> {
+    return coroutineScope.async {
+      if (execName.isNotBlank()) {
+        val detectedPath = detect(execName)
+        if (!detectedPath.isNullOrEmpty()) {
+          settings.toolPath = detectedPath
+        }
+      }
+      settings
+    }
   }
 
   suspend fun detect(path: String): String? {

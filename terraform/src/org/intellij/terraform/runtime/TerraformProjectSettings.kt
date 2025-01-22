@@ -4,6 +4,9 @@ package org.intellij.terraform.runtime
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.AsyncFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
@@ -41,16 +44,22 @@ class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettin
     fun getInstance(project: Project): TerraformProjectSettings = project.service()
   }
 
-  class DetectOnStart : ProjectActivity {
+  internal class DetectOnStart : ProjectActivity {
     override suspend fun execute(project: Project) {
       val settings = project.serviceAsync<TerraformProjectSettings>()
-
       if (settings.toolPath.isEmpty() && hasHCLLanguageFiles(project, TerraformFileType)) {
-        val detectedPath = project.serviceAsync<ToolPathDetector>().detect(TfToolType.TERRAFORM.executableName)
-        if (!detectedPath.isNullOrEmpty()) {
-          settings.toolPath = detectedPath
-        }
+        project.serviceAsync<ToolPathDetector>().detectPathAndUpdateSettingsAsync(settings, TfToolType.TERRAFORM.executableName)
       }
     }
   }
+
+  internal class TerraformFileListener : AsyncFileListener {
+    override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier? {
+      val fileEvents = events.filter { (FileUtilRt.extensionEquals(it.path, TerraformFileType.DEFAULT_EXTENSION)) }
+      if (fileEvents.isEmpty()) return null
+      return SettingsUpdater(fileEvents, TfToolType.TERRAFORM.executableName, TerraformProjectSettings::class.java)
+    }
+  }
+
+
 }
