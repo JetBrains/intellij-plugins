@@ -10,7 +10,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -26,7 +25,6 @@ import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getToolVersion
 import org.intellij.terraform.install.installTFTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
-import org.jetbrains.concurrency.runAsync
 import java.io.File
 
 private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
@@ -41,6 +39,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   private val openTofuConfig = OpenTofuProjectSettings.getInstance(project)
 
   override fun getId(): String = CONFIGURABLE_ID
+  override fun getHelpTopic(): String = "terraform"
 
   override fun createPanel(): DialogPanel {
     return panel {

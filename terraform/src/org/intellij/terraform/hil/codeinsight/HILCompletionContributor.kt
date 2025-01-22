@@ -50,7 +50,6 @@ import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMetho
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuEncryptionMethod
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuKeyProvider
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.KeyProviderBlock
-import java.util.*
 
 open class HILCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
@@ -248,7 +247,10 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           return
         }
       }
-      result.addAllElements(TypeModelProvider.getModel(parent).functions.map { createFunction(it) })
+      val model = TypeModelProvider.getModel(parent)
+      result.addAllElements(model.functions.map { createFunction(it) })
+      result.addAllElements(model.providerDefinedFunctions.map { createFunction(it) })
+
       result.addAllElements(GlobalScopes.map { createScope(it) })
       if (getProvisionerOrConnectionResource(parent) != null) result.addElement(createScope("self"))
 
@@ -392,7 +394,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           // TODO: Add special LookupElementRenderer
           val suitableBlocks = when (contextType) {
             HilContainingBlockType.IMPORT_OR_MOVED_BLOCK -> {
-              module.getDeclaredResources().mapNotNull { resourceDeclaration -> getResourceTypeAndName(resourceDeclaration) }
+              module.getDeclaredResources().map { resourceDeclaration -> getResourceTypeAndName(resourceDeclaration) }
             }
             HilContainingBlockType.UNSPECIFIED -> {
               module.getDefinedOutputs().map { it.name }

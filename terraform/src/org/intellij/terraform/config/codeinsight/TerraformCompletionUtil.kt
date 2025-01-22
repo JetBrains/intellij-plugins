@@ -3,6 +3,7 @@ package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionUtilCore
+import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementPresentation
@@ -22,7 +23,6 @@ import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.hil.codeinsight.FunctionInsertHandler
 import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
 import org.intellij.terraform.opentofu.OpenTofuFileType
@@ -60,15 +60,11 @@ object TerraformCompletionUtil {
       }
     })
 
-  fun createFunction(function: TfFunction): LookupElementBuilder = LookupElementBuilder.create(function.name)
-    .withInsertHandler(FunctionInsertHandler)
-    .withRenderer(
-      object : LookupElementRenderer<LookupElement?>() {
-        override fun renderElement(element: LookupElement?, presentation: LookupElementPresentation?) {
-          presentation?.icon = AllIcons.Nodes.Method // or Function
-          presentation?.itemText = element?.lookupString
-        }
-      })
+  fun createFunction(function: TfFunction): LookupElementBuilder = LookupElementBuilder.create(function.presentableName)
+    .withInsertHandler(if (function.arguments.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
+    .withTailText(function.getArgumentsAsText())
+    .withTypeText(function.returnType.presentableText)
+    .withIcon(AllIcons.Nodes.Function)
 
   fun dumpPsiFileModel(element: PsiElement): () -> String = { DebugUtil.psiToString(element.containingFile, true) }
 

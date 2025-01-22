@@ -11,6 +11,11 @@ class TfFunction(val name: String,
                  val variadic: VariadicArgument? = null,
                  val providerType: String? = null
 ) {
+  val presentableName: String
+    get() = if (providerType != null) "provider::$providerType::$name" else name
+
+  fun getArgumentsAsText(): String = arguments.joinToString(separator = ", ", prefix = "(", postfix = ")") { "${it.name}: ${it.type}" }
+
   init {
     val count = arguments.count { it is VariadicArgument }
     assert (count == 0 || (count == 1 && arguments.last() is VariadicArgument)) { "Only one (last) argument could be variadic" }
