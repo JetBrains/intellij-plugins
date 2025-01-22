@@ -60,6 +60,10 @@ public class HCLElementVisitor extends PsiElementVisitor {
     // visitConditionalExpression(o);
   }
 
+  public void visitDefinedMethodExpression(@NotNull HCLDefinedMethodExpression o) {
+    visitExpression(o);
+  }
+
   public void visitExpression(@NotNull HCLExpression o) {
     visitBaseExpression(o);
   }

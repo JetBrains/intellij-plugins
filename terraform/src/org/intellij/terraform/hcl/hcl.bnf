@@ -58,6 +58,7 @@
     ID="regexp:[a-zA-Z_][0-9a-zA-Z\-_]*"
 
     OP_DOT='.'
+    COLON_COLON='::'
 
     // Operators
     OP_PLUS='+'
@@ -184,6 +185,7 @@ Expression ::= (
 
     | UnaryExpression
     | MethodCallExpression
+    | DefinedMethodExpression
     | SelectExpression
     | IndexSelectExpression
 
@@ -284,6 +286,9 @@ MethodCallExpression ::= identifier ParameterList
   ]
   implements="org.intellij.terraform.hcl.psi.common.MethodCallExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
 }
+
+DefinedMethodExpression ::= "provider" '::' identifier '::' MethodCallExpression
+
 ParameterList ::= '(' ParameterListElement* '...'? ')' {
   pin(".*")=1
   methods=[
