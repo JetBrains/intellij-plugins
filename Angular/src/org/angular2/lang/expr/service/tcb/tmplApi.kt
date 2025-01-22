@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.javascript.web.html.XmlASTWrapperPsiElement

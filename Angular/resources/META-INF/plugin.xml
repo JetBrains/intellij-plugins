@@ -474,7 +474,7 @@
     </action>
     <action id="Angular2VisualizeGeneratedTcbAction"
             internal="true"
-            class="org.angular2.lang.html.tcb.Angular2VisualizeGeneratedTcbAction">
+            class="org.angular2.lang.expr.service.tcb.Angular2VisualizeGeneratedTcbAction">
       <add-to-group group-id="Internal"/>
     </action>
   </actions>

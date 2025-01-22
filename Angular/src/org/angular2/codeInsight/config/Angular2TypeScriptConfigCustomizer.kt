@@ -11,7 +11,7 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
-import org.angular2.lang.html.tcb.R3Identifiers
+import org.angular2.lang.expr.service.tcb.R3Identifiers
 
 private val STRICT_INJECTION_PARAMETERS = Key.create<Boolean>("angularCompilerOptions.strictInjectionParameters")
 private val STRICT_TEMPLATES = Key.create<Boolean>("angularCompilerOptions.strictTemplates")

@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import org.angular2.lang.Angular2LangUtil
 

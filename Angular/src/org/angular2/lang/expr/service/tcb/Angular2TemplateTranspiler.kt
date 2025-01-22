@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
@@ -12,7 +12,7 @@ import org.angular2.entities.Angular2ClassBasedComponent
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
-import org.angular2.lang.html.tcb.Expression.ExpressionBuilder
+import org.angular2.lang.expr.service.tcb.Expression.ExpressionBuilder
 import java.util.*
 
 object Angular2TemplateTranspiler {

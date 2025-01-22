@@ -7,7 +7,7 @@
  */
 @file:Suppress("CascadeIf")
 
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList

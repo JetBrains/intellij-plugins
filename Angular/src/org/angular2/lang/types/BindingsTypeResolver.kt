@@ -47,7 +47,7 @@ import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.function.BiFunction
 import java.util.function.Predicate

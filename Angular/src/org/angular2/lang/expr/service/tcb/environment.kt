@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
@@ -29,7 +29,7 @@ import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.DiagnosticKind
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 

@@ -51,9 +51,9 @@ import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElem
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.html.Angular2HtmlDialect
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.AngularSettings

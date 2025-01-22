@@ -7,8 +7,8 @@ import com.intellij.webSymbols.checkTextByFile
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", true) {
 

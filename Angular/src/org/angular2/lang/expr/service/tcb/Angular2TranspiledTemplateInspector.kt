@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
@@ -25,7 +25,7 @@ import com.intellij.util.SingleAlarm
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.XDebuggerUtil
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMapping
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Font

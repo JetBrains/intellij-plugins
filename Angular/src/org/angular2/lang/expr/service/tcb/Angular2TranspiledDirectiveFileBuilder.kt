@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -24,11 +24,11 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.Angular2HtmlDialect
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMapping
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledCode
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledHostBindings
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.TranspiledTemplate
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMapping
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledCode
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledHostBindings
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledTemplate
 import java.util.*
 
 object Angular2TranspiledDirectiveFileBuilder {

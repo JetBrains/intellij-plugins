@@ -1,4 +1,4 @@
-package org.angular2.lang.html.tcb
+package org.angular2.lang.expr.service.tcb
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.TextRange
@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.Angular2HtmlFile
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import java.util.*
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {

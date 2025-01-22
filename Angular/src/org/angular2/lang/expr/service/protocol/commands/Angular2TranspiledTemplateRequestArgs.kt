@@ -9,8 +9,8 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 import java.util.*
 
 class Angular2TranspiledTemplateRequestArgs private constructor(
