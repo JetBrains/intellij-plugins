@@ -61,4 +61,21 @@ class Angular2FormsCodeCompletionTest : Angular2TestCase("library/forms/completi
       "get('group.members.<caret>12')",
     ))
 
+  fun testFormBuilderInFieldInitializer() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "get(\"<caret>name.more.foo\")",
+      "get(\"name.<caret>more.foo\")",
+      "get(\"name.more.<caret>foo\")",
+      "get([\"name\", \"more\", \"<caret>foo\"])",
+      "formGroupName=\"<caret>more\"",
+    ))
+
+  fun testFormBuilderInConstructor() =
+    doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
+      "get(\"<caret>name.more.foo\")",
+      "get(\"name.<caret>more.foo\")",
+      "get(\"name.more.<caret>foo\")",
+      "get([\"name\", \"more\", \"<caret>foo\"])",
+      "formGroupName=\"<caret>more\"",
+    ))
 }

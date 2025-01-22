@@ -1,0 +1,34 @@
+import {Component, inject} from '@angular/core';
+import {FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
+
+@Component({
+   selector: 'app-disabled-form-control',
+   template: `
+        <div [formGroup]="form">
+            <div formGroupName="name">
+                <div formGroupName="more">
+                    <div formControlName="foo">
+                    </div>
+                </div>
+            </div>
+        </div>`,
+   standalone: false
+})
+export class DisabledFormControlComponent {
+  private formBuilder = inject(FormBuilder);
+
+  form = this.formBuilder.group(
+    {
+      name: this.formBuilder.group({
+         first: ['Nancy', Validators.minLength(2)],
+         last: 'foo',
+         more: new FormGroup({
+           bar: this.formBuilder.control('bar'),
+             foo: new FormControl()
+         })
+      }),
+      email: '',
+    },
+    {updateOn: 'change'},
+  )
+}

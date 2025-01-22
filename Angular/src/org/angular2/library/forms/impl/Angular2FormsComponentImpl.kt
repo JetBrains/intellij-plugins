@@ -36,7 +36,9 @@ class Angular2FormsComponentImpl(private val componentClass: TypeScriptClass) : 
         formGroups.add(it)
       }
       AstLoadingFilter.forceAllowTreeLoading<Throwable>(componentClass.containingFile) {
-        componentClass.jsType.asRecordType().properties.forEach {
+        for (it in componentClass.jsType.asRecordType().properties.asSequence()
+          .plus(componentClass.staticJSType.asRecordType().callSignatures.filter { it.hasNew() })
+        ) {
           it.memberSource.allSourceElements.forEach { source ->
             source.accept(builder)
           }

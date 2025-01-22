@@ -17,4 +17,7 @@ class Angular2FormsRenameRefactoringTest : Angular2TestCase("library/forms/renam
   fun testNestedFormGroupProperty() =
     checkSymbolRename("newName", Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, dir = false)
 
+  fun testFormBuilderInConstructor() =
+    checkSymbolRename("newName", Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, dir = false)
+
 }

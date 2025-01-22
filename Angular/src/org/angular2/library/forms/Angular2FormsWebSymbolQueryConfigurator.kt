@@ -149,3 +149,9 @@ const val FORM_GROUP_BINDING: String = "formGroup"
 const val FORM_CONTROL_CONSTRUCTOR: String = "FormControl"
 const val FORM_GROUP_CONSTRUCTOR: String = "FormGroup"
 const val FORM_ARRAY_CONSTRUCTOR: String = "FormArray"
+
+const val FORM_BUILDER_TYPE: String = "FormBuilder"
+
+const val FORM_BUILDER_GROUP_METHOD: String = "group"
+const val FORM_BUILDER_ARRAY_METHOD: String = "array"
+const val FORM_BUILDER_CONTROL_METHOD: String = "control"

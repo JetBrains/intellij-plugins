@@ -1,0 +1,2 @@
+bar (typeText='FormControl'; priority=10.0; typeGreyed)
+foo (typeText='FormArray'; priority=10.0; typeGreyed)
