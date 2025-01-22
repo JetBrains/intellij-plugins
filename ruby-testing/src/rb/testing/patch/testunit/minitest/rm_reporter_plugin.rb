@@ -8,7 +8,6 @@ require 'teamcity/utils/service_message_factory'
 require 'logger'
 require 'set'
 require 'pp'
-require 'mutex_m'
 
 module Minitest
   class << self
@@ -112,9 +111,6 @@ module Minitest
   end
 
   class RubyMineReporter < Reporter
-
-    # Minitest 5.0 compatibility
-    include Mutex_m
 
     def initialize(options = {})
       Minitest.assert_no_minitest_reporters
