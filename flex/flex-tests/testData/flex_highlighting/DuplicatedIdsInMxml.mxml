@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
-    <mx:Button id="<error descr="Duplicate id reference">a111</error>"/>
-    <mx:Button id="<error descr="Duplicate id reference">a111</error>"/>
+    <mx:Button id="a111"/>
+    <mx:Button id="a111"/>
     <mx:Button id=<error descr="invalid identifier value">"111"</error>/>
     <mx:Button id="b11"/>
     <mx:Button id="ccc" mx:id="1 2 3"/>
