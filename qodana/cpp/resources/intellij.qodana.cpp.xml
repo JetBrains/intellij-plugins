@@ -1,0 +1,10 @@
+<idea-plugin package="org.jetbrains.qodana.cpp">
+  <dependencies>
+    <plugin id="com.intellij.modules.clion.cmake"/>
+  </dependencies>
+
+  <projectListeners>
+    <listener class="org.jetbrains.qodana.cpp.CppQodanaCMakeGenerationStepListener"
+              topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
+  </projectListeners>
+</idea-plugin>
