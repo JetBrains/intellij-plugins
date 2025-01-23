@@ -127,6 +127,18 @@
       <bundleName>messages.Angular2Bundle</bundleName>
       <categoryKey>angular.intention.category</categoryKey>
     </intentionAction>
+    <intentionAction>
+      <language>TypeScript</language>
+      <className>org.angular2.intentions.AngularInlineComponentTemplate</className>
+      <bundleName>messages.Angular2Bundle</bundleName>
+      <categoryKey>angular.intention.category</categoryKey>
+    </intentionAction>
+    <intentionAction>
+      <language>TypeScript</language>
+      <className>org.angular2.intentions.AngularExtractComponentTemplate</className>
+      <bundleName>messages.Angular2Bundle</bundleName>
+      <categoryKey>angular.intention.category</categoryKey>
+    </intentionAction>
     <inlineActionHandler implementation="org.angular2.refactoring.inline.Angular2InlineHandler" id="Angular2Inline"
                          order="before genericJSInline"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>

@@ -146,6 +146,14 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(Angular2Bundle.message("angular.intention.introduce.let.variable.name"), ANGULAR_CORE_18_2_1,
            extension = "html", checkIntentionPreview = false)
 
+  fun testExtractComponentTemplate() =
+    doTest(Angular2Bundle.message("angular.intention.extract.component.template.name"), ANGULAR_CORE_18_2_1,
+           dir = true)
+
+  fun testInlineComponentTemplate() =
+    doTest(Angular2Bundle.message("angular.intention.inline.component.template.name"), ANGULAR_CORE_18_2_1,
+           dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

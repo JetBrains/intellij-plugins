@@ -1,0 +1,6 @@
+@Component({
+   templateUrl: "./component.html"
+})
+export class MyComponent {
+
+}
