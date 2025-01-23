@@ -139,6 +139,7 @@
       <bundleName>messages.Angular2Bundle</bundleName>
       <categoryKey>angular.intention.category</categoryKey>
     </intentionAction>
+    <usageFilteringRuleProvider implementation="org.angular2.findUsages.Angular2UsageFilteringRuleProvider"/>
     <inlineActionHandler implementation="org.angular2.refactoring.inline.Angular2InlineHandler" id="Angular2Inline"
                          order="before genericJSInline"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
@@ -195,6 +196,8 @@
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
+    <searcher forClass="com.intellij.psi.search.searches.ReferencesSearch$SearchParameters"
+              implementationClass="org.angular2.findUsages.Angular2ComponentClassInTemplateUsageSearcher"/>
     <referencesSearch implementation="org.angular2.findUsages.Angular2ReferenceSearcher"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
