@@ -20,10 +20,6 @@ public class HILParserTest extends ParsingTestCase {
     return TerraformTestUtils.getTestDataPath();
   }
 
-  private void doTest() {
-    doTest(true);
-  }
-
   public void testSimple() throws Exception {
     doCodeTest("${variable}");
   }
@@ -243,6 +239,31 @@ public class HILParserTest extends ParsingTestCase {
   public void testTemplateIf() throws IOException {
     doCodeTest("%{~ if test() > -1 ~} 123 %{endif}");
   }
+
+  public void testSimpleDefinedMethodExpression() throws Exception {
+    doCodeTest("provider::aws::createInstance()");
+  }
+
+  public void testDefinedMethodExpressionWithParameters() throws Exception {
+    doCodeTest("provider::google::startServer(\"us-central1\", 2)");
+  }
+
+  public void testComplexDefinedMethodExpression() throws Exception {
+    doCodeTest("provider::custom::nestedMethodCall(param1, param2).innerCall()");
+  }
+
+  public void testDefinedMethodExpressionWithQualifier() throws Exception {
+    doCodeTest("provider::aws::resource(\"web_server\").deploy()");
+  }
+
+  public void testInvalidDefinedMethodExpression_MissingParts() throws Exception {
+    doCodeTest("provider::aws::");
+  }
+
+  public void testInvalidDefinedMethodExpression_InvalidSyntax() throws Exception {
+    doCodeTest("provider::identifier createInstance()");
+  }
+
 
   @Override
   protected void doCodeTest(@NotNull String code) throws IOException {

@@ -1,0 +1,15 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILDefinedMethodExpression
+      PsiElement(ID)('provider')
+      PsiElement(::)('::')
+      PsiElement(ID)('aws')
+      PsiElement(::)('::')
+      ILMethodCallExpression
+        ILVariable
+          PsiElement(ID)('createInstance')
+        ILParameterList
+          PsiElement(()('(')
+          PsiElement())(')')
+    PsiElement(})('}')

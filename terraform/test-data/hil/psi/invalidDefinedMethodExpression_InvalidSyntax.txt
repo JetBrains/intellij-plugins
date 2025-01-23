@@ -1,0 +1,13 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILVariable
+      PsiElement(ID)('provider')
+  PsiElement(::)('::')
+  PsiElement(ID)('identifier')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:'::' expected, got 'createInstance'
+    PsiElement(ID)('createInstance')
+  PsiElement(()('(')
+  PsiElement())(')')
+  PsiElement(})('}')
