@@ -9,6 +9,7 @@
 
 package org.angular2.lang.expr.service.tcb
 
+import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
@@ -2237,6 +2238,15 @@ private open class TcbExpressionTranslator(
     else {
       super.visitJSCallExpression(node)
     }
+  }
+
+  override fun visitJSProperty(node: JSProperty) {
+    if (node is ES6Property && node.isShorthanded) {
+      node.name?.let {
+        result.append(it).append(": ")
+      }
+    }
+    super.visitJSProperty(node)
   }
 
   override fun visitJSReferenceExpression(node: JSReferenceExpression) {

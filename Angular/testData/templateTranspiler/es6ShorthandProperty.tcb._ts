@@ -1,0 +1,14 @@
+/* Angular type checking code */
+
+/* TCB for es6ShorthandProperty.ts */
+
+function _tcb1(this: RegistrationFormComponent) {
+}
+/* TCB for es6ShorthandProperty.ts */
+
+function _tcb2(this: AppComponent) {
+var _t1 = document.createElement("div");
+var _t2 = document.createElement("app-registration-form");
+var _t3 = null! as RegistrationFormComponent;
+_t3.product = {title: this.title};
+}

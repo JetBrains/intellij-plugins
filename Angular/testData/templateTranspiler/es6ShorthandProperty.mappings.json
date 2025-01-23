@@ -1,0 +1,20 @@
+[
+  {
+    "file-name": "es6ShorthandProperty.ts",
+    "mappings": [
+      "«div» [411] => «_t1» [205]} (no diagnostics) (no semantic)",
+      "«app-registration-form» [423] => «_t2» [246]} (no diagnostics) (no semantic)",
+      "«app-registration-form» [423] => «_t3» [305]} (ignored)",
+      "«[product]» [445] => «product» [351]} (no types)",
+      "«[product]» [445] => «_t3.product» [347]} (no types)",
+      "«{» [456] => «{» [361]}",
+      "«title» [457] => «title» [374]} (no types)",
+      "«title» [457] => «this.title» [369]}",
+      "«}» [462] => «}» [379]}",
+      "«{title}» [456] => «{title: this.title}» [361]}",
+      "0:195 => 0:195 (source)",
+      "231:404 => 231:404 (source)",
+      "504:592 => 504:592 (source)"
+    ]
+  }
+]

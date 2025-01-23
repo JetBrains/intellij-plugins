@@ -289,6 +289,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testHostDirectivesSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
+  fun testEs6ObjectInitializer() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
