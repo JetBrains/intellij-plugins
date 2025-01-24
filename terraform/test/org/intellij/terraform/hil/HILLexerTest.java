@@ -241,4 +241,44 @@ public class HILLexerTest extends BaseLexerTestCase {
       } ('}')
       } ('}')""");
   }
+
+  public void testProviderFunctionCall() {
+    doTest("provider::aws::createInstance()", """
+      ID ('provider')
+      :: ('::')
+      ID ('aws')
+      :: ('::')
+      ID ('createInstance')
+      ( ('(')
+      ) (')')""".trim());
+  }
+
+  public void testNestedProviderFunctionCall() throws Exception {
+    doTest("provider::custom::outer(provider::inner::compute(42))", """
+      ID ('provider')
+      :: ('::')
+      ID ('custom')
+      :: ('::')
+      ID ('outer')
+      ( ('(')
+      ID ('provider')
+      :: ('::')
+      ID ('inner')
+      :: ('::')
+      ID ('compute')
+      ( ('(')
+      NUMBER ('42')
+      ) (')')
+      ) (')')""".trim());
+  }
+
+  public void testInvalidProviderFunctionCall_MissingParentheses() throws Exception {
+    doTest("provider::aws::createInstance", """
+      ID ('provider')
+      :: ('::')
+      ID ('aws')
+      :: ('::')
+      ID ('createInstance')
+      """.trim());
+  }
 }
