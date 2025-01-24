@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 @Component({
    template: `
         <!--\`Property 'value' does not exist on type 'Main'.-->
-        @let <weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning> = 1 ;
+        @let <warning descr="Unused constant value"><weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning></warning> = 1 ;
         {{ this.<error descr="TS2339: Property 'value' does not exist on type 'Case1'.">value</error> }}
     `,
    standalone: true,

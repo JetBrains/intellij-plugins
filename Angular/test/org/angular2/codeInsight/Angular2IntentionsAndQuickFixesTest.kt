@@ -154,6 +154,30 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(Angular2Bundle.message("angular.intention.inline.component.template.name"), ANGULAR_CORE_18_2_1,
            dir = true)
 
+  fun testRemoveUnusedBlockLetVariable() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'letUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedNgTemplateLetVariable() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ngTemplateUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedBlockParameterVariable1() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedBlockParameterVariable2() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedTemplateBindingVariable1() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'forUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedTemplateBindingVariable2() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ifUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.service
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
@@ -50,10 +51,10 @@ import org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeCommand
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
-import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
+import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.AngularSettings
@@ -97,10 +98,15 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> =
     readAction {
-      val (transpiledComponentFile, templateFile) = getTranspiledDirectiveAndTopLevelSourceFile(file)
-                                                    ?: return@readAction errors
-      translateNamesInErrors(errors, transpiledComponentFile, templateFile)
+      val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
+                     ?.let { (transpiledDirectiveFile, topLevelFile) -> translateNamesInErrors(errors, transpiledDirectiveFile, topLevelFile) }
+                   ?: errors
+      result.filter { Angular2LanguageServiceErrorFilter.accept(file, it) }
     }
+
+  override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> =
+    super.getServiceFixes(file, element, result)
+      .filter { Angular2LanguageServiceQuickFixFilter.accept(file, element, result, it) }
 
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)

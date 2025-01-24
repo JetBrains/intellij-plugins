@@ -37,7 +37,7 @@
       "«1» [399] => «1» [220]}",
       "«user.name + 1» [387] => «this.user.name + 1» [203]}",
       "«div» [474] => «_t1» [227]} (no diagnostics) (no semantic)",
-      "«#fooBar» [478] => «_t2» [268]}",
+      "«fooBar» [479] => «_t2» [268]}",
       "«user» [727] => «user» [289]} (no types)",
       "«user» [727] => «this.user» [284]}",
       "«.» [731] => «.» [293]}",

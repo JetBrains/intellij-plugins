@@ -2,6 +2,7 @@ package org.angular2.lang.expr.service.tcb
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.javascript.web.html.XmlASTWrapperPsiElement
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.TextRange
@@ -668,7 +669,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
     .associateBy({ it.second.name }, { (attr, info) ->
       TmplAstReference(
         name = info.name,
-        keySpan = attr.nameElement.textRange,
+        keySpan = attr.nameElement.textRange.startOffset.let { TextRange(it + info.nameOffset, it + info.nameOffset + info.name.length) },
         value = attr.value ?: "",
         valueSpan = attr.valueElement?.textRange,
       ).apply {
@@ -680,7 +681,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
     .associateBy({ it.second.name }, { (attr, info) ->
       TmplAstVariable(
         name = info.name,
-        keySpan = attr.nameElement.textRange,
+        keySpan = attr.nameElement.textRange.startOffset.let { TextRange(it + info.nameOffset, it + info.nameOffset + info.name.length) },
         value = attr.value ?: "",
         valueSpan = attr.valueTextRange.takeIf { it.length > 0 },
       ).apply {
@@ -991,7 +992,8 @@ private fun hasPrefetch(parameter: Angular2BlockParameter) =
 private fun JSVariable.toTmplAstVariable(referenceResolver: ReferenceResolver): TmplAstVariable =
   TmplAstVariable(
     name = name!!,
-    keySpan = textRange,
+    keySpan = node.firstChildNode.takeIf { it.elementType == JSTokenTypes.IDENTIFIER }?.textRange
+              ?: textRange,
     valueSpan = null,
     value = null
   ).apply {
