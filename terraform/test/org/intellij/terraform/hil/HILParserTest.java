@@ -273,7 +273,7 @@ public class HILParserTest extends ParsingTestCase {
     super.doCodeTest(code);
   }
 
-  protected void doCodeTest(@NotNull final String code, @NotNull final String expected) throws IOException {
+  protected void doCodeTest(@NotNull final String code, @NotNull final String expected) {
     myFile = createPsiFile("a", code);
     ensureParsed(myFile);
     assertEquals(code, myFile.getText());

@@ -307,4 +307,12 @@ public class HILCompletionTest extends CompletionTestCase {
                               value = "${azurerm_linux_virtual_machine.example.os_disk.<caret>}"
                             }""", "caching", "storage_account_type");
   }
+
+  public void testDefinedFunctionsCompletion() {
+    doBasicCompletionTest(
+      "test = '${aws<caret>}'",
+      3,
+      "provider::aws::arn_build", "provider::aws::arn_parse", "provider::aws::trim_iam_role_path"
+    );
+  }
 }

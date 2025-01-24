@@ -858,5 +858,31 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     String[] backends = model.getBackends().stream().map(e -> e.getType()).toArray(String[]::new);
     myFixture.testCompletionVariants("main.tf", backends);
   }
-}
 
+  public void testProviderFunctionsCompletion() {
+    doBasicCompletionTest(
+      """
+      resource "kubernetes_manifest" "example" {
+        manifest = manifest_d<caret>
+      }
+      """, 2, "provider::kubernetes::manifest_decode", "provider::kubernetes::manifest_decode_multi"
+    );
+
+    doBasicCompletionTest(
+      """
+      locals {
+        tfvars = decode_tf<caret>
+      }
+      """, 1, "provider::terraform::decode_tfvars"
+    );
+
+    doBasicCompletionTest(
+      """
+      resource "some_resource" "name" {
+        enabled = assert<caret>
+      }
+      """, "provider::assert::true"
+    );
+  }
+
+}
