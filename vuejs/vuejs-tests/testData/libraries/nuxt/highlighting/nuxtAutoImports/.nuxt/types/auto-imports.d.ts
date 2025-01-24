@@ -4,10 +4,9 @@ declare global {
   const useHead: typeof useHead
 }
 // for vue template auto import
-import { UnwrapRef } from 'vue'
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    readonly useHead: UnwrapRef<typeof useHead>
+    readonly useHead: typeof useHead
   }
 }
 

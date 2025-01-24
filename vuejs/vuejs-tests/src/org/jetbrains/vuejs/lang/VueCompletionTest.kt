@@ -2345,6 +2345,14 @@ export default {
     assertSameElements(myFixture.lookupElementStrings!!, "default", "header", "footer")
   }
 
+  fun testComponentCustomProperties() {
+    myFixture.configureVueDependencies()
+    myFixture.copyDirectoryToProject("componentCustomProperties", "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "attributeFromCustomProps")
+  }
+
   fun testDefineSlotsProperties() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.configureByFile(getTestName(true) + ".vue")

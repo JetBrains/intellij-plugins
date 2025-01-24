@@ -2391,6 +2391,13 @@ export default class UsageComponent extends Vue {
     myFixture.configureFromTempProjectFile("ForComponent.vue")
     myFixture.checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "<caret>name: \"GlobalComponent\"", "GlobalComponent.vue")
   }
+
+  fun testComponentCustomProperties() {
+    myFixture.configureVueDependencies()
+    myFixture.copyDirectoryToProject("componentCustomProperties", "")
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
+  }
 }
 
 fun globalMixinText(): String {
