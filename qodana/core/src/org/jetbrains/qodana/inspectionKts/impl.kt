@@ -51,9 +51,9 @@ internal fun InspectionKts.asTool(exceptionReporter: (Exception) -> Unit): Inspe
 
         override fun runForWholeFile(): Boolean = true
 
-        override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
           if (tool !is LocalKtsInspectionTool) {
-            return tool.buildVisitor(holder, isOnTheFly)
+            return tool.buildVisitor(holder, isOnTheFly, session)
           }
 
           val inspection = LocalInspectionImpl(holder)
