@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.parser;
 
 import com.intellij.lang.LanguageASTFactory;
+import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.psi.css.CssElementDescriptorProvider;
@@ -16,10 +17,18 @@ import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.css.testFramework.CssElementTypeServiceHelper.registerCssElementTypeServices;
+
 @TestDataPath("$CONTENT_ROOT/testData/parser/")
 public abstract class PostCssParsingTest extends ParsingTestCase {
   public PostCssParsingTest(@NonNls @NotNull String dataPath) {
     super(dataPath, "pcss", new PostCssParserDefinition(), new CSSParserDefinition());
+  }
+
+  @Override
+  public void configureFromParserDefinition(@NotNull ParserDefinition definition, String extension) {
+    registerCssElementTypeServices(getApplication(), getTestRootDisposable());
+    super.configureFromParserDefinition(definition, extension);
   }
 
   @Override

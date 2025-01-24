@@ -7,6 +7,7 @@ import com.intellij.javascript.JSEmbeddedTokenTypesProvider;
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlScriptContentProvider;
+import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.dtd.DTDLanguage;
@@ -33,7 +34,9 @@ import org.coffeescript.CoffeeScriptLanguage;
 import org.coffeescript.lang.CoffeeScriptEmbeddedTokenTypesProvider;
 import org.coffeescript.lang.CoffeeScriptHtmlScriptContentProvider;
 import org.coffeescript.lang.parser.CoffeeScriptParserDefinition;
+import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.css.testFramework.CssElementTypeServiceHelper.registerCssElementTypeServices;
 import static com.intellij.lang.javascript.JSElementTypeServiceHelper.registerJSElementTypeServices;
 import static com.intellij.xml.testFramework.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
 
@@ -84,5 +87,11 @@ public abstract class JadeBaseParsingTestCase extends ParsingTestCase {
 
     CodeStyleSettings settings = CodeStyle.createTestSettings();
     CodeStyleSettingsManager.getInstance(getProject()).setTemporarySettings(settings);
+  }
+
+  @Override
+  public void configureFromParserDefinition(@NotNull ParserDefinition definition, String extension) {
+    registerCssElementTypeServices(getApplication(), getTestRootDisposable());
+    super.configureFromParserDefinition(definition, extension);
   }
 }

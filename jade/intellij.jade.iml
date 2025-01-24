@@ -44,5 +44,6 @@
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.css.testFramework" scope="TEST" />
   </component>
 </module>
