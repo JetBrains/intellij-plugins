@@ -1,12 +1,15 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.install
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
+import com.intellij.util.io.HttpRequests
 import com.intellij.util.system.CpuArch
 import kotlinx.coroutines.ensureActive
 import org.intellij.terraform.config.util.TFExecutor
@@ -22,7 +25,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
     override fun getDownloadUrl(): String {
-      val latestStableVersion = "1.8.0"
+      val latestStableVersion = fetchLatestStableVersion() ?: "1.10.0"
       return "$downloadServerUrl/$latestStableVersion/terraform_${latestStableVersion}_${getOSName()}_${getArchName()}.zip"
     }
 
@@ -33,6 +36,18 @@ internal enum class TfToolType(@Nls val executableName: String) {
       return project.service<TerraformProjectSettings>()
     }
 
+    private fun fetchLatestStableVersion(): String? {
+      val apiUrl = "https://checkpoint-api.hashicorp.com/v1/check/terraform"
+      return try {
+        val response = HttpRequests.request(apiUrl).readString()
+        val jsonNode = ObjectMapper().readTree(response)
+        jsonNode.get("current_version")?.asText()
+      }
+      catch (e: Exception) {
+        logger<BinaryInstaller>().error("Failed to fetch the latest stable Terraform version: ${e.message}")
+        null
+      }
+    }
   },
   OPENTOFU("tofu") {
     override val displayName = "OpenTofu"
