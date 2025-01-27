@@ -27,6 +27,7 @@
     <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.platform.webSymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="library" name="gson" level="project" />

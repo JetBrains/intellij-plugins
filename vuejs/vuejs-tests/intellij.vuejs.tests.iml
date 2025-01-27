@@ -45,5 +45,6 @@
     <orderEntry type="module" module-name="intellij.platform.webSymbols" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.web.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.webSymbols.testFramework" scope="TEST" />
   </component>
 </module>
