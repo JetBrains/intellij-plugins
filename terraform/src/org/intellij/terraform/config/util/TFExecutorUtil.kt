@@ -49,7 +49,8 @@ internal suspend fun TFExecutor.executeSuspendable(): Boolean {
 
 internal fun getApplicableToolType(file: VirtualFile): TfToolType {
   val moduleFolder = if (file.isFile) file.parent else file
-  return if (moduleFolder.children.any { FileUtilRt.extensionEquals(it.name, OpenTofuFileType.DEFAULT_EXTENSION) })
+  val moduleFiles = moduleFolder?.children?.asList()?.takeIf { it.isNotEmpty() } ?: listOf(file)
+  return if (moduleFiles.any {it.isFile && FileUtilRt.extensionEquals(it.name, OpenTofuFileType.DEFAULT_EXTENSION) })
     TfToolType.OPENTOFU
   else {
     TfToolType.TERRAFORM
