@@ -2,11 +2,11 @@
 package org.angular2.codeInsight.navigation
 
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2
-import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.navigation.NavigationItem
 import com.intellij.testFramework.TestIndexingModeSupporter
 import com.intellij.testFramework.TestIndexingModeSupporter.IndexingMode
-import com.intellij.webSymbols.checkListByFile
+import com.intellij.webSymbols.testFramework.checkListByFile
 import junit.framework.Test
 import junit.framework.TestSuite
 import org.angular2.Angular2TestCase

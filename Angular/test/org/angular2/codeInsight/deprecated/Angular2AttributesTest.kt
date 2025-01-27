@@ -22,6 +22,15 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbolDelegate.Companion.unwrapAllDelegates
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.doCompletionItemsTest
+import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.multiResolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.renderLookupItems
+import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.webSymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.webSymbols.testFramework.resolveWebSymbolReference
 import com.intellij.xml.util.XmlInvalidIdInspection
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase

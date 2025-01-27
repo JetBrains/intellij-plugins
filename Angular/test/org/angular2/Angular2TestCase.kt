@@ -1,8 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.javascript.web.WebFrameworkTestCase
-import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
@@ -10,11 +9,6 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.SyntaxTraverser
-import com.intellij.testFramework.ExpectedHighlightingData
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
 import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings

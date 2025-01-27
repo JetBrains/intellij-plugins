@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt
 
-import com.intellij.javascript.web.checkFileUsages
+import com.intellij.javascript.testFramework.web.checkFileUsages
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueTestModule

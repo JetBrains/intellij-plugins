@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
-import com.intellij.javascript.web.WebFrameworkTestConfigurator
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
@@ -15,8 +15,8 @@ import com.intellij.psi.util.PsiUtilBase
 import com.intellij.testFramework.IndexingTestUtil.Companion.waitUntilIndexesAreReady
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.webSymbols.checkListByFile
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection

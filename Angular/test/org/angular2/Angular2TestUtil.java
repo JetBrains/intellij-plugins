@@ -11,7 +11,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.webSymbols.WebTestUtil;
+import com.intellij.webSymbols.testFramework.WebTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.libraries.vuelidate
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.renderLookupItems
-import com.intellij.webSymbols.resolveReference
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.renderLookupItems
+import com.intellij.webSymbols.testFramework.resolveReference
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule

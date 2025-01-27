@@ -4,9 +4,9 @@ package org.angular2.css
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.resolveReference
-import com.intellij.webSymbols.resolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.webSymbols.testFramework.resolveWebSymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies

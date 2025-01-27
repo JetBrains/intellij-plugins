@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.cssModules
 
-import com.intellij.webSymbols.assertUnresolvedReference
-import com.intellij.javascript.web.checkUsages
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.resolveReference
+import com.intellij.webSymbols.testFramework.assertUnresolvedReference
+import com.intellij.javascript.testFramework.web.checkUsages
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.resolveReference
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase

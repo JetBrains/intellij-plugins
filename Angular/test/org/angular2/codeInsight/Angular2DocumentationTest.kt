@@ -1,7 +1,7 @@
 package org.angular2.codeInsight
 
-import com.intellij.javascript.web.WebFrameworkTestConfigurator
-import com.intellij.webSymbols.checkDocumentationAtCaret
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
+import com.intellij.webSymbols.testFramework.checkDocumentationAtCaret
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile

@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.navigation
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2
-import com.intellij.webSymbols.checkGTDUOutcome
+import com.intellij.webSymbols.testFramework.checkGTDUOutcome
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 

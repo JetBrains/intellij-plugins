@@ -3,10 +3,10 @@ package org.angular2.codeInsight
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.IdeBundle
-import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.webSymbols.checkListByFile
-import com.intellij.webSymbols.renderLookupItems
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.renderLookupItems
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.*

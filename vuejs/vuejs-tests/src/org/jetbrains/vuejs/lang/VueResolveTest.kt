@@ -15,6 +15,14 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.testFramework.assertUnresolvedReference
+import com.intellij.webSymbols.testFramework.checkGotoDeclaration
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.multiResolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.renderLookupItems
+import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.webSymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.webSymbols.testFramework.webSymbolSourceAtCaret
 import com.intellij.webSymbols.utils.asSingleSymbol
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory

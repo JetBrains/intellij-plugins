@@ -5,8 +5,8 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.webSymbolAtCaret
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.webSymbolAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule

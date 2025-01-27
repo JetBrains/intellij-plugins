@@ -6,7 +6,7 @@ import com.intellij.lang.typescript.documentation.TypeScriptDocumentationTargetP
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
-import com.intellij.webSymbols.checkDocumentationAtCaret
+import com.intellij.webSymbols.testFramework.checkDocumentationAtCaret
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies

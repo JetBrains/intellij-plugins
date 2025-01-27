@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.javascript.web.filterOutStandardHtmlSymbols
-import com.intellij.javascript.web.forceReloadProjectRoots
+import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
+import com.intellij.javascript.testFramework.web.forceReloadProjectRoots
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
@@ -24,7 +24,13 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation.renderReal
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.testFramework.LookupElementInfo
+import com.intellij.webSymbols.testFramework.and
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.noAutoComplete
+import com.intellij.webSymbols.testFramework.renderLookupItems
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -96,7 +102,7 @@ import compUI from 'compUI.vue'
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -122,7 +128,7 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -168,7 +174,7 @@ export default {
     try {
       noAutoComplete {
         myFixture.completeBasic()
-        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+        assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
         myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
         myFixture.checkResult("""
 <template>
@@ -194,7 +200,7 @@ export default {
     try {
       noAutoComplete {
         myFixture.completeBasic()
-        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+        assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
         myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
         myFixture.checkResult("""
 <template>
@@ -230,7 +236,7 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "ToImport")
+      assertContainsElements(myFixture.lookupElementStrings!!, "ToImport")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -265,7 +271,7 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-be-imported")
+      assertContainsElements(myFixture.lookupElementStrings!!, "to-be-imported")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -293,7 +299,7 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -335,7 +341,7 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "renamed-component")
+      assertContainsElements(myFixture.lookupElementStrings!!, "renamed-component")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -375,7 +381,7 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "lib2-component")
+      assertContainsElements(myFixture.lookupElementStrings!!, "lib2-component")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
@@ -553,7 +559,7 @@ export default {
     noAutoComplete {
       myFixture.configureByText("InsertAttributeWithoutValue.vue", "<template v-onc<caret>></template>")
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-once")
+      assertContainsElements(myFixture.lookupElementStrings!!, "v-once")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("<template v-once<caret>></template>")
     }
@@ -563,7 +569,7 @@ export default {
     noAutoComplete {
       myFixture.configureByText("InsertAttributeWithValue.vue", "<template v-tex<caret>></template>")
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-text")
+      assertContainsElements(myFixture.lookupElementStrings!!, "v-text")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("<template v-text=\"<caret>\"></template>")
     }
@@ -601,13 +607,13 @@ export default {
 """)
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
-                                            "first-mixin-prop", "second-mixin-prop", "hi2dden",
-                                            "interesting-prop")
-      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
-                                         "FirstMixinProp", "firstMixinProp",
-                                         "SecondMixinProp", "secondMixinProp", "Hi2dden",
-                                         "InterestingProp", "interestingProp")
+      assertContainsElements(myFixture.lookupElementStrings!!,
+                             "first-mixin-prop", "second-mixin-prop", "hi2dden",
+                             "interesting-prop")
+      assertDoesntContain(myFixture.lookupElementStrings!!,
+                          "FirstMixinProp", "firstMixinProp",
+                          "SecondMixinProp", "secondMixinProp", "Hi2dden",
+                          "InterestingProp", "interestingProp")
     }
   }
 
@@ -639,11 +645,11 @@ export default {
 """)
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
-      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
-                                         "Hi2dden", "interestingProp", "InterestingProp",
-                                         "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
-                                         "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
+      assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
+      assertDoesntContain(myFixture.lookupElementStrings!!,
+                          "Hi2dden", "interestingProp", "InterestingProp",
+                          "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
+                          "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
     }
   }
 
@@ -1185,7 +1191,7 @@ export default class ComponentInsertion extends Vue {
         </template>
       """)
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "HiddenComponent")
+      assertContainsElements(myFixture.lookupElementStrings!!, "HiddenComponent")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
         <template>

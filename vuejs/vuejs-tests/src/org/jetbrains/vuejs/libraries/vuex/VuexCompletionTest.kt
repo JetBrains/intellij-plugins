@@ -9,10 +9,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.LookupElementInfo
-import com.intellij.webSymbols.and
-import com.intellij.webSymbols.findOffsetBySignature
-import com.intellij.webSymbols.renderLookupItems
+import com.intellij.webSymbols.testFramework.LookupElementInfo
+import com.intellij.webSymbols.testFramework.and
+import com.intellij.webSymbols.testFramework.findOffsetBySignature
+import com.intellij.webSymbols.testFramework.renderLookupItems
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.filterOutDollarPrefixedProperties

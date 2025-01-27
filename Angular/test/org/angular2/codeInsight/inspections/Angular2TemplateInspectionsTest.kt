@@ -5,11 +5,11 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.javascript.web.WebFrameworkTestConfigurator
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.*

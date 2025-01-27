@@ -7,7 +7,7 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithou
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 

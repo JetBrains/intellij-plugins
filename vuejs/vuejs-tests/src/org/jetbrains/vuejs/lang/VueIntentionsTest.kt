@@ -20,7 +20,7 @@ import com.intellij.lang.javascript.inspections.ES6ShorthandObjectPropertyInspec
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import junit.framework.TestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 

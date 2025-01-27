@@ -1,7 +1,7 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.javascript.web.WebFrameworkTestCase.CommentStyle.BLOCK
-import com.intellij.javascript.web.WebFrameworkTestCase.CommentStyle.LINE
+import com.intellij.javascript.testFramework.web.WebFrameworkTestCase.CommentStyle.BLOCK
+import com.intellij.javascript.testFramework.web.WebFrameworkTestCase.CommentStyle.LINE
 import com.intellij.lang.javascript.JSTestUtils
 import org.intellij.plugins.postcss.settings.PostCssCodeStyleSettings
 import org.jetbrains.astro.AstroCodeInsightTestCase

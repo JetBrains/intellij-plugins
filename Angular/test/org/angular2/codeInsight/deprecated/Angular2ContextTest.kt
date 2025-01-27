@@ -19,7 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.resolveReference
+import com.intellij.webSymbols.testFramework.resolveReference
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider

@@ -5,8 +5,8 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.psi.html.HtmlTag
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.webSymbols.resolveReference
-import com.intellij.webSymbols.resolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.webSymbols.testFramework.resolveWebSymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.Angular2TestUtil

@@ -1,6 +1,6 @@
 package org.jetbrains.vuejs.lang
 
-import com.intellij.webSymbols.checkDocumentationAtCaret
+import com.intellij.webSymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import one.util.streamex.StreamEx
 import org.junit.Before

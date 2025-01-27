@@ -2,9 +2,9 @@
 package org.angular2.codeInsight
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
-import com.intellij.javascript.web.WebFrameworkTestModule
-import com.intellij.webSymbols.LookupElementInfo
-import com.intellij.webSymbols.enableIdempotenceChecksOnEveryCache
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.webSymbols.testFramework.LookupElementInfo
+import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
