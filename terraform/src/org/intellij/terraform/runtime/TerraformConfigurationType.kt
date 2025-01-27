@@ -1,14 +1,16 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
+import com.intellij.execution.RunConfigurationConverter
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.project.Project
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
+import org.jdom.Element
 import javax.swing.Icon
 
-internal class TerraformConfigurationType : TfToolConfigurationTypeBase() {
+internal class TerraformConfigurationType : TfToolConfigurationTypeBase(), RunConfigurationConverter {
 
   private val TF_RUN_CONFIGURATION_ID = "TerraformConfigurationType"
 
@@ -34,4 +36,25 @@ internal class TerraformConfigurationType : TfToolConfigurationTypeBase() {
     return TerraformRunConfiguration(project, this, "", emptyList())
   }
 
+  override fun convertRunConfigurationOnDemand(element: Element): Boolean {
+    val configType = element.getAttributeValue("type") ?: return false
+    return if (configType.contains(TF_RUN_CONFIGURATION_ID) && configType != TF_RUN_CONFIGURATION_ID) {
+      element.setAttribute("type", TF_RUN_CONFIGURATION_ID)
+      val oldFactoryName = element.getAttributeValue("factoryName")
+      element.setAttribute("factoryName", getFactoryName(oldFactoryName))
+      true
+    } else false
+  }
+
+  private fun getFactoryName(oldName: String?): String {
+    val suffix = oldName?.split(' ')?.getOrNull(1)
+    return when (suffix) {
+      "Init" -> initFactory.id
+      "Validate" -> validateFactory.id
+      "Plan" -> planFactory.id
+      "Apply" -> applyFactory.id
+      "Destroy" -> destroyFactory.id
+      else -> baseFactory.id
+    }
+  }
 }
