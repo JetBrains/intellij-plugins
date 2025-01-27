@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -69,7 +69,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   }
 
   @Override
-  protected UsageInfo @NotNull [] findUsages() {
+  public UsageInfo @NotNull [] findUsages() {
     Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     result.addAll(Arrays.asList(super.findUsages()));
     for (JSQualifiedNamedElement element : myElements) {
@@ -83,12 +83,12 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   }
 
   @Override
-  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(refUsages.get()), refUsages.get());
   }
 
   @Override
-  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
+  public boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }

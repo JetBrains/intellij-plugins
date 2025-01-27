@@ -1,12 +1,12 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
@@ -101,7 +101,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected UsageInfo @NotNull [] findUsages() {
+  public UsageInfo @NotNull [] findUsages() {
     if (myMode == JSExtractSuperMode.ExtractSuper) {
       return UsageInfo.EMPTY_ARRAY; // user doesn't want to update usages
     }
@@ -145,7 +145,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
 
   @Override
-  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(refUsages.get()), refUsages.get());
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -292,7 +292,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
     }
 
     @Override
-    protected UsageInfo @NotNull [] findUsages() {
+    public UsageInfo @NotNull [] findUsages() {
       final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<>());
       final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<>());
 

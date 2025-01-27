@@ -79,7 +79,7 @@ public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  protected UsageInfo @NotNull [] findUsages() {
+  public UsageInfo @NotNull [] findUsages() {
     final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(reference -> {
       final PsiElement element = reference.getElement();
@@ -211,7 +211,7 @@ public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(), refUsages.get());
   }
 
@@ -226,7 +226,7 @@ public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
+  public boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }

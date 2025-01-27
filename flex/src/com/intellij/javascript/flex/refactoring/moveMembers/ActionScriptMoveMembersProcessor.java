@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
@@ -108,7 +108,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected UsageInfo @NotNull [] findUsages() {
+  public UsageInfo @NotNull [] findUsages() {
     return JSRefactoringUtil.getUsages(myMembersToMove, myTargetClass);
   }
 
@@ -188,7 +188,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     if (myTargetClass == null) {
       return true;
     }
