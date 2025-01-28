@@ -387,4 +387,8 @@
     <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.LinesOfCodeMetricTable"/>
     <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.CyclomaticComplexityMetricTable"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <resultHandler implementation="org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerQodana"/>
+  </extensions>
 </idea-plugin>
