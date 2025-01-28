@@ -449,46 +449,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testViewChildReferenceNavigation() {
-    val reference = myFixture.getReferenceAtCaretPosition("viewChildReference.ts", "package.json")
-    assertNotNull(reference)
-    val el = reference!!.resolve()
-    assertNotNull(el)
-    assertEquals("#area", el!!.getParent().getParent().getText())
-  }
-
-  fun testViewChildrenReferenceNavigation() {
-    val reference = myFixture.getReferenceAtCaretPosition("viewChildrenReference.ts", "package.json")
-    assertNotNull(reference)
-    val el = reference!!.resolve()
-    assertNotNull(el)
-    assertEquals("#area", el!!.getParent().getParent().getText())
-  }
-
-  fun testViewChildReferenceCodeCompletion() {
-    assertEquals(mutableListOf("area", "area2", "area3"),
-                 myFixture.getCompletionVariants("viewChildReference.ts", "package.json"))
-  }
-
-  fun testViewChildReferenceNavigationHTML() {
-    val reference = myFixture.getReferenceAtCaretPosition("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json")
-    assertNotNull(reference)
-    val el = reference!!.resolve()
-    assertNotNull(el)
-    assertEquals("viewChildReferenceHTML.html", el!!.getContainingFile().getName())
-    assertEquals("#area", el.getParent().getParent().getText())
-  }
-
-  fun testViewChildReferenceCodeCompletionHTML() {
-    assertEquals(mutableListOf("area", "area2"),
-                 myFixture.getCompletionVariants("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json"))
-  }
-
-  fun testViewChildrenReferenceCodeCompletionHTML() {
-    assertEquals(mutableListOf("area2", "area3"),
-                 myFixture.getCompletionVariants("viewChildrenReferenceHTML.ts", "viewChildrenReferenceHTML.html", "package.json"))
-  }
-
   fun testNgNoValidateReference() {
     myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate_directive.ts", "package.json")
     val resolve = resolveWebSymbolReference("ng<caret>NativeValidate")

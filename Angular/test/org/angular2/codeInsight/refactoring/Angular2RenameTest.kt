@@ -222,4 +222,14 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
   fun testInputAndSelectorFromUsage() =
     checkSymbolRename("my-foo", dir = false)
 
+  fun testViewChildrenDecoratorHtml() =
+    checkSymbolRename("viewChildrenDecoratorHtml.html", "myFoo", dir = true)
+
+  fun testViewChildDecorator() =
+    checkSymbolRename("myFoo", dir = false)
+
+  // TODO - requires renaming several symbols at once
+  fun _testViewChildrenDecorator() =
+    checkSymbolRename("my-foo", dir = false)
+
 }

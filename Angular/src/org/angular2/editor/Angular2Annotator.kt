@@ -3,9 +3,9 @@ package org.angular2.editor
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -21,14 +21,18 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
+import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
+import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
-import org.angular2.Angular2DecoratorUtil.isHostBindingDecoratorLiteral
+import org.angular2.Angular2DecoratorUtil.isDecoratorLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
+import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -103,7 +107,8 @@ class Angular2Annotator : Annotator {
         }
       return
     }
-    val isHostBindingDecoratorLiteral = isHostBindingDecoratorLiteral(element)
+    val isHostBindingDecoratorLiteral = isDecoratorLiteral(element, HOST_BINDING_DEC)
+    val isViewChildrenDecoratorLiteral = isDecoratorLiteral(element, VIEW_CHILDREN_DEC) || isDecoratorLiteral(element, VIEW_CHILD_DEC)
     val isHostListenerDecoratorEventLiteral = isHostListenerDecoratorEventLiteral(element)
     val info = getPropertyDeclarationOrReferenceKindAndDirective(element, true)
                ?: getPropertyDeclarationOrReferenceKindAndDirective(element, false)
@@ -112,6 +117,8 @@ class Angular2Annotator : Annotator {
         Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       isHostListenerDecoratorEventLiteral || info?.kind == Angular2DecoratorUtil.OUTPUTS_PROP ->
         Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
+      isViewChildrenDecoratorLiteral ->
+        Angular2HighlighterColors.NG_VARIABLE
       isHostBindingClassValueLiteral(element) || isNgClassLiteralContext(element) -> CssHighlighter.CSS_CLASS_NAME
       else -> return
     }

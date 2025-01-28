@@ -258,6 +258,14 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
 
+  fun testViewChildrenDecorator() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
+                 locations = listOf("@ViewChild('<caret>area')", "@ViewChildren('<caret>area')"))
+
+  fun testViewChildrenDecoratorHtml() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts", dir = true,
+                 locations = listOf("@ViewChild('<caret>area')", "@ViewChildren('<caret>area')"))
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =

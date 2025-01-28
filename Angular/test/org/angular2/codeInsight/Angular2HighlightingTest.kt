@@ -295,6 +295,16 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testUnusedTemplateVariable() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
+  // TODO - JSUnusedGlobalSymbolsPass doesn't support injections
+  fun _testViewChildrenDecorator() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
+  fun testViewChildrenDecoratorHtml() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, dir = true)
+
+  fun testViewChildrenDecoratorSyntax() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

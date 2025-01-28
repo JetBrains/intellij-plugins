@@ -245,10 +245,12 @@ object Angular2DecoratorUtil {
       ?.takeIf { it.name == HOST_PROP }
       ?.let { isAngularEntityInitializerProperty(it, true, COMPONENT_DEC, DIRECTIVE_DEC) } == true
 
-  fun isHostBindingDecoratorLiteral(literal: JSLiteralExpression): Boolean =
-    literal.parentOfTypes(ES6Decorator::class, JSProperty::class, JSExecutionScope::class)
-      ?.asSafely<ES6Decorator>()
-      ?.decoratorName == HOST_BINDING_DEC
+  fun isDecoratorLiteral(literal: JSLiteralExpression, decoratorName: String): Boolean =
+    literal
+      .parent.asSafely<JSArgumentList>()
+      ?.parent.asSafely<JSCallExpression>()
+      ?.parent?.asSafely<ES6Decorator>()
+      ?.decoratorName == decoratorName
 
   fun isHostListenerDecoratorEventLiteral(literal: JSLiteralExpression): Boolean =
     literal

@@ -26,8 +26,11 @@ import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
+import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
+import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
-import org.angular2.Angular2DecoratorUtil.isHostBindingDecoratorLiteral
+import org.angular2.Angular2DecoratorUtil.isDecoratorLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.isNgClassAttribute
@@ -114,6 +117,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         listOfNotNull(DirectivePropertyMappingCompletionScope(element),
                       getHostBindingsScopeForLiteral(element),
                       getCssClassesInJSLiteralInHtmlAttributeScope(element),
+                      getViewChildrenScopeForLiteral(element),
                       element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
       }
       is JSObjectLiteralExpression -> {
@@ -132,7 +136,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
   private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
     val mapping = when {
-      isHostBindingDecoratorLiteral(element) -> NG_PROPERTY_BINDINGS
+      isDecoratorLiteral(element, HOST_BINDING_DEC) -> NG_PROPERTY_BINDINGS
       isHostListenerDecoratorEventLiteral(element) -> NG_EVENT_BINDINGS
       isHostBindingClassValueLiteral(element) -> CSS_CLASS_LIST
       else -> return null
@@ -143,6 +147,18 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
       ?.let { HostBindingsScope(mapOf(WebSymbol.JS_STRING_LITERALS to mapping), it) }
   }
+
+  private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
+    val isChildViewDec = isDecoratorLiteral(element, VIEW_CHILD_DEC)
+    val isChildrenViewDec = isDecoratorLiteral(element, VIEW_CHILDREN_DEC)
+    if (!isChildViewDec && !isChildrenViewDec) return null
+
+    return element
+      .parentOfType<TypeScriptClass>()
+      ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
+      ?.let { ViewChildrenScope(it, isChildrenViewDec) }
+  }
+
 
   private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): WebSymbolsScope? =
     element.takeIf { isNgClassLiteralContext(it) }
