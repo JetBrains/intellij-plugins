@@ -1,6 +1,9 @@
 package com.intellij.dts.completion
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 abstract class DtsCompletionTest : DtsTestBase() {
   companion object {
@@ -28,6 +31,14 @@ abstract class DtsCompletionTest : DtsTestBase() {
       "/omit-if-no-ref/ &handel;",
       "#include \"file.dtsi\"",
     )
+  }
+
+  override fun setUp() {
+    super.setUp()
+
+    runBlocking(Dispatchers.Default) {
+      DtsZephyrBundledBindings.getInstance().awaitInit()
+    }
   }
 
   fun applyVariations(
