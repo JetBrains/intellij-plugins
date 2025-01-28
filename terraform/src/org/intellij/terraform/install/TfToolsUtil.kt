@@ -25,7 +25,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
     override fun getDownloadUrl(): String {
-      val latestStableVersion = fetchLatestStableVersion() ?: "1.10.0"
+      val latestStableVersion = fetchLatestStableVersion(TERRAFORM_VERSION_URL) ?: DEFAULT_TERRAFORM_VERSION
       return "$downloadServerUrl/$latestStableVersion/terraform_${latestStableVersion}_${getOSName()}_${getArchName()}.zip"
     }
 
@@ -36,8 +36,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
       return project.service<TerraformProjectSettings>()
     }
 
-    private fun fetchLatestStableVersion(): String? {
-      val apiUrl = "https://checkpoint-api.hashicorp.com/v1/check/terraform"
+    private fun fetchLatestStableVersion(apiUrl: String): String? {
       return try {
         val response = HttpRequests.request(apiUrl).readString()
         val jsonNode = ObjectMapper().readTree(response)
@@ -134,3 +133,6 @@ internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath:
   }
   return stdout
 }
+
+private const val DEFAULT_TERRAFORM_VERSION: String = "1.10.0"
+private const val TERRAFORM_VERSION_URL: String = "https://checkpoint-api.hashicorp.com/v1/check/terraform"
