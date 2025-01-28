@@ -3,8 +3,13 @@ package org.angular2.signals
 
 import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
+import com.intellij.lang.javascript.psi.JSArgumentList
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.StubUnsafe
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
@@ -17,6 +22,7 @@ import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
 import com.intellij.lang.javascript.psi.types.recordImpl.ComputedPropertySignatureImpl
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
+import com.intellij.util.asSafely
 import org.angular2.lang.Angular2LangUtil
 
 object Angular2SignalUtils {
@@ -24,6 +30,10 @@ object Angular2SignalUtils {
   const val SIGNAL_TYPE: String = "Signal"
   const val WRITABLE_SIGNAL_TYPE: String = "WritableSignal"
   const val SIGNAL_FUNCTION: String = "signal"
+
+  const val VIEW_CHILD_FUN: String = "viewChild"
+  const val VIEW_CHILDREN_FUN: String = "viewChildren"
+  const val REQUIRED_FUN: String = "required"
 
   fun signalTypeAlias(context: PsiElement?): TypeScriptTypeAlias? =
     WebJSResolveUtil.resolveSymbolFromNodeModule(
@@ -87,6 +97,30 @@ object Angular2SignalUtils {
       source, true
     )
   }
+
+  @StubUnsafe
+  fun getPossibleSignalFunNameForLiteralParameter(expression: JSLiteralExpression): Pair<String, String?>? =
+    expression
+      .parent?.asSafely<JSArgumentList>()
+      ?.parent?.asSafely<JSCallExpression>()
+      ?.methodExpression?.asSafely<JSReferenceExpression>()?.let { expr ->
+        val qualifier = expr.qualifier
+        if (qualifier is JSReferenceExpression) {
+          if (qualifier.hasQualifier())
+            null
+          else
+            Pair(qualifier.referenceName ?: return@let null, expr.referenceName)
+        } else if (qualifier == null){
+          expr.referenceName?.let { Pair(it, null) }
+        } else null
+      }
+      ?.takeIf { Angular2LangUtil.isAngular2Context(expression) }
+
+  fun isViewChildSignalCall(methodCallInfo: Pair<String, String?>?): Boolean =
+    methodCallInfo?.first == VIEW_CHILD_FUN && methodCallInfo.second.let { it == null || it == REQUIRED_FUN }
+
+  fun isViewChildrenSignalCall(methodCallInfo: Pair<String, String?>?): Boolean =
+    methodCallInfo?.first == VIEW_CHILDREN_FUN && methodCallInfo.second == null
 
 }
 

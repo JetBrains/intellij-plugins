@@ -5,7 +5,6 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -27,7 +26,7 @@ import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
-import org.angular2.Angular2DecoratorUtil.isDecoratorLiteral
+import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2EntitiesProvider
@@ -38,6 +37,9 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.signals.Angular2SignalUtils.getPossibleSignalFunNameForLiteralParameter
+import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
+import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
 import org.angular2.web.isNgClassLiteralContext
@@ -107,8 +109,12 @@ class Angular2Annotator : Annotator {
         }
       return
     }
-    val isHostBindingDecoratorLiteral = isDecoratorLiteral(element, HOST_BINDING_DEC)
-    val isViewChildrenDecoratorLiteral = isDecoratorLiteral(element, VIEW_CHILDREN_DEC) || isDecoratorLiteral(element, VIEW_CHILD_DEC)
+    val decorator = getDecoratorForLiteralParameter(element)
+    val signalFunctionName = getPossibleSignalFunNameForLiteralParameter(element)
+    val isHostBindingDecoratorLiteral = decorator?.decoratorName == HOST_BINDING_DEC
+    val isViewChildrenLiteral = decorator?.decoratorName.let { it == VIEW_CHILDREN_DEC || it == VIEW_CHILD_DEC}
+                                || isViewChildSignalCall(signalFunctionName)
+                                || isViewChildrenSignalCall(signalFunctionName)
     val isHostListenerDecoratorEventLiteral = isHostListenerDecoratorEventLiteral(element)
     val info = getPropertyDeclarationOrReferenceKindAndDirective(element, true)
                ?: getPropertyDeclarationOrReferenceKindAndDirective(element, false)
@@ -117,7 +123,7 @@ class Angular2Annotator : Annotator {
         Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       isHostListenerDecoratorEventLiteral || info?.kind == Angular2DecoratorUtil.OUTPUTS_PROP ->
         Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
-      isViewChildrenDecoratorLiteral ->
+      isViewChildrenLiteral ->
         Angular2HighlighterColors.NG_VARIABLE
       isHostBindingClassValueLiteral(element) || isNgClassLiteralContext(element) -> CssHighlighter.CSS_CLASS_NAME
       else -> return

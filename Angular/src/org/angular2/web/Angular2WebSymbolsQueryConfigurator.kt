@@ -30,7 +30,7 @@ import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
-import org.angular2.Angular2DecoratorUtil.isDecoratorLiteral
+import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.isNgClassAttribute
@@ -45,6 +45,9 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
+import org.angular2.signals.Angular2SignalUtils.getPossibleSignalFunNameForLiteralParameter
+import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
+import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
 import org.angular2.web.scopes.*
 
 class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -136,7 +139,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
   private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
     val mapping = when {
-      isDecoratorLiteral(element, HOST_BINDING_DEC) -> NG_PROPERTY_BINDINGS
+      getDecoratorForLiteralParameter(element)?.decoratorName == HOST_BINDING_DEC -> NG_PROPERTY_BINDINGS
       isHostListenerDecoratorEventLiteral(element) -> NG_EVENT_BINDINGS
       isHostBindingClassValueLiteral(element) -> CSS_CLASS_LIST
       else -> return null
@@ -149,14 +152,16 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
-    val isChildViewDec = isDecoratorLiteral(element, VIEW_CHILD_DEC)
-    val isChildrenViewDec = isDecoratorLiteral(element, VIEW_CHILDREN_DEC)
-    if (!isChildViewDec && !isChildrenViewDec) return null
+    val signalCallInfo = getPossibleSignalFunNameForLiteralParameter(element)
+    val decorator = getDecoratorForLiteralParameter(element)
+    val isChildViewCall = decorator?.decoratorName == VIEW_CHILD_DEC || isViewChildSignalCall(signalCallInfo)
+    val isChildrenViewCall = decorator?.decoratorName == VIEW_CHILDREN_DEC || isViewChildrenSignalCall(signalCallInfo)
+    if (!isChildViewCall && !isChildrenViewCall) return null
 
     return element
       .parentOfType<TypeScriptClass>()
       ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
-      ?.let { ViewChildrenScope(it, isChildrenViewDec) }
+      ?.let { ViewChildrenScope(it, isChildrenViewCall) }
   }
 
 

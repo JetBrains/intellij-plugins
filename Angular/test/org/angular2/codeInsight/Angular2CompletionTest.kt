@@ -266,6 +266,10 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts", dir = true,
                  locations = listOf("@ViewChild('<caret>area')", "@ViewChildren('<caret>area')"))
 
+  fun testViewChildrenSignal() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
+                 locations = (1..6).map { "\"<caret>area$it\"" })
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
