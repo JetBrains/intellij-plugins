@@ -72,7 +72,7 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
     return settings
   }
 
-  private fun getConfigurationName(rootModule: RootModulePath): @Nls String {
+  internal fun getConfigurationName(rootModule: RootModulePath): @Nls String {
     return "${HCLBundle.message("terraform.run.configuration."+command.command+".name.suffix")} ${rootModule.name}"
   }
 

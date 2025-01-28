@@ -56,16 +56,16 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   private fun computeActions(block: HCLBlock, toolType: TfToolType): Array<AnAction> {
     val project = block.project
     val templateActions = getRunTemplateActions(toolType)
-
-    val actions = mutableListOf(*templateActions)
-    val templateConfigNames = templateActions.map { it.templatePresentation.text }
-
     val rootModule = TfRunBaseConfigAction.getRootModule(block)
+
+    val templateConfigNames = templateActions.filterIsInstance<TfRunBaseConfigAction>().map { it.getConfigurationName(rootModule) }
     val runManager = RunManager.getInstance(project)
     val existingConfigs = runManager.allSettings.filter {
       val configuration = it.configuration as? TfToolsRunConfigurationBase
       configuration != null && configuration.workingDirectory == rootModule.path && configuration.name !in templateConfigNames
     }
+
+    val actions = mutableListOf(*templateActions)
     actions.addAll(existingConfigs.map { TfRunExistingConfigAction(it) })
 
     actions.add(Separator())
