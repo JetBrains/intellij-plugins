@@ -2,8 +2,8 @@ package com.intellij.dts.completion
 
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import com.intellij.testFramework.common.timeoutRunBlocking
+import kotlin.time.Duration.Companion.seconds
 
 abstract class DtsCompletionTest : DtsTestBase() {
   companion object {
@@ -36,7 +36,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
   override fun setUp() {
     super.setUp()
 
-    runBlocking(Dispatchers.Default) {
+    timeoutRunBlocking(30.seconds) {
       DtsZephyrBundledBindings.getInstance().awaitInit()
     }
   }
