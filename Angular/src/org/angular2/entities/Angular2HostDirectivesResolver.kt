@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
@@ -23,6 +24,7 @@ class Angular2HostDirectivesResolver(private val directive: Angular2DirectiveWit
 
   private fun resolveHostDirectives(): CollectedResults =
     CachedValuesManager.getManager(directive.sourceElement.project).getCachedValue(directive as UserDataHolder) {
+      JSTypeEvaluationLocationProvider.assertLocationIsSet()
       CachedValueProvider.Result.create(collectAll(), PsiModificationTracker.MODIFICATION_COUNT)
     }
 

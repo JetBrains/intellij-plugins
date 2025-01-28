@@ -3,6 +3,7 @@ package org.angular2.entities
 
 import com.intellij.html.webSymbols.HtmlDescriptorUtils.getHtmlNSDescriptor
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
@@ -60,6 +61,7 @@ class Angular2DirectiveSelectorSymbol(
    * Selectors should yield to HTML symbols and directive properties
    */
   val referencedSymbol: WebSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    JSTypeEvaluationLocationProvider.assertLocationIsSet()
     getReferencedHtmlSymbol(name, sourceElement, isElementSelector, myElementSelector)
     ?: if (!isElementSelector) getReferencedDirectiveProperty(name, myParent) else null
   }
@@ -82,7 +84,7 @@ class Angular2DirectiveSelectorSymbol(
     ?: super<Angular2Symbol>.getDocumentationTarget(location)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    referencedSymbol == symbol
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(sourceElement) { referencedSymbol == symbol }
     || super<WebSymbolDeclaredInPsi>.isEquivalentTo(symbol)
 
   override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {

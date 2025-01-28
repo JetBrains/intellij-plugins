@@ -84,8 +84,10 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
     }
 
     override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
-      super<WebSymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
-        .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
+      withTypeEvaluationLocation(dataHolder) {
+        super<WebSymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
+          .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
+      }
 
     private fun initializeWithTypeLocation(consumer: (WebSymbol) -> Unit) {
       val tagName = key

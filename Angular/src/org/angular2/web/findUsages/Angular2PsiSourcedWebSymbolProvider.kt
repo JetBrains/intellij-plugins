@@ -1,5 +1,6 @@
 package org.angular2.web.findUsages
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.psi.PsiElement
@@ -13,7 +14,7 @@ class Angular2PsiSourcedWebSymbolProvider : PsiSourcedWebSymbolProvider {
   override fun getWebSymbols(element: PsiElement): List<PsiSourcedWebSymbol> {
     if (element is TypeScriptField) {
       Angular2EntitiesProvider.getDirective(element.contextOfType<TypeScriptClass>())
-        ?.inOuts
+        ?.let { JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) { it.inOuts } }
         ?.find { (it as? PsiSourcedWebSymbol)?.source == element }
         ?.let {
           return listOf(it as PsiSourcedWebSymbol)

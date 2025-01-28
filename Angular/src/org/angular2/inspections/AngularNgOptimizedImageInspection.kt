@@ -8,6 +8,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.htmltools.xml.util.HtmlReferenceProvider
 import com.intellij.lang.html.HtmlCompatibleFile
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -82,7 +83,7 @@ class AngularNgOptimizedImageInspection : LocalInspectionTool() {
               if (isNgSrcAttribute(info)) {
                 val attrsInfo = ngSrcAttrsInfo(tag)
                 if (!attrsInfo.hasFill && !attrsInfo.hasHeight && !attrsInfo.hasWidth) {
-                  if (directive.inputs.any { it.name == FILL_ATTR }) {
+                  if (JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(nameElement) { directive.inputs.any { it.name == FILL_ATTR } }) {
                     holder.registerProblem(
                       nameElement,
                       Angular2Bundle.htmlMessage(

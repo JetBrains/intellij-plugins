@@ -9,6 +9,7 @@ import com.intellij.codeInsight.template.impl.TextExpression
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
@@ -47,6 +48,10 @@ class AddInputTransformFunctionQuickFix(private val kind: TransformKind,
     !JSProjectUtil.isInLibrary(startElement)
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(startElement) { invokeInner(project, editor, startElement) }
+  }
+
+  private fun invokeInner(project: Project, editor: Editor?, startElement: PsiElement) {
     val input = Angular2EntitiesProvider.getDirective(startElement as? TypeScriptClass)
                   ?.inputs
                   ?.firstNotNullOfOrNull { property ->

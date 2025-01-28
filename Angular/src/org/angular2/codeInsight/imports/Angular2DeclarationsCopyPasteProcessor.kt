@@ -150,7 +150,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
 
           val directivesToImport = data.directives.flatMap { directivesData ->
             Angular2ApplicableDirectivesProvider(
-              project, directivesData.selector.elementName ?: "", false, directivesData.selector, sourceScope
+              project, pasteContext.containingFile, directivesData.selector.elementName ?: "", false, directivesData.selector, sourceScope
             )
               .matched
               .filter { it !in destinationScope && wasInCopyRange(it, directivesData) }

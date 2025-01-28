@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -114,6 +115,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     }
 
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {
+    JSTypeEvaluationLocationProvider.assertLocationIsSet()
     val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
     val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
     val inOuts = LinkedHashMap<String, Angular2DirectiveProperty>()
@@ -175,6 +177,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
   }
 
   private fun getAttributesNoCache(): Collection<Angular2DirectiveAttribute> {
+    JSTypeEvaluationLocationProvider.assertLocationIsSet()
     val constructors = typeScriptClass.constructors
     return if (constructors.size == 1)
       processCtorParameters(constructors[0])
@@ -242,6 +245,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     @JvmStatic
     fun getDirectiveKindNoCache(clazz: TypeScriptClass, selector: Angular2DirectiveSelector): Angular2DirectiveKind {
+      JSTypeEvaluationLocationProvider.assertLocationIsSet()
       val allNgTemplateSelectors = selector.simpleSelectors.all { it.elementName == ELEMENT_NG_TEMPLATE }
       if (allNgTemplateSelectors) {
         return Angular2DirectiveKind.STRUCTURAL

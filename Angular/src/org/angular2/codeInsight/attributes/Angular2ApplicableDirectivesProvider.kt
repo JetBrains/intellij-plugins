@@ -1,8 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
@@ -20,6 +22,7 @@ import org.angular2.web.ELEMENT_NG_TEMPLATE
  */
 class Angular2ApplicableDirectivesProvider internal constructor(
   project: Project,
+  file: PsiFile,
   tagName: String,
   onlyMatchingTagName: Boolean,
   cssSelector: Angular2DirectiveSimpleSelector,
@@ -34,11 +37,11 @@ class Angular2ApplicableDirectivesProvider internal constructor(
 
   @JvmOverloads
   constructor(xmlTag: XmlTag, onlyMatchingTagName: Boolean = false, scope: Angular2DeclarationsScope? = null)
-    : this(xmlTag.project, xmlTag.localName, onlyMatchingTagName,
+    : this(xmlTag.project, xmlTag.containingFile, xmlTag.localName, onlyMatchingTagName,
            Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag), scope)
 
   constructor(bindings: Angular2TemplateBindings, scope: Angular2DeclarationsScope? = null)
-    : this(bindings.project, ELEMENT_NG_TEMPLATE, false,
+    : this(bindings.project, bindings.containingFile, ELEMENT_NG_TEMPLATE, false,
            Angular2DirectiveSimpleSelector.createTemplateBindingsCssSelector(bindings), scope)
 
   init {
@@ -57,9 +60,11 @@ class Angular2ApplicableDirectivesProvider internal constructor(
 
     val isTemplateTag = isTemplateTag(tagName)
     val matchedDirectives = HashSet<Angular2Directive>()
-    matcher.match(cssSelector) { _, directive ->
-      if (directive != null && (directive.directiveKind.isRegular || isTemplateTag)) {
-        matchedDirectives.add(directive)
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(file) {
+      matcher.match(cssSelector) { _, directive ->
+        if (directive != null && (isTemplateTag || directive.directiveKind.isRegular)) {
+          matchedDirectives.add(directive)
+        }
       }
     }
     matched = ContainerUtil.sorted(matchedDirectives, Comparator.comparing { it.getName() })

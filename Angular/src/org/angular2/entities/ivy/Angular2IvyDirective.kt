@@ -2,6 +2,7 @@
 package org.angular2.entities.ivy
 
 import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType
@@ -70,6 +71,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
     get() = getHostDirectives(myEntityDef)
 
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {
+    JSTypeEvaluationLocationProvider.assertLocationIsSet()
     val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
     val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
 

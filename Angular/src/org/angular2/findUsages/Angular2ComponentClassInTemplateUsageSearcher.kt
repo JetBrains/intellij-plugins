@@ -1,6 +1,7 @@
 package org.angular2.findUsages
 
 import com.intellij.find.usages.api.PsiUsage
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor.JSNonRenameableReference
 import com.intellij.model.search.Searcher
@@ -23,7 +24,7 @@ class Angular2ComponentClassInTemplateUsageSearcher : Searcher<ReferencesSearch.
     val project = parameters.project
 
     return directive.selector.simpleSelectorsWithPsi.flatMap { it.allSymbols }
-      .filter { it.referencedSymbol == null }
+      .filter { JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) { it.referencedSymbol == null } }
       .flatMap { WebSymbolUsageQueries.buildWebSymbolUsagesQueries(it, project, parameters.effectiveSearchScope) }
       .map { it.filtering { !it.declaration }.mapping { it.toPsiReference(element) } }
   }
