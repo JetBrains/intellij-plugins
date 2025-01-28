@@ -16,6 +16,8 @@ public class NextJsCompletionTest extends BaseJSCompletionTestCase {
     myFixture.addFileToProject("pages/test.js", "<form action=\"/smth/<caret>\"");
     myFixture.configureFromTempProjectFile("pages/test.js");
     LookupElement[] elements = myFixture.completeBasic();
-    checkWeHaveInCompletion(elements, "component1", "component2");
+    checkWeHaveInCompletion(elements,
+                            new LookupString("component1", "component1.js"),
+                            new LookupString("component2", "component2.js"));
   }
 }
