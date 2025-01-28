@@ -92,17 +92,18 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
           ?.firstNotNullOfOrNull { it as? Angular2FormArray }
 
       if (formGroupBinding != null || formGroupName != null || formArrayName != null) {
-        holder.pushScope(tag, symbol?.let { mapOf(PROP_SOURCE_SYMBOL to it) } ?: emptyMap(), NG_FORM_ANY_CONTROL_PROPS)
-        if (symbol is Angular2FormGroup) {
-          holder.addSymbols(symbol.members)
-        }
-        else if (symbol is Angular2FormArray) {
-          holder.addSymbol(Angular2FormArrayControl)
-        }
-        else {
-          holder.addSymbol(Angular2UnknownFormGroup)
-          holder.addSymbol(Angular2UnknownFormControl)
-          holder.addSymbol(Angular2UnknownFormArray)
+        holder.pushScope(tag, symbol?.let { mapOf(PROP_SOURCE_SYMBOL to it) } ?: emptyMap(), NG_FORM_ANY_CONTROL_PROPS) {
+          if (symbol is Angular2FormGroup) {
+            addSymbols(symbol.members)
+          }
+          else if (symbol is Angular2FormArray) {
+            addSymbol(Angular2FormArrayControl)
+          }
+          else {
+            addSymbol(Angular2UnknownFormGroup)
+            addSymbol(Angular2UnknownFormControl)
+            addSymbol(Angular2UnknownFormArray)
+          }
         }
 
         try {

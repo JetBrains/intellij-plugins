@@ -13,12 +13,13 @@ import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.css.getWebSymbolsCssScopeForTagClasses
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.WebSymbolsIsolatedMappingScope
+import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING
 
 class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualifiedKind>, decorator: ES6Decorator)
-  : WebSymbolsIsolatedMappingScope<ES6Decorator>(mappings, decorator) {
+  : WebSymbolsIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
 
   override fun createPointer(): Pointer<HostBindingsScope> {
     val decoratorPtr = location.createSmartPointer()
