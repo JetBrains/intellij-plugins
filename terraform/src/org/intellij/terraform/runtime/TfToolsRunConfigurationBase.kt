@@ -43,8 +43,8 @@ internal abstract class TfToolsRunConfigurationBase(
   private var passParentEnvs: Boolean = true
 
   internal var commandType: TfCommand = TfCommand.CUSTOM
+  internal var globalOptions: String = ""
   internal var programArguments: String = ""
-
 
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
@@ -108,9 +108,10 @@ internal abstract class TfToolsRunConfigurationBase(
   override fun setProgramParameters(value: String?): Unit = Unit
 
   override fun getProgramParameters(): String = listOf(
+    globalOptions,
     commandType.command,
     programArguments
-  ).joinToString(" ").trim()
+  ).joinToString(" ") { it.trim() }.trim()
 
   override fun setWorkingDirectory(value: String?) {
     directory = ExternalizablePath.urlValue(value)
