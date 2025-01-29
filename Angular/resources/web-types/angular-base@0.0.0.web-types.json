@@ -730,6 +730,14 @@
           "pattern": "@.+",
           "doc-hide-pattern": true
         }
+      ],
+      "ng-template-binding-keywords": [
+        {
+          "name": "as"
+        },
+        {
+          "name": "let"
+        }
       ]
     },
     "css": {

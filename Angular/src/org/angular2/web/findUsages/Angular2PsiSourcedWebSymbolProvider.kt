@@ -11,16 +11,18 @@ import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2PsiSourcedWebSymbolProvider : PsiSourcedWebSymbolProvider {
 
-  override fun getWebSymbols(element: PsiElement): List<PsiSourcedWebSymbol> {
+  override fun getWebSymbols(element: PsiElement): List<PsiSourcedWebSymbol> =
     if (element is TypeScriptField) {
-      Angular2EntitiesProvider.getDirective(element.contextOfType<TypeScriptClass>())
-        ?.let { JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) { it.inOuts } }
-        ?.find { (it as? PsiSourcedWebSymbol)?.source == element }
-        ?.let {
-          return listOf(it as PsiSourcedWebSymbol)
-        }
+      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
+        Angular2EntitiesProvider.getDirective(element.contextOfType<TypeScriptClass>())
+          ?.let { it.inOuts + it.inputs }
+          ?.find { (it as? PsiSourcedWebSymbol)?.source == element }
+          ?.let {
+            listOf(it as PsiSourcedWebSymbol)
+          }
+      } ?: emptyList()
     }
-    return emptyList()
-  }
+    else
+      emptyList()
 
 }

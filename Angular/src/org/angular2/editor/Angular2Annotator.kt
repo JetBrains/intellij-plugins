@@ -32,6 +32,8 @@ import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
+import org.angular2.lang.expr.psi.Angular2TemplateBinding
+import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -51,6 +53,7 @@ class Angular2Annotator : Annotator {
       is JSLiteralExpression -> visitJSLiteralExpression(element, holder)
       is XmlAttribute -> visitXmlAttribute(element, holder)
       is Angular2HtmlNgContentSelector -> visitAngular2DirectiveSelector(element.selector, holder)
+      is Angular2TemplateBindingKey -> visitTemplateBindingKey(element, holder)
     }
   }
 
@@ -165,6 +168,14 @@ class Angular2Annotator : Annotator {
           holder.highlightPropertyBinding(it, elementNameOffset)
         }
     }
+  }
+
+  private fun visitTemplateBindingKey(key: Angular2TemplateBindingKey, holder: AnnotationHolder) {
+    if ((key.parent as? Angular2TemplateBinding)?.keyIsVar() != false) return
+    holder.newSilentAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY)
+      .range(key.textRange)
+      .textAttributes(Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME)
+      .create()
   }
 
   private fun visitAngular2DirectiveSelector(selector: Angular2DirectiveSelector, holder: AnnotationHolder) {

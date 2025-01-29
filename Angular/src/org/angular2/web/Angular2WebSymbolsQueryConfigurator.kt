@@ -6,7 +6,10 @@ import com.intellij.javascript.webSymbols.css.CssClassListInJSLiteralInHtmlAttri
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
@@ -22,6 +25,8 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
+import com.intellij.webSymbols.query.WebSymbolNameConversionRules
+import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
@@ -29,8 +34,8 @@ import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
-import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
+import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.isNgClassAttribute
@@ -38,9 +43,7 @@ import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompl
 import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
 import org.angular2.codeInsight.blocks.isDeferOnTriggerReference
 import org.angular2.codeInsight.blocks.isJSReferenceAfterEqInForBlockLetParameterAssignment
-import org.angular2.lang.expr.psi.Angular2Binding
-import org.angular2.lang.expr.psi.Angular2BlockParameter
-import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
+import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlBlock
@@ -67,6 +70,60 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       }
     }
     else emptyList()
+
+  override fun getNameConversionRulesProviders(project: Project, element: PsiElement?, context: WebSymbolsContext): List<WebSymbolNameConversionRulesProvider> {
+    if (context.framework == Angular2Framework.ID && element != null) {
+      // possibly the input definition
+      if (element is JSLiteralExpression || element is TypeScriptField) {
+        val selectors = listOf<String>("foo")
+        return listOf(object : WebSymbolNameConversionRulesProvider {
+          override fun getNameConversionRules(): WebSymbolNameConversionRules =
+            WebSymbolNameConversionRules.builder()
+              .addMatchNamesRule(NG_DIRECTIVE_INPUTS) { name ->
+                selectors.mapNotNull {
+                  if (name.startsWith(it) && name.getOrNull(it.length)?.isUpperCase() == true)
+                    StringUtil.decapitalize(name.removePrefix(it))
+                  else null
+                } + name
+              }
+              .build()
+
+          override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
+            Pointer.hardPointer(this)
+
+          override fun getModificationCount(): Long = 0
+        })
+      }
+      else if (element is Angular2TemplateBindingKey) {
+        val templateName = element.parentOfType<Angular2TemplateBindings>()?.templateName
+        if (templateName != null)
+          return listOf(object : WebSymbolNameConversionRulesProvider {
+            override fun getNameConversionRules(): WebSymbolNameConversionRules =
+              WebSymbolNameConversionRules.builder()
+                .addMatchNamesRule(NG_DIRECTIVE_INPUTS) {
+                  listOf(templateName + StringUtil.capitalize(it))
+                }
+                .addRenameRule(NG_DIRECTIVE_INPUTS) {
+                  listOf(StringUtil.decapitalize(it.removePrefix(templateName)))
+                }
+                .addCanonicalNamesRule(NG_DIRECTIVE_OUTPUTS) {
+                  listOf(templateName + StringUtil.capitalize(it))
+                }
+                .addCompletionVariantsRule(NG_DIRECTIVE_INPUTS) {
+                  listOf(StringUtil.decapitalize(it.removePrefix(templateName)))
+                }
+                .build()
+
+            override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
+              Pointer.hardPointer(this)
+
+            override fun getModificationCount(): Long = 0
+          })
+      }
+    }
+    return emptyList()
+  }
+
 
   private fun calculateHtmlScopes(element: XmlElement): MutableList<WebSymbolsScope> {
     val result = mutableListOf(DirectiveElementSelectorsScope(element.containingFile),
@@ -110,6 +167,9 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           isDeferOnTriggerParameterReference(element) ->
             listOfNotNull(element.parentOfType<Angular2BlockParameter>()?.let { DeferOnTriggerParameterScope(it) })
 
+          isTemplateBindingKeywordLocation(element) ->
+            listOf(TemplateBindingKeywordsScope)
+
           else ->
             listOfNotNull(DirectivePropertyMappingCompletionScope(element),
                           getCssClassesInJSLiteralInHtmlAttributeScope(element),
@@ -134,6 +194,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         else
           listOfNotNull(getCssClassesInJSLiteralInHtmlAttributeScope(element))
       }
+      is Angular2TemplateBindingKey -> listOf(TemplateBindingKeyScope(element), TemplateBindingKeywordsScope)
       else -> emptyList()
     }
 
@@ -169,6 +230,10 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     element.takeIf { isNgClassLiteralContext(it) }
       ?.parentOfType<XmlAttribute>()
       ?.let { CssClassListInJSLiteralInHtmlAttributeScope(it) }
+
+  private fun isTemplateBindingKeywordLocation(element: JSReferenceExpression): Boolean =
+    element.qualifier == null
+    && element.parent is Angular2TemplateBinding
 }
 
 const val PROP_BINDING_PATTERN: String = "ng-binding-pattern"
@@ -202,6 +267,8 @@ val NG_BLOCKS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "
 val NG_BLOCK_PARAMETERS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
 val NG_BLOCK_PARAMETER_PREFIXES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameter-prefixes")
 val NG_DEFER_ON_TRIGGERS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-defer-on-triggers")
+val NG_TEMPLATE_BINDING_KEYWORDS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-template-binding-keywords")
+val NG_TEMPLATE_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-template-bindings")
 
 fun isNgClassLiteralContext(literal: PsiElement): Boolean =
   isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassAttribute)

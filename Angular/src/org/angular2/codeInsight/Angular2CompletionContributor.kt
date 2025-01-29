@@ -37,6 +37,7 @@ import com.intellij.util.containers.ContainerUtil
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
+import org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyCompletionProvider
 import org.angular2.codeInsight.blocks.Angular2BlockParameterNameCompletionProvider
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isLetReferenceBeforeDeclaration
@@ -48,10 +49,7 @@ import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
-import org.angular2.lang.expr.psi.Angular2BlockParameter
-import org.angular2.lang.expr.psi.Angular2DeferredTimeLiteralExpression
-import org.angular2.lang.expr.psi.Angular2PipeExpression
-import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.lang.expr.psi.*
 import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.NonNls
 
@@ -64,6 +62,12 @@ class Angular2CompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC,
            psiElement().withElementType(BLOCK_PARAMETER_NAME_TOKENS).with(language(Angular2Language)),
            Angular2BlockParameterNameCompletionProvider())
+
+    extend(CompletionType.BASIC,
+           psiElement(JSTokenTypes.IDENTIFIER)
+             .withParents(Angular2TemplateBindingKey::class.java, Angular2TemplateBinding::class.java),
+           Angular2TemplateBindingKeyCompletionProvider()
+    )
 
     // Disable regular completions in after and minimum parameters
     extend(CompletionType.BASIC,
