@@ -56,7 +56,7 @@ data class QodanaYamlConfig(
   }
 
   /**
-   * profile path is constructed either from [yamlPath] or from [projectPath], [yamlPath] is in priority
+   * profile path is constructed either from [yamlPath] or from [projectPath], [projectPath] is in priority
    *
    * - Q: why projectPath is used?
    *   A: because it was implemented like this, and was present in this form (without [yamlPath]) in 2024.3, since 205.1 [yamlPath] is used aswell
@@ -72,7 +72,7 @@ data class QodanaYamlConfig(
 
     val absoluteFromProjectPath = projectPath.resolve(profilePath).toAbsolutePath()
     val absoluteFromYamlPath = yamlPath.parent.resolve(profilePath).toAbsolutePath()
-    val absolutePath = absoluteFromYamlPath.takeIf { it.exists() } ?: absoluteFromProjectPath
+    val absolutePath = absoluteFromProjectPath.takeIf { it.exists() } ?: absoluteFromYamlPath
 
     return copy(profile = profile.copy(path = absolutePath.pathString))
   }

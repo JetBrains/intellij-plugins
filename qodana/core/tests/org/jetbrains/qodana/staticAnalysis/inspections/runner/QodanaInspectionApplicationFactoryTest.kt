@@ -271,6 +271,8 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     val localQodanaYamlPath = configDir.resolve(QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME)
     localQodanaYamlPath.writeText(localQodanaYaml)
 
+    val profileYaml = configDir.resolve("profile.yaml").createFile()
+
     @Language("yaml")
     val effectiveQodanaYaml = """
       version: 1.0
@@ -279,6 +281,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
       profile:
         name: qodana.recommended
+        path: profile.yaml
     """.trimIndent()
     val effectiveQodanaYamlPath = configDir.resolve(QodanaYamlFiles.EFFECTIVE_QODANA_YAML_FILENAME)
     effectiveQodanaYamlPath.writeText(effectiveQodanaYaml)
@@ -291,6 +294,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)
     assertThat(app?.config?.profile?.name).isEqualTo("qodana.recommended")
+    assertThat(app?.config?.profile?.path).isEqualTo(profileYaml.pathString)
     assertThat(app?.config?.bootstrap).isEqualTo("bootstrap")
 
     val yamlFiles = app?.config?.yamlFiles
