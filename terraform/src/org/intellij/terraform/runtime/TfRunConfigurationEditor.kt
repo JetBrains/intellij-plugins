@@ -35,10 +35,23 @@ internal class TfRunConfigurationEditor(runConfiguration: TfToolsRunConfiguratio
     }
   }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
 
+  private val globalOptions = RawCommandLineEditor().withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.global.options.label"))
+
   private val programArguments = RawCommandLineEditor().withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.arguments.label"))
 
   override fun createRunFragments(): MutableList<SettingsEditorFragment<TfToolsRunConfigurationBase, *>> =
     fragments<TfToolsRunConfigurationBase>(HCLBundle.message("terraform.run.text", toolType.getBinaryName()), "terraform.run.configuration") {
+      fragment("terraform.global.options", globalOptions) {
+        name = HCLBundle.message("terraform.run.configuration.global.options.fragment")
+        apply = { model, ui ->
+          model.globalOptions =  ui.component.text
+        }
+        reset = { model, ui ->
+          ui.component.text = model.globalOptions
+        }
+        visible = { model -> model.globalOptions.isNotBlank() }
+      }
+
       fragment("terraform.command", commandComboBox) {
         apply = { model, ui ->
           model.commandType = ui.component.selectedItem as? TfCommand ?: TfCommand.CUSTOM
