@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Computable
 import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.util.ui.UIUtil
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jetbrains.annotations.Nls
@@ -28,13 +29,13 @@ internal class TfRunConfigurationEditor(runConfiguration: TfToolsRunConfiguratio
       }
       else {
         label.text = HCLBundle.message("terraform.run.configuration.command.combobox.none.item")
+        label.foreground = UIUtil.getInactiveTextColor()
       }
       font = Font(Font.MONOSPACED, font.style, font.size)
     }
   }.withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.command.label"))
 
-  private val programArguments = RawCommandLineEditor()
-    .withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.arguments.label"))
+  private val programArguments = RawCommandLineEditor().withLabelToTheLeft(HCLBundle.message("terraform.run.configuration.arguments.label"))
 
   override fun createRunFragments(): MutableList<SettingsEditorFragment<TfToolsRunConfigurationBase, *>> =
     fragments<TfToolsRunConfigurationBase>(HCLBundle.message("terraform.run.text", toolType.getBinaryName()), "terraform.run.configuration") {
