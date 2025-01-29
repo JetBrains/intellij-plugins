@@ -14,8 +14,11 @@ interface QodanaYamlViewModel {
   class YamlState(
     val document: Document,
     val editor: Editor,
+    val physicalFile: Path?,
+  ) {
     val isPhysical: Boolean
-  )
+      get() = physicalFile != null
+  }
 
   sealed interface ParseResult {
     class Valid(val yamlConfig: QodanaYamlConfig, val parsedText: String? = null) : ParseResult

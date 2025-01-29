@@ -19,9 +19,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.logging.ConsoleHandler
 import java.util.logging.Level
-import kotlin.io.path.exists
-import kotlin.io.path.isReadable
-import kotlin.io.path.isRegularFile
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 private const val QODANA_OUTPUT_LOG_LEVEL = "QODANA_OUTPUT_LOG_LEVEL"
@@ -37,6 +35,7 @@ class QodanaInspectionApplicationFactory {
     addOption(null, "cleanup", false, QodanaBundle.message("cleanup.inspections.option.description"))
     addOption(null, "script", true, QodanaBundle.message("script.option.description"))
     addOption(null, "config", true, QodanaBundle.message("config.option.description"))
+    addOption(null, "config-dir", true, QodanaBundle.message("config.dir.option.description"))
     addOption("n", "profile-name", true, QodanaBundle.message("profileName.option.description"))
     addOption("p", "profile-path", true, QodanaBundle.message("profilePath.option.description"))
     addOption("c", "changes", false, QodanaBundle.message("changes.option.description"))
@@ -84,21 +83,42 @@ class QodanaInspectionApplicationFactory {
 
     val projectPath = commandLine.args[0]
     val absoluteProjectPath = Paths.get(projectPath).toRealPath()
+
     val configOptionValue = commandLine.getOptionValue("config")
-    val configPath =
+    val configDirOptionValue = commandLine.getOptionValue("config-dir")
+
+    val localQodanaYaml =
       if (configOptionValue.isNullOrEmpty()) defaultConfigPath(absoluteProjectPath)
-      else customConfigPath(configOptionValue, absoluteProjectPath)
+      else Path(configOptionValue).asAbsoluteFrom(absoluteProjectPath)
+
+    if (configDirOptionValue.isNullOrEmpty()) {
+      QodanaMessageReporter.DEFAULT.reportError("Config directory must be specified as 'config-dir' (computed by CLI), " +
+                                                "otherwise Qodana analysis ignores global configuration and 'imports' section")
+    }
+
+    val qodanaYamlFiles = when {
+      !configDirOptionValue.isNullOrEmpty() -> {
+        QodanaYamlFiles.fromConfigDir(Path(configDirOptionValue).asAbsoluteFrom(absoluteProjectPath))
+      }
+      localQodanaYaml != null -> {
+        QodanaYamlFiles.noConfigDir(localQodanaYaml)
+      }
+      else -> {
+        QodanaYamlFiles.noFiles()
+      }
+    }
 
     val outPath = commandLine.args[1]
     val profileName = commandLine.getOptionValue("n") ?: commandLine.getOptionValue("profileName")
     val profilePath = commandLine.getOptionValue("p") ?: commandLine.getOptionValue("profilePath")
     val dirToAnalyze = commandLine.getOptionValue("d") ?: commandLine.getOptionValue("source-directory")
 
-    @Suppress("DEPRECATION") val yamlConfig = configPath?.let {
+    val effectiveQodanaYamlPath = qodanaYamlFiles.effectiveQodanaYaml
+    @Suppress("DEPRECATION") val yamlConfig = effectiveQodanaYamlPath?.let { effectiveConfig ->
       withContext(StaticAnalysisDispatchers.IO) {
-        QodanaYamlReader.load(configPath)
+        QodanaYamlReader.load(effectiveConfig)
       }
-    }?.getOrThrow()?.withAbsoluteProfilePath(absoluteProjectPath) ?: QodanaYamlConfig.EMPTY_V1
+    }?.getOrThrow()?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
     val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.toInt()
@@ -114,7 +134,7 @@ class QodanaInspectionApplicationFactory {
     val qodanaConfig = QodanaConfig.fromYaml(
       absoluteProjectPath,
       Paths.get(outPath),
-      configPath,
+      yamlFiles = qodanaYamlFiles,
       yaml = yamlConfig,
       profile = profile,
       baseline = commandLine.getOptionValue("baseline"),
@@ -244,7 +264,7 @@ class QodanaInspectionApplicationFactory {
       try {
         Level.parse(it)
       }
-      catch (e: IllegalArgumentException) {
+      catch (_: IllegalArgumentException) {
         LOG.warn("Can't parse log level $it")
         null
       }
@@ -261,22 +281,6 @@ class QodanaInspectionApplicationFactory {
   }
 }
 
-
-private fun customConfigPath(configOption: String, projectPath: Path): Path {
-  val optionPath = Paths.get(configOption)
-  val configPath = if (optionPath.isAbsolute) optionPath else projectPath.resolve(optionPath)
-
-  if (!configPath.exists()) {
-    throw QodanaException("Configuration file '${configPath}' doesn't exist")
-  }
-
-  if (!configPath.isRegularFile()) {
-    throw QodanaException("Configuration file '${configPath}' should be regular file")
-  }
-
-  if (!configPath.isReadable()) {
-    throw QodanaException("Qodana doesn't have enough privileges to read configuration file '${configPath}'")
-  }
-
-  return configPath
+private fun Path.asAbsoluteFrom(other: Path): Path {
+  return if (isAbsolute) this else other.resolve(this).toAbsolutePath()
 }

@@ -10,6 +10,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.openapi.vfs.writeText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -26,7 +27,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.ui.createEditor
 import org.jetbrains.qodana.ui.createInMemoryDocument
 import java.nio.file.Path
-import java.nio.file.Paths
+import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -43,9 +44,10 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
 
   override fun parseQodanaYaml(): Deferred<QodanaYamlViewModel.ParseResult?> {
     return scope.async(QodanaDispatchers.Default) {
-      val yamlContent = yamlStateFlow.value?.document?.immutableCharSequence ?: return@async null
+      val yamlState = yamlStateFlow.value ?: return@async null
+      val yamlContent = yamlState.document.immutableCharSequence
       val projectPath = project.guessProjectDir()?.toNioPath()?.pathString ?: return@async null
-      val parseResult = parseQodanaYamlConfig(yamlContent.toString(), projectPath)
+      val parseResult = parseQodanaYamlConfig(yamlContent.toString(), projectPath, yamlState.physicalFile)
       if (parseResult is QodanaYamlViewModel.ParseResult.Error) {
         yamlErrorHappenedFlow.emit(parseResult)
       }
@@ -103,28 +105,30 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
   }
 
   private suspend fun refreshQodanaYamlState(): QodanaYamlViewModel.YamlState {
-    val yamlFromProjectRoot = getQodanaYamlFromProjectRoot()
-    if (yamlFromProjectRoot != null) {
-      val editor = createEditor(project, yamlFromProjectRoot, yamlFiletype)
-      return QodanaYamlViewModel.YamlState(yamlFromProjectRoot, editor, isPhysical = true)
+    val qodanaYamlFromRoot = getQodanaYamlFromProjectRoot()
+    if (qodanaYamlFromRoot != null) {
+      val editor = createEditor(project, qodanaYamlFromRoot.first, yamlFiletype)
+      return QodanaYamlViewModel.YamlState(document = qodanaYamlFromRoot.first, editor, physicalFile = qodanaYamlFromRoot.second)
     }
 
     val inMemoryYamlContent = QodanaConfigChangeService.getInstance(project).createDefaultConfigContent()
     val inMemoryYaml = createInMemoryDocument(project, inMemoryYamlContent, QODANA_YAML_CONFIG_FILENAME)
     val editor = createEditor(project, inMemoryYaml, yamlFiletype)
-    return QodanaYamlViewModel.YamlState(inMemoryYaml, editor, isPhysical = false)
+    return QodanaYamlViewModel.YamlState(inMemoryYaml, editor, physicalFile = null)
   }
 
-  private suspend fun getQodanaYamlFromProjectRoot(): Document? {
+  private suspend fun getQodanaYamlFromProjectRoot(): Pair<Document, Path>? {
     return withContext(QodanaDispatchers.Default) {
       val projectDir = project.guessProjectDir()
 
       QODANA_CONFIG_FILES
         .mapNotNull { projectDir?.findChild(it) }
         .firstNotNullOfOrNull { file ->
-          readAction {
+          val nioPath = file.toNioPathOrNull() ?: return@firstNotNullOfOrNull null
+          val document = readAction {
             FileDocumentManager.getInstance().getDocument(file)
-          }
+          } ?: return@firstNotNullOfOrNull null
+          document to nioPath
         }
     }
   }
@@ -134,9 +138,16 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
     return QODANA_CONFIG_FILES.map(projectDir::resolve).contains(this)
   }
 
-  private fun parseQodanaYamlConfig(text: String, projectPath: String): QodanaYamlViewModel.ParseResult =
-    QodanaYamlReader.parse(text)
-      .map { it.withAbsoluteProfilePath(Paths.get(projectPath)) }
+  private fun parseQodanaYamlConfig(
+    text: String,
+    projectPath: String,
+    yamlPath: Path?,
+  ): QodanaYamlViewModel.ParseResult {
+    val projectPath = Path(projectPath)
+    val yamlPath = yamlPath ?: projectPath.resolve(QODANA_YAML_CONFIG_FILENAME)
+
+    return QodanaYamlReader.parse(text)
+      .map { it.withAbsoluteProfilePath(projectPath, yamlPath) }
       .map { QodanaYamlViewModel.ParseResult.Valid(it, text) }
       .getOrElse { e ->
         when (e) {
@@ -154,4 +165,6 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
           else -> throw e
         }
       }
+  }
+
 }

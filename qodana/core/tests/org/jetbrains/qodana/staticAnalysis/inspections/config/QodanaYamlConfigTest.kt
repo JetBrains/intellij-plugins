@@ -11,6 +11,7 @@ import org.junit.Test
 import org.junit.jupiter.api.fail
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.pathString
 import kotlin.io.path.writeText
@@ -83,11 +84,15 @@ class QodanaYamlConfigTest : HeavyPlatformTestCase() {
 
 
   private fun writeQodanaYaml(@Language("YAML") yaml: String) =
-    Paths.get(project.basePath!!).resolve("qodana.yaml").writeText(yaml.trimIndent())
+    qodanaYamlPath().writeText(yaml.trimIndent())
 
   private fun loadQodanaYaml() = runBlocking {
     val projectPath = Paths.get(project.basePath!!)
-    QodanaYamlReader.loadDefaultConfig(projectPath)
-      ?.getOrElse { fail(it) }?.withAbsoluteProfilePath(projectPath) ?: fail(IllegalStateException("qodana.yaml not found"))
+    QodanaYamlReader.load(qodanaYamlPath())
+      .getOrElse { fail(it) }.withAbsoluteProfilePath(projectPath, qodanaYamlPath())
+  }
+
+  private fun qodanaYamlPath(): Path {
+    return Paths.get(project.basePath!!).resolve("qodana.yaml")
   }
 }
