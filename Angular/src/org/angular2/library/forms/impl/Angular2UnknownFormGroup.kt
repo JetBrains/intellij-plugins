@@ -7,11 +7,11 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import org.angular2.Angular2Framework
-import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
+import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
+import org.angular2.web.Angular2SymbolOrigin
 
 object Angular2UnknownFormGroup : WebSymbol {
 
@@ -44,8 +44,8 @@ object Angular2UnknownFormGroup : WebSymbol {
   override val kind: @NlsSafe SymbolKind
     get() = NG_FORM_GROUP_PROPS.kind
 
-  override val origin: WebSymbolOrigin =
-    WebSymbolOrigin.Companion.create(Angular2Framework.Companion.ID)
+  override val origin: WebSymbolOrigin
+    get() = Angular2SymbolOrigin.empty
 
   override fun createPointer(): Pointer<out WebSymbol> =
     Pointer.hardPointer(this)

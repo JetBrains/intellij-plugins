@@ -22,10 +22,10 @@ import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
-import org.angular2.Angular2Framework
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
+import org.angular2.web.Angular2SymbolOrigin
 
 class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGroup) : WebSymbolsScope {
 
@@ -73,8 +73,8 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"
 
-      override val origin: WebSymbolOrigin =
-        WebSymbolOrigin.create(Angular2Framework.ID)
+      override val origin: WebSymbolOrigin
+        get() = Angular2SymbolOrigin.empty
 
       override val namespace: @NlsSafe SymbolNamespace
         get() = NAMESPACE_JS

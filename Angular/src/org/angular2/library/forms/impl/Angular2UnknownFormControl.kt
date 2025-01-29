@@ -8,8 +8,8 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
-import org.angular2.Angular2Framework
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+import org.angular2.web.Angular2SymbolOrigin
 
 object Angular2UnknownFormControl : WebSymbol {
 
@@ -24,8 +24,8 @@ object Angular2UnknownFormControl : WebSymbol {
   override val kind: @NlsSafe SymbolKind
     get() = NG_FORM_CONTROL_PROPS.kind
 
-  override val origin: WebSymbolOrigin =
-    WebSymbolOrigin.Companion.create(Angular2Framework.Companion.ID)
+  override val origin: WebSymbolOrigin
+    get() = Angular2SymbolOrigin.empty
 
   override val priority: WebSymbol.Priority?
     get() = WebSymbol.Priority.LOWEST

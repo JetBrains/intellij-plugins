@@ -2,10 +2,12 @@
 package org.angular2.web
 
 import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.WebSymbolTypeSupport
 import icons.AngularIcons
 import org.angular2.Angular2Framework
 import javax.swing.Icon
@@ -39,6 +41,9 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrig
   override val defaultIcon: Icon
     get() = AngularIcons.Angular2
 
+  override val typeSupport: WebSymbolTypeSupport?
+    get() = TypeScriptSymbolTypeSupport()
+
   override fun equals(other: Any?): Boolean =
     other === this
     || other is Angular2SymbolOrigin
@@ -46,4 +51,11 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrig
 
   override fun hashCode(): Int =
     versionAndName.hashCode()
+
+  companion object {
+    val empty: WebSymbolOrigin = WebSymbolOrigin.create(Angular2Framework.ID,
+                                                        library = "@angular/core",
+                                                        defaultIcon = AngularIcons.Angular2,
+                                                        typeSupport = TypeScriptSymbolTypeSupport())
+  }
 }

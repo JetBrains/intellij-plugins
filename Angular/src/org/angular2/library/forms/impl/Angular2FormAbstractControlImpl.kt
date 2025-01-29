@@ -10,17 +10,17 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
-import org.angular2.Angular2Framework
 import org.angular2.library.forms.Angular2FormControl
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
+import org.angular2.web.Angular2SymbolOrigin
 
 abstract class Angular2FormAbstractControlImpl(
   override val source: PsiElement,
 ) : Angular2FormControl {
 
   override val origin: WebSymbolOrigin
-    get() = WebSymbolOrigin.create(Angular2Framework.ID)
+    get() = Angular2SymbolOrigin.empty
 
   override val project: Project
     get() = source.project
