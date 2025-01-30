@@ -56,6 +56,30 @@ class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
     assertEmpty(gutters)
   }
 
+  fun testNotDuplicatedRunConfig() {
+    val file = myFixture.configureByFile("with_duplicated.tf")
+
+    val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
+    if (info == null) {
+      fail("Info of RunLineMarker not should be empty")
+      return
+    }
+
+    val actions = info.actions
+    val runnedAction = myFixture.testAction(actions.first())
+    assertEquals("Init src", runnedAction.text)
+
+    myFixture.type(" ")
+    val updatedGutter = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
+    if (updatedGutter == null) {
+      fail("Info of RunLineMarker not should be empty")
+      return
+    }
+    assertEquals(actions.size, updatedGutter.actions.size)
+    val runManager = RunManager.getInstance(project)
+    runManager.allSettings.forEach { runManager.removeConfiguration(it) }
+  }
+
   private fun checkActionNames(info: Info) {
     val actions = info.actions
     assertEquals(actions?.last()?.templateText, "Edit Configurations…")
