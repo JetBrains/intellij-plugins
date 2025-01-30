@@ -4,18 +4,9 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info
 import com.intellij.icons.AllIcons
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.ui.IconManager
-import org.intellij.terraform.TerraformTestUtils
-import org.intellij.terraform.install.TfToolType
 
-class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = TerraformTestUtils.getTestDataPath() + "/runtime"
-
-  override fun setUp() {
-    super.setUp()
-    TerraformProjectSettings.getInstance(myFixture.project).toolPath = TfToolType.TERRAFORM.getBinaryName()
-  }
+class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
   fun testSimpleLineMarker() {
     val file = myFixture.configureByFile("simple.tf")

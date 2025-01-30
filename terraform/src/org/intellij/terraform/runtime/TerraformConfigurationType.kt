@@ -12,8 +12,6 @@ import javax.swing.Icon
 
 internal class TerraformConfigurationType : TfToolConfigurationTypeBase(), RunConfigurationConverter {
 
-  private val TF_RUN_CONFIGURATION_ID = "TerraformConfigurationType"
-
   override val baseFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.CUSTOM)
   override val initFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.INIT)
   override val validateFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.VALIDATE)
@@ -56,5 +54,9 @@ internal class TerraformConfigurationType : TfToolConfigurationTypeBase(), RunCo
       "Destroy" -> destroyFactory.id
       else -> baseFactory.id
     }
+  }
+
+  companion object {
+    const val TF_RUN_CONFIGURATION_ID: String = "TerraformConfigurationType"
   }
 }
