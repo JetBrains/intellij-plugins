@@ -4,16 +4,12 @@ package org.intellij.terraform.opentofu.runtime
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.AsyncFileListener
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
 import org.intellij.terraform.hasHCLLanguageFiles
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.opentofu.OpenTofuFileType
-import org.intellij.terraform.runtime.SettingsUpdater
 import org.intellij.terraform.runtime.TfToolSettings
 import org.intellij.terraform.runtime.ToolPathDetector
 
@@ -53,19 +49,8 @@ internal class OpenTofuProjectSettings : PersistentStateComponent<OpenTofuProjec
       val settings = project.serviceAsync<OpenTofuProjectSettings>()
 
       if (settings.toolPath.isEmpty() && hasHCLLanguageFiles(project, OpenTofuFileType)) {
-        project.serviceAsync<ToolPathDetector>().detectPathAndUpdateSettingsAsync(settings, TfToolType.OPENTOFU.executableName)
+        project.serviceAsync<ToolPathDetector>().detectPathAndUpdateSettingsAsync(TfToolType.OPENTOFU)
       }
     }
   }
-
-  internal class OpenTofuFileListener : AsyncFileListener {
-    override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier? {
-      val fileEvents = events.filter { (FileUtilRt.extensionEquals(it.path, OpenTofuFileType.defaultExtension)) }
-      if (fileEvents.isEmpty()) return null
-      return SettingsUpdater(fileEvents, TfToolType.OPENTOFU.executableName, OpenTofuProjectSettings::class.java)
-    }
-  }
-
-
-
 }

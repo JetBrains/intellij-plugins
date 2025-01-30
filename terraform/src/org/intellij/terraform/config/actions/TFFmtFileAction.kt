@@ -15,7 +15,7 @@ import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.jetbrains.annotations.Nls
 
-class TFFmtFileAction : TFExternalToolsAction() {
+internal class TFFmtFileAction : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     withBackgroundProgress(project, title) {

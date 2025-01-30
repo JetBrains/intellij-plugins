@@ -31,7 +31,7 @@ private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.t
 private const val PARSE_DELAY = 100L
 private val VERSION_REGEX = Regex("^v*(\\d+)(\\.\\d+)*(\\.\\d+)*-?\\S*$")
 
-class TerraformToolConfigurable(private val project: Project) : BoundConfigurable(
+internal class TerraformToolConfigurable(private val project: Project) : BoundConfigurable(
   HCLBundle.message("terraform.opentofu.settings.label"), null
 ), SearchableConfigurable {
 

@@ -18,6 +18,7 @@ import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
+import org.intellij.terraform.runtime.ToolPathDetector
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -36,6 +37,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     val project = context.project
     val virtualFile = context.virtualFile ?: return null
     val toolType = getApplicableToolType(virtualFile)
+    ToolPathDetector.getInstance(project).detectAndUpdateToolPathIfEmpty(toolType)
     if (!isExecutableToolFileConfigured(project, toolType)) {
       return null
     }

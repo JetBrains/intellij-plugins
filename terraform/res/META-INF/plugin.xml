@@ -273,8 +273,6 @@
                         testServiceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceMock"/>
 
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
-    <vfs.asyncListener implementation="org.intellij.terraform.runtime.TerraformProjectSettings$TerraformFileListener"/>
-    <vfs.asyncListener implementation="org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings$OpenTofuFileListener"/>
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
     <postStartupActivity implementation="org.intellij.terraform.runtime.TerraformProjectSettings$DetectOnStart" />
     <postStartupActivity implementation="org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings$DetectOnStart" />

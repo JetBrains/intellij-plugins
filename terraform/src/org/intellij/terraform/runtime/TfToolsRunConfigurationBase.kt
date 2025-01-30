@@ -48,10 +48,11 @@ internal abstract class TfToolsRunConfigurationBase(
 
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
-    val error = error
+    ToolPathDetector.getInstance(project).detectAndUpdateToolPathIfEmpty(toolType)
     if (!isExecutableToolFileConfigured(project, toolType)) {
       return null
     }
+    val error = error
     if (error != null) {
       throw ExecutionException(error)
     }
@@ -69,15 +70,13 @@ internal abstract class TfToolsRunConfigurationBase(
 
     if (!isPathExecutable(toolPath)) {
       val exception = RuntimeConfigurationException(
-        HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath, toolType.displayName),
+        HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
         CommonBundle.getErrorTitle()
       )
       exception.setQuickFix(Runnable {
-        val settings = toolType.getToolSettings(project)
-        settings.toolPath =
-          runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-            ToolPathDetector.getInstance(project).detect(toolType.executableName)
-          } ?: ""
+        runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+          ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsAsync(toolType).await()
+        }
       })
       throw exception
     }
@@ -97,7 +96,7 @@ internal abstract class TfToolsRunConfigurationBase(
         return HCLBundle.message("run.configuration.no.terraform.specified", toolType.displayName)
       }
       if (!isPathExecutable(toolPath)) {
-        return HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath, toolType.displayName)
+        return HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName)
       }
       return null
     }
