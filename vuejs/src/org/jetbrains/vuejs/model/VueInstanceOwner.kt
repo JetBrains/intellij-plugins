@@ -67,8 +67,7 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
 }
 
 private fun contributeCustomProperties(source: PsiElement, result: MutableMap<String, JSRecordType.PropertySignature>) {
-  resolveSymbolFromAugmentations(source, VUE_MODULE, CUSTOM_PROPERTIES)
-    .forEach { result.put(it.key, it.value) }
+  result.putAll(resolveSymbolFromAugmentations(source, VUE_MODULE, CUSTOM_PROPERTIES))
 }
 
 private fun contributeDefaultInstanceProperties(source: PsiElement,
