@@ -1,0 +1,33 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/common";
+import * as _i2 from "@angular/core";
+/* Directives */
+const _ctor1: <T = any, U extends _i2.NgIterable<T> = _i2.NgIterable<T>>(init: Pick<_i1.NgForOf<T, U>, "ngForOf" | "ngForTrackBy" | "ngForTemplate">) => _i1.NgForOf<T, U> = null!;
+const _ctor2: <T = unknown>(init: Pick<_i1.NgIf<T>, "ngIf" | "ngIfThen" | "ngIfElse">) => _i1.NgIf<T> = null!;
+
+/* TCB for structuralDirective.ts */
+
+function _tcb1(this: AppComponent) {
+var _t1 = _ctor1({"ngForOf": this.bar, "ngForTrackBy": this.track, "ngForTemplate": 0 as any});
+_t1.ngForOf = this.bar;
+_t1.ngForTrackBy = this.track;
+var _t2 = null! as any;
+if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)) {
+_t2;
+var _t3 = _t2.$implicit;
+var _t4 = _t2.index;
+var _t5 = document.createElement("div");
+}
+var _t6 = _ctor2({"ngIf": true, "ngIfElse": this.template, "ngIfThen": 0 as any});
+_t6.ngIf = true;
+_t6.ngIfElse = this.template;
+var _t7 = null! as any;
+if (_i1.NgIf.ngTemplateContextGuard(_t6, _t7) && true) {
+_t7;
+var _t8 = _t7.ngIf;
+var _t9 = _t7.ngIfElse;
+var _t10 = _t7.ngIf;
+var _t11 = document.createElement("div");
+}
+}

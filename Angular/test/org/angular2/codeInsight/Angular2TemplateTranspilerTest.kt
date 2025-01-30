@@ -105,6 +105,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4,
   )
 
+  fun testStructuralDirective() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_18_2_1,
+    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

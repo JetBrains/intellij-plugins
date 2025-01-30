@@ -36,6 +36,7 @@
       "«*ngrxLet» [422] => «_i1.LetDirective.ngTemplateContextGuard(_t1, _t2)» [522]} (no types)",
       "«*ngrxLet» [422] => «_t2» [575]} (no types)",
       "«vm» [479] => «_t3» [584]}",
+      "«vm» [479] => «ngrxLet» [594]} (no types)",
       "«ng-container» [409] => «_t4» [607]} (no diagnostics) (no semantic)",
       "«div» [491] => «_t5» [657]} (no diagnostics) (no semantic)",
       "«vm» [497] => «_t3» [699]}",

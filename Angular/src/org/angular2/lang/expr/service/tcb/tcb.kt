@@ -163,10 +163,11 @@ private class TcbTemplateVariableOp(
       append(" = ")
       append(ctx)
       val name = variable.value?.takeIf { it.isNotBlank() } ?: `$IMPLICIT`
+      val supportTypes = variable.valueSpan != variable.keySpan
       if (StringUtil.isJavaIdentifier(name))
-        append(".").append(name, variable.valueSpan, supportTypes = true)
+        append(".").append(name, variable.valueSpan, supportTypes = supportTypes)
       else
-        append("[\"").append(name.replace("\"", "\\\""), variable.valueSpan, supportTypes = true).append("\"]")
+        append("[\"").append(name.replace("\"", "\\\""), variable.valueSpan, supportTypes = supportTypes).append("\"]")
       append(";")
     }
     return id

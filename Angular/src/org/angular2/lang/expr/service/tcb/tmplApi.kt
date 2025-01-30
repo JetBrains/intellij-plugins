@@ -832,8 +832,9 @@ private fun buildInfo(
     variables = templateBindings.asSequence()
       .filter { it.keyIsVar() }
       .map {
-        Pair(it.key, TmplAstVariable(it.key, it.name, it.variableDefinition?.textRange, null).apply {
-          referenceResolver.set(it, this)
+        Pair(it.key, TmplAstVariable(it.key, it.name, it.variableDefinition?.textRange,
+                                     it.keyElement?.textRange ?: it.variableDefinition?.textRange).apply {
+          referenceResolver[it] = this
         })
       }
       .toMap(),
