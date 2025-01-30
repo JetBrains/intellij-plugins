@@ -172,6 +172,10 @@ internal class BindingsTypeResolver private constructor(
     JSTypeUtils.applyGenericArguments(jsType, analysisResult?.strictSubstitutors?.get(directive)
                                               ?: analysisResult?.mergedSubstitutor)
 
+  fun getTypeSubstitutorForDocumentation(directive: Angular2Directive?): JSTypeSubstitutor? =
+    analysisResult?.strictSubstitutors?.get(directive)
+    ?: analysisResult?.mergedSubstitutor
+
   private fun postprocessTypes(types: List<JSType?>): JSType? {
     var notNullTypes = types.filterNotNull()
     val source = getTypeSource(element, notNullTypes)
@@ -231,7 +235,7 @@ internal class BindingsTypeResolver private constructor(
         CachedValueProvider.Result.create(create(bindings), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
-    fun get(location: PsiElement?) =
+    fun get(location: PsiElement?): BindingsTypeResolver? =
       location
         ?.parentOfTypes(XmlTag::class, Angular2HtmlTemplateBindings::class)
         ?.let {

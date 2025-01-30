@@ -224,6 +224,8 @@
                           order="before TypeScript"/>
     <annotator language="TypeScript" implementationClass="org.angular2.editor.Angular2Annotator"/>
     <annotator language="Angular2" implementationClass="org.angular2.editor.Angular2Annotator"/>
+    <codeInsight.parameterInfo language="Angular2" implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2Html" implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
