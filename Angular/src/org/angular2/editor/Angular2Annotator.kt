@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -24,9 +25,9 @@ import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
+import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
-import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2EntitiesProvider
@@ -115,7 +116,7 @@ class Angular2Annotator : Annotator {
     val decorator = getDecoratorForLiteralParameter(element)
     val signalFunctionName = getPossibleSignalFunNameForLiteralParameter(element)
     val isHostBindingDecoratorLiteral = decorator?.decoratorName == HOST_BINDING_DEC
-    val isViewChildrenLiteral = decorator?.decoratorName.let { it == VIEW_CHILDREN_DEC || it == VIEW_CHILD_DEC}
+    val isViewChildrenLiteral = decorator?.decoratorName.let { it == VIEW_CHILDREN_DEC || it == VIEW_CHILD_DEC }
                                 || isViewChildSignalCall(signalFunctionName)
                                 || isViewChildrenSignalCall(signalFunctionName)
     val isHostListenerDecoratorEventLiteral = isHostListenerDecoratorEventLiteral(element)
@@ -171,10 +172,14 @@ class Angular2Annotator : Annotator {
   }
 
   private fun visitTemplateBindingKey(key: Angular2TemplateBindingKey, holder: AnnotationHolder) {
-    if ((key.parent as? Angular2TemplateBinding)?.keyIsVar() != false) return
+    val color = when ((key.parent as? Angular2TemplateBinding ?: return).keyKind) {
+      Angular2TemplateBinding.KeyKind.LET -> TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE
+      Angular2TemplateBinding.KeyKind.BINDING ->Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
+      else -> return
+    }
     holder.newSilentAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY)
       .range(key.textRange)
-      .textAttributes(Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME)
+      .textAttributes(color)
       .create()
   }
 

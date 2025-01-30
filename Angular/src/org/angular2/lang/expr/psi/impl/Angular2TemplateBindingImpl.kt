@@ -19,7 +19,7 @@ import org.angular2.lang.types.Angular2TemplateBindingType
 
 class Angular2TemplateBindingImpl(elementType: IElementType,
                                   override val key: String,
-                                  private val myVar: Boolean,
+                                  override val keyKind: Angular2TemplateBinding.KeyKind,
                                   private val myName: String?)
   : JSStatementImpl(elementType), Angular2TemplateBinding {
   override fun accept(visitor: PsiElementVisitor) {
@@ -54,7 +54,7 @@ class Angular2TemplateBindingImpl(elementType: IElementType,
       ?.variables?.firstOrNull()
 
   override fun keyIsVar(): Boolean {
-    return myVar
+    return keyKind != Angular2TemplateBinding.KeyKind.BINDING
   }
 
   override val expression: JSExpression?
@@ -63,6 +63,6 @@ class Angular2TemplateBindingImpl(elementType: IElementType,
       ?.getPsi(JSExpression::class.java)
 
   override fun toString(): String {
-    return "Angular2TemplateBinding <" + key + ", keyIsVar=" + keyIsVar() + ", " + name + ">"
+    return "Angular2TemplateBinding <$key, keyKind=$keyKind, $name>"
   }
 }

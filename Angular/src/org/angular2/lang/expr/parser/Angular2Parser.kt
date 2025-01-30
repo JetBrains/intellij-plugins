@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.parsing.ExpressionParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.parsing.StatementParser
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
@@ -21,6 +20,8 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingStatement
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingsStatement
+import org.angular2.lang.expr.psi.Angular2TemplateBinding.KeyKind
+import org.angular2.templateBindingVarToDirectiveInput
 import org.jetbrains.annotations.NonNls
 
 class Angular2Parser private constructor(
@@ -144,6 +145,7 @@ class Angular2Parser private constructor(
       do {
         val binding = builder.mark()
         var isVar = false
+        var isLet = true
         var rawKey: String?
         var key: String?
         if (firstBinding) {
@@ -155,7 +157,7 @@ class Angular2Parser private constructor(
           isVar = builder.tokenType === JSTokenTypes.LET_KEYWORD
           if (isVar) builder.advanceLexer()
           rawKey = parseTemplateBindingKey(isVar)
-          key = if (isVar) rawKey else templateKey + StringUtil.capitalize(rawKey)
+          key = if (isVar) rawKey else templateBindingVarToDirectiveInput(rawKey, templateKey)
           if (builder.tokenType === JSTokenTypes.COLON) {
             builder.advanceLexer()
           }
@@ -175,17 +177,18 @@ class Angular2Parser private constructor(
           name = rawKey
           key = parseTemplateBindingKey(true)
           isVar = true
+          isLet = false
         }
         else if (builder.tokenType !== JSTokenTypes.LET_KEYWORD
                  && !expressionParser.parsePipe()) {
           builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.expression"))
         }
-        binding.done(createTemplateBindingStatement(key, isVar, name))
+        binding.done(createTemplateBindingStatement(key, if (isVar) if (isLet) KeyKind.LET else KeyKind.AS else KeyKind.BINDING, name))
         if (builder.tokenType === JSTokenTypes.AS_KEYWORD && !isVar) {
           val localBinding = builder.mark()
           builder.advanceLexer()
           val letName = parseTemplateBindingKey(true)
-          localBinding.done(createTemplateBindingStatement(letName, true, key))
+          localBinding.done(createTemplateBindingStatement(letName, KeyKind.AS, key))
         }
         if (builder.tokenType === JSTokenTypes.SEMICOLON
             || builder.tokenType === JSTokenTypes.COMMA) {

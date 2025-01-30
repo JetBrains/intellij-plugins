@@ -9,6 +9,7 @@ import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.impl.*
 import org.jetbrains.annotations.NonNls
 import java.util.function.Function
@@ -28,11 +29,11 @@ interface Angular2ElementTypes: Angular2StubElementTypes {
                                       classConstructor: Function<Angular2ElementType, ASTNode>)
     : Angular2ElementType(debugName, classConstructor), JSExpressionElementType
 
-  class Angular2TemplateBindingType(private val myKey: String, private val myVar: Boolean, private val myName: String?)
+  class Angular2TemplateBindingType(private val key: String, private val keyKind: Angular2TemplateBinding.KeyKind, private val name: String?)
     : IElementType("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language, false), ICompositeElementType {
 
     override fun createCompositeNode(): ASTNode {
-      return Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, myKey, myVar, myName)
+      return Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, key, keyKind, name)
     }
   }
 
@@ -109,8 +110,8 @@ interface Angular2ElementTypes: Angular2StubElementTypes {
     val PROPERTY_NAMES: TokenSet = TokenSet.orSet(IDENTIFIER_NAMES, TokenSet.create(STRING_LITERAL))
 
     @JvmStatic
-    fun createTemplateBindingStatement(key: String, isVar: Boolean, name: String?): IElementType {
-      return Angular2TemplateBindingType(key, isVar, name)
+    fun createTemplateBindingStatement(key: String, keyKind: Angular2TemplateBinding.KeyKind, name: String?): IElementType {
+      return Angular2TemplateBindingType(key, keyKind, name)
     }
 
     @JvmStatic

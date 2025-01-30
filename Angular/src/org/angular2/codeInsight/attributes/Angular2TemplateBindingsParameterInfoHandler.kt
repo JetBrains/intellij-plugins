@@ -2,7 +2,6 @@ package org.angular2.codeInsight.attributes
 
 import com.intellij.javascript.findArgumentList
 import com.intellij.lang.documentation.QuickDocHighlightingHelper
-import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.documentation.JSHtmlHighlightingUtil
 import com.intellij.lang.javascript.psi.JSArgumentsHolder
 import com.intellij.lang.javascript.psi.JSFunction
@@ -15,15 +14,12 @@ import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
-import com.intellij.psi.util.firstLeaf
 import com.intellij.psi.util.parentOfType
 import com.intellij.ui.ColorHexUtil
 import com.intellij.ui.ColorUtil
@@ -31,6 +27,7 @@ import com.intellij.util.containers.addIfNotNull
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler.Angular2TemplateBindingsParamInfo
+import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
 import org.angular2.web.scopes.TemplateBindingKeyScope.Companion.getDirectiveInputsFor
@@ -40,7 +37,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithTab
 
   override fun getActualParameters(o: Angular2HtmlTemplateBindings): Array<out Angular2TemplateBinding> =
     o.bindings.bindings.filter {
-      it.textRange.length > 0 && !it.keyIsVar() || it.firstLeaf().elementType == JSTokenTypes.LET_KEYWORD
+      it.textRange.length > 0 && it.keyKind != Angular2TemplateBinding.KeyKind.AS
     }.toTypedArray()
 
   override fun getActualParameterDelimiterType(): IElementType =
@@ -123,7 +120,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithTab
 
     val inputDefinitions = getDirectiveInputsFor(bindings.bindings)
       .associateTo(mutableMapOf()) { input ->
-        val bindingName = StringUtil.decapitalize(input.name.removePrefix(templateName))
+        val bindingName = directiveInputToTemplateBindingVar(input.name, templateName)
         val definition = input.createDocumentation(bindings.bindings)?.definition
           ?.replaceFirst("${input.name}:", bindingName.withColor(NG_INPUT, bindings) + (if (input.required) "" else "?") + ":")
         Pair(input.name, definition)
@@ -137,25 +134,24 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithTab
 
     bindings.bindings.bindings
       .mapNotNullTo(result) {
-        when {
-          it.key == templateName -> null
-          it.keyIsVar() -> {
-            if (it.firstLeaf().elementType == JSTokenTypes.LET_KEYWORD)
-              Angular2BindingPresentation("let".withColor(TS_KEYWORD, bindings) + " " + it.key.withColor(NG_TEMPLATE_VARIABLE, bindings) +
-                                          renderJSType(it.variableDefinition), it.textRange)
-            else
-              null
+        if (it.key == templateName)
+          null
+        else when (it.keyKind) {
+          Angular2TemplateBinding.KeyKind.LET -> {
+            Angular2BindingPresentation("let".withColor(TS_KEYWORD, bindings) + " " + it.key.withColor(NG_TEMPLATE_VARIABLE, bindings) +
+                                        renderJSType(it.variableDefinition), it.textRange)
           }
-          else -> {
+          Angular2TemplateBinding.KeyKind.BINDING -> {
             val inputDef = inputDefinitions.remove(it.key)
             if (inputDef != null) {
               Angular2BindingPresentation(inputDef, it.textRange)
             }
             else {
-              Angular2BindingPresentation(StringUtil.decapitalize(it.key.removePrefix(templateName)).withColor(NG_INPUT, bindings) + ": " +
+              Angular2BindingPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(NG_INPUT, bindings) + ": " +
                                           "&lt;unknown&gt;".withColor(UNUSED, bindings), it.textRange)
             }
           }
+          Angular2TemplateBinding.KeyKind.AS -> null
         }
       }
 
@@ -164,6 +160,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithTab
     }
     return result
   }
+
   class Angular2TemplateBindingsParamInfo(
     var bindings: List<Angular2BindingPresentation>,
     var modCount: Long,

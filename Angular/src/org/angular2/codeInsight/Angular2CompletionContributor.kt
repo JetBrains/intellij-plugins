@@ -50,6 +50,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.*
+import org.angular2.lang.expr.psi.impl.Angular2TemplateVariableImpl
 import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.NonNls
 
@@ -67,6 +68,16 @@ class Angular2CompletionContributor : CompletionContributor() {
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParents(Angular2TemplateBindingKey::class.java, Angular2TemplateBinding::class.java),
            Angular2TemplateBindingKeyCompletionProvider()
+    )
+
+    extend(CompletionType.BASIC,
+           psiElement(JSTokenTypes.IDENTIFIER)
+             .withParents(Angular2TemplateVariableImpl::class.java),
+           object: CompletionProvider<CompletionParameters>() {
+             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+               result.stopHere()
+             }
+           }
     )
 
     // Disable regular completions in after and minimum parameters
