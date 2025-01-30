@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Plan directory 309488" type="#org.intellij.plugins.hcl.terraform.run.TerraformConfigurationType" factoryName="Terraform Plan" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <option name="allowRunningInParallel" value="false" />
+    <option name="envFilePaths">
+      <list />
+    </option>
+    <option name="envs">
+      <map>
+        <entry key="myEnvVar" value="myEnvVarValue" />
+      </map>
+    </option>
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="plan" />
+    <option name="projectPathOnTarget" />
+    <option name="selectedOptions">
+      <list />
+    </option>
+    <option name="workingDirectory" value="C:\Users\Olga.Pavlova\IdeaProjects\ALL_Terraform\Terraform_features\testcases\hcl\309488" />
+    <envs>
+      <env name="myEnvVar" value="myEnvVarValue" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
