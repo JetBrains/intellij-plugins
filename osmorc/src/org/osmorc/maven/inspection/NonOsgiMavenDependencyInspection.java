@@ -50,7 +50,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public final class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
+final class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
   @Override
   public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder problemsHolder, boolean isOnTheFly) {
     boolean isMaven = MavenDomUtil.isMavenFile(problemsHolder.getFile());

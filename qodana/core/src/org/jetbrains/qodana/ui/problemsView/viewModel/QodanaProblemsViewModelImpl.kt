@@ -35,7 +35,7 @@ import org.jetbrains.qodana.ui.problemsView.viewModel.impl.*
 import org.jetbrains.qodana.vcs.trimRevisionString
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class QodanaProblemsViewModelImpl(private val scope: CoroutineScope, private val project: Project): QodanaProblemsViewModel {
+internal class QodanaProblemsViewModelImpl(private val scope: CoroutineScope, private val project: Project): QodanaProblemsViewModel {
   override val problemsViewState: StateFlow<QodanaProblemsViewState> = QodanaProblemsViewStateService.getInstance(project)
     .problemsViewStateFlow
 

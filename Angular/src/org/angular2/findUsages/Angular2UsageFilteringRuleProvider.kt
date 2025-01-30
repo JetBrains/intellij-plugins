@@ -2,7 +2,7 @@ package org.angular2.findUsages
 
 import com.intellij.ide.DataManager
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.javascript.findUsages.JSComponentUsageFilteringRuleProvider.JSSearchForComponentUsageAction
+import com.intellij.lang.javascript.findUsages.JSSearchForComponentUsageAction
 import com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesConfiguration
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSFile
@@ -22,8 +22,7 @@ import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.lang.Angular2LangUtil
 import org.jetbrains.annotations.NonNls
 
-class Angular2UsageFilteringRuleProvider : UsageFilteringRuleProvider {
-
+private class Angular2UsageFilteringRuleProvider : UsageFilteringRuleProvider {
   @Suppress("OVERRIDE_DEPRECATION")
   override fun getActiveRules(project: Project): Array<out UsageFilteringRule> =
     arrayOf(Angular2ComponentUsageInTemplateFilteringRule(project))

@@ -19,7 +19,7 @@ import com.intellij.psi.xml.XmlTag
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugins.markdown.lang.MarkdownElementType
 
-class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilder() {
+private class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilder() {
   override fun createTemplateLanguageBlock(node: ASTNode,
                                            wrap: Wrap?,
                                            alignment: Alignment?,

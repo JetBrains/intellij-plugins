@@ -15,7 +15,7 @@ import com.intellij.openapi.vfs.newvfs.impl.FsRoot
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
 
-class NextJsPathReferenceResolverProvider : JSDirectFileReferenceResolverProvider {
+internal class NextJsPathReferenceResolverProvider : JSDirectFileReferenceResolverProvider {
   override fun accept(element: PsiElement): Boolean {
     return (element is XmlAttributeValue || JSPatterns.jsLiteral().inJSXEmbeddedContent().accepts(element)) && isNextJsContext(element)
   }

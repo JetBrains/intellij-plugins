@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class PostCssHighlightingLexer extends CssHighlighterLexer {
+public final class PostCssHighlightingLexer extends CssHighlighterLexer {
   private static final int AFTER_AMPERSAND_FLAG = 0x20;
   private static final int AFTER_NUMBER_FLAG = 0x40;
   private boolean afterAmpersand = false;

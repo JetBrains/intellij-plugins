@@ -12,8 +12,7 @@ import com.intellij.psi.xml.XmlTag
 import org.intellij.plugin.mdx.js.MdxJSLanguage
 import org.intellij.plugin.mdx.lang.MdxLanguage
 
-
-class MdxFileViewProvider(manager: PsiManager, virtualFile: VirtualFile, eventSystemEnabled: Boolean)
+internal class MdxFileViewProvider(manager: PsiManager, virtualFile: VirtualFile, eventSystemEnabled: Boolean)
   : MultiplePsiFilesPerDocumentFileViewProvider(manager, virtualFile, eventSystemEnabled), TemplateLanguageFileViewProvider {
 
   private val myRelevantLanguages = mutableSetOf(baseLanguage, templateDataLanguage)
