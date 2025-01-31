@@ -270,6 +270,40 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = (1..6).map { "\"<caret>area$it\"" })
 
+  fun testTemplateBindingsNgIf() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
+                 lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
+                 locations = listOf(
+                   "<div *ngIf=\"<caret>true as foo; else foo as sss; let car = ngIf\"></div>",
+                   "<div *ngIf=\"true as <caret>foo; else foo as sss; let car = ngIf\"></div>",
+                   "<div *ngIf=\"true as foo; <caret>else foo as sss; let car = ngIf\"></div>",
+                   "<div *ngIf=\"true as foo; else <caret>foo as sss; let car = ngIf\"></div>",
+                   "<div *ngIf=\"true as foo; else foo as <caret>sss; let car = ngIf\"></div>",
+                   "<div *ngIf=\"true as foo; else foo as sss; <caret>let car = ngIf\"></div>",
+                   "<div *ngIf=\"true as foo; else foo as sss; let <caret>car = ngIf\"></div>",
+                   "<div *ngIf=\"true as foo; else foo as sss; let car = <caret>ngIf\"></div>",
+                 ))
+
+  fun testTemplateBindingsNgFor() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
+                 lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
+                 locations = listOf(
+                   "<div *ngFor=\"<caret>let foo of [1,2,3]; trackBy: trackByFn; let index = index\"></div>",
+                   "<div *ngFor=\"let <caret>foo of [1,2,3]; trackBy: trackByFn; let index = index\"></div>",
+                   "<div *ngFor=\"let foo <caret>of [1,2,3]; trackBy: trackByFn; let index = index\"></div>",
+                   "<div *ngFor=\"let foo of <caret>[1,2,3]; trackBy: trackByFn; let index = index\"></div>",
+                   "<div *ngFor=\"let foo of [1,2,3]; <caret>trackBy: trackByFn; let index = index\"></div>",
+                   "<div *ngFor=\"let foo of [1,2,3]; trackBy: <caret>trackByFn; let index = index\"></div>",
+                   "<div *ngFor=\"let foo of [1,2,3]; trackBy: trackByFn; <caret>let index = index\"></div>",
+                   "<div *ngFor=\"let foo of [1,2,3]; trackBy: trackByFn; let <caret>index = index\"></div>",
+                   "<div *ngFor=\"let foo of [1,2,3]; trackBy: trackByFn; let index = <caret>index\"></div>",
+                 ))
+
+  fun testTemplateBindingsNgForContextDocumentation() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1, extension = "ts",
+                 lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf"},
+                 checkDocumentation = true)
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =

@@ -1,0 +1,4 @@
+else (typeText='TemplateRef<NgIfContext<T>>'; priority=100.0; bold; typeGreyed)
+then (typeText='TemplateRef<NgIfContext<T>>'; priority=100.0; bold; typeGreyed)
+as (typeText=null; priority=10.0; typeGreyed)
+let (typeText=null; priority=10.0; typeGreyed)
