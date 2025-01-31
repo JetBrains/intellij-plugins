@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
@@ -230,6 +231,7 @@ class TerraformMetadataLoader {
     }
 
     fun getGlobalTerraformDir(): File? {
+      if (!AdvancedSettings.getBoolean("org.intellij.terraform.use.global.meta")) return null
       val terraform_d = if (SystemInfo.isWindows) {
         System.getenv("APPDATA")?.let { File(it, "terraform.d") }
       }
