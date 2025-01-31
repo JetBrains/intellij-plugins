@@ -25,10 +25,10 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
   }
 
   @RequiresEdt
-  fun detectAndUpdateToolPathIfEmpty(toolType: TfToolType) {
+  fun detectPathAndUpdateSettingsIfEmpty(toolType: TfToolType) {
     toolType.getToolSettings(project).toolPath.ifBlank {
       runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-        getInstance(project).detectPathAndUpdateSettingsAsync(toolType).await()
+        detectPathAndUpdateSettingsAsync(toolType).await()
       }
     }
   }

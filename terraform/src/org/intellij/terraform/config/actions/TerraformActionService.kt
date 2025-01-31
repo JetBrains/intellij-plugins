@@ -52,7 +52,7 @@ internal class TerraformActionService(private val project: Project, private val 
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
     val title = HCLBundle.message("progress.title.terraform.init")
     val toolType = getApplicableToolType(dirFile)
-    ToolPathDetector.getInstance(project).detectAndUpdateToolPathIfEmpty (toolType)
+    ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsIfEmpty (toolType)
     withBackgroundProgress(project, title) {
       if (!isExecutableToolFileConfigured(project, toolType)) {
         return@withBackgroundProgress

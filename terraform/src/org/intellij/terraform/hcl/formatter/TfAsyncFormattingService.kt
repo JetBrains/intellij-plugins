@@ -37,7 +37,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     val project = context.project
     val virtualFile = context.virtualFile ?: return null
     val toolType = getApplicableToolType(virtualFile)
-    ToolPathDetector.getInstance(project).detectAndUpdateToolPathIfEmpty(toolType)
+    ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsIfEmpty(toolType)
     if (!isExecutableToolFileConfigured(project, toolType)) {
       return null
     }

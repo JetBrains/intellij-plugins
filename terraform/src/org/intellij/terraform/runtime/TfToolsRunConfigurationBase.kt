@@ -48,7 +48,7 @@ internal abstract class TfToolsRunConfigurationBase(
 
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
-    ToolPathDetector.getInstance(project).detectAndUpdateToolPathIfEmpty(toolType)
+    ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsIfEmpty(toolType)
     if (!isExecutableToolFileConfigured(project, toolType)) {
       return null
     }
