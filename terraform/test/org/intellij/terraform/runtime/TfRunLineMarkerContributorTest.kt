@@ -6,7 +6,7 @@ import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info
 import com.intellij.icons.AllIcons
 import com.intellij.ui.IconManager
 
-class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
+internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
   fun testSimpleLineMarker() {
     val file = myFixture.configureByFile("simple.tf")

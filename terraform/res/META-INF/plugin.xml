@@ -494,6 +494,10 @@
 
   </extensions>
 
+  <projectListeners>
+    <listener class="org.intellij.terraform.runtime.TfRunManagerListener" topic="com.intellij.execution.RunManagerListener"/>
+  </projectListeners>
+
   <actions>
     <action icon="AllIcons.General.Warning" id="TFInitRequiredAction" class="org.intellij.terraform.config.actions.TFInitRequiredAction"/>
     <action id="Terraform.InstallTerraform" class="org.intellij.terraform.install.InstallTerraformAction"/>
