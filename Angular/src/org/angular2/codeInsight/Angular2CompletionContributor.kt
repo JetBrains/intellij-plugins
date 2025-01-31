@@ -392,3 +392,6 @@ fun <T : PsiElement> language(language: Language): PatternCondition<T> {
     }
   }
 }
+
+fun shouldPopupParameterInfoOnCompletion(place: PsiElement): Boolean =
+  place is Angular2TemplateBindings

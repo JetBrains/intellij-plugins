@@ -64,6 +64,6 @@ class AddNgModuleDeclarationAction(editor: Editor?,
         Angular2FixesPsiUtil.insertEntityDecoratorMember(module, EXPORTS_PROP, myDeclarationName)
       }
     }
-    if (myCodeCompletion) scheduleDelayedAutoPopupIfNeeded(editor)
+    if (myCodeCompletion) scheduleDelayedAutoPopupIfNeeded(editor, place)
   }
 }

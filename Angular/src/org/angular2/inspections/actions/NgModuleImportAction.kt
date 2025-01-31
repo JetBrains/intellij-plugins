@@ -53,7 +53,7 @@ class NgModuleImportAction internal constructor(editor: Editor?,
     }
     Angular2ImportsHandler.getFor(importsOwner)
       .insertImport(editor, candidate, importsOwner)
-    if (myCodeCompletion) scheduleDelayedAutoPopupIfNeeded(editor)
+    if (myCodeCompletion) scheduleDelayedAutoPopupIfNeeded(editor, myPlaceInfo.place)
   }
 
   companion object {

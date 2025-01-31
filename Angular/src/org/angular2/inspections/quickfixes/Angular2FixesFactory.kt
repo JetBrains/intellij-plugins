@@ -1,7 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.inspections.quickfixes
 
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.hint.QuestionAction
+import com.intellij.codeInsight.hint.ShowParameterInfoHandler
 import com.intellij.codeInsight.navigation.getPsiElementPopup
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
@@ -38,6 +40,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.shouldPopupParameterInfoOnCompletion
 import org.angular2.editor.delayCompletionAutoPopupOnImport
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
@@ -109,6 +112,11 @@ object Angular2FixesFactory {
                                           getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
                    candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)) { candidate ->
         Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true)
+      }
+    } else {
+      // Show parameter info popup immediately
+      if (shouldPopupParameterInfoOnCompletion(element) && CodeInsightSettings.getInstance().AUTO_POPUP_PARAMETER_INFO) {
+        ShowParameterInfoHandler.invoke(element.project, editor, element.containingFile, -1, null, false)
       }
     }
   }
