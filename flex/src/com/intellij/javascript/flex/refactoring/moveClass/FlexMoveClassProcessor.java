@@ -83,12 +83,12 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   }
 
   @Override
-  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(refUsages.get()), refUsages.get());
   }
 
   @Override
-  public boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
+  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }

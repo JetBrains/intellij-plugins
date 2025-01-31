@@ -145,7 +145,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
 
   @Override
-  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(refUsages.get()), refUsages.get());
   }
 

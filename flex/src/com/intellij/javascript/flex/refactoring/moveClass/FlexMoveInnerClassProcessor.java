@@ -211,7 +211,7 @@ public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(), refUsages.get());
   }
 
@@ -226,7 +226,7 @@ public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  public boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
+  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }

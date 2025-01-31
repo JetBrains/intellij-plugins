@@ -188,7 +188,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  public boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
+  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     if (myTargetClass == null) {
       return true;
     }
