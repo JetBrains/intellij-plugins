@@ -19,6 +19,7 @@
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.vcs</depends>
+  <depends optional="true" config-file="git-plugin-extensions.xml">Git4Idea</depends>
 
   <actions>
     <group id="PerforceDirect.Menu" class="org.jetbrains.idea.perforce.actions.PerforceMenu" popup="true">
