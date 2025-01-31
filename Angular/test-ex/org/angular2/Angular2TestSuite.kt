@@ -65,7 +65,7 @@ import org.junit.runners.Suite
   Angular2FormattingTest::class,
   Angular2TemplateInspectionsTest::class,
   Angular2DecoratorInspectionsTest::class,
-  Angular2PipeParameterInfoTest::class,
+  Angular2ParameterInfoTest::class,
   Angular2ParameterHintsTest::class,
   Angular2ExpressionTypesInspectionTest::class,
   Angular2ExpressionTypesInspectionWithoutServiceTest::class,
