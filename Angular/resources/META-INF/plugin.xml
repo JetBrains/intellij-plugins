@@ -346,6 +346,7 @@
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
     <webSymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliWebSymbolsContextProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
+    <completion.confidence language="Angular2Html" implementationClass="org.angular2.editor.Angular2PreventCompletionAutoPopupOnImport"/>
 
     <!-- Angular 2 SVG contributions -->
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>

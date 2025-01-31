@@ -38,6 +38,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.editor.delayCompletionAutoPopupOnImport
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.inspections.actions.Angular2ActionFactory
@@ -89,9 +90,11 @@ object Angular2FixesFactory {
   fun ensureDeclarationResolvedAfterCodeCompletion(element: PsiElement, editor: Editor) {
     val candidates = getCandidatesForResolution(element, true)
     if (!candidates.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
+      delayCompletionAutoPopupOnImport(editor)
       Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute()
     }
     else if (!candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
+      delayCompletionAutoPopupOnImport(editor)
       selectAndRun(editor,
                    Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
                                           getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
@@ -100,6 +103,7 @@ object Angular2FixesFactory {
       }
     }
     else if (!candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).isEmpty()) {
+      delayCompletionAutoPopupOnImport(editor)
       selectAndRun(editor,
                    Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
                                           getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
@@ -127,8 +131,10 @@ object Angular2FixesFactory {
   }
 
   @JvmStatic
-  fun getCandidatesForResolution(element: PsiElement,
-                                 codeCompletion: Boolean): MultiMap<DeclarationProximity, Angular2Declaration> {
+  fun getCandidatesForResolution(
+    element: PsiElement,
+    codeCompletion: Boolean,
+  ): MultiMap<DeclarationProximity, Angular2Declaration> {
     val scope = Angular2DeclarationsScope(element)
     val importsOwner = scope.importsOwner
     if (importsOwner == null || !scope.isInSource(importsOwner)) {
@@ -242,8 +248,10 @@ object Angular2FixesFactory {
     return result
   }
 
-  private fun removeLocalLibraryElements(context: PsiElement,
-                                         declarations: List<Angular2Declaration>): Collection<Angular2Declaration> {
+  private fun removeLocalLibraryElements(
+    context: PsiElement,
+    declarations: List<Angular2Declaration>,
+  ): Collection<Angular2Declaration> {
     val contextFile = context.containingFile.originalFile.virtualFile
     val config = AngularConfigProvider.findAngularConfig(context.project, contextFile) ?: return declarations
     val contextProject = config.getProject(contextFile) ?: return declarations
@@ -271,9 +279,11 @@ object Angular2FixesFactory {
     }
   }
 
-  private fun hasNonRelativeModuleName(context: PsiElement,
-                                       declaration: PsiElement?,
-                                       declarationFile: VirtualFile): Boolean {
+  private fun hasNonRelativeModuleName(
+    context: PsiElement,
+    declaration: PsiElement?,
+    declarationFile: VirtualFile,
+  ): Boolean {
     if (declaration == null) return false
     val builder = TypeScriptImportPathBuilder(JSImportPathConfigurationImpl(
       unwrapImplicitElement(context), unwrapImplicitElement(declaration), declarationFile, false, "Foo"))
@@ -324,10 +334,12 @@ object Angular2FixesFactory {
       Angular2Bundle.message("angular.entity.directive")
   }
 
-  private fun selectAndRun(editor: Editor,
-                           @Nls title: String,
-                           declarations: Collection<Angular2Declaration>,
-                           actionFactory: (Angular2Declaration) -> QuestionAction?) {
+  private fun selectAndRun(
+    editor: Editor,
+    @Nls title: String,
+    declarations: Collection<Angular2Declaration>,
+    actionFactory: (Angular2Declaration) -> QuestionAction?,
+  ) {
     if (declarations.isEmpty()) {
       return
     }
