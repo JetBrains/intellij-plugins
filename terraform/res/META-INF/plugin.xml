@@ -419,6 +419,12 @@
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.metadata.build.eagerly"/>
 
+    <advancedSetting id="org.intellij.terraform.use.global.meta"
+                     default="false"
+                     groupKey="advanced.setting.terraform"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.use.global.meta"/>
+
     <advancedSetting id="org.intellij.terraform.config.variables.deep.search"
                      default="true"
                      groupKey="advanced.setting.terraform"
@@ -469,6 +475,7 @@
                                    implementationClass="org.intellij.terraform.config.editor.TfTerragruntTypeUsageSchemaDescriptor"/>
 
     <statistics.projectUsagesCollector implementation="org.intellij.terraform.TerraformUsageCollector"/>
+    <statistics.counterUsagesCollector implementationClass="org.intellij.terraform.TfUsageTriggerCollector"/>
 
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.opentofu.codeinsight.OpenTofuReferenceContributor"/>
 
