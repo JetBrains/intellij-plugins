@@ -38,7 +38,7 @@ class VueFramework : WebFramework() {
 
     return when (qualifiedName.qualifiedKind) {
       VUE_COMPONENTS -> when (target) {
-        NAMES_QUERY -> listOf(name, fromAsset(name, true))
+        NAMES_QUERY, RENAME_QUERY -> listOf(name, fromAsset(name, true))
         NAMES_MAP_STORAGE -> if (name.contains('-'))
           listOf(name)
         else
@@ -50,12 +50,12 @@ class VueFramework : WebFramework() {
           listOf(name, fromAsset(name))
       }
       VUE_COMPONENT_PROPS -> when (target) {
-        NAMES_QUERY -> listOf(fromAsset(name))
+        NAMES_QUERY, RENAME_QUERY -> listOf(fromAsset(name))
         NAMES_MAP_STORAGE -> listOf(fromAsset(name))
         CODE_COMPLETION_VARIANTS -> listOf(fromAsset(name))
       }
       WebSymbol.JS_EVENTS -> when (target) {
-        NAMES_QUERY -> listOf(fromAsset(name), name, fromAsset(name, hyphenBeforeDigit = true))
+        NAMES_QUERY, RENAME_QUERY -> listOf(fromAsset(name), name, fromAsset(name, hyphenBeforeDigit = true))
         NAMES_MAP_STORAGE -> listOf(fromAsset(name, hyphenBeforeDigit = true))
         // TODO proposed variant should be taken from code style settings synced from ESLint settings
         CODE_COMPLETION_VARIANTS -> listOf(fromAsset(name), toAsset(name))
