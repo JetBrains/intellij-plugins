@@ -7,7 +7,7 @@ import com.intellij.openapi.util.JDOMUtil
 import org.intellij.terraform.install.TfToolType
 import java.nio.file.Paths
 
-class TfRunConfigurationTest : BaseRunConfigurationTest() {
+internal class TfRunConfigurationTest : BaseRunConfigurationTest() {
 
   fun testMigratingRunConfigFrom242() {
     val runManager = RunManager.getInstance(project) as? RunManagerImpl
