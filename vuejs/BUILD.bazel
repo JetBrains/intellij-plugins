@@ -22,7 +22,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-api:ide",
     "@lib//:kotlin-stdlib",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//xml/xml-psi-api:psi",
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/lang-api:lang",

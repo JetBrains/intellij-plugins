@@ -13,7 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/lang-impl",
     "@community//platform/editor-ui-ex:editor-ex",
@@ -46,7 +46,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":prettierJS"],
   deps = [
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/lang-impl",
     "@community//platform/editor-ui-ex:editor-ex",

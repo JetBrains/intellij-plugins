@@ -14,7 +14,7 @@ jvm_library(
   srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlinx-coroutines-core",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:jetbrains-markdown",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/markdown-utils",
@@ -44,7 +44,7 @@ jvm_library(
   associates = [":mdx"],
   deps = [
     "@lib//:kotlinx-coroutines-core",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:jetbrains-markdown",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/markdown-utils",

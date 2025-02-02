@@ -20,12 +20,11 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//plugins/htmltools:html-tools",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//CSS/css-psi-impl:css-psi",
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "@community//xml/tests:tests_test_lib",
     "@community//platform/lang-impl",
@@ -33,12 +32,12 @@ jvm_library(
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test_lib",
     "//contrib/postcss",
     "//contrib/postcss:postcss_test_lib",
     "//platform/lsp",
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+    "@community//platform/webSymbols:webSymbols-testFramework",
   ]
 )
 

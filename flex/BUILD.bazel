@@ -20,7 +20,7 @@ jvm_library(
     "//CSS/frontback/css-api:css-frontback",
     "@community//xml/xml-structure-view-api:structureView",
     "@community//platform/usageView",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//xml/xml-frontback:frontback",
     "//plugins/JavaScriptLanguage:javascript",

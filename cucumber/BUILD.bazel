@@ -68,7 +68,7 @@ jvm_library(
     "@community//plugins/IntelliLang:langInjection",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
-    "@community//plugins/IntelliLang:xml-langInjection",
+    "@community//plugins/IntelliLang/xml-support:xml-langInjection",
     "@lib//:jgoodies-forms",
   ],
   runtime_deps = [
