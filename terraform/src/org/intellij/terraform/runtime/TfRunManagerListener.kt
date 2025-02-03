@@ -7,15 +7,15 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
-import org.intellij.terraform.isTerraformFileExtension
+import org.intellij.terraform.isTerraformCompatibleExtension
 
 private class TfRunManagerListener(val project: Project) : RunManagerListener {
 
-  override fun runConfigurationAdded(settings: RunnerAndConfigurationSettings) = updateIfTerraform(settings)
-  override fun runConfigurationRemoved(settings: RunnerAndConfigurationSettings) = updateIfTerraform(settings)
-  override fun runConfigurationChanged(settings: RunnerAndConfigurationSettings) = updateIfTerraform(settings)
+  override fun runConfigurationAdded(settings: RunnerAndConfigurationSettings): Unit = updateIfTfCompatible(settings)
+  override fun runConfigurationRemoved(settings: RunnerAndConfigurationSettings): Unit = updateIfTfCompatible(settings)
+  override fun runConfigurationChanged(settings: RunnerAndConfigurationSettings): Unit = updateIfTfCompatible(settings)
 
-  private fun updateIfTerraform(settings: RunnerAndConfigurationSettings) {
+  private fun updateIfTfCompatible(settings: RunnerAndConfigurationSettings) {
     if (settings.type is TfToolConfigurationTypeBase) {
       updateGutterOfFiles()
     }
@@ -26,7 +26,7 @@ private class TfRunManagerListener(val project: Project) : RunManagerListener {
     val daemonAnalyzer = DaemonCodeAnalyzer.getInstance(project)
 
     FileEditorManager.getInstance(project).allEditors
-      .mapNotNull { it.file?.takeIf { file -> isTerraformFileExtension(file.extension) } }
+      .mapNotNull { it.file?.takeIf { file -> isTerraformCompatibleExtension(file.extension) } }
       .mapNotNull { psiManager.findFile(it) }
       .forEach { daemonAnalyzer.restart(it) }
   }
