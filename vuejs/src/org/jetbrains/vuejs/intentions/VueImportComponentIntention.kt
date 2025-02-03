@@ -10,8 +10,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbol
@@ -27,7 +27,7 @@ import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean =
-    element.node.elementType == XmlElementType.XML_NAME
+    element.node.elementType == XmlTokenType.XML_NAME
     && element.parent.asSafely<XmlTag>()
       ?.descriptor.asSafely<WebSymbolElementDescriptor>()
       ?.symbol

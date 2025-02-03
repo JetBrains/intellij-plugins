@@ -7,8 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.html.isVueFile
 
@@ -44,17 +44,19 @@ fun getContextForExtractComponentIntention(editor: Editor?, element: PsiElement)
   else selectedTags
 }
 
-private fun getSelectedTags(element: PsiElement,
-                            editor: Editor?): List<XmlTag>? {
+private fun getSelectedTags(
+  element: PsiElement,
+  editor: Editor?,
+): List<XmlTag>? {
   val file = element.containingFile
   if (file == null) return null
   element.node ?: return null
   if (editor == null || !editor.selectionModel.hasSelection()) {
     val type = element.node.elementType
     val parent = element.parent as? XmlTag
-    if (parent != null && (type == XmlElementType.XML_NAME ||
-                           type == XmlElementType.XML_START_TAG_START ||
-                           type == XmlElementType.XML_TAG_NAME)) {
+    if (parent != null && (type == XmlTokenType.XML_NAME ||
+                           type == XmlTokenType.XML_START_TAG_START ||
+                           type == XmlTokenType.XML_TAG_NAME)) {
       return listOf(parent)
     }
     if (element is XmlTag) return listOf(element)

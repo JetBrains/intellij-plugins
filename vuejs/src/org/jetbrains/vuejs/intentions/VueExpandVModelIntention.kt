@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElementType
+import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
@@ -24,7 +25,7 @@ class VueExpandVModelIntention : JavaScriptIntention() {
   private val validModifiers = setOf("lazy", "number", "trim")
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean =
-    element.node.elementType == XmlElementType.XML_NAME
+    element.node.elementType == XmlTokenType.XML_NAME
     && element.parent
       ?.let {
         it.node.elementType == XmlElementType.XML_ATTRIBUTE

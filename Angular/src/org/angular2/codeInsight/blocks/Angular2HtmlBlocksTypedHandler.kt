@@ -13,8 +13,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlDocument
-import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlText
+import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.asSafely
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -31,7 +31,7 @@ private class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
       val at = file.findElementAt(editor.getCaretModel().offset)
       if (at != null &&
           (at.parent.let { it is XmlDocument || it is XmlText }
-           || at.elementType == XmlElementType.XML_END_TAG_START)) {
+           || at.elementType == XmlTokenType.XML_END_TAG_START)) {
         AutoPopupController.getInstance(project)
           .scheduleAutoPopup(editor, CompletionType.BASIC, null)
       }
