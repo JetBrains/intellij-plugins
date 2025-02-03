@@ -69,7 +69,8 @@
                   "name": "never",
                   "doc-url": "https://angular.dev/guide/defer",
                   "description": "`hydrate never` tells Angular to leave your component dehydrated indefinitely, effectively treating it as static content. Note that this is not the same as a server-only component. When a `@defer` block is instantiated during normal client-side rendering, the content is still fetched and rendered normally.",
-                  "no-content": true
+                  "no-content": true,
+                  "unique": true
                 },
                 {
                   "name": "when",

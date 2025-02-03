@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.ui.ColorHexUtil
@@ -41,7 +42,7 @@ abstract class ParameterInfoHandlerWithColoredSyntax<ParameterOwner : PsiElement
           it.modCount = parameterOwner.containingFile.modificationStamp
         }
       }
-    context.setCurrentParameter(context.offset)
+    context.setCurrentParameter(StringUtil.skipWhitespaceForward(context.editor.document.text, context.offset))
   }
 
   protected abstract fun findElementForBuildingParametersListInfo(file: PsiFile, offset: Int): ParameterOwner?

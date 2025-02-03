@@ -86,8 +86,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
               ParameterHtmlPresentation(inputDef, it.textRange)
             }
             else {
-              ParameterHtmlPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(NG_INPUT, parameterOwner) + ": " +
-                                        "&lt;unknown&gt;".withColor(UNUSED, parameterOwner), it.textRange)
+              ParameterHtmlPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(ERROR, parameterOwner), it.textRange)
             }
           }
           Angular2TemplateBinding.KeyKind.AS -> null

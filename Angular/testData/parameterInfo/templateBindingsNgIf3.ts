@@ -4,7 +4,7 @@ import {NgIf} from "@angular/common";
 @Component({
   selector: 'test',
   template: `
-        <div *ngIf="true as foo; let car = <caret>ngIf"></div>
+        <div *ngIf="true as foo; let car = <caret>ngIf; esle foo"></div>
         <ng-template #foo></ng-template>
     `,
   imports: [

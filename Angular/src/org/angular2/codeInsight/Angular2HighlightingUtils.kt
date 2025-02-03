@@ -44,7 +44,9 @@ object Angular2HighlightingUtils {
     NG_BLOCK(Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
     NG_DEFER_TRIGGER(TypeScriptHighlighter.TS_GLOBAL_FUNCTION),
     NG_EXPRESSION_PREFIX(TypeScriptHighlighter.TS_KEYWORD),
-    UNUSED(CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES)
+
+    UNUSED(CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES),
+    ERROR(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES)
   }
 
   val NG_EXPORT_AS_KEY: TextAttributesKey = TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE
