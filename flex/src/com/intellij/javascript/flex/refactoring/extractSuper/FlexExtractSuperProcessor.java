@@ -101,7 +101,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  public UsageInfo @NotNull [] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     if (myMode == JSExtractSuperMode.ExtractSuper) {
       return UsageInfo.EMPTY_ARRAY; // user doesn't want to update usages
     }

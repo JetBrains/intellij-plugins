@@ -108,7 +108,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  public UsageInfo @NotNull [] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     return JSRefactoringUtil.getUsages(myMembersToMove, myTargetClass);
   }
 

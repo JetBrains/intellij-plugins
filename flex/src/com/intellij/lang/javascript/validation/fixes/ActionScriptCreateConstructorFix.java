@@ -292,7 +292,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
     }
 
     @Override
-    public UsageInfo @NotNull [] findUsages() {
+    protected UsageInfo @NotNull [] findUsages() {
       final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<>());
       final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<>());
 

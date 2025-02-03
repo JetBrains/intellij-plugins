@@ -79,7 +79,7 @@ public final class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  public UsageInfo @NotNull [] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(reference -> {
       final PsiElement element = reference.getElement();
