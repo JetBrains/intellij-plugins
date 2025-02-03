@@ -44,6 +44,7 @@ internal class TfRunConfigurationTest : BaseRunConfigurationTest() {
 
     configuration?.globalOptions = " -chdir=/some_dir/some_sub_dir/test.txt   "
     configuration?.programArguments = "   -auto-approve -input=false"
+    configuration?.passGlobalOptions = true
     assertEquals("-chdir=/some_dir/some_sub_dir/test.txt init -auto-approve -input=false", configuration?.programParameters)
   }
 }

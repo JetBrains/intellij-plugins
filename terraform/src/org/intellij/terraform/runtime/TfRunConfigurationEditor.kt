@@ -44,12 +44,13 @@ internal class TfRunConfigurationEditor(runConfiguration: TfToolsRunConfiguratio
       fragment("terraform.global.options", globalOptions) {
         name = HCLBundle.message("terraform.run.configuration.global.options.fragment")
         apply = { model, ui ->
-          model.globalOptions =  ui.component.text
+          model.passGlobalOptions = ui.isVisible
+          model.globalOptions = ui.component.text
         }
         reset = { model, ui ->
           ui.component.text = model.globalOptions
         }
-        visible = { model -> model.globalOptions.isNotBlank() }
+        visible = { model -> model.passGlobalOptions }
       }
 
       fragment("terraform.command", commandComboBox) {
@@ -72,7 +73,8 @@ internal class TfRunConfigurationEditor(runConfiguration: TfToolsRunConfiguratio
         validation = { model, _ ->
           if (model.commandType == TfCommand.CUSTOM && model.programArguments.isBlank()) {
             ValidationInfo(HCLBundle.message("terraform.run.configuration.arguments.empty.validation.text"))
-          } else null
+          }
+          else null
         }
         isRemovable = false
       }
