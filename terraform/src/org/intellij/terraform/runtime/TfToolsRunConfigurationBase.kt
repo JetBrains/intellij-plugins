@@ -44,6 +44,7 @@ internal abstract class TfToolsRunConfigurationBase(
 
   internal var commandType: TfCommand = TfCommand.CUSTOM
   internal var globalOptions: String = ""
+  internal var passGlobalOptions: Boolean = false
   internal var programArguments: String = ""
 
   @Throws(ExecutionException::class)
@@ -108,7 +109,7 @@ internal abstract class TfToolsRunConfigurationBase(
   override fun setProgramParameters(value: String?): Unit = Unit
 
   override fun getProgramParameters(): String = listOf(
-    globalOptions,
+    if (passGlobalOptions) globalOptions else "",
     commandType.command,
     programArguments
   ).joinToString(" ") { it.trim() }.trim()
