@@ -7,7 +7,6 @@ import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.IXmlAttributeElementType
-import com.intellij.psi.xml.XmlElementType
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.impl.*
@@ -15,7 +14,7 @@ import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import org.jetbrains.annotations.NonNls
 import java.util.function.Function
 
-internal interface Angular2HtmlElementTypes : XmlElementType, Angular2HtmlTokenTypes, Angular2HtmlStubElementTypes {
+internal interface Angular2HtmlElementTypes : Angular2HtmlTokenTypes, Angular2HtmlStubElementTypes {
   open class Angular2ElementType(debugName: @NonNls String, private val myClassConstructor: Function<Angular2ElementType, out ASTNode>)
     : IElementType(debugName, Angular2HtmlLanguage), ICompositeElementType {
     override fun createCompositeNode(): ASTNode {
