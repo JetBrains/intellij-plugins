@@ -14,8 +14,8 @@ import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.ERROR
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
-import org.angular2.codeInsight.ParameterInfoHandlerWithColoredSyntax
-import org.angular2.codeInsight.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
+import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax
+import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol.Companion.PRIMARY_EXPRESSION
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
