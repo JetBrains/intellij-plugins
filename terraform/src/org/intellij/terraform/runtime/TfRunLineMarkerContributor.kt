@@ -2,12 +2,13 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.RunManager
-import com.intellij.execution.impl.EditConfigurationsDialog
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.ui.IconManager
 import org.intellij.terraform.config.actions.TFInitAction
@@ -69,7 +70,7 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
     actions.addAll(existingConfigs.map { TfRunExistingConfigAction(it) })
 
     actions.add(Separator())
-    actions.add(getEditConfigurationAction(project, toolType))
+    actions.add(ActionManager.getInstance().getAction("editRunConfigurations"))
 
     return actions.toTypedArray()
   }
@@ -80,13 +81,4 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
     return group?.getChildren(actionManager) ?: emptyArray()
   }
 
-  private fun getEditConfigurationAction(project: Project, toolType: TfToolType): AnAction = object : AnAction() {
-    init {
-      templatePresentation.text = HCLBundle.message("terraform.edit.configurations.action.text")
-    }
-
-    override fun actionPerformed(e: AnActionEvent) {
-      EditConfigurationsDialog(project, tfRunConfigurationType(toolType).baseFactory).show()
-    }
-  }
 }
