@@ -21,16 +21,10 @@ public final class AngularTestUtil {
 
     public static String getBaseTestDataPath(Class<?> clazz) {
         String contribPath = getContribPath();
-        return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+        return contribPath + "/AngularJS/testResources/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
     }
 
-    public static String getBaseTestDataPath() {
-        String contribPath = getContribPath();
-        return contribPath + "/AngularJS/testData/";
-    }
-
-
-    private static String getContribPath() {
+  private static String getContribPath() {
         final String homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy();
         if (new File(homePath, "contrib/.gitignore").isFile()) {
             return homePath + File.separatorChar + "contrib";

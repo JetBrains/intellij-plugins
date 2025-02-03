@@ -10,21 +10,21 @@ import java.io.File;
  */
 public final class CfmlTestUtil {
   /**
-   * Run from ultimate sources or like a separate plugin project(to contribute)
-   */
-
-  public static final boolean isInternalRun = !(new File("testData").exists());
-
-  /**
    * The root of the test data directory
    */
   public static final String BASE_TEST_DATA_PATH = findTestDataPath();
 
   private static String findTestDataPath() {
-    File f = new File("tests", "testData");
+    File absoluteTestData = new File(PathManager.getHomePath(), "contrib/CFML/testData");
+    if (absoluteTestData.exists()) {
+      return absoluteTestData.getAbsolutePath();
+    }
+
+    File f = new File("testData");
     if (f.exists()) {
       return f.getAbsolutePath();
     }
-    return PathManager.getHomePath() + "/contrib/CFML/tests/testData";
+
+    throw new IllegalStateException("Unable to find testData directory");
   }
 }

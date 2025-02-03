@@ -95,7 +95,7 @@ public class CfmlLexerTest extends LexerTestCase {
 
   @Override
   protected @NotNull String getDirPath() {
-    return "contrib/CFML/tests/testData/lexer";
+    return "contrib/CFML/testData/lexer";
   }
 
   @NotNull
