@@ -8,7 +8,6 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import org.angular2.lang.metadata.psi.MetadataElementType
 import org.angular2.lang.metadata.stubs.MetadataElementStub
-import org.angular2.lang.metadata.stubs.MetadataElementStub.ConstructorFromJsonValue
 import java.io.IOException
 
 abstract class Angular2MetadataElementStub<Psi : PsiElement> : MetadataElementStub<Psi> {

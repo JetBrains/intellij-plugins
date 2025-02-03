@@ -14,7 +14,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import java.nio.file.Path
-import javax.swing.Icon
 
 internal val excludeCondition = ExcludeFileCondition { isDir, filename, _, _, _ ->
   !isDir &&

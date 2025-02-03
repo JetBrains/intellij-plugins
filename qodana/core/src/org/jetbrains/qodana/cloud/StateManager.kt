@@ -1,7 +1,5 @@
 package org.jetbrains.qodana.cloud
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 

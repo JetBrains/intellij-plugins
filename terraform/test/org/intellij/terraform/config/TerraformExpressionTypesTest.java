@@ -18,7 +18,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.KeyedLazyInstance;
 import org.intellij.terraform.TerraformTestUtils;
 import org.intellij.terraform.config.model.Type;
-import org.intellij.terraform.config.model.TypeModelProvider;
 import org.intellij.terraform.config.psi.TerraformReferenceContributor;
 import org.intellij.terraform.hcl.HCLParserDefinition;
 import org.intellij.terraform.hcl.HCLTokenTypes;

@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import java.io.IOException
 import java.nio.charset.StandardCharsets

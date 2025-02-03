@@ -17,7 +17,6 @@ package com.intellij.protobuf.ide.formatter;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 
 public class PbTextFormatterTest extends PbCodeInsightFixtureTestCase {

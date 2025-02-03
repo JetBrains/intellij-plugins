@@ -20,7 +20,6 @@ import com.intellij.util.PathUtil
 import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.text.nullize
 import org.jdom.Element
-import java.nio.file.Path
 
 class KarmaServerSettings(private val executor: Executor,
                           val nodeInterpreter: NodeJsInterpreter,

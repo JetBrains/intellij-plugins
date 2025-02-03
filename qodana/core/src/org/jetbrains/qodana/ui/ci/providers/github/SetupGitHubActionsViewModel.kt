@@ -2,7 +2,6 @@ package org.jetbrains.qodana.ui.ci.providers.github
 
 import com.intellij.codeInsight.daemon.impl.IntentionsUI
 import com.intellij.ide.BrowserUtil
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.readAction

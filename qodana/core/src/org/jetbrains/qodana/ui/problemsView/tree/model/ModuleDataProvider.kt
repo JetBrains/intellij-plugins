@@ -2,7 +2,6 @@ package org.jetbrains.qodana.ui.problemsView.tree.model
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
@@ -10,9 +9,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.qodana.problem.SarifProblem
 import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.Path
-import kotlin.io.path.pathString
 
 class ModuleDataProvider private constructor(private val relativePathsToModuleData: Map<String, ModuleData?>) {
   companion object {

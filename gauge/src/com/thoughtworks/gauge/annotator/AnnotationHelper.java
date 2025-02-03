@@ -19,14 +19,12 @@ package com.thoughtworks.gauge.annotator;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.util.StepUtil;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 final class AnnotationHelper {

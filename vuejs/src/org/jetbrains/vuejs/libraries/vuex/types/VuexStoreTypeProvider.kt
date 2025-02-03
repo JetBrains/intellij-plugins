@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptParameter
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE

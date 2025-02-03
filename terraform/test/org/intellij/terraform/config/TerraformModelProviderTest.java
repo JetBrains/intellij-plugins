@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.assertj.core.api.BDDAssertions.then;
-
 public class TerraformModelProviderTest extends LightPlatformTestCase {
   public void testModelIsLoaded() {
     //noinspection unused

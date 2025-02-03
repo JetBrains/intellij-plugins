@@ -5,7 +5,6 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.actionscript.JSUntypedDeclarationInspection;
 import com.intellij.openapi.vfs.VirtualFile;

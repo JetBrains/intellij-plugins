@@ -11,7 +11,6 @@ import com.intellij.util.containers.ContainerUtil
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider.Angular2SoftFileReferenceSet
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider.Angular2TemplateReferenceData
 import org.angular2.lang.Angular2LangUtil
-import java.util.*
 
 class Angular2MoveFileHandler : ES6MoveFileHandler() {
   override fun canProcessElement(element: PsiFile): Boolean {

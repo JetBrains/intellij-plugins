@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.formatter.JSSpacingProcessor
 import com.intellij.lang.javascript.formatter.blocks.JSSpacingStrategy
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.util.ObjectUtils
 
 class MdxJsBlockContext(topSettings: CodeStyleSettings,
                         dialect: Language,

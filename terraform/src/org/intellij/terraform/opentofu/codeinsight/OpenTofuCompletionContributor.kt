@@ -9,7 +9,6 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.startup.StartupActivity
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
@@ -21,7 +20,6 @@ import org.intellij.terraform.hil.codeinsight.HILCompletionContributor.SelectFro
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_PROPERTY
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
-import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMethodBlock
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMethodEmptyValue
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMethodKeysEmptyValue

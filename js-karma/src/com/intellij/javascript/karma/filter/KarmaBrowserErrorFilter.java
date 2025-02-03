@@ -4,7 +4,6 @@ import com.intellij.execution.filters.PatternBasedFileHyperlinkFilter;
 import com.intellij.execution.filters.PatternBasedFileHyperlinkRawDataFinder;
 import com.intellij.execution.filters.PatternHyperlinkFormat;
 import com.intellij.execution.filters.PatternHyperlinkPart;
-import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 

@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.
 import com.intellij.lang.javascript.modules.JSImportCandidateDescriptor
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction

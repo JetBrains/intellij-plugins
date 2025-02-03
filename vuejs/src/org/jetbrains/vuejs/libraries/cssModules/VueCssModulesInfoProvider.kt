@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.libraries.cssModules
 
 import com.intellij.lang.javascript.psi.JSRecordType
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute

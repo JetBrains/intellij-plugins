@@ -11,8 +11,6 @@ import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
 import com.intellij.lang.javascript.psi.controlflow.instruction.JSBranchInstruction.BranchOwner
 import com.intellij.lang.javascript.psi.controlflow.instruction.JSConditionInstruction
 import com.intellij.lang.javascript.psi.controlflow.instruction.JSConditionInstruction.ConditionState
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
-import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement

@@ -2,9 +2,6 @@
 package org.angular2.cli.config
 
 import com.intellij.lang.javascript.JSLanguageDialect
-import com.intellij.lang.javascript.JavaScriptFileType
-import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.LanguageFileType

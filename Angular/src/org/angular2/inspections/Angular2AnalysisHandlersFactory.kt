@@ -14,20 +14,16 @@ import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.validation.*
 import com.intellij.lang.typescript.validation.TypeScriptTypeChecker
 import com.intellij.psi.PsiElement
-import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.childLeafs
 import com.intellij.psi.util.elementType
-import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.blocks.BLOCK_FOR
-import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.quickfixes.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.*
-import org.angular2.signals.Angular2SignalUtils
 
 class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
 

@@ -4,8 +4,6 @@ import com.intellij.codeInsight.hints.declarative.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.descendantsOfType
 import org.jetbrains.yaml.psi.YAMLScalar
 
 class QodanaYamlInspectionHintProvider : InlayHintsProvider {

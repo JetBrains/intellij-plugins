@@ -2,7 +2,6 @@
 package org.jetbrains.astro.lang.parser
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.Language
 import com.intellij.lang.javascript.types.PsiGenerator
 import com.intellij.psi.stubs.*
 import com.intellij.psi.xml.IXmlAttributeElementType

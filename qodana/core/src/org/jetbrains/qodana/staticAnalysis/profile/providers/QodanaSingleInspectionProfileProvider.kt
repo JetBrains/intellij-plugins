@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
-import org.jetbrains.qodana.yaml.getAllInspections
 
 private const val QODANA_SINGLE = "qodana.single:"
 

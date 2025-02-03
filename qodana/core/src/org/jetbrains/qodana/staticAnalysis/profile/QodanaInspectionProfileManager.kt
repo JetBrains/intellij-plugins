@@ -17,7 +17,6 @@ import com.intellij.packageDependencies.DependencyValidationManager
 import com.intellij.profile.codeInspection.*
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder
 import com.intellij.util.application
-import com.intellij.util.messages.MessageBus
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QODANA_EMPTY_PROFILE_NAME

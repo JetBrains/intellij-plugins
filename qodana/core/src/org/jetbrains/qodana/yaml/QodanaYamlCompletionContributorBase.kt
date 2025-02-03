@@ -6,10 +6,8 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.progress.runBlockingCancellable
-import icons.QodanaIcons
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLScalar
-import org.jetbrains.yaml.psi.YAMLValue
 
 abstract class QodanaYamlCompletionContributorBase : CompletionContributor() {
   protected abstract suspend fun variantsForKey(key: String, file: YAMLFile, prefix: String = ""): List<QodanaLookupElement>

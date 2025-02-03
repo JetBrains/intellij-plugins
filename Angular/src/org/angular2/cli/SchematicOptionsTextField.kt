@@ -3,7 +3,6 @@ package org.angular2.cli
 
 import com.intellij.codeInsight.lookup.CharFilter
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.TextFieldWithAutoCompletion

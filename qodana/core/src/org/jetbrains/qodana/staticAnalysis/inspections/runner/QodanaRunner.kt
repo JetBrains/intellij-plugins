@@ -26,7 +26,6 @@ import org.jetbrains.qodana.staticAnalysis.sarif.createRun
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.sarif.resultsFlowByGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.writeReport
-import org.jetbrains.qodana.staticAnalysis.script.LocalChangesScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptResult
 import java.io.IOException

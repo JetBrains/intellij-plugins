@@ -1,7 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.targets
 
-import com.intellij.codeInspection.DefaultInspectionToolResultExporter.INSPECTION_RESULTS_ID_ATTRIBUTE
-import com.intellij.codeInspection.DefaultInspectionToolResultExporter.INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT
 import com.intellij.codeInspection.InspectResultsConsumer
 import com.intellij.codeInspection.ex.Tools
 import com.intellij.openapi.components.service

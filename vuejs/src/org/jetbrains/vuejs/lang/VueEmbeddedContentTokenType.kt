@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang
 import com.intellij.embedding.EmbeddingElementType
 import com.intellij.lang.*
 import com.intellij.lexer.Lexer
-import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LazyParseableElement
 import com.intellij.psi.tree.ICustomParsingType
 import com.intellij.psi.tree.IElementType

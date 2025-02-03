@@ -1,11 +1,9 @@
 package org.angular2.entities
 
 import com.intellij.javascript.webSymbols.apiStatus
-import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolApiStatus
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder

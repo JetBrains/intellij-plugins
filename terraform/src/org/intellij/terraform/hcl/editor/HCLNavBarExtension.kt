@@ -2,7 +2,6 @@
 package org.intellij.terraform.hcl.editor
 
 import com.intellij.ide.navigationToolbar.StructureAwareNavBarModelExtension
-import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement

@@ -11,7 +11,6 @@ import com.intellij.util.PlatformUtils
 import org.jetbrains.idea.maven.MavenCommandLineInspectionProjectConfigurator
 import org.jetbrains.idea.maven.project.MavenImportListener
 import org.jetbrains.idea.maven.project.MavenProject
-import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaActivityKey
 
 class QodanaMavenJdkProvider(val project: Project) : MavenImportListener {

@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.html.psi
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.pom.PomTarget
-import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 
 interface VueRefAttribute : XmlAttribute {

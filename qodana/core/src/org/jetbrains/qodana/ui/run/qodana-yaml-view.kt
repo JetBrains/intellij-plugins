@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.ui.editorViewComponentFromFlow
 import java.awt.Component
-import javax.swing.JPanel
 import javax.swing.text.JTextComponent
 
 fun qodanaYamlView(scope: CoroutineScope, viewModel: QodanaYamlViewModel): Wrapper {

@@ -18,7 +18,6 @@ import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.entities.Angular2DirectiveKind
 import org.angular2.entities.Angular2EntityUtils
-import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase.EntityFactory
 import org.angular2.index.Angular2MetadataClassNameIndexKey
 import org.angular2.lang.metadata.MetadataUtils
 import org.angular2.lang.metadata.MetadataUtils.getPropertyValue

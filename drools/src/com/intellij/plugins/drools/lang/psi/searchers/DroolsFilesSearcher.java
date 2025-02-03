@@ -10,7 +10,6 @@ import com.intellij.plugins.drools.lang.psi.util.DroolsBeanPropertyLightVariable
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightClass;
 import com.intellij.plugins.drools.lang.psi.util.processors.DroolsFunctionsProcessor;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.impl.beanProperties.BeanPropertyElement;
 import com.intellij.psi.search.RequestResultProcessor;
 import com.intellij.psi.search.UsageSearchContext;

@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.qodana.extensions.createSequenceItem
 import org.jetbrains.qodana.extensions.getOrAddSequenceForMapping
 import org.jetbrains.qodana.extensions.putSequenceItem
 import org.jetbrains.yaml.YAMLElementGenerator

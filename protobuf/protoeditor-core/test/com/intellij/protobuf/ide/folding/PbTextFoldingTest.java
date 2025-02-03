@@ -15,7 +15,6 @@
  */
 package com.intellij.protobuf.ide.folding;
 
-import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 
 public class PbTextFoldingTest extends PbCodeInsightFixtureTestCase {

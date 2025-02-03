@@ -4,8 +4,6 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
-import com.intellij.lang.javascript.psi.types.evaluable.JSApplyIndexedAccessType
-import com.intellij.lang.javascript.psi.types.evaluable.JSReferenceType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope

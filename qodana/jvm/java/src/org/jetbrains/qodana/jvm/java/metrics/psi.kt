@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.jvm.java.metrics
 
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.siblings

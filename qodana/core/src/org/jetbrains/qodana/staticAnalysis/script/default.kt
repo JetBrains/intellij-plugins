@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
-import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig

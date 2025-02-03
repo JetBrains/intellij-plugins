@@ -17,7 +17,6 @@ package com.intellij.protobuf.ide.spelling;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
-import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 
 /** Tests for {@link PbTextSpellcheckingStrategy}. */

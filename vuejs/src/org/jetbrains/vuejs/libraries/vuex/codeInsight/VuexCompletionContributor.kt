@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
-import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexArrayItemPattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexCallArgumentPattern

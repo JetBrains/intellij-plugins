@@ -3,7 +3,6 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ResourceUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*
-import java.util.*
 
 class PlatformioBoardsParserTest : UsefulTestCase() {
   private var myJson: String? = null

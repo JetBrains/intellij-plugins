@@ -3,7 +3,6 @@ package com.intellij.structuralsearch;
 
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;

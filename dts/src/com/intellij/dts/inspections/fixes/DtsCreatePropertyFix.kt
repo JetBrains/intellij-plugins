@@ -1,8 +1,5 @@
 package com.intellij.dts.inspections.fixes
 
-import com.intellij.codeInsight.AutoPopupController
-import com.intellij.codeInsight.AutoPopupController.*
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.completion.insert.dtsInsertMetaData
 import com.intellij.dts.completion.insert.writePropertyValue

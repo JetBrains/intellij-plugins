@@ -31,7 +31,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
@@ -40,7 +39,6 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TerraformToolConfigurable
-import org.intellij.terraform.runtime.ToolPathDetector
 import org.jetbrains.annotations.Nls
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException

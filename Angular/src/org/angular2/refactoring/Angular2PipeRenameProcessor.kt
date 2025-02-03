@@ -23,7 +23,6 @@ import org.angular2.Angular2DecoratorUtil.getProperty
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntitiesProvider.getPipe
 import org.angular2.lang.Angular2LangUtil
-import java.util.*
 
 class Angular2PipeRenameProcessor : JSDefaultRenameProcessor() {
   override fun canProcessElement(element: PsiElement): Boolean {

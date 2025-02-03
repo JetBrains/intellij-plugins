@@ -4,7 +4,6 @@ import com.intellij.codeInsight.daemon.impl.HighlightVisitorBasedInspection
 import com.intellij.codeInsight.daemon.impl.PROBLEM_DESCRIPTOR_TAG
 import com.intellij.codeInsight.daemon.impl.withUserData
 import com.intellij.codeInspection.*
-import com.intellij.codeInspection.ex.GlobalInspectionContextUtil
 import com.intellij.lang.LanguageUtil
 import com.intellij.lang.annotation.HighlightSeverity.ERROR
 import com.intellij.openapi.util.TextRange

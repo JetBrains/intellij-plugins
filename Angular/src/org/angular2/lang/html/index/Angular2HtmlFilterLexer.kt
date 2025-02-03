@@ -18,7 +18,6 @@ import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.html.Angular2HtmlLanguage
-import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType

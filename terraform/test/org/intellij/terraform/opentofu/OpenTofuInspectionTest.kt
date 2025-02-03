@@ -5,8 +5,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.inspection.OpenTofuUnknownEncryptionMethodInspection
 import org.intellij.terraform.opentofu.inspection.OpenTofuUnknownKeyProviderInspection
-import org.intellij.terraform.template.editor.MaybeTerraformTemplateInspection
-import org.intellij.terraform.template.editor.TerraformUnselectedDataLanguageInspection
 
 internal class OpenTofuInspectionTest: BasePlatformTestCase() {
 

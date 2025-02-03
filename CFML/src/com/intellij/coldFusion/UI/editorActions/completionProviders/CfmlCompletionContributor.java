@@ -14,7 +14,6 @@ import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.coldFusion.model.psi.CfmlComponentReference;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.StdLanguages;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.PsiElement;
