@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",
-    "clean": "rm -rf ../../gen/angular-service",
-    "build": "tsc --noEmit && node build && cp -r ./package.json ../../gen/angular-service/node_modules/ws-typescript-angular-plugin"
+    "clean": "rm -rf ../../gen-resources/angular-service",
+    "build": "tsc --noEmit && node build && cp -r ./package.json ../../gen-resources/angular-service/node_modules/ws-typescript-angular-plugin"
   }
 }

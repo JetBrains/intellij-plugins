@@ -7,7 +7,7 @@ require('esbuild').build({
 	entryPoints: {
 		"./index": './src',
 	},
-	outdir: '../../gen/angular-service/node_modules/ws-typescript-angular-plugin',
+	outdir: '../../gen-resources/angular-service/node_modules/ws-typescript-angular-plugin',
 	bundle: true,
 	external: [
     "tsc-ide-plugin",

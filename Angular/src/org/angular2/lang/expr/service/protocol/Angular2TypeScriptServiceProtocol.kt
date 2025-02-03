@@ -44,7 +44,7 @@ class Angular2TypeScriptServiceProtocol(project: Project,
       return getPluginResource(
         this::class.java,
         "angular-service/node_modules/ws-typescript-angular-plugin",
-        if (AppMode.isDevServer()) "angular-plugin" else "Angular/gen")
+        if (AppMode.isDevServer()) "angular-plugin" else "Angular/gen-resources")
     }
     catch (e: IOException) {
       throw RuntimeException(e)

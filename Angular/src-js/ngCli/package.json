@@ -9,6 +9,6 @@
     "typescript": "4.2.3"
   },
   "scripts": {
-    "build": "tsc && cp ./commands/generate.json ../../gen/ngCli/commands/generate.json"
+    "build": "tsc && cp ./commands/generate.json ../../gen-resources/ngCli/commands/generate.json"
   }
 }

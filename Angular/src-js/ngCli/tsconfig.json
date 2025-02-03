@@ -7,7 +7,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2017",
-    "outDir": "../../gen/ngCli"
+    "outDir": "../../gen-resources/ngCli"
   },
   "compileOnSave": true
 }
