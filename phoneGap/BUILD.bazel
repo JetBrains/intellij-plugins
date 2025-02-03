@@ -13,12 +13,6 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
-jvm_resources(
-  name = "phoneGap_resources_2",
-  files = glob(["src/META-INF/**/*"]),
-  strip_prefix = "src"
-)
-
 jvm_library(
   name = "phoneGap",
   module_name = "intellij.phoneGap",
@@ -42,7 +36,6 @@ jvm_library(
   runtime_deps = [
     ":phoneGap_resources",
     ":phoneGap_resources_1",
-    ":phoneGap_resources_2",
   ]
 )
 
@@ -73,7 +66,6 @@ jvm_library(
   runtime_deps = [
     ":phoneGap_resources",
     ":phoneGap_resources_1",
-    ":phoneGap_resources_2",
   ]
 )
 
