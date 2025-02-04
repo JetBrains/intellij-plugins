@@ -10,7 +10,14 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.xml.XmlTokenType.*
+import com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
+import com.intellij.psi.xml.XmlTokenType.XML_BAD_CHARACTER
+import com.intellij.psi.xml.XmlTokenType.XML_CHAR_ENTITY_REF
+import com.intellij.psi.xml.XmlTokenType.XML_COMMENT_CHARACTERS
+import com.intellij.psi.xml.XmlTokenType.XML_DATA_CHARACTERS
+import com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE
+import com.intellij.psi.xml.XmlTokenType.XML_TAG_CHARACTERS
+import com.intellij.psi.xml.XmlTokenType.XML_WHITE_SPACE
 import com.intellij.util.containers.Stack
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes.Companion.FRONTMATTER_SCRIPT
@@ -137,10 +144,12 @@ class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJ
       super.start(bufferSequence, position.offset, bufferEnd, position.state)
     }
 
-    private class AstroFlexAdapterPosition(private val offset: Int,
-                                           private val state: Int,
-                                           val expressionStack: IntArrayList,
-                                           val elementNameStack: Stack<String>) : LexerPosition {
+    private class AstroFlexAdapterPosition(
+      private val offset: Int,
+      private val state: Int,
+      val expressionStack: IntArrayList,
+      val elementNameStack: Stack<String>,
+    ) : LexerPosition {
       override fun getOffset(): Int = offset
 
       override fun getState(): Int = state
@@ -181,12 +190,18 @@ class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJ
       return result
     }
 
-    companion object {
-
-      private val TOKENS_TO_MERGE = TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
-                                                    XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS,
-                                                    STRING_TEMPLATE_PART, XML_BAD_CHARACTER, JSTokenTypes.XML_STYLE_COMMENT)
-
+    private companion object {
+      private val TOKENS_TO_MERGE = TokenSet.create(
+        XML_COMMENT_CHARACTERS,
+        XML_WHITE_SPACE,
+        XML_REAL_WHITE_SPACE,
+        XML_ATTRIBUTE_VALUE_TOKEN,
+        XML_DATA_CHARACTERS,
+        XML_TAG_CHARACTERS,
+        STRING_TEMPLATE_PART,
+        XML_BAD_CHARACTER,
+        JSTokenTypes.XML_STYLE_COMMENT,
+      )
     }
   }
 }
