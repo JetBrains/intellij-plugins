@@ -4,11 +4,10 @@ package org.angular2.lang.html.lexer
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.types.JSWhiteSpaceTokenType
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 
-internal interface Angular2HtmlTokenTypes : XmlTokenType {
+internal interface Angular2HtmlTokenTypes {
   companion object {
     @JvmField
     val INTERPOLATION_START = Angular2HtmlTokenType("NG:INTERPOLATION_START")
