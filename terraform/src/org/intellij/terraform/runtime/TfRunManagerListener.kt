@@ -17,11 +17,11 @@ private class TfRunManagerListener(val project: Project) : RunManagerListener {
 
   private fun updateIfTfCompatible(settings: RunnerAndConfigurationSettings) {
     if (settings.type is TfToolConfigurationTypeBase) {
-      updateGutterOfFiles()
+      refreshFileGutters()
     }
   }
 
-  private fun updateGutterOfFiles() {
+  private fun refreshFileGutters() {
     val psiManager = PsiManager.getInstance(project)
     val daemonAnalyzer = DaemonCodeAnalyzer.getInstance(project)
 
