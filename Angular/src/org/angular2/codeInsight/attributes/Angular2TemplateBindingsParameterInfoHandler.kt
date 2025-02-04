@@ -67,7 +67,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
       .associateTo(mutableMapOf()) { input ->
         val bindingName = directiveInputToTemplateBindingVar(input.name, templateName)
         val definition = input.createDocumentation(parameterOwner.bindings)?.definition
-          ?.replaceFirst("${input.name}:", bindingName.withColor(NG_INPUT, parameterOwner) + (if (input.required) "" else "?") + ":")
+          ?.replaceFirst("${input.name}:", bindingName.withColor(NG_INPUT, parameterOwner, false) + (if (input.required) "" else "?") + ":")
         Pair(input.name, definition)
       }
 
@@ -83,7 +83,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
           null
         else when (it.keyKind) {
           Angular2TemplateBinding.KeyKind.LET -> {
-            ParameterPresentation("let".withColor(TS_KEYWORD, parameterOwner) + " " + it.key.withColor(NG_TEMPLATE_VARIABLE, parameterOwner) +
+            ParameterPresentation("let".withColor(TS_KEYWORD, parameterOwner, false) + " " + it.key.withColor(NG_TEMPLATE_VARIABLE, parameterOwner, false) +
                                   renderJSType(it.variableDefinition), it.textRange)
           }
           Angular2TemplateBinding.KeyKind.BINDING -> {
@@ -92,7 +92,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
               ParameterPresentation(inputDef, it.textRange)
             }
             else {
-              ParameterPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(ERROR, parameterOwner), it.textRange)
+              ParameterPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(ERROR, parameterOwner, false), it.textRange)
             }
           }
           Angular2TemplateBinding.KeyKind.AS -> null

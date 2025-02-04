@@ -84,8 +84,8 @@ object Angular2HighlightingUtils {
   fun String.withNameColor(element: PsiElement): @NlsSafe String =
     highlightName(element, this)
 
-  fun String.withColor(attributes: TextAttributesKind, context: PsiElement): @NlsSafe String =
-    applyAttributes(context.project, this, attributes.key)
+  fun String.withColor(attributes: TextAttributesKind, context: PsiElement, wrapWithCodeTag: Boolean = true): @NlsSafe String =
+    applyAttributes(context.project, this, attributes.key, wrapWithCodeTag)
 
   fun String.withColor(language: Language, context: PsiElement): @NlsSafe String =
     highlightWithLexer(context.project, this, language)

@@ -51,13 +51,13 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
     val parameterDefs = mutableMapOf<String, String>()
     if (blockDefinition.parameters.firstOrNull()?.isPrimaryExpression == true) {
       parameterDefs[PRIMARY_EXPRESSION] = when (blockDefinition.name) {
-        BLOCK_FOR -> "$varPlaceholder " + "of".withColor(TS_KEYWORD, parameterOwner) + " $exprPlaceholder"
+        BLOCK_FOR -> "$varPlaceholder " + "of".withColor(TS_KEYWORD, parameterOwner, false) + " $exprPlaceholder"
         else -> exprPlaceholder
       }
     }
 
     definitionToPrefixMap.entrySet().forEach { entry ->
-      var definition = entry.key.withColor(TS_KEYWORD, parameterOwner) +
+      var definition = entry.key.withColor(TS_KEYWORD, parameterOwner, false) +
                        when (entry.key) {
                          PARAMETER_AS -> " $varPlaceholder"
                          PARAMETER_LET -> " $varPlaceholder = $exprPlaceholder"
@@ -76,14 +76,14 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
     parameterOwner.parameters.forEach { parameter ->
       if (parameter.isPrimaryExpression) {
         result.add(ParameterPresentation(parameterDefs[PRIMARY_EXPRESSION]
-                                         ?: exprPlaceholder.withColor(ERROR, parameterOwner), parameter.textRange))
+                                         ?: exprPlaceholder.withColor(ERROR, parameterOwner, false), parameter.textRange))
       }
       else {
         val prefix = parameter.prefix
-                       ?.withColor(if (parameter.prefixDefinition != null) TS_KEYWORD else ERROR, parameterOwner)
+                       ?.withColor(if (parameter.prefixDefinition != null) TS_KEYWORD else ERROR, parameterOwner, false)
                        ?.let { "$it " } ?: ""
-        result.add(ParameterPresentation(parameterDefs[parameter.name]?.let { "$prefix $it" }
-                                         ?: (parameter.name ?: return@forEach).withColor(ERROR, parameterOwner),
+        result.add(ParameterPresentation(parameterDefs[parameter.name]?.let { "$prefix$it" }
+                                         ?: (parameter.name ?: return@forEach).withColor(ERROR, parameterOwner, false),
                                          parameter.textRange))
       }
     }
@@ -115,8 +115,8 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
     val nonEmptyPrefixes = prefixes.filter { it.isNotEmpty() }
     return when (nonEmptyPrefixes.size) {
       0 -> return ""
-      1 -> nonEmptyPrefixes.first().withColor(TS_KEYWORD, parameterOwner)
-      else -> "(" + nonEmptyPrefixes.joinToString(separator = " | ") { it.withColor(TS_KEYWORD, parameterOwner) } + ")"
+      1 -> nonEmptyPrefixes.first().withColor(TS_KEYWORD, parameterOwner, false)
+      else -> "(" + nonEmptyPrefixes.joinToString(separator = " | ") { it.withColor(TS_KEYWORD, parameterOwner, false) } + ")"
     }.let {
       if (nonEmptyPrefixes.size != prefixes.size) "$it? " else "$it "
     }
