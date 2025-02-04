@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
@@ -133,7 +133,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Override
-  protected JSLanguageServiceQueue createLanguageServiceQueue() {
+  protected JSLanguageServiceQueue createLanguageServiceQueueBlocking() {
     return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), myProcessConnector,
                                           myDefaultReporter,
                                           new JSLanguageServiceDefaultCacheData());
