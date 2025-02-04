@@ -39,6 +39,6 @@ class VueParameterInfoTest : BasePlatformTestCase() {
       NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
     }
 
-    assertEquals("<html><b>s: String</b>, b: boolean</html>", hintFixture.currentHintText)
+    assertEquals("<html><b>s: String</b>, b: boolean</html>", hintFixture.currentHintText?.replace(Regex("</?span[^>]*>"), ""))
   }
 }

@@ -1,5 +1,6 @@
 package org.angular2.codeInsight.blocks
 
+import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.javascript.findArgumentList
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithTabActionSupport
@@ -16,15 +17,21 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax
 import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
+import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax.SignaturePresentation
+import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol.Companion.PRIMARY_EXPRESSION
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockParameters
 
-class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<Angular2HtmlBlockParameters>(),
+class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<Angular2HtmlBlockParameters, SignaturePresentation>(),
                                           ParameterInfoHandlerWithTabActionSupport<Angular2HtmlBlockParameters, ParameterInfoHandlerWithColoredSyntaxData, Angular2BlockParameter> {
-  override fun findElementForBuildingParametersListInfo(file: PsiFile, offset: Int): Angular2HtmlBlockParameters? {
+
+  override val parameterListSeparator: String
+    get() = ";"
+
+  override fun findParameterOwner(file: PsiFile, offset: Int): Angular2HtmlBlockParameters? {
     if (findArgumentList(file, offset) != null) return null
     var element = file.findElementAt(offset)
     if (element is PsiWhiteSpace) element = PsiTreeUtil.prevLeaf(element)
@@ -32,7 +39,7 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
       ?.takeIf { (it.parent as? Angular2HtmlBlock)?.name != BLOCK_LET }
   }
 
-  override fun buildParametersListInfo(parameterOwner: Angular2HtmlBlockParameters): List<ParameterHtmlPresentation> {
+  override fun buildSignaturePresentations(parameterOwner: Angular2HtmlBlockParameters): List<SignaturePresentation> {
     val blockDefinition = (parameterOwner.parent as? Angular2HtmlBlock)?.definition ?: return emptyList()
     val definitionToPrefixMap = buildDefinitionToPrefixMap(blockDefinition)
 
@@ -65,19 +72,19 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
       parameterDefs[entry.key] = definition
     }
 
-    val result = mutableListOf<ParameterHtmlPresentation>()
+    val result = mutableListOf<ParameterPresentation>()
     parameterOwner.parameters.forEach { parameter ->
       if (parameter.isPrimaryExpression) {
-        result.add(ParameterHtmlPresentation(parameterDefs[PRIMARY_EXPRESSION]
-                                             ?: exprPlaceholder.withColor(ERROR, parameterOwner), parameter.textRange))
+        result.add(ParameterPresentation(parameterDefs[PRIMARY_EXPRESSION]
+                                         ?: exprPlaceholder.withColor(ERROR, parameterOwner), parameter.textRange))
       }
       else {
         val prefix = parameter.prefix
                        ?.withColor(if (parameter.prefixDefinition != null) TS_KEYWORD else ERROR, parameterOwner)
                        ?.let { "$it " } ?: ""
-        result.add(ParameterHtmlPresentation(parameterDefs[parameter.name]?.let { "$prefix $it" }
-                                             ?: (parameter.name ?: return@forEach).withColor(ERROR, parameterOwner),
-                                             parameter.textRange))
+        result.add(ParameterPresentation(parameterDefs[parameter.name]?.let { "$prefix $it" }
+                                         ?: (parameter.name ?: return@forEach).withColor(ERROR, parameterOwner),
+                                         parameter.textRange))
       }
     }
     val provided = parameterOwner.parameters
@@ -94,12 +101,14 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
       val prefixes = definitionToPrefixMap[it.key]
       if (!provided.contains(it.key) && (prefixes.size != 1 || !prefixesToFilterOut.contains(prefixes.first()))) {
         if (it.key == PRIMARY_EXPRESSION)
-          result.add(ParameterHtmlPresentation(it.value, TextRange(0, 0)))
+          result.add(ParameterPresentation(it.value, TextRange(0, 0)))
         else
-          result.add(ParameterHtmlPresentation("[" + renderPrefixesList(prefixes.filter { !prefixesToFilterOut.contains(it) }, parameterOwner) + it.value + "]", null))
+          result.add(ParameterPresentation("[" + renderPrefixesList(prefixes.filter { !prefixesToFilterOut.contains(it) }, parameterOwner) + it.value + "]", null))
       }
     }
-    return result
+    if (result.isEmpty())
+      result.add(ParameterPresentation(XmlUtil.escape(CodeInsightBundle.message("parameter.info.no.parameters"))))
+    return listOf(SignaturePresentation(result))
   }
 
   private fun renderPrefixesList(prefixes: Collection<String>, parameterOwner: Angular2HtmlBlockParameters): String {
