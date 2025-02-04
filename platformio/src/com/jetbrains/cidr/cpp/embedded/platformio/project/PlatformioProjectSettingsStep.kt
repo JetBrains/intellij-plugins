@@ -174,10 +174,13 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
     }
   }
 
-  override fun createAdvancedSettings(): JPanel? {
-    val scrollPane = JBScrollPane(myTree)
+  override fun onPanelSelected() {
     platformioPresent.afterChange { service<WatchPlatformioService>().watch(it, this) }
     startPlatformioWatcher()
+  }
+
+  override fun createAdvancedSettings(): JPanel? {
+    val scrollPane = JBScrollPane(myTree)
     scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS
     val panel = BorderLayoutPanel(0, 0)
       .addToTop(JBLabel(
