@@ -32,8 +32,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
   }
 
   fun getNearestFormGroup(): Angular2FormGroup? =
-    getRootScope()
-      ?.let { findBestMatchingScope(it) }
+    getCurrentScope()
       ?.properties[PROP_SOURCE_SYMBOL]
       ?.asSafely<Angular2FormGroup>()
 

@@ -39,7 +39,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
       val stack = mutableListOf(rootScope)
       while (!stack.isEmpty()) {
         val scope = stack.removeLast()
-        result.addAll(scope.symbols)
+        result.addAll(scope.localSymbols)
         stack.addAll(scope.children)
       }
     }
@@ -47,7 +47,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
       val stack = mutableListOf(Pair(rootScope, mutableSetOf<String>()))
       while (!stack.isEmpty()) {
         val (scope, names) = stack.removeLast()
-        scope.symbols.forEach {
+        scope.localSymbols.forEach {
           val symbolName = it.name
           if (names.add(symbolName)) {
             result.add(it)
