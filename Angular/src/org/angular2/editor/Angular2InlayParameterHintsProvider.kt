@@ -7,6 +7,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSCallLikeExpression
+import com.intellij.lang.javascript.psi.JSParameterItem
 import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
@@ -31,10 +32,9 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
     return listOf(showNameForLiteralArgsOption, showNameForAllArgsOption, Options.NAMES_FOR_PIPES)
   }
 
-  override fun isSuitableCallExpression(expression: JSCallLikeExpression?): Boolean {
-    if (!super.isSuitableCallExpression(expression)) return false
-    return Options.NAMES_FOR_PIPES.get() || expression !is Angular2PipeExpression
-  }
+  override fun shouldInlineParameterName(argument: PsiElement, parameter: JSParameterItem, callExpression: JSCallLikeExpression): Boolean =
+    Options.NAMES_FOR_PIPES.get() && callExpression is Angular2PipeExpression
+        || super.shouldInlineParameterName(argument, parameter, callExpression)
 
   override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
     return (expression is Angular2PipeExpression && i == 0) || super.skipIndex(i, expression)

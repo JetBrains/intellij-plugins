@@ -5,6 +5,8 @@ import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.editing.JavaScriptInlayParameterHintsProvider
 import com.intellij.lang.javascript.psi.JSCallLikeExpression
+import com.intellij.lang.javascript.psi.JSParameterItem
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 
@@ -25,10 +27,9 @@ class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
     return listOf(showNameForLiteralArgsOption, showNameForAllArgsOption, Options.NAMES_FOR_FILTERS)
   }
 
-  override fun isSuitableCallExpression(expression: JSCallLikeExpression?): Boolean {
-    return super.isSuitableCallExpression(expression)
-           && (Options.NAMES_FOR_FILTERS.get() || expression !is VueJSFilterExpression)
-  }
+  override fun shouldInlineParameterName(argument: PsiElement, parameter: JSParameterItem, callExpression: JSCallLikeExpression): Boolean =
+    Options.NAMES_FOR_FILTERS.get() && callExpression is VueJSFilterExpression
+        || super.shouldInlineParameterName(argument, parameter, callExpression)
 
   override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
     return if (expression is VueJSFilterExpression && i == 0) true
