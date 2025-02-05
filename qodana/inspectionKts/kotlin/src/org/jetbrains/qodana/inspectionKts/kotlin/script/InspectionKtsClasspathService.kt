@@ -167,7 +167,7 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
         jarName.startsWith("database-openapi")
       }
       isYamlPlugin -> {
-        jarName.startsWith("intellij.yaml.editing") // YAML PSI
+        jarName.startsWith("intellij.yaml") // YAML PSI
       }
       else -> true
     }
