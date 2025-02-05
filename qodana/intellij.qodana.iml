@@ -85,7 +85,7 @@
     <orderEntry type="library" name="jetbrains.qodana.sarif.converter" level="project" />
     <orderEntry type="module" module-name="intellij.platform.sqlite" />
     <orderEntry type="library" scope="TEST" name="kotlinx-coroutines-test" level="project" />
-    <orderEntry type="module" module-name="intellij.yaml" />
+    <orderEntry type="module" module-name="intellij.yaml.backend" />
     <orderEntry type="module" module-name="intellij.platform.inspect" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="module" module-name="intellij.platform.util.base" />
