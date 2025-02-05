@@ -49,7 +49,7 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
       .mapNotNull { maybeExistingCodeEntity ->
         JavaPsiFacade.getInstance(project).findClass(maybeExistingCodeEntity, GlobalSearchScope.projectScope(project))
       }
-      .flatMap { baseClass -> ClassInheritorsSearch.search(baseClass) }
+      .flatMap { baseClass -> ClassInheritorsSearch.search(baseClass).asIterable() }
   }
 
   private fun handleMethodImplementations(methodDefinition: PbServiceMethod,

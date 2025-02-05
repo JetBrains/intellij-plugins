@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
@@ -60,11 +60,11 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
     JavaStepDefinitionFactory stepDefinitionFactory = JavaStepDefinitionFactory.getInstance(module);
     final List<AbstractStepDefinition> result = new ArrayList<>();
     final Query<PsiClass> stepDefAnnotations = AnnotatedElementsSearch.searchPsiClasses(stepDefAnnotationClass, dependenciesScope);
-    for (PsiClass annotationClass : stepDefAnnotations) {
+    for (PsiClass annotationClass : stepDefAnnotations.asIterable()) {
       String annotationClassName = annotationClass.getQualifiedName();
       if (annotationClass.isAnnotationType() && annotationClassName != null) {
         final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
-        for (PsiMethod stepDefMethod : javaStepDefinitions) {
+        for (PsiMethod stepDefMethod : javaStepDefinitions.asIterable()) {
           List<String> annotationValues = CucumberJavaUtil.getStepAnnotationValues(stepDefMethod, annotationClassName);
           for (String annotationValue : annotationValues) {
             result.add(stepDefinitionFactory.buildStepDefinition(stepDefMethod, module, annotationValue));
