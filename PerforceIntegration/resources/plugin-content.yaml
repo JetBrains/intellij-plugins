@@ -1,0 +1,4 @@
+- name: lib/vcs-perforce.jar
+  modules:
+  - name: intellij.vcs.perforce
+  - name: intellij.vcs.perforce.util
