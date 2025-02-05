@@ -34,7 +34,9 @@ object PrismaConstants {
     const val SEQUENCE = "sequence"
     const val NOW = "now"
     const val UUID = "uuid"
+    const val ULID = "ulid"
     const val CUID = "cuid"
+    const val NANOID = "nanoid"
     const val RAW = "raw"
   }
 

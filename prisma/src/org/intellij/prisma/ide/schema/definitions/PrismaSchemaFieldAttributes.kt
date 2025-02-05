@@ -83,6 +83,8 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.NOW) }
         variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.CUID) }
         variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.UUID) }
+        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ULID) }
+        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.NANOID) }
 
         booleanTypeValues(PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaBooleanType })
       }
