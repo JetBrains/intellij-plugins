@@ -28,7 +28,7 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <plugin id="org.jetbrains.plugins.yaml"/>
+    <module name="intellij.yaml.backend"/>
     <plugin id="com.intellij.modules.json"/>
   </dependencies>
 

@@ -1,6 +1,6 @@
 <idea-plugin package="org.jetbrains.qodana.yaml">
   <dependencies>
-    <plugin id="org.jetbrains.plugins.yaml"/>
+    <module name="intellij.yaml.backend"/>
   </dependencies>
 
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
