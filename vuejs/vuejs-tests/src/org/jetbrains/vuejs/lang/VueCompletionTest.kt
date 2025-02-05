@@ -2196,6 +2196,18 @@ export default {
     myFixture.checkResultByFile("$name.after.vue")
   }
 
+  fun testVueTscComponentWithSlots() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0, additionalDependencies = mapOf("vite-vue-testlib" to "0.0.2"))
+
+    val name = getTestName(true)
+    myFixture.copyDirectoryToProject(name, "")
+    forceReloadProjectRoots(project)
+    myFixture.configureFromTempProjectFile("$name.vue")
+
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "prop1", "prop2")
+  }
+
   fun testWatchProperty() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("watchProperty.vue")
