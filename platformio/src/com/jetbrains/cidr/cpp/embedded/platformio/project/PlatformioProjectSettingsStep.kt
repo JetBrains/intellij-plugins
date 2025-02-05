@@ -79,7 +79,7 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
       cs.coroutineContext.cancelChildren()
       // Run the watch in a new child scope
       val watchContext = (Dispatchers.EDT
-                          + ModalityState.stateForComponent(step.myTree).asContextElement()
+                          + ModalityState.any().asContextElement()
                           + CoroutineName("PlatformIO Watch"))
       cs.launch(watchContext){
         step.notifyPlatformioPresense(presense)
@@ -174,7 +174,7 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
     }
   }
 
-  override fun onPanelSelected() {
+  override fun createPanel(): JPanel? = super.createPanel().also {
     platformioPresent.afterChange { service<WatchPlatformioService>().watch(it, this) }
     startPlatformioWatcher()
   }
