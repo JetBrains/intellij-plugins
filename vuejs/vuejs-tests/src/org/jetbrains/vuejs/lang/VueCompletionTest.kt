@@ -2215,6 +2215,18 @@ export default {
     assertContainsElements(myFixture.lookupElementStrings!!, "prop1", "prop2")
   }
 
+  fun testVueTscComponentAliasedExport() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
+
+    val name = getTestName(true)
+    myFixture.copyDirectoryToProject(name, "")
+    forceReloadProjectRoots(project)
+    myFixture.configureFromTempProjectFile("$name.vue")
+
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "as", "data", "method", "only", "on-cancel-token")
+  }
+
   fun testWatchProperty() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("watchProperty.vue")
