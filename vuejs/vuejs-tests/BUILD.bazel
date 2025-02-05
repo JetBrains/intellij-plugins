@@ -24,7 +24,7 @@ jvm_library(
     "@community//java/java-runtime:rt",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//plugins/htmltools:html-tools",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
     "@community//platform/indexing-impl",

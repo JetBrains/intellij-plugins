@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "deno_resources_1",
+  files = glob(["gen-resources/**/*"]),
+  strip_prefix = "gen-resources"
+)
+
 jvm_library(
   name = "deno",
   module_name = "intellij.deno",
@@ -32,7 +38,10 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
   ],
-  runtime_deps = [":deno_resources"]
+  runtime_deps = [
+    ":deno_resources",
+    ":deno_resources_1",
+  ]
 )
 
 jvm_library(
@@ -68,7 +77,10 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@community//platform/core-impl",
   ],
-  runtime_deps = [":deno_resources"]
+  runtime_deps = [
+    ":deno_resources",
+    ":deno_resources_1",
+  ]
 )
 
 jvm_test(

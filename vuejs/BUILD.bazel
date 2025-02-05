@@ -13,6 +13,12 @@ jvm_resources(
   strip_prefix = "compatibilityResources"
 )
 
+jvm_resources(
+  name = "vuejs_resources_2",
+  files = glob(["gen-resources/**/*"]),
+  strip_prefix = "gen-resources"
+)
+
 jvm_library(
   name = "vuejs",
   module_name = "intellij.vuejs",
@@ -27,7 +33,7 @@ jvm_library(
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/lang-api:lang",
     "@community//RegExpSupport:regexp",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
@@ -72,6 +78,7 @@ jvm_library(
   runtime_deps = [
     ":vuejs_resources",
     ":vuejs_resources_1",
+    ":vuejs_resources_2",
   ]
 )
 ### auto-generated section `build intellij.vuejs` end

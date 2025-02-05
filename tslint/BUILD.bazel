@@ -7,11 +7,17 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "tslint_resources_1",
+  files = glob(["gen/**/*"]),
+  strip_prefix = "gen"
+)
+
 jvm_library(
   name = "tslint",
   module_name = "intellij.tslint",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage:javascript",
@@ -31,7 +37,10 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//json",
   ],
-  runtime_deps = [":tslint_resources"]
+  runtime_deps = [
+    ":tslint_resources",
+    ":tslint_resources_1",
+  ]
 )
 
 jvm_library(
@@ -63,7 +72,10 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//json",
   ],
-  runtime_deps = [":tslint_resources"]
+  runtime_deps = [
+    ":tslint_resources",
+    ":tslint_resources_1",
+  ]
 )
 
 jvm_test(

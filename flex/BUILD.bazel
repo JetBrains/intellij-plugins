@@ -22,7 +22,7 @@ jvm_library(
     "@community//platform/usageView",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript-impl",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/indexing-impl",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
