@@ -189,7 +189,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
     checkLookupDocumentation(lookupElements, Functions.NOW)
   }
 
-  fun testCuidAndUuid() {
+  fun testCuid() {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -197,12 +197,28 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
                 }
             """.trimIndent(), """
                 model M {
-                  name String @default(cuid()<caret>)
+                  name String @default(cuid(<caret>))
                 }
             """.trimIndent(),
       Functions.CUID
     )
-    assertContainsElements(lookupElements.strings, Functions.CUID, Functions.UUID)
+    assertContainsElements(lookupElements.strings, Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
+  }
+
+  fun testCuidVersions() {
+    val lookupElements = completeSelected(
+      """
+                model M {
+                  name String @default(cuid(<caret>))
+                }
+            """.trimIndent(), """
+                model M {
+                  name String @default(cuid(2<caret>))
+                }
+            """.trimIndent(),
+      "2"
+    )
+    assertContainsElements(lookupElements.strings, "1", "2")
   }
 
   fun testForListType() {
