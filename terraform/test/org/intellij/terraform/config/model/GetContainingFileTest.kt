@@ -20,9 +20,8 @@ class GetContainingFileTest : BasePlatformTestCase() {
         ip_address = each.value.ip_address
       }
     """.trimIndent())
-    val message = "We should be able to detect containing file for an ordinary PSI File"
-    val containingFile = getContainingFile(myFixture.elementAtCaret) ?: throw AssertionError(message)
-    assertEquals(message, "main.tf", containingFile.name)
+    val containingFile = getContainingFile(myFixture.elementAtCaret) ?: throw AssertionError("Containing file for the existing valid file should not be null")
+    assertEquals("Containing file should be detected properly", "main.tf", containingFile.name)
   }
 
   fun testDetectLightVirtualFile() {
@@ -36,10 +35,9 @@ class GetContainingFileTest : BasePlatformTestCase() {
         ip_address = each.value.ip_address
       }
     """.trimIndent())
-    val message = "We should be able to detect containing file for an Light Virtual File"
-    val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: throw AssertionError(message)
-    val containingFile = getContainingFile(psiFile.firstChild.firstChild) ?: throw AssertionError(message)
-    assertEquals(message, "main.tf", containingFile.name)
+    val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: throw AssertionError("We should be able to create PSI for a light virtual file")
+    val containingFile = getContainingFile(psiFile.firstChild.firstChild) ?: throw AssertionError("Containing file for the existing valid light virtual file should not be null")
+    assertEquals("We should be able to detect containing file for an Light Virtual File", "main.tf", containingFile.name)
   }
 
   fun testDetectWithInvalidFile() {
