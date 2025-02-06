@@ -19,12 +19,11 @@ object PlatformioWorkspaceInitializationUtil {
    * Note, at this moment there might be no actual state loaded. Platformio might be reloaded after this point
    */
   fun Project.runAfterPlatformioInitialized(block: () -> Unit) {
-    PlatformioWorkspaceInitializationWaiter(block, this)
-      .waitForInitialization(service<PlatformioWorkspace>())
+    PlatformioWorkspaceInitializationWaiter(this)
+      .waitForInitialization(service<PlatformioWorkspace>(), block)
   }
 
-  private class PlatformioWorkspaceInitializationWaiter(block: () -> Unit, project: Project) : InitializationWaiter(
-    block,
+  private class PlatformioWorkspaceInitializationWaiter(project: Project) : InitializationWaiter(
     project) {
     override fun isInitialized(): Boolean =
       project.isPlatformioWorkspaceInitialized
