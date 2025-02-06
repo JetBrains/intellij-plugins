@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
 import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.TypeScriptService
@@ -18,7 +17,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.C
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -90,19 +88,18 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     return ConfigureRequest(arguments)
   }
 
-  override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
-    return if (file.virtualFile?.isVueFile == true)
-      readAction {
-        val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@readAction emptyList()
-        val regularModuleRangeFilter = getRangeFilter(file, false, document)
-        val scriptModuleRangeFilter = getRangeFilter(file, true, document)
-        return@readAction errors.filter {
-          it is JSLanguageServiceAnnotationResult && (
-            regularModuleRangeFilter?.invoke(it) == true || (scriptModuleRangeFilter?.invoke(it) == true && !skipScriptSetupError(it)))
-        }
+  override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
+    if (file.virtualFile?.isVueFile == true) {
+      val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return emptyList()
+      val regularModuleRangeFilter = getRangeFilter(file, false, document)
+      val scriptModuleRangeFilter = getRangeFilter(file, true, document)
+      return errors.filter {
+        it is JSLanguageServiceAnnotationResult && (
+          regularModuleRangeFilter?.invoke(it) == true || (scriptModuleRangeFilter?.invoke(it) == true && !skipScriptSetupError(it)))
       }
+    }
     else
-      super.postprocessErrors(file, errors)
+      return errors
   }
 
   /**
@@ -136,11 +133,13 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     return { error -> isWithinRange(error, startLine, startColumn, endLine, endColumn) }
   }
 
-  private fun isWithinRange(error: JSLanguageServiceAnnotationResult,
-                            startLine: Int,
-                            startColumn: Int,
-                            endLine: Int,
-                            endColumn: Int): Boolean =
+  private fun isWithinRange(
+    error: JSLanguageServiceAnnotationResult,
+    startLine: Int,
+    startColumn: Int,
+    endLine: Int,
+    endColumn: Int,
+  ): Boolean =
     (error.line > startLine || error.line == startLine && error.column >= startColumn) &&
     (error.endLine < endLine || error.endLine == endLine && error.endColumn <= endColumn)
 
@@ -162,9 +161,11 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     return context !is VueJSEmbeddedExpressionContent
   }
 
-  override fun createFixSet(file: PsiFile,
-                            cache: JSLanguageServiceFileCommandCache,
-                            typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
+  override fun createFixSet(
+    file: PsiFile,
+    cache: JSLanguageServiceFileCommandCache,
+    typescriptResult: TypeScriptLanguageServiceAnnotationResult,
+  ): TypeScriptLanguageServiceFixSet {
     if (file.isVueFile) {
       val textRanges = mutableListOf<TextRange>()
       findModule(file, true)?.let { textRanges.add(it.textRange) }

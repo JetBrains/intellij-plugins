@@ -3,7 +3,7 @@ package org.angular2.css
 
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestUtil
 

@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld  v-bind:msg='$props' <error descr="ESLint: Duplicate attribute 'msg'. (vue/no-duplicate-attributes)">msg</error>= "Welcome to Your Vue.js App"/>
+    <HelloWorld  v-bind:msg='$props' <error descr="ESLint: Duplicate attribute 'msg'. (vue/no-duplicate-attributes)">msg= "Welcome to Your Vue.js App"</error>/>
   </div>
-  <error descr="ESLint: The template root requires exactly one element. (vue/no-multiple-template-root)"><</error>img alt="Vue logo" src="./assets/logo.png">
+  <error descr="ESLint: The template root requires exactly one element. (vue/no-multiple-template-root)"><img alt="Vue logo" src="./assets/logo.png"></error>
 </template>
 
 <script>

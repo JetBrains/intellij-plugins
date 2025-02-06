@@ -12,7 +12,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettingsListener
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.jvm.java.QodanaConfigJdkService
 
-class QodanaGradleJdkConfigurator : GradleSettingsListener {
+private class QodanaGradleJdkConfigurator : GradleSettingsListener {
   override fun onProjectsLinked(settings: Collection<GradleProjectSettings>) {
     if (!PlatformUtils.isQodana()) return
     if (ApplicationManager.getApplication().isDispatchThread) {

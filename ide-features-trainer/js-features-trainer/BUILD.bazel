@@ -18,7 +18,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:kotlin-stdlib",
     "@community//platform/testRunner",
     "//plugins/JavaScriptLanguage:javascript",
@@ -42,7 +42,7 @@ jvm_library(
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":javascript-featuresTrainer"],
   deps = [
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:kotlin-stdlib",
     "@community//platform/testRunner",
     "@community//platform/testRunner:testRunner_test_lib",

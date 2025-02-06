@@ -38,11 +38,12 @@ public class HCLParser implements PsiParser, LightPsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ARRAY, BINARY_ADDITION_EXPRESSION, BINARY_AND_EXPRESSION, BINARY_EQUALITY_EXPRESSION,
       BINARY_MULTIPLY_EXPRESSION, BINARY_OR_EXPRESSION, BINARY_RELATIONAL_EXPRESSION, BLOCK_OBJECT,
-      BOOLEAN_LITERAL, COLLECTION_VALUE, CONDITIONAL_EXPRESSION, EXPRESSION,
-      FOR_ARRAY_EXPRESSION, FOR_OBJECT_EXPRESSION, HEREDOC_LITERAL, IDENTIFIER,
-      INDEX_SELECT_EXPRESSION, LITERAL, METHOD_CALL_EXPRESSION, NULL_LITERAL,
-      NUMBER_LITERAL, OBJECT, PARENTHESIZED_EXPRESSION, SELECT_EXPRESSION,
-      STRING_LITERAL, UNARY_EXPRESSION, VALUE, VARIABLE),
+      BOOLEAN_LITERAL, COLLECTION_VALUE, CONDITIONAL_EXPRESSION, DEFINED_METHOD_EXPRESSION,
+      EXPRESSION, FOR_ARRAY_EXPRESSION, FOR_OBJECT_EXPRESSION, HEREDOC_LITERAL,
+      IDENTIFIER, INDEX_SELECT_EXPRESSION, LITERAL, METHOD_CALL_EXPRESSION,
+      NULL_LITERAL, NUMBER_LITERAL, OBJECT, PARENTHESIZED_EXPRESSION,
+      SELECT_EXPRESSION, STRING_LITERAL, UNARY_EXPRESSION, VALUE,
+      VARIABLE),
   };
 
   /* ********************************************************** */
@@ -890,11 +891,12 @@ public class HCLParser implements PsiParser, LightPsiParser {
   // 9: ATOM(ForObjectExpression)
   // 10: PREFIX(UnaryExpression)
   // 11: POSTFIX(MethodCallExpression)
-  // 12: POSTFIX(SelectExpression)
-  // 13: POSTFIX(IndexSelectExpression)
-  // 14: ATOM(CollectionValue)
-  // 15: ATOM(Variable)
-  // 16: ATOM(literal)
+  // 12: ATOM(DefinedMethodExpression)
+  // 13: POSTFIX(SelectExpression)
+  // 14: POSTFIX(IndexSelectExpression)
+  // 15: ATOM(CollectionValue)
+  // 16: ATOM(Variable)
+  // 17: ATOM(literal)
   public static boolean Expression(PsiBuilder b, int l, int g) {
     if (!recursion_guard_(b, l, "Expression")) return false;
     addVariant(b, "<expression>");
@@ -904,6 +906,7 @@ public class HCLParser implements PsiParser, LightPsiParser {
     if (!r) r = ForArrayExpression(b, l + 1);
     if (!r) r = ForObjectExpression(b, l + 1);
     if (!r) r = UnaryExpression(b, l + 1);
+    if (!r) r = DefinedMethodExpression(b, l + 1);
     if (!r) r = CollectionValue(b, l + 1);
     if (!r) r = Variable(b, l + 1);
     if (!r) r = literal(b, l + 1);
@@ -950,11 +953,11 @@ public class HCLParser implements PsiParser, LightPsiParser {
         r = true;
         exit_section_(b, l, m, METHOD_CALL_EXPRESSION, r, true, null);
       }
-      else if (g < 12 && SelectExpression_0(b, l + 1)) {
+      else if (g < 13 && SelectExpression_0(b, l + 1)) {
         r = true;
         exit_section_(b, l, m, SELECT_EXPRESSION, r, true, null);
       }
-      else if (g < 13 && IndexSelectExpression_0(b, l + 1)) {
+      else if (g < 14 && IndexSelectExpression_0(b, l + 1)) {
         r = true;
         exit_section_(b, l, m, INDEX_SELECT_EXPRESSION, r, true, null);
       }
@@ -1088,6 +1091,20 @@ public class HCLParser implements PsiParser, LightPsiParser {
     r = p && Expression(b, l, 10);
     exit_section_(b, l, m, UNARY_EXPRESSION, r, p, null);
     return r || p;
+  }
+
+  // "provider" '::' identifier '::' MethodCallExpression
+  public static boolean DefinedMethodExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "DefinedMethodExpression")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, DEFINED_METHOD_EXPRESSION, "<defined method expression>");
+    r = consumeTokenSmart(b, "provider");
+    r = r && consumeToken(b, COLON_COLON);
+    r = r && identifier(b, l + 1);
+    r = r && consumeToken(b, COLON_COLON);
+    r = r && Expression(b, l + 1, 10);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   // OP_DOT (number_literal|Variable)

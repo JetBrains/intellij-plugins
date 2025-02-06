@@ -9,7 +9,7 @@ import training.dsl.LessonSample
 import training.dsl.LessonUtil
 import training.learn.lesson.general.assistance.EditorCodingAssistanceLesson
 
-class RubyEditorCodingAssistanceLesson(sample: LessonSample) :
+internal class RubyEditorCodingAssistanceLesson(sample: LessonSample) :
   EditorCodingAssistanceLesson(sample) {
   override val errorIntentionText: String
     get() = RBundle.message("ruby.inspection.incorrect.call.argument.count.excess.arguments.quickFix.name", 1)

@@ -26,7 +26,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
-import org.angular2.lang.html.tcb.R3Identifiers
+import org.angular2.lang.expr.service.tcb.R3Identifiers
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import java.util.*

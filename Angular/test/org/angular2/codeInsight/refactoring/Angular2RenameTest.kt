@@ -222,4 +222,43 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
   fun testInputAndSelectorFromUsage() =
     checkSymbolRename("my-foo", dir = false)
 
+  fun testViewChildrenDecoratorHtml() =
+    checkSymbolRename("viewChildrenDecoratorHtml.html", "myFoo", dir = true)
+
+  fun testViewChildDecorator() =
+    checkSymbolRename("myFoo", dir = false)
+
+  // TODO - requires renaming several symbols at once
+  fun _testViewChildrenDecorator() =
+    checkSymbolRename("my-foo", dir = false)
+
+  fun testTemplateBindingKeyFromFieldSameFileExternalTemplate() =
+    checkSymbolRename("appClicksFoo", dir = true)
+
+  fun testTemplateBindingKeyFromFieldSameFileInlineTemplate() =
+    checkSymbolRename("appClicksFoo", dir = false)
+
+  fun testTemplateBindingKeyFromFieldDifferentFile() =
+    checkSymbolRename("appClicksFoo", dir = true)
+
+  fun testTemplateBindingKeyFromTemplateBindingSameFileExternalTemplate() =
+    checkSymbolRename("appClicksFoo", dir = true, extension = "html")
+
+  fun testTemplateBindingKeyFromTemplateBindingSameFileInlineTemplate() =
+    checkSymbolRename("appClicksFoo", dir = false)
+
+  fun testTemplateBindingKeyFromInputBindingSameFileExternalTemplate() =
+    checkSymbolRename("appClicksFoo", dir = true, extension = "html")
+
+  fun testTemplateBindingKeyFromInputBindingSameFileInlineTemplate() =
+    checkSymbolRename("appClicksFoo", dir = false)
+
+  fun testTemplateBindingKeyFromTemplateBindingDifferentFile() =
+    checkSymbolRename("component.ts", "appClicksFoo", dir = true)
+
+  fun testTemplateBindingKeyFromLiteralSameFileInlineTemplate() =
+    checkSymbolRename("appClicksFoo", dir = false)
+
+  fun testTemplateBindingKeyFromInputMappingSameFileInlineTemplate() =
+    checkSymbolRename("appClicksFoo", dir = false)
 }

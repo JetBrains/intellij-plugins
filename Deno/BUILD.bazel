@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "deno_resources_1",
+  files = glob(["gen-resources/**/*"]),
+  strip_prefix = "gen-resources"
+)
+
 jvm_library(
   name = "deno",
   module_name = "intellij.deno",
@@ -20,11 +26,10 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/lang-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/xdebugger-api:debugger",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//platform/core-ui",
@@ -33,7 +38,10 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
   ],
-  runtime_deps = [":deno_resources"]
+  runtime_deps = [
+    ":deno_resources",
+    ":deno_resources_1",
+  ]
 )
 
 jvm_library(
@@ -50,7 +58,7 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/lang-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/testFramework",
@@ -59,7 +67,6 @@ jvm_library(
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "@community//platform/xdebugger-api:debugger",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//platform/core-ui",
@@ -70,7 +77,10 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@community//platform/core-impl",
   ],
-  runtime_deps = [":deno_resources"]
+  runtime_deps = [
+    ":deno_resources",
+    ":deno_resources_1",
+  ]
 )
 
 jvm_test(

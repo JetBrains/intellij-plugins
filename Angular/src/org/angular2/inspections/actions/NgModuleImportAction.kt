@@ -11,6 +11,7 @@ import one.util.streamex.IntStreamEx
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.imports.Angular2ImportsHandler
 import org.angular2.codeInsight.imports.Angular2ModuleImportCandidate
+import org.angular2.editor.scheduleDelayedAutoPopupIfNeeded
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
@@ -52,6 +53,7 @@ class NgModuleImportAction internal constructor(editor: Editor?,
     }
     Angular2ImportsHandler.getFor(importsOwner)
       .insertImport(editor, candidate, importsOwner)
+    if (myCodeCompletion) scheduleDelayedAutoPopupIfNeeded(editor, myPlaceInfo.place)
   }
 
   companion object {

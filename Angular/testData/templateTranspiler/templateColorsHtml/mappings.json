@@ -8,6 +8,7 @@
       "«*ngFor» [21] => «_t2» [737]} (no types)",
       "«*ngFor» [21] => «_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)» [912]} (no types)",
       "«hero» [33] => «_t3» [746]}",
+      "«hero» [33] => «$implicit» [756]} (no types)",
       "«of» [38] => «ngForOf» [638]} (no types)",
       "«of» [38] => «_t1.ngForOf» [634]} (no types)",
       "«heroes» [41] => «heroes» [571]} (only reverse types)",
@@ -15,6 +16,7 @@
       "«heroes» [41] => «heroes» [653]} (no types)",
       "«heroes» [41] => «this.heroes» [648]}",
       "«test» [51] => «_t4» [771]}",
+      "«test» [51] => «ngForOf» [781]} (no types)",
       "«hero» [79] => «_t3» [831]}",
       "«hero === selectedHero» [79] => «_t3 === this.selectedHero» [831]}",
       "«===» [84] => «===» [835]}",
@@ -66,7 +68,7 @@
       "«.» [299] => «.» [1324]} (ignored)",
       "«name» [300] => «name» [1266]}",
       "«name» [300] => «name» [1325]} (ignored)",
-      "«#model» [306] => «_t10» [1339]}",
+      "«model» [307] => «_t10» [1339]}",
       "«\"ngModel\"» [313] => «_t9» [1346]}",
       "«model» [328] => «_t10» [1356]}",
       "«span» [338] => «_t15» [1646]} (no diagnostics) (no semantic)",
@@ -82,7 +84,7 @@
       "«else» [356] => «_t11.ngIfElse» [1530]} (no types)",
       "«other» [361] => «_t12» [1482]} (only reverse types)",
       "«other» [361] => «_t12» [1546]}",
-      "«#other» [394] => «_t12» [1391]}"
+      "«other» [395] => «_t12» [1391]}"
     ]
   },
   {

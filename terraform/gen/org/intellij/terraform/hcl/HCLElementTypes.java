@@ -20,6 +20,7 @@ public interface HCLElementTypes {
   IElementType BOOLEAN_LITERAL = new HCLElementType("BOOLEAN_LITERAL");
   IElementType COLLECTION_VALUE = new HCLElementType("COLLECTION_VALUE");
   IElementType CONDITIONAL_EXPRESSION = new HCLElementType("CONDITIONAL_EXPRESSION");
+  IElementType DEFINED_METHOD_EXPRESSION = new HCLElementType("DEFINED_METHOD_EXPRESSION");
   IElementType EXPRESSION = new HCLElementType("EXPRESSION");
   IElementType FOR_ARRAY_EXPRESSION = new HCLElementType("FOR_ARRAY_EXPRESSION");
   IElementType FOR_CONDITION = new HCLElementType("FOR_CONDITION");
@@ -45,6 +46,7 @@ public interface HCLElementTypes {
   IElementType VARIABLE = new HCLElementType("VARIABLE");
 
   IElementType BLOCK_COMMENT = new HCLTokenType("block_comment");
+  IElementType COLON_COLON = new HCLTokenType("::");
   IElementType COMMA = new HCLTokenType(",");
   IElementType DOUBLE_QUOTED_STRING = new HCLTokenType("DOUBLE_QUOTED_STRING");
   IElementType EQUALS = new HCLTokenType("=");
@@ -121,6 +123,9 @@ public interface HCLElementTypes {
       }
       else if (type == CONDITIONAL_EXPRESSION) {
         return new HCLConditionalExpressionImpl(node);
+      }
+      else if (type == DEFINED_METHOD_EXPRESSION) {
+        return new HCLDefinedMethodExpressionImpl(node);
       }
       else if (type == FOR_ARRAY_EXPRESSION) {
         return new HCLForArrayExpressionImpl(node);

@@ -154,7 +154,7 @@ val Application.qodanaAnalysisConfigForConfiguration: QodanaConfig?
 
 data class QodanaConfig(
   val projectPath: Path,
-  val yamlConfigPath: Path?,
+  val yamlFiles: QodanaYamlFiles,
   val outPath: Path,
   val resultsStorage: Path,
   val baseline: String?,
@@ -195,7 +195,7 @@ data class QodanaConfig(
     fun fromYaml(
       projectPath: Path,
       outPath: Path,
-      yamlConfigPath: Path? = null,
+      yamlFiles: QodanaYamlFiles = QodanaYamlFiles.noFiles(),
       yaml: QodanaYamlConfig = QodanaYamlConfig.EMPTY_V1,
       resultsStorage: Path = getResultsStorage(outPath, getOutputFormat()),
       baseline: String? = null,
@@ -229,7 +229,7 @@ data class QodanaConfig(
       return QodanaConfig(
         projectPath = projectPath,
         outPath = outPath,
-        yamlConfigPath = yamlConfigPath,
+        yamlFiles = yamlFiles,
         resultsStorage = resultsStorage,
         baseline = baseline,
         profile = profile,
@@ -301,10 +301,17 @@ data class QodanaConfig(
  */
 internal suspend fun copyConfigToLog(config: QodanaConfig) {
   runInterruptible(StaticAnalysisDispatchers.IO) {
-    val qodanaLogPath = Paths.get(PathManager.getLogPath(), QODANA_YAML_CONFIG_FILENAME)
-    runCatching { Files.deleteIfExists(qodanaLogPath) }
+    val filesWithNamesInLog = listOfNotNull(
+      config.yamlFiles.effectiveQodanaYaml?.let { it to QodanaYamlFiles.EFFECTIVE_QODANA_YAML_FILENAME },
+      config.yamlFiles.localQodanaYaml?.let { it to QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME },
+      config.yamlFiles.qodanaConfigJson?.let { it to QodanaYamlFiles.QODANA_CONFIG_JSON_FILENAME },
+    )
 
-    val configPath = config.yamlConfigPath ?: return@runInterruptible
-    Files.copy(configPath, qodanaLogPath, StandardCopyOption.REPLACE_EXISTING)
+    filesWithNamesInLog.forEach { (file, nameInLog) ->
+      val pathInLog = Paths.get(PathManager.getLogPath(), nameInLog)
+      runCatching { Files.deleteIfExists(pathInLog) }
+
+      Files.copy(file, pathInLog, StandardCopyOption.REPLACE_EXISTING)
+    }
   }
 }

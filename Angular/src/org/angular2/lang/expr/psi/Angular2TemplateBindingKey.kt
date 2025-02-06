@@ -2,7 +2,8 @@
 package org.angular2.lang.expr.psi
 
 import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.model.psi.PsiExternalReferenceHost
 
-interface Angular2TemplateBindingKey : JSExpression {
+interface Angular2TemplateBindingKey : JSExpression, PsiExternalReferenceHost {
   override fun getName(): String
 }

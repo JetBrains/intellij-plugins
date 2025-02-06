@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -81,7 +81,7 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
     }
     else if (ref is JSReferenceExpressionImpl
              && ref.qualifier is JSThisExpression?
-             && ref.parent !is ES6Property) {
+             && ref.parent !is JSProperty) {
       val patchedResult = result.withRelevanceSorter(JSCompletionContributor.createOwnSorter(parameters))
 
       if (!JSReferenceCompletionProvider.skipReferenceCompletionByContext(parameters.position)) {

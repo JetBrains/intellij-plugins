@@ -1,19 +1,26 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 apply(from = "../contrib-configuration/common.gradle.kts")
 
 plugins {
   id("java")
   id("org.jetbrains.kotlin.jvm")
-  id("org.jetbrains.intellij")
+  id("org.jetbrains.intellij.platform")
 }
 
+repositories {
+  intellijPlatform {
+    defaultRepositories()
+  }
+}
 
-intellij {
-  pluginName.set("Handlebars/Mustache")
-  plugins.set(listOf("JavaScript"))
-
-  version.set("LATEST-EAP-SNAPSHOT")
-  type.set("IU")
+intellijPlatform {
+  pluginConfiguration {
+    name = "Handlebars/Mustache"
+  }
 }
 
 sourceSets {
@@ -32,21 +39,32 @@ sourceSets {
   }
 }
 
-tasks {
-  compileKotlin {
-    kotlinOptions.jvmTarget = ext("kotlin.jvmTarget")
-    @Suppress("UNCHECKED_CAST")
-    kotlinOptions.freeCompilerArgs = rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>
+dependencies {
+  intellijPlatform {
+    bundledPlugins("JavaScript")
+
+    jetbrainsRuntime()
+    intellijIdeaUltimate(ext("platform.version"), useInstaller = false)
+    testFramework(TestFrameworkType.Platform)
   }
+  testImplementation("junit:junit:${ext("junit.version")}")
+}
+
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.fromTarget(ext("kotlin.jvmTarget")))
+    @Suppress("UNCHECKED_CAST")
+    freeCompilerArgs.addAll(rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>)
+  }
+}
+
+tasks {
   java {
     sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
     targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
   }
   wrapper {
-    gradleVersion = "8.5"
-  }
-  runIde {
-    autoReloadPlugins.set(false)
+    gradleVersion = ext("gradle.version")
   }
 }
 

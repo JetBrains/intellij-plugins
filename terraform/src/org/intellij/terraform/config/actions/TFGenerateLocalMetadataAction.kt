@@ -12,7 +12,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jetbrains.annotations.Nls
 
-class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
+internal class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()

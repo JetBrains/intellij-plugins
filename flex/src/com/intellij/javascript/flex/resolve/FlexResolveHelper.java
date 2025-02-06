@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
@@ -124,7 +124,7 @@ public final class FlexResolveHelper implements JSResolveHelper {
   @Override
   public boolean processPackage(String packageQualifierText, String resolvedName, Processor<? super VirtualFile> processor, GlobalSearchScope globalSearchScope,
                                 Project project) {
-    for (VirtualFile vfile: PackageIndex.getInstance(project).getDirsByPackageName(packageQualifierText, globalSearchScope)) {
+    for (VirtualFile vfile: PackageIndex.getInstance(project).getDirsByPackageName(packageQualifierText, globalSearchScope).asIterable()) {
       if (vfile.getFileSystem() instanceof JarFileSystem) {
         VirtualFile fileForJar = JarFileSystem.getInstance().getVirtualFileForJar(vfile);
         if (fileForJar != null &&
@@ -252,7 +252,7 @@ public final class FlexResolveHelper implements JSResolveHelper {
     Query<VirtualFile> packageFiles = PackageIndex.getInstance(project).getDirsByPackageName(packageName, scope.isSearchInLibraries());
 
     final PsiManager manager = PsiManager.getInstance(project);
-    for (VirtualFile packageFile : packageFiles) {
+    for (VirtualFile packageFile : packageFiles.asIterable()) {
       if (!scope.contains(packageFile)) continue;
 
       PsiDirectory dir = manager.findDirectory(packageFile);

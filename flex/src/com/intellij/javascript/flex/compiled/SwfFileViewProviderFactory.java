@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -49,6 +50,11 @@ public final class SwfFileViewProviderFactory implements FileViewProviderFactory
       super(fileViewProvider, Objects.requireNonNullElse(
         DialectDetector.getJSLanguageFromFileType(fileViewProvider.getVirtualFile()),
         FlexSupportLoader.ECMA_SCRIPT_L4));
+    }
+
+    @Override
+    public @Nullable PsiElement getCachedMirror() {
+      return getMirror();
     }
 
     @Override

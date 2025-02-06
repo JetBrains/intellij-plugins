@@ -213,6 +213,9 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
                 )
               })
 
+    override val renames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+      get() = canonicalNames
+
     override val matchNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
       get() = canonicalNames
 

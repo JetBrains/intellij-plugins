@@ -25,11 +25,11 @@ import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
 import org.jetbrains.qodana.staticAnalysis.inspections.config.*
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader.defaultConfigPath
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
+import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QDCloudLinterProjectApi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplication
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
-import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.PreconfiguredRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
@@ -63,7 +63,7 @@ class QodanaTestManager {
     val projectPath = testData_.project.guessProjectDir()?.toNioPath() ?: testData_.projectPath
     val yamlConfig = runBlocking {
       yamlPath?.let { path ->
-        QodanaYamlReader.load(path).getOrThrow().withAbsoluteProfilePath(projectPath)
+        QodanaYamlReader.load(path).getOrThrow().withAbsoluteProfilePath(projectPath, yamlPath)
       } ?: QodanaYamlConfig.EMPTY_V1
     }
 
@@ -74,7 +74,7 @@ class QodanaTestManager {
     qodanaConfig = QodanaConfig.fromYaml(
       testData.projectPath,
       testData.outputPath,
-      yamlConfigPath = yamlPath,
+      yamlFiles = yamlPath?.let { QodanaYamlFiles.noConfigDir(yamlPath) } ?: QodanaYamlFiles.noFiles(),
       yaml = yamlConfig,
       baseline = testData.getTestDataPath("baseline-results.sarif.json").takeIf { it.exists() }?.toString(),
       profile = if (isProfileSpecifiedInYaml) yamlConfig.profile else QodanaProfileConfig(testData.getTestDataPath("inspection-profile.xml").toString(), ""),

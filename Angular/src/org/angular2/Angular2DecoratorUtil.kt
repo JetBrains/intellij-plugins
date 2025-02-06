@@ -18,7 +18,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.util.PsiTreeUtil.getContextOfType
 import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
-import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.util.ArrayUtil.contains
 import com.intellij.util.AstLoadingFilter
@@ -209,15 +208,13 @@ object Angular2DecoratorUtil {
            && hasAngularImport(decoratorName, decorator.containingFile)
   }
 
-  private fun hasAngularImport(name: String, file: PsiFile): Boolean {
-    return JSStubBasedPsiTreeUtil.resolveLocally(name, file)
-             ?.let { getContextOfType(it, ES6ImportDeclaration::class.java) }
-             ?.fromClause
-             ?.referenceText
-             ?.let { StringUtil.unquoteString(it) }
-             ?.let { from -> ANGULAR_CORE_PACKAGE == from }
-           ?: false
-  }
+  private fun hasAngularImport(name: String, file: PsiFile): Boolean =
+    JSStubBasedPsiTreeUtil.resolveLocally(name, file)
+      ?.let { getContextOfType(it, ES6ImportDeclaration::class.java) }
+      ?.fromClause
+      ?.referenceText
+      ?.let { StringUtil.unquoteString(it) }
+      ?.let { from -> ANGULAR_CORE_PACKAGE == from } == true
 
   @JvmStatic
   fun getClassForDecoratorElement(element: PsiElement?): TypeScriptClass? {
@@ -235,17 +232,24 @@ object Angular2DecoratorUtil {
       ?.parent?.asSafely<JSProperty>()
       ?.let { isHostBinding(it) } == true
 
+  fun isAngularEntityInitializerProperty(property: JSProperty, allowAbstractClasses: Boolean, vararg names: String): Boolean =
+    property.parent?.asSafely<JSObjectLiteralExpression>()
+      ?.parent?.asSafely<JSArgumentList>()
+      ?.parent?.asSafely<JSCallExpression>()
+      ?.parent?.asSafely<ES6Decorator>()
+      ?.let { isAngularEntityDecorator(it, allowAbstractClasses, *names) } == true
+
   fun isHostBinding(property: JSProperty): Boolean =
     property.parent?.asSafely<JSObjectLiteralExpression>()
       ?.parent?.asSafely<JSProperty>()
-      ?.name == HOST_PROP
-    && property.parentOfType<ES6Decorator>()
-      ?.let { isAngularEntityDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) } == true
+      ?.takeIf { it.name == HOST_PROP }
+      ?.let { isAngularEntityInitializerProperty(it, true, COMPONENT_DEC, DIRECTIVE_DEC) } == true
 
-  fun isHostBindingDecoratorLiteral(literal: JSLiteralExpression): Boolean =
-    literal.parentOfTypes(ES6Decorator::class, JSProperty::class, JSExecutionScope::class)
-      ?.asSafely<ES6Decorator>()
-      ?.decoratorName == HOST_BINDING_DEC
+  fun getDecoratorForLiteralParameter(literal: JSLiteralExpression): ES6Decorator? =
+    literal
+      .parent.asSafely<JSArgumentList>()
+      ?.parent.asSafely<JSCallExpression>()
+      ?.parent?.asSafely<ES6Decorator>()
 
   fun isHostListenerDecoratorEventLiteral(literal: JSLiteralExpression): Boolean =
     literal

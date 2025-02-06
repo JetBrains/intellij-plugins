@@ -1,6 +1,6 @@
 package org.jetbrains.astro
 
-import com.intellij.javascript.web.WebFrameworkTestCase
+import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 
 abstract class AstroCodeInsightTestCase(override val testCasePath: String) : WebFrameworkTestCase() {
 

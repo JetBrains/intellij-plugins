@@ -153,6 +153,7 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
     val isJavaPlugin = pluginId == "com.intellij.java"
     val isKotlinPlugin = pluginId == "org.jetbrains.kotlin"
     val isDatabasePlugin = pluginId == "com.intellij.database"
+    val isYamlPlugin = pluginId == "org.jetbrains.plugins.yaml"
     return when {
       isJavaPlugin -> {
         jarName.startsWith("java-frontback") // part of Java's PSI
@@ -165,19 +166,25 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
       isDatabasePlugin -> {
         jarName.startsWith("database-openapi")
       }
+      isYamlPlugin -> {
+        jarName.startsWith("intellij.yaml.editing") // YAML PSI
+      }
       else -> true
     }
   }
 
   val pluginJars = pluginClassLoader.baseUrls.toSet()
 
-  val pluginXml = pluginClassLoader.getResource("META-INF/plugin.xml") ?: return emptyList()
-  val pluginXmlPath = Path(URLDecoder.decode(pluginXml.path.substringAfterLast(":"), StandardCharsets.UTF_8)).toAbsolutePath()
+  val pluginXmlPath = pluginClassLoader.getResource("META-INF/plugin.xml")?.let { pluginXml ->
+    Path(URLDecoder.decode(pluginXml.path.substringAfterLast(":"), StandardCharsets.UTF_8)).toAbsolutePath()
+  }
 
-  val pluginMainJar = pluginJars.firstOrNull { jar -> pluginXmlPath.toString().startsWith(jar.toString()) } ?: return emptyList()
-  val pluginAdditionalJars = (pluginJars - pluginMainJar).filter { jar -> isPluginAdditionalJarAccepted(jar.name) }
+  val (pluginMainJar, pluginRestJars) = pluginJars.partition { jar -> 
+    pluginXmlPath != null && pluginXmlPath.toString().startsWith(jar.toString()) 
+  }
+  val pluginAdditionalJars = pluginRestJars.filter { jar -> isPluginAdditionalJarAccepted(jar.name) }
 
-  return (listOf(pluginMainJar) + pluginAdditionalJars).map { it.toFile() }
+  return (pluginMainJar + pluginAdditionalJars).map { it.toFile() }
 }
 
 private fun platformJars(classLoader: ClassLoader): List<File> {

@@ -7,10 +7,11 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.withContext
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import kotlinx.coroutines.*
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getBinaryName
 import java.nio.file.Files
 import kotlin.io.path.Path
@@ -21,6 +22,29 @@ internal class ToolPathDetector(val project: Project, val coroutineScope: Corout
 
   companion object {
     fun getInstance(project: Project): ToolPathDetector = project.service<ToolPathDetector>()
+  }
+
+  @RequiresEdt
+  fun detectPathAndUpdateSettingsIfEmpty(toolType: TfToolType) {
+    toolType.getToolSettings(project).toolPath.ifBlank {
+      runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+        detectPathAndUpdateSettingsAsync(toolType).await()
+      }
+    }
+  }
+
+  fun detectPathAndUpdateSettingsAsync(toolType: TfToolType): Deferred<TfToolSettings> {
+    return coroutineScope.async {
+      val settings = toolType.getToolSettings(project)
+      val execName = toolType.executableName
+      if (execName.isNotBlank()) {
+        val detectedPath = detect(execName)
+        if (!detectedPath.isNullOrEmpty()) {
+          settings.toolPath = detectedPath
+        }
+      }
+      settings
+    }
   }
 
   suspend fun detect(path: String): String? {

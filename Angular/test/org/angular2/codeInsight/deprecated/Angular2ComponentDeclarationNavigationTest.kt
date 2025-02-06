@@ -11,7 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestUtil
 import org.junit.Test

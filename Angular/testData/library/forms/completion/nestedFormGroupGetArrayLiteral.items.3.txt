@@ -1,0 +1,1 @@
+bar (typeText='FormControl'; priority=10.0; typeGreyed)

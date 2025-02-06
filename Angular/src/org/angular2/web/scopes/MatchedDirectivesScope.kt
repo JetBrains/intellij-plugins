@@ -28,16 +28,16 @@ private val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
   HTML_ATTRIBUTES
 )
 
-abstract class MatchedDirectivesScope<T: PsiElement> (dataHolder: T)
+abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
   : WebSymbolsScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
 
-    companion object {
-      fun createFor (tag: XmlTag): MatchedDirectivesScope<XmlTag> =
-        MatchedDirectivesScopeOnTag(tag)
+  companion object {
+    fun createFor(tag: XmlTag): MatchedDirectivesScope<XmlTag> =
+      MatchedDirectivesScopeOnTag(tag)
 
-      fun createFor(location: PsiElement, tagName: String): MatchedDirectivesScope<PsiElement> =
-        MatchedDirectivesScopeForTagName(location, tagName)
-    }
+    fun createFor(location: PsiElement, tagName: String): MatchedDirectivesScope<PsiElement> =
+      MatchedDirectivesScopeForTagName(location, tagName)
+  }
 
   abstract val isTemplateTagContext: Boolean
 
@@ -48,10 +48,12 @@ abstract class MatchedDirectivesScope<T: PsiElement> (dataHolder: T)
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
-    matchDirectives().forEach { directive ->
-      directive.exportAs.forEach { consumer(it.value) }
-      collectSymbols(directive, isTemplateTagContext) { symbol ->
-        consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, WebSymbol.Priority.HIGHEST))
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(dataHolder) {
+      matchDirectives().forEach { directive ->
+        directive.exportAs.forEach { consumer(it.value) }
+        collectSymbols(directive, isTemplateTagContext) { symbol ->
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, WebSymbol.Priority.HIGHEST))
+        }
       }
     }
   }
@@ -61,14 +63,12 @@ abstract class MatchedDirectivesScope<T: PsiElement> (dataHolder: T)
       return
     }
 
-    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(dataHolder) {
-      directive.inOuts.forEach(consumer)
-      directive.inputs.forEach(consumer)
-      directive.outputs.forEach(consumer)
-      directive.attributes.forEach(consumer)
+    directive.inOuts.forEach(consumer)
+    directive.inputs.forEach(consumer)
+    directive.outputs.forEach(consumer)
+    directive.attributes.forEach(consumer)
 
-      Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
-    }
+    Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
   }
 
   private class MatchedDirectivesScopeOnTag(tag: XmlTag) : MatchedDirectivesScope<XmlTag>(tag) {
@@ -93,7 +93,7 @@ abstract class MatchedDirectivesScope<T: PsiElement> (dataHolder: T)
       get() = isTemplateTag(tagName)
 
     override fun matchDirectives(): List<Angular2Directive> =
-      Angular2ApplicableDirectivesProvider(dataHolder.project, tagName, false, Angular2DirectiveSimpleSelector(tagName), null)
+      Angular2ApplicableDirectivesProvider(dataHolder.project, dataHolder.containingFile, tagName, false, Angular2DirectiveSimpleSelector(tagName), null)
         .matched
 
     override fun createPointer(): Pointer<MatchedDirectivesScopeForTagName> {

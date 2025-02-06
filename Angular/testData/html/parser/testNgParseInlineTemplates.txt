@@ -23,7 +23,7 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('condition')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
@@ -42,10 +42,10 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 PsiErrorElement:Expression expected
                   <empty list>
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 PsiElement(JS:SHARP)('#')
                 JSAssignmentExpression
                   JSDefinitionExpression
@@ -84,9 +84,9 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 <empty list>
-              Angular2TemplateBinding <a, keyIsVar=true, b>
+              Angular2TemplateBinding <a, keyKind=LET, b>
                 PsiElement(JS:LET_KEYWORD)('let')
                 PsiWhiteSpace(' ')
                 JSVarStatement
@@ -111,9 +111,9 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 <empty list>
-              Angular2TemplateBinding <a, keyIsVar=true, b>
+              Angular2TemplateBinding <a, keyKind=LET, b>
                 PsiElement(JS:LET_KEYWORD)('let')
                 PsiWhiteSpace(' ')
                 JSVarStatement
@@ -138,11 +138,11 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('expr')
               PsiWhiteSpace(' ')
-              Angular2TemplateBinding <local, keyIsVar=true, ngIf>
+              Angular2TemplateBinding <local, keyKind=AS, ngIf>
                 PsiElement(JS:AS_KEYWORD)('as')
                 PsiWhiteSpace(' ')
                 JSVarStatement

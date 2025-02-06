@@ -6,7 +6,7 @@ import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.intellij.terraform.hil.psi.HILLexer
+import org.intellij.terraform.hil.HILLexer
 import org.intellij.terraform.hil.psi.ILProperty
 import org.intellij.terraform.hil.psi.ILVariable
 

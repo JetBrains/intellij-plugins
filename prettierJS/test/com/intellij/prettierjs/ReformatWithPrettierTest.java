@@ -312,6 +312,33 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testChangeConfig() {
+    var dirName = getTestName(true);
+    myFixture.copyDirectoryToProject(dirName, "");
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat_after.js"));
+
+    // set singleQuote to true
+    var config = myFixture.createFile("prettier.config.mjs", """
+      const config = {
+        singleQuote: true,
+      }
+      
+      export default config
+      """);
+    runReformatAction();
+    myFixture.checkResultByFile(dirName + "/toReformat_after.js");
+
+    // change singleQuote to false
+    myFixture.saveText(config, """
+      const config = {
+        singleQuote: false,
+      }
+      
+      export default config
+      """);
+    runReformatAction();
+    myFixture.checkResultByFile(dirName + "/toReformat_after_1.js");
+  }
 
   public void testCommentAfterImports() {
     configureRunOnReformat(() -> doTestEditorReformat(""));

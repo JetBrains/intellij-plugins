@@ -3,16 +3,17 @@ package org.angular2.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub
 import com.intellij.lang.javascript.psi.types.JSAnyType
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.html.HtmlTag
+import com.intellij.psi.util.*
+import com.intellij.util.asSafely
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -55,6 +56,18 @@ class Angular2TemplateVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable
       CachedValueProvider.Result.create(calculateType(), PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
+
+  override fun delete() {
+    parent.asSafely<JSVarStatement>()
+      ?.parent?.asSafely<Angular2TemplateBinding>()
+      ?.delete()
+  }
+
+  override fun hasBlockScope(): Boolean =
+    true
+
+  override fun getDeclarationScope(): PsiElement? =
+    parentOfType<HtmlTag>()
 
   override fun isLocal(): Boolean {
     return true

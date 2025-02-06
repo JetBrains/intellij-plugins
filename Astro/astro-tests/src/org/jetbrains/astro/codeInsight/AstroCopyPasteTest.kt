@@ -1,6 +1,6 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.javascript.web.configureAndCopyPaste
+import com.intellij.javascript.testFramework.web.configureAndCopyPaste
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {

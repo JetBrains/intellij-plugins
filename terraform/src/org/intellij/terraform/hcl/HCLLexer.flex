@@ -296,6 +296,7 @@ STRING_ELEMENT=([^\"\'\r\n\$\%\{\}\\]|\\[^\r\n\\])+
   ","                         { return COMMA; }
   "..."                       { return OP_ELLIPSIS; }
   "."                         { return OP_DOT; }
+  "::"                        { return COLON_COLON; }
   "+"                         { return OP_PLUS; }
   "-"                         { return OP_MINUS; }
   "*"                         { return OP_MUL; }

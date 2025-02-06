@@ -28,16 +28,15 @@ class Angular2LanguageServiceQuickFixProvider : JSLanguageServiceQuickFixProvide
     serviceError: JSAnnotationError,
     file: PsiFile,
     textRange: TextRange,
-  ): List<JSLanguageServiceQuickFix> {
+  ): List<JSLanguageServiceQuickFix> =
     if (service is Angular2TypeScriptService && serviceError is TypeScriptLanguageServiceAnnotationResult) {
       when (serviceError.errorCode) {
-        2322 -> {
-          return getQuickFixesForWrongBindingType(file, textRange)
-        }
+        TS_ERROR_CODE_TYPE_A_IS_NOT_ASSIGNABLE_TO_TYPE_B -> getQuickFixesForWrongBindingType(file, textRange)
+        else -> emptyList()
       }
     }
-    return emptyList()
-  }
+    else
+      emptyList()
 
   private fun getQuickFixesForWrongBindingType(
     file: PsiFile,

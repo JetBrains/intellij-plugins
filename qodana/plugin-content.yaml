@@ -91,6 +91,7 @@
   - name: intellij.qodana.sarif
   - name: intellij.qodana.coverage
   - name: intellij.qodana.go
+  - name: intellij.qodana.cpp
   - name: intellij.qodana.inspectionKts.js
   - name: intellij.qodana.inspectionKts.kotlin
   - name: intellij.qodana.js

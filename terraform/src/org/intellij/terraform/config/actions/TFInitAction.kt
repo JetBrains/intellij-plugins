@@ -11,7 +11,7 @@ import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
 
-open class TFInitAction(private val notifyOnSuccess: Boolean = true) : TFExternalToolsAction() {
+internal open class TFInitAction(private val notifyOnSuccess: Boolean = true) : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     virtualFiles.firstOrNull()?.let { project.service<TerraformActionService>().initTerraform(it, notifyOnSuccess) }
@@ -49,5 +49,5 @@ open class TFInitAction(private val notifyOnSuccess: Boolean = true) : TFExterna
 
 }
 
-class TFInitRequiredAction : TFInitAction(false)
+internal class TFInitRequiredAction : TFInitAction(false)
 

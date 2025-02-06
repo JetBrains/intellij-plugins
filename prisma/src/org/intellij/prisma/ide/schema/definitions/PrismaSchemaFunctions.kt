@@ -123,15 +123,78 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
     element {
       label = Functions.UUID
       documentation =
-        "Generate a globally unique identifier based on the [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) spec."
+        "Generate a globally unique identifier based on the [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) spec. " +
+        "Prisma ORM supports versions 4 (default) and 7."
       pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+
+      param {
+        label = "version"
+        documentation = "The version of the UUID generator to use."
+        type = "Int?"
+        skipInCompletion = true
+
+        variant {
+          label = "4"
+          type = "Int"
+          documentation = "Use the default [UUID v4](https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)) generator."
+        }
+
+        variant {
+          label = "7"
+          type = "Int"
+          documentation = "Use the [UUID v7](https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_7_(timestamp_and_random)) generator."
+        }
+      }
     }
 
     element {
       label = Functions.CUID
       documentation =
-        "Generate a globally unique identifier based on the [cuid](https://github.com/ericelliott/cuid) spec."
+        "Generate a globally unique identifier based on the [cuid](https://github.com/ericelliott/cuid) spec.\n\n" +
+        "If you'd like to use [cuid2](https://github.com/paralleldrive/cuid2) values, you can pass 2 as an argument to the `cuid` function: `cuid(2)`"
       pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+
+      param {
+        label = "version"
+        documentation = "The version of the cuid generator to use."
+        type = "Int?"
+        skipInCompletion = true
+
+        variant {
+          label = "1"
+          type = "Int"
+          documentation = "Use the default cuid generator."
+        }
+
+        variant {
+          label = "2"
+          type = "Int"
+          documentation = "Use the [cuid2](https://github.com/paralleldrive/cuid2) generator."
+        }
+      }
+    }
+
+    element {
+      label = Functions.ULID
+      documentation =
+        "Generate a universally unique lexicographically sortable identifier based on the [ULID](https://github.com/ulid/spec) spec."
+      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+    }
+
+    element {
+      label = Functions.NANOID
+      documentation =
+        "Generate values based on the [Nano ID](https://github.com/ai/nanoid) spec. `nanoid()` accepts an integer value between 2 and 255 " +
+        "that specifies the *length* of the generated ID value, e.g. `nanoid(16)` will generate ID with 16 characters. " +
+        "If you don't provide a value to the `nanoid()` function, the default value is 21."
+      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+
+      param {
+        label = "length"
+        documentation = "The length of the generated ID value."
+        type = "Int?"
+        skipInCompletion = true
+      }
     }
 
     element {

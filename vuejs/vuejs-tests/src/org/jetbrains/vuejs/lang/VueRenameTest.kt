@@ -32,8 +32,8 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.renameWebSymbol
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.renameWebSymbol
 
 class VueRenameTest : BasePlatformTestCase() {
 

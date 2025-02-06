@@ -1,0 +1,20 @@
+<!-- ViewChild should grab only first reference from each template block -->
+<textarea #area></textarea>
+<textarea #<warning descr="Unused constant area">area</warning>></textarea>
+
+@if(true) {
+  <div #area3></div>
+  <div #<warning descr="Unused constant area3">area3</warning>></div>
+} @else {
+  <div #area3></div>
+  <div #<warning descr="Unused constant area3">area3</warning>></div>
+}
+<div *ngIf="true"> <div #area3></div> <div #<warning descr="Unused constant area3">area3</warning>></div> </div>
+<div *ngIf="true"> <div #area3></div> <div #<warning descr="Unused constant area3">area3</warning>></div> </div>
+
+<!-- ViewChildren should grab all references within template blocks -->
+<div #area2></div>
+<div #area2></div>
+
+<div *ngIf="true"> <div #area4></div> <div #area4></div> </div>
+<div *ngIf="true"> <div #area4></div> <div #area4></div> </div>

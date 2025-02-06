@@ -1,0 +1,3 @@
+index (typeText='number'; priority=100.0; bold; typeGreyed)
+last (typeText='boolean'; priority=100.0; bold; typeGreyed)
+ngForOf (typeText='any'; priority=100.0; bold; typeGreyed)

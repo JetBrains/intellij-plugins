@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
@@ -361,7 +361,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     CompletableFuture<PrettierLanguageService.FormatResult> formatFuture =
       service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get());
     long timeout = edt ? EDT_TIMEOUT_MS : JSLanguageServiceUtil.getTimeout();
-    return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, JSLanguageServiceUtil.QUOTA_MILLS, true, null, edt);
+    return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, true, null, edt);
   }
 
   private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {

@@ -22,6 +22,15 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbolDelegate.Companion.unwrapAllDelegates
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.doCompletionItemsTest
+import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.multiResolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.renderLookupItems
+import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.webSymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.webSymbols.testFramework.resolveWebSymbolReference
 import com.intellij.xml.util.XmlInvalidIdInspection
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
@@ -438,46 +447,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.enableInspections(XmlInvalidIdInspection::class.java)
     myFixture.configureByFiles("id.html", "package.json", "object.ts")
     myFixture.checkHighlighting()
-  }
-
-  fun testViewChildReferenceNavigation() {
-    val reference = myFixture.getReferenceAtCaretPosition("viewChildReference.ts", "package.json")
-    assertNotNull(reference)
-    val el = reference!!.resolve()
-    assertNotNull(el)
-    assertEquals("#area", el!!.getParent().getParent().getText())
-  }
-
-  fun testViewChildrenReferenceNavigation() {
-    val reference = myFixture.getReferenceAtCaretPosition("viewChildrenReference.ts", "package.json")
-    assertNotNull(reference)
-    val el = reference!!.resolve()
-    assertNotNull(el)
-    assertEquals("#area", el!!.getParent().getParent().getText())
-  }
-
-  fun testViewChildReferenceCodeCompletion() {
-    assertEquals(mutableListOf("area", "area2", "area3"),
-                 myFixture.getCompletionVariants("viewChildReference.ts", "package.json"))
-  }
-
-  fun testViewChildReferenceNavigationHTML() {
-    val reference = myFixture.getReferenceAtCaretPosition("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json")
-    assertNotNull(reference)
-    val el = reference!!.resolve()
-    assertNotNull(el)
-    assertEquals("viewChildReferenceHTML.html", el!!.getContainingFile().getName())
-    assertEquals("#area", el.getParent().getParent().getText())
-  }
-
-  fun testViewChildReferenceCodeCompletionHTML() {
-    assertEquals(mutableListOf("area", "area2"),
-                 myFixture.getCompletionVariants("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json"))
-  }
-
-  fun testViewChildrenReferenceCodeCompletionHTML() {
-    assertEquals(mutableListOf("area2", "area3"),
-                 myFixture.getCompletionVariants("viewChildrenReferenceHTML.ts", "viewChildrenReferenceHTML.html", "package.json"))
   }
 
   fun testNgNoValidateReference() {

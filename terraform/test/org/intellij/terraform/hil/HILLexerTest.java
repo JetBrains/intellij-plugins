@@ -3,7 +3,6 @@ package org.intellij.terraform.hil;
 
 import com.intellij.lexer.Lexer;
 import org.intellij.terraform.BaseLexerTestCase;
-import org.intellij.terraform.hil.psi.HILLexer;
 import org.jetbrains.annotations.NotNull;
 
 public class HILLexerTest extends BaseLexerTestCase {
@@ -17,7 +16,7 @@ public class HILLexerTest extends BaseLexerTestCase {
     return "data/hil/lexer";
   }
 
-  public void testLogicalOps() throws Exception {
+  public void testLogicalOps() {
     doTest("true && true", """
       true ('true')
       WHITE_SPACE (' ')
@@ -34,7 +33,7 @@ public class HILLexerTest extends BaseLexerTestCase {
         "true ('true')");
   }
 
-  public void testCompareOps() throws Exception {
+  public void testCompareOps() {
     doTest("1==2", """
       NUMBER ('1')
       == ('==')
@@ -61,7 +60,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       NUMBER ('2')""");
   }
 
-  public void testTernaryOp() throws Exception {
+  public void testTernaryOp() {
     doTest("true ? 1 : 2", """
       true ('true')
       WHITE_SPACE (' ')
@@ -74,7 +73,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       NUMBER ('2')""");
   }
 
-  public void testTernaryOpWithInterpolationBranch() throws Exception {
+  public void testTernaryOpWithInterpolationBranch() {
     doTest("true ? 1 : \"${\"x\"}\"", """
       true ('true')
       WHITE_SPACE (' ')
@@ -87,7 +86,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${"x"}"')""");
   }
 
-  public void testMultiline() throws Exception {
+  public void testMultiline() {
     doTest("1 +\n2", """
       NUMBER ('1')
       WHITE_SPACE (' ')
@@ -96,23 +95,23 @@ public class HILLexerTest extends BaseLexerTestCase {
       NUMBER ('2')""");
   }
 
-  public void testMultilineStringInception() throws Exception {
+  public void testMultilineStringInception() {
     doTest("\"${\n\"x\"\n}\"", "DOUBLE_QUOTED_STRING ('\"${\\n\"x\"\\n}\"')");
   }
 
-  public void testMultilineStringInception2() throws Exception {
+  public void testMultilineStringInception2() {
     doTest("\"${\n\"x\n y\"}\"", "DOUBLE_QUOTED_STRING ('\"${\\n\"x\\n y\"}\"')");
   }
 
-  public void testMultilineStringInception3() throws Exception {
+  public void testMultilineStringInception3() {
     doTest("\"${\"${1\n+1}\n \"}", "DOUBLE_QUOTED_STRING ('\"${\"${1\\n+1}\\n \"}')");
   }
 
-  public void testEscapesInString() throws Exception {
+  public void testEscapesInString() {
     doTest("\"\\\\\"", "DOUBLE_QUOTED_STRING ('\"\\\\\"')");
   }
 
-  public void testEscapesInString2() throws Exception {
+  public void testEscapesInString2() {
     doTest("join(\"\\\",\\\"\", x)", """
       ID ('join')
       ( ('(')
@@ -123,7 +122,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       ) (')')""");
   }
 
-  public void testUnsupportedOps() throws Exception {
+  public void testUnsupportedOps() {
     doTest("1|2", """
       NUMBER ('1')
       BAD_CHARACTER ('|')
@@ -138,7 +137,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       NUMBER ('2')""");
   }
 
-  public void testClosingCurlyBraceInString() throws Exception {
+  public void testClosingCurlyBraceInString() {
     doTest("${x(\"\\\"}\\\\\")}", """
       ${ ('${')
       ID ('x')
@@ -148,7 +147,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       } ('}')""");
   }
 
-  public void testIdStartsWithNumber() throws Exception {
+  public void testIdStartsWithNumber() {
     doTest("${null_resource.2a.id}", """
       ${ ('${')
       ID ('null_resource')
@@ -159,7 +158,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       } ('}')""");
   }
 
-  public void testIdIsHexNumber() throws Exception {
+  public void testIdIsHexNumber() {
     doTest("${null_resource.0x0.id}", """
       ${ ('${')
       ID ('null_resource')
@@ -170,7 +169,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       } ('}')""");
   }
 
-  public void testNumbers() throws Exception {
+  public void testNumbers() {
     doTest("0", "NUMBER ('0')");
     doTest("0x0", "NUMBER ('0x0')");
     doTest("0x0.0", "NUMBER ('0x0.0')");
@@ -179,14 +178,14 @@ public class HILLexerTest extends BaseLexerTestCase {
     doTest("0x0.0e+0", "NUMBER ('0x0.0e+0')");
   }
 
-  public void testNumberOps() throws Exception {
+  public void testNumberOps() {
     doTest("1+1", "NUMBER ('1')\n+ ('+')\nNUMBER ('1')\n");
     doTest("1-1", "NUMBER ('1')\n- ('-')\nNUMBER ('1')\n");
     doTest("1*1", "NUMBER ('1')\n* ('*')\nNUMBER ('1')\n");
     doTest("1/1", "NUMBER ('1')\n/ ('/')\nNUMBER ('1')\n");
   }
 
-  public void testTemplateFor() throws Exception {
+  public void testTemplateFor() {
     doTest("%{for a, b in var.test~} 123 %{endfor} ", """
       TEMPLATE_START ('%{')
       for ('for')
@@ -211,7 +210,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       WHITE_SPACE (' ')""".trim());
   }
 
-  public void testArray() throws Exception {
+  public void testArray() {
     doTest("${[true,false,]}", """
       ${ ('${')
       [ ('[')
@@ -223,7 +222,7 @@ public class HILLexerTest extends BaseLexerTestCase {
       } ('}')""");
   }
 
-  public void testObject() throws Exception {
+  public void testObject() {
     doTest("${{a=1,b=2\nc=3}}}", """
       ${ ('${')
       { ('{')
@@ -241,5 +240,45 @@ public class HILLexerTest extends BaseLexerTestCase {
       } ('}')
       } ('}')
       } ('}')""");
+  }
+
+  public void testProviderFunctionCall() {
+    doTest("provider::aws::createInstance()", """
+      ID ('provider')
+      :: ('::')
+      ID ('aws')
+      :: ('::')
+      ID ('createInstance')
+      ( ('(')
+      ) (')')""".trim());
+  }
+
+  public void testNestedProviderFunctionCall() {
+    doTest("provider::custom::outer(provider::inner::compute(42))", """
+      ID ('provider')
+      :: ('::')
+      ID ('custom')
+      :: ('::')
+      ID ('outer')
+      ( ('(')
+      ID ('provider')
+      :: ('::')
+      ID ('inner')
+      :: ('::')
+      ID ('compute')
+      ( ('(')
+      NUMBER ('42')
+      ) (')')
+      ) (')')""".trim());
+  }
+
+  public void testInvalidProviderFunctionCall_MissingParentheses() {
+    doTest("provider::aws::createInstance", """
+      ID ('provider')
+      :: ('::')
+      ID ('aws')
+      :: ('::')
+      ID ('createInstance')
+      """.trim());
   }
 }

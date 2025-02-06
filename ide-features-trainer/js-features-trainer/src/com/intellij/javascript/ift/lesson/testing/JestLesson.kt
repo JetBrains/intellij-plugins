@@ -25,7 +25,7 @@ import java.awt.event.KeyEvent
 import javax.swing.SwingConstants
 import javax.swing.tree.DefaultMutableTreeNode
 
-class JestLesson
+internal class JestLesson
   : KLesson("Fundamentals of Testing in WebStorm", JsLessonsBundle.message("js.testing.jest.title", productName)){
   override val lessonContent: LessonContext.() -> Unit
     get() {

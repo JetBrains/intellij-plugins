@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.intellij.psi.formatter.FormattingDocumentModelImpl;
+import com.intellij.psi.formatter.WrappingUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.formatter.xml.HtmlPolicy;
 import com.intellij.psi.formatter.xml.SyntheticBlock;
@@ -23,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static com.intellij.psi.formatter.WrappingUtil.getWrapType;
 
 /**
  * Template aware formatter which provides formatting for Handlebars/Mustache syntax and delegates formatting
@@ -134,7 +133,7 @@ public final class HbFormattingModelBuilder extends TemplateLanguageFormattingMo
     @Override
     protected Wrap createChildWrap(ASTNode child) {
       if (isAttribute(child)) {
-        return Wrap.createWrap(getWrapType(myHtmlPolicy.getAttributesWrap()), false);
+        return Wrap.createWrap(WrappingUtil.getWrapType(myHtmlPolicy.getAttributesWrap()), false);
       }
       return null;
     }

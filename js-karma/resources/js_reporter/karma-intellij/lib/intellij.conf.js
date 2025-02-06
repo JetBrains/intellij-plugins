@@ -80,7 +80,7 @@ function tryRequireFromProjectRoot(modulePath) {
   }
 }
 
-module.exports = function (config) {
+module.exports = async function (config) {
   if (originalConfigPath) {
     // support for karma.conf.ts when ts-node is available
     // https://github.com/karma-runner/karma/blob/v6.4.4/lib/config.js#L431-L434
@@ -95,7 +95,7 @@ module.exports = function (config) {
     if (typeof originalConfigModule === 'object' && typeof originalConfigModule.default !== 'undefined') {
       originalConfigModule = originalConfigModule.default;
     }
-    originalConfigModule(config);
+    await originalConfigModule(config);
   }
   else {
     require('./ng-template').getBuiltInKarmaConfig(config);

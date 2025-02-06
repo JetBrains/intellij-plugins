@@ -1,6 +1,6 @@
 package org.intellij.prisma
 
-import com.intellij.javascript.web.WebFrameworkTestCase
+import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import org.intellij.prisma.lang.PrismaFileType
 
 abstract class PrismaTestCase(override val testCasePath: String) : WebFrameworkTestCase() {

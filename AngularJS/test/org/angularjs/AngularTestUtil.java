@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
-import com.intellij.webSymbols.WebTestUtil;
+import com.intellij.webSymbols.testFramework.WebTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -21,16 +21,10 @@ public final class AngularTestUtil {
 
     public static String getBaseTestDataPath(Class<?> clazz) {
         String contribPath = getContribPath();
-        return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+        return contribPath + "/AngularJS/testResources/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
     }
 
-    public static String getBaseTestDataPath() {
-        String contribPath = getContribPath();
-        return contribPath + "/AngularJS/testData/";
-    }
-
-
-    private static String getContribPath() {
+  private static String getContribPath() {
         final String homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy();
         if (new File(homePath, "contrib/.gitignore").isFile()) {
             return homePath + File.separatorChar + "contrib";

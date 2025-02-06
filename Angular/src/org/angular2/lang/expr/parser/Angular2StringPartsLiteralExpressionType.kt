@@ -4,14 +4,14 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSLiteralExpressionStub
 import com.intellij.lang.javascript.types.JSExpressionElementType
-import com.intellij.lang.javascript.types.JSLiteralExpressionElementType
+import com.intellij.lang.javascript.types.JSLiteralExpressionElementTypeImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import org.angular2.lang.expr.psi.impl.Angular2StringPartsLiteralExpressionImpl
 import org.angular2.lang.expr.psi.impl.Angular2StringPartsLiteralExpressionStubImpl
 
-class Angular2StringPartsLiteralExpressionType : JSLiteralExpressionElementType("STRING_PARTS_LITERAL_EXPRESSION"),
+class Angular2StringPartsLiteralExpressionType : JSLiteralExpressionElementTypeImpl("STRING_PARTS_LITERAL_EXPRESSION"),
                                                  JSExpressionElementType {
 
   override fun getExternalId(): String =

@@ -9,8 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.expr.service.protocol.commands.toAngular2TranspiledTemplateRequestArgs
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 

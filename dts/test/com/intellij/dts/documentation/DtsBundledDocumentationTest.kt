@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.intellij.dts.DTS_TEST_ROOT_PATH
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.networknt.schema.JsonSchemaFactory
 import com.networknt.schema.SpecVersion
-import kotlinx.coroutines.runBlocking
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
+import kotlin.time.Duration.Companion.seconds
 
 class DtsBundledDocumentationTest : DtsDocumentationTest() {
   override fun getBasePath(): String = "documentation/bundled"
@@ -18,7 +19,7 @@ class DtsBundledDocumentationTest : DtsDocumentationTest() {
   override fun setUp() {
     super.setUp()
 
-    runBlocking {
+    timeoutRunBlocking(30.seconds) {
       DtsZephyrBundledBindings.getInstance().awaitInit()
     }
   }

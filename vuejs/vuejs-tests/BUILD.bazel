@@ -22,9 +22,9 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS/impl:css-impl",
     "@community//java/java-runtime:rt",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//plugins/htmltools:html-tools",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
     "@community//platform/indexing-impl",
@@ -54,9 +54,9 @@ jvm_library(
     "//plugins/webpack:webpack_test_lib",
     "//platform/lsp",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test_lib",
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+    "@community//platform/webSymbols:webSymbols-testFramework",
   ]
 )
 

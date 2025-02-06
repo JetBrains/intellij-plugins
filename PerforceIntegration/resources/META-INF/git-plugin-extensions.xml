@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <vcsSharedChecker implementation="org.jetbrains.idea.perforce.perforce.P4SharedInVcsChecker"/> <!--support for .idea/.gitignore generation-->
+  </extensions>
+</idea-plugin>

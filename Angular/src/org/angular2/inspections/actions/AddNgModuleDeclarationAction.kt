@@ -14,6 +14,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP
 import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.editor.scheduleDelayedAutoPopupIfNeeded
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Module
 import org.angular2.entities.source.Angular2SourceDeclaration
@@ -63,5 +64,6 @@ class AddNgModuleDeclarationAction(editor: Editor?,
         Angular2FixesPsiUtil.insertEntityDecoratorMember(module, EXPORTS_PROP, myDeclarationName)
       }
     }
+    if (myCodeCompletion) scheduleDelayedAutoPopupIfNeeded(editor, place)
   }
 }

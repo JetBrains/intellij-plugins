@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "angular_resources_1",
+  files = glob(["gen-resources/**/*"]),
+  strip_prefix = "gen-resources"
+)
+
 jvm_library(
   name = "angular",
   module_name = "intellij.angular",
@@ -18,14 +24,14 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS:css",
     "@community//platform/usageView",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/editor-ui-ex:editor-ex",
     "//CSS/frontback/css-api:css-frontback",
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/lang-api:lang",
     "//CSS/css-psi-impl:css-psi",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-impl",
     "@community//platform/lang-impl",
     "@community//platform/execution-impl",
@@ -53,7 +59,10 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
   ],
-  runtime_deps = [":angular_resources"]
+  runtime_deps = [
+    ":angular_resources",
+    ":angular_resources_1",
+  ]
 )
 
 jvm_library(
@@ -67,7 +76,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS:css",
     "@community//platform/usageView",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/editor-ui-ex:editor-ex",
@@ -75,13 +84,14 @@ jvm_library(
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/lang-api:lang",
     "//CSS/css-psi-impl:css-psi",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-impl",
     "@community//platform/lang-impl",
     "@community//platform/execution-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//xml/impl",
     "//CSS/impl:css-impl",
+    "@community//platform/webSymbols:webSymbols-testFramework",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
@@ -95,7 +105,7 @@ jvm_library(
     "@ultimate_lib//:angular-oleaster-runner",
     "//plugins/IntelliLang-js:javascript-langInjection",
     "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
-    "@community//plugins/IntelliLang:xml-langInjection",
+    "@community//plugins/IntelliLang/xml-support:xml-langInjection",
     "//plugins/sass",
     "//plugins/sass:sass_test_lib",
     "//plugins/less",
@@ -117,7 +127,6 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test_lib",
     "@lib//:fastutil-min",
     "@community//images",
     "@community//images:images_test_lib",
@@ -128,7 +137,10 @@ jvm_library(
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
   ],
-  runtime_deps = [":angular_resources"]
+  runtime_deps = [
+    ":angular_resources",
+    ":angular_resources_1",
+  ]
 )
 
 jvm_test(

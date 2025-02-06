@@ -5,9 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
-import com.intellij.webSymbols.checkLookupItems
-import com.intellij.webSymbols.noAutoComplete
-import junit.framework.TestCase
+import com.intellij.webSymbols.testFramework.checkLookupItems
+import com.intellij.webSymbols.testFramework.noAutoComplete
 import org.intellij.prisma.PrismaTestCase
 import org.intellij.prisma.ide.documentation.PrismaDocumentationProvider
 import org.intellij.prisma.lang.PrismaConstants
@@ -40,10 +39,10 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
         myFixture.addFileToProject("additionalSchema.prisma", additionalFile)
       }
       val lookupElements = myFixture.completeBasic()
-      TestCase.assertNotNull(lookupElements)
+      assertNotNull(lookupElements)
       if (selected != null) {
         val selectedItem = myFixture.lookupElements?.find { it.lookupString == selected }
-        TestCase.assertNotNull(selectedItem)
+        assertNotNull(selectedItem)
         myFixture.lookup.currentItem = selectedItem
         myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
         myFixture.checkResult(expected)

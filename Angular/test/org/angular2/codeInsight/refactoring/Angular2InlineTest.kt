@@ -1,6 +1,6 @@
 package org.angular2.codeInsight.refactoring
 
-import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.refactoring.inline.JSInlineHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.NotNullLazyValue

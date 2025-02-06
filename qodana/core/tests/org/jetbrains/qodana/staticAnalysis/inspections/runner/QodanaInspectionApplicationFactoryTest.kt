@@ -2,8 +2,11 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
+import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.junit.Test
@@ -107,7 +110,10 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath().pathString, app.config.projectPath.toString())
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
     assertEquals(null, app.config.sourceDirectory)
-    assertNull(app.config.yamlConfigPath)
+
+    assertNull(app.config.yamlFiles.effectiveQodanaYaml)
+    assertNull(app.config.yamlFiles.localQodanaYaml)
+    assertNull(app.config.yamlFiles.qodanaConfigJson)
 
     assertEquals(
       QodanaConfig.fromYaml(
@@ -246,7 +252,53 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     )
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)
-    assertEquals(testProjectPath, app?.config?.yamlConfigPath)
+    assertEquals(testProjectPath, app?.config?.yamlFiles?.effectiveQodanaYaml)
     assertEquals("empty", app?.config?.profile?.name)
+  }
+
+  @Test
+  fun `effective qodana yaml is applied`(): Unit = runBlocking {
+    val configDir = Paths.get(project.basePath!!).resolve(".qodana/config")
+    configDir.createDirectories()
+
+    @Language("yaml")
+    val localQodanaYaml = """
+      version: 1.0
+      
+      profile:
+        name: empty
+    """.trimIndent()
+    val localQodanaYamlPath = configDir.resolve(QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME)
+    localQodanaYamlPath.writeText(localQodanaYaml)
+
+    val profileYaml = configDir.resolve("profile.yaml").createFile()
+
+    @Language("yaml")
+    val effectiveQodanaYaml = """
+      version: 1.0
+      
+      bootstrap: 'bootstrap'
+
+      profile:
+        name: qodana.recommended
+        path: profile.yaml
+    """.trimIndent()
+    val effectiveQodanaYamlPath = configDir.resolve(QodanaYamlFiles.EFFECTIVE_QODANA_YAML_FILENAME)
+    effectiveQodanaYamlPath.writeText(effectiveQodanaYaml)
+
+    val args = listOf(
+        "--config-dir", ".qodana/config",
+        "${project.basePath}",
+        "/OUT_PATH",
+      )
+
+    val app = QodanaInspectionApplicationFactory().buildApplication(args)
+    assertThat(app?.config?.profile?.name).isEqualTo("qodana.recommended")
+    assertThat(app?.config?.profile?.path).isEqualTo(profileYaml.pathString)
+    assertThat(app?.config?.bootstrap).isEqualTo("bootstrap")
+
+    val yamlFiles = app?.config?.yamlFiles
+    assertThat(yamlFiles?.effectiveQodanaYaml).isEqualTo(effectiveQodanaYamlPath)
+    assertThat(yamlFiles?.localQodanaYaml).isEqualTo(localQodanaYamlPath)
   }
 }

@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
@@ -16,6 +15,14 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.testFramework.assertUnresolvedReference
+import com.intellij.webSymbols.testFramework.checkGotoDeclaration
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.multiResolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.renderLookupItems
+import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.webSymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.webSymbols.testFramework.webSymbolSourceAtCaret
 import com.intellij.webSymbols.utils.asSingleSymbol
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
@@ -1707,7 +1714,7 @@ export default class UsageComponent extends Vue {
 """)
     val target = myFixture.resolveToWebSymbolSource("<<caret>LongComponent/>")
     TestCase.assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
-    assertInstanceOf(target, ES6Property::class.java)
+    assertInstanceOf(target, JSProperty::class.java)
     myFixture.checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
   }
 
@@ -2390,6 +2397,13 @@ export default class UsageComponent extends Vue {
     myFixture.copyDirectoryToProject("resolveGlobalAppComponent", "")
     myFixture.configureFromTempProjectFile("ForComponent.vue")
     myFixture.checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "<caret>name: \"GlobalComponent\"", "GlobalComponent.vue")
+  }
+
+  fun testComponentCustomProperties() {
+    myFixture.configureVueDependencies()
+    myFixture.copyDirectoryToProject("componentCustomProperties", "")
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
   }
 }
 

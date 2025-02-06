@@ -4,18 +4,9 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info
 import com.intellij.icons.AllIcons
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.ui.IconManager
-import org.intellij.terraform.TerraformTestUtils
-import org.intellij.terraform.install.TfToolType
 
-class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = TerraformTestUtils.getTestDataPath() + "/runtime"
-
-  override fun setUp() {
-    super.setUp()
-    TerraformProjectSettings.getInstance(myFixture.project).toolPath = TfToolType.TERRAFORM.getBinaryName()
-  }
+internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
   fun testSimpleLineMarker() {
     val file = myFixture.configureByFile("simple.tf")
@@ -54,6 +45,30 @@ class TfRunLineMarkerContributorTest : BasePlatformTestCase() {
 
     val gutters = myFixture.findAllGutters("whole_commented.tf")
     assertEmpty(gutters)
+  }
+
+  fun testNotDuplicatedRunConfig() {
+    val file = myFixture.configureByFile("with_duplicated.tf")
+
+    val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
+    if (info == null) {
+      fail("Info of RunLineMarker not should be empty")
+      return
+    }
+
+    val actions = info.actions
+    val runnedAction = myFixture.testAction(actions.first())
+    assertEquals("Init src", runnedAction.text)
+
+    myFixture.type(" ")
+    val updatedGutter = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
+    if (updatedGutter == null) {
+      fail("Info of RunLineMarker not should be empty")
+      return
+    }
+    assertEquals(actions.size, updatedGutter.actions.size)
+    val runManager = RunManager.getInstance(project)
+    runManager.allSettings.forEach { runManager.removeConfiguration(it) }
   }
 
   private fun checkActionNames(info: Info) {

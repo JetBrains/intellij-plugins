@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.inspections.JSOctalIntegerInspection
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestUtil

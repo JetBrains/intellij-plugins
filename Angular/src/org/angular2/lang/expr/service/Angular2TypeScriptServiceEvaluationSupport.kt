@@ -4,7 +4,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 
 interface Angular2TypeScriptServiceEvaluationSupport : TypeScriptServiceEvaluationSupport {
 

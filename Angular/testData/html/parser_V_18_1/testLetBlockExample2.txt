@@ -178,7 +178,7 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+              Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('condition')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -232,7 +232,7 @@ HtmlFile:test.html
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
               Angular2TemplateBindings
-                Angular2TemplateBinding <ngIf, keyIsVar=false, null>
+                Angular2TemplateBinding <ngIf, keyKind=BINDING, null>
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('condition')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')

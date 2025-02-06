@@ -1,0 +1,20 @@
+{
+  "name": "ws-typescript-angular-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "@volar/typescript": "2.4.11",
+    "tsc-ide-plugin": "file:/../../../../plugins/JavaScriptLanguage/src/tscplugin",
+    "esbuild": "^0.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.13.10",
+    "typescript": "^5.1.0"
+  },
+  "scripts": {
+    "build:clean": "npm run clean && npm run build",
+    "clean": "rm -rf ../../gen-resources/angular-service",
+    "build": "tsc --noEmit && node build && cp -r ./package.json ../../gen-resources/angular-service/node_modules/ws-typescript-angular-plugin"
+  }
+}

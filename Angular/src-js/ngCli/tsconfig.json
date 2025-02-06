@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "outDir": "../../gen-resources/ngCli"
+  },
+  "compileOnSave": true
+}

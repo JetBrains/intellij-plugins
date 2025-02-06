@@ -1,6 +1,6 @@
 package org.angular2
 
-import com.intellij.javascript.web.WebFrameworkTestConfigurator
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.openapi.Disposable
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture

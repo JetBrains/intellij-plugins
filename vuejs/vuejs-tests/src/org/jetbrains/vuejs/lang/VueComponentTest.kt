@@ -14,8 +14,8 @@ import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.DebugOutputPrinter
-import com.intellij.webSymbols.checkTextByFile
+import com.intellij.webSymbols.testFramework.DebugOutputPrinter
+import com.intellij.webSymbols.testFramework.checkTextByFile
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*

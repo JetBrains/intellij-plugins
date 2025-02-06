@@ -1,15 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
-import com.intellij.lang.javascript.library.JSLibraryUtil.findUpClosestNodeModulesResolveRoot
-import com.intellij.lang.javascript.psi.JSCommonTypeNames.MODULE_PREFIX
-import com.intellij.lang.javascript.psi.JSField
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.lang.javascript.psi.util.stubSafeChildren
-import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil.calculateAugmentationScope
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromAugmentations
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -27,44 +19,10 @@ class VueTypedGlobal(override val delegate: VueGlobal,
 
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
-      val file = source.containingFile
-      val scope = calculateAugmentationScope(file) ?: file
-      val map = TypeScriptUtil.getAllAugmentationModules(source.project, scope)
-        .asSequence()
-        .filter { module -> module.name?.removePrefix(MODULE_PREFIX)?.let { it.startsWith("@$VUE_MODULE") || it.startsWith(VUE_MODULE) } == true }
-        .flatMap { it.stubSafeChildren }
-        .filterIsInstance<TypeScriptInterface>()
-        .filter { it.name == GLOBAL_COMPONENTS }
-        .flatMap { vueGlobal ->
-          val fields = vueGlobal.fields.asSequence()
-          //resolve only for locally defined extend elements, see GlobalComponents in Nuxt
-          val inheritedFields = vueGlobal.extendsList?.members
-            ?.mapNotNull { it.referenceText }
-            ?.mapNotNull { JSStubBasedPsiTreeUtil.resolveLocally(it, vueGlobal.containingFile) }
-            ?.filterIsInstance<JSClass>()
-            ?.flatMap { it.fields.asSequence() } ?: emptyList()
-          return@flatMap fields + inheritedFields
-        }
-        .groupBy { it.name }
-        .mapNotNull { nameToField ->
-          val fromLibrary = mutableListOf<JSField>()
-          val field = nameToField.value.find { property ->
-            val isFromProject = property.containingFile?.virtualFile?.let {
-              findUpClosestNodeModulesResolveRoot(it)
-            } != null
+      val result = resolveSymbolFromAugmentations(source, VUE_MODULE, GLOBAL_COMPONENTS)
+        .mapValues { VueTypedComponent(it.value as PsiElement, it.key) }
 
-            if (isFromProject) {
-              return@find true
-            }
-
-            fromLibrary.add(property)
-            false
-          } ?: fromLibrary.singleOrNull() ?: return@mapNotNull null
-          val fieldName = field.name ?: return@mapNotNull null
-          Pair(fieldName, VueTypedComponent(field, fieldName))
-        }.toMap()
-
-      CachedValueProvider.Result.create(map, PsiModificationTracker.MODIFICATION_COUNT)
+      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
   override val components: Map<String, VueComponent>

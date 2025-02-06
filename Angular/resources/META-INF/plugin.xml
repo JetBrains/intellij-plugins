@@ -127,6 +127,19 @@
       <bundleName>messages.Angular2Bundle</bundleName>
       <categoryKey>angular.intention.category</categoryKey>
     </intentionAction>
+    <intentionAction>
+      <language>TypeScript</language>
+      <className>org.angular2.intentions.AngularInlineComponentTemplate</className>
+      <bundleName>messages.Angular2Bundle</bundleName>
+      <categoryKey>angular.intention.category</categoryKey>
+    </intentionAction>
+    <intentionAction>
+      <language>TypeScript</language>
+      <className>org.angular2.intentions.AngularExtractComponentTemplate</className>
+      <bundleName>messages.Angular2Bundle</bundleName>
+      <categoryKey>angular.intention.category</categoryKey>
+    </intentionAction>
+    <usageFilteringRuleProvider implementation="org.angular2.findUsages.Angular2UsageFilteringRuleProvider"/>
     <inlineActionHandler implementation="org.angular2.refactoring.inline.Angular2InlineHandler" id="Angular2Inline"
                          order="before genericJSInline"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
@@ -183,6 +196,8 @@
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
+    <searcher forClass="com.intellij.psi.search.searches.ReferencesSearch$SearchParameters"
+              implementationClass="org.angular2.findUsages.Angular2ComponentClassInTemplateUsageSearcher"/>
     <referencesSearch implementation="org.angular2.findUsages.Angular2ReferenceSearcher"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
@@ -209,6 +224,10 @@
                           order="before TypeScript"/>
     <annotator language="TypeScript" implementationClass="org.angular2.editor.Angular2Annotator"/>
     <annotator language="Angular2" implementationClass="org.angular2.editor.Angular2Annotator"/>
+    <codeInsight.parameterInfo language="Angular2" implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2Html" implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2" implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2Html" implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterInfoHandler"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
@@ -325,10 +344,13 @@
     <webSymbols.webTypes enableByDefault="false" source="web-types/angular@19.0.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
+
     <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>
     <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2WebSymbolsQueryResultsCustomizer$Factory"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
     <webSymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliWebSymbolsContextProvider"/>
+    <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
+    <completion.confidence language="Angular2Html" implementationClass="org.angular2.editor.Angular2PreventCompletionAutoPopupOnImport"/>
 
     <!-- Angular 2 SVG contributions -->
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
@@ -343,7 +365,6 @@
     <braceMatcher filetype="Angular17Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
-    <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <lang.syntaxHighlighter language="Angular2"
@@ -355,7 +376,7 @@
     <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2StubElementTypes" externalIdPrefix="NG:"/>
     <completion.contributor language="any" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
                             id="Angular2CompletionContributor"
-                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor, before TypeScriptServiceCompletionContributor"/>
     <lang.braceMatcher language="Angular2" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
 
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
@@ -368,6 +389,11 @@
                                  hostLanguage="Angular2"
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferencesProvider"
+                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
+    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
+                                 hostLanguage="Angular2"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
+                                 implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
 
     <!-- Angular2 metadata JSON contributions -->
@@ -396,6 +422,16 @@
                          key="angular.configurable.service.title"
                          nonDefaultProject="true"
     />
+
+    <!-- ReactiveForms support contributions -->
+    <webSymbols.queryResultsCustomizerFactory
+      implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryResultsCustomizer$Factory"/>
+    <webSymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryConfigurator"/>
+    <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.library.forms.Angular2FormsWebSymbolsCodeCompletionItemCustomizer"/>
+    <webSymbols.problemQuickFixProvider
+      implementation="org.angular2.library.forms.quickFixes.Angular2FormsWebSymbolProblemQuickFixProvider"/>
+    <annotator language="Angular2Html" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
+    <annotator language="TypeScript" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -463,7 +499,7 @@
     </action>
     <action id="Angular2VisualizeGeneratedTcbAction"
             internal="true"
-            class="org.angular2.lang.html.tcb.Angular2VisualizeGeneratedTcbAction">
+            class="org.angular2.lang.expr.service.tcb.Angular2VisualizeGeneratedTcbAction">
       <add-to-group group-id="Internal"/>
     </action>
   </actions>

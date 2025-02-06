@@ -7,7 +7,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestUtil
 
 class Angular2CliContextTest : BasePlatformTestCase() {

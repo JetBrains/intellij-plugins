@@ -3,6 +3,7 @@ package org.angular2.web.references
 
 import com.intellij.javascript.webSymbols.symbols.asWebSymbol
 import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
@@ -37,21 +38,23 @@ class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferencePro
 
     val name = stringValue.substring(startOffset, endOffset)
 
-    if (hostDirective) {
-      val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
-      val symbol = properties.find { it.name == name }
-                   ?: unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
-      return mapOf(startOffset + 1 to symbol)
-    }
-    else {
-      val symbol = directive
-                     .asSafely<Angular2ClassBasedDirective>()
-                     ?.typeScriptClass
-                     ?.asWebSymbol()
-                     ?.getMatchingJSPropertySymbols(name, null)
-                     ?.find { it.source is JSAttributeListOwner }
-                   ?: return emptyMap()
-      return mapOf(startOffset + 1 to symbol)
+    return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(psiElement) {
+      if (hostDirective) {
+        val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
+        val symbol = properties.find { it.name == name }
+                     ?: unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
+        mapOf(startOffset + 1 to symbol)
+      }
+      else {
+        val symbol = directive
+                       .asSafely<Angular2ClassBasedDirective>()
+                       ?.typeScriptClass
+                       ?.asWebSymbol()
+                       ?.getMatchingJSPropertySymbols(name, null)
+                       ?.find { it.source is JSAttributeListOwner }
+                     ?: return@withTypeEvaluationLocation emptyMap()
+        mapOf(startOffset + 1 to symbol)
+      }
     }
   }
 

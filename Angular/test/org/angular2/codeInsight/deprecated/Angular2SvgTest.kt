@@ -2,9 +2,9 @@
 package org.angular2.codeInsight.deprecated
 
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.checkListByFile
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.renderLookupItems
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.renderLookupItems
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider

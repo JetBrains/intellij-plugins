@@ -22,6 +22,7 @@
     <module name="intellij.qodana/yaml"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>
+    <module name="intellij.qodana.cpp"/>
     <module name="intellij.qodana.inspectionKts.js"/>
     <module name="intellij.qodana.inspectionKts.kotlin"/>
     <module name="intellij.qodana.js"/>

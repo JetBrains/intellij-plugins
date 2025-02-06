@@ -45,7 +45,7 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
       myFixture.type(" ");
       myFixture.type("\b");
       myFixture.doHighlighting();
-      CodeInsightTestFixtureImpl.waitForUnresolvedReferencesQuickFixesUnderCaret(myFixture.getFile(), myFixture.getEditor());
+      CodeInsightTestFixtureImpl.waitForLazyQuickFixesUnderCaret(myFixture.getFile(), myFixture.getEditor());
       UIUtil.dispatchAllInvocationEvents();
       myFixture.checkResultByFile(testName + "_after.as");
     }

@@ -7,10 +7,15 @@ import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.parentOfType
+import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.expr.parser.Angular2StubElementTypes
+import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.types.Angular2BlockVariableType
 
 class Angular2BlockParameterVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable>, JSVariable> {
@@ -24,6 +29,27 @@ class Angular2BlockParameterVariableImpl : JSVariableImpl<JSVariableStub<in JSVa
   override fun getJSType(): JSType? {
     return CachedValuesManager.getCachedValue(this) {
       CachedValueProvider.Result.create(calculateType(), PsiModificationTracker.MODIFICATION_COUNT)
+    }
+  }
+
+  override fun hasBlockScope(): Boolean =
+    true
+
+  override fun getDeclarationScope(): PsiElement? =
+    parentOfType<Angular2HtmlBlock>()
+      ?.let { if (it.name == BLOCK_LET) containingFile else it }
+
+  override fun delete() {
+    parentOfType<Angular2HtmlBlock>()
+      ?.takeIf { it.name == BLOCK_LET }
+      ?.let {
+        it.delete()
+        return
+      }
+    val blockParameter = parent.parent as? Angular2BlockParameter
+    super.delete()
+    if (blockParameter?.variables?.isEmpty() == true) {
+      blockParameter.delete()
     }
   }
 

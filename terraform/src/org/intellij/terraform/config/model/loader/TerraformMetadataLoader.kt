@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
@@ -55,6 +56,7 @@ class TerraformMetadataLoader {
     model.provisioners.addAll(another.provisioners.filter { tmp.getProvisionerType(it.type) == null })
     model.backends.addAll(another.backends.filter { tmp.getBackendType(it.type) == null })
     model.functions.addAll(another.functions.filter { tmp.getFunction(it.name) == null })
+    model.providerDefinedFunctions.addAll(another.providerDefinedFunctions.filter { tmp.getFunction(it.name) == null })
   }
 
   fun buildModel(): TypeModel {
@@ -64,7 +66,8 @@ class TerraformMetadataLoader {
       model.providers,
       model.provisioners,
       model.backends,
-      model.functions
+      model.functions,
+      model.providerDefinedFunctions
     )
   }
 
@@ -230,6 +233,7 @@ class TerraformMetadataLoader {
     }
 
     fun getGlobalTerraformDir(): File? {
+      if (!AdvancedSettings.getBoolean("org.intellij.terraform.use.global.meta")) return null
       val terraform_d = if (SystemInfo.isWindows) {
         System.getenv("APPDATA")?.let { File(it, "terraform.d") }
       }

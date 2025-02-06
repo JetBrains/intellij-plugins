@@ -1,6 +1,9 @@
 package com.intellij.dts.completion
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.testFramework.common.timeoutRunBlocking
+import kotlin.time.Duration.Companion.seconds
 
 abstract class DtsCompletionTest : DtsTestBase() {
   companion object {
@@ -28,6 +31,14 @@ abstract class DtsCompletionTest : DtsTestBase() {
       "/omit-if-no-ref/ &handel;",
       "#include \"file.dtsi\"",
     )
+  }
+
+  override fun setUp() {
+    super.setUp()
+
+    timeoutRunBlocking(30.seconds) {
+      DtsZephyrBundledBindings.getInstance().awaitInit()
+    }
   }
 
   fun applyVariations(

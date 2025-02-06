@@ -20,7 +20,7 @@ export interface User {
     } @loading (<error descr="@loading does not support parameter max">max</error> 12; after 12) {
     
     }
-    <div <weak_warning descr="TS6133: 'fooBar' is declared but its value is never read.">#fooBar</weak_warning>></div>
+    <div #fooBar></div>
     @defer(prefetch<error descr="Expected 'when' or 'on'">;</error>
            prefetch on<error descr="Identifier expected">;</error>
            on <error descr="Unresolved symbol">foo</error>;

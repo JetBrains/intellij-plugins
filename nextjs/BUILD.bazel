@@ -58,7 +58,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
   ],
   runtime_deps = [":nextjs_resources"]

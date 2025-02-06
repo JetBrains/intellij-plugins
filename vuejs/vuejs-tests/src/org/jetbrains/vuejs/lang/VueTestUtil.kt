@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.completion.JSPatternBasedCompletionContribut
 import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
 import com.intellij.lang.javascript.refactoring.JSRefactoringSettings
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
-import com.intellij.webSymbols.LookupElementInfo
+import com.intellij.webSymbols.testFramework.LookupElementInfo
 import org.jetbrains.vuejs.codeInsight.VueCompletionContributor
 import java.io.File
 

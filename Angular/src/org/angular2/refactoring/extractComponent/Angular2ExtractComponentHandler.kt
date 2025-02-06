@@ -113,7 +113,7 @@ class Angular2ExtractComponentHandlerService(
       job.isCompleted
     }
     if (ex != null) {
-      throw ex!!
+      throw ex
     }
   }
 

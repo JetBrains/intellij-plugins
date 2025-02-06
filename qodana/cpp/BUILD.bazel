@@ -1,0 +1,23 @@
+### auto-generated section `build intellij.qodana.cpp` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+
+jvm_resources(
+  name = "cpp_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "cpp",
+  module_name = "intellij.qodana.cpp",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-api:core",
+    "@community//platform/util",
+    "//CIDR/clion-cmake",
+  ],
+  runtime_deps = [":cpp_resources"]
+)
+### auto-generated section `build intellij.qodana.cpp` end

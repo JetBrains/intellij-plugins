@@ -6,9 +6,10 @@ import com.intellij.lang.Language
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.FakePsiElement
-import com.intellij.psi.util.parentsOfType
+import com.intellij.psi.util.parentOfType
 import org.intellij.terraform.config.documentation.TerraformWebDocUrlProvider
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
@@ -18,17 +19,17 @@ import org.intellij.terraform.hcl.psi.HCLElement
 internal class TerraformDocumentPsi(val element: PsiElement,
                                     private val text: String) : FakePsiElement(), HCLElement {
 
-  private val parentElement: HCLBlock? = element.parentsOfType<HCLBlock>(true).firstOrNull()
+  private val parentElement: HCLBlock? = element.parentOfType<HCLBlock>(true)
 
-  override fun getParent(): PsiElement = parentElement as PsiElement
+  private val parentPointer: SmartPsiElementPointer<PsiElement>? = parentElement?.createSmartPointer() //assuming that PsiElement is created under ReadAction in platform code
+
+  override fun getParent(): PsiElement? =  parentElement
 
   override fun getLanguage(): Language = HCLLanguage
 
   override fun navigate(requestFocus: Boolean) {
-    parentElement ?: return
-
     runWithModalProgressBlocking(project, HCLBundle.message("progress.title.opening.terraform.documentation")) {
-      val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement.createSmartPointer()).firstOrNull()
+      val url = parentPointer?.let { TerraformWebDocUrlProvider.getDocumentationUrl(it) }?.firstOrNull()
       url?.let { BrowserUtil.browse(it) }
     }
   }

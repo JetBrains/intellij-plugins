@@ -1,20 +1,14 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
-import com.intellij.javascript.web.WebFrameworkTestModule
-import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.SyntaxTraverser
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.testFramework.runInEdtAndWait
 import junit.framework.TestCase
 import org.angular2.*
 import org.angular2.Angular2TestModule.*
@@ -295,6 +289,31 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testHostDirectivesSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
+  fun testEs6ObjectInitializer() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
+
+  fun testUnusedTemplateVariable() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
+  // TODO - JSUnusedGlobalSymbolsPass doesn't support injections
+  fun _testViewChildrenDecorator() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
+  fun testViewChildrenDecoratorHtml() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, dir = true)
+
+  fun testViewChildrenDecoratorSyntax() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
+
+  fun testViewChildrenSignal() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, dir = true)
+
+  fun testViewChildrenSignalSyntax() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
+
+  fun testTemplateBindingsNgFor() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
@@ -310,16 +329,13 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkSymbolNames: Boolean = false,
     checkInformation: Boolean = checkSymbolNames,
   ) {
-    doConfiguredTest(*modules, dir = dir, extension = extension, configureFileName = configureFileName,
-                     configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates))
-    ) {
-      if (checkInjections)
-        loadInjectionsAndCheckHighlighting(checkInformation)
-      else if (checkSymbolNames)
-        checkHighlightingWithSymbolNames(true, checkInformation, true)
-      else
-        checkHighlighting(true, checkInformation, true)
-    }
+    checkHighlighting(
+      *modules, dir = dir, extension = extension, configureFileName = configureFileName,
+      configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates)),
+      checkInjections = checkInjections,
+      checkSymbolNames = checkSymbolNames,
+      checkInformation = checkInformation,
+    )
   }
 
   override fun adjustModules(modules: Array<out WebFrameworkTestModule>): Array<out WebFrameworkTestModule> {
@@ -334,18 +350,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     }
 
     return result.toTypedArray()
-  }
-
-  private fun loadInjectionsAndCheckHighlighting(checkInformation: Boolean) {
-    val data = ExpectedHighlightingData(
-      myFixture.getEditor().getDocument(), true, true, checkInformation, true)
-    data.init()
-    runInEdtAndWait { PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments() }
-    val injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.getProject())
-    // We need to ensure that injections are cached before we check deprecated highlighting
-    SyntaxTraverser.psiTraverser(myFixture.getFile())
-      .forEach { if (it is PsiLanguageInjectionHost) injectedLanguageManager.getInjectedPsiFiles(it) }
-    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
   }
 
   private fun checkHighlightingWithCrLfEnsured() {

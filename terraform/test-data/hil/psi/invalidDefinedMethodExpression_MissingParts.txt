@@ -1,0 +1,11 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILDefinedMethodExpression
+      PsiElement(ID)('provider')
+      PsiElement(::)('::')
+      PsiElement(ID)('aws')
+      PsiElement(::)('::')
+      PsiErrorElement:<expression> expected, got '}'
+        <empty list>
+    PsiElement(})('}')

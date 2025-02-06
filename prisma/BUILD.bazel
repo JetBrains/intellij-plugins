@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "prisma_resources_1",
+  files = glob(["gen-resources/**/*"]),
+  strip_prefix = "gen-resources"
+)
+
 jvm_library(
   name = "prisma",
   module_name = "intellij.prisma",
@@ -20,7 +26,7 @@ jvm_library(
     "@lib//:gson",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//platform/lang-impl",
     "@community//platform/core-impl",
     "@community//platform/core-api:core",
@@ -37,7 +43,10 @@ jvm_library(
     "@community//platform/execution",
     "//platform/lsp-impl",
   ],
-  runtime_deps = [":prisma_resources"]
+  runtime_deps = [
+    ":prisma_resources",
+    ":prisma_resources_1",
+  ]
 )
 
 jvm_library(
@@ -54,7 +63,7 @@ jvm_library(
     "@lib//:gson",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//platform/lang-impl",
     "@community//platform/core-impl",
     "@community//platform/core-api:core",
@@ -77,12 +86,14 @@ jvm_library(
     "//ultimate/ultimate-resources:idea-ultimate-customization",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/webSymbols",
-    "@community//platform/webSymbols:webSymbols_test_lib",
     "//platform/lsp-impl",
     "//platform/lsp-impl:lsp-impl_test_lib",
-    "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+    "@community//platform/webSymbols:webSymbols-testFramework",
   ],
-  runtime_deps = [":prisma_resources"]
+  runtime_deps = [
+    ":prisma_resources",
+    ":prisma_resources_1",
+  ]
 )
 
 jvm_test(

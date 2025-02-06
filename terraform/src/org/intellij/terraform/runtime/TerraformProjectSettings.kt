@@ -41,15 +41,11 @@ class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettin
     fun getInstance(project: Project): TerraformProjectSettings = project.service()
   }
 
-  class DetectOnStart : ProjectActivity {
+  internal class DetectOnStart : ProjectActivity {
     override suspend fun execute(project: Project) {
       val settings = project.serviceAsync<TerraformProjectSettings>()
-
       if (settings.toolPath.isEmpty() && hasHCLLanguageFiles(project, TerraformFileType)) {
-        val detectedPath = project.serviceAsync<ToolPathDetector>().detect(TfToolType.TERRAFORM.executableName)
-        if (!detectedPath.isNullOrEmpty()) {
-          settings.toolPath = detectedPath
-        }
+        project.serviceAsync<ToolPathDetector>().detectPathAndUpdateSettingsAsync(TfToolType.TERRAFORM)
       }
     }
   }

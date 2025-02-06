@@ -12,8 +12,8 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.Parameterized
-import com.intellij.webSymbols.canRenameWebSymbolAtCaret
-import com.intellij.webSymbols.renameWebSymbol
+import com.intellij.webSymbols.testFramework.canRenameWebSymbolAtCaret
+import com.intellij.webSymbols.testFramework.renameWebSymbol
 import org.angular2.Angular2TestUtil
 import org.junit.runner.RunWith
 import java.io.File

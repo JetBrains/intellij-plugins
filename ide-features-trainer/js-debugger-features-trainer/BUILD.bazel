@@ -24,7 +24,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/testRunner",
     "@community//platform/smRunner",
     "@community//plugins/ide-features-trainer:featuresTrainer",

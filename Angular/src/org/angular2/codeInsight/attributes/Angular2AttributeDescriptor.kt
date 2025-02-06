@@ -11,11 +11,11 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
-import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.angular2.web.Angular2DescriptorSymbolsProvider
+import org.angular2.web.Angular2SymbolOrigin
 
 class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?)
   : WebSymbolAttributeDescriptor(info, tag) {
@@ -55,7 +55,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
     ): Angular2AttributeDescriptor {
       val symbol = object : WebSymbol {
         override val origin: WebSymbolOrigin
-          get() = WebSymbolOrigin.create(Angular2Framework.ID)
+          get() = Angular2SymbolOrigin.empty
         override val namespace: SymbolNamespace
           get() = WebSymbol.NAMESPACE_HTML
         override val kind: SymbolKind

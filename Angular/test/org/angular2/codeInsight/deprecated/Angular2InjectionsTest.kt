@@ -28,8 +28,8 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.resolveReference
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.resolveReference
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule

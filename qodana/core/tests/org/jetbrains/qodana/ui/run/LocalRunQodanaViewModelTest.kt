@@ -372,7 +372,12 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
 
   private fun yamlStateMock(isPhysical: Boolean): QodanaYamlViewModel.YamlState {
     val mockDocument = MockDocument()
-    return QodanaYamlViewModel.YamlState(mockDocument, ImaginaryEditor(project, mockDocument), isPhysical)
+    val physicalFile = if (isPhysical) {
+      FileUtilRt.createTempFile("qodana.yaml", "", true).toPath()
+    } else {
+      null
+    }
+    return QodanaYamlViewModel.YamlState(mockDocument, ImaginaryEditor(project, mockDocument), physicalFile)
   }
 
   private class QodanaRunInIdeServiceMock(qodanaRunState: QodanaRunState) : QodanaRunInIdeService {

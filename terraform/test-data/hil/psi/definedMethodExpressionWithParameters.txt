@@ -1,0 +1,21 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILDefinedMethodExpression
+      PsiElement(ID)('provider')
+      PsiElement(::)('::')
+      PsiElement(ID)('google')
+      PsiElement(::)('::')
+      ILMethodCallExpression
+        ILVariable
+          PsiElement(ID)('startServer')
+        ILParameterList
+          PsiElement(()('(')
+          ILLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"us-central1"')
+          PsiElement(,)(',')
+          PsiWhiteSpace(' ')
+          ILLiteral
+            PsiElement(NUMBER)('2')
+          PsiElement())(')')
+    PsiElement(})('}')

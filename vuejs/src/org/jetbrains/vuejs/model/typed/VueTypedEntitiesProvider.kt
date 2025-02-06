@@ -11,10 +11,12 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptSingleTypeStub
 import com.intellij.lang.javascript.psi.stubs.TypeScriptTypeArgumentListStub
 import com.intellij.lang.javascript.psi.stubs.TypeScriptUnionOrIntersectionTypeStub
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.stubs.Stub
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.VueFrameworkHandler
@@ -24,55 +26,71 @@ import org.jetbrains.vuejs.model.source.VueEntityDescriptor
 object VueTypedEntitiesProvider {
 
   private val vueComponentTypenameRegex = Regex(
-    "(import\\s*\\(\\s*['\"]vue['\"]\\s*\\)\\s*\\.\\s*|vue\\s*\\.\\s*)?(DefineComponent|ComponentOptionsBase|ComponentOptionsMixin|ComponentCustomProps)")
+    """(import\s*\(\s*['"]vue['"]\s*\)\s*\.\s*|vue\s*\.\s*)?(DefineComponent|ComponentOptionsBase|ComponentOptionsMixin|ComponentCustomProps|__VLS_WithTemplateSlots)""")
 
   fun isComponentDefinition(definition: JSQualifiedNamedElement): Boolean {
     if (definition.name == null || definition is JSField) return false
     when (definition) {
       is TypeScriptVariable -> {
         val typeElement = definition.typeElement ?: return false
+        if (checkType(typeElement)) {
+          return true
+        }
+        if (typeElement is TypeScriptSingleType) {
+          val aliasedType = typeElement.qualifiedTypeName
+            ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, typeElement) }
+            ?.asSafely<TypeScriptTypeAlias>()
+            ?.typeDeclaration
 
-        var result = false
-        val typeStub = (typeElement as? StubBasedPsiElement<*>)?.stub
-
-        fun checkTypeName(typeName: String?) =
-          typeName != null && typeName.matches(vueComponentTypenameRegex)
-
-        if (typeStub != null) {
-          fun visit(stub: Stub) {
-            if (stub is TypeScriptSingleTypeStub
-                && checkTypeName(stub.qualifiedTypeName)) {
-              result = true
-            }
-            else if (stub is TypeScriptTypeArgumentListStub
-                     || stub is TypeScriptUnionOrIntersectionTypeStub
-                     || stub is TypeScriptSingleTypeStub) {
-              stub.childrenStubs.forEach { visit(it) }
-            }
+          if (aliasedType != null && checkType(aliasedType)) {
+            return true
           }
-          visit(typeStub)
         }
-        else {
-          typeElement.accept(object : JSElementVisitor(),PsiRecursiveVisitor {
-            override fun visitJSElement(node: JSElement) {
-              if (node is TypeScriptSingleType
-                  && checkTypeName(node.qualifiedTypeName)) {
-                result = true
-              }
-              else if (node is TypeScriptTypeArgumentList
-                       || node is TypeScriptUnionOrIntersectionType
-                       || node is TypeScriptSingleType) {
-                node.acceptChildren(this)
-              }
-            }
-          })
-        }
-        return result
+        return false
       }
       is TypeScriptClass -> return TypeScriptUtil.isDefinitionFile(definition.containingFile)
       else -> return false
     }
   }
+
+  private fun checkType(typeElement: TypeScriptType): Boolean {
+    var result = false
+    val typeStub = (typeElement as? StubBasedPsiElement<*>)?.stub
+
+    if (typeStub != null) {
+      fun visit(stub: Stub) {
+        if (stub is TypeScriptSingleTypeStub
+            && checkTypeName(stub.qualifiedTypeName)) {
+          result = true
+        }
+        else if (stub is TypeScriptTypeArgumentListStub
+                 || stub is TypeScriptUnionOrIntersectionTypeStub
+                 || stub is TypeScriptSingleTypeStub) {
+          stub.childrenStubs.forEach { visit(it) }
+        }
+      }
+      visit(typeStub)
+    }
+    else {
+      typeElement.accept(object : JSElementVisitor(), PsiRecursiveVisitor {
+        override fun visitJSElement(node: JSElement) {
+          if (node is TypeScriptSingleType
+              && checkTypeName(node.qualifiedTypeName)) {
+            result = true
+          }
+          else if (node is TypeScriptTypeArgumentList
+                   || node is TypeScriptUnionOrIntersectionType
+                   || node is TypeScriptSingleType) {
+            node.acceptChildren(this)
+          }
+        }
+      })
+    }
+    return result
+  }
+
+  private fun checkTypeName(typeName: String?) =
+    typeName != null && typeName.matches(vueComponentTypenameRegex)
 
   fun getComponentDescriptor(element: PsiElement?): VueEntityDescriptor? {
     if (element == null) return null
@@ -134,7 +152,9 @@ object VueTypedEntitiesProvider {
     return componentsFromDts
   }
 
-  class VueTypedComponentDescriptor(override val source: PsiElement,
-                                    val name: String) : VueEntityDescriptor
+  class VueTypedComponentDescriptor(
+    override val source: PsiElement,
+    val name: String,
+  ) : VueEntityDescriptor
 
 }

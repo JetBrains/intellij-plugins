@@ -1,0 +1,5 @@
+of (typeText='(U & Array<T>) | (U & Iterable<T>)'; priority=100.0; bold; typeGreyed)
+template (typeText='TemplateRef<NgForOfContext<T, U>>'; priority=100.0; bold; typeGreyed)
+trackBy (typeText='TrackByFunction<T>'; priority=100.0; bold; typeGreyed)
+as (typeText=null; priority=10.0; typeGreyed)
+let (typeText=null; priority=10.0; typeGreyed)

@@ -7,7 +7,7 @@ import {NgClass} from '@angular/common';
   imports: [NgClass],
   template: `
     <div [ngClass]="{ 'open': isOpened  }">open</div>
-    <div [ngClass]="<error descr="TS2551: Property 'pinnd' does not exist on type 'AppComponent2'. Did you mean 'pinned'?">pinnd</error> ? 'pin' : ''">pinned</div>
+    <div [ngClass]="<error descr="TS2551: Property 'pinnd' does not exist on type 'AppComponent2'. Did you mean 'pinned'?">pinnd</error> ? '<warning descr="Unrecognized name">pin</warning>' : ''">pinned</div>
   `,
 }))))
 export class AppComponent2 {

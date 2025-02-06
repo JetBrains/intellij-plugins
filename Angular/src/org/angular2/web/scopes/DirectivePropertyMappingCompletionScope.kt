@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.webSymbols.symbols.JSPropertySymbol
 import com.intellij.javascript.webSymbols.symbols.asWebSymbol
 import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -21,6 +22,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
+import com.intellij.webSymbols.query.WebSymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
@@ -71,30 +73,32 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
             consumer(symbol)
         }
 
-        if (hostDirective) {
-          if (kind == INPUTS_PROP)
-            directive.bindings.inputs.forEach(filterAndConsume)
-          else
-            directive.bindings.outputs.forEach(filterAndConsume)
-        }
-        else {
-          val symbolKind = if (kind == Angular2DecoratorUtil.INPUTS_PROP)
-            NG_DIRECTIVE_INPUTS
-          else
-            NG_DIRECTIVE_OUTPUTS
-          val typeScriptClass = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass
-          typeScriptClass
-            ?.asWebSymbol()
-            ?.getJSPropertySymbols()
-            ?.filter { property ->
-              val sources = Angular2SourceDirective.getPropertySources(property.source)
-              sources.isNotEmpty()
-              && sources.none { source ->
-                source.attributeList?.decorators?.any { dec -> dec.decoratorName == INPUT_DEC || dec.decoratorName == OUTPUT_DEC } == true
+        JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(jsProperty) {
+          if (hostDirective) {
+            if (kind == INPUTS_PROP)
+              directive.bindings.inputs.forEach(filterAndConsume)
+            else
+              directive.bindings.outputs.forEach(filterAndConsume)
+          }
+          else {
+            val symbolKind = if (kind == INPUTS_PROP)
+              NG_DIRECTIVE_INPUTS
+            else
+              NG_DIRECTIVE_OUTPUTS
+            val typeScriptClass = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass
+            typeScriptClass
+              ?.asWebSymbol()
+              ?.getJSPropertySymbols()
+              ?.filter { property ->
+                val sources = Angular2SourceDirective.getPropertySources(property.source)
+                sources.isNotEmpty()
+                && sources.none { source ->
+                  source.attributeList?.decorators?.any { dec -> dec.decoratorName == INPUT_DEC || dec.decoratorName == OUTPUT_DEC } == true
+                }
               }
-            }
-            ?.map { Angular2FieldPropertySymbol(it, symbolKind, directive.sourceElement.project, typeScriptClass) }
-            ?.forEach(filterAndConsume)
+              ?.map { Angular2FieldPropertySymbol(it, symbolKind, directive.sourceElement.project, typeScriptClass) }
+              ?.forEach(filterAndConsume)
+          }
         }
       }
   }
@@ -103,7 +107,11 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     /* Do not support reference resolution */
-    emptyList()
+    if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
+      // Provide an empty symbol match to avoid unresolved reference on the string literal
+      listOf(WebSymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, WebSymbolNameSegment.create(0,0)))
+    else
+      emptyList()
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,

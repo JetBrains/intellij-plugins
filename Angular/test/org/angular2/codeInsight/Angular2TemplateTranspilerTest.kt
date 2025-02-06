@@ -1,14 +1,14 @@
 package org.angular2.codeInsight
 
 import com.google.gson.GsonBuilder
-import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.webSymbols.checkTextByFile
+import com.intellij.webSymbols.testFramework.checkTextByFile
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
-import org.angular2.lang.html.tcb.Angular2TemplateTranspiler.SourceMappingFlag
-import org.angular2.lang.html.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", true) {
 
@@ -99,6 +99,15 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
 
   fun testHostBindings() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
+  fun testEs6ShorthandProperty() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4,
+  )
+
+  fun testStructuralDirective() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_18_2_1,
+    Angular2TestModule.ANGULAR_COMMON_18_2_1,
   )
 
   private fun checkTranspilation(

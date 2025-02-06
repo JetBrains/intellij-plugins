@@ -31,6 +31,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
@@ -39,11 +40,12 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TerraformToolConfigurable
+import org.intellij.terraform.runtime.ToolPathDetector
 import org.jetbrains.annotations.Nls
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 
-abstract class TFExternalToolsAction : DumbAwareAction() {
+internal abstract class TFExternalToolsAction : DumbAwareAction() {
 
   private fun isAvailableOnFile(file: VirtualFile, checkDirChildren: Boolean, onlyTerraformFileType: Boolean): Boolean {
     if (!file.isInLocalFileSystem) return false
@@ -76,8 +78,7 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
     e.presentation.isEnabled = true
   }
 
-  protected fun getActionCoroutineScope(project: Project): CoroutineScope
-     = project.service<CoroutineScopeProvider>().coroutineScope
+  protected fun getActionCoroutineScope(project: Project): CoroutineScope = project.service<CoroutineScopeProvider>().coroutineScope
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -119,12 +120,12 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
     ).notify(project)
 }
 
-internal fun isExecutableToolFileConfigured(project: Project, applicableToolType: TfToolType): Boolean {
-  val toolPath = applicableToolType.getToolSettings(project).toolPath
+internal fun isExecutableToolFileConfigured(project: Project, toolType: TfToolType): Boolean {
+  val toolPath = toolType.getToolSettings(project).toolPath
   return if (!isPathExecutable(toolPath)) {
     TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
-      HCLBundle.message("run.configuration.terraform.path.title", applicableToolType.displayName),
-      HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath, applicableToolType.displayName),
+      HCLBundle.message("run.configuration.terraform.path.title", toolType.displayName),
+      HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
       NotificationType.ERROR
     ).addAction(object : NotificationAction(HCLBundle.message("terraform.open.settings")) {
       override fun actionPerformed(e: AnActionEvent, notification: Notification) {

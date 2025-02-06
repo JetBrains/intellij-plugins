@@ -79,7 +79,7 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
       cs.coroutineContext.cancelChildren()
       // Run the watch in a new child scope
       val watchContext = (Dispatchers.EDT
-                          + ModalityState.stateForComponent(step.myTree).asContextElement()
+                          + ModalityState.any().asContextElement()
                           + CoroutineName("PlatformIO Watch"))
       cs.launch(watchContext){
         step.notifyPlatformioPresense(presense)
@@ -174,10 +174,13 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
     }
   }
 
-  override fun createAdvancedSettings(): JPanel? {
-    val scrollPane = JBScrollPane(myTree)
+  override fun createPanel(): JPanel? = super.createPanel().also {
     platformioPresent.afterChange { service<WatchPlatformioService>().watch(it, this) }
     startPlatformioWatcher()
+  }
+
+  override fun createAdvancedSettings(): JPanel? {
+    val scrollPane = JBScrollPane(myTree)
     scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS
     val panel = BorderLayoutPanel(0, 0)
       .addToTop(JBLabel(

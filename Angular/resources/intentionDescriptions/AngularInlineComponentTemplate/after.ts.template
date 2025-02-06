@@ -1,0 +1,6 @@
+@Component({
+   template: `<div></div>`
+})
+export class MyComponent {
+
+}

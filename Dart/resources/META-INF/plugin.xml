@@ -262,6 +262,10 @@
     <!--suppress PluginXmlCapitalization -->
     <registryKey defaultValue="true" description="Launch Dart Tooling Daemon and DevTools" key="dart.launch.dtd.and.devtools"/>
     <registryKey defaultValue="true" description="Dart macros support (SDK 3.4+)" key="dart.macros.support"/>
+
+    <registryKey key="dart.server.vm.options" defaultValue="" description="Dart VM options to use when starting Dart Analysis Server process"/>
+    <registryKey key="dart.server.additional.arguments" defaultValue="" description="Dart Analysis Server command line arguments"/>
+    <registryKey key="dart.projects.without.pubspec" defaultValue="false" description="For special internal Dart projects only"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

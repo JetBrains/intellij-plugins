@@ -18,10 +18,16 @@ interface Angular2TemplateBinding : JSStatement {
   val keyElement: Angular2TemplateBindingKey?
   val keyJSType: JSType?
   fun keyIsVar(): Boolean
+  val keyKind: KeyKind
+
   override fun getName(): String?
   val variableDefinition: JSVariable?
 
   val expression: JSExpression?
+
+  enum class KeyKind {
+    BINDING, LET, AS,
+  }
 
   companion object {
     val EMPTY_ARRAY: Array<Angular2TemplateBinding> = emptyArray<Angular2TemplateBinding>()

@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromAugmentations
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -19,6 +20,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.index.CUSTOM_PROPERTIES
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.VueCompleteRecordType
@@ -56,11 +58,16 @@ private val VUE_INSTANCE_METHODS: List<String> = listOf(
 private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val source = instance.source ?: return null
   val result = mutableMapOf<String, JSRecordType.PropertySignature>()
+  contributeCustomProperties(source, result)
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
   replaceStandardProperty(INSTANCE_REFS_PROP, VueRefsType(createStrictTypeSource(source), instance), source, result)
   contributePropertiesFromProviders(instance, result)
   return VueComponentInstanceType(JSTypeSourceFactory.createTypeSource(source, true), instance, result.values.toList())
+}
+
+private fun contributeCustomProperties(source: PsiElement, result: MutableMap<String, JSRecordType.PropertySignature>) {
+  result.putAll(resolveSymbolFromAugmentations(source, VUE_MODULE, CUSTOM_PROPERTIES))
 }
 
 private fun contributeDefaultInstanceProperties(source: PsiElement,

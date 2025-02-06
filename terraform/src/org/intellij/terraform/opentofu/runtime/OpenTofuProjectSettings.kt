@@ -43,16 +43,13 @@ internal class OpenTofuProjectSettings : PersistentStateComponent<OpenTofuProjec
     fun getInstance(project: Project): OpenTofuProjectSettings = project.service()
   }
 
-  class DetectOnStart : ProjectActivity {
+  internal class DetectOnStart : ProjectActivity {
 
     override suspend fun execute(project: Project) {
       val settings = project.serviceAsync<OpenTofuProjectSettings>()
 
       if (settings.toolPath.isEmpty() && hasHCLLanguageFiles(project, OpenTofuFileType)) {
-        val detectedPath = project.serviceAsync<ToolPathDetector>().detect(TfToolType.OPENTOFU.executableName)
-        if (!detectedPath.isNullOrEmpty()) {
-          settings.toolPath = detectedPath
-        }
+        project.serviceAsync<ToolPathDetector>().detectPathAndUpdateSettingsAsync(TfToolType.OPENTOFU)
       }
     }
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
 import com.intellij.application.options.CodeStyle
@@ -246,6 +246,16 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
     finally {
       PrettierConfiguration.getInstance(project).state.formatFilesOutsideDependencyScope = false
     }
+  }
+
+  fun testPlainText() {
+    val (language, settings) = getInfoForFile("text.txt")
+    assertContainsElements(settings.getSoftMargins(language), emptyList())
+  }
+
+  fun testCssFile() {
+    val (language, settings) = getInfoForFile("style.css")
+    assertContainsElements(settings.getSoftMargins(language), listOf(70))
   }
 
   private fun getInfoForFile(fileName: String): Pair<Language, CodeStyleSettings> {

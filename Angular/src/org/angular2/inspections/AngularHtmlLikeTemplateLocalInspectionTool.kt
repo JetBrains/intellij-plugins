@@ -4,6 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.html.HtmlCompatibleFile
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlAttribute
@@ -25,12 +26,16 @@ abstract class AngularHtmlLikeTemplateLocalInspectionTool : LocalInspectionTool(
       override fun visitXmlAttribute(attribute: XmlAttribute) {
         val descriptor = attribute.descriptor as? Angular2AttributeDescriptor
         if (descriptor != null) {
-          visitAngularAttribute(holder, attribute, descriptor)
+          JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(attribute) {
+            visitAngularAttribute(holder, attribute, descriptor)
+          }
         }
       }
 
       override fun visitXmlTag(tag: XmlTag) {
-        this@AngularHtmlLikeTemplateLocalInspectionTool.visitXmlTag(holder, tag)
+        JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(tag) {
+          this@AngularHtmlLikeTemplateLocalInspectionTool.visitXmlTag(holder, tag)
+        }
       }
     }
   }

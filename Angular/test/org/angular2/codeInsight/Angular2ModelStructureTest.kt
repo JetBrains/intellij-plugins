@@ -1,9 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.webSymbols.DebugOutputPrinter
+import com.intellij.webSymbols.testFramework.DebugOutputPrinter
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestUtil
@@ -243,7 +244,9 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", false) {
       val el = myFixture.getFile().findElementAt(moduleOffset)!!
       val moduleClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
       val module = getEntity(moduleClass) as Angular2ImportsOwner
-      val result = Angular2EntitiesDebugOutputPrinter(printDirectives).printValue(module)
+      val result = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(moduleClass) {
+        Angular2EntitiesDebugOutputPrinter(printDirectives).printValue(module)
+      }
       myFixture.configureByText("__my-check.txt", result)
       myFixture.checkResultByFile("$directory/$checkFile", true)
     }

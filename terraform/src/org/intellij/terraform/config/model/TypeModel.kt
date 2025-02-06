@@ -60,12 +60,14 @@ class TypeModel(
   providers: List<ProviderType> = emptyList(),
   provisioners: List<ProvisionerType> = emptyList(),
   backends: List<BackendType> = emptyList(),
-  functions: List<Function> = emptyList(),
+  functions: List<TfFunction> = emptyList(),
+  providerDefinedFunctions: List<TfFunction> = emptyList()
 ) {
 
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
   val backends: List<BackendType> = backends.sortedBy { it.type }
-  val functions: List<Function> = functions.sortedBy { it.name }
+  val functions: List<TfFunction> = functions.sortedBy { it.name }
+  val providerDefinedFunctions: List<TfFunction> = providerDefinedFunctions.sortedBy { it.name }
 
   val providersByFullName: Map<String, ProviderType>
   val resourcesByProvider: Map<String, List<ResourceType>>
@@ -359,7 +361,7 @@ class TypeModel(
     return backends.findBinary(name) { it.type }
   }
 
-  fun getFunction(name: String): Function? {
+  fun getFunction(name: String): TfFunction? {
     return functions.findBinary(name) { it.name }
   }
 

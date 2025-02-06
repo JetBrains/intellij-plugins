@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import org.intellij.terraform.TfUsageTriggerCollector
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.model.local.LocalSchemaService
 
@@ -53,6 +54,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
           "Cannot read 'ignored-references.list': resource '/terraform/model-external/ignored-references.list' not found")
         return emptySet()
       }
+      TfUsageTriggerCollector.ODD_FEATURE_USED.log("ignored-references")
       val lines = stream.use { s -> s.bufferedReader(Charsets.UTF_8).readLines().map(String::trim).filter { !it.isEmpty() } }
       return LinkedHashSet<String>(lines)
     }

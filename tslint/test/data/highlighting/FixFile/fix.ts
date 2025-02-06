@@ -1,5 +1,5 @@
-let abc = <error><caret>'aaa'</error><EOLError>
-</EOLError>console.log(abc)<EOLError>
+let abc = <error descr="TSLint: ' should be \" (quotemark)"><caret>'aaa'</error><EOLError descr="TSLint: Missing semicolon (semicolon)">
+</EOLError>console.log(abc)<EOLError descr="TSLint: Missing semicolon (semicolon)">
+</EOLError>
 
-
-</EOLError>let cde = <error><error>'cde'</error></error>
+let cde = <error descr="TSLint: ' should be \" (quotemark)">'cde<error descr="TSLint: Missing semicolon (semicolon)">'</error></error>

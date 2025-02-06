@@ -1,0 +1,149 @@
+<idea-plugin>
+  <name>Perforce Helix Core</name>
+  <id>PerforceDirectPlugin</id>
+  <vendor>JetBrains</vendor>
+  <resource-bundle>messages.PerforceBundle</resource-bundle>
+  <category>Version Controls</category>
+  <description>
+      <![CDATA[
+      Allows working with <a href="https://www.perforce.com/">Perforce version control system</a>.
+      The following features are available:
+        <ul>
+        <li>Submit, merge, diff, shelf and more</li>
+        <li>Automatic checkout of files on editing</li>
+        <li>Dedicated item in the VCS menu and in the context menu</li>
+        </ul>
+         <p>To configure, open <b>Settings / Preferences</b> and go to <b>Version Control | Perforce</b>.</p>
+      ]]>
+   </description>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.vcs</depends>
+  <depends optional="true" config-file="git-plugin-extensions.xml">Git4Idea</depends>
+
+  <actions>
+    <group id="PerforceDirect.Menu" class="org.jetbrains.idea.perforce.actions.PerforceMenu" popup="true">
+      <reference ref="CheckinFiles"/>
+      <reference ref="UpdateFiles"/>
+      <reference ref="IntegrateFiles"/>
+      <action id="RevertUnchanged" class="org.jetbrains.idea.perforce.actions.RevertAllUnchangedFilesAction"/>
+      <reference ref="Annotate"/>
+      <reference ref="Show.Current.Revision"/>
+      <reference ref="Compare.SameVersion"/>
+      <reference ref="Compare.LastVersion"/>
+      <reference ref="Compare.Selected"/>
+      <action id="PerforceDirect.Edit" class="org.jetbrains.idea.perforce.actions.ActionEdit">
+        <keyboard-shortcut first-keystroke="control alt E" keymap="$default"/>
+      </action>
+      <reference ref="ChangesView.AddUnversioned"/>
+      <reference ref="ChangesView.Revert"/>
+      <reference ref="Vcs.ShowTabbedFileHistory"/>
+      <reference ref="Vcs.ShowHistoryForBlock"/>
+      <action id="Resolve" class="org.jetbrains.idea.perforce.actions.ResolveAction"/>
+      <action id="ResolveAll" class="org.jetbrains.idea.perforce.actions.ResolveAllAction"/>
+      <reference ref="ChangesView.Browse"/>
+      <action id="RevisionGraph" class="org.jetbrains.idea.perforce.actions.RevisionGraphAction"/>
+      <action id="TimeLapseView" class="org.jetbrains.idea.perforce.actions.TimeLapseViewAction"/>
+      <separator/>
+      <action id="PerforceEnableIntegration" class="org.jetbrains.idea.perforce.actions.EnableAction"/>
+      <action id="PerforceCheckLoginStateAction" class="org.jetbrains.idea.perforce.actions.CheckLoginStateAction"/>
+      <add-to-group group-id="VcsGroup" anchor="last"/>
+      <add-to-group group-id="VcsGlobalGroup" anchor="after" relative-to-action="Vcs.Specific"/>
+    </group>
+
+    <group id="Perforce.Toolbar">
+      <reference ref="Vcs.UpdateProject"/>
+      <reference ref="CheckinProject"/>
+      <reference ref="ChangesView.Revert"/>
+      <reference ref="PerforceEnableIntegration"/>
+    </group>
+
+    <action id="SetJobsForChangeList" class="org.jetbrains.idea.perforce.actions.LinkChangeListToJobsAction">
+      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="EditSource" anchor="after"/>
+    </action>
+
+    <action id="Perforce.Shelve" class="org.jetbrains.idea.perforce.actions.ShelveAction">
+      <add-to-group group-id="PerforceDirect.Menu" relative-to-action="Compare.Selected" anchor="after"/>
+      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="ChangesView.Shelve" anchor="before"/>
+    </action>
+    <action id="Perforce.Unshelve" class="org.jetbrains.idea.perforce.actions.UnshelveAction">
+      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="Perforce.Shelve" anchor="after"/>
+    </action>
+    <action id="Perforce.Unshelve.And.Delete" class="org.jetbrains.idea.perforce.actions.UnshelveAndDeleteAction"
+            icon="AllIcons.Vcs.Unshelve">
+      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="Perforce.Unshelve" anchor="after"/>
+    </action>
+
+    <action id="Perforce.SyncToRevision" class="org.jetbrains.idea.perforce.actions.SyncToRevisionAction">
+      <add-to-group group-id="IncomingChangesToolbar"/>
+    </action>
+
+    <action id="Perforce.Force.Refresh" class="org.jetbrains.idea.perforce.actions.ForceRefreshAction">
+      <add-to-group group-id="ChangesViewToolbar" relative-to-action="ChangesView.Refresh" anchor="after"/>
+    </action>
+
+    <action id="Perforce.Toolbar.ShowMoreActions" class="org.jetbrains.idea.perforce.actions.PerforceQuickActionsToolbarPopup">
+      <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="last"/>
+    </action>
+    <action id="Perforce.Toolbar.WorkspaceAction" class="org.jetbrains.idea.perforce.actions.PerforceWorkspaceComboBoxAction">
+      <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="first"/>
+    </action>
+    <group id="MainToolbarPerforceVCSGroup">
+      <action id="Perforce.Toolbar.PerforceToolbarWidgetAction" class="org.jetbrains.idea.perforce.actions.PerforceToolbarWidgetAction"/>
+      <add-to-group group-id="MainToolbarLeft" relative-to-action="MainToolbarGeneralActionsGroup" anchor="before"/>
+    </group>
+
+    <action id="PerforceCommittedChanges.Filter" class="org.jetbrains.idea.perforce.actions.PerforceFilterCommittedAction">
+      <add-to-group group-id="CommittedChangesToolbar" relative-to-action="CommittedChanges.Refresh" anchor="after"/>
+    </action>
+
+  </actions>
+
+  <extensionPoints>
+    <!--suppress PluginXmlValidity -->
+    <extensionPoint qualifiedName="Perforce.P4ConnectionParametersProvider"
+                    interface="org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParametersProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="Perforce">
+    <P4ConnectionParametersProvider
+      implementation="org.jetbrains.idea.perforce.perforce.connections.SettingsConnectionParametersProvider" order="first"/>
+    <P4ConnectionParametersProvider
+      implementation="org.jetbrains.idea.perforce.perforce.connections.EnvConnectionParametersProvider"/>
+    <P4ConnectionParametersProvider
+      implementation="org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <vcs name="Perforce" vcsClass="org.jetbrains.idea.perforce.application.PerforceVcs" displayName="Perforce"/>
+    <projectConfigurable id="vcs.Perforce" key="settings.perforce.option.group" instance="org.jetbrains.idea.perforce.perforce.PerforceConfigurable"
+                         parentId="project.propVCSSupport.Mappings" groupWeight="-500"/>
+    <vcs.changeListDecorator implementation="org.jetbrains.idea.perforce.application.PerforceLocalChangeListDecorator"/>
+    <vcs.changes.changesViewModifier implementation="org.jetbrains.idea.perforce.application.PerforceShelveChangesViewModifier"/>
+    <vcsCheckinHandlerFactory implementation="org.jetbrains.idea.perforce.application.PerforceCheckinHandlerFactory"/>
+    <vcsPopupProvider implementation="org.jetbrains.idea.perforce.actions.PerforceQuickListContentProvider"/>
+    <search.projectOptionsTopHitProvider implementation="org.jetbrains.idea.perforce.perforce.PerforceOptionsTopHitProvider"/>
+    <vcsRootChecker implementation="org.jetbrains.idea.perforce.perforce.P4RootChecker"/>
+    <vcs.ignoredFilesHolder implementation="org.jetbrains.idea.perforce.application.PerforceIgnoredFilesHolder$Provider"/>
+    <vcs.unversionedFilesHolder implementation="org.jetbrains.idea.perforce.application.PerforceUnversionedFilesHolder$Provider"/>
+
+    <projectService serviceInterface="org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI"
+    serviceImplementation="org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager"/>
+    <projectService serviceImplementation="org.jetbrains.idea.perforce.perforce.PerforceSettings"/>
+    <projectService serviceImplementation="org.jetbrains.idea.perforce.operations.VcsOperationLog"/>
+    <projectService serviceImplementation="org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer"/>
+
+    <registryKey key="p4.ignore.all.potentially.ignored" defaultValue="true"
+                 description="Consider all excluded files as ignored and do not check them via native ignores"/>
+
+    <registryKey key="p4.use.p4.sync.for.incoming.files" defaultValue="false"
+                 description="Use p4 sync to get a list of incoming files during the refresh"/>
+    <registryKey key="p4.refresh.local.changes.on.frame.activation" defaultValue="false"
+                 description="When enabled, refresh root of mapped connections and update Local Changes with changelist potentially created outside IDE"/>
+  </extensions>
+  <applicationListeners>
+    <listener class="org.jetbrains.idea.perforce.application.P4LocalChangesRefresher"
+              topic="com.intellij.openapi.application.ApplicationActivationListener" />
+  </applicationListeners>
+</idea-plugin>

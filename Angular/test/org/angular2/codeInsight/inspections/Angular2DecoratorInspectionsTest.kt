@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies

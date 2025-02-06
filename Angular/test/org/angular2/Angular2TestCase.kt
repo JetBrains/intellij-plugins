@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.javascript.web.WebFrameworkTestCase
+import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 
 abstract class Angular2TestCase(
   override val testCasePath: String,
-  private val useTsc: Boolean,
+  private val useTsc: Boolean = true,
 ) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
   private var expectedServerClass: KClass<out TypeScriptService> = Angular2TypeScriptService::class

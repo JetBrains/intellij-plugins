@@ -6,7 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.webSymbols.resolveWebSymbolReference
+import com.intellij.webSymbols.testFramework.resolveWebSymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.Angular2TestUtil

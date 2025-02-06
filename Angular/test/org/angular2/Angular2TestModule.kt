@@ -1,8 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.javascript.web.WebFrameworkTestModule
-import com.intellij.javascript.web.configureDependencies
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.javascript.testFramework.web.configureDependencies
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 
 enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFrameworkTestModule {

@@ -2,7 +2,7 @@ VuexStoreContext: {
   stores: [
     VuexStoreImpl <store/index.js:194:JSCallExpression> {
       modules: [
-        VuexModuleImpl cart [namespaced] <store/index.js:225:ES6Property> {
+        VuexModuleImpl cart [namespaced] <store/index.js:225:JSProperty> {
           state: {
             checkoutStatus: <modules/cart.js:112:JSProperty>,
             items: <modules/cart.js:99:JSProperty>,
@@ -22,7 +22,7 @@ VuexStoreContext: {
             setCheckoutStatus: <modules/cart.js:1956:JSFunctionProperty>,
           }
         }
-        VuexModuleImpl products [namespaced] <store/index.js:235:ES6Property> {
+        VuexModuleImpl products [namespaced] <store/index.js:235:JSProperty> {
           state: {
             all: <modules/products.js:70:JSProperty>,
           }

@@ -3,10 +3,10 @@ package org.angular2.codeInsight
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.IdeBundle
-import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.webSymbols.checkListByFile
-import com.intellij.webSymbols.renderLookupItems
+import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.webSymbols.testFramework.renderLookupItems
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.*
@@ -145,6 +145,38 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   fun testExtractLetVariable() =
     doTest(Angular2Bundle.message("angular.intention.introduce.let.variable.name"), ANGULAR_CORE_18_2_1,
            extension = "html", checkIntentionPreview = false)
+
+  fun testExtractComponentTemplate() =
+    doTest(Angular2Bundle.message("angular.intention.extract.component.template.name"), ANGULAR_CORE_18_2_1,
+           dir = true)
+
+  fun testInlineComponentTemplate() =
+    doTest(Angular2Bundle.message("angular.intention.inline.component.template.name"), ANGULAR_CORE_18_2_1,
+           dir = true)
+
+  fun testRemoveUnusedBlockLetVariable() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'letUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedNgTemplateLetVariable() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ngTemplateUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedBlockParameterVariable1() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedBlockParameterVariable2() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedTemplateBindingVariable1() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'forUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
+
+  fun testRemoveUnusedTemplateBindingVariable2() =
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ifUnused'"),  ANGULAR_CORE_18_2_1,
+           checkIntentionPreview = false)
 
   override fun setUp() {
     super.setUp()

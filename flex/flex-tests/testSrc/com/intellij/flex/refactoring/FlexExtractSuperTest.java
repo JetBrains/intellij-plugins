@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.FlexTestOption;
@@ -36,6 +36,7 @@ import com.intellij.refactoring.util.DocCommentPolicy;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.TestActionEvent;
 import com.intellij.util.ArrayUtilRt;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -310,7 +311,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     }
   }
 
-  private void checkAction(String actionId, boolean enabled, int pos) {
+  private void checkAction(@Language("devkit-action-id") String actionId, boolean enabled, int pos) {
     AnAction action = ActionManager.getInstance().getAction(actionId);
     DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
     AnActionEvent e = TestActionEvent.createTestEvent(action, dataContext);

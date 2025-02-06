@@ -14,7 +14,7 @@ import {MatFormFieldModule, MatInputModule, MatTabsModule, MatTableModule} from 
     <<warning descr="Unknown html tag bar">bar</warning>></<warning descr="Unknown html tag bar">bar</warning>>
     <table mat-table>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let <warning descr="Unused constant row">row</warning>; columns: displayedColumns;"></tr>
     </table>
   `
 })

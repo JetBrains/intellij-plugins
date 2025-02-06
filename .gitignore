@@ -2,5 +2,5 @@
 .DS_Store
 .gradle
 .idea
-build
-out
+.intellijPlatform
+.kotlin

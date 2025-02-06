@@ -51,7 +51,7 @@ internal class DefaultRunContextFactory(
     UsageCollector.logConfig(config, loadedProfile.nameForReporting, loadedProfile.pathForReporting)
     UsageCollector.logLicense(config.license)
 
-    if (config.yamlConfigPath != null) {
+    if (config.yamlFiles.effectiveQodanaYaml != null) {
       UsageCollector.logQodanaYamlPresent()
     }
     try {

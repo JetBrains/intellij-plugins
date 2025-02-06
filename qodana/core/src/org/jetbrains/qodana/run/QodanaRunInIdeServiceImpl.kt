@@ -19,6 +19,7 @@ import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.report.guid
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -146,12 +147,14 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       val outDir = FileUtil.createTempDirectory("qodana_output", null, true)
       val resultsDir = FileUtil.createTempDirectory("qodana_results", null, true)
 
+      val yamlFiles = runInIdeParameters.qodanaYamlFile?.let { QodanaYamlFiles.noConfigDir(it) } ?: QodanaYamlFiles.noFiles()
+
       val config = QodanaConfig.fromYaml(
         projectPath = projectPath,
         outPath = outDir.toPath(),
         resultsStorage = resultsDir.toPath(),
         yaml = runInIdeParameters.qodanaYamlConfig,
-        yamlConfigPath = runInIdeParameters.qodanaYamlFile,
+        yamlFiles = yamlFiles,
         baseline = runInIdeParameters.qodanaBaseline?.toString()
       )
 

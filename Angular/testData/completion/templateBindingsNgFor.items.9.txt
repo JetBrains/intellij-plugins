@@ -1,0 +1,7 @@
+count (typeText='number'; priority=100.0; bold; typeGreyed)
+even (typeText='boolean'; priority=100.0; bold; typeGreyed)
+first (typeText='boolean'; priority=100.0; bold; typeGreyed)
+index (typeText='number'; priority=100.0; bold; typeGreyed)
+last (typeText='boolean'; priority=100.0; bold; typeGreyed)
+ngForOf (typeText='any'; priority=100.0; bold; typeGreyed)
+odd (typeText='boolean'; priority=100.0; bold; typeGreyed)

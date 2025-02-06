@@ -7,17 +7,23 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "prettierJS_resources_1",
+  files = glob(["gen/**/*"]),
+  strip_prefix = "gen"
+)
+
 jvm_library(
   name = "prettierJS",
   module_name = "intellij.prettierJS",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/lang-impl",
     "@community//platform/editor-ui-ex:editor-ex",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-api:lang",
@@ -37,7 +43,10 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/statistics",
   ],
-  runtime_deps = [":prettierJS_resources"]
+  runtime_deps = [
+    ":prettierJS_resources",
+    ":prettierJS_resources_1",
+  ]
 )
 
 jvm_library(
@@ -46,11 +55,11 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":prettierJS"],
   deps = [
-    "//plugins/JavaScriptLanguage/javascript-frontback",
+    "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/lang-impl",
     "@community//platform/editor-ui-ex:editor-ex",
-    "@community//xml/xml-frontback:frontback",
+    "@community//xml/xml-parser:parser",
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
@@ -77,8 +86,12 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
+    "@community//platform/statistics/testFramework",
   ],
-  runtime_deps = [":prettierJS_resources"]
+  runtime_deps = [
+    ":prettierJS_resources",
+    ":prettierJS_resources_1",
+  ]
 )
 
 jvm_test(

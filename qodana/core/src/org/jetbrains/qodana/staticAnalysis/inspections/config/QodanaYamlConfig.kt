@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.config
 import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.*
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 import kotlin.io.path.pathString
 
 data class QodanaCoverageYamlConfig(
@@ -54,14 +55,25 @@ data class QodanaYamlConfig(
     val EMPTY_V1 = QodanaYamlConfig(version = "1.0")
   }
 
-  fun withAbsoluteProfilePath(projectPath: Path): QodanaYamlConfig {
+  /**
+   * profile path is constructed either from [yamlPath] or from [projectPath], [projectPath] is in priority
+   *
+   * - Q: why projectPath is used?
+   *   A: because it was implemented like this, and was present in this form (without [yamlPath]) in 2024.3, since 205.1 [yamlPath] is used aswell
+   */
+  fun withAbsoluteProfilePath(
+    projectPath: Path,
+    yamlPath: Path,
+  ): QodanaYamlConfig {
     val profilePath = profile.path
-    return if (profilePath.isBlank() || Paths.get(profilePath).isAbsolute) {
-      this
+    if (profilePath.isBlank() || Paths.get(profilePath).isAbsolute) {
+      return this
     }
-    else {
-      val absolute = projectPath.resolve(profilePath).toAbsolutePath().pathString
-      copy(profile = profile.copy(path = absolute))
-    }
+
+    val absoluteFromProjectPath = projectPath.resolve(profilePath).toAbsolutePath()
+    val absoluteFromYamlPath = yamlPath.parent.resolve(profilePath).toAbsolutePath()
+    val absolutePath = absoluteFromProjectPath.takeIf { it.exists() } ?: absoluteFromYamlPath
+
+    return copy(profile = profile.copy(path = absolutePath.pathString))
   }
 }

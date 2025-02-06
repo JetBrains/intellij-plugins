@@ -2,7 +2,7 @@ package com.jetbrains.plugins.meteor.runner
 
 import com.google.gson.stream.JsonReader
 import com.intellij.javascript.debugger.DebuggableFileFinder
-import com.intellij.javascript.debugger.LOG
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -18,6 +18,7 @@ import java.io.File
 private const val METEOR_LOCAL_PACKAGE_SOURCE_PREFIX = "meteor://\uD83D\uDCBBapp/"
 private const val PACKAGES_PREFIX = "packages/"
 private const val DOT_METEOR = ".meteor"
+private val LOG = logger<MeteorFileFinder>()
 
 /**
  * @param workDir System-independent path

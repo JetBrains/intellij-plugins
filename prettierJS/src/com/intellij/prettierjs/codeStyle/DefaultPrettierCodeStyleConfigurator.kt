@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs.codeStyle
 
 import com.intellij.prettierjs.PrettierConfig
@@ -18,7 +18,7 @@ open class DefaultPrettierCodeStyleConfigurator : PrettierCodeStyleConfigurator 
       settings.LINE_SEPARATOR = lineSeparator
     }
 
-    settings.setSoftMargins(psiFile.language, listOf(prettierConfig.printWidth))
+    commonSettings.softMargins = listOf(prettierConfig.printWidth)
   }
 
   override fun isApplied(settings: CodeStyleSettings, psiFile: PsiFile, prettierConfig: PrettierConfig): Boolean {

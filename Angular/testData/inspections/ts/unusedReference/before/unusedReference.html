@@ -11,5 +11,5 @@
 <div #<warning descr="Unused constant notUsedRefWithAttr" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">notUsedRefWithAttr</warning>='fooo'></div>
 <div ref-<warning descr="Unused constant anotherNotUsedRefWithAttr" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">anotherNotUsedRefWithAttr</warning>='fooo'></div>
 
-<div *ngIf="true"> First <a #innerRef/> </div>
-<div *ngIf="true"> Second <a #<warning descr="Unused constant innerRef" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">innerRef</warning>/> </div>
+<div *ngIf="true"> First <a #innerRef/>, and another <a #<warning descr="Unused constant innerRef" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">innerRef</warning>/> </div>
+<div *ngIf="true"> Second <a #innerRef/> </div>

@@ -52,7 +52,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           }
           .bindSelected(settings::useTypesFromServer)
           .gap(RightGap.SMALL)
-        icon(AllIcons.General.Beta)
+        icon(AllIcons.General.Alpha)
       }.enabledIf(radioButtonDisabled.selected.not())
     }
   }

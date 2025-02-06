@@ -19,6 +19,7 @@ import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.runtime.ToolPathDetector
 import org.jetbrains.annotations.Nls
 import kotlin.io.path.Path
 
@@ -50,16 +51,17 @@ internal class TerraformActionService(private val project: Project, private val 
 
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
     val title = HCLBundle.message("progress.title.terraform.init")
+    val toolType = getApplicableToolType(dirFile)
+    ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsIfEmpty (toolType)
     withBackgroundProgress(project, title) {
-      val applicableToolType = getApplicableToolType(dirFile)
-      if (!isExecutableToolFileConfigured(project, applicableToolType)) {
+      if (!isExecutableToolFileConfigured(project, toolType)) {
         return@withBackgroundProgress
       }
       if (!execTerraformInit(dirFile, project, title)) {
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
           .createNotification(
             title,
-            HCLBundle.message("notification.content.terraform.init.failed", applicableToolType.displayName),
+            HCLBundle.message("notification.content.terraform.init.failed", toolType.displayName),
             NotificationType.WARNING
           ).notify(project)
         return@withBackgroundProgress
@@ -84,7 +86,7 @@ internal class TerraformActionService(private val project: Project, private val 
           TerraformConstants.EXECUTION_NOTIFICATION_GROUP
             .createNotification(
               title,
-              HCLBundle.message("notification.content.terraform.init.succeed", applicableToolType.displayName),
+              HCLBundle.message("notification.content.terraform.init.succeed", toolType.displayName),
               NotificationType.INFORMATION
             ).notify(project)
         }
