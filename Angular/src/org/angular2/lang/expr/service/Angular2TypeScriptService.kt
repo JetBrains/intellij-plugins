@@ -96,13 +96,12 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     else
       super.getQuickInfoAt(usageElement, originalFile)
 
-  override suspend fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> =
-    readAction {
-      val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
-                     ?.let { (transpiledDirectiveFile, topLevelFile) -> translateNamesInErrors(errors, transpiledDirectiveFile, topLevelFile) }
-                   ?: errors
-      result.filter { Angular2LanguageServiceErrorFilter.accept(file, it) }
-    }
+  override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
+  val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
+                 ?.let { (transpiledDirectiveFile, topLevelFile) -> translateNamesInErrors(errors, transpiledDirectiveFile, topLevelFile) }
+               ?: errors
+  return result.filter { Angular2LanguageServiceErrorFilter.accept(file, it) }
+}
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> =
     super.getServiceFixes(file, element, result)

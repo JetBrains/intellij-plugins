@@ -1,12 +1,10 @@
 package org.angular2.library.forms
 
-import com.intellij.idea.IJIgnore
 import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.lang.Angular2Bundle
 
-@IJIgnore(issue = "WEB-71549")
 class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes") {
 
   fun testNestedFormGroupFromControlNameAttribute() =
@@ -99,7 +97,7 @@ class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes")
     signature: String,
     quickFixName: String,
     dir: Boolean = false,
-    extension: String = "ts"
+    extension: String = "ts",
   ) = doConfiguredTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0,
                        dir = dir, checkResult = true, extension = extension) {
     checkHighlightingEx(checkInjections = true)
