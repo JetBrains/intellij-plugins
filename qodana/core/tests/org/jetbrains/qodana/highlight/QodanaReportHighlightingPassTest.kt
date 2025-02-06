@@ -527,13 +527,14 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
   private fun configureGit() {
     JBProtocolRevisionResolver.EP_NAME.point.registerExtension(
       JBProtocolRevisionResolver { _, absolutePath, revision ->
-        val projectPath = Path(projectDir!!.path)
+        val projectDirectory = projectDir
+        val projectPath = Path(projectDirectory!!.path)
         val pathToFile = Path(absolutePath)
         if (!pathToFile.startsWith(projectPath))
           return@JBProtocolRevisionResolver null
 
         val relativePathFromProjectDir = projectPath.relativize(pathToFile).pathString
-        projectDir.findFileByRelativePath(Path(REVISIONS_DIR, revision, relativePathFromProjectDir).invariantSeparatorsPathString)
+        projectDirectory.findFileByRelativePath(Path(REVISIONS_DIR, revision, relativePathFromProjectDir).invariantSeparatorsPathString)
       },
       testRootDisposable
     )
