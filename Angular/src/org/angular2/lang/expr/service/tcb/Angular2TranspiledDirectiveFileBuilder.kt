@@ -113,7 +113,7 @@ object Angular2TranspiledDirectiveFileBuilder {
         }
       })
       CachedValueProvider.Result.create(
-        if (directives.isEmpty() && components.isEmpty)
+        if (directives.isEmpty() && components.isEmpty())
           null
         else
           DirectiveFileCache(directives, components, Angular2TemplateTranspiler.createFileContext(file)),
