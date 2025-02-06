@@ -40,7 +40,7 @@ internal class XmlProblem(private val element: Element,
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
         ?.map { it.toSarifLocation(macroManager, result) }
         ?.toSet()
-      if (result.properties?.containsKey(PROBLEM_TYPE) == false) {
+      if (props[PROBLEM_TYPE] == null) {
         props[PROBLEM_TYPE] = ProblemType.REGULAR
         result.properties = props
       }

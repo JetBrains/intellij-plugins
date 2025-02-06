@@ -8,6 +8,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.model.*
 import org.jdom.Element
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.JVM_TAINT_ANALYSIS_INSPECTION_ID
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.PHP_VULNERABLE_PATHS_INSPECTION_ID
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
@@ -60,7 +62,7 @@ abstract class GlobalFlowOutputConsumer: GlobalOutputConsumer {
       return convertFlowFromXmlFormat(element, macroManager).apply {
         properties = (properties ?: PropertyBag()).apply {
           when (ruleId) {
-            "PhpVulnerablePathsInspection", "JvmTaintAnalysis" -> {
+            PHP_VULNERABLE_PATHS_INSPECTION_ID, JVM_TAINT_ANALYSIS_INSPECTION_ID -> {
               if (!graphs.isNullOrEmpty()) {
                 this[PROBLEM_TYPE] = ProblemType.TAINT
               } else {

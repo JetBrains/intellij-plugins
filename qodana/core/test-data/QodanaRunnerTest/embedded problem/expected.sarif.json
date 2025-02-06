@@ -54,6 +54,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "CSS"
             ]
@@ -110,6 +111,7 @@
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "tags": [
               "CSS"
             ]
