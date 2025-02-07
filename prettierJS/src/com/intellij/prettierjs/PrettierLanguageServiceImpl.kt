@@ -101,12 +101,9 @@ class PrettierLanguageServiceImpl(
   override fun createLanguageServiceQueueBlocking(): JSLanguageServiceQueue =
     JSLanguageServiceQueueImpl(myProject,
                                Protocol(myProject, Consumer { o: Any? -> }),
-                               myProcessConnector,
+                               null,
                                myDefaultReporter,
                                JSLanguageServiceDefaultCacheData())
-
-  override fun needInitToolWindow(): Boolean = false
-
 
   private inner class Protocol(
     project: Project,

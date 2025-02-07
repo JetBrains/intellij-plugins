@@ -134,14 +134,9 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   @Override
   protected JSLanguageServiceQueue createLanguageServiceQueueBlocking() {
-    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), myProcessConnector,
+    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), null,
                                           myDefaultReporter,
                                           new JSLanguageServiceDefaultCacheData());
-  }
-
-  @Override
-  protected boolean needInitToolWindow() {
-    return false;
   }
 
   private abstract static class BaseCommand implements JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
