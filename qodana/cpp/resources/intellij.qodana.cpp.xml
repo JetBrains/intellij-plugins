@@ -7,4 +7,7 @@
     <listener class="org.jetbrains.qodana.cpp.CppQodanaCMakeGenerationStepListener"
               topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
   </projectListeners>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <externalToolsConfigurationProvider  implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
+  </extensions>
 </idea-plugin>
