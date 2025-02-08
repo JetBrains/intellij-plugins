@@ -84,7 +84,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/qodana-test-framework:qodana-testFramework",
     "//idea-tests:ultimate-tests_test_lib",
-    "//python:python-plugin",
+    "//python/plugin",
   ],
   runtime_deps = [":python_resources"]
 )
