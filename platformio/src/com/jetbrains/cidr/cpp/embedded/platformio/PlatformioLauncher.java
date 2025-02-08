@@ -1,6 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio;
 
-import com.intellij.clion.embedded.execution.custom.McuResetActionKt;
+import com.intellij.clion.embedded.execution.custom.McuResetAction;
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
@@ -185,7 +185,6 @@ public class PlatformioLauncher extends CLionLauncher {
                                           @NotNull ExecutionConsole console,
                                           @NotNull List<? super AnAction> actions) throws ExecutionException {
     super.collectAdditionalActions(state, processHandler, console, actions);
-    actions.add(ActionManager.getInstance().getAction("intellij.clion.embedded.mcu.reset"));
-    processHandler.putUserData(McuResetActionKt.RESET_COMMAND, "pio_reset_halt_target");
+    McuResetAction.addResetMcuAction(actions, processHandler, "pio_reset_halt_target");
   }
 }
