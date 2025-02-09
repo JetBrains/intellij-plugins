@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@volar/typescript": "2.4.11",
-    "tsc-ide-plugin": "file:/../../../../plugins/JavaScriptLanguage/src/tscplugin",
+    "tsc-ide-plugin": "file:/../../../../plugins/JavaScriptLanguage/resources/tscplugin",
     "esbuild": "^0.20.0"
   },
   "devDependencies": {
