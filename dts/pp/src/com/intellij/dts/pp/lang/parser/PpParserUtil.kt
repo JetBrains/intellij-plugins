@@ -2,7 +2,7 @@ package com.intellij.dts.pp.lang.parser
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.impl.PsiBuilderImpl
+import com.intellij.lang.SyntaxTreeBuilder
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 
@@ -71,13 +71,13 @@ object PpParserUtil {
    *
    * Returns an empty list if a trailing productions is of type node content.
    */
-  private fun collectTrailingProductions(builder: PpBuildAdapter, exitMarker: PsiBuilder.Marker): List<PsiBuilderImpl.ProductionMarker> {
+  private fun collectTrailingProductions(builder: PpBuildAdapter, exitMarker: PsiBuilder.Marker): List<SyntaxTreeBuilder.Production> {
     val productions = builder.productions.reversed()
 
-    var last: PsiBuilderImpl.ProductionMarker? = null
+    var last: SyntaxTreeBuilder.Production? = null
     var maxEndIndex = Int.MAX_VALUE
 
-    val result = mutableListOf<PsiBuilderImpl.ProductionMarker>()
+    val result = mutableListOf<SyntaxTreeBuilder.Production>()
     for (current in productions) {
       when {
         // stop collecting if the exit marker was reached or an error

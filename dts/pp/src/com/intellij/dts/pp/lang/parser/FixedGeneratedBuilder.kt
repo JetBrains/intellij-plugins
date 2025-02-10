@@ -2,6 +2,7 @@ package com.intellij.dts.pp.lang.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiParser
+import com.intellij.lang.SyntaxTreeBuilder
 import com.intellij.lang.impl.PsiBuilderAdapter
 import com.intellij.lang.impl.PsiBuilderImpl
 import com.intellij.lang.parser.GeneratedParserUtilBase
@@ -23,7 +24,7 @@ open class FixedGeneratedBuilder(
 
   override fun getLexer(): Lexer = getImplFromDelegate(myDelegate).lexer
 
-  override fun getProductions(): List<PsiBuilderImpl.ProductionMarker> = getImplFromDelegate(myDelegate).productions
+  override fun getProductions(): List<SyntaxTreeBuilder.Production> = getImplFromDelegate(myDelegate).productions
 
   override fun getDelegate(): PsiBuilder = getImplFromDelegate(myDelegate)
 }
