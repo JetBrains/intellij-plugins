@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ex.ApplicationInspectionProfileManager
 import com.intellij.codeInspection.ex.InspectionToolRegistrar
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ComponentManagerEx
 import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.project.Project
@@ -14,7 +15,6 @@ import com.intellij.platform.util.coroutines.childScope
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.testFramework.replaceService
-import com.intellij.util.application
 import kotlinx.coroutines.cancel
 import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 import org.jetbrains.qodana.staticAnalysis.profile.*
@@ -26,17 +26,18 @@ fun reinstantiateInspectionRelatedServices(project: Project, testRootDisposable:
   }
 
   // app
-  val appToolRegistrar = InspectionToolRegistrar()
+  val appToolRegistrar = InspectionToolRegistrar(scope)
   Disposer.register(testRootDisposable, appToolRegistrar)
-  application.replaceService(InspectionToolRegistrar::class.java, appToolRegistrar, testRootDisposable)
+  val app = ApplicationManager.getApplication()
+  app.replaceService(InspectionToolRegistrar::class.java, appToolRegistrar, testRootDisposable)
 
   val qodanaAppToolRegistrar = QodanaToolApplicationRegistrar()
   Disposer.register(testRootDisposable, qodanaAppToolRegistrar)
-  application.replaceService(QodanaToolRegistrar::class.java, qodanaAppToolRegistrar, testRootDisposable)
+  app.replaceService(QodanaToolRegistrar::class.java, qodanaAppToolRegistrar, testRootDisposable)
 
-  application.replaceService(InspectionProfileManager::class.java, ApplicationInspectionProfileManager(), testRootDisposable)
+  app.replaceService(InspectionProfileManager::class.java, ApplicationInspectionProfileManager(), testRootDisposable)
 
-  application.replaceService(QodanaApplicationInspectionProfileManager::class.java, QodanaApplicationInspectionProfileManager(), testRootDisposable)
+  app.replaceService(QodanaApplicationInspectionProfileManager::class.java, QodanaApplicationInspectionProfileManager(), testRootDisposable)
 
   // project
   val ktsInspectionManager = KtsInspectionsManager(project, scope.childScope("KtsInspectionsManager"))
