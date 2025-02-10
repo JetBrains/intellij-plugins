@@ -172,16 +172,12 @@
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
-    <psi.symbolReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
-                                 hostLanguage="TypeScript"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
-    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
-                                 hostLanguage="Angular2Html"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferencesProvider"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
+    <webSymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+                                     hostLanguage="TypeScript"
+                                     implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider"/>
+    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
+                                     hostLanguage="Angular2Html"
+                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferencesProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
@@ -385,16 +381,12 @@
     <codeInsight.parameterNameHints language="Angular2Html"
                                     implementationClass="org.angular2.editor.Angular2InlayParameterHintsProvider"/>
     <highlightVisitor implementation="org.angular2.lang.expr.highlighting.Angular2RainbowVisitor"/>
-    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
-                                 hostLanguage="Angular2"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferencesProvider"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
-    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
-                                 hostLanguage="Angular2"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
+    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
+                                     hostLanguage="Angular2"
+                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferencesProvider"/>
+    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
+                                     hostLanguage="Angular2"
+                                     implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="NG-META:"/>

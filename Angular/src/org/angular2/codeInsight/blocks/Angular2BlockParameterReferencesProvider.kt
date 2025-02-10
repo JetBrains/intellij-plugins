@@ -2,12 +2,12 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.references.WebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 
-class Angular2BlockParameterReferencesProvider : WebSymbolReferenceProvider<Angular2BlockParameter>() {
+class Angular2BlockParameterReferencesProvider : PsiWebSymbolReferenceProvider<Angular2BlockParameter> {
 
-  override fun getOffsetsToSymbols(psiElement: Angular2BlockParameter): Map<Int, WebSymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: Angular2BlockParameter): Map<Int, WebSymbol> {
     if (psiElement.isPrimaryExpression) {
       return emptyMap()
     }

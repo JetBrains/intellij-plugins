@@ -2,14 +2,14 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.references.WebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
-class Angular2BlockReferencesProvider : WebSymbolReferenceProvider<Angular2HtmlBlock>() {
+class Angular2BlockReferencesProvider : PsiWebSymbolReferenceProvider<Angular2HtmlBlock> {
 
-  override fun getSymbol(psiElement: Angular2HtmlBlock): WebSymbol? =
+  override fun getReferencedSymbol(psiElement: Angular2HtmlBlock): WebSymbol? =
     psiElement.definition
 
-  override fun getSymbolNameOffset(psiElement: Angular2HtmlBlock): Int = 1
+  override fun getReferencedSymbolNameOffset(psiElement: Angular2HtmlBlock): Int = 1
 
 }

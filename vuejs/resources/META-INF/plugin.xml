@@ -257,11 +257,9 @@
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
-    <psi.symbolReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
-                                 hostLanguage="HtmlCompatible"
-                                 implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
+    <webSymbols.psiReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
+                                     hostLanguage="HtmlCompatible"
+                                     implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"/>
     <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
