@@ -2,11 +2,10 @@ package org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting
 
 import com.intellij.codeInsight.daemon.impl.ProblemRelatedLocation
 import com.intellij.codeInsight.daemon.impl.withRelatedLocations
-import com.intellij.codeInspection.GlobalInspectionContext
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingInspectionHelper
 import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingResultHandler
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
+import kotlin.collections.isNotEmpty
 
 class IncorrectFormattingResultHandlerQodana: IncorrectFormattingResultHandler {
   override fun getResults(reportPerFile: Boolean, helper: IncorrectFormattingInspectionHelper): Array<ProblemDescriptor>? {
@@ -18,10 +17,6 @@ class IncorrectFormattingResultHandlerQodana: IncorrectFormattingResultHandler {
       )
     }
     return null
-  }
-
-  override fun isCorrectHandlerForContext(globalContext: GlobalInspectionContext): Boolean {
-    return globalContext is QodanaGlobalInspectionContext
   }
 
   private fun evenlyDistributedItems(array: Array<ProblemDescriptor>, itemCount: Int): Array<ProblemDescriptor> {
