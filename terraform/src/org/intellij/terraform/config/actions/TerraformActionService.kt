@@ -20,6 +20,7 @@ import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.ToolPathDetector
+import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
 import kotlin.io.path.Path
 
@@ -28,11 +29,10 @@ internal class TerraformActionService(private val project: Project, private val 
 
   fun scheduleTerraformInit(directory: String, notifyOnSuccess: Boolean): Job {
     return coroutineScope.launch {
-      val title = HCLBundle.message("progress.title.terraform.init")
+      val title = HCLBundle.message("progress.title.terraform.init", directory)
       val dirFile = LocalFileSystem.getInstance().findFileByNioFile(Path(directory))
       if (dirFile == null || !dirFile.isDirectory) {
-        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
-          .createNotification(
+        TerraformConstants.getNotificationGroup().createNotification(
             title,
             HCLBundle.message("notification.content.cannot.find.directory", directory),
             NotificationType.ERROR
@@ -50,15 +50,16 @@ internal class TerraformActionService(private val project: Project, private val 
   }
 
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
-    val title = HCLBundle.message("progress.title.terraform.init")
+    val title = HCLBundle.message("progress.title.terraform.init", dirFile.name)
     val toolType = getApplicableToolType(dirFile)
-    ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsIfEmpty (toolType)
+    if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
+      showIncorrectPathNotification(project, toolType)
+      return
+    }
+
     withBackgroundProgress(project, title) {
-      if (!isExecutableToolFileConfigured(project, toolType)) {
-        return@withBackgroundProgress
-      }
       if (!execTerraformInit(dirFile, project, title)) {
-        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+        TerraformConstants.getNotificationGroup()
           .createNotification(
             title,
             HCLBundle.message("notification.content.terraform.init.failed", toolType.displayName),
@@ -83,7 +84,7 @@ internal class TerraformActionService(private val project: Project, private val 
         }
         if (notifyOnSuccess) {
           localSchemaService.awaitModelsReady()
-          TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+          TerraformConstants.getNotificationGroup()
             .createNotification(
               title,
               HCLBundle.message("notification.content.terraform.init.succeed", toolType.displayName),

@@ -18,17 +18,15 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
-import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.text.findTextRange
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TerraformActionService
-import org.intellij.terraform.config.actions.isExecutableToolFileConfigured
-import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jdom.Element
 import org.jetbrains.annotations.Nls
+import kotlin.io.path.Path
 
 internal abstract class TfToolsRunConfigurationBase(
   project: Project,
@@ -49,15 +47,14 @@ internal abstract class TfToolsRunConfigurationBase(
 
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
-    ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsIfEmpty(toolType)
-    if (!isExecutableToolFileConfigured(project, toolType)) {
+    if (!ToolPathDetector.getInstance(project).isExecutable(Path(toolPath))) {
+      showIncorrectPathNotification(project, toolType)
       return null
     }
     val error = error
     if (error != null) {
       throw ExecutionException(error)
     }
-
     return TfToolCommandLineState(project, this, env, toolType)
   }
 
@@ -69,16 +66,14 @@ internal abstract class TfToolsRunConfigurationBase(
       throw exception
     }
 
-    if (!isPathExecutable(toolPath)) {
+    val pathDetector = ToolPathDetector.getInstance(project)
+
+    if (!pathDetector.isExecutable(Path(toolPath))) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
         CommonBundle.getErrorTitle()
       )
-      exception.setQuickFix(Runnable {
-        runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-          ToolPathDetector.getInstance(project).detectPathAndUpdateSettingsAsync(toolType).await()
-        }
-      })
+      exception.setQuickFix(DetectExecutableAction(project, toolType))
       throw exception
     }
 
@@ -96,7 +91,7 @@ internal abstract class TfToolsRunConfigurationBase(
       if (toolPath.isBlank()) {
         return HCLBundle.message("run.configuration.no.terraform.specified", toolType.displayName)
       }
-      if (!isPathExecutable(toolPath)) {
+      if (!ToolPathDetector.getInstance(project).isExecutable(Path(toolPath))) {
         return HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName)
       }
       return null

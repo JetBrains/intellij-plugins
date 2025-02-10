@@ -15,9 +15,6 @@
  */
 package org.intellij.terraform.config.actions
 
-import com.intellij.execution.wsl.WslPath
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -26,21 +23,19 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
-import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
-import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.runtime.TerraformToolConfigurable
+import org.intellij.terraform.runtime.ToolPathDetector
+import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
-import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 
 internal abstract class TFExternalToolsAction : DumbAwareAction() {
@@ -81,10 +76,15 @@ internal abstract class TFExternalToolsAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-    val title = e.presentation.text ?: "Processing..."
+    val title = e.presentation.text ?: HCLBundle.message("progress.title.processing")
 
     getActionCoroutineScope(project).launch {
       try {
+        val toolType = getApplicableToolType(file)
+        if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
+          showIncorrectPathNotification(project, toolType)
+          return@launch
+        }
         invoke(project, title, file)
       }
       catch (ex: Exception) {
@@ -106,7 +106,7 @@ internal abstract class TFExternalToolsAction : DumbAwareAction() {
 }
 
 internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
-  TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+  TerraformConstants.getNotificationGroup()
     .createNotification(
       title,
       @Suppress("HardCodedStringLiteral")
@@ -116,28 +116,4 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
         .joinToString("\n"),
       NotificationType.ERROR
     ).notify(project)
-}
-
-internal fun isExecutableToolFileConfigured(project: Project, toolType: TfToolType): Boolean {
-  val toolPath = toolType.getToolSettings(project).toolPath
-  return if (!isPathExecutable(toolPath)) {
-    TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
-      HCLBundle.message("run.configuration.terraform.path.title", toolType.displayName),
-      HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
-      NotificationType.ERROR
-    ).addAction(object : NotificationAction(HCLBundle.message("terraform.open.settings")) {
-      override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(e.project, TerraformToolConfigurable::class.java)
-      }
-    }).notify(project)
-    false
-  }
-  else {
-    true
-  }
-}
-
-internal fun isPathExecutable(path: String): Boolean {
-  if (FileUtil.canExecute(File(path))) return true
-  return WslPath.parseWindowsUncPath(path) != null
 }

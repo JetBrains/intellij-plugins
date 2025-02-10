@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.*;
 
 @SuppressWarnings("unused")
@@ -198,7 +199,7 @@ public final class TFExecutor {
     ApplicationManager.getApplication().invokeLater(
         () -> {
           String title = getPresentableName();
-          Notification notification = TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(title, message, type);
+          Notification notification = TerraformConstants.getNotificationGroup().createNotification(title, message, type);
           if (type == NotificationType.ERROR) {
             notification.addAction(new NotificationAction(HCLBundle.message("terraform.open.settings")) {
               @Override
@@ -233,10 +234,12 @@ public final class TFExecutor {
       exePath = wslPath.getLinuxPath();
     }
     GeneralCommandLine commandLine = !myPtyDisabled && PtyCommandLine.isEnabled() ? new PtyCommandLine() : new GeneralCommandLine();
-    commandLine.setExePath(exePath);
+    commandLine.withExePath(exePath);
     commandLine.getEnvironment().putAll(myExtraEnvironment);
 
-    commandLine.withWorkDirectory(myWorkDirectory);
+    if (myWorkDirectory != null) {
+      commandLine.withWorkingDirectory(Paths.get(myWorkDirectory));
+    }
     commandLine.addParameters(myParameterList.getList());
     commandLine.withParentEnvironmentType(myParentEnvironmentType);
     commandLine.withCharset(StandardCharsets.UTF_8);

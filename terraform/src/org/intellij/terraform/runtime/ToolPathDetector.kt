@@ -1,110 +1,138 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
-import com.intellij.execution.configurations.PathEnvironmentVariableUtil
-import com.intellij.execution.wsl.WslPath
-import com.intellij.openapi.components.Service
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.options.ConfigurationQuickFix
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
+import com.intellij.platform.eel.provider.asNioPath
+import com.intellij.platform.eel.provider.getEelDescriptor
+import com.intellij.platform.eel.provider.utils.where
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
-import com.intellij.util.concurrency.annotations.RequiresEdt
-import kotlinx.coroutines.*
+import com.intellij.platform.ide.progress.withBackgroundProgress
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.install.getBinaryName
-import java.nio.file.Files
-import kotlin.io.path.Path
-import kotlin.io.path.nameWithoutExtension
+import java.nio.file.Path
+import kotlin.io.path.*
 
-@Service(Service.Level.PROJECT)
-internal class ToolPathDetector(val project: Project, val coroutineScope: CoroutineScope) {
+internal interface ToolPathDetector {
 
   companion object {
     fun getInstance(project: Project): ToolPathDetector = project.service<ToolPathDetector>()
   }
 
-  @RequiresEdt
-  fun detectPathAndUpdateSettingsIfEmpty(toolType: TfToolType) {
-    toolType.getToolSettings(project).toolPath.ifBlank {
-      runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-        detectPathAndUpdateSettingsAsync(toolType).await()
+  suspend fun detectAndVerifyTool(toolType: TfToolType, overrideExistingValue: Boolean): Boolean
+
+  fun isExecutable(path: Path): Boolean
+
+  suspend fun detect(path: String): String?
+}
+
+internal class ToolPathDetectorImpl(val project: Project, val coroutineScope: CoroutineScope) : ToolPathDetector {
+
+  override suspend fun detectAndVerifyTool(toolType: TfToolType, overwriteExistingSettings: Boolean): Boolean {
+    val toolPath = Path(toolType.getToolSettings(project).toolPath)
+    if (isExecutable(toolPath)) return true
+    if (overwriteExistingSettings || toolPath.pathString.isBlank()) {
+      withBackgroundProgress(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+        detectToolAndUpdateSettings(toolType)
       }
     }
+    return isExecutable(Path(toolType.getToolSettings(project).toolPath))
   }
 
-  fun detectPathAndUpdateSettingsAsync(toolType: TfToolType): Deferred<TfToolSettings> {
-    return coroutineScope.async {
-      val settings = toolType.getToolSettings(project)
-      val execName = toolType.executableName
-      if (execName.isNotBlank()) {
-        val detectedPath = detect(execName)
-        if (!detectedPath.isNullOrEmpty()) {
-          settings.toolPath = detectedPath
-        }
+  private suspend fun detectToolAndUpdateSettings(toolType: TfToolType): TfToolSettings {
+    val settings = toolType.getToolSettings(project)
+    val execName = toolType.executableName
+    if (execName.isNotBlank()) {
+      val detectedPath = detect(execName)
+      if (!detectedPath.isNullOrEmpty()) {
+        settings.toolPath = detectedPath
       }
-      settings
     }
+    return settings
   }
 
-  suspend fun detect(path: String): String? {
+  override suspend fun detect(path: String): String? {
     return withContext(Dispatchers.IO) {
-      runInterruptible {
-        val filePath = Path(path)
-        if (Files.isExecutable(filePath)) {
-          return@runInterruptible path
-        }
-        val fileName = filePath.fileName
-        val projectFilePath = project.projectFilePath
-        if (projectFilePath != null) {
-          val wslDistribution = WslPath.getDistributionByWindowsUncPath(projectFilePath)
-          if (wslDistribution != null) {
-            try {
-              val out = wslDistribution.executeOnWsl(3000, "which", fileName.nameWithoutExtension)
-              if (out.exitCode == 0) {
-                return@runInterruptible wslDistribution.getWindowsPath(out.stdout.trim())
-              }
-              else {
-                logger<ToolPathDetector>().info("Cannot detect ${path} in WSL. Output stdout: ${out.stdout}")
-                return@runInterruptible null
-              }
-            }
-            catch (e: Exception) {
-              logger<ToolPathDetector>().warnWithDebug(e)
-            }
-          }
-        }
-        return@runInterruptible findExecutable(getBinaryName(fileName.nameWithoutExtension))
+      val filePath = Path(path)
+      if (isExecutable(filePath)) {
+        return@withContext path
       }
+      val fileName = filePath.fileName.nameWithoutExtension
+      val eelApi = project.getEelDescriptor().upgrade()
+      val exePath = eelApi.exec.where(fileName)?.asNioPath()?.takeIf { isExecutable(it) }?.absolutePathString()
+      return@withContext exePath
     }
   }
 
-  private fun findExecutable(path: String): String? {
-    return PathEnvironmentVariableUtil.findInPath(path)?.takeIf { file -> file.canExecute() }?.absolutePath
+  override fun isExecutable(path: Path): Boolean {
+    return path.pathString.isNotBlank() && path.isRegularFile() && path.isExecutable()
+  }
+}
+
+internal fun showIncorrectPathNotification(
+  project: Project,
+  toolType: TfToolType,
+) {
+  val toolPath = toolType.getToolSettings(project).toolPath
+  TerraformConstants.getNotificationGroup().createNotification(
+    HCLBundle.message("run.configuration.terraform.path.title", toolType.displayName),
+    HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
+    NotificationType.ERROR
+  ).addActions(setOf(DetectExecutableAction(project, toolType), OpenSettingsAction()))
+    .notify(project)
+}
+
+internal fun showDetectedPathNotification(project: Project, toolType: TfToolType) {
+  val detectedPath = toolType.getToolSettings(project).toolPath
+  TerraformConstants.getNotificationGroup().createNotification(
+    HCLBundle.message("run.configuration.terraform.path.detected.title", toolType.displayName),
+    HCLBundle.message("run.configuration.terraform.path.detected", detectedPath),
+    NotificationType.INFORMATION
+  ).addAction(OpenSettingsAction()).notify(project)
+}
+
+internal class DetectExecutableAction(
+  private val project: Project,
+  private val toolType: TfToolType,
+) : NotificationAction(HCLBundle.message("tool.detectAndTestButton.text")), ConfigurationQuickFix {
+
+  override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+    notification.expire()
+    detectExecutable(true)
   }
 
-  suspend fun isExecutable(path: String): Boolean {
-    return withContext(Dispatchers.IO) {
-      runInterruptible {
-        val filePath = Path(path)
-        if (Files.isExecutable(filePath)) return@runInterruptible true
+  override fun applyFix(dataContext: DataContext) {
+    detectExecutable(false)
+  }
 
-        val wslDistribution = WslPath.getDistributionByWindowsUncPath(path)
-        if (wslDistribution != null) {
-          try {
-            val command = wslDistribution.getWslPath(filePath)
-            val out = wslDistribution.executeOnWsl(3000, "test", "-x", command)
-            out.exitCode == 0
-          }
-          catch (e: Exception) {
-            logger<ToolPathDetector>().warnWithDebug(e)
-            false
-          }
-        }
-        else {
-          false
-        }
-      }
+  private fun detectExecutable(showNotification: Boolean = true) {
+    val isToolSetUp = runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+      ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, true)
+    }
+    if (isToolSetUp && showNotification) {
+      showDetectedPathNotification(project, toolType)
+    }
+    else if (showNotification) {
+      showIncorrectPathNotification(project, toolType)
     }
   }
 }
+
+internal class OpenSettingsAction : NotificationAction(HCLBundle.message("terraform.open.settings")) {
+  override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+    notification.expire()
+    ShowSettingsUtil.getInstance().showSettingsDialog(e.project, TerraformToolConfigurable::class.java)
+  }
+}
+

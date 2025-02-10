@@ -5,5 +5,7 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationGroupManager;
 
 public final class TerraformConstants {
-  public static final NotificationGroup EXECUTION_NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Terraform Execution");
+  public static NotificationGroup getNotificationGroup()  {
+    return NotificationGroupManager.getInstance().getNotificationGroup("Terraform Execution");
+  }
 }

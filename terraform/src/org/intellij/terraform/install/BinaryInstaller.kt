@@ -26,7 +26,7 @@ import com.intellij.util.io.Decompressor
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.io.RequestBuilder
 import com.sun.jna.platform.win32.*
-import org.intellij.terraform.config.TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.jetbrains.annotations.Nls
@@ -363,7 +363,7 @@ internal class BinaryInstaller private constructor(
   private fun showNotification(@NlsContexts.NotificationContent content: String,
                                type: NotificationType,
                                project: Project) {
-    EXECUTION_NOTIFICATION_GROUP.createNotification(HCLBundle.message("terraform.name"), content, type)
+    TerraformConstants.getNotificationGroup().createNotification(HCLBundle.message("terraform.name"), content, type)
       .notify(project)
   }
 

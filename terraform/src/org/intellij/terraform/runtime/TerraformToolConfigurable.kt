@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
-import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
@@ -25,7 +24,7 @@ import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getToolVersion
 import org.intellij.terraform.install.installTFTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
-import java.io.File
+import kotlin.io.path.Path
 
 private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
 private const val PARSE_DELAY = 100L
@@ -68,8 +67,7 @@ internal class TerraformToolConfigurable(private val project: Project) : BoundCo
       emptyText.text = type.getBinaryName()
     }.trimmedTextValidation(
       validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
-        val wslDistribution = WslPath.getDistributionByWindowsUncPath(filePath)
-        filePath.isNotBlank() && (!File(filePath).exists() && wslDistribution == null)
+        !ToolPathDetector.getInstance(project).isExecutable(Path(filePath))
       }
     ).align(AlignX.FILL)
     val testButton = testToolButton(type, project.service<ToolPathDetector>(), parentDisposable, executorField.component)
@@ -101,14 +99,14 @@ internal class TerraformToolConfigurable(private val project: Project) : BoundCo
     }
   ) {
     val executorPathText = withContext(Dispatchers.EDT) { executorPathField?.text }
-    if (executorPathText.isNullOrEmpty() || !pathDetector.isExecutable(executorPathText)) { //Trying to detect tool in PATH variable
+    if (executorPathText.isNullOrEmpty() || !pathDetector.isExecutable(Path(executorPathText))) { //Trying to detect tool in PATH variable
       val detectedPath = pathDetector.detect(executorPathText.orEmpty().ifBlank { type.executableName })
       if (!detectedPath.isNullOrEmpty()) {
         withContext(Dispatchers.EDT) { executorPathField?.text = detectedPath }
       }
     }
     val updatedPathText = withContext(Dispatchers.EDT) { executorPathField?.text }
-    if (!updatedPathText.isNullOrEmpty() && pathDetector.isExecutable(updatedPathText)) {
+    if (!updatedPathText.isNullOrEmpty() && pathDetector.isExecutable(Path(updatedPathText))) {
       val versionLine = getToolVersion(project, type, updatedPathText).lineSequence().firstOrNull()?.trim()
       val version = versionLine?.split(" ")?.firstOrNull {
         VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))

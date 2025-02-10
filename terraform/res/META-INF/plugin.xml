@@ -272,10 +272,13 @@
                         serviceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceImpl"
                         testServiceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceMock"/>
 
+    <projectService serviceInterface="org.intellij.terraform.runtime.ToolPathDetector"
+                    serviceImplementation="org.intellij.terraform.runtime.ToolPathDetectorImpl"
+                    testServiceImplementation="org.intellij.terraform.runtime.ToolPathDetectorMock"
+    />
+
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
-    <postStartupActivity implementation="org.intellij.terraform.runtime.TerraformProjectSettings$DetectOnStart" />
-    <postStartupActivity implementation="org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings$DetectOnStart" />
 
     <!-- Code Inspections -->
     <!-- HCL used instead HCL-Terraform, to apply to all psi elements. .hcl files filtered out in #buildVisito method -->
@@ -397,7 +400,7 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WEAK WARNING"
                      implementationClass="org.intellij.terraform.hil.inspection.HCLSimplifyExpressionInspection"/>
 
-    <fileBasedIndex implementation="org.intellij.terraform.hcl.HCLSymbolIndex" />
+    <fileBasedIndex implementation="org.intellij.terraform.hcl.HCLSymbolIndex"/>
     <gotoSymbolContributor implementation="org.intellij.terraform.hcl.GoToSymbolContributor"/>
 
     <!-- Terraform as Tool -->

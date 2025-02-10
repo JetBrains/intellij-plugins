@@ -3,13 +3,9 @@ package org.intellij.terraform.runtime
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
-import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.hasHCLLanguageFiles
-import org.intellij.terraform.install.TfToolType
 
 @Service(Service.Level.PROJECT)
 @State(name = "TerraformProjectSettings", storages = [Storage("terraform.xml")])
@@ -41,12 +37,4 @@ class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettin
     fun getInstance(project: Project): TerraformProjectSettings = project.service()
   }
 
-  internal class DetectOnStart : ProjectActivity {
-    override suspend fun execute(project: Project) {
-      val settings = project.serviceAsync<TerraformProjectSettings>()
-      if (settings.toolPath.isEmpty() && hasHCLLanguageFiles(project, TerraformFileType)) {
-        project.serviceAsync<ToolPathDetector>().detectPathAndUpdateSettingsAsync(TfToolType.TERRAFORM)
-      }
-    }
-  }
 }
