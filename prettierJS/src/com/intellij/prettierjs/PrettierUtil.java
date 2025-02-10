@@ -75,12 +75,13 @@ public final class PrettierUtil {
    * <a href="https://github.com/prettier/prettier/blob/main/docs/configuration.md">github.com/prettier/prettier/blob/main/docs/configuration.md</a>
    */
   private static final List<String> CONFIG_FILE_NAMES = List.of(
-    ".prettierrc",
-    ".prettierrc.json", ".prettierrc.yml", ".prettierrc.yaml", ".prettierrc.json5",
-    ".prettierrc.js", CONFIG_FILE_NAME + ".js",
-    ".prettierrc.mjs", CONFIG_FILE_NAME + ".mjs",
-    ".prettierrc.cjs", CONFIG_FILE_NAME + ".cjs",
-    ".prettierrc.toml"
+    RC_FILE_NAME,
+    RC_FILE_NAME + ".json", RC_FILE_NAME + ".yml",
+    RC_FILE_NAME + ".yaml", RC_FILE_NAME + ".json5",
+    RC_FILE_NAME + ".js", CONFIG_FILE_NAME + ".js",
+    RC_FILE_NAME + ".mjs", CONFIG_FILE_NAME + ".mjs",
+    RC_FILE_NAME + ".cjs", CONFIG_FILE_NAME + ".cjs",
+    RC_FILE_NAME + ".toml"
   );
 
   private static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
