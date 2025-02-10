@@ -389,6 +389,6 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <resultHandler implementation="org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerQodana"/>
+    <resultHandlerProvider implementation="org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerProviderQodana"/>
   </extensions>
 </idea-plugin>
