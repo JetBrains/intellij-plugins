@@ -4,7 +4,6 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
 import com.intellij.coverage.CoverageSuitesBundle
-import com.intellij.idea.IJIgnore
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.php.phpunit.coverage.PhpUnitCoverageEngine
@@ -14,7 +13,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFro
 import org.junit.Test
 import java.nio.file.Path
 
-@IJIgnore(issue = "QD-10938")
 class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspection") {
   private val dummyProvider: CoverageFileProvider = object : CoverageFileProvider {
     override fun getCoverageDataFilePath() = ""
