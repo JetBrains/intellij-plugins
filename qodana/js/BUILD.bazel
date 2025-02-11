@@ -59,6 +59,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//duplicatedetector:duplicatesDetector",
     "//duplicatedetector:duplicatesDetector_test_lib",
+    "//plugins/NodeJS/tests:nodeJS-tests_test_lib",
   ],
   runtime_deps = [":js_resources"]
 )
