@@ -26,7 +26,7 @@ export class <symbolName descr="classes//exported class">UnderlineDirective</sym
         <symbolName descr="instance field">outputs</symbolName>: ['<symbolName textAttributesKey="NG.EVENT_BINDING_ATTR_NAME">hover</symbolName>']
     }, {
         <symbolName descr="instance field">directive</symbolName>: <symbolName descr="classes//exported class">UnderlineDirective</symbolName>,
-        <symbolName descr="instance field">inputs</symbolName>: ['<symbolName textAttributesKey="NG.PROPERTY_BINDING_ATTR_NAME">color: underlineColor</symbolName>']
+        <symbolName descr="instance field">inputs</symbolName>: ['<symbolName textAttributesKey="NG.PROPERTY_BINDING_ATTR_NAME">color</symbolName>: <symbolName textAttributesKey="NG.PROPERTY_BINDING_ATTR_NAME">underlineColor</symbolName>']
     }]
 })
 export class <symbolName descr="classes//exported class">MouseenterDirective</symbolName> {

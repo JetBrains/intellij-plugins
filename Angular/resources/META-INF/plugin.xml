@@ -162,16 +162,12 @@
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory" order="before JavaScript"/>
     <psi.referenceContributor language="TypeScript" implementation="org.angular2.codeInsight.refs.Angular2TSReferencesContributor"/>
     <psi.referenceContributor language="HtmlCompatible" implementation="org.angular2.codeInsight.refs.Angular2HtmlReferencesContributor"/>
-    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
-                                 hostLanguage="Angular2Html"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgContentSelectorProvider"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
-    <psi.symbolReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
-                                 hostLanguage="TypeScript"
-                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
-                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
+    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
+                                     hostLanguage="Angular2Html"
+                                     implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgContentSelectorProvider"/>
+    <webSymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+                                     hostLanguage="TypeScript"
+                                     implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"/>
     <webSymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                      hostLanguage="TypeScript"
                                      implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider"/>
@@ -189,6 +185,9 @@
                                        implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol$Factory"/>
     <webSymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedWebSymbolProvider"/>
     <webSymbols.documentationCustomizer implementation="org.angular2.web.Angular2WebSymbolDocumentationCustomizer"/>
+    <webSymbols.highlightingCustomizer id="angular2"
+                                       implementation="org.angular2.web.Angular2WebSymbolHighlightingCustomizer"
+                                       order="before js, before html"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
@@ -220,10 +219,13 @@
                           order="before TypeScript"/>
     <annotator language="TypeScript" implementationClass="org.angular2.editor.Angular2Annotator"/>
     <annotator language="Angular2" implementationClass="org.angular2.editor.Angular2Annotator"/>
-    <codeInsight.parameterInfo language="Angular2" implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
-    <codeInsight.parameterInfo language="Angular2Html" implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2"
+                               implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2Html"
+                               implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingsParameterInfoHandler"/>
     <codeInsight.parameterInfo language="Angular2" implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterInfoHandler"/>
-    <codeInsight.parameterInfo language="Angular2Html" implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="Angular2Html"
+                               implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterInfoHandler"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
@@ -419,7 +421,8 @@
     <webSymbols.queryResultsCustomizerFactory
       implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryResultsCustomizer$Factory"/>
     <webSymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryConfigurator"/>
-    <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.library.forms.Angular2FormsWebSymbolsCodeCompletionItemCustomizer"/>
+    <webSymbols.codeCompletionItemCustomizer
+      implementation="org.angular2.library.forms.Angular2FormsWebSymbolsCodeCompletionItemCustomizer"/>
     <webSymbols.problemQuickFixProvider
       implementation="org.angular2.library.forms.quickFixes.Angular2FormsWebSymbolProblemQuickFixProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>

@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.webSymbols.highlighting.newSilentAnnotationWithDebugInfo
 import org.angular2.lang.html.Angular2HtmlFile
 
 class Angular2FormsAnnotator : Annotator {
@@ -57,9 +58,9 @@ class Angular2FormsAnnotator : Annotator {
 
   private fun highlightFormControlReference(holder: AnnotationHolder, textRange: TextRange, text: String) {
     val isNumber = text.toIntOrNull() != null
-    @Suppress("HardCodedStringLiteral", "DialogTitleCapitalization")
-    holder.newAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, if (isNumber) "form array control" else "form control")
+    holder.newSilentAnnotationWithDebugInfo(HighlightInfoType.SYMBOL_TYPE_SEVERITY, if (isNumber) "form array control" else "form control")
       .range(textRange)
+      .needsUpdateOnTyping()
       .textAttributes(if (isNumber) TypeScriptHighlighter.TS_NUMBER else TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
       .create()
   }

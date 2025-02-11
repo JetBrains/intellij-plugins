@@ -21,14 +21,15 @@ class Angular2SourceDirectiveVirtualProperty(
   override val name: String,
   override val required: Boolean,
   override val sourceElement: PsiElement,
-  override val textRangeInSourceElement: TextRange?
+  override val textRangeInSourceElement: TextRange?,
 ) : Angular2ClassBasedDirectiveProperty, WebSymbolDeclaredInPsi {
 
   constructor(owner: TypeScriptClass, qualifiedKind: WebSymbolQualifiedKind, info: Angular2PropertyInfo)
-    : this(owner, qualifiedKind, info.name, info.required, info.declaringElement ?: owner,
+    : this(owner, qualifiedKind, info.name, info.required, info.declaringElement ?: info.nameElement ?: owner,
            when {
              info.declarationRange != null -> info.declarationRange
              info.declaringElement != null -> TextRange(1, 1 + info.name.length)
+             info.nameElement != null -> TextRange(1, 1 + info.name.length)
              else -> null
            }
   )

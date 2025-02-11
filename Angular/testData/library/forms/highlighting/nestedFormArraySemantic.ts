@@ -2,7 +2,7 @@ import {<symbolName descr="identifiers//exported function">Component</symbolName
 import {<symbolName descr="identifiers//exported variable">FormControl</symbolName>, <symbolName descr="classes//exported class">FormGroup</symbolName>, <symbolName descr="classes//exported class">FormArray</symbolName>} <info descr="null">from</info> '@angular/forms';
 
 <info descr="decorator">@</info><info descr="decorator">Component</info>({
-   <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="null">nested-form-groups</symbolName>',
+   <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="HTML_TAG_NAME">nested-form-groups</symbolName>',
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
         <form [formGroup]="<symbolName descr="instance field">form</symbolName>">
             <div formGroupName="<symbolName descr="form control">first</symbolName>">

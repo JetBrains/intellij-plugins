@@ -10,4 +10,5 @@ data class Angular2PropertyInfo(
   val declarationSource: PsiElement?,
   val declaringElement: PsiElement?,
   val declarationRange: TextRange? = if (declaringElement != null) TextRange(1, 1 + name.length) else null,
+  val nameElement: PsiElement? = null,
 )

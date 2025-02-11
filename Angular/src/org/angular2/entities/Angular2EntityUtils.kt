@@ -84,11 +84,13 @@ object Angular2EntityUtils {
     context: PsiElement?,
     declaration: Boolean,
   ): PropertyDeclarationOrReferenceInfo? {
-    val ownerProp = if (declaration) Angular2DecoratorUtil.ALIAS_PROP else Angular2DecoratorUtil.NAME_PROP
     val contextParent = context?.parent ?: return null
     val parent = contextParent.let { parent ->
       if (parent is JSProperty)
-        parent.takeIf { property -> property.name == ownerProp }?.parent?.parent
+        parent.takeIf { property ->
+          property.name == Angular2DecoratorUtil.NAME_PROP
+          || declaration && property.name == Angular2DecoratorUtil.ALIAS_PROP
+        }?.parent?.parent
       else
         parent
     }
@@ -208,7 +210,7 @@ object Angular2EntityUtils {
     try {
       selectors = Angular2DirectiveSimpleSelector.parse(selector)
     }
-    catch (e: ParseException) {
+    catch (_: ParseException) {
       return emptySet()
     }
 

@@ -38,7 +38,7 @@ export class BarComponent {
  */
 @Directive({
   standalone: true,
-  selector: '[bar]',
+  selector: '[<weak_warning descr="bar is deprecated, do not use!">bar</weak_warning>]',
 })
 export class BarDirective{
 

@@ -199,13 +199,17 @@ internal object Angular2SourceUtil {
   @Deprecated(message = "Use createPropertyInfo overload with function names list",
               replaceWith = ReplaceWith("createPropertyInfo(call, listOfNotNull(functionName), defaultName, getFunctionNameFromIndex)",
                                         "org.angular2.entities.source.Angular2SourceUtil.createPropertyInfo"))
-  fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String,
-                         getFunctionNameFromIndex: (JSCallExpression) -> String?): Angular2PropertyInfo? =
+  fun createPropertyInfo(
+    call: JSCallExpression, functionName: String?, defaultName: String,
+    getFunctionNameFromIndex: (JSCallExpression) -> String?,
+  ): Angular2PropertyInfo? =
     createPropertyInfo(call, listOfNotNull(functionName), defaultName, getFunctionNameFromIndex)
 
   @JvmStatic
-  fun createPropertyInfo(call: JSCallExpression, functionNames: List<String>, defaultName: String,
-                         getFunctionNameFromIndex: (JSCallExpression) -> String?): Angular2PropertyInfo? {
+  fun createPropertyInfo(
+    call: JSCallExpression, functionNames: List<String>, defaultName: String,
+    getFunctionNameFromIndex: (JSCallExpression) -> String?,
+  ): Angular2PropertyInfo? {
     if (functionNames.isEmpty()) return null
     val referenceNames = getFunctionNameFromIndex(call)
                            ?.split('.')
@@ -234,13 +238,15 @@ internal object Angular2SourceUtil {
   @JvmStatic
   fun parseInputObjectLiteral(expr: JSObjectLiteralExpression, name: String): Angular2PropertyInfo {
     val aliasLiteral = expr.findProperty(Angular2DecoratorUtil.ALIAS_PROP)?.literalExpressionInitializer
+    val nameLiteral = expr.findProperty(Angular2DecoratorUtil.NAME_PROP)?.literalExpressionInitializer
     val alias = aliasLiteral?.stubSafeStringValue
     return Angular2PropertyInfo(
       alias ?: name,
       expr.findProperty(Angular2DecoratorUtil.REQUIRED_PROP)?.jsType?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
       expr,
       aliasLiteral,
-      declarationRange = if (alias != null) TextRange(1, 1 + alias.length) else null
+      declarationRange = if (alias != null) TextRange(1, 1 + alias.length) else null,
+      nameElement = nameLiteral
     )
   }
 

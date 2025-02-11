@@ -1,8 +1,8 @@
 import {<symbolName descr="identifiers//exported function">Component</symbolName>} <info descr="null">from</info> '@angular/core';
-import {<symbolName descr="identifiers//exported variable">FormControl</symbolName>, <symbolName descr="classes//exported class">FormGroup</symbolName>, <weak_warning descr="TS6133: 'Validators' is declared but its value is never read."><symbolName descr="classes//exported class">Validators</symbolName></weak_warning>} <info descr="null">from</info> '@angular/forms';
+import {<symbolName descr="identifiers//exported variable">FormControl</symbolName>, <symbolName descr="classes//exported class">FormGroup</symbolName>, <symbolName descr="classes//exported class">Validators</symbolName>} <info descr="null">from</info> '@angular/forms';
 
 <info descr="decorator">@</info><info descr="decorator">Component</info>({
-   <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="null">nested-form-groups</symbolName>',
+   <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="HTML_TAG_NAME">nested-form-groups</symbolName>',
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
         <form [formGroup]="<symbolName descr="instance field">form</symbolName>">
             <div formGroupName="<symbolName descr="form control">name</symbolName>">
