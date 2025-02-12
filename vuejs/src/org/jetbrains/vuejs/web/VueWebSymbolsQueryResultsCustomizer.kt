@@ -16,6 +16,7 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.utils.nameSegments
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
@@ -35,9 +36,11 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
     }
   }
 
-  override fun apply(matches: List<WebSymbol>,
-                     strict: Boolean,
-                     qualifiedName: WebSymbolQualifiedName): List<WebSymbol> {
+  override fun apply(
+    matches: List<WebSymbol>,
+    strict: Boolean,
+    qualifiedName: WebSymbolQualifiedName,
+  ): List<WebSymbol> {
     if (qualifiedName.namespace != WebSymbol.NAMESPACE_HTML) return matches
 
     var result = matches
@@ -56,8 +59,13 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
       if (!strict) return result
     }
     else if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
-      val hasStandardHtmlSymbols = result.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
-      if (!hasStandardHtmlSymbols) return result
+      val standardHtmlSymbols = result.filterTo(LinkedHashSet()) { symbol ->
+        symbol.nameSegments.flatMap { it.symbols }.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
+      }
+      if (standardHtmlSymbols.isEmpty()) return result
+      if (isVueComponentQuery(qualifiedName)) {
+        return result.filter { it !in standardHtmlSymbols }
+      }
     }
 
     return result.filter { symbol ->
@@ -66,8 +74,10 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
     }
   }
 
-  override fun apply(item: WebSymbolCodeCompletionItem,
-                     qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem {
+  override fun apply(
+    item: WebSymbolCodeCompletionItem,
+    qualifiedKind: WebSymbolQualifiedKind,
+  ): WebSymbolCodeCompletionItem {
     if (qualifiedKind == VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
