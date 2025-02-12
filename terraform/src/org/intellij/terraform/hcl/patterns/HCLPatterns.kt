@@ -9,7 +9,7 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
@@ -54,9 +54,9 @@ object HCLPatterns {
   val HashesStringLiterals: PsiElementPattern.Capture<HCLStringLiteral> =
     PlatformPatterns.psiElement(HCLStringLiteral::class.java)
       .withSuperParent(1, HCLArray::class.java)
-      .withSuperParent(2, TerraformPatterns.propertyWithName("hashes"))
+      .withSuperParent(2, TfPsiPatterns.propertyWithName("hashes"))
       .withSuperParent(3, HCLObject::class.java)
       .withSuperParent(4, PlatformPatterns.psiElement(HCLBlock::class.java)
-        .with(TerraformPatterns.createBlockPattern("provider"))
+        .with(TfPsiPatterns.createBlockPattern("provider"))
       )
 }

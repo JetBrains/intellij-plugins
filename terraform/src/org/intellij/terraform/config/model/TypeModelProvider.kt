@@ -12,14 +12,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import org.intellij.terraform.TfUsageTriggerCollector
-import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
+import org.intellij.terraform.config.model.loader.TfMetadataLoader
 import org.intellij.terraform.config.model.local.LocalSchemaService
 
 @Service
 internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
 
   private val _model = this.coroutineScope.async(context = Dispatchers.IO, start = CoroutineStart.LAZY) {
-    TerraformMetadataLoader().loadDefaults() ?: TypeModel()
+    TfMetadataLoader().loadDefaults() ?: TypeModel()
   }
 
   val ignoredReferences: Set<String> by lazy { loadIgnoredReferences() }
@@ -48,9 +48,9 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
 
   private fun loadIgnoredReferences(): Set<String> {
     try {
-      val stream = TerraformMetadataLoader.loadExternalResource("ignored-references.list")
+      val stream = TfMetadataLoader.loadExternalResource("ignored-references.list")
       if (stream == null) {
-        TerraformMetadataLoader.LOG.warn(
+        TfMetadataLoader.LOG.warn(
           "Cannot read 'ignored-references.list': resource '/terraform/model-external/ignored-references.list' not found")
         return emptySet()
       }
@@ -59,7 +59,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
       return LinkedHashSet<String>(lines)
     }
     catch (e: Exception) {
-      TerraformMetadataLoader.LOG.warn("Cannot read 'ignored-references.list': ${e.message}")
+      TfMetadataLoader.LOG.warn("Cannot read 'ignored-references.list': ${e.message}")
       return emptySet()
     }
   }

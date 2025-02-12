@@ -71,7 +71,7 @@ class HCLBlockConflictingPropertiesInspection : LocalInspectionTool() {
     if (conflicts.isEmpty()) return
 
     // TODO: Add 'navigate to' and 'remove current element' quick fixes
-    // TODO: Reuse quick fixes from TFDuplicatedInspectionBase
+    // TODO: Reuse quick fixes from TfDuplicatedInspectionBase
     holder.registerProblem(
       element,
       HCLBundle.message("conflicting.resource.property.inspection.error.message", conflicts.joinToString(", ")),

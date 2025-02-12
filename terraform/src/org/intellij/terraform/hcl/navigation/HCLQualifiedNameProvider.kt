@@ -7,7 +7,7 @@ import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.*
 
 class HCLQualifiedNameProvider : QualifiedNameProvider {
@@ -60,7 +60,7 @@ class HCLQualifiedNameProvider : QualifiedNameProvider {
     fun getFQN(block: HCLBlock): String? {
       var elements = block.nameElements.asList()
 
-      if (TerraformPatterns.ResourceRootBlock.accepts(block)) {
+      if (TfPsiPatterns.ResourceRootBlock.accepts(block)) {
         elements = elements.drop(1)
       } else if (block.parent !is HCLFile) {
         // TODO: Implement
@@ -77,8 +77,8 @@ class HCLQualifiedNameProvider : QualifiedNameProvider {
       val parent = block.parent
       var prefix: String? = null
 
-      if (TerraformPatterns.ResourceRootBlock.accepts(block)
-          || TerraformPatterns.DataSourceRootBlock.accepts(block)) {
+      if (TfPsiPatterns.ResourceRootBlock.accepts(block)
+          || TfPsiPatterns.DataSourceRootBlock.accepts(block)) {
         elements = elements.dropLast(1)
       } else if (parent !is HCLFile) {
         if (parent is HCLObject && parent.parent is HCLBlock) {

@@ -104,8 +104,8 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
   private fun testTfConfiguration(settings: RunnerAndConfigurationSettings, mainCommand: TfCommand) {
     val configuration = settings.configuration
-    assertInstanceOf(configuration, TerraformRunConfiguration::class.java)
-    configuration as TerraformRunConfiguration
+    assertInstanceOf(configuration, TfRunConfiguration::class.java)
+    configuration as TfRunConfiguration
 
     assertEquals(mainCommand.command, configuration.programParameters)
     assertEquals("/src", configuration.workingDirectory)

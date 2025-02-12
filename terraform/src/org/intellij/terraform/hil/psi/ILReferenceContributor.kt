@@ -5,7 +5,7 @@ import com.intellij.patterns.PlatformPatterns.or
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.withHCLHost
 import org.intellij.terraform.hil.patterns.HILPatterns
@@ -28,7 +28,7 @@ class ILReferenceContributor : PsiReferenceContributor() {
     // 'dynamic' 'content' block reference
     registrar.registerReferenceProvider(
       psiElement(Identifier::class.java).with(HILPatterns.IsSeFromCondition)
-        .withHCLHost(psiElement().inside(TerraformPatterns.DynamicBlock)),
+        .withHCLHost(psiElement().inside(TfPsiPatterns.DynamicBlock)),
       DynamicBlockVariableReferenceProvider)
 
     // 'each' in resource or data source
@@ -37,7 +37,7 @@ class ILReferenceContributor : PsiReferenceContributor() {
         .withText("each")
         .with(HILPatterns.IsSeFromCondition)
         .withHCLHost(psiElement().inside(true, or(
-          TerraformPatterns.ResourceRootBlock, TerraformPatterns.DataSourceRootBlock, TerraformPatterns.ModuleRootBlock))
+          TfPsiPatterns.ResourceRootBlock, TfPsiPatterns.DataSourceRootBlock, TfPsiPatterns.ModuleRootBlock))
         ), ResourceEachVariableReferenceProvider)
   }
 }

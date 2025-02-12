@@ -9,7 +9,7 @@ import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider;
 import org.intellij.terraform.hcl.psi.HCLBlock;
 import org.intellij.terraform.hcl.psi.HCLElementGenerator;
 import org.intellij.terraform.hcl.psi.HCLObject;
-import org.intellij.terraform.config.psi.TerraformElementGenerator;
+import org.intellij.terraform.config.psi.TfElementGenerator;
 
 public class ModelFQNTest extends LightPlatformTestCase {
   private HCLElementGenerator myElementGenerator;
@@ -17,7 +17,7 @@ public class ModelFQNTest extends LightPlatformTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myElementGenerator = new TerraformElementGenerator(getProject());
+    myElementGenerator = new TfElementGenerator(getProject());
   }
 
   public void testResourceDefinitionBlock() throws Exception {

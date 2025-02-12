@@ -14,10 +14,10 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.*
@@ -38,7 +38,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
 
     val parent = element.parent as? SelectExpression<*> ?: return PsiReference.EMPTY_ARRAY
 
-    if (parent.from === element && name in TerraformCompletionUtil.Scopes) return PsiReference.EMPTY_ARRAY
+    if (parent.from === element && name in TfCompletionUtil.Scopes) return PsiReference.EMPTY_ARRAY
 
     if (HCLPsiUtil.isPartOfPropertyKey(element)) return PsiReference.EMPTY_ARRAY
 
@@ -93,12 +93,12 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       return refs.toTypedArray()
     }
 
-    if (TerraformPatterns.ResourceProviderProperty.accepts(host.getParent(HCLProperty::class.java))) {
+    if (TfPsiPatterns.ResourceProviderProperty.accepts(host.getParent(HCLProperty::class.java))) {
       // covered by ResourceProviderReferenceProvider
       return PsiReference.EMPTY_ARRAY
     }
 
-    if (TerraformPatterns.PropertyUnderModuleProvidersPOB.accepts(host.getParent(HCLProperty::class.java))) {
+    if (TfPsiPatterns.PropertyUnderModuleProvidersPOB.accepts(host.getParent(HCLProperty::class.java))) {
       // covered by ModuleProvidersReferenceProvider
       return PsiReference.EMPTY_ARRAY
     }
@@ -175,7 +175,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
         else if (isResourceReferencedFromImportBlock(r, initialContextType, name)) {
           found.add(r)
         }
-        else if (TerraformPatterns.ModuleRootBlock.accepts(r)) {
+        else if (TfPsiPatterns.ModuleRootBlock.accepts(r)) {
           // TODO: Move this special TerraformPatters supports somewhere else
           val module = Module.getAsModuleBlock(r)
           if (module == null) {
@@ -194,7 +194,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
           }
         }
-        else if (TerraformPatterns.VariableRootBlock.accepts(r)) {
+        else if (TfPsiPatterns.VariableRootBlock.accepts(r)) {
           val variable = Variable(r)
           val prev = found.size
           when (val default = variable.getDefault()) {
@@ -207,11 +207,11 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             found.addIfNotNull(resolveInType(variable.getType(), r, name) ?: if (fake) FakeHCLProperty(name, r, true) else null)
           }
         }
-        else if (TerraformPatterns.DynamicBlock.accepts(r)) {
+        else if (TfPsiPatterns.DynamicBlock.accepts(r)) {
           // Moved to DynamicBlockVariableReferenceProvider.DynamicValueReference
           return
         }
-        else if (TerraformPatterns.OutputRootBlock.accepts(r)) {
+        else if (TfPsiPatterns.OutputRootBlock.accepts(r)) {
           // Probably reference to module output
           // If it's resource provide it's properties
           val value = r.`object`?.findProperty("value")?.value
@@ -286,7 +286,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
           }
         }
-        else if (r.parent is HCLObject && r.parent.parents(false).any { TerraformPatterns.LocalsRootBlock.accepts(it) }) {
+        else if (r.parent is HCLObject && r.parent.parents(false).any { TfPsiPatterns.LocalsRootBlock.accepts(it) }) {
           val value = r.value
           when {
             value is HCLObject -> collectReferencesInner(value, name, found, fake, visited = visited)
@@ -335,7 +335,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
 
   private fun isResourceReferencedFromImportBlock(maybeHclBlock: PsiElement, initialContextType: HilContainingBlockType, resolvableSegmentName: String): Boolean {
     return maybeHclBlock is HCLBlock
-           && TerraformPatterns.ResourceRootBlock.accepts(maybeHclBlock)
+           && TfPsiPatterns.ResourceRootBlock.accepts(maybeHclBlock)
            && initialContextType == HilContainingBlockType.IMPORT_OR_MOVED_BLOCK
            && getResourceName(maybeHclBlock) == resolvableSegmentName
   }
@@ -376,7 +376,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       isVariableReference(value) -> HCLPsiUtil.getReferencesSelectAware(value)
         .flatMap { resolve(it, false, fake) }
         .filterIsInstance<HCLBlock>()
-        .filter { TerraformPatterns.VariableRootBlock.accepts(it) }
+        .filter { TfPsiPatterns.VariableRootBlock.accepts(it) }
         .forEach {
           resolveVariableElementFromIterable(it, name, found, fake, visited = visited)
         }
@@ -458,7 +458,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
         }
       }
       is HCLBlock -> {
-        if (TerraformPatterns.VariableRootBlock.accepts(r)) {
+        if (TfPsiPatterns.VariableRootBlock.accepts(r)) {
           return r
         }
         return null

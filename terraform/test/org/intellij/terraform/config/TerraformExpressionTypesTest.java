@@ -18,7 +18,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.KeyedLazyInstance;
 import org.intellij.terraform.TerraformTestUtils;
 import org.intellij.terraform.config.model.Type;
-import org.intellij.terraform.config.psi.TerraformReferenceContributor;
+import org.intellij.terraform.config.psi.TfReferenceContributor;
 import org.intellij.terraform.hcl.HCLParserDefinition;
 import org.intellij.terraform.hcl.HCLTokenTypes;
 import org.intellij.terraform.hcl.psi.HCLBlock;
@@ -67,7 +67,7 @@ public abstract class TerraformExpressionTypesTest extends ParsingTestCase {
 
   //region helpers
   public TerraformExpressionTypesTest() {
-    super("terraform/types", "tf", false, new TerraformParserDefinition(), new HCLParserDefinition());
+    super("terraform/types", "tf", false, new TfParserDefinition(), new HCLParserDefinition());
   }
 
   @Override
@@ -76,7 +76,7 @@ public abstract class TerraformExpressionTypesTest extends ParsingTestCase {
     InjectedTestUtil.registerMockInjectedLanguageManager(getApplication(), getProject(), getPluginDescriptor());
 
     //registerExtensionPoint(PsiReferenceContributor.EP_NAME, PsiReferenceContributor.class);
-    registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HCL", new ILReferenceContributor(), new TerraformReferenceContributor()));
+    registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HCL", new ILReferenceContributor(), new TfReferenceContributor()));
     registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HIL", new ILReferenceContributor()));
   }
 

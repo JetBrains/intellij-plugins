@@ -6,7 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.Variable
 import org.intellij.terraform.config.model.getTerraformModule
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -69,7 +69,7 @@ fun getContainingResourceOrDataSource(element: HCLElement?): HCLBlock? {
   if (element == null) return null
   return PsiTreeUtil.findFirstParent(element, true) {
     it is HCLBlock &&
-        (TerraformPatterns.DataSourceRootBlock.accepts(it) || TerraformPatterns.ResourceRootBlock.accepts(it))
+    (TfPsiPatterns.DataSourceRootBlock.accepts(it) || TfPsiPatterns.ResourceRootBlock.accepts(it))
   } as? HCLBlock
 }
 
@@ -77,7 +77,7 @@ fun getContainingResourceOrDataSourceOrModule(element: HCLElement?): HCLBlock? {
   if (element == null) return null
   return PsiTreeUtil.findFirstParent(element, true) {
     it is HCLBlock &&
-        (TerraformPatterns.DataSourceRootBlock.accepts(it) || TerraformPatterns.ResourceRootBlock.accepts(it)|| TerraformPatterns.ModuleRootBlock.accepts(it))
+    (TfPsiPatterns.DataSourceRootBlock.accepts(it) || TfPsiPatterns.ResourceRootBlock.accepts(it) || TfPsiPatterns.ModuleRootBlock.accepts(it))
   } as? HCLBlock
 }
 

@@ -9,9 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.config.actions.TfInitAction
 import org.intellij.terraform.config.codeinsight.TfModelHelper
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.isTerraformCompatiblePsiFile
@@ -39,7 +39,7 @@ class TfUnknownPropertyInspection : LocalInspectionTool() {
           property,
           HCLBundle.message("unknown.property.in.block.inspection.error.message", propertyName),
           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-          *listOfNotNull(TFInitAction.createQuickFixNotInitialized(property), RemovePropertyQuickFix(property)).toTypedArray()
+          *listOfNotNull(TfInitAction.createQuickFixNotInitialized(property), RemovePropertyQuickFix(property)).toTypedArray()
         )
       }
     }
@@ -47,7 +47,7 @@ class TfUnknownPropertyInspection : LocalInspectionTool() {
     private fun getBlockOfProperty(element: HCLElement): HCLBlock? {
       val hclObject = element.parent as? HCLObject
       val hclBlock = hclObject?.parent as? HCLBlock
-      return if (TerraformPatterns.RootBlock.accepts(hclBlock)) hclBlock else null
+      return if (TfPsiPatterns.RootBlock.accepts(hclBlock)) hclBlock else null
     }
   }
 }

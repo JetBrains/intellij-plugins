@@ -93,8 +93,8 @@ internal fun Type.pool(context: LoadContext): Type = context.pool.pool(this)
 internal fun warnOrFailInInternalMode(message: String) {
   val application = ApplicationManager.getApplication()
   if (application.isUnitTestMode || application.isInternal) {
-    TerraformMetadataLoader.LOG.error(message)
+    TfMetadataLoader.LOG.error(message)
     assert(false) { message }
   }
-  TerraformMetadataLoader.LOG.warn(message)
+  TfMetadataLoader.LOG.warn(message)
 }

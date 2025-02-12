@@ -11,7 +11,7 @@ import java.util.List;
 public class TerraformConfigLexerTest extends HCLLexerTest {
   @Override
   protected @NotNull Lexer createLexer() {
-    return TerraformParserDefinition.createLexer();
+    return TfParserDefinition.createLexer();
   }
 
   public void testTerraformILWithSpecials() {

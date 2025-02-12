@@ -22,7 +22,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.config.refactoring.BaseIntroduceOperation
 import org.intellij.terraform.config.refactoring.BaseIntroduceVariableHandler
 import org.intellij.terraform.hcl.HCLBundle
@@ -301,7 +301,7 @@ open class ILIntroduceVariableHandler : BaseIntroduceVariableHandler<ILExpressio
     val expr = operation.initializer ?: return null
     val name = operation.name ?: return null
     val type: Type = expr.getType() ?: Types.String
-    return TerraformElementGenerator(operation.project).createVariable(name, type, expr)
+    return TfElementGenerator(operation.project).createVariable(name, type, expr)
   }
 
 

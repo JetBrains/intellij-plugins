@@ -3,7 +3,7 @@ package org.intellij.terraform.hil.psi
 
 import com.intellij.psi.*
 import com.intellij.psi.util.parentOfType
-import org.intellij.terraform.config.psi.TerraformDocumentPsi
+import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hil.inspection.PsiFakeAwarePolyVariantReference
 
@@ -33,7 +33,7 @@ open class HCLElementLazyReference<T : PsiElement>(from: T, soft: Boolean, val d
   }
 
   override fun isReferenceTo(element: PsiElement): Boolean {
-    if (element is TerraformDocumentPsi) {
+    if (element is TfDocumentPsi) {
       element.parentOfType<HCLBlock>()?.let {
         if (super.isReferenceTo(it)) return true
       }

@@ -21,7 +21,7 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.model.getType
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -136,7 +136,7 @@ class HILConvertToHCLInspection : LocalInspectionTool(), CleanupLocalInspectionT
 
       @JvmStatic
       fun getReplacementValue(project: Project, literal: HCLStringLiteral): HCLExpression {
-        return TerraformElementGenerator(project).createValue(getReplacementText(literal))
+        return TfElementGenerator(project).createValue(getReplacementText(literal))
       }
 
       private fun replace(project: Project, file: PsiFile, element: HCLExpression, replacement: HCLExpression) {

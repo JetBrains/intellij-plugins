@@ -19,10 +19,10 @@ import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
-import org.intellij.terraform.config.model.local.TFLocalMetaEntity
-import org.intellij.terraform.config.util.TFCommandLineServiceMock
+import org.intellij.terraform.config.model.local.TfLocalMetaEntity
+import org.intellij.terraform.config.util.TfCommandLineServiceMock
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.runtime.TerraformProjectSettings
+import org.intellij.terraform.runtime.TfProjectSettings
 import org.junit.Assert
 import org.junit.Assume
 import java.nio.file.Files
@@ -31,7 +31,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
   override fun tearDown() {
     try {
-      TFCommandLineServiceMock.instance.throwErrorsIfAny()
+      TfCommandLineServiceMock.instance.throwErrorsIfAny()
     }
     catch (e: Throwable) {
       addSuppressedException(e)
@@ -44,9 +44,9 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
-    TFCommandLineServiceMock.instance.clear() // to avoid getting errors from previous tests
+    TfCommandLineServiceMock.instance.clear() // to avoid getting errors from previous tests
     TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
-    myFixture.project.service<TerraformProjectSettings>().toolPath = TfToolType.TERRAFORM.executableName
+    myFixture.project.service<TfProjectSettings>().toolPath = TfToolType.TERRAFORM.executableName
   }
 
   override fun runInDispatchThread(): Boolean = false
@@ -150,7 +150,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     get() = project.service<LocalSchemaService>()
 
   private fun loadAndCheckDoMetadata(dummyPropName: String) {
-    TFCommandLineServiceMock.instance.mockCommandLine(
+    TfCommandLineServiceMock.instance.mockCommandLine(
       "$terraformExe providers schema -json", genDoModel(dummyPropName),
       testRootDisposable)
 
@@ -184,7 +184,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
   fun testLocalMetadataNotUpdatedIfForbidden() {
     // setup prev meta
     loadAndCheckDoMetadata("dummyProp1")
-    assertFalse("Commands should have been executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
+    assertFalse("Commands should have been executed", TfCommandLineServiceMock.instance.requestsToVerify().isEmpty())
 
     withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.auto", false) {
       // testing no process was started implicitly
@@ -195,14 +195,14 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
         localSchemaService.awaitModelsReady()
       }
       myFixture.testHighlighting("main.tf")
-      assertTrue("Commands should have been not executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
+      assertTrue("Commands should have been not executed", TfCommandLineServiceMock.instance.requestsToVerify().isEmpty())
     }
   }
 
   fun testActionWorksEvenIfLoadingIsForbidden() =
     withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.auto", false) {
       timeoutRunBlocking {
-        TFCommandLineServiceMock.instance.mockCommandLine(
+        TfCommandLineServiceMock.instance.mockCommandLine(
           "$terraformExe providers schema -json", genDoModel("dummyProp1"),
           testRootDisposable)
 
@@ -211,17 +211,17 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
         myFixture.configureByText("main.tf", genInspectedMain("dummyProp1"))
         withContext(Dispatchers.EDT) {
           writeIntentReadAction {
-            myFixture.testAction(ActionUtil.getAction("TFGenerateLocalMetadataAction")!!)
+            myFixture.testAction(ActionUtil.getAction("TfGenerateLocalMetadataAction")!!)
           }
         }
-        waitUntil { TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
+        waitUntil { TfCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
         localSchemaService.awaitModelsReady()
         myFixture.testHighlighting("main.tf")
       }
     }
 
   fun testNewLockPickedUp() = withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.eagerly", true) {
-    TFCommandLineServiceMock.instance.mockCommandLine(
+    TfCommandLineServiceMock.instance.mockCommandLine(
       "$terraformExe providers schema -json", genDoModel("dummyProp"),
       testRootDisposable)
 
@@ -231,7 +231,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     timeoutRunBlocking {
       localSchemaService.awaitModelsReady()
       readAction {
-        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java).toList()
+        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TfLocalMetaEntity::class.java).toList()
         Assert.assertEquals(entities.single().lockFile.virtualFile, lockFile.virtualFile)
       }
     }
@@ -244,7 +244,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     timeoutRunBlocking {
       localSchemaService.awaitModelsReady()
       readAction {
-        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java)
+        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TfLocalMetaEntity::class.java)
           .filter { it.lockFile.virtualFile != lock.virtualFile }
           .toList()
         assertEmpty(entities)
@@ -254,7 +254,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
   fun testPickUpOldMetaOnError() {
     loadAndCheckDoMetadata("dummyProp")
-    TFCommandLineServiceMock.instance.mockCommandLine(
+    TfCommandLineServiceMock.instance.mockCommandLine(
       "$terraformExe providers schema -json", "", 1,
       testRootDisposable)
 
@@ -264,14 +264,14 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     myFixture.configureByText("main.tf", genInspectedMain("dummyProp"))
     myFixture.doHighlighting()
     timeoutRunBlocking {
-      waitUntil { TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
+      waitUntil { TfCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
       localSchemaService.awaitModelsReady()
     }
     myFixture.testHighlighting("main.tf")
   }
 
   fun testNotPumpOnError() {
-    TFCommandLineServiceMock.instance.mockCommandLine(
+    TfCommandLineServiceMock.instance.mockCommandLine(
       "$terraformExe providers schema -json", "", 1,
       testRootDisposable)
 
@@ -282,7 +282,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
     timeoutRunBlocking {
       waitUntil {
         localSchemaService.awaitModelsReady()
-        TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty()
+        TfCommandLineServiceMock.instance.requestsToVerify().isNotEmpty()
       }
     }
     (0..5).forEach { i ->
@@ -292,7 +292,7 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
       myFixture.doHighlighting()
     }
 
-    assertEquals("", TFCommandLineServiceMock.instance.requestsToVerify().joinToString("\n"))
+    assertEquals("", TfCommandLineServiceMock.instance.requestsToVerify().joinToString("\n"))
   }
 
   private val terraformExe: String

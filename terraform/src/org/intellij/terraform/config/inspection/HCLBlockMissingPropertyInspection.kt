@@ -12,14 +12,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.config.actions.TfInitAction
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.patterns.TerraformPatterns.ConfigOverrideFile
-import org.intellij.terraform.config.patterns.TerraformPatterns.DynamicBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.ModuleWithEmptySource
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.patterns.TfPsiPatterns.ConfigOverrideFile
+import org.intellij.terraform.config.patterns.TfPsiPatterns.DynamicBlock
+import org.intellij.terraform.config.patterns.TfPsiPatterns.ModuleWithEmptySource
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.isTerraformCompatiblePsiFile
@@ -55,7 +55,7 @@ internal class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection
     val element = descriptor.psiElement.parent as? HCLBlock ?: return
     val obj = element.`object` ?: return
     IntentionPreviewUtils.write<Throwable> {
-      val generator = TerraformElementGenerator(project)
+      val generator = TfElementGenerator(project)
       val elements = add.map {
         if (it is PropertyType) {
           val type = it.type
@@ -152,7 +152,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
       *listOfNotNull(
         AddResourcePropertiesFix(required),
-        TFInitAction.createQuickFixNotInitialized(nameOfBlock),
+        TfInitAction.createQuickFixNotInitialized(nameOfBlock),
         createDisableDeepVariableSearchQuickFix()
       ).toArray(LocalQuickFix.EMPTY_ARRAY)
     )

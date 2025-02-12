@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.intellij.terraform.config.model.getTerraformModule
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.isTerraformCompatiblePsiFile
@@ -62,17 +62,17 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
   }
 
   private fun getHclUnusedElement(element: HCLElement, name: String): HclUnusedElement? = when {
-    TerraformPatterns.LocalProperty.accepts(element) -> object : HclUnusedElement {
+    TfPsiPatterns.LocalProperty.accepts(element) -> object : HclUnusedElement {
       override val inspectionMessage: String = HCLBundle.message("unused.local.inspection.error.message", name)
       override val quickFix: LocalQuickFix = RemoveLocalQuickFix(element)
     }
 
-    TerraformPatterns.VariableRootBlock.accepts(element) -> object : HclUnusedElement {
+    TfPsiPatterns.VariableRootBlock.accepts(element) -> object : HclUnusedElement {
       override val inspectionMessage: String = HCLBundle.message("unused.variable.inspection.error.message", name)
       override val quickFix: LocalQuickFix = RemoveVariableQuickFix(element)
     }
 
-    TerraformPatterns.DataSourceRootBlock.accepts(element) -> object : HclUnusedElement {
+    TfPsiPatterns.DataSourceRootBlock.accepts(element) -> object : HclUnusedElement {
       override val inspectionMessage: String = HCLBundle.message("unused.data.source.inspection.error.message", name)
       override val quickFix: LocalQuickFix = RemoveDataSourceQuickFix(element)
     }

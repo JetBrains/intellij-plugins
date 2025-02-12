@@ -15,7 +15,7 @@ import com.intellij.testFramework.findReferenceByText
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import junit.framework.TestCase
-import org.intellij.terraform.config.inspection.TFIncorrectVariableTypeInspection
+import org.intellij.terraform.config.inspection.TfIncorrectVariableTypeInspection
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
@@ -473,7 +473,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
 
   @Test
   fun variableTypesSOE() {
-    myFixture.enableInspections(TFIncorrectVariableTypeInspection::class.java)
+    myFixture.enableInspections(TfIncorrectVariableTypeInspection::class.java)
     val file = myFixture.configureByText("main.tf", """
       variable "input_variable" {
         type = list(object({

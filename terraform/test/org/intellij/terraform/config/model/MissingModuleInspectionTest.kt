@@ -4,9 +4,9 @@ package org.intellij.terraform.config.model
 import com.intellij.openapi.components.service
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.TerraformTestUtils
-import org.intellij.terraform.config.inspection.TFMissingModuleInspection
+import org.intellij.terraform.config.inspection.TfMissingModuleInspection
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.runtime.TerraformProjectSettings
+import org.intellij.terraform.runtime.TfProjectSettings
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
@@ -15,13 +15,13 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myFixture.project.service<TerraformProjectSettings>().toolPath = TfToolType.TERRAFORM.getBinaryName()
+    myFixture.project.service<TfProjectSettings>().toolPath = TfToolType.TERRAFORM.getBinaryName()
   }
 
   override fun getTestDataPath(): String? = TerraformTestUtils.getTestDataPath()
   @org.junit.Test
   fun setOfModules() {
-    myFixture.enableInspections(TFMissingModuleInspection::class.java)
+    myFixture.enableInspections(TfMissingModuleInspection::class.java)
     myFixture.copyDirectoryToProject("terraform/inspections/missing_module/.terraform", ".terraform")
     myFixture.configureByText("main.tf", """
       module "registry_short" {
@@ -178,7 +178,7 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
         variable = "test"
       }</warning>
     """.trimIndent())
-    myFixture.enableInspections(TFMissingModuleInspection::class.java)
+    myFixture.enableInspections(TfMissingModuleInspection::class.java)
     myFixture.checkHighlighting()
   }
 

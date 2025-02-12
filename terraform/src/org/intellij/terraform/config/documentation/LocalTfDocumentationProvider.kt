@@ -13,8 +13,8 @@ import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.Variable
-import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.psi.TerraformDocumentPsi
+import org.intellij.terraform.config.patterns.TfPsiPatterns
+import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
@@ -34,7 +34,7 @@ internal object LocalTfDocumentationProvider {
       is HCLIdentifier -> {
         provideDocForIdentifier(element)
       } //Workaround for documentation - we do not parse type identifier in top-level blocks
-      is TerraformDocumentPsi -> {
+      is TfDocumentPsi -> {
         getBlockForDocumentationLink(element, element.name)?.let { provideDocForHclBlock(it) }
       }
       else -> null
@@ -48,7 +48,7 @@ internal object LocalTfDocumentationProvider {
     if (property != null) {
       return HCLBundle.message("terraform.doc.property.0.1.br.2", element.name, property.type.presentableText, property.description ?: "")
     }
-    else if (TerraformPatterns.LocalsRootBlock.accepts(block)) {
+    else if (TfPsiPatterns.LocalsRootBlock.accepts(block)) {
       return HCLBundle.message("terraform.doc.local.value.0", element.name)
     }
     return null
@@ -57,11 +57,11 @@ internal object LocalTfDocumentationProvider {
   @Nls
   private fun provideDocForHclBlock(element: HCLBlock): String? {
     return when {
-      TerraformPatterns.VariableRootBlock.accepts(element) -> getVariableDocumentation(element)
-      TerraformPatterns.OutputRootBlock.accepts(element) -> getOutputBlockDocumentation(element, "terraform.doc.hcl.output.0.of.type.1")
-      TerraformPatterns.ResourceRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.resource.0.of.type.1")
-      TerraformPatterns.DataSourceRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.datasource.0.of.type.1")
-      TerraformPatterns.ProviderRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.provider.0.of.type.1")
+      TfPsiPatterns.VariableRootBlock.accepts(element) -> getVariableDocumentation(element)
+      TfPsiPatterns.OutputRootBlock.accepts(element) -> getOutputBlockDocumentation(element, "terraform.doc.hcl.output.0.of.type.1")
+      TfPsiPatterns.ResourceRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.resource.0.of.type.1")
+      TfPsiPatterns.DataSourceRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.datasource.0.of.type.1")
+      TfPsiPatterns.ProviderRootBlock.accepts(element) -> getTypedBlockDocumentation(element, "terraform.doc.hcl.provider.0.of.type.1")
       else -> calculateBlockDescription(element)
     }
   }
@@ -78,7 +78,7 @@ internal object LocalTfDocumentationProvider {
   @Nls
   private fun getOutputBlockDocumentation(element: HCLBlock, bundleKey: String): String? {
     val descriptionProperty = element.`object`?.children
-      ?.firstOrNull { TerraformPatterns.DescriptionProperty.accepts(it) } as? HCLProperty
+      ?.firstOrNull { TfPsiPatterns.DescriptionProperty.accepts(it) } as? HCLProperty
 
     val description = descriptionProperty?.value?.text?.let { StringUtil.unquoteString(it) }
     return HCLBundle.message(bundleKey, element.getNameElementUnquoted(1), description ?: "")

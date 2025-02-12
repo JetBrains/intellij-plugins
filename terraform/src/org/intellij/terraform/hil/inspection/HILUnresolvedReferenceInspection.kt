@@ -17,8 +17,8 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.patterns.TerraformPatterns.FromPropertyInMovedBlock
+import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.patterns.TfPsiPatterns.FromPropertyInMovedBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -106,7 +106,7 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
           if (reference is LocalQuickFixProvider) {
             addAll(reference.quickFixes.orEmpty())
           }
-          addIfNotNull(TFInitAction.createQuickFixNotInitialized(reference.element))
+          addIfNotNull(TfInitAction.createQuickFixNotInitialized(reference.element))
         }
         holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange, *fixes.toArray(LocalQuickFix.EMPTY_ARRAY))
       }

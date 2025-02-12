@@ -6,7 +6,7 @@ import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.startOffset
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.config.psi.TerraformDocumentPsi
+import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.psi.HCLBlock
 
 internal class DocReferenceTestCase : BasePlatformTestCase() {
@@ -47,7 +47,7 @@ internal class DocReferenceTestCase : BasePlatformTestCase() {
     val (documented, unDocumented) = namedConfigBlocks.map { it.nameElements[1] }.partition {
       val offset = it.startOffset + 1
       myFixture.editor.caretModel.moveToOffset(offset)
-      myFixture.elementAtCaret is TerraformDocumentPsi
+      myFixture.elementAtCaret is TfDocumentPsi
     }
     assertSize(3, documented)
     assertSize(2, unDocumented)

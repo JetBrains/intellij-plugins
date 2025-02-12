@@ -4,15 +4,15 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.template.editor.MaybeTerraformTemplateInspection
-import org.intellij.terraform.template.editor.TerraformUnselectedDataLanguageInspection
+import org.intellij.terraform.template.editor.MaybeTfTemplateInspection
+import org.intellij.terraform.template.editor.TfUnselectedDataLanguageInspection
 import org.junit.Assert
 
 class TerraformTemplateHighlightingTest : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(TerraformUnselectedDataLanguageInspection::class.java,
-                                MaybeTerraformTemplateInspection::class.java)
+    myFixture.enableInspections(TfUnselectedDataLanguageInspection::class.java,
+                                MaybeTfTemplateInspection::class.java)
   }
 
   fun `test detect unselected data language`() {

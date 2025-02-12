@@ -11,39 +11,39 @@
               fieldName="INSTANCE"
               extensions="tfpl;tftpl"/>
     <lang.parserDefinition language="TFTPL"
-                           implementationClass="org.intellij.terraform.template.psi.TerraformTemplateParserDefinition"/>
+                           implementationClass="org.intellij.terraform.template.psi.TftplParserDefinition"/>
     <lang.fileViewProviderFactory language="TFTPL"
                                   implementationClass="org.intellij.terraform.template.TftplFileViewProviderFactory"/>
     <lang.syntaxHighlighterFactory language="TFTPL"
-                                   implementationClass="org.intellij.terraform.template.editor.TerraformTemplateSyntaxHighlightingFactory"/>
-    <editorHighlighterProvider filetype="Terraform Template" implementationClass="org.intellij.terraform.template.editor.TerraformTemplateEditorHighlighterProvider"/>
+                                   implementationClass="org.intellij.terraform.template.editor.TftplSyntaxHighlightingFactory"/>
+    <editorHighlighterProvider filetype="Terraform Template" implementationClass="org.intellij.terraform.template.editor.TftplEditorHighlighterProvider"/>
     <completion.contributor language="HIL"
                             implementationClass="org.intellij.terraform.template.editor.HilTemplateCompletionContributor"/>
     <completion.contributor language="HIL"
                             implementationClass="org.intellij.terraform.template.editor.InjectedHilTemplateCompletionContributor"/>
     <completion.contributor language="any"
-                            implementationClass="org.intellij.terraform.template.editor.TerraformTemplateLanguageCompletionContributor"/>
+                            implementationClass="org.intellij.terraform.template.editor.TftplLanguageCompletionContributor"/>
     <completion.contributor language="any"
-                            implementationClass="org.intellij.terraform.template.editor.TerraformTemplateDataLanguageCompletionContributor"/>
-    <lang.foldingBuilder language="TFTPL" implementationClass="org.intellij.terraform.template.editor.TerraformTemplateFoldingBuilder"/>
-    <liveTemplateContext contextId="TFTPL_TEMPLATE" implementation="org.intellij.terraform.template.editor.TerraformTemplateContextType"/>
+                            implementationClass="org.intellij.terraform.template.editor.TftplDataLanguageCompletionContributor"/>
+    <lang.foldingBuilder language="TFTPL" implementationClass="org.intellij.terraform.template.editor.TftplFoldingBuilder"/>
+    <liveTemplateContext contextId="TFTPL_TEMPLATE" implementation="org.intellij.terraform.template.editor.TftplContextType"/>
     <defaultLiveTemplates file="liveTemplates/terraformTemplate.xml"/>
-    <gotoDeclarationHandler implementation="org.intellij.terraform.template.editor.TerraformTemplateVariableGoToDeclarationHandler"/>
+    <gotoDeclarationHandler implementation="org.intellij.terraform.template.editor.TftplVariableGoToDeclarationHandler"/>
     <localInspection language=""
-                     shortName="MaybeTerraformTemplateInspection"
+                     shortName="MaybeTfTemplateInspection"
                      groupBundle="messages.HCLBundle" groupKey="inspection.possible.template.group.name"
                      bundle="messages.HCLBundle" key="inspection.possible.template.name"
                      enabledByDefault="true" level="WARNING"
-                     implementationClass="org.intellij.terraform.template.editor.MaybeTerraformTemplateInspection"/>
+                     implementationClass="org.intellij.terraform.template.editor.MaybeTfTemplateInspection"/>
     <localInspection language="TFTPL"
-                     shortName="TerraformUnselectedDataLanguage"
+                     shortName="TfUnselectedDataLanguage"
                      groupBundle="messages.HCLBundle" groupKey="inspection.possible.template.group.name"
                      bundle="messages.HCLBundle" key="inspection.unselected.data.language.name"
                      enabledByDefault="true" level="WARNING"
-                     implementationClass="org.intellij.terraform.template.editor.TerraformUnselectedDataLanguageInspection"/>
+                     implementationClass="org.intellij.terraform.template.editor.TfUnselectedDataLanguageInspection"/>
     <intentionAction>
       <language>TFTPL</language>
-      <className>org.intellij.terraform.template.editor.TerraformRemoveFileTypeAssociationIntention</className>
+      <className>org.intellij.terraform.template.editor.TfRemoveFileTypeAssociationIntention</className>
       <bundleName>messages.HCLBundle</bundleName>
       <categoryKey>inspection.possible.template.group.name</categoryKey>
       <skipBeforeAfter>true</skipBeforeAfter>

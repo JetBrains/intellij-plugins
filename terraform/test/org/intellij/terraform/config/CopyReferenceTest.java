@@ -8,7 +8,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
 import org.intellij.terraform.hcl.psi.*;
-import org.intellij.terraform.config.psi.TerraformElementGenerator;
+import org.intellij.terraform.config.psi.TfElementGenerator;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class CopyReferenceTest extends LightPlatformTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myElementGenerator = new TerraformElementGenerator(getProject());
+    myElementGenerator = new TfElementGenerator(getProject());
   }
 
   public void testResourceDefinitionBlock() throws Exception {

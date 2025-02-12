@@ -77,31 +77,31 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
   }
 
   public void testIncorrectTFVARS() {
-    doTest("incorrect_tfvars", new TFVARSIncorrectElementInspection());
+    doTest("incorrect_tfvars", new TfVARSIncorrectElementInspection());
   }
 
   public void testIncorrectVariableType() {
-    doTest("incorrect_variable_type", new TFIncorrectVariableTypeInspection());
+    doTest("incorrect_variable_type", new TfIncorrectVariableTypeInspection());
   }
 
   public void testDuplicatedProvider() {
-    doTest("duplicated_provider", new TFDuplicatedProviderInspection());
+    doTest("duplicated_provider", new TfDuplicatedProviderInspection());
   }
 
   public void testDuplicatedOutput() {
-    doTest("duplicated_output", new TFDuplicatedOutputInspection());
+    doTest("duplicated_output", new TfDuplicatedOutputInspection());
   }
 
   public void testDuplicatedVariable() {
-    doTest("duplicated_variable", new TFDuplicatedVariableInspection());
+    doTest("duplicated_variable", new TfDuplicatedVariableInspection());
   }
 
   public void testDuplicatedBlockProperty() {
-    doTest("duplicated_block_property", new TFDuplicatedBlockPropertyInspection());
+    doTest("duplicated_block_property", new TfDuplicatedBlockPropertyInspection());
   }
 
   public void testInterpolationsInWrongPlaces() {
-    doTest("interpolations_in_wrong_places", new TFNoInterpolationsAllowedInspection());
+    doTest("interpolations_in_wrong_places", new TfNoInterpolationsAllowedInspection());
   }
 
   public void testMissingBlockProperty() {

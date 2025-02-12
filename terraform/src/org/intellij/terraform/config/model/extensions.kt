@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.originalFileOrSelf
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hil.psi.ILExpression
@@ -64,7 +64,7 @@ fun BaseExpression?.getType(): Type? {
 }
 
 fun BaseExpression.isInTerraformFile(): Boolean {
-  return TerraformPatterns.TerraformFile.accepts(this.getHCLHost()?.containingFile)
+  return TfPsiPatterns.TerraformFile.accepts(this.getHCLHost()?.containingFile)
 }
 
 fun String.ensureHavePrefix(prefix: String) = if (this.startsWith(prefix)) this else (prefix + this)

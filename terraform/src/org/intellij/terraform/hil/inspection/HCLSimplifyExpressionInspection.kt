@@ -12,7 +12,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.DocumentUtil
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -93,7 +93,7 @@ class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspe
         val args = call.parameterList.elements
         val list = args[0]
         val index = args[1]
-        return TerraformElementGenerator(project).createValue(list.text + '[' + index.text + ']')
+        return TfElementGenerator(project).createValue(list.text + '[' + index.text + ']')
       }
 
       private fun replace(project: Project, file: PsiFile, element: HCLExpression, replacement: HCLExpression) {

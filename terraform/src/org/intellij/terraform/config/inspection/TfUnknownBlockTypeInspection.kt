@@ -13,11 +13,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.parentOfTypes
-import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.isTerraformCompatiblePsiFile
@@ -48,7 +48,7 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
     val parent = block.parentOfTypes(HCLBlock::class, HCLFile::class) ?: return
     when (parent) {
       is HCLFile -> {
-        if (TerraformCompletionUtil.RootBlockKeywords.contains(type))
+        if (TfCompletionUtil.RootBlockKeywords.contains(type))
           return
 
         registerUnknownBlockProblem(block, holder, type)
@@ -56,14 +56,14 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
       is HCLBlock -> {
         parent.getNameElementUnquoted(0) ?: return
         parent.`object` ?: return
-        if (TerraformPatterns.DynamicBlock.accepts(block) || TerraformPatterns.DynamicBlockContent.accepts(block))
+        if (TfPsiPatterns.DynamicBlock.accepts(block) || TfPsiPatterns.DynamicBlockContent.accepts(block))
           return
 
         val properties = TfModelHelper.getBlockProperties(parent)
         if (properties[type] is BlockType) return
 
         // Check for non-closed root block (issue #93)
-        if (TerraformPatterns.RootBlock.accepts(parent) && TerraformCompletionUtil.RootBlockKeywords.contains(type)) {
+        if (TfPsiPatterns.RootBlock.accepts(parent) && TfCompletionUtil.RootBlockKeywords.contains(type)) {
           holder.registerProblem(block.nameElements.first(),
                                  HCLBundle.message("unknown.block.type.inspection.missing.closing.brace.error.message"),
                                  ProblemHighlightType.GENERIC_ERROR, AddClosingBraceFix(block.nameElements.first()))
@@ -79,7 +79,7 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
     holder.registerProblem(block.nameElements.first(),
                            HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                           *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block), RemoveBlockQuickFix(block)).toTypedArray())
+                           *listOfNotNull(TfInitAction.createQuickFixNotInitialized(block), RemoveBlockQuickFix(block)).toTypedArray())
   }
 }
 

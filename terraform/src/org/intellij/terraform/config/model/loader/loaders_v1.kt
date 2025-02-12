@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.loader.TerraformMetadataLoader.Companion.LOG
+import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
 
 object BaseLoaderV1 : BaseLoader {
   override val version: String

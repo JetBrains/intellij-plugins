@@ -4,7 +4,7 @@ package org.intellij.terraform.hil;
 import com.intellij.lang.Language;
 import org.intellij.terraform.TerraformTestUtils;
 import org.intellij.terraform.config.CompletionTestCase;
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil;
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil;
 import org.intellij.terraform.config.model.TfFunction;
 import org.intellij.terraform.config.model.TypeModelProvider;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public class HILCompletionTest extends CompletionTestCase {
     for (TfFunction function : functions) {
       result.add(function.getName());
     }
-    result.addAll(TerraformCompletionUtil.INSTANCE.getGlobalScopes());
+    result.addAll(TfCompletionUtil.INSTANCE.getGlobalScopes());
     return result;
   }
 

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hil.refactoring.ILIntroduceVariableHandler
@@ -20,7 +20,7 @@ class AddVariableFix(element: PsiNamedElement, private val vName: String = eleme
   override fun getText(): String = HCLBundle.message("AddVariableFix.text", vName)
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-    val declaration = TerraformElementGenerator(project).createVariable(vName, null, "\"\"")
+    val declaration = TfElementGenerator(project).createVariable(vName, null, "\"\"")
     val anchor = ILIntroduceVariableHandler.findAnchor(listOf(startElement, endElement))
     if (anchor == null) {
       CommonRefactoringUtil.showErrorHint(

@@ -20,7 +20,7 @@ public class TerraformIntroduceVariableRefactoringTest extends BaseIntroduceVari
   @Override
   @NotNull
   protected BaseIntroduceVariableHandler createHandler() {
-    return new TerraformIntroduceVariableHandler();
+    return new TfIntroduceVariableHandler();
   }
 
   public void testStringExpressionSimple() throws Exception {

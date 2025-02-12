@@ -12,11 +12,11 @@ import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.system.CpuArch
 import kotlinx.coroutines.ensureActive
-import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
-import org.intellij.terraform.runtime.TerraformProjectSettings
+import org.intellij.terraform.runtime.TfProjectSettings
 import org.intellij.terraform.runtime.TfToolSettings
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.coroutineContext
@@ -33,7 +33,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
       get() = "https://releases.hashicorp.com/terraform"
 
     override fun getToolSettings(project: Project): TfToolSettings {
-      return project.service<TerraformProjectSettings>()
+      return project.service<TfProjectSettings>()
     }
 
     private fun fetchLatestStableVersion(apiUrl: String): String? {
@@ -117,7 +117,7 @@ internal fun installTFTool(
 internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String? = tool.executableName): @NlsSafe String {
   val capturingProcessAdapter = CapturingProcessAdapter()
 
-  val success = TFExecutor.`in`(project, tool)
+  val success = TfExecutor.`in`(project, tool)
     .withExePath(exePath)
     .withPresentableName(HCLBundle.message("tool.executor.version", tool.displayName))
     .withParameters("version")

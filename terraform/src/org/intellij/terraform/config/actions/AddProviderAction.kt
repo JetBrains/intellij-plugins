@@ -29,7 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper.getAllTypesForBlockByIdentifier
 import org.intellij.terraform.config.model.BlockType
@@ -151,12 +151,12 @@ private class SelectUnknownResourceStep(
 ) : BaseListPopupStep<BlockType>(title, types) {
 
   override fun getTextFor(value: BlockType?): String {
-    return value?.let { TerraformCompletionUtil.buildResourceFullString(value) }
+    return value?.let { TfCompletionUtil.buildResourceFullString(value) }
            ?: HCLBundle.message("unknown.resource.identifier.inspection.display.name")
   }
 
   override fun getIconFor(value: BlockType?): Icon? {
-    return value?.let { TerraformCompletionUtil.getLookupIcon(pointer.element ?: return@getIconFor null) }
+    return value?.let { TfCompletionUtil.getLookupIcon(pointer.element ?: return@getIconFor null) }
            ?: AllIcons.General.QuestionDialog
   }
 

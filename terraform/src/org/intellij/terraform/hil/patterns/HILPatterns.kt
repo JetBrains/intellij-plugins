@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.Scopes
-import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil.Scopes
+import org.intellij.terraform.config.patterns.TfPsiPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -23,7 +23,7 @@ object HILPatterns {
   private val InVariableBlock: PatternCondition<HCLElement?> = object : PatternCondition<HCLElement?>("In Variable block") {
     override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
       val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return false
-      return TerraformPatterns.VariableRootBlock.accepts(topmost)
+      return TfPsiPatterns.VariableRootBlock.accepts(topmost)
     }
   }
 
@@ -47,7 +47,7 @@ object HILPatterns {
 
   val ForEachIteratorPosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
     .withParent(PlatformPatterns.psiElement(Identifier::class.java).withHCLHost(
-      PlatformPatterns.psiElement(HCLElement::class.java).inside(TerraformPatterns.DynamicBlock))
+      PlatformPatterns.psiElement(HCLElement::class.java).inside(TfPsiPatterns.DynamicBlock))
     )
 
   val IlseFromKnownScope: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)

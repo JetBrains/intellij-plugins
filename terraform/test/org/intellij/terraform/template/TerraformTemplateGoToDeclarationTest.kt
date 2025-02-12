@@ -8,7 +8,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.psi.ForVariable
-import org.intellij.terraform.template.editor.TerraformTemplateVariableGoToDeclarationHandler
+import org.intellij.terraform.template.editor.TftplVariableGoToDeclarationHandler
 import org.junit.Assert
 
 class TerraformTemplateGoToDeclarationTest : BasePlatformTestCase() {
@@ -69,7 +69,7 @@ class TerraformTemplateGoToDeclarationTest : BasePlatformTestCase() {
     val injectedVariable = templateFile.findElementWithText<PsiElement>("variable", true)
     val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable")
 
-     val targets = TerraformTemplateVariableGoToDeclarationHandler().getGotoDeclarationTargets(injectedVariable, -1, null)
+     val targets = TftplVariableGoToDeclarationHandler().getGotoDeclarationTargets(injectedVariable, -1, null)
     Assert.assertTrue(targets.size > 1)
     val actualTarget = targets[0]
     //val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)

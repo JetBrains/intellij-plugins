@@ -22,10 +22,10 @@ import com.intellij.util.asSafely
 import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
 import org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes
 
-internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
-                                                 virtualFile: VirtualFile,
-                                                 eventSystemEnabled: Boolean,
-                                                 private val givenDataLanguage: Language = doComputeTemplateDataLanguage(virtualFile, psiManager.project)
+internal class TftplFileViewProvider(psiManager: PsiManager,
+                                     virtualFile: VirtualFile,
+                                     eventSystemEnabled: Boolean,
+                                     private val givenDataLanguage: Language = doComputeTemplateDataLanguage(virtualFile, psiManager.project)
 ) : MultiplePsiFilesPerDocumentFileViewProvider(psiManager, virtualFile, eventSystemEnabled), ConfigurableTemplateLanguageFileViewProvider {
 
   override fun createFile(lang: Language): PsiFile? {
@@ -55,7 +55,7 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
   override fun getLanguages(): Set<Language> = hashSetOf(baseLanguage, templateDataLanguage)
 
   override fun cloneInner(fileCopy: VirtualFile): MultiplePsiFilesPerDocumentFileViewProvider {
-    return TerraformTemplateFileViewProvider(manager, fileCopy, false, doComputeTemplateDataLanguage(virtualFile, manager.project))
+    return TftplFileViewProvider(manager, fileCopy, false, doComputeTemplateDataLanguage(virtualFile, manager.project))
   }
 
   override fun getTemplateDataLanguage(): Language {

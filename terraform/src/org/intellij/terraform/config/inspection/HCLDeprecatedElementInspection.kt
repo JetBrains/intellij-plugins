@@ -9,7 +9,7 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.config.actions.TfInitAction
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyOrBlockType
@@ -59,7 +59,7 @@ class HCLDeprecatedElementInspection : LocalInspectionTool() {
             "deprecated.element.inspection.deprecated.property.error.message", name, reason,
             if (reason.isNotEmpty()) 0 else 1),
           ProblemHighlightType.LIKE_DEPRECATED,
-          *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+          *listOfNotNull(TfInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
         )
       }
     }

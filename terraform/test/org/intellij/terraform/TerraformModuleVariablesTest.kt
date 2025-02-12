@@ -17,8 +17,8 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
-import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
-import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
+import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection
+import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.LocalSchemaService
 
@@ -98,8 +98,8 @@ abstract class TerraformModuleVariablesTestBase(private val testDataRoot: String
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
     myFixture.enableInspections(
-      TFVARSIncorrectElementInspection::class.java,
-      TFDuplicatedVariableInspection::class.java,
+      TfVARSIncorrectElementInspection::class.java,
+      TfDuplicatedVariableInspection::class.java,
       HCLBlockMissingPropertyInspection::class.java,
     )
     runWriteActionAndWait {

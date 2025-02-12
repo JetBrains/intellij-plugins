@@ -11,7 +11,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
+import org.intellij.terraform.config.codeinsight.TfConfigCompletionContributor
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLForExpression
 import org.intellij.terraform.hcl.psi.HCLForIntro
@@ -34,7 +34,7 @@ class ForVariableReferenceProvider2 : PsiReferenceProvider() {
   }
 }
 
-object ForVariableCompletion : TerraformConfigCompletionContributor.TfCompletionProvider() {
+object ForVariableCompletion : TfConfigCompletionContributor.TfCompletionProvider() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val id = parameters.position.parent as? Identifier ?: return
     val parent = id.parent

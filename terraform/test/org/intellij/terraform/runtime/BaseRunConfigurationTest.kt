@@ -10,6 +10,6 @@ internal abstract class BaseRunConfigurationTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    TerraformProjectSettings.getInstance(myFixture.project).toolPath = TfToolType.TERRAFORM.getBinaryName()
+    TfProjectSettings.getInstance(myFixture.project).toolPath = TfToolType.TERRAFORM.getBinaryName()
   }
 }

@@ -7,8 +7,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
-import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
+import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection
+import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.isFallbackVariableSearchEnabled
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
@@ -19,7 +19,7 @@ class TFVarsTest : AbstractTFVarsTest(false)
 class TFVarsFallbackTest : AbstractTFVarsTest(true) {
   fun testDifferentDirsWithoutLock() {
 
-    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+    myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
 
     myFixture.configureByText("simple.tf", """
       variable "foo" {
@@ -54,7 +54,7 @@ abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnable
   }
 
   fun testSameDir() {
-    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+    myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
     myFixture.configureByText("simple.tf", """
       variable "foo" {
         default = "42"
@@ -73,7 +73,7 @@ abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnable
   }
 
   fun testHCLModule() {
-    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+    myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
     val file = myFixture.configureByText("simple.HCL", """
       variable "foo" {
         default = "42"
@@ -121,7 +121,7 @@ abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnable
 
   fun testDifferentDirsWithLock() {
 
-    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+    myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
     myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, "")
 
     myFixture.configureByText("simple.tf", """
@@ -145,7 +145,7 @@ abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnable
 
   fun testNoDifferentDirsDuplicates() {
 
-    myFixture.enableInspections(TFDuplicatedVariableInspection::class.java)
+    myFixture.enableInspections(TfDuplicatedVariableInspection::class.java)
     configureByTextInDir("dir1/$TERRAFORM_LOCK_FILE_NAME", "")
 
     configureByTextInDir("dir1/samedir1.tf", """
@@ -176,7 +176,7 @@ abstract class AbstractTFVarsTest(private val enableFallbackVariableSearchEnable
 
   fun testCompletionFromMultipleSources() {
 
-    myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
+    myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
     myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, "")
 
     myFixture.configureByText("simple.tf", """

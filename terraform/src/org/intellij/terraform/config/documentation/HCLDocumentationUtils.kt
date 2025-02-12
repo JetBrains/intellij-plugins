@@ -15,8 +15,8 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
-import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.psi.TerraformDocumentPsi
+import org.intellij.terraform.config.patterns.TfPsiPatterns
+import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
@@ -38,7 +38,7 @@ internal fun getBlockForHclIdentifier(element: HCLIdentifier): HCLBlock? {
 }
 
 @RequiresReadLock
-internal fun getBlockForDocumentationLink(element: TerraformDocumentPsi?, blockTypeLiteral: String): HCLBlock? {
+internal fun getBlockForDocumentationLink(element: TfDocumentPsi?, blockTypeLiteral: String): HCLBlock? {
   return element?.parentsOfType<HCLBlock>(false)?.firstOrNull { block -> block.getNameElementUnquoted(1) == blockTypeLiteral }
 }
 
@@ -47,7 +47,7 @@ internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
   return when (element) {
     is HCLProperty -> {
       val block = element.parentOfType<HCLBlock>(true)
-      if (TerraformPatterns.LocalsRootBlock.accepts(block)) {
+      if (TfPsiPatterns.LocalsRootBlock.accepts(block)) {
         HCLBundle.message("terraform.doc.label.local.value.0", element.name)
       }
       else {
@@ -67,7 +67,7 @@ internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
     is HCLBlock -> {
       calculateBlockDescription(element)
     }
-    is TerraformDocumentPsi -> {
+    is TfDocumentPsi -> {
       val block = element.parent
       (block as? HCLBlock)?.let { calculateBlockDescription(it) } ?: HCLBundle.message("terraform.doc.block.type.0", HCLBundle.message("terraform.doc.generic.block"), element.name)
     }
@@ -78,7 +78,7 @@ internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
 internal fun calculateBlockDescription(element: HCLBlock): @Nls String {
   val type = element.getNameElementUnquoted(0)
   val name = element.name
-  return if (TerraformPatterns.RootBlock.accepts(element)) {
+  return if (TfPsiPatterns.RootBlock.accepts(element)) {
     if (name == element.getNameElementUnquoted(1)) {
       HCLBundle.message("terraform.doc.block.type.0", type?.replaceFirstChar { it.uppercase(Locale.getDefault()) }, element.name)
     }

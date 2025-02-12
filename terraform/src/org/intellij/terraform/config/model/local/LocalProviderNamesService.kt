@@ -12,8 +12,8 @@ import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModel.Companion.getTerraformBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersData
-import org.intellij.terraform.config.patterns.TerraformPatterns.RequiredProvidersSource
+import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersData
+import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersSource
 import org.intellij.terraform.hcl.psi.HCLProperty
 import java.io.DataInput
 import java.io.DataOutput

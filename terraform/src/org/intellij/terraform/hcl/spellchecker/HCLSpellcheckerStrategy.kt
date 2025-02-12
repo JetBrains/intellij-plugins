@@ -7,11 +7,11 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.*
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
-import org.intellij.terraform.config.patterns.TerraformPatterns.DescriptionProperty
-import org.intellij.terraform.config.patterns.TerraformPatterns.RootBlockForHCLFiles
-import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil
-import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.HeredocContentTokenizer
-import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.StringLiteralTokenizer
+import org.intellij.terraform.config.patterns.TfPsiPatterns.DescriptionProperty
+import org.intellij.terraform.config.patterns.TfPsiPatterns.RootBlockForHCLFiles
+import org.intellij.terraform.config.spellchecker.TfSpellcheckingUtil
+import org.intellij.terraform.config.spellchecker.TfSpellcheckingUtil.HeredocContentTokenizer
+import org.intellij.terraform.config.spellchecker.TfSpellcheckingUtil.StringLiteralTokenizer
 import org.intellij.terraform.hcl.psi.*
 
 open class HCLSpellcheckerStrategy : SpellcheckingStrategy(), DumbAware {
@@ -40,7 +40,7 @@ open class HCLSpellcheckerStrategy : SpellcheckingStrategy(), DumbAware {
       if (RootBlockForHCLFiles.accepts(parent)) {
         // may change a last name element in some block types, otherwise name elements are predefined, no sense to report them as typos
         val type = parent.getNameElementUnquoted(0)
-        if (element === parent.nameIdentifier && type in TerraformSpellcheckingUtil.RootBlocksWithChangeableName) {
+        if (element === parent.nameIdentifier && type in TfSpellcheckingUtil.RootBlocksWithChangeableName) {
           return if (element is HCLStringLiteral) StringLiteralTokenizer else TEXT_TOKENIZER
         }
       }

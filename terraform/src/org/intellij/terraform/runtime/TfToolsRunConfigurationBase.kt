@@ -20,8 +20,8 @@ import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.util.text.findTextRange
 import com.intellij.util.xmlb.XmlSerializer
-import org.intellij.terraform.config.actions.TerraformActionService
-import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.config.actions.TfActionService
+import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jdom.Element
@@ -171,7 +171,7 @@ internal class TfToolCommandLineState(
   private fun createCommandLine(): GeneralCommandLine {
     val parameters = parameters
 
-    return TFExecutor.`in`(project, toolType)
+    return TfExecutor.`in`(project, toolType)
       .withPresentableName(HCLBundle.message("terraform.run.configuration.name", toolType.displayName))
       .withWorkDirectory(parameters.workingDirectory)
       .withParameters(parameters.programParametersList.parameters)
@@ -214,7 +214,7 @@ private class TfToolInitCommandFilter(
     return Filter.Result(entireLength - line.length + textRange.startOffset,
                          entireLength - line.length + textRange.endOffset
     ) {
-      project.service<TerraformActionService>().scheduleTerraformInit(directory, notifyOnSuccess = true)
+      project.service<TfActionService>().scheduleTerraformInit(directory, notifyOnSuccess = true)
     }
   }
 }

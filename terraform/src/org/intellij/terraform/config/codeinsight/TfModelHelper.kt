@@ -14,7 +14,7 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
@@ -37,8 +37,8 @@ internal object TfModelHelper {
     // Special case for 'backend' blocks, since it's located not in root
 
     when {
-      TerraformPatterns.Backend.accepts(block) -> return getBackendProperties(block)
-      TerraformPatterns.DynamicBlockContent.accepts(block) -> {
+      TfPsiPatterns.Backend.accepts(block) -> return getBackendProperties(block)
+      TfPsiPatterns.DynamicBlockContent.accepts(block) -> {
         val dynamic = block.parentOfType<HCLBlock>(withSelf = false) ?: return emptyMap()
 
         val origin = dynamic.parentOfType<HCLBlock>(withSelf = false) ?: return emptyMap()
@@ -46,10 +46,10 @@ internal object TfModelHelper {
         val blockType = getBlockProperties(origin)[dynamic.name] as? BlockType ?: return emptyMap()
         return blockType.properties
       }
-      TerraformPatterns.DynamicBlock.accepts(block) -> return TypeModel.ResourceDynamic.properties
-      TerraformPatterns.ProvisionerBlock.accepts(block) -> return getProvisionerProperties(block)
-      TerraformPatterns.ResourceLifecycleBlock.accepts(block) -> return TypeModel.ResourceLifecycle.properties
-      TerraformPatterns.ResourceConnectionBlock.accepts(block) -> return getConnectionProperties(block)
+      TfPsiPatterns.DynamicBlock.accepts(block) -> return TypeModel.ResourceDynamic.properties
+      TfPsiPatterns.ProvisionerBlock.accepts(block) -> return getProvisionerProperties(block)
+      TfPsiPatterns.ResourceLifecycleBlock.accepts(block) -> return TypeModel.ResourceLifecycle.properties
+      TfPsiPatterns.ResourceConnectionBlock.accepts(block) -> return getConnectionProperties(block)
       OpenTofuPatterns.KeyProviderBlock.accepts(block) -> return getEncryptionKeyProviderProperties(block)
       OpenTofuPatterns.EncryptionMethodBlock.accepts(block) -> return getEncryptionMethodProperties(block)
       block.parent !is PsiFile -> return getModelBlockProperties(block, type)
@@ -74,12 +74,12 @@ internal object TfModelHelper {
 
     // non-root blocks, match using patterns
     return when {
-      TerraformPatterns.Backend.accepts(block) -> TypeModel.AbstractBackend
-      TerraformPatterns.DynamicBlock.accepts(block) -> TypeModel.ResourceDynamic
-      TerraformPatterns.DynamicBlockContent.accepts(block) -> TypeModel.AbstractResourceDynamicContent
-      TerraformPatterns.ProvisionerBlock.accepts(block) -> TypeModel.AbstractResourceProvisioner
-      TerraformPatterns.ResourceLifecycleBlock.accepts(block) -> TypeModel.ResourceLifecycle
-      TerraformPatterns.ResourceConnectionBlock.accepts(block) -> TypeModel.Connection
+      TfPsiPatterns.Backend.accepts(block) -> TypeModel.AbstractBackend
+      TfPsiPatterns.DynamicBlock.accepts(block) -> TypeModel.ResourceDynamic
+      TfPsiPatterns.DynamicBlockContent.accepts(block) -> TypeModel.AbstractResourceDynamicContent
+      TfPsiPatterns.ProvisionerBlock.accepts(block) -> TypeModel.AbstractResourceProvisioner
+      TfPsiPatterns.ResourceLifecycleBlock.accepts(block) -> TypeModel.ResourceLifecycle
+      TfPsiPatterns.ResourceConnectionBlock.accepts(block) -> TypeModel.Connection
       else -> null
     }
   }
@@ -88,12 +88,12 @@ internal object TfModelHelper {
     val type = block.getNameElementUnquoted(0) ?: return null
 
     // non-root blocks, match using patterns
-    if (TerraformPatterns.Backend.accepts(block)) {
+    if (TfPsiPatterns.Backend.accepts(block)) {
       val fallback = TypeModel.AbstractBackend
       val name = block.getNameElementUnquoted(1) ?: return fallback
       return TypeModelProvider.getModel(block).getBackendType(name) ?: return fallback
     }
-    if (TerraformPatterns.DynamicBlockContent.accepts(block)) {
+    if (TfPsiPatterns.DynamicBlockContent.accepts(block)) {
       val fallback = TypeModel.AbstractResourceDynamicContent
       val dynamic = block.parentOfType<HCLBlock>(withSelf = false) ?: return fallback
 
@@ -101,19 +101,19 @@ internal object TfModelHelper {
       // origin is either ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock or ProvisionerBlock
       return getBlockProperties(origin)[dynamic.name] as? BlockType ?: return fallback
     }
-    if (TerraformPatterns.DynamicBlock.accepts(block)) {
+    if (TfPsiPatterns.DynamicBlock.accepts(block)) {
       // TODO: consider more specific content instead of AbstractResourceDynamicContent
       return TypeModel.ResourceDynamic
     }
-    if (TerraformPatterns.ProvisionerBlock.accepts(block)) {
+    if (TfPsiPatterns.ProvisionerBlock.accepts(block)) {
       val fallback = TypeModel.AbstractResourceProvisioner
       val name = block.getNameElementUnquoted(1) ?: return fallback
       return TypeModelProvider.getModel(block).getProvisionerType(name)
     }
-    if (TerraformPatterns.ResourceLifecycleBlock.accepts(block)) {
+    if (TfPsiPatterns.ResourceLifecycleBlock.accepts(block)) {
       return TypeModel.ResourceLifecycle
     }
-    if (TerraformPatterns.ResourceConnectionBlock.accepts(block)) {
+    if (TfPsiPatterns.ResourceConnectionBlock.accepts(block)) {
       return TypeModel.Connection
     }
 

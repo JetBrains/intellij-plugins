@@ -11,10 +11,10 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.model.getTerraformModule
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hil.psi.*
@@ -41,23 +41,23 @@ class HILUnknownResourceTypeInspection : LocalInspectionTool() {
 
       val name = element.name ?: return
 
-      if (TerraformCompletionUtil.Scopes.contains(name)) return
+      if (TfCompletionUtil.Scopes.contains(name)) return
       if (isExistingResourceType(element, host)) return
 
       if (DynamicBlockVariableReferenceProvider.getDynamicWithIteratorName(host, name) != null) return
       if (name == "each" &&
           PlatformPatterns.psiElement().inside(
             true,
-            PlatformPatterns.or(TerraformPatterns.ResourceRootBlock,
-                                TerraformPatterns.DataSourceRootBlock,
-                                TerraformPatterns.ModuleRootBlock)
+            PlatformPatterns.or(TfPsiPatterns.ResourceRootBlock,
+                                TfPsiPatterns.DataSourceRootBlock,
+                                TfPsiPatterns.ModuleRootBlock)
           ).accepts(host)) return
 
       if (element.references.any { it is ForVariableDirectReference && it.resolve() != null }) return
 
       holder.registerProblem(element, HCLBundle.message("hil.unknown.resource.type.inspection.unknown.resource.type.error.message"),
                              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                             *listOfNotNull(TFInitAction.createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
+                             *listOfNotNull(TfInitAction.createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
     }
   }
 

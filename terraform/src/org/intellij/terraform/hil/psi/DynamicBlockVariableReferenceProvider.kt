@@ -12,7 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
@@ -27,9 +27,9 @@ object DynamicBlockVariableReferenceProvider : PsiReferenceProvider() {
     val parent = id.parent as? SelectExpression<*> ?: return PsiReference.EMPTY_ARRAY
     if (parent.from !== id) return PsiReference.EMPTY_ARRAY
 
-    if (PsiTreeUtil.findFirstParent(host) { TerraformPatterns.DynamicBlockContent.accepts(it) } == null) {
+    if (PsiTreeUtil.findFirstParent(host) { TfPsiPatterns.DynamicBlockContent.accepts(it) } == null) {
       // Either in 'content' or in 'labels'
-      val labels = PsiTreeUtil.findFirstParent(host) { TerraformPatterns.DynamicLabels.accepts(it) } as?HCLProperty
+      val labels = PsiTreeUtil.findFirstParent(host) { TfPsiPatterns.DynamicLabels.accepts(it) } as?HCLProperty
           ?: return PsiReference.EMPTY_ARRAY
       if (!PsiTreeUtil.isAncestor(labels.value, host, false)) return PsiReference.EMPTY_ARRAY
     }
@@ -39,7 +39,7 @@ object DynamicBlockVariableReferenceProvider : PsiReferenceProvider() {
   }
 
   fun getDynamicWithIteratorName(host: HCLElement, name: String): HCLBlock? {
-    val dynamics = host.parentsOfType(HCLBlock::class.java).filter { TerraformPatterns.DynamicBlock.accepts(it) }
+    val dynamics = host.parentsOfType(HCLBlock::class.java).filter { TfPsiPatterns.DynamicBlock.accepts(it) }
     for (dynamic in dynamics) {
       val iteratorPropertyValue = dynamic.`object`?.findProperty("iterator")?.value as? HCLIdentifier
       val iterator = iteratorPropertyValue?.id ?: dynamic.name

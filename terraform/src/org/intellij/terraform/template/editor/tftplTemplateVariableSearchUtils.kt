@@ -16,7 +16,7 @@ import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.psi.ILExpressionHolder
 import org.intellij.terraform.hil.psi.ILVariable
 import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
-import org.intellij.terraform.template.TerraformTemplateFileViewProvider
+import org.intellij.terraform.template.TftplFileViewProvider
 import org.intellij.terraform.template.model.TftplVariable
 import org.intellij.terraform.template.psi.TftplFile
 
@@ -34,10 +34,10 @@ private fun computeAbsoluteOffsetInFile(position: PsiElement): Int {
   return elementUnderCaretOffset + injectionHostStartOffsetIfAny
 }
 
-internal fun getTemplateFileViewProvider(element: PsiElement): TerraformTemplateFileViewProvider? {
+internal fun getTemplateFileViewProvider(element: PsiElement): TftplFileViewProvider? {
   return InjectedLanguageManager.getInstance(element.project)
     .getTopLevelFile(element)
-    ?.viewProvider as? TerraformTemplateFileViewProvider
+    ?.viewProvider as? TftplFileViewProvider
 }
 
 internal val hilVariablePattern: ElementPattern<PsiElement> =

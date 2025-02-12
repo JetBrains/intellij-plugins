@@ -11,11 +11,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.tail
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.psi.*
 
-object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributor.TfCompletionProvider() {
+object PropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCompletionProvider() {
   private val LOG = Logger.getInstance(PropertyObjectKeyCompletionProvider::class.java)
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -77,7 +77,7 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
       val pathToRoot = pathToRootObject(property)
       val objTypeProperty = findObjectTypeInModule(block, pathToRoot.reversed())
       val properties = objTypeProperty?.elements?.map { PropertyType(it.key, it.value ?: Types.Any) } ?: return
-      result.addAllElements(properties.map { TerraformCompletionUtil.createPropertyOrBlockType(it) })
+      result.addAllElements(properties.map { TfCompletionUtil.createPropertyOrBlockType(it) })
     }
   }
 
@@ -114,7 +114,7 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
   private fun handleModuleProvidersMapping(block: HCLBlock, parameters: CompletionParameters, obj: HCLObject, result: CompletionResultSet) {
     val module = Module.getAsModuleBlock(block) ?: return
     val incomplete: String? = getIncomplete(parameters)
-    val defined = TerraformCompletionUtil.getOriginalObject(parameters, obj).propertyList.map { it.name }
+    val defined = TfCompletionUtil.getOriginalObject(parameters, obj).propertyList.map { it.name }
     val providers = module.getDefinedProviders()
       .map { it.second }
       .filter { !defined.contains(it) || (incomplete != null && it.contains(incomplete)) }

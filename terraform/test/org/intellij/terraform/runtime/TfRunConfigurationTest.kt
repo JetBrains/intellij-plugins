@@ -19,14 +19,14 @@ internal class TfRunConfigurationTest : BaseRunConfigurationTest() {
     val oldStateElement = JDOMUtil.load(Paths.get("${getTestDataPath()}/run-config-242.xml"))
     runManager.loadState(oldStateElement)
 
-    val tfConfig = runManager.allSettings.firstOrNull()?.configuration as? TerraformRunConfiguration
+    val tfConfig = runManager.allSettings.firstOrNull()?.configuration as? TfRunConfiguration
     assertNotNull(tfConfig)
     assertEquals("Plan directory 309488", tfConfig?.name)
     assertEquals("Terraform plan", tfConfig?.factory?.id)
 
-    val configurationType = tfConfig?.type as? TerraformConfigurationType
+    val configurationType = tfConfig?.type as? TfConfigurationType
     assertNotNull(configurationType)
-    assertEquals(TerraformConfigurationType.TF_RUN_CONFIGURATION_ID, configurationType?.id)
+    assertEquals(TfConfigurationType.TF_RUN_CONFIGURATION_ID, configurationType?.id)
   }
 
 
@@ -37,7 +37,7 @@ internal class TfRunConfigurationTest : BaseRunConfigurationTest() {
     val runManager = RunManager.getInstance(project)
     val settings = runManager.createConfiguration("Test 'global option'", initFactory)
 
-    val configuration = settings.configuration as? TerraformRunConfiguration
+    val configuration = settings.configuration as? TfRunConfiguration
     assertNotNull(configuration)
     assertEmpty(configuration?.globalOptions)
     assertEquals("init", configuration?.programParameters)

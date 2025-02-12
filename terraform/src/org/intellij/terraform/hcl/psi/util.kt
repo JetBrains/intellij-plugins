@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
@@ -29,8 +29,8 @@ internal fun HCLElement.getElementName(): String? = when (this) {
   // For now, consider the name of 'Local' property, 'Variable', 'Data source' and 'Resource'
   is HCLProperty -> this.name
   is HCLBlock -> when {
-    TerraformPatterns.VariableRootBlock.accepts(this) -> this.getNameElementUnquoted(1)
-    TerraformPatterns.DataSourceRootBlock.accepts(this) || TerraformPatterns.ResourceRootBlock.accepts(this) ->
+    TfPsiPatterns.VariableRootBlock.accepts(this) -> this.getNameElementUnquoted(1)
+    TfPsiPatterns.DataSourceRootBlock.accepts(this) || TfPsiPatterns.ResourceRootBlock.accepts(this) ->
       this.getNameElementUnquoted(2)
     else -> null
   }

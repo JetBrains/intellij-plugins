@@ -12,7 +12,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
+import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLSyntaxHighlighter
 import org.intellij.terraform.hcl.psi.*
@@ -74,9 +74,9 @@ class HCLLiteralAnnotator : Annotator, DumbAware, LightEditCompatible {
           }
         } else for (i in ne.indices) {
           if (ne[i] === element) {
-            val fix: TFVARSIncorrectElementInspection.ConvertToHCLStringQuickFix?
+            val fix: TfVARSIncorrectElementInspection.ConvertToHCLStringQuickFix?
             if (i != 0 && element is HCLIdentifier) {
-              fix = TFVARSIncorrectElementInspection.ConvertToHCLStringQuickFix(element)
+              fix = TfVARSIncorrectElementInspection.ConvertToHCLStringQuickFix(element)
             }
             else {
               fix = null

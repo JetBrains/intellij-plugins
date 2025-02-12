@@ -6,7 +6,7 @@ import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.createHclLexer
 import org.intellij.terraform.hcl.psi.*
@@ -22,18 +22,18 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
     }
     if (psiElement is HCLIdentifier) {
       if (HCLPsiUtil.isPropertyValue(psiElement)) {
-        if (TerraformPatterns.DynamicBlockIterator.accepts(psiElement.parent)) {
+        if (TfPsiPatterns.DynamicBlockIterator.accepts(psiElement.parent)) {
           return true
         }
-      } else if (TerraformPatterns.ForVariable.accepts(psiElement)) {
+      } else if (TfPsiPatterns.ForVariable.accepts(psiElement)) {
         return true
       }
     }
-    if (TerraformPatterns.RootBlock.accepts(psiElement)) {
-      if (TerraformPatterns.LocalsRootBlock.accepts(psiElement)) {
+    if (TfPsiPatterns.RootBlock.accepts(psiElement)) {
+      if (TfPsiPatterns.LocalsRootBlock.accepts(psiElement)) {
         return false
       }
-      if (TerraformPatterns.TerraformRootBlock.accepts(psiElement)) {
+      if (TfPsiPatterns.TerraformRootBlock.accepts(psiElement)) {
         return false
       }
     }
@@ -45,12 +45,12 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
   }
 
   override fun getType(element: PsiElement): String {
-    if (TerraformPatterns.TerraformFile.accepts(element.containingFile)) {
+    if (TfPsiPatterns.TerraformFile.accepts(element.containingFile)) {
       val parent = element.parent
 
       if (element is HCLBlock) {
         @NlsSafe val type = element.getNameElementUnquoted(0)
-        if (TerraformPatterns.RootBlock.accepts(element)) {
+        if (TfPsiPatterns.RootBlock.accepts(element)) {
           when (type) {
             "module" -> return HCLBundle.message("HCLFindUsagesProvider.type.module")
             "variable" -> return HCLBundle.message("HCLFindUsagesProvider.type.variable")
@@ -63,24 +63,24 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
             "locals" -> return HCLBundle.message("HCLFindUsagesProvider.type.local.values")
           }
         }
-        if (TerraformPatterns.Backend.accepts(element)){
+        if (TfPsiPatterns.Backend.accepts(element)){
           return HCLBundle.message("HCLFindUsagesProvider.type.backend.configuration")
         }
         return "$type"
       }
 
       if (element is HCLProperty) {
-        if (TerraformPatterns.LocalsRootBlock.accepts(parent?.parent)) {
+        if (TfPsiPatterns.LocalsRootBlock.accepts(parent?.parent)) {
           return HCLBundle.message("HCLFindUsagesProvider.type.local.value")
         }
         return HCLBundle.message("HCLFindUsagesProvider.type.property")
       }
       if (element is HCLIdentifier) {
         if (HCLPsiUtil.isPropertyValue(element)) {
-          if (TerraformPatterns.DynamicBlockIterator.accepts(element.parent)) {
+          if (TfPsiPatterns.DynamicBlockIterator.accepts(element.parent)) {
             return HCLBundle.message("HCLFindUsagesProvider.type.dynamic.iterator")
           }
-        } else if (TerraformPatterns.ForVariable.accepts(element)) {
+        } else if (TfPsiPatterns.ForVariable.accepts(element)) {
           return HCLBundle.message("HCLFindUsagesProvider.type.for.loop.variable")
         }
       }

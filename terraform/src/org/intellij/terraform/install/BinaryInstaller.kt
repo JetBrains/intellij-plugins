@@ -26,9 +26,9 @@ import com.intellij.util.io.Decompressor
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.io.RequestBuilder
 import com.sun.jna.platform.win32.*
-import org.intellij.terraform.config.TerraformConstants
+import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.runtime.TerraformProjectSettings
+import org.intellij.terraform.runtime.TfProjectSettings
 import org.jetbrains.annotations.Nls
 import java.io.File
 import java.io.IOException
@@ -363,7 +363,7 @@ internal class BinaryInstaller private constructor(
   private fun showNotification(@NlsContexts.NotificationContent content: String,
                                type: NotificationType,
                                project: Project) {
-    TerraformConstants.getNotificationGroup().createNotification(HCLBundle.message("terraform.name"), content, type)
+    TfConstants.getNotificationGroup().createNotification(HCLBundle.message("terraform.name"), content, type)
       .notify(project)
   }
 
@@ -447,7 +447,7 @@ internal class SuccessfulInstallation(override val binary: Path)
 internal class FailedInstallation(override val errorMsg: Supplier<@Nls String>)
   : InstallationResult(null, errorMsg)
 
-internal class InstallTerraformAction : DumbAwareAction() {
+internal class InstallTfAction : DumbAwareAction() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -463,7 +463,7 @@ internal class InstallTerraformAction : DumbAwareAction() {
   private fun handleInstall(project: Project, result: InstallationResult) {
     when (result) {
       is SuccessfulInstallation -> {
-        project.service<TerraformProjectSettings>().toolPath = result.binary.toString()
+        project.service<TfProjectSettings>().toolPath = result.binary.toString()
       }
       else -> {}
     }

@@ -15,11 +15,11 @@ public class TerraformElementGeneratorTest extends HCLElementGeneratorTest {
   @NotNull
   @Override
   protected HCLElementGenerator createElementGenerator() {
-    return new TerraformElementGenerator(getProject());
+    return new TfElementGenerator(getProject());
   }
 
   public void testCreateVariable() throws Exception {
-    TerraformElementGenerator generator = (TerraformElementGenerator) myElementGenerator;
+    TfElementGenerator generator = (TfElementGenerator) myElementGenerator;
     HCLBlock element = generator.createVariable("name", Types.INSTANCE.getString(), "\"42\"");
     assertEquals("name", element.getName());
     HCLObject object = element.getObject();

@@ -54,7 +54,7 @@ internal abstract class TfToolConfigurationTypeBase : ConfigurationType, DumbAwa
 
 internal fun tfRunConfigurationType(toolType: TfToolType): TfToolConfigurationTypeBase {
   return when (toolType) {
-    TfToolType.TERRAFORM -> return runConfigurationType<TerraformConfigurationType>()
+    TfToolType.TERRAFORM -> return runConfigurationType<TfConfigurationType>()
     TfToolType.OPENTOFU -> return runConfigurationType<OpenTofuConfigurationType>()
   }
 }

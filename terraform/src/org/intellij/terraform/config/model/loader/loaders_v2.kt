@@ -6,10 +6,10 @@ import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.impl.PsiBuilderImpl
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.config.TerraformParserDefinition
+import org.intellij.terraform.config.TfParserDefinition
 import org.intellij.terraform.config.inspection.TypeSpecificationValidator
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.loader.TerraformMetadataLoader.Companion.LOG
+import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
 import org.intellij.terraform.hcl.HCLParser
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
@@ -242,7 +242,7 @@ object BaseLoaderV2 : BaseLoader {
     val text = "foo = $input"
 
     val parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(TerraformLanguage)
-    val lexer = TerraformParserDefinition.createLexer()
+    val lexer = TfParserDefinition.createLexer()
     val builder = PsiBuilderImpl(null, null, parserDefinition, lexer, null, text, null, null)
     val parser = HCLParser()
 

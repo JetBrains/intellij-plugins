@@ -5,7 +5,7 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.RefactoringActionHandler
-import org.intellij.terraform.config.refactoring.TerraformIntroduceVariableHandler
+import org.intellij.terraform.config.refactoring.TfIntroduceVariableHandler
 
 class HCLRefactoringSupportProvider : RefactoringSupportProvider() {
   override fun isAvailable(context: PsiElement): Boolean {
@@ -22,10 +22,10 @@ class HCLRefactoringSupportProvider : RefactoringSupportProvider() {
   }
 
   override fun getIntroduceVariableHandler(): RefactoringActionHandler {
-    return TerraformIntroduceVariableHandler()
+    return TfIntroduceVariableHandler()
   }
 
   override fun getIntroduceVariableHandler(element: PsiElement?): RefactoringActionHandler {
-    return TerraformIntroduceVariableHandler()
+    return TfIntroduceVariableHandler()
   }
 }

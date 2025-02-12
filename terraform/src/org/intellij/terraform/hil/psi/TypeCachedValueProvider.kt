@@ -9,7 +9,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.*
@@ -329,7 +329,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       if (HCLPsiUtil.isPartOfPropertyKey(e)) {
         return null
       }
-      if (TerraformPatterns.ForVariable.accepts(e)) {
+      if (TfPsiPatterns.ForVariable.accepts(e)) {
         val p = e.parent as HCLForIntro
         val containerType = p.container?.getType() ?: return null
         return if ((p.var2 === null && p.var1 === e) || p.var2 === e) {

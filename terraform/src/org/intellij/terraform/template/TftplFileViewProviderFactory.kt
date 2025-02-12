@@ -9,6 +9,6 @@ import com.intellij.psi.PsiManager
 
 class TftplFileViewProviderFactory : FileViewProviderFactory {
   override fun createFileViewProvider(file: VirtualFile, language: Language?, manager: PsiManager, eventSystemEnabled: Boolean): FileViewProvider {
-    return TerraformTemplateFileViewProvider(manager, file, eventSystemEnabled)
+    return TftplFileViewProvider(manager, file, eventSystemEnabled)
   }
 }

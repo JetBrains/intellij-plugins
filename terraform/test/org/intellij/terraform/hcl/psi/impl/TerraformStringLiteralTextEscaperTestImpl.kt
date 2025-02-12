@@ -3,11 +3,11 @@ package org.intellij.terraform.hcl.psi.impl
 
 import com.intellij.openapi.util.TextRange
 import org.intellij.terraform.hcl.psi.HCLElementGenerator
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.psi.TfElementGenerator
 
 class TerraformStringLiteralTextEscaperTestImpl : HCLStringLiteralTextEscaperTest() {
   override fun createElementGenerator(): HCLElementGenerator {
-    return TerraformElementGenerator(getProject())
+    return TfElementGenerator(getProject())
   }
 
   fun testRelevantRangeTF() {

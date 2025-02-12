@@ -9,7 +9,7 @@ import java.io.IOException;
 @TestDataPath("$CONTENT_ROOT/test-data/psi/")
 public class TerraformConfigParserTest extends HCLParserTest {
   public TerraformConfigParserTest() {
-    super("psi", "hcl", false, new TerraformParserDefinition(), new HCLParserDefinition());
+    super("psi", "hcl", false, new TfParserDefinition(), new HCLParserDefinition());
   }
 
   private void setTerraformExtension() {

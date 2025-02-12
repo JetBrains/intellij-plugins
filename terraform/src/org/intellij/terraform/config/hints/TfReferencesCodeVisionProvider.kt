@@ -12,7 +12,7 @@ import com.intellij.psi.search.PsiSearchHelper.SearchCostResult
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.intellij.terraform.config.model.restrictToTerraformFiles
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
@@ -26,10 +26,10 @@ internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
 
   override fun acceptsElement(element: PsiElement): Boolean = when (element) {
     is HCLBlock ->
-      TerraformPatterns.VariableRootBlock.accepts(element) ||
-      TerraformPatterns.DataSourceRootBlock.accepts(element) ||
-      TerraformPatterns.ResourceRootBlock.accepts(element)
-    is HCLProperty -> TerraformPatterns.LocalProperty.accepts(element)
+      TfPsiPatterns.VariableRootBlock.accepts(element) ||
+      TfPsiPatterns.DataSourceRootBlock.accepts(element) ||
+      TfPsiPatterns.ResourceRootBlock.accepts(element)
+    is HCLProperty -> TfPsiPatterns.LocalProperty.accepts(element)
     else -> false
   }
 

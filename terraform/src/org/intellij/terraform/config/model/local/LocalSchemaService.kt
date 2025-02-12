@@ -44,8 +44,8 @@ import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.getVFSParents
-import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
-import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.config.model.loader.TfMetadataLoader
+import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
@@ -105,7 +105,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelComputationCache.remove(lock)?.cancel()
 
     readAndWriteAction {
-      val relatedEntities = WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().filter {
+      val relatedEntities = WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().filter {
         it.lockFile.virtualFile == lock
       }.toList()
       if (relatedEntities.isEmpty()) return@readAndWriteAction value(Unit)
@@ -219,11 +219,11 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private suspend fun retrieveJsonForTFLock(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): String {
     val lockData = readAction {
-      WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().firstOrNull {
+      WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().firstOrNull {
         it.lockFile.virtualFile == lock
       }.also {
         logger<LocalSchemaService>().info("building local model lockData: ${it?.lockFile?.virtualFile?.name} among ${
-          WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().count()
+          WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().count()
         }")
       }
     }
@@ -315,7 +315,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       }
 
       val usedMeta = readAction {
-        WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().mapTo(mutableSetOf()) { it.jsonPath }
+        WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().mapTo(mutableSetOf()) { it.jsonPath }
       }
 
       logger<LocalSchemaService>().info("OrphanMetadataCollection: $localModelPath allModelFiles = $allModelFiles, usedMeta = $usedMeta")
@@ -330,22 +330,22 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private suspend fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TFLocalMetaEntity?, newJson: @NlsSafe String) {
+  private suspend fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TfLocalMetaEntity?, newJson: @NlsSafe String) {
     val low = (lock.timeStamp and 0xFFFFFFFFL).toInt()
     val high = (lock.timeStamp shr 32).toInt()
     val workspaceModel = WorkspaceModel.getInstance(project)
     workspaceModel.update("Update TF Local Model from $lock") { storage ->
       if (prevLockData != null) storage.removeEntity(prevLockData)
-      storage.addEntity(TFLocalMetaEntity(low, high, newJson,
+      storage.addEntity(TfLocalMetaEntity(low, high, newJson,
                                           lock.toVirtualFileUrl(workspaceModel.getVirtualFileUrlManager()),
-                                          TFLocalMetaEntity.LockEntitySource
+                                          TfLocalMetaEntity.LockEntitySource
 
       ))
     }
   }
 
   private fun buildModelFromJson(json: String): TypeModel {
-    val loader = TerraformMetadataLoader()
+    val loader = TfMetadataLoader()
     json.byteInputStream().use { input ->
       loader.loadOne("local-schema.json", input)
     }
@@ -358,7 +358,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     val capturingProcessAdapter = CapturingProcessAdapter()
 
     val toolType = getApplicableToolType(lock)
-    val success = TFExecutor.`in`(project, toolType)
+    val success = TfExecutor.`in`(project, toolType)
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
       .withParameters("providers", "schema", "-json")
       .withWorkDirectory(lock.parent.path)

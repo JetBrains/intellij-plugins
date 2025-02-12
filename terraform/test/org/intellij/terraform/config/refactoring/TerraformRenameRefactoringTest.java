@@ -5,13 +5,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.terraform.hcl.psi.HCLBlock;
-import org.intellij.terraform.config.psi.TerraformElementGenerator;
+import org.intellij.terraform.config.psi.TfElementGenerator;
 import org.intellij.terraform.hil.psi.ILElementGenerator;
 
 public class TerraformRenameRefactoringTest extends BasePlatformTestCase {
 
   public void testNewIdentifierNames() throws Exception {
-    final TerraformElementGenerator generator = new TerraformElementGenerator(getProject());
+    final TfElementGenerator generator = new TfElementGenerator(getProject());
     final PsiElement element = generator.createIdentifier("origin");
 
     doTestNameValidness(element, "origin", true);
@@ -26,7 +26,7 @@ public class TerraformRenameRefactoringTest extends BasePlatformTestCase {
   }
 
   public void testNewStringLiteralsNames() throws Exception {
-    final TerraformElementGenerator generator = new TerraformElementGenerator(getProject());
+    final TfElementGenerator generator = new TfElementGenerator(getProject());
     final PsiElement element = generator.createStringLiteral("origin", '\"');
 
     doTestNameValidness(element, "origin", true);
@@ -59,7 +59,7 @@ public class TerraformRenameRefactoringTest extends BasePlatformTestCase {
   }
 
   public void testNewTerraformResourceNames() throws Exception {
-    final TerraformElementGenerator generator = new TerraformElementGenerator(getProject());
+    final TfElementGenerator generator = new TfElementGenerator(getProject());
     com.intellij.psi.PsiFile file = generator.createDummyFile("resource null_resource \"name\" {}");
     HCLBlock element = (HCLBlock) file.getFirstChild();
 

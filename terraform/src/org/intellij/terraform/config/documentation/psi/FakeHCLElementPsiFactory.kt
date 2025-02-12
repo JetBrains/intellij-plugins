@@ -11,7 +11,7 @@ import org.intellij.terraform.config.model.NamedType
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.getProviderForBlockType
-import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
@@ -25,7 +25,7 @@ internal class FakeHCLElementPsiFactory(val project: Project) {
     createFakeHCLBlock("", "")
   }
 
-  private val terraformElementGenerator = TerraformElementGenerator(project)
+  private val myTfElementGenerator = TfElementGenerator(project)
 
   fun createFakeHCLBlock(block: NamedType, original: PsiFile? = null): HCLBlock? {
     val provider = getProviderForBlockType(block as BlockType) ?: return null
@@ -36,7 +36,7 @@ internal class FakeHCLElementPsiFactory(val project: Project) {
 
   fun createFakeHCLBlock(blockName: String, blockType: String, original: PsiFile? = null): HCLBlock? {
     val hclBlock = try {
-      terraformElementGenerator.createBlock(blockName, emptyMap(), blockType, original = original)
+      myTfElementGenerator.createBlock(blockName, emptyMap(), blockType, original = original)
     }
     catch (e: IllegalStateException) {
       fileLogger().warnWithDebug("Failed to create HCLBlock for content: ${blockName} ${blockType}. ${e.message}", e)
@@ -47,11 +47,11 @@ internal class FakeHCLElementPsiFactory(val project: Project) {
 
   fun createFakeHCLProperty(block: HCLBlock, property: PropertyOrBlockType): HCLProperty? {
     val dummyBlock = try {
-      terraformElementGenerator.createBlock(block.getNameElementUnquoted(0) ?: "",
-                                            mapOf(property.name to "\"\""),
-                                            namedElements = arrayOf(block.getNameElementUnquoted(1) ?: "\"\"",
+      myTfElementGenerator.createBlock(block.getNameElementUnquoted(0) ?: "",
+                                       mapOf(property.name to "\"\""),
+                                       namedElements = arrayOf(block.getNameElementUnquoted(1) ?: "\"\"",
                                                                     block.getNameElementUnquoted(2) ?: "\"\""),
-                                            original = block.containingFile.originalFile)
+                                       original = block.containingFile.originalFile)
     }
     catch (e: IllegalStateException) {
       fileLogger().warnWithDebug("Failed to create HCLProperty: ${property} for block ${block}. ${e.message}", e)

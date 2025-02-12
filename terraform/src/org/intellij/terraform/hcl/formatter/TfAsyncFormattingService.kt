@@ -11,9 +11,9 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
-import org.intellij.terraform.config.TerraformConstants
+import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
@@ -81,7 +81,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   }
 
   private fun createCommandLine(project: Project, applicableToolType: TfToolType): GeneralCommandLine =
-    TFExecutor.`in`(project, applicableToolType)
+    TfExecutor.`in`(project, applicableToolType)
       .withPresentableName(HCLBundle.message("tool.format.display", applicableToolType.displayName))
       .withParameters("fmt", "-")
       .createCommandLine()

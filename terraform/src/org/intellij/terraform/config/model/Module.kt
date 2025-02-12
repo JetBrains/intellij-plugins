@@ -31,7 +31,7 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
@@ -97,7 +97,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     private class CollectVariablesVisitor(val name: String? = null) : HCLElementVisitor() {
       val collected: MutableSet<Variable> = ConcurrentCollectionFactory.createConcurrentSet()
       override fun visitBlock(o: HCLBlock) {
-        if (!TerraformPatterns.VariableRootBlock.accepts(o)) return
+        if (!TfPsiPatterns.VariableRootBlock.accepts(o)) return
         o.`object` ?: return
         if (name != null && name != o.getNameElementUnquoted(1)) return
         collected.add(Variable(o))
@@ -107,7 +107,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     private class CollectLocalsVisitor(val name: String? = null) : HCLElementVisitor() {
       val collected: MutableSet<Pair<String, HCLProperty>> = HashSet()
       override fun visitBlock(o: HCLBlock) {
-        if (!TerraformPatterns.LocalsRootBlock.accepts(o)) return
+        if (!TfPsiPatterns.LocalsRootBlock.accepts(o)) return
 
         val obj = o.`object` ?: return
 
@@ -408,7 +408,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if (!TerraformPatterns.TerraformRootBlock.accepts(o)) return
+          if (!TfPsiPatterns.TerraformRootBlock.accepts(o)) return
           val value = o.`object`?.findProperty(TypeModel.TerraformRequiredVersion.name)?.value ?: return
           if (value is LiteralExpression) {
             found.add(value.unquotedText)

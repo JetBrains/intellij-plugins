@@ -34,7 +34,7 @@ import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
-import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.intellij.terraform.opentofu.model.EncryptionBlockType
@@ -300,7 +300,7 @@ class TypeModel(
 
     @RequiresReadLock
     fun getTerraformBlock(psiFile: PsiFile?): HCLBlock? {
-      val terraformRootBlock = psiFile?.childrenOfType<HCLBlock>()?.firstOrNull { TerraformPatterns.TerraformRootBlock.accepts(it) }
+      val terraformRootBlock = psiFile?.childrenOfType<HCLBlock>()?.firstOrNull { TfPsiPatterns.TerraformRootBlock.accepts(it) }
       return terraformRootBlock
     }
   }
