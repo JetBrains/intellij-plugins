@@ -4,7 +4,7 @@ package org.intellij.terraform.hil;
 import com.intellij.lang.Language;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.testFramework.ParsingTestCase;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class HILParserTest extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataPath();
+    return TfTestUtils.getTestDataPath();
   }
 
   public void testSimple() throws Exception {

@@ -18,7 +18,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.config.TerraformConstants
+import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import java.nio.file.Path
@@ -85,7 +85,7 @@ internal fun showIncorrectPathNotification(
   toolType: TfToolType,
 ) {
   val toolPath = toolType.getToolSettings(project).toolPath
-  TerraformConstants.getNotificationGroup().createNotification(
+  TfConstants.getNotificationGroup().createNotification(
     HCLBundle.message("run.configuration.terraform.path.title", toolType.displayName),
     HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
     NotificationType.ERROR
@@ -95,7 +95,7 @@ internal fun showIncorrectPathNotification(
 
 internal fun showDetectedPathNotification(project: Project, toolType: TfToolType) {
   val detectedPath = toolType.getToolSettings(project).toolPath
-  TerraformConstants.getNotificationGroup().createNotification(
+  TfConstants.getNotificationGroup().createNotification(
     HCLBundle.message("run.configuration.terraform.path.detected.title", toolType.displayName),
     HCLBundle.message("run.configuration.terraform.path.detected", detectedPath),
     NotificationType.INFORMATION
@@ -132,7 +132,7 @@ internal class DetectExecutableAction(
 internal class OpenSettingsAction : NotificationAction(HCLBundle.message("terraform.open.settings")) {
   override fun actionPerformed(e: AnActionEvent, notification: Notification) {
     notification.expire()
-    ShowSettingsUtil.getInstance().showSettingsDialog(e.project, TerraformToolConfigurable::class.java)
+    ShowSettingsUtil.getInstance().showSettingsDialog(e.project, TfToolConfigurable::class.java)
   }
 }
 

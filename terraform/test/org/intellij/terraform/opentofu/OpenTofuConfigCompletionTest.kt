@@ -1,9 +1,9 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu
 
-import org.intellij.terraform.config.codeinsight.TFBaseCompletionTestCase
+import org.intellij.terraform.config.codeinsight.TfBaseCompletionTestCase
 
-internal class OpenTofuConfigCompletionTest: TFBaseCompletionTestCase() {
+internal class OpenTofuConfigCompletionTest: TfBaseCompletionTestCase() {
 
   fun testTofuBlockCompletion() {
     val file = myFixture.configureByText("main.tofu", """ 

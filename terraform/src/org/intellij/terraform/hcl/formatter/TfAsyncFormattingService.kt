@@ -11,8 +11,8 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
-import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
@@ -24,7 +24,7 @@ import kotlin.io.path.Path
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
 
-  override fun getNotificationGroupId(): String = TerraformConstants.getNotificationGroup().displayId
+  override fun getNotificationGroupId(): String = TfConstants.getNotificationGroup().displayId
 
   override fun getFeatures(): Set<FormattingService.Feature> = emptySet()
 

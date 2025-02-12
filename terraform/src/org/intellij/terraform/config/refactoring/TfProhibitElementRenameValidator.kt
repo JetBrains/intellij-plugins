@@ -4,7 +4,7 @@ package org.intellij.terraform.config.refactoring
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.RenameInputValidator
+import com.intellij.refactoring. rename.RenameInputValidator
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 

@@ -2,7 +2,7 @@
 package org.intellij.terraform.hcl.codeinsight;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 
 public class HCLLiteralAnnotatorTest extends CodeInsightFixtureTestCase {
   private String myExtension;
@@ -20,7 +20,7 @@ public class HCLLiteralAnnotatorTest extends CodeInsightFixtureTestCase {
 
   @Override
   protected String getBasePath() {
-    return TerraformTestUtils.getTestDataPath() + "/terraform/annotator/";
+    return TfTestUtils.getTestDataPath() + "/terraform/annotator/";
   }
 
   protected String getExtension() {

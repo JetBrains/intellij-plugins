@@ -2,7 +2,7 @@
 package org.intellij.terraform.hil;
 
 import com.intellij.lang.Language;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.config.CompletionTestCase;
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil;
 import org.intellij.terraform.config.model.TfFunction;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class HILCompletionTest extends CompletionTestCase {
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataRelativePath();
+    return TfTestUtils.getTestDataRelativePath();
   }
 
   @Override

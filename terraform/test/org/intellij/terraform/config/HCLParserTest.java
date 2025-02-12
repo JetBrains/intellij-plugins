@@ -7,7 +7,7 @@ import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.testFramework.TestDataPath;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.hcl.HCLParserDefinition;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class HCLParserTest extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataPath();
+    return TfTestUtils.getTestDataPath();
   }
 
   protected void doTest() {

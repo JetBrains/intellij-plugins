@@ -2,11 +2,11 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.TerraformTestUtils
+import org.intellij.terraform.TfTestUtils
 import org.intellij.terraform.install.TfToolType
 
 internal abstract class BaseRunConfigurationTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = TerraformTestUtils.getTestDataPath() + "/runtime"
+  override fun getTestDataPath(): String = TfTestUtils.getTestDataPath() + "/runtime"
 
   override fun setUp() {
     super.setUp()

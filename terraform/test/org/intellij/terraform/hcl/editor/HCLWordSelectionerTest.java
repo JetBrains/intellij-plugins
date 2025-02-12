@@ -4,7 +4,7 @@ package org.intellij.terraform.hcl.editor;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 
 @TestDataPath("$CONTENT_ROOT/selectWord")
 public class HCLWordSelectionerTest extends BasePlatformTestCase {
@@ -19,6 +19,6 @@ public class HCLWordSelectionerTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataPath() + "/selectWord";
+    return TfTestUtils.getTestDataPath() + "/selectWord";
   }
 }

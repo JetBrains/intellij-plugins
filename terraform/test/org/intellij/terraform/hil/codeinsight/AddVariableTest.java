@@ -2,7 +2,7 @@
 package org.intellij.terraform.hil.codeinsight;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ public class AddVariableTest extends LightQuickFixTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataPath() + "/hil/codeinsight/add-variable/";
+    return TfTestUtils.getTestDataPath() + "/hil/codeinsight/add-variable/";
   }
 
   @Override

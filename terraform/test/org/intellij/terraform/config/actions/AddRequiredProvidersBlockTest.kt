@@ -5,7 +5,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.TerraformTestUtils
+import org.intellij.terraform.TfTestUtils
 
 internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
 
@@ -18,7 +18,7 @@ internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
   }
 
   private fun doCompletionWithDelay() {
-    val filePath = "${TerraformTestUtils.getTestDataRelativePath()}/terraform/completion/${getTestClassName()}/${getTestName(true)}"
+    val filePath = "${TfTestUtils.getTestDataRelativePath()}/terraform/completion/${getTestClassName()}/${getTestName(true)}"
     myFixture.configureByFile("$filePath.tf")
     val variants = myFixture.complete(CompletionType.BASIC, 2)
     assertNull(variants)

@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil;
 
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.config.refactoring.BaseIntroduceOperation;
 import org.intellij.terraform.config.refactoring.BaseIntroduceVariableHandler;
 import org.intellij.terraform.config.refactoring.BaseIntroduceVariableRefactoringTest;
@@ -13,7 +13,7 @@ public class ILIntroduceVariableRefactoringTest extends BaseIntroduceVariableRef
 
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataPath() + "/hil/refactoring/extract/variable";
+    return TfTestUtils.getTestDataPath() + "/hil/refactoring/extract/variable";
   }
 
   @NotNull

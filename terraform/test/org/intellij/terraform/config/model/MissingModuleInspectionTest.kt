@@ -3,7 +3,7 @@ package org.intellij.terraform.config.model
 
 import com.intellij.openapi.components.service
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.TerraformTestUtils
+import org.intellij.terraform.TfTestUtils
 import org.intellij.terraform.config.inspection.TfMissingModuleInspection
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -18,7 +18,7 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
     myFixture.project.service<TfProjectSettings>().toolPath = TfToolType.TERRAFORM.getBinaryName()
   }
 
-  override fun getTestDataPath(): String? = TerraformTestUtils.getTestDataPath()
+  override fun getTestDataPath(): String? = TfTestUtils.getTestDataPath()
   @org.junit.Test
   fun setOfModules() {
     myFixture.enableInspections(TfMissingModuleInspection::class.java)

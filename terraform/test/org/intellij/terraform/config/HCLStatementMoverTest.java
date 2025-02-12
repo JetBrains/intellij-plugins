@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
-import org.intellij.terraform.TerraformTestUtils;
+import org.intellij.terraform.TfTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.io.IOException;
 public class HCLStatementMoverTest extends LightJavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return TerraformTestUtils.getTestDataPath() + "/terraform/mover";
+    return TfTestUtils.getTestDataPath() + "/terraform/mover";
   }
 
   private void both() throws IOException {
