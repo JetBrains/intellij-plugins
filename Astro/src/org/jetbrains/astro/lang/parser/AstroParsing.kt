@@ -310,7 +310,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
           }
         }
         else if (!parseArgument()) {
-          builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.expression"))
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
 
         if (!checkMatches(builder, JSTokenTypes.XML_RBRACE, "javascript.parser.message.expected.rbrace")) {

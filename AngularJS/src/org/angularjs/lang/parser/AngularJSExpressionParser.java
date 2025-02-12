@@ -5,7 +5,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptCoreBundle;
+import com.intellij.lang.javascript.JavaScriptParserBundle;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.AngularJSBundle;
@@ -35,7 +35,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       final PsiBuilder.Marker expr = builder.mark();
       builder.advanceLexer();
       if (!super.parseUnaryExpression()) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.expression"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"));
       }
       expr.done(JSElementTypes.PREFIX_EXPRESSION);
       return true;
@@ -77,7 +77,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
     }
     else {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
     }
   }
 
@@ -106,7 +106,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       arguments = arguments == null ? builder.mark() : arguments;
       builder.advanceLexer();
       if (!super.parseUnaryExpression()) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.expression"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"));
       }
     }
     if (arguments != null) {
@@ -151,7 +151,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       builder.advanceLexer();
       builder.advanceLexer();
       if (builder.getTokenType() != JSTokenTypes.COLON) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.colon"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.colon"));
       }
       else {
         builder.advanceLexer();
@@ -166,7 +166,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
     final PsiBuilder.Marker def = builder.mark();
     builder.advanceLexer();
     if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
     }
     else {
       myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
@@ -209,26 +209,26 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
     }
     else {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
     }
     if (builder.getTokenType() == JSTokenTypes.COMMA) {
       builder.advanceLexer();
     }
     else {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.comma"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.comma"));
     }
     if (isIdentifierToken(builder.getTokenType())) {
       myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
     }
     else {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
     }
     comma.done(JSStubElementTypes.VAR_STATEMENT);
     if (builder.getTokenType() == JSTokenTypes.RPAR) {
       builder.advanceLexer();
     }
     else {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.rparen"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rparen"));
     }
   }
 }

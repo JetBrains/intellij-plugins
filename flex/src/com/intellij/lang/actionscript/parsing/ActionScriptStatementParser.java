@@ -35,7 +35,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
   @Override
   protected boolean parseVarName(PsiBuilder.Marker var) {
     if (!isIdentifierToken(builder.getTokenType())) {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.variable.name"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.variable.name"));
       builder.advanceLexer();
       var.drop();
       return false;
@@ -126,7 +126,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
         parser.getExpressionParser().parseExpression();
       }
       else {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.string.literal"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.string.literal"));
       }
     }
     checkForSemicolon();
@@ -153,7 +153,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
     }
     else {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.xml"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.xml"));
     }
     marker.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
     checkForSemicolon();
@@ -180,19 +180,19 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     builder.advanceLexer();
 
     if (builder.getTokenType() != JSTokenTypes.NAMESPACE_KEYWORD) {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.namespace"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.namespace"));
     }
     else {
       builder.advanceLexer();
 
       if (!parser.getTypeParser().parseQualifiedTypeName()) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
       }
 
       while (builder.getTokenType() == JSTokenTypes.COMMA) {
         builder.advanceLexer();
         if (!parser.getTypeParser().parseQualifiedTypeName()) {
-          builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
           break;
         }
       }
@@ -209,7 +209,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     }
 
     if (builder.getTokenType() != JSTokenTypes.LBRACE) {
-      builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.name.or.lbrace"));
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.name.or.lbrace"));
     }
     else {
       parseBlockAndAttachStatementsDirectly();
@@ -224,7 +224,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
       final PsiBuilder.Marker nsAssignment = builder.mark();
       if (!parser.getTypeParser().parseQualifiedTypeName(true)) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
         nsAssignment.drop();
         return;
       }
@@ -232,7 +232,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       if (builder.getTokenType() == JSTokenTypes.EQ) {
         builder.advanceLexer();
         if (!parser.getTypeParser().parseQualifiedTypeName()) {
-          builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
         }
 
         nsAssignment.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
@@ -265,7 +265,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
         parsePossiblyQualifiedName();
       }
       else {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
       }
 
       if (builder.getTokenType() == JSTokenTypes.EXTENDS_KEYWORD) {
@@ -298,7 +298,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       builder.advanceLexer();
       validQualifier = JSKeywordSets.IDENTIFIER_NAMES.contains(builder.getTokenType());
       if (!validQualifier) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
       }
       builder.advanceLexer();
     }

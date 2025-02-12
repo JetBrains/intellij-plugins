@@ -56,7 +56,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
         while (builder.getTokenType() == JSTokenTypes.LBRACKET) {
           if (doNotAllowAttributes) {
-            builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.declaration"));
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.declaration"));
             break;
           }
 
@@ -66,7 +66,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
           IElementType tokenType = builder.getTokenType();
           if (tokenType == JSTokenTypes.RBRACKET) {
-            builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier"));
+            builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
           }
           else if (tokenType == null || !isIdentifierToken(tokenType)) {
             attribute.drop();
@@ -81,7 +81,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
             if (builder.eof()) {
               attribute.done(JSStubElementTypes.ATTRIBUTE);
-              builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.rbracket"));
+              builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rbracket"));
               return true;
             }
           }
@@ -129,7 +129,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
                 identifier.done(JSElementTypes.REFERENCE_EXPRESSION);
                 identifier = identifier.precede();
                 if (!identifierToken) {
-                  builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.name"));
+                  builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.name"));
                   break;
                 }
               }
@@ -190,7 +190,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
       boolean hasName = JSAttributeNameValuePairImpl.IDENTIFIER_TOKENS_SET.contains(builder.getTokenType());
 
       if (builder.getTokenType() == JSTokenTypes.COMMA) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.identifier.or.value"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier.or.value"));
         break;
       }
       IElementType tokenType = builder.getTokenType();
@@ -222,7 +222,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
           }
         }
         else {
-          builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.value"));
+          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.value"));
         }
       }
 
@@ -231,7 +231,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
       builder.advanceLexer();
 
       if (builder.eof()) {
-        builder.error(JavaScriptCoreBundle.message("javascript.parser.message.expected.rparen"));
+        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rparen"));
         return;
       }
     }
