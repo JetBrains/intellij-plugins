@@ -167,6 +167,31 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
+  fun testAddMissingComponentImportWithConflictingTagName() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
+
+    myFixture.configureFromTempProjectFile("${getTestName(true)}.vue")
+    myFixture.moveToOffsetBySignature("Li<caret>nk")
+
+    val intention = myFixture.findSingleIntention("Import 'Link' component")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+
+    myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
+  }
+
+  fun testSkipMissingComponentImportForHtmlTags() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
+
+    myFixture.configureFromTempProjectFile("${getTestName(true)}.vue")
+    myFixture.moveToOffsetBySignature("li<caret>nk")
+
+    assertNull(myFixture.getAvailableIntention("Import 'Link' component"))
+  }
+
   fun testAddMissingFunctionImport() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
