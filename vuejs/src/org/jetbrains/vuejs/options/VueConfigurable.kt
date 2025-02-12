@@ -46,9 +46,9 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
       separator()
 
       row {
-        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server"))
+        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine"))
           .applyToComponent {
-            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server.description")
+            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine.comment")
           }
           .bindSelected(settings::useTypesFromServer)
           .gap(RightGap.SMALL)
