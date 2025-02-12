@@ -34,9 +34,9 @@ class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(),
       separator()
 
       row {
-        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server"))
+        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine"))
           .applyToComponent {
-            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.types.from.server.description")
+            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine.comment")
           }
           .enabledIf(rbDisabled.selected.not())
           .bindSelected(settings::useTypesFromServer)
