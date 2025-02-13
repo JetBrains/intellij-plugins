@@ -46,6 +46,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//plugins/JavaScriptDebugger/backend:javascript-debugger-backend",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
     "//CSS/css-psi-impl:css-psi",
     "@community//platform/xdebugger-api:debugger",

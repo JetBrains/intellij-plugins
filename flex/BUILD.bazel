@@ -27,6 +27,7 @@ jvm_library(
     "@community//platform/indexing-impl",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptDebugger:javascript-debugger",
+    "//plugins/JavaScriptDebugger/backend:javascript-debugger-backend",
     "@community//platform/util/progress",
     "//duplicatedetector:duplicatesDetector",
     "@community//platform/platform-impl:ide-impl",

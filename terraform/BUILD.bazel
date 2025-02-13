@@ -43,6 +43,9 @@ jvm_library(
     "@lib//:jetbrains-markdown",
     "@lib//:jna",
     "@community//platform/statistics",
+    "@community//platform/eel",
+    "@community//platform/eel-impl",
+    "@community//platform/eel-provider",
   ],
   runtime_deps = [":terraform_resources"]
 )
@@ -93,6 +96,9 @@ jvm_library(
     "@community//platform/navbar/testFramework",
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
+    "@community//platform/eel",
+    "@community//platform/eel-impl",
+    "@community//platform/eel-provider",
   ],
   runtime_deps = [":terraform_resources"]
 )
