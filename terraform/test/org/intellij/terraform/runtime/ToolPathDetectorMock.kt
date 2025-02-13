@@ -11,7 +11,7 @@ internal class ToolPathDetectorMock: ToolPathDetector {
   }
 
   override fun isExecutable(path: Path): Boolean {
-    return path.fileName.toString() == "terraform"
+    return true
   }
 
   override suspend fun detect(path: String): String? {
