@@ -69,4 +69,6 @@
       </library>
     </orderEntry>
   </component>
+  <orderEntry type="module" module-name="intellij.javascript.debugger" />
+  <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
 </module>
