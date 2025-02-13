@@ -58,7 +58,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
   }
 
   override val parameterListSeparator: String
-    get() = ";"
+    get() = ";<br>"
 
   override fun buildSignaturePresentations(parameterOwner: Angular2HtmlTemplateBindings): List<SignaturePresentation> {
     val templateName = parameterOwner.templateName
