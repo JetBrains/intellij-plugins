@@ -1,4 +1,4 @@
-# intention: "TFDuplicatedVariable"
+# intention: "TfDuplicatedVariable"
 # fix: "Rename variable"
 # position: 0: "variable "x" {"
 #

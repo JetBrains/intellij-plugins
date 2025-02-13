@@ -15,7 +15,7 @@ class TfExecutorUtilTest : BasePlatformTestCase() {
     val file2 = tempDir.resolve("file2.tf")
     file1.writeText("resource \"aws_instance\" \"example\" {}")
     file2.writeText("resource \"google_storage_bucket\" \"example\" {}")
-    val vFile = VirtualFileManager.getInstance().findFileByNioPath(file1.toPath())
+    val vFile = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file1.toPath())
 
     requireNotNull(vFile) { "Virtual file conversion failed for ${file1.absolutePath}" }
     val toolType = getApplicableToolType(vFile)
@@ -29,7 +29,7 @@ class TfExecutorUtilTest : BasePlatformTestCase() {
     val file2 = tempDir.resolve("file2.tofu")
     file1.writeText("resource \"aws_instance\" \"example\" {}")
     file2.writeText("resource \"google_storage_bucket\" \"example\" {}")
-    val vFile = VirtualFileManager.getInstance().findFileByNioPath(file1.toPath())
+    val vFile = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file1.toPath())
 
     requireNotNull(vFile) { "Virtual file conversion failed for ${file1.absolutePath}" }
     val toolType = getApplicableToolType(vFile)
@@ -43,14 +43,14 @@ class TfExecutorUtilTest : BasePlatformTestCase() {
     val file2 = tempDir.resolve("file2.tofu")
     file1.writeText("resource \"aws_instance\" \"example\" {}")
     file2.writeText("resource \"google_storage_bucket\" \"example\" {}")
-    val vFileTF = VirtualFileManager.getInstance().findFileByNioPath(file1.toPath())
+    val vFileTF = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file1.toPath())
 
     requireNotNull(vFileTF) { "Virtual file conversion failed for ${file1.absolutePath}" }
     val toolTypeTF = getApplicableToolType(vFileTF)
     assertEquals(TfToolType.OPENTOFU, toolTypeTF)
 
 
-    val vFileTofu = VirtualFileManager.getInstance().findFileByNioPath(file2.toPath())
+    val vFileTofu = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file2.toPath())
     requireNotNull(vFileTofu) { "Virtual file conversion failed for ${file2.absolutePath}" }
     val toolTypeTofu = getApplicableToolType(vFileTofu)
     assertEquals(TfToolType.OPENTOFU, toolTypeTofu)
@@ -67,6 +67,5 @@ class TfExecutorUtilTest : BasePlatformTestCase() {
     val toolType = getApplicableToolType(vFile)
     assertEquals(TfToolType.OPENTOFU, toolType)
   }
-
 
 }

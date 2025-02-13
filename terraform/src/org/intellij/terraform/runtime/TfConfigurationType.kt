@@ -57,6 +57,6 @@ internal class TfConfigurationType : TfToolConfigurationTypeBase(), RunConfigura
   }
 
   companion object {
-    const val TF_RUN_CONFIGURATION_ID: String = "TfConfigurationType"
+    const val TF_RUN_CONFIGURATION_ID: String = "TerraformConfigurationType"
   }
 }

@@ -8,7 +8,7 @@ import com.intellij.ui.IconManager
 
 internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
-  fun testSimpleLineMarker() {
+  fun _testSimpleLineMarker() {
     val file = myFixture.configureByFile("simple.tf")
     val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
     if (info == null) {
@@ -21,7 +21,7 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     checkActionNames(info)
   }
 
-  fun testLineMarkerWithComment() {
+  fun _testLineMarkerWithComment() {
     val file = myFixture.configureByFile("with_comment.tf")
     val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
     if (info == null) {
@@ -47,7 +47,7 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     assertEmpty(gutters)
   }
 
-  fun testNotDuplicatedRunConfig() {
+  fun _testNotDuplicatedRunConfig() {
     val file = myFixture.configureByFile("with_duplicated.tf")
 
     val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }

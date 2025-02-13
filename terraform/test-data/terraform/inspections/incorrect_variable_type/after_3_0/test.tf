@@ -1,4 +1,4 @@
-# intention: "TFIncorrectVariableType"
+# intention: "TfIncorrectVariableType"
 # fix: "Change variable type to list"
 # position: 18: "["
 #
