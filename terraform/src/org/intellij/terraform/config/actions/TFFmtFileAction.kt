@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.eel.provider.asEelPath
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,7 +28,7 @@ internal class TFFmtFileAction : TFExternalToolsAction() {
 
       if (virtualFiles.isEmpty()) return@withBackgroundProgress
 
-      val filePaths = virtualFiles.map { it.canonicalPath!! }.toTypedArray()
+      val filePaths = virtualFiles.map { it.toNioPath().asEelPath().toString() }.toTypedArray()
       TFExecutor.`in`(project, getApplicableToolType(virtualFiles.first()))
         .withPresentableName(title)
         .withParameters("fmt", *filePaths)
