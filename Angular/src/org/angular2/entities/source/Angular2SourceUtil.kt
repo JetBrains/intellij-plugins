@@ -357,24 +357,24 @@ internal object Angular2SourceUtil {
       expressionToCheck = expression
       actualDirectRefs = directRefs
     }
-    for (ref in expressionToCheck.references) {
-      val el = JSTypeEvaluationLocationProvider.withTypeEvaluationLocationForced(expressionToCheck) {
-        ref.resolve()
-      }
-      if (actualDirectRefs) {
-        if (el is PsiFile) {
-          return el
+    return JSTypeEvaluationLocationProvider.withTypeEvaluationLocationForced(expressionToCheck) {
+      for (ref in expressionToCheck.references) {
+        val el = ref.resolve()
+        if (actualDirectRefs) {
+          if (el is PsiFile) {
+            return@withTypeEvaluationLocationForced el
+          }
         }
-      }
-      else if (el is ES6ImportedBinding) {
-        for (importedElement in el.findReferencedElements()) {
-          if (importedElement is PsiFile) {
-            return importedElement
+        else if (el is ES6ImportedBinding) {
+          for (importedElement in el.findReferencedElements()) {
+            if (importedElement is PsiFile) {
+              return@withTypeEvaluationLocationForced importedElement
+            }
           }
         }
       }
+      return@withTypeEvaluationLocationForced null
     }
-    return null
   }
 
   private fun resolveComponentsFromSimilarFile(file: PsiFile): List<TypeScriptClass> {
