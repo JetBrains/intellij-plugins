@@ -13,7 +13,7 @@ import com.intellij.psi.util.prevLeaf
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.PRISMA_ENTITY_DECLARATION
 import org.intellij.prisma.lang.types.PrismaType
-import org.intellij.prisma.lang.types.name
+import org.intellij.prisma.lang.types.unwrapOptionalType
 
 object PrismaPsiPatterns {
   val topKeyword: PsiElementPattern.Capture<PsiElement> =
@@ -38,14 +38,14 @@ object PrismaPsiPatterns {
     element.elementType == TokenType.WHITE_SPACE && element.textContains('\n')
   }
 
-  fun withFieldType(names: Set<String>): PsiElementPattern.Capture<PsiElement> {
-    return withFieldType { type, _ -> type.name in names }
-  }
-
-  fun withFieldType(predicate: (PrismaType, PsiElement) -> Boolean): PsiElementPattern.Capture<PsiElement> {
+  fun withFieldType(unwrapOptional: Boolean = false, predicate: (PrismaType, PsiElement) -> Boolean): PsiElementPattern.Capture<PsiElement> {
     return psiElement().with("withFieldType") { element ->
-      val fieldDeclaration = element.parentOfType<PrismaFieldDeclaration>(true) ?: return@with false
-      predicate(fieldDeclaration.type, element)
+      element
+        .parentOfType<PrismaFieldDeclaration>(true)
+        ?.type
+        ?.let { if (unwrapOptional) it.unwrapOptionalType() else it }
+        ?.let { predicate(it, element) }
+      ?: false
     }
   }
 
@@ -79,7 +79,7 @@ fun <T : PsiElement, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.after
   }
 
 fun <T : PsiElement, Self : ObjectPattern<T, Self>, P : PsiElement> ObjectPattern<T, Self>.afterSiblingNewLinesAware(
-  pattern: PsiElementPattern.Capture<P>
+  pattern: PsiElementPattern.Capture<P>,
 ): Self =
   with("afterSiblingWithoutNewLines") { element, context ->
     val prev = element.skipWhitespacesBackwardWithoutNewLines() ?: return@with true
@@ -93,7 +93,7 @@ fun <T : Any, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.with(name: S
 
 fun <T : Any, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.with(
   name: String,
-  cond: (T, ProcessingContext?) -> Boolean
+  cond: (T, ProcessingContext?) -> Boolean,
 ): Self = with(object : PatternCondition<T>(name) {
   override fun accepts(t: T, context: ProcessingContext?): Boolean = cond(t, context)
 })

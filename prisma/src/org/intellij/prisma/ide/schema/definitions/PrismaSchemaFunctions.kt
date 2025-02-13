@@ -60,7 +60,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
       documentation =
         "Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence."
       datasources = EnumSet.of(PrismaDatasourceType.COCKROACHDB)
-      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaIntType || type is PrismaBigIntType }
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaIntType || type is PrismaBigIntType }
 
       param {
         label = "virtual"
@@ -108,7 +108,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
       label = Functions.AUTOINCREMENT
       documentation =
         "Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence."
-      pattern = PrismaPsiPatterns.withFieldType { type, element ->
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, element ->
         type is PrismaIntType && element.resolveDatasourceTypes().singleOrNull() != PrismaDatasourceType.COCKROACHDB ||
         type is PrismaBigIntType
       }
@@ -117,7 +117,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
     element {
       label = Functions.NOW
       documentation = "Set a timestamp of the time when a record is created."
-      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaDateTimeType }
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaDateTimeType }
     }
 
     element {
@@ -125,7 +125,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
       documentation =
         "Generate a globally unique identifier based on the [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) spec. " +
         "Prisma ORM supports versions 4 (default) and 7."
-      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaStringType }
 
       param {
         label = "version"
@@ -152,7 +152,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
       documentation =
         "Generate a globally unique identifier based on the [cuid](https://github.com/ericelliott/cuid) spec.\n\n" +
         "If you'd like to use [cuid2](https://github.com/paralleldrive/cuid2) values, you can pass 2 as an argument to the `cuid` function: `cuid(2)`"
-      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaStringType }
 
       param {
         label = "version"
@@ -178,7 +178,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
       label = Functions.ULID
       documentation =
         "Generate a universally unique lexicographically sortable identifier based on the [ULID](https://github.com/ulid/spec) spec."
-      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaStringType }
     }
 
     element {
@@ -187,7 +187,7 @@ val PRISMA_SCHEMA_FUNCTIONS = schema {
         "Generate values based on the [Nano ID](https://github.com/ai/nanoid) spec. `nanoid()` accepts an integer value between 2 and 255 " +
         "that specifies the *length* of the generated ID value, e.g. `nanoid(16)` will generate ID with 16 characters. " +
         "If you don't provide a value to the `nanoid()` function, the default value is 21."
-      pattern = PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaStringType }
+      pattern = PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaStringType }
 
       param {
         label = "length"

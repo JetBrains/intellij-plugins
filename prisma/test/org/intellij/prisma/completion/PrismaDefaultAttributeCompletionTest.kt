@@ -205,6 +205,22 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
     assertContainsElements(lookupElements.strings, Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
   }
 
+  fun testCuidNullableType() {
+    val lookupElements = completeSelected(
+      """
+                model M {
+                  name String? @default(<caret>)
+                }
+            """.trimIndent(), """
+                model M {
+                  name String? @default(cuid(<caret>))
+                }
+            """.trimIndent(),
+      Functions.CUID
+    )
+    assertContainsElements(lookupElements.strings, Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
+  }
+
   fun testCuidVersions() {
     val lookupElements = completeSelected(
       """
@@ -252,6 +268,22 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(), """
                 model M {
                   active Boolean @default(false)
+                }
+            """.trimIndent(),
+      "false"
+    )
+    assertContainsElements(lookupElements.strings, "true", "false")
+  }
+
+  fun testForBooleanNullable() {
+    val lookupElements = completeSelected(
+      """
+                model M {
+                  active Boolean? @default(<caret>)
+                }
+            """.trimIndent(), """
+                model M {
+                  active Boolean? @default(false)
                 }
             """.trimIndent(),
       "false"
