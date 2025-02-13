@@ -2,7 +2,14 @@ package org.intellij.prisma.lang.types
 
 fun PrismaType.unwrapType(): PrismaType {
   if (this is PrismaDecoratedType) {
-    return this.unwrap()
+    return unwrap()
+  }
+  return this
+}
+
+fun PrismaType.unwrapOptionalType(): PrismaType {
+  if (this is PrismaOptionalType) {
+    return innerType
   }
   return this
 }
