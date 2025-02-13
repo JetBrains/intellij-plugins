@@ -32,9 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.intellij.testFramework.UsefulTestCase.*;
-import static com.intellij.testFramework.UsefulTestCase.assertEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertNull;
-import static com.intellij.testFramework.UsefulTestCase.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
