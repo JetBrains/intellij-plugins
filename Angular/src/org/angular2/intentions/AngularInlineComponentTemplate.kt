@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.asSafely
@@ -36,16 +37,13 @@ class AngularInlineComponentTemplate : JavaScriptIntention() {
     val component = Angular2EntitiesProvider.getComponent(Angular2DecoratorUtil.getClassForDecoratorElement(property)) ?: return
     val template = component.templateFile ?: return
     val newProperty = (property.setName(TEMPLATE_PROP) as JSProperty)
-    val templateLiteralText = if (IntentionPreviewUtils.isIntentionPreviewActive()) {
-      // For the preview we need to preformat the template literal a bit,
-      // since the injection is not reformatted properly with FormatFixer
-      val lineIndent = CodeStyleManager.getInstance(project).getLineIndent(property.containingFile, property.textRange.startOffset)
-                       ?: ""
-      val indentSize = " ".repeat(CodeStyle.getIndentSize(property.containingFile))
-      "`\n" + template.text.replace("`", "\\`").trim('\n').prependIndent(lineIndent + indentSize) + "\n$lineIndent`"
-    } else {
-      "`\n" + template.text.replace("`", "\\`").trim('\n') + "\n`"
-    }
+
+    // Preformat the template literal a bit, since the injection might be not reformatted at all with FormatFixer
+    val lineIndent = CodeStyleManager.getInstance(project).getLineIndent(property.containingFile, property.textRange.startOffset)
+                     ?: ""
+    val indentSize = " ".repeat(CodeStyle.getIndentSize(property.containingFile))
+    val templateLiteralText = "`\n" + template.text.replace("`", "\\`").trim('\n').prependIndent(lineIndent + indentSize) + "\n$lineIndent`"
+
     newProperty
       .initializer
       ?.replace(JSChangeUtil.createExpressionWithContext(templateLiteralText, property)!!.psi)
