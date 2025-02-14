@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.*;
 
 @SuppressWarnings("unused")
@@ -236,9 +236,8 @@ public final class TfExecutor {
     GeneralCommandLine commandLine = !myPtyDisabled && PtyCommandLine.isEnabled() ? new PtyCommandLine() : new GeneralCommandLine();
     commandLine.withExePath(exePath);
     commandLine.getEnvironment().putAll(myExtraEnvironment);
-
     if (myWorkDirectory != null) {
-      commandLine.withWorkingDirectory(Paths.get(myWorkDirectory));
+      commandLine.withWorkingDirectory(Path.of(myWorkDirectory));
     }
     commandLine.addParameters(myParameterList.getList());
     commandLine.withParentEnvironmentType(myParentEnvironmentType);

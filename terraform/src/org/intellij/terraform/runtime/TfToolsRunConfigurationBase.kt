@@ -11,13 +11,17 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.util.ProgramParametersUtil
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.text.findTextRange
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TfActionService
@@ -25,8 +29,8 @@ import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jdom.Element
-import org.jetbrains.annotations.Nls
 import kotlin.io.path.Path
+import kotlin.io.path.notExists
 
 internal abstract class TfToolsRunConfigurationBase(
   project: Project,
@@ -36,7 +40,7 @@ internal abstract class TfToolsRunConfigurationBase(
   val toolType: TfToolType,
 ) : RunConfigurationBase<Any?>(project, factory, name), CommonProgramRunConfigurationParameters, EnvFilesOptions, DumbAware {
 
-  private var directory: String = ""
+  private var directory: String = project.basePath ?: ""
   private val myEnvs: MutableMap<String, String> = LinkedHashMap()
   private var passParentEnvs: Boolean = true
 
@@ -45,60 +49,49 @@ internal abstract class TfToolsRunConfigurationBase(
   internal var passGlobalOptions: Boolean = false
   internal var programArguments: String = ""
 
+  private val toolPath
+    get() = toolType.getToolSettings(project).toolPath
+
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
-    if (!ToolPathDetector.getInstance(project).isExecutable(Path(toolPath))) {
-      showIncorrectPathNotification(project, toolType)
-      return null
+    try {
+      checkWorkingDirAndThrow()
     }
-    val error = error
-    if (error != null) {
-      throw ExecutionException(error)
+    catch (e: Exception) {
+      logger<TfToolsRunConfigurationBase>().debug("Run configuration state failure for tool: ${toolType.displayName} folder ${directory}, command: ${commandType}", e)
+      throw ExecutionException(e.message, e)
     }
     return TfToolCommandLineState(project, this, env, toolType)
   }
 
   @Throws(RuntimeConfigurationException::class)
   override fun checkConfiguration() {
-    if (directory.isBlank()) {
-      val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
-      exception.setQuickFix(Runnable { workingDirectory = project.basePath })
-      throw exception
-    }
+    checkWorkingDirAndThrow()
+    checkExecutableAndThrow()
+  }
 
-    val pathDetector = ToolPathDetector.getInstance(project)
-
-    if (!pathDetector.isExecutable(Path(toolPath))) {
+  private fun checkExecutableAndThrow() {
+    if (!ToolPathDetector.getInstance(this.project).isExecutable(Path(toolPath))) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
         CommonBundle.getErrorTitle()
       )
-      exception.setQuickFix(DetectExecutableAction(project, toolType))
+      exception.setQuickFix(Runnable {
+        runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+          ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, true)
+        }
+      })
       throw exception
-    }
-
-    val error = error
-    if (error != null) {
-      throw RuntimeConfigurationException(error)
     }
   }
 
-  private val error: @Nls String?
-    get() {
-      if (directory.isBlank()) {
-        return HCLBundle.message("run.configuration.no.working.directory.specified")
-      }
-      if (toolPath.isBlank()) {
-        return HCLBundle.message("run.configuration.no.terraform.specified", toolType.displayName)
-      }
-      if (!ToolPathDetector.getInstance(project).isExecutable(Path(toolPath))) {
-        return HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName)
-      }
-      return null
+  private fun checkWorkingDirAndThrow() {
+    if (workingDirectory.isNullOrEmpty() || workingDirectory?.let { Path(it).notExists() } == true) {
+      val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
+      exception.setQuickFix(Runnable { workingDirectory = project.basePath })
+      throw exception
     }
-
-  private val toolPath
-    get() = toolType.getToolSettings(project).toolPath
+  }
 
   override fun setProgramParameters(value: String?): Unit = Unit
 
@@ -154,6 +147,18 @@ internal class TfToolCommandLineState(
   env: ExecutionEnvironment,
   val toolType: TfToolType,
 ) : CommandLineState(env) {
+
+  override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
+    val isToolDetected = runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+      ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
+    }
+    if (!isToolDetected) {
+      showIncorrectPathNotification(project, toolType)
+      throw ProcessCanceledException()
+    }
+    return super.execute(executor, runner)
+  }
+
   @Throws(ExecutionException::class)
   override fun startProcess(): ProcessHandler {
     val handler: OSProcessHandler = KillableColoredProcessHandler(createCommandLine())

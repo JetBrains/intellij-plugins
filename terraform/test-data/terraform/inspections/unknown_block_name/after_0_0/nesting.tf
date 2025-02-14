@@ -1,5 +1,5 @@
 # intention: "TfUnknownBlockType"
-# fix: "Add closing braces before element"
+# fix: "Add closing braces before an element"
 # position: 3: "resource"
 #
 resource "aws_alb" "x" {

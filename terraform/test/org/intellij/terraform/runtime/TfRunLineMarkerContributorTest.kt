@@ -2,8 +2,8 @@ package org.intellij.terraform.runtime
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.ui.IconManager
 
 internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
@@ -18,7 +18,7 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
     val warnedRun = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
     assertEquals(warnedRun, info.icon)
-    checkActionNames(info)
+    runActionsAndCheckNames(info.actions)
   }
 
   fun _testLineMarkerWithComment() {
@@ -31,8 +31,8 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
     val warnedRun = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
     assertEquals(warnedRun, info.icon)
-    testRunConfigActions(info)
-    checkActionNames(info)
+    testRunConfigActions(info.actions)
+    runActionsAndCheckNames(info.actions)
 
     val gutter = myFixture.findGutter("with_comment.tf")
     assertNotNull(gutter)
@@ -71,8 +71,7 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     runManager.allSettings.forEach { runManager.removeConfiguration(it) }
   }
 
-  private fun checkActionNames(info: Info) {
-    val actions = info.actions
+  private fun runActionsAndCheckNames(actions: Array<AnAction>?) {
     assertEquals(actions?.last()?.templateText, "Edit Configurations…")
 
     val templateActions = actions?.take(5)
@@ -84,8 +83,8 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     }
   }
 
-  private fun testRunConfigActions(info: Info) {
-    val actions = info.actions
+  private fun testRunConfigActions(actions: Array<AnAction>?) {
+    actions ?: return
     val runManager = RunManager.getInstance(project)
     assertEmpty(runManager.allSettings)
 

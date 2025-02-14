@@ -29,7 +29,7 @@ internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
         .createNotification(
           HCLBundle.message("notification.title.cant.generate.model"),
           HCLBundle.message("notification.content.there.no.terraform.lock.hcl.found.please.run.terraform.init", moduleDir?.name),
-          NotificationType.ERROR
+          NotificationType.WARNING
         ).addAction(InitFolderAction(moduleDir)).notify(project)
       return
     }
@@ -43,10 +43,10 @@ internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
       ).notify(project)
   }
 
-  private class InitFolderAction(private val file: VirtualFile?): NotificationAction(HCLBundle.message("action.TFInitRequiredAction.text")) {
+  private class InitFolderAction(private val file: VirtualFile?): NotificationAction(HCLBundle.message("action.TfInitRequiredAction.text")) {
     override fun actionPerformed(e: AnActionEvent, notification: Notification) {
       notification.expire()
-      val tfInitAction = ActionManager.getInstance().getAction("TFInitRequiredAction")
+      val tfInitAction = ActionManager.getInstance().getAction("TfInitRequiredAction")
       val dataContext = DataContext { dataId ->
         when (dataId) {
           CommonDataKeys.VIRTUAL_FILE.name -> { file }

@@ -90,7 +90,7 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
   //TODO: Fix preview
   private val skipPreview = setOf(
     "Add variable 'x'",
-    "Add closing braces before element",
+    "Add closing braces before an element",
     "Rename output",
     "Convert to HCL2 expression",
     "Rename variable",
