@@ -34,8 +34,8 @@ class VueParserDefinition : HTMLParserDefinition() {
     }
   }
 
-  override fun createLexer(project: Project): Lexer {
-    return Util.createLexer(project, null, true)
+  override fun createLexer(project: Project?): Lexer {
+    return Util.createLexer(project!!, null, true)
   }
 
   override fun getFileNodeType(): IFileElementType {
@@ -46,8 +46,8 @@ class VueParserDefinition : HTMLParserDefinition() {
     return VueFileImpl(viewProvider)
   }
 
-  override fun createElement(node: ASTNode?): PsiElement {
-    if (node?.elementType is VueElementTypes.EmbeddedVueContentElementType) {
+  override fun createElement(node: ASTNode): PsiElement {
+    if (node.elementType is VueElementTypes.EmbeddedVueContentElementType) {
       return HtmlEmbeddedContentImpl(node)
     }
     return super.createElement(node)

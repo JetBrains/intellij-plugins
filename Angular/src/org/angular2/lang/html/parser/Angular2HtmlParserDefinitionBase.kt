@@ -20,11 +20,11 @@ abstract class Angular2HtmlParserDefinitionBase : HTMLParserDefinition() {
 
   protected abstract val syntax: Angular2TemplateSyntax
 
-  override fun createLexer(project: Project): Lexer {
+  override fun createLexer(project: Project?): Lexer {
     return Angular2HtmlLexer(false, syntax, null)
   }
 
-  override fun createParser(project: Project): PsiParser {
+  override fun createParser(project: Project?): PsiParser {
     return Angular2HtmlParser(syntax)
   }
 
