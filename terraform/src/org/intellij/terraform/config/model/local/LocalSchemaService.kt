@@ -105,7 +105,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelComputationCache.remove(lock)?.cancel()
 
     readAndWriteAction {
-      val relatedEntities = WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().filter {
+      val relatedEntities = WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().filter {
         it.lockFile.virtualFile == lock
       }.toList()
       if (relatedEntities.isEmpty()) return@readAndWriteAction value(Unit)
@@ -219,11 +219,11 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private suspend fun retrieveJsonForTFLock(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): String {
     val lockData = readAction {
-      WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().firstOrNull {
+      WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().firstOrNull {
         it.lockFile.virtualFile == lock
       }.also {
         logger<LocalSchemaService>().info("building local model lockData: ${it?.lockFile?.virtualFile?.name} among ${
-          WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().count()
+          WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().count()
         }")
       }
     }
@@ -315,7 +315,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       }
 
       val usedMeta = readAction {
-        WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().mapTo(mutableSetOf()) { it.jsonPath }
+        WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().mapTo(mutableSetOf()) { it.jsonPath }
       }
 
       logger<LocalSchemaService>().info("OrphanMetadataCollection: $localModelPath allModelFiles = $allModelFiles, usedMeta = $usedMeta")
@@ -330,15 +330,15 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private suspend fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TfLocalMetaEntity?, newJson: @NlsSafe String) {
+  private suspend fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TFLocalMetaEntity?, newJson: @NlsSafe String) {
     val low = (lock.timeStamp and 0xFFFFFFFFL).toInt()
     val high = (lock.timeStamp shr 32).toInt()
     val workspaceModel = WorkspaceModel.getInstance(project)
     workspaceModel.update("Update TF Local Model from $lock") { storage ->
       if (prevLockData != null) storage.removeEntity(prevLockData)
-      storage.addEntity(TfLocalMetaEntity(low, high, newJson,
+      storage.addEntity(TFLocalMetaEntity(low, high, newJson,
                                           lock.toVirtualFileUrl(workspaceModel.getVirtualFileUrlManager()),
-                                          TfLocalMetaEntity.LockEntitySource
+                                          TFLocalMetaEntity.LockEntitySource
 
       ))
     }

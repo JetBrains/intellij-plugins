@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
-import org.intellij.terraform.config.model.local.TfLocalMetaEntity
+import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 import org.intellij.terraform.config.util.TfCommandLineServiceMock
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -231,7 +231,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
     timeoutRunBlocking {
       localSchemaService.awaitModelsReady()
       readAction {
-        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TfLocalMetaEntity::class.java).toList()
+        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java).toList()
         Assert.assertEquals(entities.single().lockFile.virtualFile, lockFile.virtualFile)
       }
     }
@@ -244,7 +244,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
     timeoutRunBlocking {
       localSchemaService.awaitModelsReady()
       readAction {
-        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TfLocalMetaEntity::class.java)
+        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java)
           .filter { it.lockFile.virtualFile != lock.virtualFile }
           .toList()
         assertEmpty(entities)

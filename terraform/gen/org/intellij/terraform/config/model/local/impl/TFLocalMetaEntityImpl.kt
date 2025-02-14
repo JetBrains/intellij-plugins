@@ -1,8 +1,10 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local.impl
 
+import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.ConnectionId
 import com.intellij.platform.workspace.storage.EntitySource
+import com.intellij.platform.workspace.storage.EntityType
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
 import com.intellij.platform.workspace.storage.MutableEntityStorage
@@ -15,12 +17,12 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInstrumentationApi
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
-import org.intellij.terraform.config.model.local.TfLocalMetaEntity
+import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 
 @GeneratedCodeApiVersion(3)
 @GeneratedCodeImplVersion(6)
 @OptIn(WorkspaceEntityInternalApi::class)
-internal class TfLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityData) : TfLocalMetaEntity, WorkspaceEntityBase(dataSource) {
+internal class TFLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityData) : TFLocalMetaEntity, WorkspaceEntityBase(dataSource) {
 
   private companion object {
 
@@ -63,8 +65,8 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityDa
   }
 
 
-  internal class Builder(result: TFLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TFLocalMetaEntityData>(
-    result), TfLocalMetaEntity.Builder {
+  internal class Builder(result: TFLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TFLocalMetaEntity, TFLocalMetaEntityData>(
+    result), TFLocalMetaEntity.Builder {
     internal constructor() : this(TFLocalMetaEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -74,7 +76,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityDa
           return
         }
         else {
-          error("Entity TfLocalMetaEntity is already created in a different builder")
+          error("Entity TFLocalMetaEntity is already created in a different builder")
         }
       }
 
@@ -97,10 +99,10 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityDa
         error("Field WorkspaceEntity#entitySource should be initialized")
       }
       if (!getEntityData().isJsonPathInitialized()) {
-        error("Field TfLocalMetaEntity#jsonPath should be initialized")
+        error("Field TFLocalMetaEntity#jsonPath should be initialized")
       }
       if (!getEntityData().isLockFileInitialized()) {
-        error("Field TfLocalMetaEntity#lockFile should be initialized")
+        error("Field TFLocalMetaEntity#lockFile should be initialized")
       }
     }
 
@@ -110,7 +112,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityDa
 
     // Relabeling code, move information from dataSource to this builder
     override fun relabel(dataSource: WorkspaceEntity, parents: Set<WorkspaceEntity>?) {
-      dataSource as TfLocalMetaEntity
+      dataSource as TFLocalMetaEntity
       if (this.entitySource != dataSource.entitySource) this.entitySource = dataSource.entitySource
       if (this.timeStampLow != dataSource.timeStampLow) this.timeStampLow = dataSource.timeStampLow
       if (this.timeStampHigh != dataSource.timeStampHigh) this.timeStampHigh = dataSource.timeStampHigh
@@ -163,12 +165,12 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TFLocalMetaEntityDa
         if (_diff != null) index(this, "lockFile", value)
       }
 
-    override fun getEntityClass(): Class<TfLocalMetaEntity> = TfLocalMetaEntity::class.java
+    override fun getEntityClass(): Class<TFLocalMetaEntity> = TFLocalMetaEntity::class.java
   }
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
-internal class TFLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() {
+internal class TFLocalMetaEntityData : WorkspaceEntityData<TFLocalMetaEntity>() {
   var timeStampLow: Int = 0
   var timeStampHigh: Int = 0
   lateinit var jsonPath: String
@@ -178,18 +180,18 @@ internal class TFLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   internal fun isJsonPathInitialized(): Boolean = ::jsonPath.isInitialized
   internal fun isLockFileInitialized(): Boolean = ::lockFile.isInitialized
 
-  override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntity.Builder<TfLocalMetaEntity> {
-    val modifiable = TfLocalMetaEntityImpl.Builder(null)
+  override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntity.Builder<TFLocalMetaEntity> {
+    val modifiable = TFLocalMetaEntityImpl.Builder(null)
     modifiable.diff = diff
     modifiable.id = createEntityId()
     return modifiable
   }
 
   @OptIn(EntityStorageInstrumentationApi::class)
-  override fun createEntity(snapshot: EntityStorageInstrumentation): TfLocalMetaEntity {
+  override fun createEntity(snapshot: EntityStorageInstrumentation): TFLocalMetaEntity {
     val entityId = createEntityId()
     return snapshot.initializeEntity(entityId) {
-      val entity = TfLocalMetaEntityImpl(this)
+      val entity = TFLocalMetaEntityImpl(this)
       entity.snapshot = snapshot
       entity.id = entityId
       entity
@@ -197,15 +199,15 @@ internal class TFLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   }
 
   override fun getMetadata(): EntityMetadata {
-    return MetadataStorageImpl.getMetadataByTypeFqn("org.intellij.terraform.config.model.local.TfLocalMetaEntity") as EntityMetadata
+    return MetadataStorageImpl.getMetadataByTypeFqn("org.intellij.terraform.config.model.local.TFLocalMetaEntity") as EntityMetadata
   }
 
   override fun getEntityInterface(): Class<out WorkspaceEntity> {
-    return TfLocalMetaEntity::class.java
+    return TFLocalMetaEntity::class.java
   }
 
   override fun createDetachedEntity(parents: List<WorkspaceEntity.Builder<*>>): WorkspaceEntity.Builder<*> {
-    return TfLocalMetaEntity(timeStampLow, timeStampHigh, jsonPath, lockFile, entitySource) {
+    return TFLocalMetaEntity(timeStampLow, timeStampHigh, jsonPath, lockFile, entitySource) {
     }
   }
 
