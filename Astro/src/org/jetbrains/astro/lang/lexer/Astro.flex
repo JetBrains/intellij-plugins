@@ -1036,6 +1036,8 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
   "satisfies"     { yybegin(DIV_OR_GT); return JSTokenTypes.SATISFIES_KEYWORD; }
   "from"          { yybegin(DIV_OR_GT); return JSTokenTypes.FROM_KEYWORD; }
   "assert"        { yybegin(DIV_OR_GT); return JSTokenTypes.ASSERT_KEYWORD; }
+  "defer"         { yybegin(DIV_OR_GT); return JSTokenTypes.DEFER_KEYWORD; }
+  "source"        { yybegin(DIV_OR_GT); return JSTokenTypes.SOURCE_KEYWORD; }
   "@"             { return JSTokenTypes.AT; }
   "==="           { yybegin(EXPRESSION_INITIAL); return JSTokenTypes.EQEQEQ; }
   "!=="           { yybegin(EXPRESSION_INITIAL); return JSTokenTypes.NEQEQ; }
