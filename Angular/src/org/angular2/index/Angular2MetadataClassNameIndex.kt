@@ -3,19 +3,10 @@ package org.angular2.index
 
 import com.intellij.psi.stubs.StubIndexKey
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase
-import org.jetbrains.annotations.ApiStatus
 
 class Angular2MetadataClassNameIndex : Angular2IndexBase<Angular2MetadataClassBase<*>>() {
 
   override fun getKey(): StubIndexKey<String, Angular2MetadataClassBase<*>> = Angular2MetadataClassNameIndexKey
-
-  @Suppress("CompanionObjectInExtension")
-  companion object {
-    @JvmField
-    @Deprecated("Use org.angular2.index.Angular2MetadataClassNameIndexKt.Angular2MetadataClassNameIndexKey instead")
-    @ApiStatus.ScheduledForRemoval
-    val KEY: StubIndexKey<String, Angular2MetadataClassBase<*>> = Angular2MetadataClassNameIndexKey
-  }
 }
 
 @JvmField
