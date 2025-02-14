@@ -81,4 +81,46 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
     )
   }
 
+  fun `test scopeJasmineSuite`() {
+    doTreeTest(
+      {
+        it.setScopeKind(KarmaScopeKind.SUITE)
+          .setTestNames(listOf("user"))
+          .setTestFilePath(getAbsolutePathToProjectDirOrFile("/src/user.spec.js"))
+          .setConfigPath(getAbsolutePathToProjectDirOrFile("/karma.conf.js"))
+      },
+      PassedTest(
+        "karma.conf.js",
+        PassedTest(
+          "Chrome Headless .*",
+          PassedTest(
+            "user",
+            PassedTest("should be tested"),
+            PassedTest("should be tested 2")
+          )
+        ).withNameAsRegex()
+      )
+    )
+  }
+
+  fun `test scopeJasmineTest`() {
+    doTreeTest(
+      {
+        it.setScopeKind(KarmaScopeKind.TEST)
+          .setTestNames(listOf("user", "should be tested 2"))
+          .setTestFilePath(getAbsolutePathToProjectDirOrFile("/src/user.spec.js"))
+          .setConfigPath(getAbsolutePathToProjectDirOrFile("/karma.conf.js"))
+      },
+      PassedTest(
+        "karma.conf.js",
+        PassedTest(
+          "Chrome Headless .*",
+          PassedTest(
+            "user",
+            PassedTest("should be tested 2")
+          )
+        ).withNameAsRegex()
+      )
+    )
+  }
 }

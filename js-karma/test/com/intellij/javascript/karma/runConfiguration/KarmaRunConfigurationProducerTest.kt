@@ -69,6 +69,23 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  fun `test guttersInFileWithoutTestName`() {
+    val fileQuery = FileQuery("src/file-with-some-name.js")
+    val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/file-with-some-name.js", "karma.conf.js", workingDir = "")
+
+    assertGuttersCount(fileQuery.filePath, 2)
+
+    assertGutterRunConfigurationSettings(
+      fileQuery.forLine(1),
+      baseSettingsFixture.forSuite("user")
+    )
+
+    assertGutterRunConfigurationSettings(
+      fileQuery.forLine(2),
+      baseSettingsFixture.forTest("user", "should be tested")
+    )
+  }
+
   fun `test forPsiElements`() {
     val fileQuery = FileQuery("src/user.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/user.spec.js", "karma.conf.js", workingDir = "")
@@ -122,7 +139,7 @@ class KarmaRunConfigurationProducerTest:
     val fileQuery = FileQuery("src/array.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/array.spec.js", "karma.conf.js", workingDir = "")
 
-    assertGuttersCount(fileQuery.filePath, 4)
+    assertGuttersCount(fileQuery.filePath, 3)
 
     assertGutterRunConfigurationSettings(
       fileQuery.forLine(1),
@@ -139,10 +156,6 @@ class KarmaRunConfigurationProducerTest:
     assertGutterRunConfigurationSettings(
       fileQuery.forLine(4),
       baseSettingsFixture.forTest("Top level suite", "Subsuite", "Test in subsuite")
-    )
-    assertGutterRunConfigurationSettings(
-      fileQuery.forLine(10),
-      baseSettingsFixture.forTest("Top level test")
     )
   }
 
@@ -169,11 +182,6 @@ class KarmaRunConfigurationProducerTest:
       "Test in subsuite",
       fileQuery.forPsiElement("test", 4, 8),
       baseSettingsFixture.forTest("Top level suite", "Subsuite", "Test in subsuite")
-    )
-    asserPsiElementInFileRunConfigurationSettings(
-      "Top level test",
-      fileQuery.forPsiElement("test", 10, 3),
-      baseSettingsFixture.forTest("Top level test")
     )
   }
 

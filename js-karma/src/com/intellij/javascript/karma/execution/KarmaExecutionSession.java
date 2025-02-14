@@ -21,13 +21,6 @@ import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.remote.NodeJsRemoteInterpreter;
-import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
-import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
-import com.intellij.javascript.testFramework.jasmine.JasmineSpecStructure;
-import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
-import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.javascript.testFramework.util.JSTestNamePattern;
 import com.intellij.javascript.testing.JSTestRunnerUtil;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
@@ -40,15 +33,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.javascript.nodejs.execution.NodeTargetRunOptions.shouldUsePtyForTestRunners;
@@ -210,6 +200,7 @@ public class KarmaExecutionSession {
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
       return JSTestRunnerUtil.buildTestNamesPattern(myProject,
+                                                    KarmaDetector.Companion.getInstance(),
                                                     myRunSettings.getTestFileSystemDependentPath(),
                                                     myRunSettings.getTestNames(),
                                                     myRunSettings.getScopeKind() == KarmaScopeKind.SUITE);
@@ -229,37 +220,10 @@ public class KarmaExecutionSession {
       LOG.info("Not a JavaScript file " + testFilePath + ", " + (psiFile == null ? "null" : psiFile.getClass()));
       throw new ExecutionException(KarmaBundle.message("execution.javascript_file_expected.dialog.message", testFilePath));
     }
-    List<List<JSTestNamePattern>> allTestsPatterns = new ArrayList<>(collectJasmineTests(jsFile));
-    if (!allTestsPatterns.isEmpty()) {
-      return allTestsPatterns;
-    }
-    MochaTddFileStructure mochaTdd = MochaTddFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    mochaTdd.forEachTest(test -> {
-      allTestsPatterns.add(test.getTestTreePathPatterns());
-    });
-    if (!allTestsPatterns.isEmpty()) {
-      return allTestsPatterns;
-    }
-    QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    qunit.forEachTest(test -> {
-      allTestsPatterns.add(List.of(JSTestNamePattern.literalPattern(test.getModuleStructure().getName()),
-                                                      JSTestNamePattern.literalPattern(test.getName())));
-    });
+    List<List<JSTestNamePattern>> allTestsPatterns = KarmaDetector.Companion.getInstance().findAllFileTestPatterns(jsFile);
     if (!allTestsPatterns.isEmpty()) {
       return allTestsPatterns;
     }
     throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFilePath));
-  }
-
-  private static @NotNull List<List<JSTestNamePattern>> collectJasmineTests(@NotNull JSFile jsFile) {
-    JasmineFileStructure jasmine = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    return ContainerUtil.map(jasmine.getChildren(), element -> {
-      List<JSTestNamePattern> patterns = element.getTestTreePathPatterns();
-      if (element instanceof JasmineSpecStructure) {
-        return patterns;
-      }
-      JSTestNamePattern anyTestPattern = new JSTestNamePattern(Collections.singletonList(JSTestNamePattern.anyRange("match all descendant suites/specs")));
-      return ContainerUtil.concat(patterns, Collections.singletonList(anyTestPattern));
-    });
   }
 }

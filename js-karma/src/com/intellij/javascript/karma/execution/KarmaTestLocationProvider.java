@@ -4,16 +4,10 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
-import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.JsTestSelector;
 import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
-import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
-import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
-import com.intellij.javascript.testFramework.util.JsTestFqn;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSTestFileType;
+import com.intellij.javascript.testing.detection.JsTestFrameworkDetectionUtilsKt;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -74,7 +68,8 @@ public class KarmaTestLocationProvider implements SMTestLocator {
       suiteNames = path.subList(0, path.size() - 1);
       testName = path.get(path.size() - 1);
     }
-    PsiElement psiElement = findJasmineElement(project, suiteNames, testName);
+    JsTestSelector testSelector = new JsTestSelector(suiteNames, testName);
+    PsiElement psiElement = JsTestFrameworkDetectionUtilsKt.findPsiElementInJsTestNamesIndexes(project, getKarmaDetector(), testSelector);
     if (psiElement == null) {
       String moduleName = null;
       if (suiteNames.isEmpty()) {
@@ -84,7 +79,9 @@ public class KarmaTestLocationProvider implements SMTestLocator {
         moduleName = suiteNames.get(0);
       }
       if (moduleName != null) {
-        psiElement = findQUnitElement(project, moduleName, testName);
+        JsTestSelector specialQunitSelector = new JsTestSelector(List.of(moduleName), testName);
+        // save working with the index for following old logic
+        psiElement = JsTestFrameworkDetectionUtilsKt.findPsiElementInJsTestNamesIndexes(project, getKarmaDetector(), specialQunitSelector);
       }
     }
     if (psiElement != null) {
@@ -93,44 +90,7 @@ public class KarmaTestLocationProvider implements SMTestLocator {
     return null;
   }
 
-  private static @Nullable PsiElement findJasmineElement(Project project, @NotNull List<String> suiteNames, @Nullable String testName) {
-    String key = JsTestFileByTestNameIndex.createJasmineKey(suiteNames);
-    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
-
-    JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
-    for (VirtualFile file : jsTestVirtualFiles) {
-      PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-      if (psiFile instanceof JSFile) {
-        JasmineFileStructure jasmineFileStructure = builder.fetchCachedTestFileStructure((JSFile)psiFile);
-        PsiElement element = jasmineFileStructure.findPsiElement(suiteNames, testName);
-        if (element != null && element.isValid()) {
-          return element;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  private static @Nullable PsiElement findQUnitElement(Project project, @NotNull String moduleName, @Nullable String testName) {
-    String key = JsTestFileByTestNameIndex.createQUnitKey(moduleName, testName);
-    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
-
-    JsTestFqn fqn = new JsTestFqn(JSTestFileType.QUNIT, List.of(moduleName), testName);
-    QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
-    for (VirtualFile file : jsTestVirtualFiles) {
-      PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-      if (psiFile instanceof JSFile) {
-        QUnitFileStructure qunitFileStructure = builder.fetchCachedTestFileStructure((JSFile)psiFile);
-        PsiElement element = qunitFileStructure.findPsiElement(fqn);
-        if (element != null && element.isValid()) {
-          return element;
-        }
-      }
-    }
-
-    return null;
+  public static @NotNull KarmaDetector getKarmaDetector() {
+    return KarmaDetector.Companion.getInstance();
   }
 }

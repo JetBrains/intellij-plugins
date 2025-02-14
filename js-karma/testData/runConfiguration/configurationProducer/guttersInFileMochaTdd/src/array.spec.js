@@ -6,7 +6,3 @@ suite('Top level suite', () => {
     })
   })
 })
-
-test('Top level test', () => {
-  expect(1).to.equal(1)
-})

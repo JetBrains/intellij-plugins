@@ -6,13 +6,11 @@ import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.javascript.testFramework.AbstractTestFileStructure;
 import com.intellij.javascript.testFramework.JsTestElementPath;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
-import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
-import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testing.JsPackageDependentTestRunConfigurationProducer;
+import com.intellij.javascript.testing.detection.JsTestFrameworkDetector;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -38,6 +36,11 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
   @Override
   public @NotNull ConfigurationFactory getConfigurationFactory() {
     return KarmaConfigurationType.getInstance();
+  }
+
+  @Override
+  public KarmaDetector getTestFrameworkDetector() {
+    return KarmaDetector.Companion.getInstance();
   }
 
   @Override
@@ -77,7 +80,7 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
                            .setScopeKind(KarmaScopeKind.ALL)
                            .setConfigPath(virtualFile.getPath()).build(), file);
     }
-    if (file.getTestFileType() != null) {
+    if (KarmaDetector.Companion.getInstance().hasTestsInFile(file)) {
       KarmaRunSettings settings = guessConfigFileIfNeeded(templateSettings, virtualFile, element.getProject());
       return Pair.create(settings.toBuilder()
                            .setScopeKind(KarmaScopeKind.TEST_FILE)
@@ -94,12 +97,11 @@ public final class KarmaRunConfigurationProducer extends JsPackageDependentTestR
     if (textRange == null || !file.isTestFile()) {
       return null;
     }
-    JasmineFileStructure jasmineStructure = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(file);
-    JsTestElementPath path = jasmineStructure.findTestElementPath(textRange);
-    if (path == null) {
-      MochaTddFileStructure mochaTddFileStructure = MochaTddFileStructureBuilder.getInstance().fetchCachedTestFileStructure(file);
-      path = mochaTddFileStructure.findTestElementPath(textRange);
+    AbstractTestFileStructure testsStructure = KarmaDetector.Companion.getInstance().findTestsStructure(file);
+    if (testsStructure == null) {
+      return null;
     }
+    JsTestElementPath path = testsStructure.findTestElementPath(textRange);
     if (path != null) {
       templateSettings = guessConfigFileIfNeeded(templateSettings, virtualFile, element.getProject());
       KarmaRunSettings.Builder builder = templateSettings.toBuilder();
