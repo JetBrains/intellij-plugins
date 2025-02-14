@@ -50,6 +50,7 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript",
+    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
