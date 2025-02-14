@@ -1,11 +1,14 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-class DebuggerCommand {
+@ApiStatus.Internal
+public class DebuggerCommand {
   private final String myText;
   private final CommandOutputProcessingType myOutputProcessingType; // program will consume immediate server response (no infinite blocking allowed)
   private final VMState myEndVMState;
