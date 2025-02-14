@@ -8,6 +8,7 @@ import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.service.*
 import com.intellij.lang.javascript.service.protocol.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -15,6 +16,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.webcore.util.JsonUtil
+import kotlinx.coroutines.future.future
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -41,8 +43,9 @@ class PrettierLanguageServiceImpl(
     // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
     val forceLineBreakAtEof = range != null && range.endOffset < text.length && text.endsWith("\n")
     val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, false)
-    return process.execute(command) { _, response: JSLanguageServiceAnswer ->
-      parseReformatResponse(response, forceLineBreakAtEof)
+    return project.service<PrettierLanguageServiceManager>().cs.future {
+      val answer = process.execute(command)?.answer ?: return@future null
+      parseReformatResponse(answer, forceLineBreakAtEof)
     }
   }
 
@@ -58,7 +61,8 @@ class PrettierLanguageServiceImpl(
     }
 
     val command = ResolveConfigCommand(myProject, filePath, prettierPackage, false)
-    return process.execute(command) { _, response: JSLanguageServiceAnswer ->
+    return project.service<PrettierLanguageServiceManager>().cs.future {
+      val response = process.execute(command)?.answer ?: return@future null
       parseResolveConfigResponse(response)
     }
   }

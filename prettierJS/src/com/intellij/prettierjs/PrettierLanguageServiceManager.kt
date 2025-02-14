@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.util.NodePackage
@@ -11,9 +11,10 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import kotlinx.coroutines.CoroutineScope
 
 @Service(Service.Level.PROJECT)
-class PrettierLanguageServiceManager(project: Project) :
+class PrettierLanguageServiceManager(project: Project, internal val cs: CoroutineScope) :
   MultiRootJSLinterLanguageServiceManager<PrettierLanguageServiceImpl>(project, PrettierUtil.PACKAGE_NAME) {
 
   init {
