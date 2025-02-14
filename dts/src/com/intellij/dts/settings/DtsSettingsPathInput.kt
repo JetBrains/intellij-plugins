@@ -17,8 +17,21 @@ import javax.swing.plaf.basic.BasicComboBoxEditor
 abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
                                        private val browserTitle: @NlsContexts.DialogTitle String) : ComboBox<T>() {
   protected val textField = ExtendableTextField()
+  protected val customDelimitersField = JTextField(HbConfig.getCustomDelimiters())
 
   var text: String by textField::text
+
+  init {
+    textField.border = null
+    configureCustomDelimitersField()
+    configure()
+  }
+
+  private fun configureCustomDelimitersField() {
+    customDelimitersField.addActionListener {
+      HbConfig.setCustomDelimiters(customDelimitersField.text)
+    }
+  }
 
   protected fun configure() {
     val editor = object : BasicComboBoxEditor() {
@@ -29,8 +42,8 @@ abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
         )
 
         textField.addBrowseExtension({
-                                       listener.actionPerformed(ActionEvent(textField, ActionEvent.ACTION_PERFORMED, "action"))
-                                     }, disposable)
+          listener.actionPerformed(ActionEvent(textField, ActionEvent.ACTION_PERFORMED, "action"))
+        }, disposable)
 
         return textField
       }

@@ -8,6 +8,21 @@ import org.jetbrains.annotations.NotNull;
  * Formalizes the properties which we will persist using {@link com.intellij.ide.util.PropertiesComponent}
  */
 enum Property {
+  CUSTOM_DELIMITERS {
+    @Override
+    public @NotNull String getStringName() {
+      return "handlebars.custom.delimiters";
+    }
+
+    @Override
+    public @NotNull String getDefault() {
+      return ""; // Default is empty string (no custom delimiters)
+    }
+
+    public static final String ENABLED = "enabled";
+    public static final String DISABLED = "disabled";
+  },
+
   AUTO_GENERATE_CLOSE_TAG {
     @Override
     public @NotNull String getStringName() {

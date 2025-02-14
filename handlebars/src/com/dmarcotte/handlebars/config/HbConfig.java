@@ -11,6 +11,14 @@ import org.jetbrains.annotations.Nullable;
 import static com.dmarcotte.handlebars.config.Property.*;
 
 public final class HbConfig {
+  public static String getCustomDelimiters() {
+    return getStringPropertyValue(Property.CUSTOM_DELIMITERS);
+  }
+
+  public static void setCustomDelimiters(String delimiters) {
+    setStringPropertyValue(Property.CUSTOM_DELIMITERS, delimiters);
+  }
+
 
   public static boolean isAutoGenerateCloseTagEnabled() {
     return getBooleanPropertyValue(AUTO_GENERATE_CLOSE_TAG);
