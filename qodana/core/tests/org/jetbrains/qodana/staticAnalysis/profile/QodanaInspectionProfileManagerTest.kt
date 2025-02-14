@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.profile.codeInspection.BaseInspectionProfileManager
 import com.intellij.profile.codeInspection.InspectionProfileManager
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.ConfigTester
@@ -15,6 +14,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalInspectionDescriptor
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QODANA_EMPTY_PROFILE_NAME
 import org.jetbrains.qodana.staticAnalysis.registerDynamicExternalInspectionsInTests
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Ignore
 import org.junit.Test
 
@@ -267,7 +267,7 @@ class QodanaInspectionProfileManagerTest : QodanaTestCase() {
     val expectedXmlWithoutChangedTool = """
       <profile version="1.0">
         <option name="myName" value="foo" />
-        <inspection_tool class="${notEnabledTool.shortName}" enabled="true" level="${notEnabledTool.level}" enabled_by_default="false" />
+        <inspection_tool class="${notEnabledTool.shortName}" enabled="true" level="${notEnabledTool.level.name}" enabled_by_default="false" />
       </profile>
     """.trimIndent()
     assertThat(writeProfile(profileBasedOnEmptyProfile)).isEqualTo(expectedXmlWithoutChangedTool)
@@ -284,7 +284,7 @@ class QodanaInspectionProfileManagerTest : QodanaTestCase() {
     val expectedXmlWithoutChangedTool = """
       <profile version="1.0">
         <option name="myName" value="foo" />
-        <inspection_tool class="${notEnabledTool.shortName}" enabled="true" level="${notEnabledTool.level}" enabled_by_default="false" />
+        <inspection_tool class="${notEnabledTool.shortName}" enabled="true" level="${notEnabledTool.level.name}" enabled_by_default="false" />
       </profile>
     """.trimIndent()
     assertThat(writeProfile(profileBasedOnBaseProfile)).isEqualTo(expectedXmlWithoutChangedTool)
