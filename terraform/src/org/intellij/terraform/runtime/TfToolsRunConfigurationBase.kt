@@ -86,8 +86,13 @@ internal abstract class TfToolsRunConfigurationBase(
   }
 
   private fun checkWorkingDirAndThrow() {
-    if (workingDirectory.isNullOrEmpty() || workingDirectory?.let { Path(it).notExists() } == true) {
+    if (workingDirectory.isNullOrEmpty()) {
       val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
+      exception.setQuickFix(Runnable { workingDirectory = project.basePath })
+      throw exception
+    }
+    if (workingDirectory?.let { Path(it).notExists() } == true) {
+      val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.working.directory.doesnt.exist", workingDirectory))
       exception.setQuickFix(Runnable { workingDirectory = project.basePath })
       throw exception
     }

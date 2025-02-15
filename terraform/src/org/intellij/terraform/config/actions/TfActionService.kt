@@ -62,7 +62,7 @@ internal class TfActionService(private val project: Project, private val corouti
         TfConstants.getNotificationGroup()
           .createNotification(
             title,
-            HCLBundle.message("notification.content.terraform.init.failed", toolType.displayName),
+            HCLBundle.message("notification.content.terraform.init.failed", toolType.executableName, dirFile.name),
             NotificationType.WARNING
           ).notify(project)
         return@withBackgroundProgress
@@ -87,7 +87,7 @@ internal class TfActionService(private val project: Project, private val corouti
           TfConstants.getNotificationGroup()
             .createNotification(
               title,
-              HCLBundle.message("notification.content.terraform.init.succeed", toolType.displayName),
+              HCLBundle.message("notification.content.terraform.init.succeed", toolType.executableName, dirFile.name),
               NotificationType.INFORMATION
             ).notify(project)
         }

@@ -23,8 +23,8 @@ internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
     val anyFileInModuleDir = virtualFiles.firstOrNull()
     val lockFile = anyFileInModuleDir?.let { localSchemaService.findLockFile(it) }
+    val moduleDir = anyFileInModuleDir?.let { if (anyFileInModuleDir.isDirectory) anyFileInModuleDir else anyFileInModuleDir.parent }
     if (lockFile == null) {
-      val moduleDir = anyFileInModuleDir?.let { if (anyFileInModuleDir.isDirectory) anyFileInModuleDir else anyFileInModuleDir.parent }
       TfConstants.getNotificationGroup()
         .createNotification(
           HCLBundle.message("notification.title.cant.generate.model"),
@@ -38,7 +38,7 @@ internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
     TfConstants.getNotificationGroup()
       .createNotification(
         title,
-        HCLBundle.message("notification.content.local.model.has.been.generated.successfully"),
+        HCLBundle.message("notification.content.local.model.has.been.generated.successfully", moduleDir?.name),
         NotificationType.INFORMATION
       ).notify(project)
   }
@@ -46,6 +46,7 @@ internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
   private class InitFolderAction(private val file: VirtualFile?): NotificationAction(HCLBundle.message("action.TfInitRequiredAction.text")) {
     override fun actionPerformed(e: AnActionEvent, notification: Notification) {
       notification.expire()
+      file ?: return
       val tfInitAction = ActionManager.getInstance().getAction("TfInitRequiredAction")
       val dataContext = DataContext { dataId ->
         when (dataId) {
