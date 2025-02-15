@@ -16,11 +16,12 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-interface PbSyntaxStatementBase extends PbElement {
-
+@ApiStatus.Internal
+public interface PbSyntaxStatementBase extends PbElement {
   @Nullable
   SyntaxLevel getSyntaxLevel();
 

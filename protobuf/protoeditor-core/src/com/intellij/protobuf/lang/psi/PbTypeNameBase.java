@@ -16,11 +16,12 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.intellij.protobuf.lang.util.BuiltInType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-interface PbTypeNameBase extends PbElement {
-
+@ApiStatus.Internal
+public interface PbTypeNameBase extends PbElement {
   /** Returns <code>true</code> if this is a built-in type. */
   default boolean isBuiltInType() {
     return getBuiltInType() != null;

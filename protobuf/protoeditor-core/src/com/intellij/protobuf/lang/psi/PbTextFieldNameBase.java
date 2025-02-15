@@ -16,9 +16,11 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.intellij.protobuf.lang.util.BuiltInType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-interface PbTextFieldNameBase extends PbTextElement {
+@ApiStatus.Internal
+public interface PbTextFieldNameBase extends PbTextElement {
 
   /** Returns the {@link PbField} instance that this text field is associated with. */
   @Nullable

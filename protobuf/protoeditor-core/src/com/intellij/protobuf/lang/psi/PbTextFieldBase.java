@@ -15,11 +15,13 @@
  */
 package com.intellij.protobuf.lang.psi;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-interface PbTextFieldBase extends PbTextElement {
+@ApiStatus.Internal
+public interface PbTextFieldBase extends PbTextElement {
   /** Return a list of all literals and message values for this field. */
   @NotNull
   List<PbTextElement> getValues();

@@ -16,11 +16,13 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.google.common.collect.Multimap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-interface PbEnumDefinitionBase extends PbElement {
+@ApiStatus.Internal
+public interface PbEnumDefinitionBase extends PbElement {
 
   /** Returns a mapping of enum value names to values. */
   @NotNull
