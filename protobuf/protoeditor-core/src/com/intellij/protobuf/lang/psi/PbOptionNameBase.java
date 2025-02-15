@@ -18,10 +18,11 @@ package com.intellij.protobuf.lang.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.protobuf.lang.util.ValueTester;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-interface PbOptionNameBase extends PbElement {
-
+@ApiStatus.Internal
+public interface PbOptionNameBase extends PbElement {
   /**
    * Returns the qualifier PbOptionName element, if it exists.
    *
