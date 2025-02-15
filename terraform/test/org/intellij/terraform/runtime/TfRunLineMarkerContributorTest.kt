@@ -4,12 +4,14 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.ui.IconManager
 
 internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
-  fun _testSimpleLineMarker() {
-    val file = myFixture.configureByFile("simple.tf")
+  fun testSimpleLineMarker() {
+    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject("simple.tf", "src/simple.tf"))
+    val file = myFixture.file
     val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
     if (info == null) {
       fail("Info of RunLineMarker not should be empty")
@@ -21,8 +23,9 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     runActionsAndCheckNames(info.actions)
   }
 
-  fun _testLineMarkerWithComment() {
-    val file = myFixture.configureByFile("with_comment.tf")
+  fun testLineMarkerWithComment() {
+    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject("with_comment.tf", "src/with_comment.tf"))
+    val file = myFixture.file
     val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
     if (info == null) {
       fail("Info of RunLineMarker not should be empty")
@@ -47,9 +50,9 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     assertEmpty(gutters)
   }
 
-  fun _testNotDuplicatedRunConfig() {
-    val file = myFixture.configureByFile("with_duplicated.tf")
-
+  fun testNotDuplicatedRunConfig() {
+    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject("with_duplicated.tf", "src/with_duplicated.tf"))
+    val file = myFixture.file
     val info = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
     if (info == null) {
       fail("Info of RunLineMarker not should be empty")
@@ -107,7 +110,7 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
     configuration as TfRunConfiguration
 
     assertEquals(mainCommand.command, configuration.programParameters)
-    assertEquals("/src", configuration.workingDirectory)
+    assertEquals("${myFixture.file.virtualFile.parent.toNioPathOrNull()}", configuration.workingDirectory)
     assertTrue(configuration.envs.isEmpty())
   }
 }
