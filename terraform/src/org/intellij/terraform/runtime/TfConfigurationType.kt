@@ -19,7 +19,7 @@ internal class TfConfigurationType : TfToolConfigurationTypeBase(), RunConfigura
   override val applyFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.APPLY)
   override val destroyFactory: ConfigurationFactory = createFactory(TfToolType.TERRAFORM, TfCommand.DESTROY)
 
-  override val actionGroupId: String = "TerraformRunConfigurationActions"
+  override val actionGroupId: String = "TfRunConfigurationActions"
 
   override fun getDisplayName(): String = HCLBundle.message("terraform.name")
   override fun getConfigurationTypeDescription(): String = HCLBundle.message("terraform.configuration.type.description", TfToolType.TERRAFORM.displayName)
