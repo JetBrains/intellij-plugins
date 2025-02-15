@@ -13,6 +13,8 @@ import com.jetbrains.lang.dart.DartParserDefinition;
 import com.jetbrains.lang.dart.DartScriptContentProvider;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
+import static com.intellij.xml.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
+
 public class DartInHtmlParsingTest extends ParsingTestCase {
   public DartInHtmlParsingTest() {
     super("parsing/html", "html", new HTMLParserDefinition(), new DartParserDefinition());
@@ -21,6 +23,7 @@ public class DartInHtmlParsingTest extends ParsingTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
+    registerXmlElementTypeServices(getApplication(), getTestRootDisposable());
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
     registerExtensionPoint(StartTagEndTokenProvider.EP_NAME, StartTagEndTokenProvider.class);
     registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);

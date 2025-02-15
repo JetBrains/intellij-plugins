@@ -17,6 +17,7 @@ import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.psi.LanguageFileViewProviders;
 
 import static com.intellij.lang.javascript.JSElementTypeServiceHelper.registerJSElementTypeServices;
+import static com.intellij.xml.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
 
 public class HbHtmlParserTest extends HbParserTest {
 
@@ -28,6 +29,7 @@ public class HbHtmlParserTest extends HbParserTest {
   protected void setUp() throws Exception {
     super.setUp();
 
+    registerXmlElementTypeServices(getApplication(), getTestRootDisposable());
     registerJSElementTypeServices(getApplication(), getTestRootDisposable());
 
     addExplicitExtension(LanguageFileViewProviders.INSTANCE, HbLanguage.INSTANCE, new HbFileViewProviderFactory());
