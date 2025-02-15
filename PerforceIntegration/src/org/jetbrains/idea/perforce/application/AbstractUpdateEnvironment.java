@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.WaitForProgressToShow;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.merge.PerforceMergeProvider;
@@ -44,7 +45,8 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import java.io.File;
 import java.util.*;
 
-abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
+@ApiStatus.Internal
+public abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
   protected final Project myProject;
 
   AbstractUpdateEnvironment(final Project project) {
