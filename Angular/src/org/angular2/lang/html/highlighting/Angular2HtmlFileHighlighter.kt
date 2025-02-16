@@ -26,7 +26,7 @@ import kotlin.collections.set
 
 class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2TemplateSyntax,
                                   private val interpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     var result = keys[tokenType]
     if (result != null) {
       return result
@@ -44,7 +44,7 @@ class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2TemplateSy
   }
 
   companion object {
-    private val keys: MutableMap<IElementType, Array<TextAttributesKey>> = HashMap()
+    private val keys: MutableMap<IElementType, Array<out TextAttributesKey>> = HashMap()
     private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_1_5)
     private val ourTsHighlighter = TypeScriptHighlighter()
     private val ourTsKeyMap: MutableMap<Pair<TextAttributesKey, IElementType>, TextAttributesKey> = ConcurrentHashMap()
@@ -112,7 +112,7 @@ class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2TemplateSy
 
     }
 
-    private fun mapToTsKeys(tokenHighlights: Array<TextAttributesKey>, tokenType: IElementType): Array<TextAttributesKey> {
+    private fun mapToTsKeys(tokenHighlights: Array<out TextAttributesKey>, tokenType: IElementType): Array<out TextAttributesKey> {
       return tokenHighlights.map2Array { key -> getTsMappedKey(key, tokenType) }
     }
 

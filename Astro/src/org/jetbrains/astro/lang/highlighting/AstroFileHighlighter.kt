@@ -43,7 +43,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
       put(AstroTokenTypes.FRONTMATTER_SEPARATOR, XmlHighlighterColors.HTML_CODE, AstroHighlighterColors.ASTRO_FRONTMATTER_SEPARATOR)
     }
 
-    private fun mapToTsKeys(tokenHighlights: Array<TextAttributesKey>, tokenType: IElementType): Array<TextAttributesKey> {
+    private fun mapToTsKeys(tokenHighlights: Array<out TextAttributesKey>, tokenType: IElementType): Array<TextAttributesKey> {
       return tokenHighlights.map2Array { key -> getTsMappedKey(key, tokenType) }
     }
 

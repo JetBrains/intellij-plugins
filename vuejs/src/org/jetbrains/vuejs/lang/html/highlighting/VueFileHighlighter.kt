@@ -24,7 +24,7 @@ internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
                                   private val interpolationConfig: Pair<String, String>?,
                                   private val htmlCompatMode: Boolean) : HtmlFileHighlighter() {
 
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     keys[tokenType]?.let { return it }
     return super.getTokenHighlights(tokenType)
   }
