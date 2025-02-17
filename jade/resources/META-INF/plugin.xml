@@ -114,7 +114,7 @@
 
   <actions>
     <action id="NewPugFile" class="com.jetbrains.plugins.jade.CreatePugOrJadeFileAction"
-            icon="com.jetbrains.plugins.jade.JadeIcons.Pug">
+            icon="com.intellij.jade.icons.JadeIcons.Pug">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
   </actions>

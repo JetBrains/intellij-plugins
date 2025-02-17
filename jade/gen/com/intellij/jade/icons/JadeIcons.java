@@ -1,4 +1,4 @@
-package com.jetbrains.plugins.jade;
+package com.intellij.jade.icons;
 
 import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;

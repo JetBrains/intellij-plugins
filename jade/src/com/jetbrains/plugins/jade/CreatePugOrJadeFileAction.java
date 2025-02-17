@@ -3,6 +3,7 @@ package com.jetbrains.plugins.jade;
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
+import com.intellij.jade.icons.JadeIcons;
 import com.intellij.javascript.web.JSWebUtil;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
