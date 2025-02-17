@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
+import com.intellij.util.containers.addIfNotNull
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
@@ -249,7 +250,7 @@ internal class TmplAstLetBlock(
   val declaration: TmplAstLetDeclaration?,
 ) : TmplAstBlockNode
 
-internal class TmplDirectiveMetadata(
+internal class TmplDirectiveMetadata constructor(
   val directive: Angular2Directive,
   val isHostDirective: Boolean,
   val inputs: Map<String, Angular2DirectiveProperty>,
@@ -770,7 +771,7 @@ internal fun buildMetadata(directive: Angular2Directive): List<TmplDirectiveMeta
   val takenOutputs = mutableSetOf<String>()
   result.add(directive.toDirectiveMetadata(exportAs[directive], takenInputs, takenOutputs))
   for (hostDirective in directive.hostDirectives) {
-    result.add(hostDirective.toDirectiveMetadata(exportAs[hostDirective.directive], takenInputs, takenOutputs))
+    result.addIfNotNull(hostDirective.toDirectiveMetadata(exportAs[hostDirective.directive], takenInputs, takenOutputs))
   }
   return result
 }
