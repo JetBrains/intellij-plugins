@@ -110,7 +110,10 @@ public final class GenerateNgAddCompatibleList {
     Stream.of("angular schematics", "angular components", "angular").parallel().forEach(search -> {
       try {
         service.findPackages(
-          null, NpmRegistryService.fullTextSearch(search), 100000, pkg -> true,
+          NpmRegistryService.fullTextSearch(search),
+          100000,
+          null,
+          pkg -> true,
           addPkg);
       }
       catch (IOException e) {

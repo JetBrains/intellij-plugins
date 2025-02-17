@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -180,6 +179,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
   private class SelectCustomPackageDialog(
     private val myProject: Project,
     private val myExistingPackages: Set<String>,
+    private val contextFile: VirtualFile,
   ) : DialogWrapper(myProject) {
     private var myTextEditor: EditorTextField? = null
 
@@ -200,14 +200,18 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
     override fun createCenterPanel(): JComponent {
       val panel = JPanel(BorderLayout(0, 4))
       myTextEditor = TextFieldWithAutoCompletion(
-        myProject, NodePackagesCompletionProvider(myProject, myExistingPackages), false, null)
+        myProject, NodePackagesCompletionProvider(myProject, myExistingPackages, contextFile), false, null)
       myTextEditor!!.setPreferredWidth(250)
       panel.add(LabeledComponent.create(myTextEditor!!, Angular2Bundle.message("angular.action.ng-add.package-name"), BorderLayout.NORTH))
       return panel
     }
   }
 
-  private class NodePackagesCompletionProvider(private val project: Project, private val myExistingPackages: Set<String>) : TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo>(
+  private class NodePackagesCompletionProvider(
+    private val project: Project,
+    private val myExistingPackages: Set<String>,
+    private val contextFile: VirtualFile,
+  ) : TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo>(
     emptyList()) {
 
     override fun getLookupString(item: NodePackageBasicInfo): String {
@@ -231,8 +235,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       val result = ArrayList<NodePackageBasicInfo>()
       try {
         NpmRegistryService.getInstance(project).findPackages(
-          ProgressManager.getInstance().progressIndicator,
-          NpmRegistryService.namePrefixSearch(prefix), 20, { true },
+          NpmRegistryService.namePrefixSearch(prefix), 20, contextFile, { true },
           { pkg ->
             if (!myExistingPackages.contains(pkg.name)) {
               result.add(pkg)
@@ -373,7 +376,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       cli: VirtualFile,
       existingPackages: Set<String>,
     ) {
-      val dialog = SelectCustomPackageDialog(project, existingPackages)
+      val dialog = SelectCustomPackageDialog(project, existingPackages, cli)
       if (dialog.showAndGet()) {
         runAndShowConsole(project, cli, dialog.`package`, false)
       }
