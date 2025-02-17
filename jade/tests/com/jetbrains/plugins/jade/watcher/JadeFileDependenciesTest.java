@@ -3,22 +3,18 @@ package com.jetbrains.plugins.jade.watcher;
 
 import com.intellij.plugins.watcher.DependenciesTestBase;
 import com.intellij.plugins.watcher.model.TaskOptions;
-import com.jetbrains.plugins.jade.JadeHighlightingTest;
+import com.jetbrains.plugins.jade.JadeTestUtil;
 import com.jetbrains.plugins.jade.psi.JadeFileType;
-import org.jetbrains.annotations.NotNull;
 
 public class JadeFileDependenciesTest extends DependenciesTestBase {
-
-  private static final String TEST_DATA_PATH = JadeHighlightingTest.RELATIVE_TEST_DATA_PATH + "/watcher";
 
   public JadeFileDependenciesTest() {
     super(JadeFileType.INSTANCE.getDefaultExtension());
   }
 
-  @NotNull
   @Override
-  protected String getBasePath() {
-    return TEST_DATA_PATH;
+  public String getTestDataPath() {
+    return JadeTestUtil.getBaseTestDataPath() + "/watcher";
   }
 
   public void testIncludeHead() {

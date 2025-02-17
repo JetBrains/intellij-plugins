@@ -2,7 +2,7 @@
 package com.jetbrains.plugins.jade.injectedScriptJs;
 
 import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableTestCase;
-import com.jetbrains.plugins.jade.JadeHighlightingTest;
+import com.jetbrains.plugins.jade.JadeTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class JadeJsIntroduceVariableTest extends JSIntroduceVariableTestCase {
@@ -14,6 +14,6 @@ public class JadeJsIntroduceVariableTest extends JSIntroduceVariableTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/injectedScriptJs/";
+    return JadeTestUtil.getBaseTestDataPath() + "/injectedScriptJs/";
   }
 }

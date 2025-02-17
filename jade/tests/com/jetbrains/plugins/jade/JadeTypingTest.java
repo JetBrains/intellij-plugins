@@ -9,7 +9,7 @@ public class JadeTypingTest extends BasePlatformTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/typing/";
+    return JadeTestUtil.getBaseTestDataPath() + "/typing/";
   }
 
   public void testEnterDoctype() {

@@ -15,7 +15,7 @@ public class JadeFindUsagesTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/findUsages/";
+    return JadeTestUtil.getBaseTestDataPath() + "/findUsages/";
   }
 
   public void testCssSelector() {

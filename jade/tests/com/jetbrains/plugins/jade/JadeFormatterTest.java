@@ -17,7 +17,7 @@ public class JadeFormatterTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/formatter/";
+    return JadeTestUtil.getBaseTestDataPath() + "/formatter/";
   }
 
   public void testTags() {

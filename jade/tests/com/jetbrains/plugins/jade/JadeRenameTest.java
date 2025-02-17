@@ -21,7 +21,7 @@ public class JadeRenameTest extends UsefulTestCase {
     moduleFixtureBuilder.addSourceContentRoot(myFixture.getTempDirPath());
 
     myFixture.setUp();
-    myFixture.setTestDataPath(JadeHighlightingTest.TEST_DATA_PATH + "/rename");
+    myFixture.setTestDataPath(JadeTestUtil.getBaseTestDataPath() + "/rename");
   }
 
   @Override

@@ -2,18 +2,18 @@
 package com.jetbrains.plugins.jade.parser;
 
 import com.intellij.application.options.CodeStyle;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.jetbrains.plugins.jade.JadeBaseParsingTestCase;
+import com.jetbrains.plugins.jade.JadeTestUtil;
 import com.jetbrains.plugins.jade.psi.JadeFileType;
 
 public class JadeParsingTest extends JadeBaseParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + "/plugins/Jade/testData/parser";
+    return JadeTestUtil.getBaseTestDataPath() + "/parser";
   }
 
   @Override

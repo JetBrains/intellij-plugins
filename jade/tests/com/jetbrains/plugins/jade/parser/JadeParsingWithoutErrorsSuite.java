@@ -3,7 +3,6 @@ package com.jetbrains.plugins.jade.parser;
 
 import com.intellij.idea.IgnoreJUnit3;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PluginPathManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -17,6 +16,7 @@ import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ThrowableRunnable;
 import com.jetbrains.plugins.jade.JadeBaseParsingTestCase;
+import com.jetbrains.plugins.jade.JadeTestUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
@@ -61,8 +61,8 @@ public class JadeParsingWithoutErrorsSuite extends TestSuite {
   private static File fetchJadeSourcesToTmp() throws IOException {
     final File sourceRoot = FileUtil.createTempDirectory("pug-test", null, false);
 
-    final String pathToScript = PluginPathManager.getPluginHomePath("Jade") +
-                                "/tests/com/jetbrains/plugins/jade/parser/fetch_jade.sh";
+    final String pathToScript = JadeTestUtil.getContribPath() +
+                                "/jade/tests/com/jetbrains/plugins/jade/parser/fetch_jade.sh";
 
     final Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
       Process exec;

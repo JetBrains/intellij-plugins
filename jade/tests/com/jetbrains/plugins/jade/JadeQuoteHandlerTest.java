@@ -1,15 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.plugins.jade;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public class JadeQuoteHandlerTest extends LightPlatformCodeInsightTestCase {
-
-  public static final String RELATIVE_TEST_DATA_PATH = "/plugins/Jade/testData";
-  public static final String TEST_DATA_PATH = PathManager.getHomePath() + RELATIVE_TEST_DATA_PATH;
 
   public void testMinusCode() {
     doTest();
@@ -48,6 +44,6 @@ public class JadeQuoteHandlerTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return TEST_DATA_PATH + "/quoteHandler/";
+    return JadeTestUtil.getBaseTestDataPath() + "/quoteHandler/";
   }
 }

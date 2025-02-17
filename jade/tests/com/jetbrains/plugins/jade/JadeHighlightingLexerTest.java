@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.plugins.jade;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.LexerTestCase;
 import com.jetbrains.plugins.jade.lexer.JadeHighlightingLexer;
 
@@ -12,7 +11,7 @@ public class JadeHighlightingLexerTest extends JadeBaseParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + "/plugins/Jade/testData/lexer";
+    return JadeTestUtil.getBaseTestDataPath() + "lexer";
   }
 
 

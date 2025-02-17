@@ -2,7 +2,7 @@
 package com.jetbrains.plugins.jade.injectedScriptJs;
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import com.jetbrains.plugins.jade.JadeHighlightingTest;
+import com.jetbrains.plugins.jade.JadeTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ public class JadeJsHighlightingTest extends BasePlatformTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/injectedScriptJs/";
+    return JadeTestUtil.getBaseTestDataPath() + "/injectedScriptJs/";
   }
 
   public void testHighlightingVar() {

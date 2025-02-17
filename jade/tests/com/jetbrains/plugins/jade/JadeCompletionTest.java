@@ -16,7 +16,7 @@ public class JadeCompletionTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/completion/";
+    return JadeTestUtil.getBaseTestDataPath() + "/completion/";
   }
 
   public void testTag1() {

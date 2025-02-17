@@ -18,7 +18,7 @@ public class JadeCopyPasteTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JadeHighlightingTest.TEST_DATA_PATH + "/copyPaste";
+    return JadeTestUtil.getBaseTestDataPath() + "/copyPaste";
   }
 
   @Override
