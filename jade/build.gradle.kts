@@ -44,11 +44,14 @@ sourceSets {
 
 dependencies {
   intellijPlatform {
-    bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css", "com.intellij.plugins.watcher")
-
+    bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css")
+    plugins("com.intellij.plugins.watcher:251.20015.29",
+            "com.intellij.plugins.html.instantEditing:251.20015.29",
+            "org.coffeescript:251.20015.29")
     jetbrainsRuntime()
     intellijIdeaUltimate(ext("platform.version"), useInstaller = false)
     testFramework(TestFrameworkType.Platform)
+    testFramework(TestFrameworkType.Plugin.JavaScript)
   }
   testImplementation("junit:junit:${ext("junit.version")}")
 }
