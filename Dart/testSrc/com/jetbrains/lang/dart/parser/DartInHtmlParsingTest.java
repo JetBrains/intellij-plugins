@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.DartParserDefinition;
 import com.jetbrains.lang.dart.DartScriptContentProvider;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-import static com.intellij.xml.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
+import static com.intellij.xml.testFramework.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
 
 public class DartInHtmlParsingTest extends ParsingTestCase {
   public DartInHtmlParsingTest() {

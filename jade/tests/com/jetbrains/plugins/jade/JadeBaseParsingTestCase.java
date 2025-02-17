@@ -35,7 +35,7 @@ import org.coffeescript.lang.CoffeeScriptHtmlScriptContentProvider;
 import org.coffeescript.lang.parser.CoffeeScriptParserDefinition;
 
 import static com.intellij.lang.javascript.JSElementTypeServiceHelper.registerJSElementTypeServices;
-import static com.intellij.xml.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
+import static com.intellij.xml.testFramework.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
 
 public abstract class JadeBaseParsingTestCase extends ParsingTestCase {
   public JadeBaseParsingTestCase() {

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
-import com.intellij.javascript.web.JSHtmlParsingTest
+import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.lang.LanguageASTFactory
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.application.PathManager

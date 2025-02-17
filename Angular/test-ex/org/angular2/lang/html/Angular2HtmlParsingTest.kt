@@ -2,7 +2,7 @@
 package org.angular2.lang.html
 
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
-import com.intellij.javascript.web.JSHtmlParsingTest
+import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.CustomLanguageASTComparator
 import org.angular2.Angular2TestUtil

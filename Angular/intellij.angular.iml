@@ -102,5 +102,6 @@
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="library" name="opentelemetry" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.web.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
   </component>
 </module>

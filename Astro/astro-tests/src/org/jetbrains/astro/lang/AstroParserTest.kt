@@ -1,7 +1,7 @@
 package org.jetbrains.astro.lang
 
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
-import com.intellij.javascript.web.JSHtmlParsingTest
+import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
 import org.jetbrains.astro.getAstroTestDataPath

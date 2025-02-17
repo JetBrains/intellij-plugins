@@ -17,7 +17,7 @@ import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.psi.LanguageFileViewProviders;
 
 import static com.intellij.lang.javascript.JSElementTypeServiceHelper.registerJSElementTypeServices;
-import static com.intellij.xml.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
+import static com.intellij.xml.testFramework.XmlElementTypeServiceHelper.registerXmlElementTypeServices;
 
 public class HbHtmlParserTest extends HbParserTest {
 
