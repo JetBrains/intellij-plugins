@@ -30,7 +30,8 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jdom.Element
 import kotlin.io.path.Path
-import kotlin.io.path.notExists
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 internal abstract class TfToolsRunConfigurationBase(
   project: Project,
@@ -91,7 +92,9 @@ internal abstract class TfToolsRunConfigurationBase(
       exception.setQuickFix(Runnable { workingDirectory = project.basePath })
       throw exception
     }
-    if (workingDirectory?.let { Path(it).notExists() } == true) {
+    //To avoid compilation error, it cannot detect isNullOrEmpty method and derive nullability
+    val workDirPath = workingDirectory ?.let {Path(it) } ?: throw RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
+    if (!workDirPath.exists() || !workDirPath.isDirectory()) {
       val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.working.directory.doesnt.exist", workingDirectory))
       exception.setQuickFix(Runnable { workingDirectory = project.basePath })
       throw exception
