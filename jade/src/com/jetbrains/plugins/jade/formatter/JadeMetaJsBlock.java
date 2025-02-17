@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.plugins.jade.formatter;
 
 import com.intellij.formatting.*;
@@ -35,7 +36,7 @@ public class JadeMetaJsBlock extends JadeBlock {
         return super.getBlockForAChild(child);
       }
       Indent type = getChildIndentByElementType(child, child.getElementType());
-      
+
       return new JSBlock(child, null, type, null, null, new JSBlockContext(mySettings, JadeLanguage.INSTANCE, null, FormattingMode.REFORMAT));
     }
     return super.getBlockForAChild(child);
