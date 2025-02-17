@@ -67,8 +67,8 @@
     <!-- Angular 2 contributions -->
     <webSymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
 
-    <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
-                        serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
+    <projectService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
+                    serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
     <psi.fileReferenceHelper implementation="org.angular2.cli.AngularCliFileReferenceHelper"/>
 

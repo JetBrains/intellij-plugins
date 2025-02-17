@@ -63,7 +63,8 @@ abstract class AngularCliSchematicsRegistryService {
   companion object {
 
     @JvmStatic
-    val instance: AngularCliSchematicsRegistryService
-      get() = service<AngularCliSchematicsRegistryService>()
+    fun getInstance(project: Project): AngularCliSchematicsRegistryService {
+      return project.service<AngularCliSchematicsRegistryService>()
+    }
   }
 }

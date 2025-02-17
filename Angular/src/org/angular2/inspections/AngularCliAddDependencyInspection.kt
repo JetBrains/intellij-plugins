@@ -60,8 +60,9 @@ class AngularCliAddDependencyInspection : LocalInspectionTool() {
       val version = versionLiteral?.value ?: ""
       val pkgVersion = finder.findInstalledPackage(packageName)
 
-      if ((pkgVersion != null && AngularCliSchematicsRegistryService.instance.supportsNgAdd(pkgVersion))
-          || (pkgVersion == null && AngularCliSchematicsRegistryService.instance.supportsNgAdd(packageName, TIMEOUT))) {
+      val schematicsRegistryService = AngularCliSchematicsRegistryService.getInstance(project)
+      if ((pkgVersion != null && schematicsRegistryService.supportsNgAdd(pkgVersion))
+          || (pkgVersion == null && schematicsRegistryService.supportsNgAdd(packageName, TIMEOUT))) {
         val message = Angular2Bundle.message("angular.inspection.install-with-ng-add.message",
                                              StringUtil.wrapWithDoubleQuote(packageName))
         val quickFix = AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null)

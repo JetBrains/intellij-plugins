@@ -37,7 +37,7 @@ import java.util.*
 import java.util.concurrent.*
 import java.util.function.Supplier
 
-class AngularCliSchematicsRegistryServiceImpl : AngularCliSchematicsRegistryService() {
+class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : AngularCliSchematicsRegistryService() {
 
   private val myNgAddPackages = CachedValue { fetchPackagesSupportingNgAdd() }
   private val myLocalNgAddPackages = ConcurrentHashMap<String, Pair<Boolean, Long>>()
@@ -57,7 +57,7 @@ class AngularCliSchematicsRegistryServiceImpl : AngularCliSchematicsRegistryServ
     return supportsNgAdd(packageName, timeout)
            && myNgAddSupportedCache
              .computeIfAbsent(getKey(packageName, versionOrRange)) { _ ->
-               CachedValue { checkForNgAddSupport(packageName, versionOrRange) }
+               CachedValue { checkForNgAddSupport(project, packageName, versionOrRange) }
              }.getValue(timeout) == true
   }
 
@@ -296,10 +296,10 @@ class AngularCliSchematicsRegistryServiceImpl : AngularCliSchematicsRegistryServ
       return false
     }
 
-    private fun checkForNgAddSupport(packageName: String, versionOrRange: String): Boolean {
+    private fun checkForNgAddSupport(project: Project, packageName: String, versionOrRange: String): Boolean {
       try {
         val indicator = ProgressManager.getInstance().progressIndicator
-        val pkgJson = NpmRegistryService.instance.fetchPackageJson(packageName, versionOrRange, indicator)
+        val pkgJson = NpmRegistryService.getInstance(project).fetchPackageJson(packageName, versionOrRange, indicator)
         return pkgJson?.get(SCHEMATICS_PROP) != null
       }
       catch (e: Exception) {

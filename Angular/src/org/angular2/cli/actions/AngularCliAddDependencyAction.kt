@@ -162,7 +162,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       }
     }.installOn(list)
     popup.showCenteredInCurrentWindow(project)
-    updateListAsync(list, model, popup, existingPackages)
+    updateListAsync(project, list, model, popup, existingPackages)
   }
 
   override fun update(e: AnActionEvent) {
@@ -200,14 +200,14 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
     override fun createCenterPanel(): JComponent {
       val panel = JPanel(BorderLayout(0, 4))
       myTextEditor = TextFieldWithAutoCompletion(
-        myProject, NodePackagesCompletionProvider(myExistingPackages), false, null)
+        myProject, NodePackagesCompletionProvider(myProject, myExistingPackages), false, null)
       myTextEditor!!.setPreferredWidth(250)
       panel.add(LabeledComponent.create(myTextEditor!!, Angular2Bundle.message("angular.action.ng-add.package-name"), BorderLayout.NORTH))
       return panel
     }
   }
 
-  private class NodePackagesCompletionProvider(private val myExistingPackages: Set<String>) : TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo>(
+  private class NodePackagesCompletionProvider(private val project: Project, private val myExistingPackages: Set<String>) : TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo>(
     emptyList()) {
 
     override fun getLookupString(item: NodePackageBasicInfo): String {
@@ -230,7 +230,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       }
       val result = ArrayList<NodePackageBasicInfo>()
       try {
-        NpmRegistryService.instance.findPackages(
+        NpmRegistryService.getInstance(project).findPackages(
           ProgressManager.getInstance().progressIndicator,
           NpmRegistryService.namePrefixSearch(prefix), 20, { true },
           { pkg ->
@@ -273,7 +273,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
           return@executeOnPooledThread
         }
         val version = Ref(StringUtil.defaultIfEmpty(packageVersion, LATEST))
-        val proposeLatestVersion = proposeLatestVersionIfNeeded && !AngularCliSchematicsRegistryService.instance.supportsNgAdd(packageName,
+        val proposeLatestVersion = proposeLatestVersionIfNeeded && !AngularCliSchematicsRegistryService.getInstance(project).supportsNgAdd(packageName,
                                                                                                                                version.get(),
                                                                                                                                TIMEOUT)
         ApplicationManager.getApplication().invokeLater(
@@ -350,7 +350,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       val index = packageSpec.lastIndexOf('@')
       val packageName = if (index <= 0) packageSpec else packageSpec.substring(0, index)
       val pkg = finder.findInstalledPackage(packageName) ?: return
-      if (!AngularCliSchematicsRegistryService.instance.supportsNgAdd(pkg)) {
+      if (!AngularCliSchematicsRegistryService.getInstance(project).supportsNgAdd(pkg)) {
         ApplicationManager.getApplication().invokeLater(
           {
             @Suppress("DialogTitleCapitalization")
@@ -380,6 +380,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
     }
 
     private fun updateListAsync(
+      project: Project,
       list: JBList<NodePackageBasicInfo>,
       model: SortedListModel<NodePackageBasicInfo>,
       popup: JBPopup, existingPackages: Set<String>,
@@ -391,7 +392,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
           return@executeOnPooledThread
         }
         val packages = AngularCliSchematicsRegistryService
-          .instance
+          .getInstance(project)
           .getPackagesSupportingNgAdd(20000)
         ApplicationManager.getApplication().invokeLater(
           {

@@ -97,7 +97,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        AngularCliSchematicsRegistryService.instance.clearProjectSchematicsCache()
+        AngularCliSchematicsRegistryService.getInstance(project).clearProjectSchematicsCache()
         updateList(list, model, project, cli)
       }
 
@@ -173,7 +173,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     reloadingList = true
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread {
-      val schematics = AngularCliSchematicsRegistryService.instance.getSchematics(project, cli)
+      val schematics = AngularCliSchematicsRegistryService.getInstance(project).getSchematics(project, cli)
       ApplicationManager.getApplication().invokeLater {
         model.clear()
         schematics.forEach {

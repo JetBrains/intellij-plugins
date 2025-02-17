@@ -221,9 +221,10 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
           if (localFile != null) {
             localFile = localFile.parent.parent.parent
             try {
+              val project = ProjectManager.getInstance().defaultProject
               val availableOptions =
-                AngularCliSchematicsRegistryService.instance
-                  .getSchematics(ProjectManager.getInstance().defaultProject, localFile!!, true, false)
+                AngularCliSchematicsRegistryService.getInstance(project)
+                  .getSchematics(project, localFile!!, true, false)
                   .asSequence()
                   .filter { s -> "ng-new" == s.name }
                   .firstOrNull()
