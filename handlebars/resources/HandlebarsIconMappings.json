@@ -1,0 +1,14 @@
+{
+  "icons": {
+    "expui": {
+      "elements": {
+        "openBlock.svg": "icons/elements/openBlock.svg",
+        "openInverse.svg": "icons/elements/openInverse.svg",
+        "openMustache.svg": "icons/elements/openMustache.svg",
+        "openPartial.svg": "icons/elements/openPartial.svg",
+        "openUnescaped.svg": "icons/elements/openUnescaped.svg"
+      },
+      "handlebars.svg": "icons/handlebars_icon.svg"
+    }
+  }
+}

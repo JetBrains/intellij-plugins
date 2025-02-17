@@ -68,5 +68,6 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
     <highlightErrorFilter implementation="com.dmarcotte.handlebars.inspections.HbErrorFilter"/>
     <fileIndentOptionsProvider implementation="com.dmarcotte.handlebars.format.HbFileIndentOptionsProvider"/>
     <editorHighlighterProvider filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbHighlighterProvider"/>
+    <iconMapper mappingFile="HandlebarsIconMappings.json"/>
   </extensions>
 </idea-plugin>
