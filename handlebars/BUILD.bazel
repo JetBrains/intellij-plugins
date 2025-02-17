@@ -49,6 +49,7 @@ jvm_library(
     "@community//xml/xml-parser:parser",
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//xml/tests:tests_test_lib",
     "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",

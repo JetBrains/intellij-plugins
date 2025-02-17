@@ -82,6 +82,7 @@ jvm_library(
     "@community//spellchecker:spellchecker_test_lib",
     "@community//plugins/coverage-common:coverage",
     "@community//plugins/coverage-common:coverage_test_lib",
+    "@community//xml/tests:tests_test_lib",
     "//idea-tests:ultimate-tests_test_lib",
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "//plugins/WebComponents:webComponents",
