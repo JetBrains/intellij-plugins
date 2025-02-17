@@ -18,7 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
-import com.intellij.javascript.nodejs.npm.registry.NpmRegistryServiceImpl;
+import com.intellij.javascript.nodejs.npm.registry.PublicNpmRegistryServiceImpl;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -79,7 +79,7 @@ public final class GenerateNgAddCompatibleList {
     f.setBoolean(app, false);
 
     Map<String, NodePackageBasicInfo> angularPkgs = new ConcurrentHashMap<>();
-    NpmRegistryService service = new NpmRegistryServiceImpl(app.getCoroutineScope());
+    NpmRegistryService service = new PublicNpmRegistryServiceImpl(app.getCoroutineScope());
 
     Consumer<NodePackageBasicInfo> addPkg = pkg -> angularPkgs.merge(pkg.getName(), pkg, (p1, p2) -> {
       if (!StringUtil.equals(p1.getDescription(), p2.getDescription())) {
