@@ -25,4 +25,6 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages", false) 
 
   fun testDollarSymbolInInlineTemplate() = checkUsages(fileName = "hello1.service.ts")
 
+  fun testComponentClassUsagesInTemplates() = checkUsages()
+
 }

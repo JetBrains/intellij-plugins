@@ -1,0 +1,4 @@
+<slots.test.component.html:(1,16):(0,15)>	<slots-component></slots-component>
+<slots.test.component.html:(19,34):(0,15)>	<slots-component></slots-component>
+<slots.test.component.ts:(190,204):(0,14)>	{SlotsComponent}
+<slots.test.component.ts:(368,382):(0,14)>	[\n    SlotsComponent\n  ]
