@@ -1,0 +1,51 @@
+extends layout
+
+block head
+    link(rel="stylesheet" href="/css/sm.play.css")
+    script(src="https://www.youtube.com/iframe_api")
+    script(src="http://f.vimeocdn.com/js/froogaloop2.min.js")
+    script.
+        var model = @Html.Raw(Json.Encode(Model));
+        model.id = "@Model.link";
+        window.onYouTubePlayerAPIReady = function () {
+            console.log("youtube ready");
+            playPrepare();
+        };
+        $(playReady);
+
+
+block content
+    .play-wrap
+        .play-overlay
+        .play-topbar
+            a(href="/lists/edit/Model.link"): <i class="fa fa-arrow-left"></i>
+            a(href="javascript:playFirst()"): <i class="fa fa-fast-backward"></i>
+            a(href="javascript:playPrevious()"): <i class="fa fa-step-backward"></i>
+            a(href="javascript:location.reload()"): <i class="fa fa-refresh"></i>
+            a(href="javascript:playNext()"): <i class="fa fa-step-forward"></i>
+            a(href="javascript:playLast()"): <i class="fa fa-fast-forward"></i>
+            a(href="javascript:playFullscreen()"): <i class="fa fa-arrows-alt"></i>
+
+        #play-container
+
+
+    script(id='template' type='text/ractive' ).
+        {{#item}}
+            {{>tplayer}}
+        {{/}}
+
+    script(id="tplayer" type="text/ractive").
+        {{#type.youtube}}
+            <iframe id="video" src="http://www.youtube.com/embed/{{source}}?enablejsapi=1&autoplay=1&iv_load_policy=3&controls=1&showinfo=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        {{/}}
+        {{#type.vimeo}}
+            <iframe id="video" src="http://player.vimeo.com/video/{{source}}?autoplay=1&player_id=video" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        {{/}}
+        {{#type.twitch}}
+            <iframe id="video" src="http://www.twitch.tv/{{source}}/embed" frameborder="0" scrolling="no" height="480" width="853"></iframe>
+        {{/}}
+        {{#type.html}}
+            <video id="video" width="853" height="480" controls autoplay>
+				<source src="{{id}}" type="{{type.htmltype}}">
+            </video>
+        {{/}}

@@ -1,0 +1,106 @@
+### auto-generated section `build intellij.jade` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+
+jvm_resources(
+  name = "jade_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_resources(
+  name = "jade_resources_1",
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
+)
+
+jvm_library(
+  name = "jade",
+  module_name = "intellij.jade",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "//CSS/frontback/css-api:css-frontback",
+    "@community//platform/lang-api:lang",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "@community//platform/lang-impl",
+    "@community//platform/indexing-impl",
+    "@community//RegExpSupport:regexp",
+    "@community//xml/xml-parser:parser",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "//CSS/css-psi-impl:css-psi",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript",
+    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
+    "@community//platform/ide-core-impl",
+    "@community//xml/impl",
+    "//CSS/impl:css-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//CSS:css",
+    "//plugins/fileWatcher",
+    "@community//spellchecker",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+  ],
+  runtime_deps = [
+    ":jade_resources",
+    ":jade_resources_1",
+  ]
+)
+
+jvm_library(
+  name = "jade_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
+  associates = [":jade"],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "//CSS/frontback/css-api:css-frontback",
+    "@community//platform/lang-api:lang",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "@community//platform/lang-impl",
+    "@community//platform/indexing-impl",
+    "@community//RegExpSupport:regexp",
+    "@community//RegExpSupport:regexp_test_lib",
+    "@community//xml/xml-parser:parser",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "//CSS/css-psi-impl:css-psi",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript",
+    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
+    "@community//platform/ide-core-impl",
+    "@community//xml/impl",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "//CSS/impl:css-impl",
+    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//ultimate/ultimate-resources:idea-ultimate-customization",
+    "//CSS:css",
+    "//plugins/fileWatcher",
+    "//plugins/fileWatcher:fileWatcher_test_lib",
+    "@community//spellchecker",
+    "@community//spellchecker:spellchecker_test_lib",
+    "@community//xml/tests:tests_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/coffeescript/coffeescript-core:coffeescript",
+    "@community//platform/core-ui",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+  ],
+  runtime_deps = [
+    ":jade_resources",
+    ":jade_resources_1",
+  ]
+)
+
+jvm_test(
+  name = "jade_test",
+  runtime_deps = [":jade_test_lib"]
+)
+### auto-generated section `build intellij.jade` end

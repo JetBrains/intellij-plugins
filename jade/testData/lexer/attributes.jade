@@ -1,0 +1,27 @@
+meta(http-equiv="expires", content="Sun, 01 Jan 2013 07:01:00 GMT")
+div1#(a=b)id.foo.bar
+div2(a=b)#id.foo.bar
+(a=b)#id.foo.bar
+div3#id(a=b).foo.bar
+div4#id.(a=b)foo.bar
+div5#id.foo(a=b).bar
+div6#id.foo.(a=b)bar
+div7#id.foo.bar(a=b)
+div8.foo.bar(a=b)#id
+div9.foo.bar#id(a=b)
+foo(
+ a=200
+ b=300)
+bar(a='1'
+ b=2)
+z1(a=((((1)))))
+z2(a=((1))
+z3(a=((1)
+input(
+:first="name"
+type='checkbox'
+name='agreement'
+checked
+@click="onClick"
+)
+div(:onClick="onClick" v-if=1 @fff="u43" :onMouseOver="handler")

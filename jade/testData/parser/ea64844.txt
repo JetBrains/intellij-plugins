@@ -1,0 +1,21 @@
+XmlFile:ea64844.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(LPAREN)('(')
+      PsiElement(LPAREN)('(')
+      XmlToken:XML_TAG_NAME('abc')
+      PsiElement(EQ)('=')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSInJadeEmbeddedStatementWrapper
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"def"')
+              PsiErrorElement:Unexpected tokens
+                PsiElement(JS:RPAR)(')')
+                PsiElement(JS:RPAR)(')')
+      PsiErrorElement:) expected
+        <empty list>

@@ -1,0 +1,16 @@
+mixin my_mixin
+  div&attributes(attributes)
+
+mixin my_mixin()
+  div&attributes(attributes)
+
+mixin my_mixin(arg1, arg2)
+  div&attributes(attributes)
+
+body
+  +my_mixin
+  + my_mixin
+  mixin my_mixin
+
+  +my_mixin(1, 2)
+  mixin my_mixin(1, 2)

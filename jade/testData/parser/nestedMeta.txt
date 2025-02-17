@@ -1,0 +1,23 @@
+XmlFile:nestedMeta.jade
+  PsiElement(DOCUMENT)
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSEmptyStatement
+        PsiElement(JS:SEMICOLON)(';')
+      PsiElement(INDENT)('\n    ')
+      JSEmptyStatement
+        ASTWrapperPsiElement(JADE_EMBEDDED_WRAPPER: JADE_EMBEDDED_CONTENT)
+          PsiElement(DOCUMENT)
+            JSInJadeEmbeddedContentImpl:JS_META_CODE
+              PsiElement(MINUS)('-')
+              PsiElement(INDENT)(' ')
+              JSEmptyStatement
+                PsiElement(JS:SEMICOLON)(';')
+                PsiElement(INDENT)('\n')
+            PsiElement(EOL)('\n    ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('div')
+              PsiElement(INDENT)('\n        ')
+              JadeTagImpl(TAG)
+                XmlToken:XML_TAG_NAME('div')

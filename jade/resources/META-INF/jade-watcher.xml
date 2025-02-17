@@ -1,0 +1,6 @@
+<idea-plugin package="com.jetbrains.plugins.jade.watcher">
+  <extensions defaultExtensionNs="com.intellij.plugins.watcher">
+    <consumer implementation="com.jetbrains.plugins.jade.watcher.JadeOrPugTaskConsumer"/>
+    <dependency.finder implementation="com.jetbrains.plugins.jade.watcher.JadeFileDependencyFinder"/>
+  </extensions>
+</idea-plugin>

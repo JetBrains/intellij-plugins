@@ -1,0 +1,74 @@
+XmlFile:attributesEs6Strings.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('es6')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:STRING_TEMPLATE_PART)('string')
+              PsiElement(JS:BACKQUOTE)('`')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('es6')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            ES6TaggedTemplateExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('tagged')
+              JSStringTemplateExpression
+                PsiElement(JS:BACKQUOTE)('`')
+                PsiElement(JS:STRING_TEMPLATE_PART)('string')
+                PsiElement(JS:BACKQUOTE)('`')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('es6')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            ES6TaggedTemplateExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('qualified')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('tagged')
+              JSStringTemplateExpression
+                PsiElement(JS:BACKQUOTE)('`')
+                PsiElement(JS:STRING_TEMPLATE_PART)('string')
+                PsiElement(JS:BACKQUOTE)('`')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('h1')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('v-html')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:STRING_TEMPLATE_PART)('  <-- parsing error\n  some\n  long\n  stuff\n')
+              PsiElement(JS:BACKQUOTE)('`')
+      PsiElement(RPAREN)(')')

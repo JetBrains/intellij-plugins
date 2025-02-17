@@ -1,0 +1,105 @@
+XmlFile:web12935.jade
+  PsiElement(DOCUMENT)
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('mixin_name')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('b')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(CONDITIONAL_STATEMENT)
+        PsiElement(CONDITIONAL_HEADER)
+          PsiElement(CONDITIONAL_KEYWORD)('if')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(CONDITIONAL_BODY)
+          PsiElement(INDENT)('\n    ')
+          JadeCommentImpl(COMMENT)
+            PsiElement(UNBUFFERED_COMMENT)('//- Comment 1')
+          PsiElement(INDENT)('\n    ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('meta')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('name')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"a"')
+            PsiWhiteSpace(' ')
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('content')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(RPAREN)(')')
+            PsiElement(EOL)('\n')
+      PsiElement(INDENT)('\n  ')
+      JadeCommentImpl(COMMENT)
+        PsiElement(UNBUFFERED_COMMENT)('//- Comment2')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(CONDITIONAL_STATEMENT)
+        PsiElement(CONDITIONAL_HEADER)
+          PsiElement(CONDITIONAL_KEYWORD)('if')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('b')
+        PsiElement(CONDITIONAL_BODY)
+          PsiElement(INDENT)('\n    ')
+          JadeCommentImpl(COMMENT)
+            PsiElement(UNBUFFERED_COMMENT)('//- Comment2')
+          PsiElement(INDENT)('\n    ')
+          PsiElement(CONDITIONAL_STATEMENT)
+            PsiElement(CONDITIONAL_HEADER)
+              PsiElement(CONDITIONAL_KEYWORD)('if')
+              PsiWhiteSpace(' ')
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSReferenceExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('b')
+                  PsiElement(JS:DOT)('.')
+                  PsiElement(JS:IDENTIFIER)('foo')
+            PsiElement(CONDITIONAL_BODY)
+              PsiElement(INDENT)('\n      ')
+              JadeTagImpl(TAG)
+                XmlToken:XML_TAG_NAME('meta')
+                PsiElement(LPAREN)('(')
+                PsiElement(JADE_PSEUDO_WHITESPACE)
+                  <empty list>
+                JadeAttributeImpl(XML_ATTRIBUTE)
+                  XmlToken:XML_NAME('name')
+                  PsiElement(EQ)('=')
+                  PsiElement(XML_ATTRIBUTE_VALUE)
+                    JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                      JSLiteralExpression
+                        PsiElement(JS:STRING_LITERAL)('"b:foo"')
+                PsiWhiteSpace(' ')
+                JadeAttributeImpl(XML_ATTRIBUTE)
+                  XmlToken:XML_NAME('content')
+                  PsiElement(EQ)('=')
+                  PsiElement(XML_ATTRIBUTE_VALUE)
+                    JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                      JSReferenceExpression
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('b')
+                        PsiElement(JS:DOT)('.')
+                        PsiElement(JS:IDENTIFIER)('foo')
+                PsiElement(RPAREN)(')')

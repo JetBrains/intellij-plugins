@@ -1,0 +1,3 @@
+XML_TAG_NAME ('div')
+INDENT ('\n  ')
+JS_META_CODE ('- if (true)\n    div\n  - else\n    span')

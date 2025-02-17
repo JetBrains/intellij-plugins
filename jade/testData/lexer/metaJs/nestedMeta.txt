@@ -1,0 +1,5 @@
+MINUS ('-')
+INDENT (' ')
+JS:SEMICOLON (';')
+INDENT ('\n    ')
+JADE_EMBEDDED_WRAPPER: JADE_EMBEDDED_CONTENT ('- ;\n\n    div\n        div')

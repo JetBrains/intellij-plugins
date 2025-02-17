@@ -1,0 +1,89 @@
+// this is just a simple Jade file
+doctype 5 6 "aa" zz
+//- this is some unbuffered comment
+  with some extra
+    lines
+html(lang="en",length=1+2-3/4"and so on!==",xcv=this+is+value!)
+  head(a='foo,'+'bar,'+"zzz)",b===,c=,,d,,)
+    title Foo bar zzz
+  body(a=)
+    h1 Jade - node template engine
+    // some comment
+      1. too
+      2. late
+    tag2 with text
+toptag#id text
+// comment
+    line
+#just-an-id
+  #and-sub-tag
+tag.with-class
+
+.just-class with text
+fully#formed.class.declaration.here yes
+.class-first#id-second.class-third#id_fourth
+p
+ | and here comes
+ | some text
+ | and more
+
+ and tag again
+
+p.
+  so this is
+  going to
+  be a really
+  multiline text...
+that-suddenly-stops
+p .
+ space before the dot
+ would also
+ be fine
+script
+//-
+
+ p .
+  commented
+  stuff
+"line1\
+line2"
+'line3a\
+  line3b\
+   line3c'
+
+z
+  
+rss(xmlns:atom="aaatom")
+
+a:b
+c:d.foo#bar
+_:_
+
+tag1: tag2
+tag3: tag4.foo#bar
+tag5.foo#bar(a="b"): tag6#id: tag7
+tag8: #tag9: .tag10(q='w')
+
+obj = { foo: 'bar' }
+each val, key in obj
+  li #{key}: #{val}
+for val, key in obj
+  li #{key}: #{val}
+for zzz in obj
+  li #{key}: #{val}
+
+friends = 10
+    case friends
+      when 5
+        p you have no friends
+      when 1+2
+        p you have no friends
+      when "aaa": p you have a friend
+      default
+        p you have friends
+
+extends foobar
+   extends    a/bbb/c.jade
+   extends    a  ddd
+foo:.bar#zzz
+foo:#bar.zzz.uuu

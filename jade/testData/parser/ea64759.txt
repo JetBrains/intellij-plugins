@@ -1,0 +1,71 @@
+XmlFile:ea64759.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('html')
+      PsiElement(INDENT)('\n   ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('head')
+      PsiElement(INDENT)('\n   ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('body')
+        PsiElement(INDENT)('\n      ')
+        JSInJadeEmbeddedContentImpl:JS_META_CODE
+          PsiElement(MINUS)('-')
+          PsiElement(INDENT)(' ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:SEMICOLON)(';')
+            PsiElement(INDENT)('\n')
+        PsiElement(INDENT)('\n      ')
+        PsiElement(FOR_STATEMENT)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+            JSEachStatement
+              PsiElement(JS:EACH_KEYWORD)('each')
+              PsiWhiteSpace(' ')
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('ia')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:IN_KEYWORD)('in')
+              PsiWhiteSpace(' ')
+              JSArrayLiteralExpression
+                PsiElement(JS:LBRACKET)('[')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('1')
+                PsiElement(JS:COMMA)(',')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('2')
+                PsiElement(JS:COMMA)(',')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('3')
+                PsiElement(JS:RBRACKET)(']')
+          PsiElement(FOR_BODY)
+            PsiElement(INDENT)('\n         ')
+            JSInJadeEmbeddedContentImpl:JS_META_CODE
+              PsiElement(MINUS)('-')
+              PsiElement(INDENT)(' ')
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('console')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('log')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('ia')
+                    PsiElement(JS:RPAR)(')')
+            PsiElement(INDENT)('\n         ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('li')

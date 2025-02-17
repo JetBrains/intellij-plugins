@@ -1,0 +1,62 @@
+XmlFile:unbufferedBlock2.jade
+  PsiElement(DOCUMENT)
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)('\n    ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('list')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Uno"')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Dos"')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Tres"')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace('\n    ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Cuatro"')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Cinco"')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Seis"')
+            PsiElement(JS:RBRACKET)(']')
+      PsiWhiteSpace('\n')
+    PsiElement(EOL)('\n')
+    PsiElement(FOR_STATEMENT)
+      JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+        JSEachStatement
+          PsiElement(JS:EACH_KEYWORD)('each')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('item')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IN_KEYWORD)('in')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('list')
+      PsiElement(FOR_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('item')

@@ -1,0 +1,185 @@
+XmlFile:mixin.jade
+  PsiElement(DOCUMENT)
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('book')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('name')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('price')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('li')
+        XmlText
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('#{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('name')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('for')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('#{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('price')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('€')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ul')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeTagIdImpl(TAG_ID)('#books')
+      PsiElement(INDENT)('\n    ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        XmlToken:XML_TAG_NAME('book')
+        PsiElement(LPAREN)('(')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"Book A"')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('12.99')
+        PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        XmlToken:XML_TAG_NAME('book')
+        PsiElement(LPAREN)('(')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"Book B"')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('5.99')
+        PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n\n')
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('book')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('name')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('price')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('div')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('attributes')
+        PsiElement(RPAREN)(')')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('name')
+    PsiElement(EOL)('\n\n')
+    JadeMixinImpl(MIXIN)
+      PsiElement(PLUS)('+')
+      XmlToken:XML_TAG_NAME('book')
+      PsiElement(LPAREN)('(')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Book A"')
+      PsiElement(RPAREN)(')')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeTagIdImpl(TAG_ID)('#first')
+    PsiElement(EOL)('\n')
+    JadeMixinImpl(MIXIN)
+      PsiElement(PLUS)('+')
+      XmlToken:XML_TAG_NAME('book')
+      PsiElement(LPAREN)('(')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Book B"')
+      PsiElement(RPAREN)(')')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('title')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"book b"')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeMixinImpl(MIXIN)
+      PsiElement(PLUS)('+')
+      XmlToken:XML_TAG_NAME('book')
+      PsiElement(LPAREN)('(')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"Book C"')
+      PsiElement(RPAREN)(')')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeClassImpl(CLASS)
+            PsiElement(DOT)('.')
+            JadeClassNameImpl(TAG_CLASS)('last')

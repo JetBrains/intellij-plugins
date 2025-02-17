@@ -1,0 +1,122 @@
+XmlFile:unbufferedBlock.jade
+  PsiElement(DOCUMENT)
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)('\n    ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('meta')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSObjectLiteralExpression
+            PsiElement(JS:LBRACE)('{')
+            PsiWhiteSpace('\n        ')
+            JSProperty
+              PsiElement(JS:STRING_LITERAL)(''description'')
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''Says hello to the world'')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace('\n        ')
+            JSProperty
+              PsiElement(JS:STRING_LITERAL)(''viewport'')
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''width=device-width, initial-scale=1.0'')
+            PsiWhiteSpace('\n    ')
+            PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('html')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('lang')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''en'')
+      PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('head')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('meta')
+          PsiElement(LPAREN)('(')
+          PsiElement(JADE_PSEUDO_WHITESPACE)
+            <empty list>
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('charset')
+            PsiElement(EQ)('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''utf-8'')
+          PsiElement(RPAREN)(')')
+        PsiElement(INDENT)('\n        ')
+        PsiElement(FOR_STATEMENT)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+            JSEachStatement
+              PsiElement(JS:EACH_KEYWORD)('each')
+              PsiWhiteSpace(' ')
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('content')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('name')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:IN_KEYWORD)('in')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('meta')
+          PsiElement(FOR_BODY)
+            PsiElement(INDENT)('\n            ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('meta')
+              PsiElement(LPAREN)('(')
+              PsiElement(JADE_PSEUDO_WHITESPACE)
+                <empty list>
+              JadeAttributeImpl(XML_ATTRIBUTE)
+                XmlToken:XML_NAME('name')
+                PsiElement(EQ)('=')
+                PsiElement(XML_ATTRIBUTE_VALUE)
+                  JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('name')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              JadeAttributeImpl(XML_ATTRIBUTE)
+                XmlToken:XML_NAME('content')
+                PsiElement(EQ)('=')
+                PsiElement(XML_ATTRIBUTE_VALUE)
+                  JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('content')
+              PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('body')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('p')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('Hello,')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('World')
+            XmlToken:XML_DATA_CHARACTERS('!')

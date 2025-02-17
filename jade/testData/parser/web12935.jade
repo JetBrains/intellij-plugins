@@ -1,0 +1,10 @@
+mixin mixin_name(a, b)
+  if a
+    //- Comment 1
+    meta(name="a" content=a)
+
+  //- Comment2
+  if b
+    //- Comment2
+    if b.foo
+      meta(name="b:foo" content=b.foo)

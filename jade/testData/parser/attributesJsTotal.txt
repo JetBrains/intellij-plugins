@@ -1,0 +1,181 @@
+XmlFile:attributesJsTotal.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('body')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('p5')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('a')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSCallExpression
+                JSReferenceExpression
+                  JSArrayLiteralExpression
+                    PsiElement(JS:LBRACKET)('[')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('0')
+                    PsiElement(JS:COMMA)(',')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('1')
+                    PsiElement(JS:RBRACKET)(']')
+                  PsiElement(JS:DOT)('.')
+                  PsiElement(JS:IDENTIFIER)('reverse')
+                JSArgumentList
+                  PsiElement(JS:LPAR)('(')
+                  PsiElement(JS:RPAR)(')')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('b')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSCallExpression
+                JSParenthesizedExpression
+                  PsiElement(JS:LPAR)('(')
+                  JSFunctionExpression
+                    JSAttributeList
+                      <empty list>
+                    PsiElement(JS:FUNCTION_KEYWORD)('function')
+                    JSParameterList
+                      PsiElement(JS:LPAR)('(')
+                      PsiElement(JS:RPAR)(')')
+                    JSBlockStatementEager
+                      PsiElement(JS:LBRACE)('{')
+                      PsiWhiteSpace('\n    ')
+                      JSVarStatement
+                        JSAttributeList
+                          <empty list>
+                        PsiElement(JS:VAR_KEYWORD)('var')
+                        PsiWhiteSpace(' ')
+                        JSVariable
+                          PsiElement(JS:IDENTIFIER)('x')
+                          PsiWhiteSpace(' ')
+                          PsiElement(JS:EQ)('=')
+                          PsiWhiteSpace(' ')
+                          JSArrayLiteralExpression
+                            PsiElement(JS:LBRACKET)('[')
+                            JSLiteralExpression
+                              PsiElement(JS:NUMERIC_LITERAL)('1')
+                            PsiElement(JS:COMMA)(',')
+                            JSLiteralExpression
+                              PsiElement(JS:NUMERIC_LITERAL)('2')
+                            PsiElement(JS:COMMA)(',')
+                            JSLiteralExpression
+                              PsiElement(JS:NUMERIC_LITERAL)('3')
+                            PsiElement(JS:RBRACKET)(']')
+                        PsiElement(JS:SEMICOLON)(';')
+                      PsiWhiteSpace('\n    ')
+                      JSVarStatement
+                        JSAttributeList
+                          <empty list>
+                        PsiElement(JS:VAR_KEYWORD)('var')
+                        PsiWhiteSpace(' ')
+                        JSVariable
+                          PsiElement(JS:IDENTIFIER)('y')
+                          PsiWhiteSpace(' ')
+                          PsiElement(JS:EQ)('=')
+                          PsiWhiteSpace(' ')
+                          JSObjectLiteralExpression
+                            PsiElement(JS:LBRACE)('{')
+                            JSProperty
+                              PsiElement(JS:IDENTIFIER)('a')
+                              PsiElement(JS:COLON)(':')
+                              PsiWhiteSpace(' ')
+                              JSLiteralExpression
+                                PsiElement(JS:STRING_LITERAL)(''b'')
+                            PsiElement(JS:RBRACE)('}')
+                        PsiElement(JS:SEMICOLON)(';')
+                      PsiWhiteSpace('\n    ')
+                      PsiComment(JS:END_OF_LINE_COMMENT)('// alert('surprise!');  <-- we should add there a couple of')
+                      PsiWhiteSpace('\n    ')
+                      PsiComment(JS:END_OF_LINE_COMMENT)('//                        closing brackets to make life worse :3')
+                      PsiWhiteSpace('\n    ')
+                      JSVarStatement
+                        JSAttributeList
+                          <empty list>
+                        PsiElement(JS:VAR_KEYWORD)('var')
+                        PsiWhiteSpace(' ')
+                        JSVariable
+                          PsiElement(JS:IDENTIFIER)('neverUsed')
+                          PsiWhiteSpace(' ')
+                          PsiElement(JS:EQ)('=')
+                          PsiWhiteSpace(' ')
+                          JSNewExpression
+                            PsiElement(JS:NEW_KEYWORD)('new')
+                            PsiWhiteSpace(' ')
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('Array')
+                            JSArgumentList
+                              PsiElement(JS:LPAR)('(')
+                              JSLiteralExpression
+                                PsiElement(JS:NUMERIC_LITERAL)('10')
+                              PsiElement(JS:RPAR)(')')
+                        PsiElement(JS:SEMICOLON)(';')
+                      PsiWhiteSpace('\n    ')
+                      JSReturnStatement
+                        PsiElement(JS:RETURN_KEYWORD)('return')
+                        PsiWhiteSpace(' ')
+                        JSIndexedPropertyAccessExpression
+                          JSCallExpression
+                            JSReferenceExpression
+                              JSReferenceExpression
+                                JSReferenceExpression
+                                  JSReferenceExpression
+                                    PsiElement(JS:IDENTIFIER)('Array')
+                                  PsiElement(JS:DOT)('.')
+                                  PsiElement(JS:IDENTIFIER)('prototype')
+                                PsiElement(JS:DOT)('.')
+                                PsiElement(JS:IDENTIFIER)('reverse')
+                              PsiElement(JS:DOT)('.')
+                              PsiElement(JS:IDENTIFIER)('call')
+                            JSArgumentList
+                              PsiElement(JS:LPAR)('(')
+                              JSReferenceExpression
+                                PsiElement(JS:IDENTIFIER)('y')
+                              PsiElement(JS:RPAR)(')')
+                          PsiElement(JS:LBRACKET)('[')
+                          JSLiteralExpression
+                            PsiElement(JS:STRING_LITERAL)(''a'')
+                          PsiElement(JS:RBRACKET)(']')
+                        PsiElement(JS:SEMICOLON)(';')
+                      PsiWhiteSpace('\n    ')
+                      JSReturnStatement
+                        PsiElement(JS:RETURN_KEYWORD)('return')
+                        PsiWhiteSpace(' ')
+                        JSCallExpression
+                          JSReferenceExpression
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('x')
+                            PsiElement(JS:DOT)('.')
+                            PsiElement(JS:IDENTIFIER)('reverse')
+                          JSArgumentList
+                            PsiElement(JS:LPAR)('(')
+                            PsiElement(JS:RPAR)(')')
+                        PsiElement(JS:SEMICOLON)(';')
+                      PsiWhiteSpace('\n  ')
+                      PsiElement(JS:RBRACE)('}')
+                  PsiElement(JS:RPAR)(')')
+                JSArgumentList
+                  PsiElement(JS:LPAR)('(')
+                  PsiElement(JS:RPAR)(')')
+        PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('foo')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('a')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('""')
+        PsiElement(RPAREN)(')')

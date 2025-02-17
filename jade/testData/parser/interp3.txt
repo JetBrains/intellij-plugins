@@ -1,0 +1,37 @@
+XmlFile:interp3.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('script')
+      PsiElement(DOT)('.')
+      PsiElement(INDENT)('\n    ')
+      PsiElement(BLOCK)
+        JSInJadeEmbeddedContentImpl:EMBEDDED_CONTENT
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('$')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    JSLiteralExpression
+                      ASTWrapperPsiElement(INTERPOLATION)
+                        PsiElement(JS:STRING_LITERAL)(''row_ico_')
+                        XmlText
+                          XmlToken:XML_DATA_CHARACTERS('#{')
+                        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                          JSReferenceExpression
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('row')
+                            PsiElement(JS:DOT)('.')
+                            PsiElement(JS:IDENTIFIER)('id')
+                        XmlText
+                          XmlToken:XML_DATA_CHARACTERS('}')
+                        PsiElement(JS:STRING_LITERAL)(''')
+                    PsiElement(JS:RPAR)(')')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('tooltip')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:SEMICOLON)(';')

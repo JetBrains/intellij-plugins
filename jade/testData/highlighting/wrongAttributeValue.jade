@@ -1,0 +1,8 @@
+input(type=<weak_warning descr="Unresolved variable or type zzz">zzz</weak_warning>)
+script(src=<weak_warning descr="Unresolved variable or type missing123">missing123</weak_warning>.<weak_warning descr="Unresolved variable js">js</weak_warning>)
+
+script(
+script(src="foo.js"<error descr="Unexpected tokens">)</error>
+script
+
+<EOLError descr=") expected"></EOLError>

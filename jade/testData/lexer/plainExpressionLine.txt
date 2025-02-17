@@ -1,0 +1,7 @@
+NEQ ('!=')
+WHITE_SPACE (' ')
+EMBEDDED_EXPRESSION ('history+1')
+EOL ('\n')
+EQ ('=')
+WHITE_SPACE (' ')
+EMBEDDED_EXPRESSION ('1+2')

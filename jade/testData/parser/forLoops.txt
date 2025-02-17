@@ -1,0 +1,242 @@
+XmlFile:forLoops.jade
+  PsiElement(DOCUMENT)
+    PsiElement(FOR_STATEMENT)
+      JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+        JSEachStatement
+          PsiElement(JS:EACH_KEYWORD)('each')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IN_KEYWORD)('in')
+          PsiWhiteSpace(' ')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('4')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('5')
+            PsiElement(JS:RBRACKET)(']')
+      PsiElement(FOR_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('val')
+    PsiElement(EOL)('\n\n')
+    PsiElement(FOR_STATEMENT)
+      JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+        JSEachStatement
+          PsiElement(JS:EACH_KEYWORD)('each')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('val')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('index')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IN_KEYWORD)('in')
+          PsiWhiteSpace(' ')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''zero'')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''one'')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''two'')
+            PsiElement(JS:RBRACKET)(']')
+      PsiElement(FOR_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSBinaryExpression
+              JSBinaryExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('index')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('': '')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('val')
+    PsiElement(EOL)('\n\n')
+    PsiElement(CONDITIONAL_STATEMENT)
+      PsiElement(CONDITIONAL_HEADER)
+        PsiElement(CONDITIONAL_KEYWORD)('while')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('n')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:LT)('<')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('4')
+      PsiElement(CONDITIONAL_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSPostfixExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('n')
+              PsiElement(JS:PLUSPLUS)('++')
+    PsiElement(EOL)('\n\n')
+    PsiElement(FOR_STATEMENT)
+      JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+        JSEachStatement
+          PsiElement(JS:FOR_KEYWORD)('for')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IN_KEYWORD)('in')
+          PsiWhiteSpace(' ')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:COMMA)(',')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:COMMA)(',')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
+            PsiElement(JS:COMMA)(',')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('4')
+            PsiElement(JS:RBRACKET)(']')
+      PsiElement(FOR_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('val')
+    PsiElement(EOL)('\n\n')
+    PsiElement(FOR_STATEMENT)
+      JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+        JSEachStatement
+          PsiElement(JS:FOR_KEYWORD)('for')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('val')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('index')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IN_KEYWORD)('in')
+          PsiWhiteSpace(' ')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''z'')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''o'')
+            PsiElement(JS:RBRACKET)(']')
+      PsiElement(FOR_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSBinaryExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('index')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('val')
+    PsiElement(EOL)('\n\n')
+    PsiElement(FOR_STATEMENT)
+      JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+        JSEachStatement
+          PsiElement(JS:FOR_KEYWORD)('for')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('i')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IN_KEYWORD)('in')
+          PsiWhiteSpace(' ')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:COMMA)(',')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:COMMA)(',')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
+            PsiElement(JS:RBRACKET)(']')
+      PsiElement(FOR_BODY)
+        PsiElement(INDENT)('\n  ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('li')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('i')
+      PsiElement(EOL)('\n')
+      PsiElement(FOR_ELSE)
+        PsiElement(ELSE_KEYWORD)('else')
+        PsiElement(INDENT)('\n  ')
+        PsiElement(PIPED_TEXT)
+          PsiElement(PIPE)('|')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('Nothing')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('to')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('do')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('here')
+            XmlToken:XML_DATA_CHARACTERS('!')

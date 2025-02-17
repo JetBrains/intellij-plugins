@@ -1,0 +1,142 @@
+XmlFile:interpInJs.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('href')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              ASTWrapperPsiElement(INTERPOLATION)
+                PsiElement(JS:STRING_LITERAL)(''/user/')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('#{')
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('id')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('}')
+                PsiElement(JS:STRING_LITERAL)(''')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('bar')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''stuff \#{here} yup'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('baz')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('taz')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              ASTWrapperPsiElement(INTERPOLATION)
+                PsiElement(JS:STRING_LITERAL)(''smth { with braces ')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('#{')
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  PsiWhiteSpace(' ')
+                  JSBinaryExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('anotherVar')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    JSFunctionExpression
+                      JSAttributeList
+                        <empty list>
+                      PsiElement(JS:FUNCTION_KEYWORD)('function')
+                      JSParameterList
+                        PsiElement(JS:LPAR)('(')
+                        PsiElement(JS:RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      JSBlockStatementEager
+                        PsiElement(JS:LBRACE)('{')
+                        PsiElement(JS:RBRACE)('}')
+                  PsiWhiteSpace(' ')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('}')
+                PsiElement(JS:STRING_LITERAL)(' }'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('tag')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('at')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              ASTWrapperPsiElement(INTERPOLATION)
+                PsiElement(JS:STRING_LITERAL)(''two ')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('#{')
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('first')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('}')
+                PsiElement(JS:STRING_LITERAL)(' \#{interpolations} are ')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('#{')
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('second')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('}')
+                PsiElement(JS:STRING_LITERAL)(' okay'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('tag')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('at')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              ASTWrapperPsiElement(INTERPOLATION)
+                PsiElement(JS:STRING_LITERAL)('"two consectutive: ')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('#{')
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('first')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('}')
+                  XmlToken:XML_DATA_CHARACTERS('#{')
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSBinaryExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('and')
+                    PsiElement(JS:PLUS)('+')
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('second')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('}')
+                PsiElement(JS:STRING_LITERAL)('?"')
+      PsiElement(RPAREN)(')')

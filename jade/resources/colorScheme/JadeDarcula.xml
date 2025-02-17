@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<list>
+  <option name="JADE_STATEMENTS">
+    <value>
+      <option name="FOREGROUND" value="a07458" />
+    </value>
+  </option>
+  <option name="JADE_FILE_PATH">
+    <value>
+      <option name="FOREGROUND" value="8585ff" />
+    </value>
+  </option>
+  <option name="JADE_FILTER_NAME">
+    <value>
+      <option name="FOREGROUND" value="ff0000" />
+    </value>
+  </option>
+  <option name="JADE_JS_BLOCK">
+    <value>
+      <option name="FOREGROUND" value="9762c6" />
+    </value>
+  </option>
+</list>

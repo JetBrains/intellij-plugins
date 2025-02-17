@@ -1,0 +1,12 @@
+html(lang='en')
+    head
+        title= pageTitle
+        -if (foo)
+        h1.someClass #{bar()}
+        style(type="text/css").
+            .someClass {
+                                  color: #37b552;
+                                  border-color: #c2f7fe;
+                                  text-align:center;
+                        }
+            <caret>

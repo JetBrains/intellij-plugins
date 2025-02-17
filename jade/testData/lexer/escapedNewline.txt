@@ -1,0 +1,6 @@
+XML_TAG_NAME ('i')
+LPAREN ('(')
+XML_NAME ('title')
+EQ ('=')
+EMBEDDED_EXPRESSION ('"Чтобы открыть в фоновом режиме,\nиспользуйте"')
+RPAREN (')')

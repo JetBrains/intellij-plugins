@@ -1,0 +1,109 @@
+XmlFile:interp1.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeTagIdImpl(TAG_ID)('#user')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('My')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('name')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('is:')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('#{')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('name')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('}')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('and')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('my')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('phone')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('is')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('!{')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('phone')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('}')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('always')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('p')
+      PsiElement(DOT)('.')
+      PsiElement(INDENT)('\n ')
+      PsiElement(BLOCK)
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('And')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('he')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('I')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('am')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('again')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('with')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('#{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')
+          XmlToken:XML_DATA_CHARACTERS(',')
+          PsiWhiteSpace('\n ')
+          XmlToken:XML_DATA_CHARACTERS('!{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('b')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('and')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('!{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('c')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')
+          XmlToken:XML_DATA_CHARACTERS('!')
+          XmlToken:XML_DATA_CHARACTERS('!')
+          XmlToken:XML_DATA_CHARACTERS('!')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('tag')
+      PsiElement(INDENT)('\n ')
+      PsiElement(PIPED_TEXT)
+        PsiElement(PIPE)('|')
+        XmlText
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('!{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('foo')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')
+      PsiElement(INDENT)('\n ')
+      PsiElement(PIPED_TEXT)
+        PsiElement(PIPE)('|')
+        XmlText
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('#{')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('}')

@@ -1,0 +1,85 @@
+extends foobar
+   extends    a/bbb/c.jade
+   extends    a  ddd
+// this is just a simple Jade file for the parser
+  commented tag
+    commented subtag
+// foobar
+doctype 5 6 7
+//- this is some unbuffered comment
+html(lang="en")
+  head
+    //- inner comment
+      inner commented subsubtag
+    title Foo bar zzz
+  body
+    h1 Jade - node template engine
+  div#container
+  div.user-details sometext
+  div#foo.bar.baz
+  #foo
+  .bar
+  p wahoo!
+
+// comment
+     cccc
+#just-an-id with some text
+  #and-sub-tag boo
+.just-one-class-her4.and_another_1
+.class-first#id_2nd
+.class-first#id-second.class-third#id_fourth
+p
+ | and some
+ | text!
+p.
+ and here comes
+ a long story
+ with many lines...
+a b
+  
+rss(xmlns:atom="aaatom")
+
+a:b
+c:d.foo#bar
+  e:f hey
+_:_
+
+tag1: tag2
+tag3: tag4.foo#bar
+tag5.foo#bar(a="b"): tag6#id: tag7
+tag8: #tag9: .tag10(q='w')
+
+ul
+  li.first: a(href='#') foo
+  li: a(href='#') bar
+  li.last: a(href='#') baz
+
+obj = { foo: 'bar' }
+each val, key in obj
+  li #{key}: #{val}
+for val, key in obj
+  li #{key}: #{val}
+for zzz in obj
+  li #{key}: #{val}
+
+friends = 10
+    case friends
+      when 5
+        p you have no friends
+      when 1+2
+        p you have no friends
+      when "aaa": p you have a friend
+      default
+        p you have friends
+if a<b
+ foo
+else if a>b
+ bar
+else
+ zzzz
+
+foo:.bar#zzz
+foo:#bar.zzz.uuu
+yield
+foo(a)bar(b)
+ zz

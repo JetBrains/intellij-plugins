@@ -1,0 +1,162 @@
+XmlFile:case.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('html')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('body')
+        PsiElement(INDENT)('\n        ')
+        JSInJadeEmbeddedContentImpl:JS_META_CODE
+          PsiElement(MINUS)('-')
+          PsiElement(INDENT)(' ')
+          JSVarStatement
+            JSAttributeList
+              <empty list>
+            PsiElement(JS:VAR_KEYWORD)('var')
+            PsiWhiteSpace(' ')
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('friends')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(INDENT)('\n        ')
+        PsiElement(CASE_STATEMENT)
+          PsiElement(CASE)('case')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('friends')
+          PsiElement(INDENT)('\n            ')
+          PsiElement(WHEN_STATEMENT)
+            PsiElement(WHEN)('when')
+            PsiWhiteSpace(' ')
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('0')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('p')
+              XmlText
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('you')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('have')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('no')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('friends')
+          PsiElement(INDENT)('\n            ')
+          PsiElement(WHEN_STATEMENT)
+            PsiElement(WHEN)('when')
+            PsiWhiteSpace(' ')
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('p')
+              XmlText
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('you')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('have')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('a')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('friend')
+          PsiElement(INDENT)('\n            ')
+          PsiElement(WHEN_STATEMENT)
+            PsiElement(DEFAULT_KEYWORD)('default')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('p')
+              XmlText
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('you')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('have')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('#{')
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('friends')
+              XmlText
+                XmlToken:XML_DATA_CHARACTERS('}')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('friends')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('friends')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+    PsiElement(EOL)('\n')
+    PsiElement(CASE_STATEMENT)
+      PsiElement(CASE)('case')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('friends')
+      PsiElement(INDENT)('\n    ')
+      PsiElement(WHEN_STATEMENT)
+        PsiElement(WHEN)('when')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+      PsiElement(INDENT)('\n    ')
+      PsiElement(WHEN_STATEMENT)
+        PsiElement(WHEN)('when')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('p')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('you')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('have')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('very')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('few')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('friends')
+      PsiElement(INDENT)('\n    ')
+      PsiElement(WHEN_STATEMENT)
+        PsiElement(DEFAULT_KEYWORD)('default')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('p')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('you')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('have')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('#{')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('friends')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('}')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('friends')

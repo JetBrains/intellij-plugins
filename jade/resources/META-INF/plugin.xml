@@ -1,0 +1,122 @@
+<idea-plugin package="com.jetbrains.plugins.jade">
+  <!--suppress PluginXmlCapitalization -->
+  <name>Pug (ex-Jade)</name>
+  <id>com.jetbrains.plugins.jade</id>
+  <vendor>JetBrains</vendor>
+  <resource-bundle>messages.JadeBundle</resource-bundle>
+  <description><![CDATA[
+    <p>Provides support for the <a href="https://github.com/pugjs/pug">Pug</a> programming language to all JetBrains IDEs that
+      <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+
+    <h2>Features</h2>
+    <ul>
+      <li>Pug-aware syntax highlighting
+    </ul>
+
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out this section in the <a href="https://www.jetbrains.com/help/webstorm/jade.html">documentation</a>.
+  ]]></description>
+  <category>Template Languages</category>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.xml"/>
+    <plugin id="com.intellij.css"/>
+    <plugin id="JavaScript"/>
+  </dependencies>
+  <depends optional="true" config-file="jade-liveEdit.xml">com.intellij.plugins.html.instantEditing</depends>
+  <depends optional="true" config-file="jade-watcher.xml">com.intellij.plugins.watcher</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:pug" displayName="Pug"/>
+    <fileType name="Jade" implementationClass="com.jetbrains.plugins.jade.psi.JadeFileType" fieldName="INSTANCE" language="Jade" extensions="jade;pug" />
+    <iconProvider implementation="com.jetbrains.plugins.jade.psi.JadeIconProvider"/>
+    <lang.parserDefinition language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeParserDefinition"/>
+    <lang.fileViewProviderFactory language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeFileViewProviderFactory"/>
+    <lang.ast.factory language="Jade" implementationClass="com.jetbrains.plugins.jade.psi.JadeAstFactory"/>
+    <colorSettingsPage implementation="com.jetbrains.plugins.jade.highlighter.JadeColorsPage"/>
+    <quoteHandler fileType="Jade" className="com.jetbrains.plugins.jade.JadeQuoteHandler"/>
+    <quoteHandler fileType="Pug" className="com.jetbrains.plugins.jade.JadeQuoteHandler"/>
+    <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeAttributeValueImpl"
+                             implementationClass="com.jetbrains.plugins.jade.psi.impl.JadeAttributeValueManipulator" order="first"/>
+    <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeClassNameImpl"
+                             implementationClass="com.jetbrains.plugins.jade.psi.impl.JadeClassNameImpl$Manipulator"/>
+    <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeTagIdImpl"
+                             implementationClass="com.jetbrains.plugins.jade.psi.impl.JadeTagIdImpl$Manipulator"/>
+    <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeJsCodeBlockImpl"
+                             implementationClass="com.jetbrains.plugins.jade.psi.impl.JadeJsCodeBlockImpl$Manipulator"/>
+    <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeJsCodeBlockPatchedImpl"
+                             implementationClass="com.jetbrains.plugins.jade.psi.impl.JadeJsCodeBlockPatchedImpl$Manipulator"/>
+    <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeFilePathImpl"
+                             implementationClass="com.jetbrains.plugins.jade.JadeFilePathManipulator"/>
+    <xml.xmlExtension implementation="com.jetbrains.plugins.jade.JadeXmlExtension"/>
+    <html.compatibleLanguage language="Jade"/>
+    <embeddedTokenHighlighter implementation="com.jetbrains.plugins.jade.highlighter.JadeSyntaxHighlighter$XmlTokenHighlighter"/>
+
+    <todoIndexer filetype="Jade" implementationClass="com.jetbrains.plugins.jade.todo.JadeTodoIndexer"/>
+    <todoIndexer filetype="Pug" implementationClass="com.jetbrains.plugins.jade.todo.JadeTodoIndexer"/>
+    <indexPatternBuilder implementation="com.jetbrains.plugins.jade.todo.JadeIndexPatternBuilder"/>
+
+    <spellchecker.support language="Jade" implementationClass="com.jetbrains.plugins.jade.spellcheck.JadeSpellcheckingStrategy"/>
+
+    <lang.parserDefinition language="JSInJade" implementationClass="com.jetbrains.plugins.jade.js.JavascriptInJadeParserDefinition"/>
+    <annotator language="Jade" implementationClass="com.jetbrains.plugins.jade.validation.JadeAnnotatingVisitor"/>
+
+    <editor.backspaceModeOverride language="Jade" implementationClass="com.intellij.codeInsight.editorActions.SmartBackspaceDisabler"/>
+    <lang.commenter language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeCommenter"/>
+    <lang.foldingBuilder language="Jade" implementationClass="com.jetbrains.plugins.jade.folding.JadeFoldingBuilder"/>
+
+    <lang.formatter language="Jade" implementationClass="com.jetbrains.plugins.jade.formatter.JadeFormattingModelBuilder"/>
+    <codeStyleSettingsProvider implementation="com.jetbrains.plugins.jade.formatter.JadeCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.jetbrains.plugins.jade.formatter.JadeLanguageCodeStyleSettingsProvider"/>
+    <copyPastePreProcessor implementation="com.jetbrains.plugins.jade.JadeCopyPasteProcessor"/>
+
+    <css.classOrIdUsagesProvider implementation="com.jetbrains.plugins.jade.JadeClassOrIdUsagesProvider"/>
+    <completion.contributor language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeCompletionContributor"
+                            order="before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>
+    <liveTemplateContext contextId="JADE" implementation="com.jetbrains.plugins.jade.template.JadeTemplateContextType"/>
+    <include.provider implementation="com.jetbrains.plugins.jade.watcher.JadeFileIncludeProvider"/>
+    <internalFileTemplate name="Pug File"/>
+    <internalFileTemplate name="Jade File"/>
+
+    <psi.referenceContributor language="Jade" implementation="com.jetbrains.plugins.jade.psi.references.JadeReferenceContributor"/>
+    <psi.referenceContributor language="Jade" implementation="com.jetbrains.plugins.jade.psi.references.JadeCssReferenceContributor"/>
+    <stubElementTypeHolder class="com.jetbrains.plugins.jade.psi.stubs.JadeStubElementTypes"/>
+    <stubIndex implementation="com.jetbrains.plugins.jade.psi.stubs.JadeMixinIndex"/>
+
+    <additionalTextAttributes scheme="Default" file="colorScheme/JadeDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorScheme/JadeDarcula.xml"/>
+
+    <projectViewNestingRulesProvider implementation="com.jetbrains.plugins.jade.projectView.PugNestingRulesProvider"/>
+
+    <localInspection implementationClass="com.jetbrains.plugins.jade.validation.JadeTabsAndSpacesInspection"
+                     language="Jade" bundle="messages.JadeBundle" groupKey="pug.inspections.group.name"
+                     key="pug.inspections.tabs.and.spaces.name" level="ERROR"
+                     enabledByDefault="true"/>
+    <html.scriptContentProvider language="Jade" implementationClass="com.jetbrains.plugins.jade.psi.impl.JadeScriptContentProvider"/>
+    <breadcrumbsInfoProvider implementation="com.jetbrains.plugins.jade.breadcrumbs.JadeBreadcrumbsInfoProvider"/>
+    <xml.elementDescriptorProvider implementation="com.jetbrains.plugins.jade.JadeTagDescriptorProvider"/>
+    <xml.tagNameProvider implementation="com.jetbrains.plugins.jade.JadeTagDescriptorProvider"/>
+    <lang.documentationProvider language="Jade" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"/>
+    <editorHighlighterProvider filetype="Jade" implementationClass="com.jetbrains.plugins.jade.psi.JadeEditorHighlighterProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.css">
+    <embeddedCssProvider implementation="com.jetbrains.plugins.jade.JadeEmbeddedCssProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <intentionAndInspectionFilter language="JSInJade" implementationClass="com.jetbrains.plugins.jade.js.JavaScriptInJadeInspectionFilter"/>
+    <inheritedLanguagesConfigurableProvider language="JSInJade"
+                                            implementationClass="com.jetbrains.plugins.jade.js.JSInJadeConfigurableProvider"/>
+
+    <indexedFileTypeProvider implementation="com.jetbrains.plugins.jade.js.JSInJadeIndexedFileTypeProvider"/>
+  </extensions>
+
+  <actions>
+    <action id="NewPugFile" class="com.jetbrains.plugins.jade.CreatePugOrJadeFileAction"
+            icon="com.jetbrains.plugins.jade.JadeIcons.Pug">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+  </actions>
+
+</idea-plugin>

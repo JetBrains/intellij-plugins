@@ -1,0 +1,31 @@
+XmlFile:ifelse.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('div')
+      PsiElement(INDENT)('\n  ')
+      JSInJadeEmbeddedContentImpl:JS_META_CODE
+        PsiElement(MINUS)('-')
+        PsiElement(INDENT)(' ')
+        JSIfStatement
+          PsiElement(JS:IF_KEYWORD)('if')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:LPAR)('(')
+          JSLiteralExpression
+            PsiElement(JS:TRUE_KEYWORD)('true')
+          PsiElement(JS:RPAR)(')')
+          PsiElement(INDENT)('\n    ')
+          JSEmptyStatement
+            ASTWrapperPsiElement(JADE_EMBEDDED_WRAPPER: JADE_EMBEDDED_CONTENT)
+              PsiElement(DOCUMENT)
+                JadeTagImpl(TAG)
+                  XmlToken:XML_TAG_NAME('div')
+                PsiElement(EOL)('\n  ')
+          PsiElement(MINUS)('-')
+          PsiElement(INDENT)(' ')
+          PsiElement(JS:ELSE_KEYWORD)('else')
+          PsiElement(INDENT)('\n    ')
+          JSEmptyStatement
+            ASTWrapperPsiElement(JADE_EMBEDDED_WRAPPER: JADE_EMBEDDED_CONTENT)
+              PsiElement(DOCUMENT)
+                JadeTagImpl(TAG)
+                  XmlToken:XML_TAG_NAME('span')

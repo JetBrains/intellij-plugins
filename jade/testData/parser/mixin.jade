@@ -1,0 +1,14 @@
+mixin book(name, price)
+    li #{name} for #{price} €
+
+ul#books
+    +book("Book A", 12.99)
+    +book("Book B", 5.99)
+
+
+mixin book(name, price)
+    div(attributes)= name
+
++book("Book A")#first
++book("Book B")(title="book b")
++book("Book C").last

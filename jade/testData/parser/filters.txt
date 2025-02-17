@@ -1,0 +1,123 @@
+XmlFile:filters.jade
+  PsiElement(DOCUMENT)
+    PsiElement(FILTER)
+      PsiElement(COLON)(':')
+      PsiElement(FILTER_NAME)('barkdown')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(BLOCK)
+        PsiElement(FILTER_CODE)('# Markdown\n\n  Some markdown content')
+    PsiElement(EOL)('\n\n')
+    PsiElement(FILTER)
+      PsiElement(COLON)(':')
+      PsiElement(FILTER_NAME)('strangelang')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(BLOCK)
+        PsiElement(FILTER_CODE)('Super{Syntax}$@()#U%U@#%*zx/,c;'')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('tag')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('tag')
+        PsiElement(INDENT)('\n    ')
+        PsiElement(FILTER)
+          PsiElement(COLON)(':')
+          PsiElement(FILTER_NAME)('filterintag')
+          PsiElement(INDENT)('\n      ')
+          PsiElement(BLOCK)
+            PsiElement(FILTER_CODE)('Something')
+        PsiElement(INDENT)('\n    ')
+        PsiElement(FILTER)
+          PsiElement(COLON)(':')
+          PsiElement(FILTER_NAME)('filter1')
+        PsiElement(INDENT)('\n    ')
+        PsiElement(FILTER)
+          PsiElement(COLON)(':')
+          PsiElement(FILTER_NAME)('filter2')
+          PsiElement(INDENT)('\n      ')
+          PsiElement(BLOCK)
+            PsiElement(FILTER_CODE)('Previous was empty')
+    PsiElement(EOL)('\n\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('script')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(FILTER)
+        PsiElement(COLON)(':')
+        PsiElement(FILTER_NAME)('cofoscript')
+        PsiElement(INDENT)('\n      ')
+        PsiElement(BLOCK)
+          PsiElement(FILTER_CODE)('math =\n          square: (value) ->\n              value * value')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('script')
+      PsiElement(DOT)('.')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(BLOCK)
+        JSInJadeEmbeddedContentImpl:EMBEDDED_CONTENT
+          PsiErrorElement:Statement expected
+            <empty list>
+          PsiElement(JS:COLON)(':')
+          JSExpressionStatement
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('cofoscript')
+          PsiWhiteSpace('\n        ')
+          JSExpressionStatement
+            JSAssignmentExpression
+              JSDefinitionExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('math')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace('\n            ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('square')
+            PsiErrorElement:Newline or semicolon expected
+              <empty list>
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSExpressionStatement
+            JSFunctionExpression
+              JSAttributeList
+                <empty list>
+              JSParameterList
+                PsiElement(JS:LPAR)('(')
+                JSParameter
+                  PsiElement(JS:IDENTIFIER)('value')
+                PsiElement(JS:RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:MINUSGT)('->')
+              PsiWhiteSpace('\n                ')
+              JSBinaryExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('value')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:MULT)('*')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('value')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('style')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(FILTER)
+        PsiElement(COLON)(':')
+        PsiElement(FILTER_NAME)('more')
+        PsiElement(INDENT)('\n    ')
+        PsiElement(BLOCK)
+          PsiElement(FILTER_CODE)('@pad: 15px;')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('tratata')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('tututu')
+        PsiElement(INDENT)('\n    ')
+        PsiElement(PIPED_TEXT)
+          PsiElement(PIPE)('|')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('content')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('in')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('here')

@@ -1,0 +1,440 @@
+XmlFile:web14564.jade
+  PsiElement(DOCUMENT)
+    PsiElement(INCLUDE_STATEMENT)
+      PsiElement(EXTENDS)('extends')
+      PsiWhiteSpace(' ')
+      PsiElement(FILE_PATH)
+        PsiElement(FILE_PATH)('layout')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('block')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('head')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('link')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('rel')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"stylesheet"')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('href')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"/css/sm.play.css"')
+        PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('script')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('src')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"https://www.youtube.com/iframe_api"')
+        PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('script')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('src')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"http://f.vimeocdn.com/js/froogaloop2.min.js"')
+        PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('script')
+        PsiElement(DOT)('.')
+        PsiElement(INDENT)('\n        ')
+        PsiElement(BLOCK)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_CONTENT
+            JSVarStatement
+              JSAttributeList
+                <empty list>
+              PsiElement(JS:VAR_KEYWORD)('var')
+              PsiWhiteSpace(' ')
+              JSVariable
+                PsiElement(JS:IDENTIFIER)('model')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSAttributeList
+                  ES6Decorator
+                    PsiElement(JS:AT)('@')
+                    JSCallExpression
+                      JSReferenceExpression
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('Html')
+                        PsiElement(JS:DOT)('.')
+                        PsiElement(JS:IDENTIFIER)('Raw')
+                      JSArgumentList
+                        PsiElement(JS:LPAR)('(')
+                        JSCallExpression
+                          JSReferenceExpression
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('Json')
+                            PsiElement(JS:DOT)('.')
+                            PsiElement(JS:IDENTIFIER)('Encode')
+                          JSArgumentList
+                            PsiElement(JS:LPAR)('(')
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('Model')
+                            PsiElement(JS:RPAR)(')')
+                        PsiElement(JS:RPAR)(')')
+                PsiErrorElement:'class' expected
+                  <empty list>
+              PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace('\n        ')
+            JSExpressionStatement
+              JSAssignmentExpression
+                JSDefinitionExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('model')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('id')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"@Model.link"')
+              PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace('\n        ')
+            JSExpressionStatement
+              JSAssignmentExpression
+                JSDefinitionExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('window')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('onYouTubePlayerAPIReady')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSFunctionExpression
+                  JSAttributeList
+                    <empty list>
+                  PsiElement(JS:FUNCTION_KEYWORD)('function')
+                  PsiWhiteSpace(' ')
+                  JSParameterList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  JSBlockStatementEager
+                    PsiElement(JS:LBRACE)('{')
+                    PsiWhiteSpace('\n            ')
+                    JSExpressionStatement
+                      JSCallExpression
+                        JSReferenceExpression
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('console')
+                          PsiElement(JS:DOT)('.')
+                          PsiElement(JS:IDENTIFIER)('log')
+                        JSArgumentList
+                          PsiElement(JS:LPAR)('(')
+                          JSLiteralExpression
+                            PsiElement(JS:STRING_LITERAL)('"youtube ready"')
+                          PsiElement(JS:RPAR)(')')
+                      PsiElement(JS:SEMICOLON)(';')
+                    PsiWhiteSpace('\n            ')
+                    JSExpressionStatement
+                      JSCallExpression
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('playPrepare')
+                        JSArgumentList
+                          PsiElement(JS:LPAR)('(')
+                          PsiElement(JS:RPAR)(')')
+                      PsiElement(JS:SEMICOLON)(';')
+                    PsiWhiteSpace('\n        ')
+                    PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace('\n        ')
+            JSExpressionStatement
+              JSCallExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('$')
+                JSArgumentList
+                  PsiElement(JS:LPAR)('(')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('playReady')
+                  PsiElement(JS:RPAR)(')')
+              PsiElement(JS:SEMICOLON)(';')
+    PsiElement(EOL)('\n\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('block')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('content')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JadeClassImpl(CLASS)
+              PsiElement(DOT)('.')
+              JadeClassNameImpl(TAG_CLASS)('play-wrap')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            PsiElement(XML_NAME)
+              <empty list>
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JadeClassImpl(CLASS)
+                PsiElement(DOT)('.')
+                JadeClassNameImpl(TAG_CLASS)('play-overlay')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            PsiElement(XML_NAME)
+              <empty list>
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JadeClassImpl(CLASS)
+                PsiElement(DOT)('.')
+                JadeClassNameImpl(TAG_CLASS)('play-topbar')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"/lists/edit/Model.link"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-arrow-left"></i>')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"javascript:playFirst()"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-fast-backward"></i>')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"javascript:playPrevious()"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-step-backward"></i>')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"javascript:location.reload()"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-refresh"></i>')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"javascript:playNext()"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-step-forward"></i>')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"javascript:playLast()"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-fast-forward"></i>')
+          PsiElement(INDENT)('\n            ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('a')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('href')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"javascript:playFullscreen()"')
+            PsiElement(RPAREN)(')')
+            PsiElement(COLON)(':')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<')
+              XmlToken:XML_DATA_CHARACTERS('i')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('class="fa')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('fa-arrows-alt"></i>')
+          PsiElement(EOL)('\n')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            PsiElement(XML_NAME)
+              <empty list>
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JadeTagIdImpl(TAG_ID)('#play-container')
+          PsiElement(EOL)('\n\n')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('script')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('id')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''template'')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('type')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''text/ractive'')
+        PsiWhiteSpace(' ')
+        PsiElement(RPAREN)(')')
+        PsiElement(DOT)('.')
+        PsiElement(INDENT)('\n        ')
+        PsiElement(BLOCK)
+          ASTWrapperPsiElement(JADE_EMBEDDED_WRAPPER: XML_DATA_CHARACTERS)
+            XmlToken:XML_DATA_CHARACTERS('{{#item}}\n            {{>tplayer}}\n        {{/}}')
+          PsiElement(EOL)('\n')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('script')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('id')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"tplayer"')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('type')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"text/ractive"')
+        PsiElement(RPAREN)(')')
+        PsiElement(DOT)('.')
+        PsiElement(INDENT)('\n        ')
+        PsiElement(BLOCK)
+          ASTWrapperPsiElement(JADE_EMBEDDED_WRAPPER: XML_DATA_CHARACTERS)
+            XmlToken:XML_DATA_CHARACTERS('{{#type.youtube}}\n            <iframe id="video" src="http://www.youtube.com/embed/{{source}}?enablejsapi=1&autoplay=1&iv_load_policy=3&controls=1&showinfo=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n        {{/}}\n        {{#type.vimeo}}\n            <iframe id="video" src="http://player.vimeo.com/video/{{source}}?autoplay=1&player_id=video" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n        {{/}}\n        {{#type.twitch}}\n            <iframe id="video" src="http://www.twitch.tv/{{source}}/embed" frameborder="0" scrolling="no" height="480" width="853"></iframe>\n        {{/}}\n        {{#type.html}}\n            <video id="video" width="853" height="480" controls autoplay>\n\t\t\t\t<source src="{{id}}" type="{{type.htmltype}}">\n            </video>\n        {{/}}')

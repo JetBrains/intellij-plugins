@@ -1,0 +1,6 @@
+XML_TAG_NAME ('body')
+INDENT ('\n    ')
+XML_TAG_NAME ('script')
+DOT ('.')
+INDENT ('\n        ')
+EMBEDDED_CONTENT ('let foo = `boo ${visitStatsJSON}`;\n        const multiplyES6 = (x, y) => { return x * y };')

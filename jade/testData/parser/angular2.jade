@@ -1,0 +1,31 @@
+.container
+  div([hidden]='submitted')
+    h1 Hero Form
+    form((ngsubmit)='onSubmit()', #heroform='ngForm')
+      .form-group
+        label(for='name') Name
+        input.form-control(type='text', [(ngmodel)]='model.name', ngcontrol='name', required='', #name='ngForm')
+        .alert.alert-danger([hidden]='name.valid')
+          b Name
+          |  is required
+      .form-group
+        label(for='alterEgo') Alter Ego
+        input.form-control(type='text', [(ngmodel)]='model.alterEgo', ngcontrol='alterEgo')
+      .form-group
+        label(for='power') Hero Power
+        select.form-control(required='', [(ngmodel)]='model.power', ngcontrol='power')
+          option(*ngfor='#p of powers', [value]='p') {{p}}
+      button.btn.btn-default(type='submit', [disabled]='!heroForm.form.valid') Submit
+  div([hidden]='!submitted')
+    h2 You submitted the following:
+    .row
+      .col-xs-3 Name
+      .col-xs-9.pull-left {{ model.name }}
+    .row
+      .col-xs-3 Alter Ego
+      .col-xs-9.pull-left {{ model.alterEgo }}
+    .row
+      .col-xs-3 Power
+      .col-xs-9.pull-left {{ model.power }}
+    br
+    button.btn.btn-default((click)='submitted=false') Edit

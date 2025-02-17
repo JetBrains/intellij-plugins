@@ -1,0 +1,54 @@
+XmlFile:ea59518.jade
+  PsiElement(DOCUMENT)
+    PsiElement(XML_DOCTYPE)
+      PsiElement(DOCTYPE_KEYWORD)('doctype')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('5')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('html')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('head')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('title')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            PsiErrorElement:Expression expected
+              <empty list>
+            PsiComment(JS:END_OF_LINE_COMMENT)('// some comment')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('link')
+          PsiElement(LPAREN)('(')
+          PsiElement(JADE_PSEUDO_WHITESPACE)
+            <empty list>
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('rel')
+            PsiElement(EQ)('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''stylesheet'')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('href')
+            PsiElement(EQ)('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''/stylesheets/style.css'')
+          PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n    ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('body')
+        PsiElement(INDENT)('\n        ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('block')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('content')

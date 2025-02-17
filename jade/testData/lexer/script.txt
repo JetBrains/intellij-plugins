@@ -1,0 +1,5 @@
+EQ ('=')
+EMBEDDED_EXPRESSION ('1+2')
+EOL ('\n')
+JS_META_CODE ('-foo/bar')
+EOL ('\n')

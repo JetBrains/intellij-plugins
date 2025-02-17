@@ -1,0 +1,41 @@
+package com.jetbrains.plugins.jade.psi;
+
+import com.intellij.embedding.EmbeddedLazyParseableElementType;
+import com.intellij.embedding.MasqueradingPsiBuilderAdapter;
+import com.intellij.lang.*;
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.project.Project;
+import com.jetbrains.plugins.jade.lexer.JadeSimpleInterpolationLexer;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * The one that redefines the parsing routines entirely
+ */
+abstract class JadeLazyParseableElementType extends EmbeddedLazyParseableElementType {
+  JadeLazyParseableElementType(@NotNull @NonNls String debugName, @Nullable Language language) {
+    super(debugName, language);
+  }
+
+  protected abstract void parseIntoBuilder(@NotNull PsiBuilder builder);
+
+  @Override
+  public PsiBuilder getBuilder(ASTNode chameleon, Project project, ParserDefinition parserDefinition, Lexer lexer, CharSequence chars) {
+    return new MasqueradingPsiBuilderAdapter(project, parserDefinition, new JadeSimpleInterpolationLexer(lexer), chameleon, chars);
+  }
+
+  @Override
+  public Lexer createLexer(@NotNull ASTNode chameleon, @NotNull Project project) {
+    final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage());
+    return parserDefinition.createLexer(project);
+  }
+
+  @Override
+  public ASTNode parseAndGetTree(@NotNull PsiBuilder builder) {
+    final PsiBuilder.Marker marker = builder.mark();
+    parseIntoBuilder(builder);
+    marker.done(this);
+    return builder.getTreeBuilt();
+  }
+}

@@ -1,0 +1,75 @@
+XmlFile:tagsIndentation.jade
+  PsiElement(DOCUMENT)
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('copyright')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"cp"')
+        PsiElement(JS:SEMICOLON)(';')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('p')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeClassImpl(CLASS)
+            PsiElement(DOT)('.')
+            JadeClassNameImpl(TAG_CLASS)('copyright-left')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('copyright')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('span')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JadeClassImpl(CLASS)
+              PsiElement(DOT)('.')
+              JadeClassNameImpl(TAG_CLASS)('copyright-right')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''Powered by '')
+        PsiElement(INDENT)('\n    ')
+        JadeTagImpl(TAG)
+          XmlToken:XML_TAG_NAME('a')
+          PsiElement(LPAREN)('(')
+          PsiElement(JADE_PSEUDO_WHITESPACE)
+            <empty list>
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('href')
+            PsiElement(EQ)('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''https://github.com/username/project'')
+          PsiWhiteSpace(' ')
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('target')
+            PsiElement(EQ)('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''_blank'')
+          PsiElement(RPAREN)(')')
+          XmlText
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('Project')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('Name')

@@ -1,0 +1,33 @@
+package com.jetbrains.plugins.jade.formatter;
+
+import com.intellij.application.options.CodeStyleAbstractConfigurable;
+import com.intellij.application.options.CodeStyleAbstractPanel;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
+import com.jetbrains.plugins.jade.JadeBundle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public final class JadeCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
+  @Override
+  public @NotNull Configurable createSettingsPage(@NotNull CodeStyleSettings settings, final @NotNull CodeStyleSettings originalSettings) {
+    return new CodeStyleAbstractConfigurable(settings, originalSettings, JadeBundle.message("pug.code.style.configurable.name")) {
+      @Override
+      protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
+        return new JadeCodeStyleMainPanel(settings, originalSettings);
+      }
+
+      @Override
+      public @Nullable String getHelpTopic() {
+        return "reference.settingsdialog.codestyle.jade";
+      }
+    };
+  }
+
+  @Override
+  public @Nullable String getConfigurableDisplayName() {
+    return JadeBundle.message("pug.code.style.configurable.name");
+  }
+
+}

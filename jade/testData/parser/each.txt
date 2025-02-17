@@ -1,0 +1,67 @@
+XmlFile:each.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ul')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeTagIdImpl(TAG_ID)('#users')
+      PsiElement(INDENT)('\n    ')
+      PsiElement(FOR_STATEMENT)
+        JSInJadeEmbeddedContentImpl:EMBEDDED_FOREACH
+          JSEachStatement
+            PsiElement(JS:EACH_KEYWORD)('each')
+            PsiWhiteSpace(' ')
+            JSVarStatement
+              JSVariable
+                PsiElement(JS:IDENTIFIER)('user')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSVarStatement
+              JSVariable
+                PsiElement(JS:IDENTIFIER)('name')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IN_KEYWORD)('in')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('users')
+        PsiElement(FOR_BODY)
+          PsiElement(INDENT)('\n        ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('li')
+            PsiElement(LPAREN)('(')
+            PsiElement(JADE_PSEUDO_WHITESPACE)
+              <empty list>
+            JadeAttributeImpl(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('class')
+              PsiElement(EQ)('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                  JSBinaryExpression
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''user-'')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('name')
+            PsiElement(RPAREN)(')')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('#{')
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('name')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('}')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('#{')
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('user')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('email')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('}')

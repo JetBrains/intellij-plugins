@@ -1,0 +1,116 @@
+XmlFile:web17268.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('block')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('content')
+      PsiElement(INDENT)('\n    ')
+      JSInJadeEmbeddedContentImpl:JS_META_CODE
+        PsiElement(MINUS)('-')
+        PsiElement(INDENT)('\n        ')
+        JSExpressionStatement
+          JSAssignmentExpression
+            JSDefinitionExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('yes')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''<img src="images/ok.png" />'')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n        ')
+        JSExpressionStatement
+          JSAssignmentExpression
+            JSDefinitionExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('no')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''<img src="images/cross.png" />'')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n        ')
+        JSExpressionStatement
+          JSAssignmentExpression
+            JSDefinitionExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('list')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              PsiWhiteSpace('\n            ')
+              JSArrayLiteralExpression
+                PsiElement(JS:LBRACKET)('[')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('''')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''Premium'')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''VIP'')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''Moderator'')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''Administrator'')
+                PsiElement(JS:RBRACKET)(']')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace('\n            ')
+              JSArrayLiteralExpression
+                PsiElement(JS:LBRACKET)('[')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''Premium<br><code>/kit premium</code>'')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('yes')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('no')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('no')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('no')
+                PsiElement(JS:RBRACKET)(']')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace('\n            ')
+              JSArrayLiteralExpression
+                PsiElement(JS:LBRACKET)('[')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''VIP<br><code>/kit vip</code>'')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('no')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('yes')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('yes')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('yes')
+                PsiElement(JS:RBRACKET)(']')
+              PsiWhiteSpace('\n        ')
+              PsiElement(JS:RBRACKET)(']')
+          PsiElement(JS:SEMICOLON)(';')

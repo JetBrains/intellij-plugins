@@ -1,0 +1,156 @@
+XmlFile:mixins.jade
+  PsiElement(DOCUMENT)
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('my_mixin')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('div')
+        PsiElement(ATTRIBUTES_KEYWORD)('&attributes')
+        PsiElement(LPAREN)('(')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('attributes')
+        PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n')
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('my_mixin')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('div')
+        PsiElement(ATTRIBUTES_KEYWORD)('&attributes')
+        PsiElement(LPAREN)('(')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('attributes')
+        PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n')
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('my_mixin')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('arg1')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('arg2')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('div')
+        PsiElement(ATTRIBUTES_KEYWORD)('&attributes')
+        PsiElement(LPAREN)('(')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSVarStatement
+                JSVariable
+                  PsiElement(JS:IDENTIFIER)('attributes')
+        PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('body')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        XmlToken:XML_TAG_NAME('my_mixin')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_TAG_NAME('my_mixin')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(MIXIN_KEYWORD)('mixin')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('my_mixin')
+        PsiElement(EOL)('\n')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        XmlToken:XML_TAG_NAME('my_mixin')
+        PsiElement(LPAREN)('(')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(RPAREN)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(MIXIN_KEYWORD)('mixin')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('my_mixin')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS_VALUES
+          ASTWrapperPsiElement(MIXIN_PARAMETERS_VALUES)
+            PsiElement(JS:LPAR)('(')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(EOL)('\n')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        XmlToken:XML_TAG_NAME('tabular')
+        XmlText
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('class="table')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('table-striped')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('table-bordered"')
+        PsiElement(EOL)('\n')
+      PsiElement(INDENT)('\n  ')
+      JadeMixinImpl(MIXIN)
+        PsiElement(PLUS)('+')
+        PsiErrorElement:Mixin name expected, LPAREN found
+          <empty list>
+        PsiElement(LPAREN)('(')
+        PsiElement(RPAREN)(')')
+        XmlText
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('class="table')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('table-striped')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('table-bordered"')

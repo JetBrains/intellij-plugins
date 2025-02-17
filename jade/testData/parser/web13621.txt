@@ -1,0 +1,36 @@
+XmlFile:web13621.jade
+  PsiElement(DOCUMENT)
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('injection')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"<div>Something <b>is</b> inside</div>"')
+      PsiElement(INDENT)('\n')
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('temp')
+        PsiElement(JS:SEMICOLON)(';')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('p')
+      PsiElement(NEQ)('!=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('injection')

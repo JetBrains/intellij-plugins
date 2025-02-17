@@ -1,0 +1,36 @@
+title = "my title"
+html
+    head.qe<caret>45
+        style.
+            p {
+                color: blue;
+                text-align: center;
+                display: inline-block;
+            }
+
+            .qe45 {
+                border-bottom-color: #ff8bda;
+            }
+
+            .cl1,
+            #id1,
+            span.cl2,
+            span#id2,
+            div.cl3,
+            div#id3,
+            span<warning descr="Selector cl4 is never used">.cl4</warning>,
+            span<warning descr="Selector id4 is never used">#id4</warning> {
+              font-weight: 600;
+            }
+
+            <warning descr="Selector someCls is never used">.someCls</warning> {
+                color: red
+            }
+        h1(data-binding="rethought") Title - #{title}
+
+    body
+        div(class="cl1")
+        div(id="id1")
+        span.cl2#id2
+        #id3.cl3
+        #id4.cl4

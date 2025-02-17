@@ -1,0 +1,228 @@
+XmlFile:testcoffee.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('script')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('type')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"text/coffeescript"')
+      PsiElement(RPAREN)(')')
+      PsiElement(DOT)('.')
+      PsiElement(INDENT)('\n    ')
+      PsiElement(BLOCK)
+        JSInJadeEmbeddedContentImpl:JADE_EMBEDDED_WRAPPER: COFFEESCRIPT_EMBEDDED_CONTENT
+          JSVarStatement
+            CoffeeScriptVariable
+              PsiElement(JS:IDENTIFIER)('math')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSCallExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                JSArgumentList
+                  JSFunctionExpression
+                    PsiElement(FUNCTION)('->')
+                    PsiWhiteSpace('\n        ')
+                    CoffeeScriptBlockStatement
+                      JSExpressionStatement
+                        JSBinaryExpression
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('x')
+                          PsiWhiteSpace(' ')
+                          PsiElement(JS:MULT)('*')
+                          PsiWhiteSpace(' ')
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('x')
+                      PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n\n    ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+                PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+                PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              PsiWhiteSpace(' ')
+              JSArgumentList
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+          PsiWhiteSpace('\n    ')
+          JSIfStatement
+            PsiElement(IF)('if')
+            PsiWhiteSpace(' ')
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+              PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace('\n        ')
+            CoffeeScriptBlockStatement
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('console')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('log')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"!"')
+                    PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace('\n    ')
+            PsiElement(JS:ELSE_KEYWORD)('else')
+            PsiWhiteSpace('\n        ')
+            CoffeeScriptBlockStatement
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('console')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('log')
+                  PsiWhiteSpace(' ')
+                  JSArgumentList
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"?"')
+    PsiElement(EOL)('\n\n')
+    PsiElement(FILTER)
+      PsiElement(COLON)(':')
+      PsiElement(FILTER_NAME)('coffeescript')
+      PsiElement(INDENT)('\n  ')
+      PsiElement(BLOCK)
+        JSInJadeEmbeddedContentImpl:JADE_EMBEDDED_WRAPPER: COFFEESCRIPT_EMBEDDED_CONTENT
+          JSVarStatement
+            CoffeeScriptVariable
+              PsiElement(JS:IDENTIFIER)('math')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSCallExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                JSArgumentList
+                  JSFunctionExpression
+                    PsiElement(FUNCTION)('->')
+                    PsiWhiteSpace('\n      ')
+                    CoffeeScriptBlockStatement
+                      JSExpressionStatement
+                        JSBinaryExpression
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('x')
+                          PsiWhiteSpace(' ')
+                          PsiElement(JS:MULT)('*')
+                          PsiWhiteSpace(' ')
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('x')
+                      PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n\n  ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+                PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace('\n  ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+                PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace('\n  ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('console')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('log')
+              PsiWhiteSpace(' ')
+              JSArgumentList
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"!"')
+          PsiWhiteSpace('\n  ')
+          JSIfStatement
+            PsiElement(IF)('if')
+            PsiWhiteSpace(' ')
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+              PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace('\n      ')
+            CoffeeScriptBlockStatement
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('console')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('log')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"!"')
+                    PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace('\n  ')
+            PsiElement(JS:ELSE_KEYWORD)('else')
+            PsiWhiteSpace('\n      ')
+            CoffeeScriptBlockStatement
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('console')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('log')
+                  PsiWhiteSpace(' ')
+                  JSArgumentList
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"?"')

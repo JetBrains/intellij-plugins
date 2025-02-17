@@ -1,0 +1,4 @@
+XML_TAG_NAME ('script')
+DOT ('.')
+INDENT ('\n    ')
+EMBEDDED_CONTENT ('$('row_ico_#{row.id}').tooltip();')

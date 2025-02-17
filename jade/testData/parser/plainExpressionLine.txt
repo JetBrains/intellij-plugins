@@ -1,0 +1,23 @@
+XmlFile:plainExpressionLine.jade
+  PsiElement(DOCUMENT)
+    PsiElement(JS_EXPR)
+      PsiElement(NEQ)('!=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('history')
+          PsiElement(JS:PLUS)('+')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+    PsiElement(EOL)('\n')
+    PsiElement(JS_EXPR)
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:PLUS)('+')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')

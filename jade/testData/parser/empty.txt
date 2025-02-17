@@ -1,0 +1,3 @@
+XmlFile:empty.jade
+  PsiElement(DOCUMENT)
+    <empty list>

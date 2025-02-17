@@ -1,0 +1,20 @@
+XmlFile:embeddedHtmlPlainText.jade
+  PsiElement(DOCUMENT)
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS('<')
+      XmlToken:XML_DATA_CHARACTERS('t>')
+    PsiElement(EOL)('\n')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS('<')
+      XmlToken:XML_DATA_CHARACTERS('/t>')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('html')
+      PsiElement(INDENT)('\n    ')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('<')
+        XmlToken:XML_DATA_CHARACTERS('t>')
+    PsiElement(INDENT)('\n   ')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS('<')
+      XmlToken:XML_DATA_CHARACTERS('/t>')

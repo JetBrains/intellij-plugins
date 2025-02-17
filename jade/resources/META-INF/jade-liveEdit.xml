@@ -1,0 +1,6 @@
+<!--suppress PluginXmlValidity -->
+<idea-plugin package="com.jetbrains.plugins.jade.liveEdit">
+  <extensions defaultExtensionNs="com.jetbrains.liveEdit">
+    <externalCompiler fileType="Jade" interpreter="true"/>
+  </extensions>
+</idea-plugin>

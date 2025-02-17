@@ -1,0 +1,16 @@
+block content
+    h1 Test injections
+
+    div Script tag not followed with dot:
+    script(type='text/javascript')
+        var a,b;
+        function test(a,b) {
+            return a+b;
+        }
+
+    div Script tag followed with dot:
+    script(type='text/javascript').
+        var c,d;
+        function test(c,d) {
+            return c*d;
+        }

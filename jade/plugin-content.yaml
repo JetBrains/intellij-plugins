@@ -1,0 +1,3 @@
+- name: lib/jade.jar
+  modules:
+  - name: intellij.jade

@@ -1,0 +1,16 @@
+.col-lg-5(ng-if="placingEnabled")
+    .form-group
+        .col-lg-12(ng-show="placingFull")
+            .alert.alert-danger
+                span.glyphicon.glyphicon-remove
+                b.form-control-static(translate="core.samplereceive.full")
+        .col-lg-12
+            span(translate='samplemanagement.sampleplacing.nextact')
+            = ' '
+            input(type="radio",ng-model="cont.nextActive",value="0" )
+            = ' '
+            span(translate='samplemanagement.sampleplacing.nextflw')
+            = ' '
+            input(type="radio",ng-model="cont.nextActive",value="1")
+            = ' '
+            span(translate='samplemanagement.sampleplacing.nextfirst')

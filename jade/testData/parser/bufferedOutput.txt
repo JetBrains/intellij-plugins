@@ -1,0 +1,312 @@
+XmlFile:bufferedOutput.jade
+  PsiElement(DOCUMENT)
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(EQ)('=')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+          PsiWhiteSpace('    ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace('    ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      PsiElement(EQ)('=')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('=bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('=')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      XmlText
+        PsiWhiteSpace('    ')
+        XmlToken:XML_DATA_CHARACTERS('=')
+        PsiWhiteSpace('    ')
+        XmlToken:XML_DATA_CHARACTERS('bar')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('foo')
+        PsiElement(EQ)('=')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('foo')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl
+        JSExpressionStatement
+          JSAssignmentExpression
+            JSDefinitionExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl
+        JSExpressionStatement
+          JSAssignmentExpression
+            JSDefinitionExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl
+        JSExpressionStatement
+          JSAssignmentExpression
+            JSDefinitionExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('foo')
+            PsiWhiteSpace('    ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace('    ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(NEQ)('!=')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('foo')
+      PsiElement(NEQ)('!=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl
+      JSExpressionStatement
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:NE)('!=')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl
+      JSExpressionStatement
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:NE)('!=')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl
+      JSExpressionStatement
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('foo')
+          PsiWhiteSpace('    ')
+          PsiElement(JS:NE)('!=')
+          PsiWhiteSpace('    ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      PsiElement(NEQ)('!=')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      PsiElement(NEQ)('!=')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('!')
+        XmlToken:XML_DATA_CHARACTERS('=bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      XmlText
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('!')
+        XmlToken:XML_DATA_CHARACTERS('=')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns:foo')
+      XmlText
+        PsiWhiteSpace('    ')
+        XmlToken:XML_DATA_CHARACTERS('!')
+        XmlToken:XML_DATA_CHARACTERS('=')
+        PsiWhiteSpace('    ')
+        XmlToken:XML_DATA_CHARACTERS('bar')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('foo')
+        PsiElement(NEQ)('!=')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('foo')
+        PsiElement(NEQ)('!=')
+        PsiWhiteSpace(' ')
+        JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl
+        JSExpressionStatement
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:NE)('!=')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl
+        JSExpressionStatement
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:NE)('!=')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('ns')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      JSInJadeEmbeddedContentImpl
+        JSExpressionStatement
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+            PsiWhiteSpace('    ')
+            PsiElement(JS:NE)('!=')
+            PsiWhiteSpace('    ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')

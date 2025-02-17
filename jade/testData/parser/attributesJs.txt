@@ -1,0 +1,408 @@
+XmlFile:attributesJs.jade
+  PsiElement(DOCUMENT)
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('id')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('5')
+      PsiElement(INDENT)('\n')
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSFunction
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:IDENTIFIER)('answer')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatementEager
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace(' ')
+          JSReturnStatement
+            PsiElement(JS:RETURN_KEYWORD)('return')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('42')
+            PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:RBRACE)('}')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('href')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSBinaryExpression
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''/user/'')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('id')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''button'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('href')
+        PsiWhiteSpace('  ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace('  ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSBinaryExpression
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''/user/'')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('id')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiWhiteSpace('  ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace('  ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''button'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('meta')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('key')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''answer'')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('value')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('answer')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class1'')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class2'')
+              PsiElement(JS:RBRACKET)(']')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeClassImpl(CLASS)
+            PsiElement(DOT)('.')
+            JadeClassNameImpl(TAG_CLASS)('tag-class')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class1'')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class2'')
+              PsiElement(JS:RBRACKET)(']')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('href')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSBinaryExpression
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''/user/'')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('id')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''button'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('href')
+        PsiWhiteSpace('  ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace('  ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSBinaryExpression
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''/user/'')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('id')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiWhiteSpace('  ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace('  ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''button'')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('meta')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('key')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''answer'')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('value')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('answer')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class1'')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class2'')
+              PsiElement(JS:RBRACKET)(']')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('a')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JadeClassImpl(CLASS)
+            PsiElement(DOT)('.')
+            JadeClassNameImpl(TAG_CLASS)('tag-class')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class1'')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''class2'')
+              PsiElement(JS:RBRACKET)(']')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('div')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('id')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('id')
+      PsiElement(RPAREN)(')')
+      PsiElement(ATTRIBUTES_KEYWORD)('&attributes')
+      PsiElement(LPAREN)('(')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSObjectLiteralExpression
+              PsiElement(JS:LBRACE)('{')
+              JSProperty
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''bar'')
+              PsiElement(JS:RBRACE)('}')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n')
+    JSInJadeEmbeddedContentImpl:JS_META_CODE
+      PsiElement(MINUS)('-')
+      PsiElement(INDENT)(' ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('bar')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NULL_KEYWORD)('null')
+    PsiElement(EOL)('\n')
+    JadeTagImpl(TAG)
+      XmlToken:XML_TAG_NAME('div')
+      PsiElement(LPAREN)('(')
+      PsiElement(JADE_PSEUDO_WHITESPACE)
+        <empty list>
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('foo')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:NULL_KEYWORD)('null')
+      PsiWhiteSpace(' ')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('bar')
+        PsiElement(EQ)('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+      PsiElement(RPAREN)(')')
+      PsiElement(ATTRIBUTES_KEYWORD)('&attributes')
+      PsiElement(LPAREN)('(')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSObjectLiteralExpression
+              PsiElement(JS:LBRACE)('{')
+              JSProperty
+                PsiElement(JS:IDENTIFIER)('baz')
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)(''baz'')
+              PsiElement(JS:RBRACE)('}')
+      PsiElement(RPAREN)(')')

@@ -1,0 +1,47 @@
+title = "my title"
+
+html
+    head
+        style.
+            p {
+                color: blue;
+                text-align: center;
+                display: inline-block;
+            }
+
+            .abacaba {
+                border-bottom-color: #ff8bda;
+            }
+
+            .dabacaba {
+                color: red
+            }
+
+
+    body
+        div.abacaba
+            | some text
+
+-var pppa = 1;
+
+- if (1+1==2)
+    div
+        span
+            ololo
+- else
+    papapa
+
+html
+    head
+        script(type="text/javascript").
+            var xxx = 'yyy';
+        script.
+            var aaa = 'bb#{pppa}b';
+        script
+            :coffeescript
+                console.log "!"
+        style.
+            div#{pppa} {
+                padding: 3px;
+            }
+

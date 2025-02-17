@@ -1,0 +1,11 @@
+body
+  p5(a=[0,1].reverse(), b=(function(){
+    var x = [1,2,3];
+    var y = {a: 'b'};
+    // alert('surprise!');  <-- we should add there a couple of
+    //                        closing brackets to make life worse :3
+    var neverUsed = new Array(10);
+    return Array.prototype.reverse.call(y)['a'];
+    return x.reverse();
+  })())
+  foo(a="")

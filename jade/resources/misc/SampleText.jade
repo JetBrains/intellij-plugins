@@ -1,0 +1,34 @@
+mixin my_mixin(title)
+    h1 #{title}
+    div&attributes(attributes)
+        | Hello here!
+
+// Sample Jade template:
+doctype html
+html(lang='en')
+    head
+        include header.jade
+        title= pageTitle
+        script(type='text/javascript').
+            if (foo) {
+                bar();
+            }
+        :coffeescript
+            console.log "!"
+    body
+        h1 Jade - node template engine
+        #container
+            +my_mixin("Title")
+        //- and we could add some more:
+        div#foo.bar.baz
+        #foo
+        .bar +
+        p
+            | and some text here
+            | and even more;
+        myns:mytag
+
+        if foobar > zoo
+            p Yes
+        else
+            p No

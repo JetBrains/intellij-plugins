@@ -1,0 +1,13 @@
+-
+    var meta = {
+        'description': 'Says hello to the world',
+        'viewport': 'width=device-width, initial-scale=1.0'
+    };
+
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        each content, name in meta
+            meta(name=name, content=content)
+    body
+        p Hello, World!

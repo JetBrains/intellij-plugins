@@ -1,0 +1,19 @@
+- var items = ["one", "two", "three"]
+each item in items
+    li= item
+items = ["one", "two", "three"]
+each item, i in items
+    li #{item}: #{i}
+obj = { foo: 'bar' }
+each val, key in obj
+    li #{key}: #{val}
+
+div
+    -
+        yes = '<img src="images/ok.png" />';
+        no = '<img src="images/cross.png" />';
+        list = [
+            ['', 'Premium', 'VIP', 'Moderator', 'Administrator'],
+            ['Premium<br><code>/kit premium</code>', yes, no, no, no],
+            ['VIP<br><code>/kit vip</code>', no, yes, yes, yes]
+        ];
