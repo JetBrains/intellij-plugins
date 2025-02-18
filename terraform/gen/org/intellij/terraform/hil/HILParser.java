@@ -1039,7 +1039,7 @@ public class HILParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // "provider" '::' identifier '::'
+  // "provider" COLON_COLON identifier COLON_COLON
   private static boolean ILDefinedMethodExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ILDefinedMethodExpression_0")) return false;
     boolean r;

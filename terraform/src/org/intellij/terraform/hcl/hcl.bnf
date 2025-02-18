@@ -287,7 +287,7 @@ MethodCallExpression ::= identifier ParameterList
   implements="org.intellij.terraform.hcl.psi.common.MethodCallExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
 }
 
-DefinedMethodExpression ::= "provider" '::' identifier '::' MethodCallExpression
+DefinedMethodExpression ::= "provider" COLON_COLON identifier COLON_COLON MethodCallExpression
 
 ParameterList ::= '(' ParameterListElement* '...'? ')' {
   pin(".*")=1
