@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.refactoring
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,7 +19,7 @@ class Angular2CliComponentGeneratorMockImpl(val project: Project) : Angular2CliC
     val name = arguments.first()
 
     val ref = Ref<String>(null)
-    writeAction {
+    edtWriteAction {
       val componentDir = workingDir.createChildDirectory(requestor, name)
 
       componentDir.createChild("$name.component.css")

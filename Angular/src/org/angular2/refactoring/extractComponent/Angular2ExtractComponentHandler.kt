@@ -20,7 +20,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.components.Service
@@ -131,7 +131,7 @@ class Angular2ExtractComponentHandlerService(
     cliDir: VirtualFile,
   ) {
     reporter.nextStep(endFraction = 10)
-    writeAction {
+    edtWriteAction {
       PsiDocumentManager.getInstance(sourceFilePtr.dereference()!!.project).commitAllDocuments()
     }
 
@@ -172,7 +172,7 @@ class Angular2ExtractComponentHandlerService(
     }
 
     reporter.nextStep(endFraction = 60)
-    val affectedPaths = writeAction {
+    val affectedPaths = edtWriteAction {
       var result: List<String>? = null
       CommandProcessor.getInstance().runUndoTransparentAction {
         result = postProcessCli()
@@ -211,7 +211,7 @@ class Angular2ExtractComponentHandlerService(
     } ?: return
 
     reporter.nextStep(endFraction = 100)
-    writeAction {
+    edtWriteAction {
       CommandProcessor.getInstance().executeCommand(
         project,
         {
@@ -413,7 +413,7 @@ class Angular2ExtractComponentHandlerService(
 
   private suspend fun addRangeHighlighter(editor: Editor,
                                           extractedComponent: Angular2ExtractedComponent): RangeHighlighter =
-    writeAction {
+    edtWriteAction {
       editor.markupModel.addRangeHighlighter(
         EditorColors.SEARCH_RESULT_ATTRIBUTES,
         extractedComponent.sourceStartOffset, extractedComponent.sourceStartOffset + extractedComponent.template.length,
@@ -424,7 +424,7 @@ class Angular2ExtractComponentHandlerService(
 
   private suspend fun clearRangeHighlighter(editor: Editor, rangeHighlighter: RangeHighlighter?) {
     if (rangeHighlighter != null) {
-      writeAction {
+      edtWriteAction {
         editor.markupModel.removeHighlighter(rangeHighlighter)
       }
     }

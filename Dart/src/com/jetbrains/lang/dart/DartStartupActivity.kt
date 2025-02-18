@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readActionBlocking
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
@@ -46,7 +46,7 @@ class DartStartupActivity : ProjectActivity {
 
       if (writeActions.isEmpty()) return@launch
 
-      writeAction {
+      edtWriteAction {
         writeActions.forEach { it() }
       }
 
