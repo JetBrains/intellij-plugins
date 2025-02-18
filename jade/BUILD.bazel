@@ -3,21 +3,21 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
   name = "jade_resources",
-  files = glob(["resources/**/*"]),
-  strip_prefix = "resources"
+  files = glob(["compatibilityResources/**/*"]),
+  strip_prefix = "compatibilityResources"
 )
 
 jvm_resources(
   name = "jade_resources_1",
-  files = glob(["compatibilityResources/**/*"]),
-  strip_prefix = "compatibilityResources"
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
 )
 
 jvm_library(
   name = "jade",
   module_name = "intellij.jade",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
@@ -92,6 +92,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//xml/testFramework",
   ],
   runtime_deps = [
     ":jade_resources",

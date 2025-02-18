@@ -117,6 +117,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui_test_lib",
+    "@community//xml/testFramework",
   ],
   runtime_deps = [":dart_resources"]
 )

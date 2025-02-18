@@ -60,6 +60,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/relaxng",
     "@community//xml/relaxng:relaxng_test_lib",
+    "@community//xml/testFramework",
   ],
   runtime_deps = [
     ":handlebars_resources",

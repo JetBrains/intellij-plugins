@@ -40,6 +40,7 @@ jvm_library(
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//platform/webSymbols:webSymbols-testFramework",
+    "@community//xml/testFramework",
   ]
 )
 

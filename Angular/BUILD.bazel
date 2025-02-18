@@ -136,6 +136,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+    "@community//xml/testFramework",
   ],
   runtime_deps = [
     ":angular_resources",
