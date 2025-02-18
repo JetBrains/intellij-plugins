@@ -23,7 +23,6 @@ import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationImpl;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -127,7 +127,7 @@ public final class GenerateNgAddCompatibleList {
 
     List<Pair<NodePackageBasicInfo, JsonObject>> schematicsPkgs = angularPkgs.values().stream().parallel().map(info -> {
       try {
-        JsonObject obj = service.fetchPackageJson(info.getName(), "latest", (ProgressIndicator)null);
+        JsonObject obj = service.fetchPackageJsonFuture(info.getName(), "latest", null).get(30, TimeUnit.SECONDS);
         if (obj != null && obj.has("schematics")) {
           return Pair.create(info, obj);
         }

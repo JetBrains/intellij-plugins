@@ -11,7 +11,6 @@ import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
@@ -298,8 +297,8 @@ class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : An
 
     private fun checkForNgAddSupport(project: Project, packageName: String, versionOrRange: String): Boolean {
       try {
-        val indicator = ProgressManager.getInstance().progressIndicator
-        val pkgJson = NpmRegistryService.getInstance(project).fetchPackageJson(packageName, versionOrRange, indicator)
+        val future = NpmRegistryService.getInstance(project).fetchPackageJsonFuture(packageName, versionOrRange, null)
+        val pkgJson = future.get(30, TimeUnit.SECONDS)
         return pkgJson?.get(SCHEMATICS_PROP) != null
       }
       catch (e: Exception) {
