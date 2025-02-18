@@ -2,7 +2,7 @@ package org.jetbrains.qodana.ui.run
 
 import com.fasterxml.jackson.core.JacksonException
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -63,7 +63,7 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
         return@async project.findQodanaConfigVirtualFile()?.toNioPath()
       }
 
-      val newVirtualFile = writeAction {
+      val newVirtualFile = edtWriteAction {
         val newVirtualFile = projectVirtualFile.createChildData(projectVirtualFile.fileSystem, QODANA_YAML_CONFIG_FILENAME)
         newVirtualFile.writeText(yamlState.document.text)
         newVirtualFile

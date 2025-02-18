@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.SourceFolder
 import com.intellij.openapi.roots.TestSourcesFilter
@@ -230,7 +230,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
     val rootManager = ModuleRootManager.getInstance(module).modifiableModel
     val contentRoot = rootManager.contentEntries[0]
     val testFolder = contentRoot.addSourceFolder(contentRoot.url + "/tests", true)
-    writeAction { rootManager.commit() }
+    edtWriteAction { rootManager.commit() }
     return testFolder
   }
 

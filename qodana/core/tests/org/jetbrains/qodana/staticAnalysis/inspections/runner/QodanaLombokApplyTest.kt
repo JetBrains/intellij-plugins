@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.TestDataPath
@@ -17,7 +17,7 @@ class QodanaLombokApplyTest: QodanaQuickFixesTestBase(FixesStrategy.APPLY) {
   override fun setUp() {
     super.setUp()
     runBlocking(Dispatchers.EDT) {
-      writeAction {
+      edtWriteAction {
         ModuleRootManager.getInstance(module).modifiableModel.apply {
           MavenDependencyUtil.addFromMaven(this, LombokTestUtil.LOMBOK_MAVEN_COORDINATES, false)
           commit()

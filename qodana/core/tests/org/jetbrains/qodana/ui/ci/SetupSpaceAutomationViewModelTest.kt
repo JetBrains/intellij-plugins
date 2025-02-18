@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.ui.ci
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.EditorTestUtil
@@ -240,13 +240,13 @@ class SetupSpaceAutomationViewModelTest : QodanaPluginHeavyTestBase() {
   }
 
   private suspend fun createPhysicalConfigYml() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.createFile(".space.kts", expectedText)
     }
   }
 
   private suspend fun deletePhysicalConfigYml() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.getFile(".space.kts")!!.delete(this)
     }
   }

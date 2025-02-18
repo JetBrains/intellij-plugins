@@ -2,7 +2,7 @@ package org.jetbrains.qodana.ui.ci
 
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.EditorTestUtil
@@ -268,13 +268,13 @@ class SetupCircleCIViewModelTest : QodanaPluginHeavyTestBase() {
 
   private suspend fun createPhysicalConfigYml() {
     myFixture.tempDirFixture.findOrCreateDir(".circleci")
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.createFile(".circleci/config.yml", expectedText)
     }
   }
 
   private suspend fun deletePhysicalConfigYml() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.getFile(".circleci/config.yml")!!.delete(this)
     }
   }

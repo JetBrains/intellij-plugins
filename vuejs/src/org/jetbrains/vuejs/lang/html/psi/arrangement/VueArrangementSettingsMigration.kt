@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang.html.psi.arrangement
 import com.intellij.application.options.codeStyle.CodeStyleSchemesModel
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.xml.arrangement.HtmlRearranger
@@ -21,9 +21,9 @@ private class VueArrangementSettingsMigration : ProjectActivity {
       return
     }
 
-    writeAction {
+    edtWriteAction {
       if (propertiesComponent.isTrueValue(VUE_REARRANGER_SETTINGS_MIGRATION)) {
-        return@writeAction
+        return@edtWriteAction
       }
 
       propertiesComponent.setValue(VUE_REARRANGER_SETTINGS_MIGRATION, true)

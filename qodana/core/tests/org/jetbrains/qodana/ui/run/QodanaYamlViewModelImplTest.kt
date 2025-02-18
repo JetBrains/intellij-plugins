@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.ui.run
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
@@ -294,13 +294,13 @@ class QodanaYamlViewModelImplTest : QodanaPluginHeavyTestBase() {
   }
 
   private suspend fun deletePhysicalQodanaYaml() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.getFile("qodana.yaml")!!.delete(this)
     }
   }
 
   private suspend fun deletePhysicalQodanaYml() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.getFile("qodana.yml")!!.delete(this)
     }
   }

@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.jvm.java
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -19,7 +19,7 @@ class QodanaJdkProjectActivity : QodanaLinterProjectActivity() {
   private suspend fun configureJdk(project: Project) {
     val sdk = service<QodanaConfigJdkService>().deferredSdk.await() ?: return
     ConsoleLog.info("Setting project JDK ${sdk.name}")
-    writeAction {
+    edtWriteAction {
       ProjectRootManager.getInstance(project).projectSdk = sdk
     }
   }

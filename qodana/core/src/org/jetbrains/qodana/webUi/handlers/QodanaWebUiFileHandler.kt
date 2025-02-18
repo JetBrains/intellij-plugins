@@ -3,7 +3,7 @@ package org.jetbrains.qodana.webUi.handlers
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -108,7 +108,7 @@ class QodanaWebUiFileHandler : RestService() {
       notificationProvider.invoke(false, alreadyPresentFile).notify(project)
       return true
     }
-    val newVirtualFile = writeAction {
+    val newVirtualFile = edtWriteAction {
       projectVirtualFile.createChildData(this, fileNameToCreate)
     }
     writeToVirtualFile(newVirtualFile, request)

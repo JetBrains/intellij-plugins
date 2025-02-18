@@ -23,7 +23,7 @@ class TfModuleVariablesTest() : TfModuleVariablesTestBase("terraform/variables/t
   fun testModuleVariableDeclarationRename() = timeoutRunBlocking {
     val file = myFixture.configureByFile("modules/fake_module/variables.tf")
     val varToRename = file.text.indexOf("fake_var_1")
-    writeAction {
+    edtWriteAction {
       myFixture.editor.caretModel.moveToOffset(varToRename + 1)
     }
     val findUsages = readAction {
@@ -35,7 +35,7 @@ class TfModuleVariablesTest() : TfModuleVariablesTestBase("terraform/variables/t
 
     assertEquals(1, findUsages.size)
     assertContainsElements(myFixture.getCodeVisionsForCaret(), "1 usage")
-    writeAction { myFixture.renameElementAtCaret("new_fake_var_1") }
+    edtWriteAction { myFixture.renameElementAtCaret("new_fake_var_1") }
     myFixture.checkResult("main.tf", """
       module "main" {
         source = "./modules/fake_module"

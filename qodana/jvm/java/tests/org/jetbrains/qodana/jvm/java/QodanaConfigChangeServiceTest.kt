@@ -2,7 +2,7 @@ package org.jetbrains.qodana.jvm.java
 
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ProjectRootManager
@@ -69,14 +69,14 @@ class QodanaConfigChangeServiceTest: QodanaPluginHeavyTestBase() {
       }
     }
     try {
-      writeAction {
+      edtWriteAction {
         projectJDKTable.addJdk(newJdk, testRootDisposable)
         projectRootManager.projectSdk = newJdk
       }
       action.invoke()
     }
     finally {
-      writeAction {
+      edtWriteAction {
         projectJDKTable.removeJdk(newJdk)
       }
     }

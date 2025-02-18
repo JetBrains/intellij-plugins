@@ -12,7 +12,7 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.WriteIntentReadAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -78,7 +78,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     )
 
     awaitStartupActivities(project)
-    writeAction { VirtualFileManager.getInstance().refreshWithoutFileWatcher(false) }
+    edtWriteAction { VirtualFileManager.getInstance().refreshWithoutFileWatcher(false) }
 
     reporter.reportMessage(1, InspectionsBundle.message("inspection.done"))
 

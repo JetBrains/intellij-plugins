@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.ui.ci
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.EditorTestUtil
@@ -269,13 +269,13 @@ class SetupBitbucketCIViewModelTest : QodanaPluginHeavyTestBase() {
   }
 
   private suspend fun createPhysicalConfigFile() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.createFile("bitbucket-pipelines.yml", expectedText)
     }
   }
 
   private suspend fun deletePhysicalConfigFile() {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.getFile("bitbucket-pipelines.yml")!!.delete(this)
     }
   }

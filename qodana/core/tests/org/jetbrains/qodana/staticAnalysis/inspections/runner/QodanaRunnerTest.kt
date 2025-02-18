@@ -2,7 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.TextRange
@@ -779,7 +779,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     val rootManager = ModuleRootManager.getInstance(module).modifiableModel
     val contentRoot = rootManager.contentEntries[0]
     contentRoot.addExcludeFolder(contentRoot.url + "/dir")
-    writeAction { rootManager.commit() }
+    edtWriteAction { rootManager.commit() }
 
     runAnalysis()
 

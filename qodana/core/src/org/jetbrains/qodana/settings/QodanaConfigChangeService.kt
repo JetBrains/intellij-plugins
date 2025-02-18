@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.settings
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -67,7 +67,7 @@ class QodanaConfigChangeService(val project: Project, val scope: CoroutineScope)
       val file = projectPath.resolve(QODANA_YAML_CONFIG_FILENAME).createParentDirectories().createFile().refreshAndFindVirtualFile()
                  ?: return@withContext null
       val text = createDefaultConfigContent()
-      writeAction {
+      edtWriteAction {
         file.writeText(text)
       }
       return@withContext file

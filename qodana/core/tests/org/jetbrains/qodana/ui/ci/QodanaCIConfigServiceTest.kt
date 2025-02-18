@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.ui.ci
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.TestDataPath
 import kotlinx.coroutines.flow.filter
@@ -234,7 +234,7 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
   }
 
   private suspend fun deletePhysicalConfigYml(name: String) {
-    writeAction {
+    edtWriteAction {
       myFixture.tempDirFixture.getFile(name)!!.delete(this)
     }
   }
