@@ -15,7 +15,7 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-interface PbServiceMethodTypeBase extends PbElement {
+public interface PbServiceMethodTypeBase extends PbElement {
 
   boolean isStreaming();
 }
