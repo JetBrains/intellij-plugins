@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.php
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
@@ -62,7 +62,7 @@ class PhpMigrationScript(
   override suspend fun setUpAfter(runContext: QodanaRunContext) = setLevel(toLevel, runContext.project)
 
   private suspend fun setLevel(level: PhpLanguageLevel, project: Project) {
-    writeAction {
+    edtWriteAction {
       PhpProjectConfigurationFacade.getInstance(project).languageLevel = level
     }
   }

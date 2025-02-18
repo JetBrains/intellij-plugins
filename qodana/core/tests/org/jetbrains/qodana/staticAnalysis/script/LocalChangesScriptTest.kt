@@ -2,7 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.openapi.application.runWriteActionAndWait
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -241,7 +241,7 @@ class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
 
     override suspend fun isInProgress(project: Project): Boolean =
       if (++invocationCount == corruptOnInvocation) {
-        writeAction {
+        edtWriteAction {
           applyCorruption()
           done.complete(Unit)
         }

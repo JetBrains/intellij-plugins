@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.SourceFolder
@@ -12,6 +12,6 @@ suspend fun markGenFolderAsGeneratedSources(module: Module): SourceFolder {
   val contentRoot = rootManager.contentEntries[0]
   val generatedProperties = JpsJavaExtensionService.getInstance().createSourceRootProperties("", true)
   val genFolder = contentRoot.addSourceFolder(contentRoot.url + "/gen", JavaSourceRootType.SOURCE, generatedProperties)
-  writeAction { rootManager.commit() }
+  edtWriteAction { rootManager.commit() }
   return genFolder
 }

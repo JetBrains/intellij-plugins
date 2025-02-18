@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.jvm.java
 
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
@@ -21,7 +21,7 @@ class JdkConfigurator : CommandLineInspectionProjectConfigurator {
     runBlockingCancellable {
       val jdk = service<QodanaConfigJdkService>().getJdk()
       if (jdk != null) {
-        writeAction {
+        edtWriteAction {
           ProjectRootManager.getInstance(project).projectSdk = jdk
         }
       }

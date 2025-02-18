@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.ui.ci.providers
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -85,9 +85,9 @@ sealed class CIConfigFileState(val project: Project, val document: Document, val
 }
 
 private suspend fun createAndWriteToFile(project: Project, absolutePath: Path, content: String) {
-  val virtualFile = writeAction {
-    val root = absolutePath.root ?: return@writeAction null
-    val rootVirtualFile = LocalFileSystem.getInstance().findFileByNioFile(root) ?: return@writeAction null
+  val virtualFile = edtWriteAction {
+    val root = absolutePath.root ?: return@edtWriteAction null
+    val rootVirtualFile = LocalFileSystem.getInstance().findFileByNioFile(root) ?: return@edtWriteAction null
     val newVirtualFile = rootVirtualFile.findOrCreateFile(absolutePath.relativeTo(rootVirtualFile.toNioPath()).toString())
     newVirtualFile.writeText(content)
     newVirtualFile

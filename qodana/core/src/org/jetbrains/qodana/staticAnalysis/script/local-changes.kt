@@ -2,7 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.openapi.application.readActionBlocking
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.blockingContext
@@ -222,7 +222,7 @@ open class LocalChangesScript(
   private suspend fun syncProject(project: Project, changes: List<FilePath>) {
     val virtualFiles = changes.mapNotNull { it.virtualFile }.toTypedArray()
     VfsUtil.markDirtyAndRefresh(false, false, false, *virtualFiles)
-    writeAction {
+    edtWriteAction {
       PsiDocumentManager.getInstance(project).commitAllDocuments()
     }
   }
