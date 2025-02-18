@@ -8,8 +8,10 @@ import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
-import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.config.TerraformFileType
@@ -19,6 +21,7 @@ import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.ToolPathDetector
+import org.intellij.terraform.runtime.showIncorrectPathNotification
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -38,19 +41,24 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     val virtualFile = context.virtualFile ?: return null
     val toolType = getApplicableToolType(virtualFile)
 
-    val commandLine = createCommandLine(project, toolType)
-
     return object : FormattingTask {
       private var processHandler: CapturingProcessHandler? = null
 
       override fun run() {
         try {
 
-          runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-            if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
-              throw IllegalStateException("Incorrect ${toolType.displayName} path: ${toolType.getToolSettings(project).toolPath}")
+          val isToolConfigured = runBlockingCancellable {
+            withBackgroundProgress(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+              ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
             }
           }
+
+          if (!isToolConfigured) {
+            showIncorrectPathNotification(project, toolType)
+            throw ProcessCanceledException()
+          }
+
+          val commandLine = createCommandLine(project, toolType)
 
           processHandler = CapturingProcessHandler(commandLine)
 
@@ -65,6 +73,9 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
           else {
             request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), output.stderr)
           }
+        }
+        catch (e: ProcessCanceledException) {
+          throw e
         }
         catch (e: Exception) {
           logger<TfAsyncFormattingService>().warn("Failed to run FormattingTask", e)
