@@ -25,6 +25,7 @@
 package org.osmorc.facet.ui;
 
 import com.intellij.openapi.util.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
 
@@ -35,7 +36,8 @@ import java.util.List;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-class AdditionalJARContentsTableModel extends AbstractTableModel {
+@ApiStatus.Internal
+public final class AdditionalJARContentsTableModel extends AbstractTableModel {
   private final List<Pair<String, String>> myAdditionalContents;
 
   AdditionalJARContentsTableModel() {
