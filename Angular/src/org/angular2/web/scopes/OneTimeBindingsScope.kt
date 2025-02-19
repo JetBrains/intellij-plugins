@@ -5,6 +5,7 @@ import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -69,10 +70,10 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         isOneTimeBindingProperty(input)
       }
       if (isStrictTemplates) {
-        consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name), !isOneTimeBinding))
+        consumer(Angular2OneTimeBinding(input, dataHolder, !attributeSelectors.contains(input.name), !isOneTimeBinding))
       }
       else if (isOneTimeBinding) {
-        consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name)))
+        consumer(Angular2OneTimeBinding(input, dataHolder, !attributeSelectors.contains(input.name)))
       }
     }
 
@@ -118,7 +119,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         .transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
-  private class Angular2OneTimeBinding(delegate: WebSymbol, val requiresValue: Boolean, val resolveOnly: Boolean = false)
+  private class Angular2OneTimeBinding(delegate: WebSymbol, val typeEvaluationLocation: PsiElement, val requiresValue: Boolean, val resolveOnly: Boolean = false)
     : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedWebSymbol)?.source
@@ -141,46 +142,52 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
       get() = false
 
     override val attributeValue: WebSymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-      if (isStrictTemplates(this.psiContext)) {
-        WebSymbolHtmlAttributeValue.create(
-          WebSymbolHtmlAttributeValue.Kind.PLAIN,
-          WebSymbolHtmlAttributeValue.Type.COMPLEX,
-          !resolveOnly && !JSResolveUtil.isAssignableJSType(
-            jsType, JSStringLiteralTypeImpl("", false, JSTypeSource.EXPLICITLY_DECLARED), null),
-          null,
-          TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)
-        )
-      }
-      else {
-        val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType, psiContext)
-        when {
-          isBoolean != ThreeState.NO -> {
-            WebSymbolHtmlAttributeValue.create(
-              WebSymbolHtmlAttributeValue.Kind.PLAIN,
-              WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
-              null,
-              JSCompositeTypeFactory.createUnionType(
-                JSTypeSource.EXPLICITLY_DECLARED,
-                if (isBoolean == ThreeState.UNSURE)
-                  TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)
-                else
-                  null,
-                JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
-                JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
-                JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
-              ))
+      withTypeEvaluationLocation(typeEvaluationLocation) {
+        if (isStrictTemplates(this.psiContext)) {
+          WebSymbolHtmlAttributeValue.create(
+            WebSymbolHtmlAttributeValue.Kind.PLAIN,
+            WebSymbolHtmlAttributeValue.Type.COMPLEX,
+            !resolveOnly && !JSResolveUtil.isAssignableJSType(
+              jsType, JSStringLiteralTypeImpl("", false, JSTypeSource.EXPLICITLY_DECLARED), null),
+            null,
+            TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)
+          )
+        }
+        else {
+          val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType, psiContext)
+          when {
+            isBoolean != ThreeState.NO -> {
+              WebSymbolHtmlAttributeValue.create(
+                WebSymbolHtmlAttributeValue.Kind.PLAIN,
+                WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
+                null,
+                JSCompositeTypeFactory.createUnionType(
+                  JSTypeSource.EXPLICITLY_DECLARED,
+                  if (isBoolean == ThreeState.UNSURE)
+                    TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)
+                  else
+                    null,
+                  JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
+                  JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
+                  JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
+                ))
+            }
+            !requiresValue -> WebSymbolHtmlAttributeValue.create(required = false)
+            else -> null
           }
-          !requiresValue -> WebSymbolHtmlAttributeValue.create(required = false)
-          else -> null
         }
       }
     }
 
     override fun createPointer(): Pointer<Angular2OneTimeBinding> {
       val delegatePtr = this.delegate.createPointer()
+      val evaluationLocationPtr = this.typeEvaluationLocation.createSmartPointer()
       val requiresValue = this.requiresValue
+      val resolveOnly = this.resolveOnly
       return Pointer {
-        delegatePtr.dereference()?.let { Angular2OneTimeBinding(it, requiresValue) }
+        val delegate = delegatePtr.dereference() ?: return@Pointer null
+        val evaluationLocation = evaluationLocationPtr.dereference() ?: return@Pointer null
+        Angular2OneTimeBinding(delegate, evaluationLocation, requiresValue, resolveOnly)
       }
     }
 
