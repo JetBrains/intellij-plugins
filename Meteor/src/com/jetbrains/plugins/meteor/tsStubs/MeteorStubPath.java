@@ -3,6 +3,7 @@ package com.jetbrains.plugins.meteor.tsStubs;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -37,7 +38,8 @@ public final class MeteorStubPath {
     }
   }
 
-  static final class VersionNumber implements Comparable<VersionNumber> {
+  @ApiStatus.Internal
+  public static final class VersionNumber implements Comparable<VersionNumber> {
     final List<Integer> myOrderedVersions = new ArrayList<>();
     String myFileName;
 
