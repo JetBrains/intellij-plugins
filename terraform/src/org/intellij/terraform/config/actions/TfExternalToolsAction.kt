@@ -26,17 +26,16 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
 import org.intellij.terraform.runtime.ToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
-import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.runtime.TfToolConfigurable
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -83,7 +82,9 @@ internal abstract class TfExternalToolsAction : DumbAwareAction() {
     getActionCoroutineScope(project).launch {
       try {
         val toolType = getApplicableToolType(file)
-        if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
+        val isToolConfigured =
+          withBackgroundProgress(project, title) { ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false) }
+        if (!isToolConfigured) {
           showIncorrectPathNotification(project, toolType)
           return@launch
         }

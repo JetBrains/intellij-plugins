@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.eel.provider.asNioPath
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.utils.where
-import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.platform.util.progress.withProgressText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -42,7 +42,7 @@ internal class ToolPathDetectorImpl(val project: Project, val coroutineScope: Co
 
   override suspend fun detectAndVerifyTool(toolType: TfToolType, overwriteExistingSettings: Boolean): Boolean {
     if (overwriteExistingSettings || toolType.getToolSettings(project).toolPath.isBlank()) {
-      withBackgroundProgress(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
+      withProgressText(HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
         detectToolAndUpdateSettings(toolType)
       }
     }

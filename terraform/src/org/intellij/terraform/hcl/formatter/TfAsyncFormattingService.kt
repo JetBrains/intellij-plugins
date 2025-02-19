@@ -11,7 +11,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
-import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.config.TerraformFileType
@@ -48,9 +47,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
         try {
 
           val isToolConfigured = runBlockingCancellable {
-            withBackgroundProgress(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
               ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
-            }
           }
 
           if (!isToolConfigured) {
