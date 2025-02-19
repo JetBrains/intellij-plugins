@@ -10,7 +10,6 @@ import com.intellij.javascript.testFramework.AbstractTestFileStructure;
 import com.intellij.javascript.testFramework.JsTestElementPath;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testing.JsPackageDependentTestRunConfigurationProducer;
-import com.intellij.javascript.testing.detection.JsTestFrameworkDetector;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
