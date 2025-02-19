@@ -41,7 +41,7 @@ public final class MeteorStubPath {
   @ApiStatus.Internal
   public static final class VersionNumber implements Comparable<VersionNumber> {
     final List<Integer> myOrderedVersions = new ArrayList<>();
-    String myFileName;
+    public String myFileName;
 
     VersionNumber(@NotNull String fileName) {
       myFileName = fileName;
