@@ -30,6 +30,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
+import java.util.Objects
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -442,4 +443,17 @@ internal data class DiagnosticData(
 
   override val quickFixes: Array<LocalQuickFix>?
     get() = quickFixProvider()
+
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    other is DiagnosticData
+    && other.kind == kind
+    && other.startOffset == startOffset
+    && other.length == length
+    && other.message == message
+    && other.category == category
+    && other.highlightType == highlightType
+
+  override fun hashCode(): Int =
+    Objects.hash(kind, startOffset, length, message, category, highlightType)
 }
