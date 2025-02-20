@@ -458,9 +458,9 @@
     <dependencySupport kind="executable" coordinate="terraform"/>
 
     <internalFileTemplate name="Empty File"/>
-    <internalFileTemplate name="Template File"/>
-    <internalFileTemplate name="Outputs File"/>
-    <internalFileTemplate name="Variables File"/>
+    <internalFileTemplate name="Main"/>
+    <internalFileTemplate name="Outputs"/>
+    <internalFileTemplate name="Variables"/>
 
     <!--OpenTofu support-->
     <fileType name="OpenTofu" language="HCL-Terraform" extensions="tofu" implementationClass="org.intellij.terraform.opentofu.OpenTofuFileType" fieldName="INSTANCE"/>
