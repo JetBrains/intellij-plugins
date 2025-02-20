@@ -1,0 +1,8 @@
+deg] (tailText=null; typeText='angle'; priority=0.0; typeGreyed)
+dpcm] (tailText=null; typeText='resolution'; priority=0.0; typeGreyed)
+dpi] (tailText=null; typeText='resolution'; priority=0.0; typeGreyed)
+dppx] (tailText=null; typeText='resolution'; priority=0.0; typeGreyed)
+dvh] (tailText=null; typeText='length'; priority=0.0; typeGreyed)
+dvw] (tailText=null; typeText='length'; priority=0.0; typeGreyed)
+grad] (tailText=null; typeText='angle'; priority=0.0; typeGreyed)
+rad] (tailText=null; typeText='angle'; priority=0.0; typeGreyed)

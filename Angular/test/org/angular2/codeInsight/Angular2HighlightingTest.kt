@@ -34,7 +34,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testUnknownTagsAttributesInlineTemplate() = checkHighlighting(extension = "ts")
 
-  fun testStyleUnitLength() = checkHighlighting()
+  fun testStyleUnit() = checkHighlighting()
 
   fun testMatSortHeader() = checkHighlighting(ANGULAR_MATERIAL_14_2_5_MIXED)
 

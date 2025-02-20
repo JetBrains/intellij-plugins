@@ -501,13 +501,18 @@
               "#...",
               "#item:CSS Property",
               {
-                "items": "/css/length-units",
+                "items": [
+                  "/css/length-units",
+                  "/css/time-units",
+                  "/css/angle-units",
+                  "/css/resolution-units"
+                ],
                 "priority": "lowest",
                 "required": false,
                 "template": [
                   ".",
                   "#...",
-                  "#item:length unit"
+                  "#item:unit"
                 ]
               }
             ]
