@@ -52,12 +52,12 @@ internal class TfActionService(private val project: Project, private val corouti
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
     val title = HCLBundle.message("progress.title.terraform.init", dirFile.name)
     val toolType = getApplicableToolType(dirFile)
-    if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
-      showIncorrectPathNotification(project, toolType)
-      return
-    }
 
     withBackgroundProgress(project, title) {
+      if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
+        showIncorrectPathNotification(project, toolType)
+        return@withBackgroundProgress
+      }
       if (!execTerraformInit(dirFile, project, title)) {
         TfConstants.getNotificationGroup()
           .createNotification(
