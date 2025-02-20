@@ -22,7 +22,7 @@ import com.intellij.psi.search.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
-import com.intellij.util.indexing.IndexableFilesIndex
+import com.intellij.util.indexing.IndexingIteratorsProvider
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
@@ -230,9 +230,9 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
         return@withGuaranteedProgressIndicator false
 
       // also process all unindexed files in the same dir IJPL-148978
-      val indexableFilesIndex = IndexableFilesIndex.getInstance(moduleRoot.project)
+      val iteratorsProvider = IndexingIteratorsProvider.getInstance(moduleRoot.project)
       process(PsiElementProcessor { file ->
-        if (!indexableFilesIndex.shouldBeIndexed(file.virtualFile))
+        if (!iteratorsProvider.shouldBeIndexed(file.virtualFile))
           processor.process(file)
         else
           true
