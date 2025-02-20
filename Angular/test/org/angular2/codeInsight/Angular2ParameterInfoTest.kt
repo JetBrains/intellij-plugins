@@ -3,7 +3,6 @@ package org.angular2.codeInsight
 
 import com.intellij.testFramework.fixtures.EditorHintFixture
 import org.angular2.Angular2TestCase
-import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4

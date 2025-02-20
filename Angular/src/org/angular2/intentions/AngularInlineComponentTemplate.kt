@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.asSafely
