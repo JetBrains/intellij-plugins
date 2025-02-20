@@ -91,6 +91,11 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
           holder.popScope()
         }
       }
+      else if (block.primaryBlockDefinition?.hasNestedSecondaryBlocks == true) {
+        holder.pushScope(block)
+        block.acceptChildren(this)
+        holder.popScope()
+      }
     }
 
     override fun visitXmlAttribute(attribute: XmlAttribute) {
