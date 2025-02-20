@@ -308,6 +308,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testViewChildrenSignal() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, dir = true)
 
+  fun testViewChildSwitchBlock() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
+
   fun testViewChildrenSignalSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
