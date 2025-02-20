@@ -8,10 +8,30 @@
           "kind": "fail",
           "level": "note",
           "message": {
-            "text": "Incorrect whitespace",
-            "markdown": "Incorrect whitespace"
+            "text": "File 'Main.java' is not properly formatted",
+            "markdown": "File 'Main.java' is not properly formatted"
           },
           "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingSimple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5403426bd05c41f0",
+            "equalIndicator/v1": "4ac59531dc29f57be488b6fed48467dbbbce51abe97ff77ebac825bef35a6a05"
+          },
+          "relatedLocations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
@@ -26,7 +46,7 @@
                   "snippet": {
                     "text": "\n    "
                   },
-                  "sourceLanguage": "JAVA"
+                  "sourceLanguage": "Java"
                 },
                 "contextRegion": {
                   "startLine": 1,
@@ -38,37 +58,8 @@
                   },
                   "sourceLanguage": "JAVA"
                 }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testIncorrectFormattingSimple",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "c34e869c9b88f0cd",
-            "equalIndicator/v1": "95e970611b7626f5def86f2e04c8a416e6f4938f112b36699f38e2778b816dc3"
-          },
-          "properties": {
-            "ideaSeverity": "WEAK WARNING",
-            "qodanaSeverity": "Moderate",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "IncorrectFormatting",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Incorrect whitespace",
-            "markdown": "Incorrect whitespace"
-          },
-          "locations": [
+              }
+            },
             {
               "physicalLocation": {
                 "artifactLocation": {
@@ -83,7 +74,7 @@
                   "snippet": {
                     "text": "                "
                   },
-                  "sourceLanguage": "JAVA"
+                  "sourceLanguage": "Java"
                 },
                 "contextRegion": {
                   "startLine": 2,
@@ -95,37 +86,8 @@
                   },
                   "sourceLanguage": "JAVA"
                 }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testIncorrectFormattingSimple",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "3e5a3040b31ba7d1",
-            "equalIndicator/v1": "e119e8ec899d82f56a79857b95845c144d8454da9f2d11e5472d52dd094af559"
-          },
-          "properties": {
-            "ideaSeverity": "WEAK WARNING",
-            "qodanaSeverity": "Moderate",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "IncorrectFormatting",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Incorrect whitespace",
-            "markdown": "Incorrect whitespace"
-          },
-          "locations": [
+              }
+            },
             {
               "physicalLocation": {
                 "artifactLocation": {
@@ -140,7 +102,7 @@
                   "snippet": {
                     "text": "                  "
                   },
-                  "sourceLanguage": "JAVA"
+                  "sourceLanguage": "Java"
                 },
                 "contextRegion": {
                   "startLine": 3,
@@ -152,37 +114,8 @@
                   },
                   "sourceLanguage": "JAVA"
                 }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testIncorrectFormattingSimple",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "1f17ff9703a189dd",
-            "equalIndicator/v1": "174c023be95d34bedb994a654494d13fbdf3b6a124d4d6d1967448c6e8f587d7"
-          },
-          "properties": {
-            "ideaSeverity": "WEAK WARNING",
-            "qodanaSeverity": "Moderate",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "IncorrectFormatting",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Incorrect whitespace",
-            "markdown": "Incorrect whitespace"
-          },
-          "locations": [
+              }
+            },
             {
               "physicalLocation": {
                 "artifactLocation": {
@@ -197,7 +130,7 @@
                   "snippet": {
                     "text": "    "
                   },
-                  "sourceLanguage": "JAVA"
+                  "sourceLanguage": "Java"
                 },
                 "contextRegion": {
                   "startLine": 4,
@@ -209,23 +142,13 @@
                   },
                   "sourceLanguage": "JAVA"
                 }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testIncorrectFormattingSimple",
-                  "kind": "module"
-                }
-              ]
+              }
             }
           ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "b3f8c5e4d857e17d",
-            "equalIndicator/v1": "7e9a294d13d7b89b10f3bf49cb5e9853178f20f5ea51afd5da33d4e6ed15ef3a"
-          },
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
-            "problemType": "REGULAR",
+            "problemType": "INCORRECT_FORMATTING",
             "tags": [
               "JAVA"
             ]

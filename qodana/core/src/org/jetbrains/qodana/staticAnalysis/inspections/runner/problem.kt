@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_CHILD_HASH
 import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_ROOT_HASH
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.util.UserDataHolderEx
+import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.Fix
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
@@ -15,6 +16,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter.toSarif
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 
 /**
  * Provides the contract of supplying issues, produced by global/external tools, in SARIF format.
@@ -40,9 +42,16 @@ internal class XmlProblem(private val element: Element,
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
         ?.map { it.toSarifLocation(macroManager, result) }
         ?.toSet()
-      if (props[PROBLEM_TYPE] == null) {
-        props[PROBLEM_TYPE] = ProblemType.REGULAR
-        result.properties = props
+
+      when {
+        result.ruleId == INCORRECT_FORMATTING_INSPECTION_ID && !result.relatedLocations.isNullOrEmpty() -> {
+          if (isRelatedLocationsValidForIncorrectFormatting(result.relatedLocations)) {
+            result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.INCORRECT_FORMATTING
+          } else {
+            QodanaException("Related locations are invalid for inspection: $INCORRECT_FORMATTING_INSPECTION_ID")
+          }
+        }
+        else -> result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR
       }
     }
   }
@@ -53,6 +62,18 @@ internal class XmlProblem(private val element: Element,
 
   override fun getRelatedProblemHashFrom(): String? {
     return userData?.getUserData(RELATED_PROBLEMS_CHILD_HASH)
+  }
+
+  private fun isRelatedLocationsValidForIncorrectFormatting(relatedLocations: Iterable<Location>): Boolean {
+    return relatedLocations.all { it.physicalLocation != null } &&
+           relatedLocations.all {
+             it.physicalLocation.artifactLocation?.uri ==
+               relatedLocations.first().physicalLocation.artifactLocation?.uri
+           } &&
+           relatedLocations.all {
+             it.physicalLocation.region.sourceLanguage ==
+               relatedLocations.first().physicalLocation.region.sourceLanguage
+           }
   }
 
   private fun addRelatedProblemsHashes(props: PropertyBag) {
