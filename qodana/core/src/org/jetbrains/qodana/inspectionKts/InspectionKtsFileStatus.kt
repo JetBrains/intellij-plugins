@@ -2,6 +2,8 @@ package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
 import com.intellij.ide.script.IdeScriptEngine
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
 import kotlinx.coroutines.flow.StateFlow
 import java.nio.file.Path
 
@@ -30,7 +32,23 @@ internal sealed interface InspectionKtsFileStatus {
   data class Cancelled(override val file: Path) : InspectionKtsFileStatus
 }
 
+interface CompiledInspectionsKtsData
+
 internal class CompiledInspectionKtsInspections(
   val inspections: Set<DynamicInspectionDescriptor>,
-  @Suppress("unused") private val engine: IdeScriptEngine? // to keep classes loaded by the engine
+  val userData: Set<CompiledInspectionsKtsData>,
+  @Suppress("unused") private val engine: IdeScriptEngine?, // to keep classes loaded by the engine
 )
+
+abstract class CompiledInspectionKtsPostProcessor {
+  companion object {
+    val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessor> = ExtensionPointName.create("org.intellij.qodana.compiledInspectionKtsPostProcessor")
+
+    fun getProcessor(result: Any): CompiledInspectionKtsPostProcessor? =
+      EP_NAME.extensionList.firstOrNull { it.isApplicable(result) }
+  }
+
+  abstract fun isApplicable(result: Any): Boolean
+
+  abstract fun process(project: Project, filePath: Path, result: Any): CompiledInspectionsKtsData?
+}

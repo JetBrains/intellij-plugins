@@ -43,7 +43,7 @@ internal suspend fun compileInspectionKtsFile(
   if (engine == null) {
     LOG.warn("Failed to compile $file: kotlin scripting engine not found")
     val emptyCompiled = InspectionKtsFileStatus.Compiled(
-      CompiledInspectionKtsInspections(emptySet(), null),
+      CompiledInspectionKtsInspections(emptySet(), emptySet(), null),
       exceptionDuringAnalysisFlow,
       errorLogger,
       0,
@@ -59,7 +59,7 @@ internal suspend fun compileInspectionKtsFile(
   val scriptContentHash = scriptText.hashCode()
   val scriptTextWithDefaultImports = InspectionKtsDefaultImportProvider.imports().joinToString("") { "import $it\n" } + scriptText
 
-  val dynamicInspectionDescriptors: Set<DynamicInspectionDescriptor>  = try {
+  val dynamicInspectionData: InspectionKtsResultData = try {
     val result = coroutineScope {
       val resultDeferred = async(StaticAnalysisDispatchers.IO) {
         withBackgroundProgress(project, QodanaBundle.message("compiling.kts.file", file.name), true) {
@@ -87,21 +87,31 @@ internal suspend fun compileInspectionKtsFile(
 
     KeepAliveKotlinCompileService.getInstance().keepCompilerAliveJob.start()
 
-    val resultList = result as? Collection<*>
-                     ?: error("Got $result from inspection script, expected ${Collection::class.java.canonicalName} of ${InspectionKts::class.java.canonicalName}")
-    val inspectionsKts: Sequence<InspectionKts> = resultList.asSequence().mapIndexed { idx, item ->
-      item as? InspectionKts ?: error("Got $item on position $idx from inspection script, expected ${InspectionKts::class.java.canonicalName}")
+    val processor = CompiledInspectionKtsPostProcessor.getProcessor(result)
+    if (processor == null) {
+      val resultList = result as? Collection<*>
+                       ?: error("Got $result from inspection script, expected ${Collection::class.java.canonicalName} of ${InspectionKts::class.java.canonicalName}")
+      val inspectionsKts: Sequence<InspectionKts> = resultList.asSequence().mapIndexed { idx, item ->
+        item as? InspectionKts
+        ?: error("Got $item on position $idx from inspection script, expected ${InspectionKts::class.java.canonicalName}")
+      }
+      val dynamicInspectionsDescriptor = inspectionsKts.map {
+        val inspectionTool = it.asTool(exceptionReporter = { exception ->
+          project.qodanaProjectScope.launch(StaticAnalysisDispatchers.Default) {
+            errorLogger.logException(exception)
+            exceptionDuringAnalysisFlow.value = exception
+          }
+        })
+        DynamicInspectionDescriptor.fromTool(inspectionTool)
+      }
+      val descriptors = dynamicInspectionsDescriptor.toSet()
+      InspectionKtsResultData(descriptors, emptySet())
     }
-    val dynamicInspectionsDescriptor = inspectionsKts.map {
-      val inspectionTool = it.asTool(exceptionReporter = { exception ->
-        project.qodanaProjectScope.launch(StaticAnalysisDispatchers.Default) {
-          errorLogger.logException(exception)
-          exceptionDuringAnalysisFlow.value = exception
-        }
-      })
-      DynamicInspectionDescriptor.fromTool(inspectionTool)
+    else {
+      val inspectionsKtsData = processor.process(project, file, result)
+                               ?: error("Failed to process inspection data with ${processor::javaClass.name} processor")
+      InspectionKtsResultData(emptySet(), setOf(inspectionsKtsData))
     }
-    dynamicInspectionsDescriptor.toSet()
   }
   catch (ce : CancellationException) {
     throw ce
@@ -112,11 +122,15 @@ internal suspend fun compileInspectionKtsFile(
     errorLogger.logException(e)
     return InspectionKtsFileStatus.Error(e, errorLogger, scriptContentHash, isOutdated = false, file)
   }
-
-  val compiled = CompiledInspectionKtsInspections(dynamicInspectionDescriptors, engine)
-  LOG.info("Compiled ${file}, number of inspections: ${dynamicInspectionDescriptors.size}")
+  val compiled = CompiledInspectionKtsInspections(dynamicInspectionData.inspections, dynamicInspectionData.userData, engine)
+  LOG.info("Compiled ${file}, number of inspections: ${dynamicInspectionData.inspections.size}")
   return InspectionKtsFileStatus.Compiled(compiled, exceptionDuringAnalysisFlow, errorLogger, scriptContentHash, isOutdated = false, file)
 }
+
+internal data class InspectionKtsResultData(
+  val inspections: Set<DynamicInspectionDescriptor>,
+  val userData: Set<CompiledInspectionsKtsData>
+)
 
 internal suspend fun getDocumentByNioPath(file: Path): Document? {
   val virtualFile = LocalFileSystem.getInstance().findFileByNioFile(file)
