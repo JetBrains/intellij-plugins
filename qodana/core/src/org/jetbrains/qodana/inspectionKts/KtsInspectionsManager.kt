@@ -109,6 +109,14 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
       .stateIn(scope, SharingStarted.Lazily, null)
   }
 
+  val ktsInspectionsSignalFlow: Flow<Unit> = ktsInspectionsFlow.map {}
+
+  val compiledKtsInspectionData: Collection<CompiledInspectionsKtsData>
+    get() = ktsInspectionsFlow.value.orEmpty()
+      .filterIsInstance<InspectionKtsFileStatus.Compiled>()
+      .flatMap { it.inspections.userData }
+      .toSet()
+
   fun recompileFile(file: Path) {
     recompileFileFlow.tryEmit(file)
   }
