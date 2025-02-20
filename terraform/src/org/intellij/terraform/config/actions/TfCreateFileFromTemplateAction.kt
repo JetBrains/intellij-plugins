@@ -46,8 +46,8 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
 }
 
 private const val EMPTY_TF_TEMPLATE = "Empty File"
-private const val TEMPLATE_TF_TEMPLATE = "Template File"
-private const val OUTPUTS_TF_TEMPLATE = "Outputs File"
-private const val VARIABLES_TF_TEMPLATE = "Variables File"
+private const val TEMPLATE_TF_TEMPLATE = "Main"
+private const val OUTPUTS_TF_TEMPLATE = "Outputs"
+private const val VARIABLES_TF_TEMPLATE = "Variables"
 
 private const val DEFAULT_FILE_NAME = "main"
