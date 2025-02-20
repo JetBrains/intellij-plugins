@@ -984,9 +984,9 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkListByFile(myFixture.renderLookupItems(true, true), getTestName(true) + ".expected.txt", false)
   }
 
-  fun testStyleUnitLengthCompletion() {
+  fun testStyleUnitCompletion() {
     myFixture.configureByFiles("package.json")
-    doCompletionItemsTest(myFixture, "styleUnitLengthCompletion.html", false, false)
+    doCompletionItemsTest(myFixture, "styleUnitCompletion.html", false, false)
   }
 
 }
