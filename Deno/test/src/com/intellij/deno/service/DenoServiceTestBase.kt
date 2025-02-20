@@ -36,7 +36,7 @@ const val stdVersion = "std@0.187.0"
 const val stdPathUrl = "https://deno.land/$stdVersion/path/mod.ts"
 
 abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
-  protected val denoAppRule: DenoAppRule = DenoAppRule.V_1_46_3
+  protected val denoAppRule: DenoAppRule = DenoAppRule.LATEST
 
   override fun setUp() {
     super.setUp()
