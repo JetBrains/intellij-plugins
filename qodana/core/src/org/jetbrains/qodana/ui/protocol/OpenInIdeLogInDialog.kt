@@ -224,7 +224,7 @@ class OpenInIdeLogInDialog(
           }
       }
       row {
-        text(QodanaBundle.message("qodana.open.in.ide.log.in.dialog.logged.in.another.account",
+        text(QodanaBundle.message("qodana.open.in.ide.log.in.dialog.logged.in.another.account.description",
                                   userInfo.name, openInIdeCloudParameters.htmlLinkElement()))
           .align(AlignX.CENTER)
           .applyToComponent {

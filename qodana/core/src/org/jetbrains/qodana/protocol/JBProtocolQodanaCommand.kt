@@ -7,6 +7,7 @@ import com.intellij.navigation.NavigatorWithinProject
 import com.intellij.navigation.ProtocolOpenProjectResult
 import com.intellij.navigation.openProject
 import com.intellij.openapi.application.JBProtocolCommand
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.IncorrectOperationException
@@ -186,7 +187,9 @@ internal class JBProtocolQodanaCommand : JBProtocolCommand("qodana") {
     return withContext(QodanaDispatchers.Ui) {
       val dialog = OpenInIdeLogInDialog(openInIdeCloudParameters, project)
       launch {
-        dialog.show()
+        writeIntentReadAction {
+          dialog.show()
+        }
       }
       // can't use showAndGet because in tests dialog is non-modal and it doesn't work
       suspendCoroutine { continuation ->
