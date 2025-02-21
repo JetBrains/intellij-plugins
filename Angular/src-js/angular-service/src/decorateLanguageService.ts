@@ -33,15 +33,13 @@ function toGeneratedRange(language: Language, serviceScript: TypeScriptServiceSc
 }
 
 export type UnboundReverseMapper = (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range) => {
-  pos: number,
-  end: number,
+  sourceRange: Range,
   fileName: string
 } | undefined;
 
 export function createUnboundReverseMapper(language: Language<string>, languageService: TS.LanguageService): UnboundReverseMapper {
   return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): {
-    pos: number,
-    end: number,
+    sourceRange: Range,
     fileName: string
   } | undefined {
     const [serviceScript, targetScript, sourceScript] =
@@ -61,8 +59,10 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
         if (sourceRange !== undefined) {
           return {
             fileName: sourceRange[0],
-            pos: sourceRange[1],
-            end: sourceRange[2],
+            sourceRange: {
+              start: sourceFile.getLineAndCharacterOfPosition(sourceRange[1]),
+              end: sourceFile.getLineAndCharacterOfPosition(sourceRange[2]),
+            },
           }
         }
       }
