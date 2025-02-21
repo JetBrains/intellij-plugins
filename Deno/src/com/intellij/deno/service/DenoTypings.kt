@@ -99,7 +99,7 @@ class DenoTypings(val project: Project) : Disposable {
       URLUtil.FILE_PROTOCOL -> LocalFileSystem.getInstance().findFileByPath(bundled.path)
       else -> error("Unsupported protocol '${bundled.protocol}' for bundled Deno typings file '$bundled'")
     }?.also {
-      require(isDenoTypings(it))
+      require(isDenoTypings(it)) { "Virtual file '$it' is not a Deno typings file" }
     }
   }
 
