@@ -6,15 +6,19 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings.WrapConstant
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
+import org.intellij.terraform.hcl.HCLBundle
 
 @Suppress("PropertyName")
 class HclCodeStyleSettings(container: CodeStyleSettings, language: Language) : CustomCodeStyleSettings(language.id, container) {
   @JvmField
   var PROPERTY_ALIGNMENT: PropertyAlignment = PropertyAlignment.ON_EQUALS
+
   @JvmField
   var LINE_COMMENTER_CHARACTER: LineCommenterPrefix = LineCommenterPrefix.POUND_SIGN
+
   @JvmField
   var RUN_TF_FMT_ON_REFORMAT: Boolean = false
+
   @JvmField
   var IMPORT_PROVIDERS_AUTOMATICALLY: Boolean = true
 
@@ -27,21 +31,24 @@ class HclCodeStyleSettings(container: CodeStyleSettings, language: Language) : C
   var ARRAY_WRAPPING: Int = CommonCodeStyleSettings.WRAP_AS_NEEDED
 }
 
-enum class PropertyAlignment(private val description: String) {
-  DO_NOT_ALIGN("Do not align"),
-  ON_VALUE("On value"),
-  ON_EQUALS("On equals");
+enum class PropertyAlignment {
+  DO_NOT_ALIGN,
+  ON_VALUE,
+  ON_EQUALS;
 
-  override fun toString(): String {
-    return description
+  override fun toString(): String = when (this) {
+    DO_NOT_ALIGN -> HCLBundle.message("code.style.align.properties.do.not.align")
+    ON_VALUE -> HCLBundle.message("code.style.align.properties.on.value")
+    ON_EQUALS -> HCLBundle.message("code.style.align.properties.on.equals")
   }
 }
 
-enum class LineCommenterPrefix(private val description: String, val prefix: String) {
-  DOUBLE_SLASHES("Double Slashes (//)", "//"),
-  POUND_SIGN("Pound Sign (#)", "#");
+enum class LineCommenterPrefix(val prefix: String) {
+  DOUBLE_SLASHES("//"),
+  POUND_SIGN("#");
 
-  override fun toString(): String {
-    return description
+  override fun toString(): String = when (this) {
+    DOUBLE_SLASHES -> HCLBundle.message("code.style.line.commenter.double.slashes")
+    POUND_SIGN -> HCLBundle.message("code.style.line.commenter.pound.sign")
   }
 }
