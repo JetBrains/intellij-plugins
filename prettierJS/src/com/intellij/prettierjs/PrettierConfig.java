@@ -51,7 +51,7 @@ public class PrettierConfig {
   public final int tabWidth;
   public final TrailingCommaOption trailingComma;
   public final boolean useTabs;
-  public final @Nullable String lineSeparator;
+  public final @Nullable LineSeparator lineSeparator;
   public final boolean vueIndentScriptAndStyle;
 
   public PrettierConfig(boolean jsxBracketSameLine,
@@ -62,7 +62,7 @@ public class PrettierConfig {
                         int tabWidth,
                         @NotNull PrettierConfig.TrailingCommaOption trailingComma,
                         boolean useTabs,
-                        @Nullable String lineSeparator,
+                        @Nullable LineSeparator lineSeparator,
                         boolean vueIndentScriptAndStyle) {
     this.jsxBracketSameLine = jsxBracketSameLine;
     this.bracketSpacing = bracketSpacing;
@@ -78,14 +78,15 @@ public class PrettierConfig {
 
   public void install(@NotNull Project project) {
     JSCodeStyleUtil.updateProjectCodeStyle(project, newSettings -> {
-      newSettings.LINE_SEPARATOR = this.lineSeparator;
+      newSettings.LINE_SEPARATOR = this.lineSeparator != null ? this.lineSeparator.getSeparatorString() : null;
       PrettierCodeStyleInstaller.EP_NAME.getExtensionList().forEach(installer -> installer.install(project, this, newSettings));
     });
   }
 
   public boolean isInstalled(@NotNull Project project) {
     CodeStyleSettings settings = CodeStyle.getSettings(project);
-    if (!StringUtil.equals(settings.LINE_SEPARATOR, this.lineSeparator)) return false;
+    var lineSeparator = this.lineSeparator != null ? this.lineSeparator.getSeparatorString() : null;
+    if (!StringUtil.equals(settings.LINE_SEPARATOR, lineSeparator)) return false;
     return ContainerUtil.and(PrettierCodeStyleInstaller.EP_NAME.getExtensionList(),
                              installer -> installer.isInstalled(project, this, settings));
   }
@@ -103,7 +104,7 @@ public class PrettierConfig {
       ObjectUtils.coalesce(getIntValue(map, TAB_WIDTH), tabWidth),
       ObjectUtils.coalesce(parseTrailingCommaValue(ObjectUtils.tryCast(map.get(TRAILING_COMMA), String.class)), trailingComma),
       ObjectUtils.coalesce(getBooleanValue(map, USE_TABS), useTabs),
-      ObjectUtils.coalesce(parseLineSeparatorValue(ObjectUtils.tryCast(map.get(END_OF_LINE), String.class)), lineSeparator),
+      ObjectUtils.coalesce(parseLineSeparator(ObjectUtils.tryCast(map.get(END_OF_LINE), String.class)), lineSeparator),
       ObjectUtils.coalesce(getBooleanValue(map, VUE_INDENT_SCRIPT_AND_STYLE), vueIndentScriptAndStyle)
     );
   }
@@ -121,7 +122,7 @@ public class PrettierConfig {
       JsonUtil.getChildAsInteger(object, TAB_WIDTH, tabWidth),
       ObjectUtils.coalesce(parseTrailingCommaValue(JsonUtil.getChildAsString(object, TRAILING_COMMA)), trailingComma),
       JsonUtil.getChildAsBoolean(object, USE_TABS, useTabs),
-      ObjectUtils.coalesce(parseLineSeparatorValue(JsonUtil.getChildAsString(object, END_OF_LINE)), lineSeparator),
+      ObjectUtils.coalesce(parseLineSeparator(JsonUtil.getChildAsString(object, END_OF_LINE)), lineSeparator),
       JsonUtil.getChildAsBoolean(object, VUE_INDENT_SCRIPT_AND_STYLE, vueIndentScriptAndStyle)
     );
   }
@@ -137,14 +138,9 @@ public class PrettierConfig {
            ", tabWidth=" + tabWidth +
            ", trailingComma=" + trailingComma +
            ", useTabs=" + useTabs +
-           ", lineSeparator=" + lineSeparator +
+           ", lineSeparator=" + (lineSeparator != null ? lineSeparator.getSeparatorString() : null) +
            ", vueIndentScriptAndStyle=" + vueIndentScriptAndStyle +
            '}';
-  }
-
-  private static @Nullable String parseLineSeparatorValue(@Nullable String string) {
-    LineSeparator separator = parseLineSeparator(string);
-    return separator != null ? separator.getSeparatorString() : null;
   }
 
   private static @Nullable LineSeparator parseLineSeparator(@Nullable String string) {

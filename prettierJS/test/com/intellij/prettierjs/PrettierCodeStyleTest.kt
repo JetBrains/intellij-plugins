@@ -258,6 +258,24 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
     assertContainsElements(settings.getSoftMargins(language), listOf(70))
   }
 
+  fun testInjectedLanguages() {
+    for (fileName in listOf("javascript.js", "typescript.ts")) {
+      val settings = getCodeStyleSettingsForFile(fileName)
+
+      for (language in listOf("CSS", "HTML")) {
+        val indentOptions = settings.getCommonSettings(language).indentOptions
+        assertNotNull(indentOptions)
+        indentOptions?.let {
+          assertEquals(12, it.INDENT_SIZE)
+          assertEquals(12, it.CONTINUATION_INDENT_SIZE)
+          assertEquals(12, it.TAB_SIZE)
+          assertTrue(it.USE_TAB_CHARACTER)
+        }
+        assertEquals(settings.LINE_SEPARATOR, "\r\n")
+      }
+    }
+  }
+
   private fun getInfoForFile(fileName: String): Pair<Language, CodeStyleSettings> {
     val language = getLanguageForFile(fileName)
     val settings = getCodeStyleSettingsForFile(fileName)

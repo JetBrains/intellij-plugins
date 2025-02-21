@@ -8,10 +8,8 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 
 internal class JsPrettierCodeStyleConfigurator<T : JSCodeStyleSettings>(
   private val customSettingsClass: Class<T>,
-) : DefaultPrettierCodeStyleConfigurator() {
+) : PrettierCodeStyleConfigurator {
   override fun applySettings(settings: CodeStyleSettings, psiFile: PsiFile, prettierConfig: PrettierConfig) {
-    super.applySettings(settings, psiFile, prettierConfig)
-
     settings.getCustomSettings(customSettingsClass).apply {
       USE_DOUBLE_QUOTES = !prettierConfig.singleQuote
       USE_SEMICOLON_AFTER_STATEMENT = prettierConfig.semi
@@ -30,8 +28,7 @@ internal class JsPrettierCodeStyleConfigurator<T : JSCodeStyleSettings>(
   override fun isApplied(settings: CodeStyleSettings, psiFile: PsiFile, prettierConfig: PrettierConfig): Boolean {
     val customSettings = settings.getCustomSettings(customSettingsClass)
 
-    return super.isApplied(settings, psiFile, prettierConfig) &&
-           customSettings.USE_DOUBLE_QUOTES == !prettierConfig.singleQuote &&
+    return customSettings.USE_DOUBLE_QUOTES == !prettierConfig.singleQuote &&
            customSettings.USE_SEMICOLON_AFTER_STATEMENT == prettierConfig.semi &&
            customSettings.SPACES_WITHIN_OBJECT_LITERAL_BRACES == prettierConfig.bracketSpacing &&
            customSettings.SPACES_WITHIN_OBJECT_TYPE_BRACES == prettierConfig.bracketSpacing &&
