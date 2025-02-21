@@ -29,7 +29,7 @@ internal class TfActionService(private val project: Project, private val corouti
 
   fun scheduleTerraformInit(directory: String, notifyOnSuccess: Boolean): Job {
     return coroutineScope.launch {
-      val title = HCLBundle.message("progress.title.terraform.init", directory)
+      val title = HCLBundle.message("progress.title.terraform.init")
       val dirFile = LocalFileSystem.getInstance().findFileByNioFile(Path(directory))
       if (dirFile == null || !dirFile.isDirectory) {
         TfConstants.getNotificationGroup().createNotification(
@@ -50,7 +50,7 @@ internal class TfActionService(private val project: Project, private val corouti
   }
 
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
-    val title = HCLBundle.message("progress.title.terraform.init", dirFile.name)
+    val title = HCLBundle.message("progress.title.terraform.init")
     val toolType = getApplicableToolType(dirFile)
 
     withBackgroundProgress(project, title) {
