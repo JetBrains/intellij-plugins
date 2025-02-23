@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.*
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.StateManager
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
+import org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer.Companion.waitForDynamicInspectionsInitialization
 import org.jetbrains.qodana.report.guid
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
@@ -145,6 +146,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       val projectPath = project.guessProjectDir()?.toNioPath()?.toAbsolutePath() ?: return null
       val outDir = FileUtil.createTempDirectory("qodana_output", null, true)
       val resultsDir = FileUtil.createTempDirectory("qodana_results", null, true)
+      val messageReporter = QodanaMessageReporter.EMPTY
 
       val config = QodanaConfig.fromYaml(
         projectPath = projectPath,
@@ -156,11 +158,11 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       )
 
       val analysisScope = QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)
-      val loadedInspectionProfile = loadInspectionProfile(config, QodanaInspectionProfileLoader(project))
+      val loadedInspectionProfile = loadInspectionProfile(config, QodanaInspectionProfileLoader(project), messageReporter)
 
       return QodanaInIdeRunContextFactory(
         config,
-        QodanaMessageReporter.EMPTY,
+        messageReporter,
         project,
         loadedInspectionProfile,
         analysisScope,
@@ -168,10 +170,12 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       ).openRunContext()
     }
 
-    private fun loadInspectionProfile(
+    private suspend fun loadInspectionProfile(
       config: QodanaConfig,
-      inspectionProfileLoader: QodanaInspectionProfileLoader
+      inspectionProfileLoader: QodanaInspectionProfileLoader,
+      messageReporter: QodanaMessageReporter
     ): LoadedProfile {
+      waitForDynamicInspectionsInitialization(project, messageReporter)
       val (path, name) = config.profile
       val profileFromQodanaYaml = inspectionProfileLoader.tryLoadProfileByNameOrPath(name, path, QODANA_YAML_CONFIG_FILENAME) {}
       if (profileFromQodanaYaml != null) return LoadedProfile(profileFromQodanaYaml, name, path)
