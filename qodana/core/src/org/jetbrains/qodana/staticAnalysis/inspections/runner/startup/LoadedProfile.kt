@@ -2,7 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner.startup
 
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.runInterruptible
-import org.jetbrains.qodana.inspectionKts.waitForDynamicInspectionsInitialization
+import org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer.Companion.waitForDynamicInspectionsInitialization
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
