@@ -152,7 +152,6 @@
 
     <postStartupActivity implementation="org.jetbrains.qodana.staticAnalysis.QodanaAwaitBackgroundStartupActivity"/>
     <backgroundPostStartupActivity implementation="org.jetbrains.qodana.staticAnalysis.QodanaLinterBackgroundStartupActivity"/>
-
   </extensions>
 
   <actions resource-bundle="messages.QodanaBundle">
@@ -330,7 +329,9 @@
     <extensionPoint name="cyclomaticComplexityFileVisitor"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMetricFileVisitor"
                     dynamic="true"/>
-
+    <extensionPoint name="dynamicInspectionsInitializer"
+                    interface="org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">
@@ -377,6 +378,7 @@
     <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>
     <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageGlobalInspectionKtsTemplateProvider"/>
     <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.examples.JsonYamlInspectionKtsExampleProvider"/>
+    <dynamicInspectionsInitializer implementation="org.jetbrains.qodana.inspectionKts.InspectionKtsProfileInitializer" />
 
     <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.LinesOfCodeMetricAggregator"/>
     <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.CyclomaticComplexityMetricAggregator"/>
