@@ -24,6 +24,7 @@ import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil.addIfNotNull
+import com.intellij.util.containers.addIfNotNull
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
@@ -130,7 +131,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       }
 
       override fun visitES6ExportDefaultAssignment(node: ES6ExportDefaultAssignment) {
-        result.add(node.stubSafeElement)
+        result.addIfNotNull(node.stubSafeElement)
       }
 
       override fun visitJSSpreadExpression(spreadExpression: JSSpreadExpression) {
@@ -196,7 +197,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       }
 
       override fun visitTypeScriptTypeOfType(typeofType: TypeScriptTypeofType) {
-        result.add(typeofType.expression)
+        result.addIfNotNull(typeofType.expression)
       }
     }
   }
