@@ -413,8 +413,10 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   // consume escaped char
 }
 <INTERPOLATION, INTERPOLATION_SQ, INTERPOLATION_DQ> \/\/ {
-  // comment start
-  inInterpolationComment = true;
+  if (interpolationQuote == null) {
+    // comment start
+    inInterpolationComment = true;
+  }
 }
 <UNTERMINATED_INTERPOLATION> ([^<&\$# \n\r\t\f]|(\\#)) { return XmlTokenType.XML_DATA_CHARACTERS; }
 

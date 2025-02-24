@@ -1518,8 +1518,10 @@ public class _Angular2HtmlLexer implements FlexLexer {
           // fall through
           case 140: break;
           case 65:
-            { // comment start
-  inInterpolationComment = true;
+            { if (interpolationQuote == null) {
+    // comment start
+    inInterpolationComment = true;
+  }
             }
           // fall through
           case 141: break;
