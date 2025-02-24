@@ -239,7 +239,7 @@
     <lang.psiStructureViewFactory language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.structureView.HCLStructureViewFactory"/>
     <lang.braceMatcher language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.codeinsight.HCLBraceMatcher"/>
     <lang.findUsagesProvider language="HCL-Terraform" implementationClass="org.intellij.terraform.config.findUsages.TfFindUsagesProvider"/>
-    <useScopeEnlarger implementation="org.intellij.terraform.config.OutputsAndVariablesBlocksUseScopeEnlarger"/>
+    <useScopeEnlarger implementation="org.intellij.terraform.config.TfOutputsAndVariablesUseScopeEnlarger"/>
     <codeInsight.daemonBoundCodeVisionProvider implementation="org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider"/>
     <vcs.codeVisionLanguageContext language="HCL-Terraform" implementationClass="org.intellij.terraform.config.hints.TfVcsContextProvider"/>
     <codeInsight.codeVisionSettingsPreviewLanguage modelId="references" language="HCL-Terraform"/>
@@ -271,9 +271,9 @@
                         serviceImplementation="org.intellij.terraform.config.util.TfCommandLineServiceImpl"
                         testServiceImplementation="org.intellij.terraform.config.util.TfCommandLineServiceMock"/>
 
-    <projectService serviceInterface="org.intellij.terraform.runtime.ToolPathDetector"
-                    serviceImplementation="org.intellij.terraform.runtime.ToolPathDetectorImpl"
-                    testServiceImplementation="org.intellij.terraform.runtime.ToolPathDetectorMock"
+    <projectService serviceInterface="org.intellij.terraform.runtime.TfToolPathDetector"
+                    serviceImplementation="org.intellij.terraform.runtime.TfToolPathDetectorImpl"
+                    testServiceImplementation="org.intellij.terraform.runtime.TfToolPathDetectorMock"
     />
 
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>

@@ -16,7 +16,7 @@ import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspectio
 import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.TypeModelProvider
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 
 class TfModuleVariablesTest() : TfModuleVariablesTestBase("terraform/variables/tf-modules-subdirs") {
 
@@ -102,7 +102,7 @@ abstract class TfModuleVariablesTestBase(private val testDataRoot: String) : Bas
       myFixture.copyDirectoryToProject(testDataRoot, ".")
     }
     timeoutRunBlocking {
-      project.service<LocalSchemaService>().awaitModelsReady()
+      project.service<TfLocalSchemaService>().awaitModelsReady()
     }
   }
 

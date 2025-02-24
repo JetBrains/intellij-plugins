@@ -17,9 +17,9 @@ import com.intellij.testFramework.waitUntil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
-import org.intellij.terraform.config.model.local.TFLocalMetaEntity
+import org.intellij.terraform.config.model.local.TfLocalMetaEntity
 import org.intellij.terraform.config.util.TfCommandLineServiceMock
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -146,8 +146,8 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
           }
         """.trimIndent()
 
-  private val localSchemaService: LocalSchemaService
-    get() = project.service<LocalSchemaService>()
+  private val tfLocalSchemaService: TfLocalSchemaService
+    get() = project.service<TfLocalSchemaService>()
 
   private fun loadAndCheckDoMetadata(dummyPropName: String) {
     TfCommandLineServiceMock.instance.mockCommandLine(
@@ -160,7 +160,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
     myFixture.configureByText("main.tf", genInspectedMain(dummyPropName))
     myFixture.doHighlighting() // to trigger model building
     timeoutRunBlocking {
-      localSchemaService.awaitModelsReady()
+      tfLocalSchemaService.awaitModelsReady()
     }
     myFixture.testHighlighting("main.tf")
   }
@@ -169,7 +169,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
     loadAndCheckDoMetadata("dummyProp")
     timeoutRunBlocking {
       waitUntil("one metadata file remains") {
-        1L == Files.list(localSchemaService.localModelPath).use { it.count() }
+        1L == Files.list(tfLocalSchemaService.localModelPath).use { it.count() }
       }
     }
   }
@@ -192,7 +192,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
       myFixture.configureByText("main.tf", genInspectedMain("dummyProp1"))
       myFixture.doHighlighting() // should not trigger model building
       timeoutRunBlocking {
-        localSchemaService.awaitModelsReady()
+        tfLocalSchemaService.awaitModelsReady()
       }
       myFixture.testHighlighting("main.tf")
       assertTrue("Commands should have been not executed", TfCommandLineServiceMock.instance.requestsToVerify().isEmpty())
@@ -215,7 +215,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
           }
         }
         waitUntil { TfCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
-        localSchemaService.awaitModelsReady()
+        tfLocalSchemaService.awaitModelsReady()
         myFixture.testHighlighting("main.tf")
       }
     }
@@ -229,9 +229,9 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
 
     myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
     timeoutRunBlocking {
-      localSchemaService.awaitModelsReady()
+      tfLocalSchemaService.awaitModelsReady()
       readAction {
-        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java).toList()
+        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TfLocalMetaEntity::class.java).toList()
         Assert.assertEquals(entities.single().lockFile.virtualFile, lockFile.virtualFile)
       }
     }
@@ -242,9 +242,9 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
 
     myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
     timeoutRunBlocking {
-      localSchemaService.awaitModelsReady()
+      tfLocalSchemaService.awaitModelsReady()
       readAction {
-        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TFLocalMetaEntity::class.java)
+        val entities = WorkspaceModel.getInstance(project).currentSnapshot.entities(TfLocalMetaEntity::class.java)
           .filter { it.lockFile.virtualFile != lock.virtualFile }
           .toList()
         assertEmpty(entities)
@@ -265,7 +265,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
     myFixture.doHighlighting()
     timeoutRunBlocking {
       waitUntil { TfCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
-      localSchemaService.awaitModelsReady()
+      tfLocalSchemaService.awaitModelsReady()
     }
     myFixture.testHighlighting("main.tf")
   }
@@ -281,13 +281,13 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
     myFixture.doHighlighting()
     timeoutRunBlocking {
       waitUntil {
-        localSchemaService.awaitModelsReady()
+        tfLocalSchemaService.awaitModelsReady()
         TfCommandLineServiceMock.instance.requestsToVerify().isNotEmpty()
       }
     }
     (0..5).forEach { i ->
       timeoutRunBlocking {
-        localSchemaService.awaitModelsReady()
+        tfLocalSchemaService.awaitModelsReady()
       }
       myFixture.doHighlighting()
     }

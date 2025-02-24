@@ -529,7 +529,7 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
 
   public void testModuleProvidersPropertyCompletion() {
     myFixture.addFileToProject("module/a.tf", "provider aws {}\nprovider aws {alias=\"second\"}");
-    // via PropertyObjectKeyCompletionProvider
+    // via TfPropertyObjectKeyCompletionProvider
     doBasicCompletionTest("""
                             module x {
                               source = "./module/"
@@ -727,7 +727,7 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
 
   public void testModuleProvidersValueCompletion() {
     myFixture.addFileToProject("module/a.tf", "provider aws {}\nprovider aws {alias=\"second\"}");
-    // via PropertyObjectKeyCompletionProvider
+    // via TfPropertyObjectKeyCompletionProvider
     doBasicCompletionTest("""
                             provider aws {}module x {
                               source = "./module/"

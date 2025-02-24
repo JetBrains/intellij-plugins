@@ -11,7 +11,7 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.isTerraformCompatiblePsiFile
 
-class OutputsAndVariablesBlocksUseScopeEnlarger : UseScopeEnlarger() {
+class TfOutputsAndVariablesUseScopeEnlarger : UseScopeEnlarger() {
 
   override fun getAdditionalUseScope(element: PsiElement): SearchScope? {
     if (element !is HCLElement) return null

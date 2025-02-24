@@ -153,7 +153,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       .inFile(TerraformConfigFile)
       .withParent(Object)
       .withSuperParent(2, PropertyOrBlock)
-      .withSuperParent(3, Object), PropertyObjectKeyCompletionProvider)
+      .withSuperParent(3, Object), TfPropertyObjectKeyCompletionProvider)
     // property = { <caret>a="" }
     // property = { "<caret>a"="" }
     // property { <caret>="" }
@@ -165,7 +165,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       .withSuperParent(3, Object)
       .withSuperParent(4, PropertyOrBlock)
       .withSuperParent(5, Object)
-      .withSuperParent(6, Block), PropertyObjectKeyCompletionProvider)
+      .withSuperParent(6, Block), TfPropertyObjectKeyCompletionProvider)
     // property = { a=""  <caret> }
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(TerraformConfigFile)
@@ -173,7 +173,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       .withSuperParent(2, Object)
       .withSuperParent(3, PropertyOrBlock)
       .withSuperParent(4, Object)
-      .withSuperParent(5, Block), PropertyObjectKeyCompletionProvider)
+      .withSuperParent(5, Block), TfPropertyObjectKeyCompletionProvider)
     //endregion
 
     //region .tfvars

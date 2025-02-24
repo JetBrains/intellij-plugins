@@ -13,7 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import org.intellij.terraform.TfUsageTriggerCollector
 import org.intellij.terraform.config.model.loader.TfMetadataLoader
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 
 @Service
 internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
@@ -42,7 +42,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
     @RequiresBackgroundThread(generateAssertion = true)
     fun getModel(psiElement: PsiElement): TypeModel {
       val virtualFile = getContainingFile(psiElement)?.virtualFile ?: return globalModel
-      return psiElement.containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
+      return psiElement.containingFile.project.service<TfLocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
   }
 

@@ -15,8 +15,8 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.psi.*
 
-object PropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCompletionProvider() {
-  private val LOG = Logger.getInstance(PropertyObjectKeyCompletionProvider::class.java)
+object TfPropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCompletionProvider() {
+  private val LOG = Logger.getInstance(TfPropertyObjectKeyCompletionProvider::class.java)
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val position = parameters.position // DQS, SQS or ID
@@ -28,7 +28,7 @@ object PropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCom
         return addPropertyValueCompletions(result, obj)
       }
     }
-    LOG.debug { "TF.PropertyObjectKeyCompletionProvider{position=$position, parent=$parent, obj=$obj}" }
+    LOG.debug { "TF.TfPropertyObjectKeyCompletionProvider{position=$position, parent=$parent, obj=$obj}" }
     when (obj.parent) {
       is HCLProperty -> {
         return addPropertyCompletions(parameters, result, obj)
@@ -49,7 +49,7 @@ object PropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCom
   private fun addPropertyValueCompletions(result: CompletionResultSet, obj: HCLObject) {
     val inner = obj.parent ?: return
     val block = inner.getParent(HCLBlock::class.java, true) ?: return
-    LOG.debug { "TF.PropertyObjectKeyCompletionProvider.InSomethingValue{block=$block, inner=$inner}" }
+    LOG.debug { "TF.TfPropertyObjectKeyCompletionProvider.InSomethingValue{block=$block, inner=$inner}" }
 
     val name: String = getLeftmostName(inner) ?: return
     val type = block.getNameElementUnquoted(0)
@@ -65,7 +65,7 @@ object PropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCom
   private fun addPropertyCompletions(parameters: CompletionParameters, result: CompletionResultSet, obj: HCLObject) {
     val property = obj.parent as? HCLProperty ?: return
     val block = PsiTreeUtil.getParentOfType(property, HCLBlock::class.java) ?: return
-    LOG.debug { "TF.PropertyObjectKeyCompletionProvider.Property{block=$block, inner-property=$property}" }
+    LOG.debug { "TF.TfPropertyObjectKeyCompletionProvider.Property{block=$block, inner-property=$property}" }
 
     val type = block.getNameElementUnquoted(0)
     // TODO: Replace with 'ReferenceHint'
@@ -101,7 +101,7 @@ object PropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCom
   private fun addInnerBlockCompletions(parameters: CompletionParameters, result: CompletionResultSet, obj: HCLObject) {
     val innerBlock = PsiTreeUtil.getParentOfType(obj, HCLBlock::class.java) ?: return
     val block = PsiTreeUtil.getParentOfType(innerBlock, HCLBlock::class.java, true) ?: return
-    LOG.debug { "TF.PropertyObjectKeyCompletionProvider.Block{block=$block, inner-block=$block}" }
+    LOG.debug { "TF.TfPropertyObjectKeyCompletionProvider.Block{block=$block, inner-block=$block}" }
 
     val type = block.getNameElementUnquoted(0)
     // TODO: Replace with 'ReferenceHint'

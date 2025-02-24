@@ -100,7 +100,7 @@ internal fun getBinaryName(executableName: String): String {
     executableName
 }
 
-internal fun installTFTool(
+internal fun installTfTool(
   project: Project,
   resultHandler: (InstallationResult) -> Unit = {},
   progressIndicator: ProgressIndicator? = null,

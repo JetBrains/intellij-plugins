@@ -14,12 +14,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.*
 import org.intellij.terraform.config.TfConstants
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.runtime.ToolPathDetector
+import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
 import kotlin.io.path.Path
@@ -54,7 +54,7 @@ internal class TfActionService(private val project: Project, private val corouti
     val toolType = getApplicableToolType(dirFile)
 
     withBackgroundProgress(project, title) {
-      if (!ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
+      if (!TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)) {
         showIncorrectPathNotification(project, toolType)
         return@withBackgroundProgress
       }
@@ -68,8 +68,8 @@ internal class TfActionService(private val project: Project, private val corouti
         return@withBackgroundProgress
       }
       try {
-        val localSchemaService = project.serviceAsync<LocalSchemaService>()
-        localSchemaService.scheduleModelRebuild(setOf(dirFile), explicitlyAllowRunningProcess = true).let { result ->
+        val tfLocalSchemaService = project.serviceAsync<TfLocalSchemaService>()
+        tfLocalSchemaService.scheduleModelRebuild(setOf(dirFile), explicitlyAllowRunningProcess = true).let { result ->
           coroutineScope.launch {
             try {
               result.getValue()
@@ -83,7 +83,7 @@ internal class TfActionService(private val project: Project, private val corouti
           }
         }
         if (notifyOnSuccess) {
-          localSchemaService.awaitModelsReady()
+          tfLocalSchemaService.awaitModelsReady()
           TfConstants.getNotificationGroup()
             .createNotification(
               title,
