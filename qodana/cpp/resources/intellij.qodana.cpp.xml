@@ -10,4 +10,7 @@
   <extensions defaultExtensionNs="org.intellij.qodana">
     <externalToolsConfigurationProvider  implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
   </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey defaultValue="false" description="Force printing of CMake configuration output" key="qd.force.cmake.output.enabled"/>
+  </extensions>
 </idea-plugin>
