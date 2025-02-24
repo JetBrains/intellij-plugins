@@ -415,4 +415,16 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
       <label>{{ 'Version:' // ' }}</label>
     """.trimIndent())
   }
+
+  fun testInterpolatedHrefUrl() {
+    doTestHtml("""
+      <main class="main">
+        <a href="{{ test + 'https://' }}">{{ test + 'foo' }}</a>
+
+        @if (playerSummary !== undefined) {
+          {{ test + 'foo' + test }}
+        }
+      </main>
+    """.trimIndent())
+  }
 }

@@ -1,0 +1,89 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:main
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('main')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('class')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('main')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:a
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('a')
+        PsiWhiteSpace(' ')
+        Angular2HtmlPropertyBinding <href,PROPERTY>
+          XmlToken:XML_NAME('href')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            PsiElement(NG:INTERPOLATION_START)('{{')
+            ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+              PsiWhiteSpace(' ')
+              Angular2Interpolation
+                JSBinaryExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('test')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)(''https://'')
+              PsiWhiteSpace(' ')
+            PsiElement(NG:INTERPOLATION_END)('}}')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        XmlToken:XML_TAG_END('>')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          PsiWhiteSpace(' ')
+          Angular2Interpolation
+            JSBinaryExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('test')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''foo'')
+          PsiWhiteSpace(' ')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('a')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n\n  ')
+        XmlToken:XML_DATA_CHARACTERS('@if')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('(playerSummary')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('!==')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('undefined)')
+        PsiWhiteSpace(' ')
+      PsiErrorElement:Unterminated expansion form
+        PsiElement(NG:EXPANSION_FORM_START)('{')
+      PsiWhiteSpace('\n    ')
+      XmlText
+        PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
+      PsiErrorElement:Unterminated expansion form
+        PsiElement(NG:EXPANSION_FORM_START)('{')
+      PsiWhiteSpace(' ')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('test + 'foo' + test')
+        PsiWhiteSpace(' ')
+        PsiElement(NG:EXPANSION_FORM_END)('}')
+        PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
+        PsiWhiteSpace('\n  ')
+        PsiElement(NG:EXPANSION_FORM_END)('}')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('main')
+      XmlToken:XML_TAG_END('>')
