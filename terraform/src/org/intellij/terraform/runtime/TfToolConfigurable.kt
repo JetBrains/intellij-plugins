@@ -22,7 +22,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.FailedInstallation
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.getToolVersion
-import org.intellij.terraform.install.installTFTool
+import org.intellij.terraform.install.installTfTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import kotlin.io.path.Path
 
@@ -67,10 +67,10 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
       emptyText.text = type.getBinaryName()
     }.trimmedTextValidation(
       validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
-        !ToolPathDetector.getInstance(project).isExecutable(Path(filePath))
+        !TfToolPathDetector.getInstance(project).isExecutable(Path(filePath))
       }
     ).align(AlignX.FILL)
-    val testButton = testToolButton(type, project.service<ToolPathDetector>(), parentDisposable, executorField.component)
+    val testButton = testToolButton(type, project.service<TfToolPathDetector>(), parentDisposable, executorField.component)
     row {
       cell(testButton)
     }
@@ -81,7 +81,7 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
 
   private fun testToolButton(
     type: TfToolType,
-    pathDetector: ToolPathDetector,
+    pathDetector: TfToolPathDetector,
     parentDisposable: Disposable?,
     executorPathField: TextFieldWithBrowseButton?,
   ) = ToolExecutableTestButtonComponent(
@@ -90,7 +90,7 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
     executorPathField,
     { resultHandler ->
       try {
-        installTFTool(project, resultHandler, EmptyProgressIndicator(), type)
+        installTfTool(project, resultHandler, EmptyProgressIndicator(), type)
       }
       catch (ex: Exception) {
         fileLogger().warnWithDebug("Failed to install ${type.displayName}", ex)

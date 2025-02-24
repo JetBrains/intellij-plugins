@@ -5,7 +5,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
 import com.intellij.psi.PsiElement
 
-internal class TfPsiDocTargetProvider: BaseTfDocumentationProvider(), PsiDocumentationTargetProvider {
+internal class TfPsiDocTargetProvider : TfBaseDocumentationProvider(), PsiDocumentationTargetProvider {
 
   override fun documentationTarget(element: PsiElement, originalElement: PsiElement?): DocumentationTarget? {
     return computeDocumentationTarget(element)

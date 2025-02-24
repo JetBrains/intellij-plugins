@@ -34,7 +34,7 @@ import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
-import org.intellij.terraform.runtime.ToolPathDetector
+import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.cancellation.CancellationException
@@ -83,7 +83,7 @@ internal abstract class TfExternalToolsAction : DumbAwareAction() {
       try {
         val toolType = getApplicableToolType(file)
         val isToolConfigured =
-          withBackgroundProgress(project, title) { ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false) }
+          withBackgroundProgress(project, title) { TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false) }
         if (!isToolConfigured) {
           showIncorrectPathNotification(project, toolType)
           return@launch

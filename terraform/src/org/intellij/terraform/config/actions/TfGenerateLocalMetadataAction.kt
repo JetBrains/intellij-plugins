@@ -13,16 +13,16 @@ import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.terraform.config.TfConstants
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
 
 internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
 
   override suspend fun invoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
-    val localSchemaService = project.serviceAsync<LocalSchemaService>()
+    val tfLocalSchemaService = project.serviceAsync<TfLocalSchemaService>()
     val anyFileInModuleDir = virtualFiles.firstOrNull()
-    val lockFile = anyFileInModuleDir?.let { localSchemaService.findLockFile(it) }
+    val lockFile = anyFileInModuleDir?.let { tfLocalSchemaService.findLockFile(it) }
     val moduleDir = anyFileInModuleDir?.let { if (anyFileInModuleDir.isDirectory) anyFileInModuleDir else anyFileInModuleDir.parent }
     if (lockFile == null) {
       TfConstants.getNotificationGroup()
@@ -33,8 +33,8 @@ internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
         ).addAction(InitFolderAction(moduleDir)).notify(project)
       return
     }
-    localSchemaService.clearLocalModel(lockFile)
-    localSchemaService.scheduleModelRebuild(setOf(lockFile), explicitlyAllowRunningProcess = true).getValue()
+    tfLocalSchemaService.clearLocalModel(lockFile)
+    tfLocalSchemaService.scheduleModelRebuild(setOf(lockFile), explicitlyAllowRunningProcess = true).getValue()
     TfConstants.getNotificationGroup()
       .createNotification(
         title,

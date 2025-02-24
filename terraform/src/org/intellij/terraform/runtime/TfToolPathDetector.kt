@@ -21,10 +21,10 @@ import org.intellij.terraform.install.TfToolType
 import java.nio.file.Path
 import kotlin.io.path.*
 
-internal interface ToolPathDetector {
+internal interface TfToolPathDetector {
 
   companion object {
-    fun getInstance(project: Project): ToolPathDetector = project.service<ToolPathDetector>()
+    fun getInstance(project: Project): TfToolPathDetector = project.service<TfToolPathDetector>()
   }
 
   suspend fun detectAndVerifyTool(toolType: TfToolType, overrideExistingValue: Boolean): Boolean {
@@ -38,7 +38,7 @@ internal interface ToolPathDetector {
   suspend fun detect(path: String): String?
 }
 
-internal class ToolPathDetectorImpl(val project: Project, val coroutineScope: CoroutineScope) : ToolPathDetector {
+internal class TfToolPathDetectorImpl(val project: Project, val coroutineScope: CoroutineScope) : TfToolPathDetector {
 
   override suspend fun detectAndVerifyTool(toolType: TfToolType, overwriteExistingSettings: Boolean): Boolean {
     if (overwriteExistingSettings || toolType.getToolSettings(project).toolPath.isBlank()) {

@@ -6,7 +6,7 @@ import com.intellij.platform.backend.documentation.DocumentationTargetProvider
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.hcl.HCLLanguage
 
-internal class TfDocTargetProvider: BaseTfDocumentationProvider(), DocumentationTargetProvider {
+internal class TfDocTargetProvider : TfBaseDocumentationProvider(), DocumentationTargetProvider {
 
   override fun documentationTargets(file: PsiFile, offset: Int): List<DocumentationTarget> {
     if (!file.language.`is`(HCLLanguage)) return mutableListOf()

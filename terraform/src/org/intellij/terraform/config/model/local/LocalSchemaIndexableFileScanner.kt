@@ -15,9 +15,9 @@ private class LocalSchemaIndexableFileScanner : IndexableFileScanner {
   override fun startSession(project: Project): IndexableFileScanner.ScanSession {
     return IndexableFileScanner.ScanSession {
       IndexableFileScanner.IndexableFileVisitor { fileOrDir ->
-        if (buildLocalMetadataAutomatically && isTFLock(fileOrDir)) {
-          logger<LocalSchemaService>().info("Scanning local schema: $fileOrDir")
-          project.service<LocalSchemaService>().scheduleModelRebuild(setOf(fileOrDir))
+        if (buildLocalMetadataAutomatically && isTfLock(fileOrDir)) {
+          logger<TfLocalSchemaService>().info("Scanning local schema: $fileOrDir")
+          project.service<TfLocalSchemaService>().scheduleModelRebuild(setOf(fileOrDir))
         }
       }
     }
@@ -27,12 +27,12 @@ private class LocalSchemaIndexableFileScanner : IndexableFileScanner {
 private class LocalSchemaVfsListener : AsyncFileListener {
   override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
     if (!buildLocalMetadataAutomatically) return null
-    val lockFiles = events.filter { isTFLock(it.file) }
+    val lockFiles = events.filter { isTfLock(it.file) }
     if (lockFiles.isEmpty()) return null
-    logger<LocalSchemaService>().info("LocalSchemaVfsListener: $events")
+    logger<TfLocalSchemaService>().info("LocalSchemaVfsListener: $events")
     return object : AsyncFileListener.ChangeApplier {
       override fun afterVfsChange() {
-        logger<LocalSchemaService>().info("LocalSchemaVfsListener after: $events")
+        logger<TfLocalSchemaService>().info("LocalSchemaVfsListener after: $events")
 
         val files = lockFiles.mapNotNullTo(mutableSetOf()) { it.file }
         val projectFiles = mutableMapOf<Project, MutableSet<VirtualFile>>()
@@ -50,7 +50,7 @@ private class LocalSchemaVfsListener : AsyncFileListener {
         }
 
         for ((project, pfiles) in projectFiles) {
-          project.service<LocalSchemaService>().scheduleModelRebuild(pfiles + lostFiles)
+          project.service<TfLocalSchemaService>().scheduleModelRebuild(pfiles + lostFiles)
         }
 
       }

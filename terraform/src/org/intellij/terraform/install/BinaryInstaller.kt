@@ -457,7 +457,7 @@ internal class InstallTfAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    installTFTool(project, type = TfToolType.TERRAFORM, resultHandler = { result -> handleInstall(project, result) })
+    installTfTool(project, type = TfToolType.TERRAFORM, resultHandler = { result -> handleInstall(project, result) })
   }
 
   private fun handleInstall(project: Project, result: InstallationResult) {

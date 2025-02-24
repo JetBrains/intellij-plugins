@@ -7,7 +7,7 @@ import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.TfTestUtils
 
-internal class AddRequiredProvidersBlockTest: BasePlatformTestCase() {
+internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
 
   override fun runInDispatchThread(): Boolean {
     return false

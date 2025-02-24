@@ -19,7 +19,7 @@ import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.runtime.ToolPathDetector
+import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
@@ -47,7 +47,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
         try {
 
           val isToolConfigured = runBlockingCancellable {
-              ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
+              TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
           }
 
           if (!isToolConfigured) {

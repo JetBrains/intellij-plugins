@@ -29,7 +29,7 @@ import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -194,7 +194,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
 
     val manifestRoots = terraformDir?.let { findRootsFromManifest(context, it) } ?: emptyList()
     val exactModuleRoot = findClosestRoot(manifestRoots, currentFile)
-                          ?: context.project.service<LocalSchemaService>().findLockFile(currentFile)?.parent
+                          ?: context.project.service<TfLocalSchemaService>().findLockFile(currentFile)?.parent
 
     val dirToSearchIn = exactModuleRoot ?: currentFileDir ?: return null
     val otherModuleRoots = manifestRoots.filterNot { VfsUtil.isAncestor(it, dirToSearchIn, false) }

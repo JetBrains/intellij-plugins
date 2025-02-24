@@ -7,7 +7,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
 
@@ -40,7 +40,7 @@ internal open class TfInitAction(private val notifyOnSuccess: Boolean = true) : 
     }
 
     fun isInitRequired(project: Project, virtualFile: VirtualFile): Boolean {
-      val lock = project.service<LocalSchemaService>().findLockFile(virtualFile) ?: return true
+      val lock = project.service<TfLocalSchemaService>().findLockFile(virtualFile) ?: return true
       val terraformDirectory = lock.parent.findChild(".terraform") ?: return true
       return !terraformDirectory.isDirectory || terraformDirectory.children.isEmpty()
     }

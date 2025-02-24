@@ -17,7 +17,7 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 
-internal abstract class BaseTfDocumentationProvider {
+internal abstract class TfBaseDocumentationProvider {
 
   protected fun computeDocumentationTarget(element: PsiElement): DocumentationTarget? {
     if (element !is HCLElement) return null

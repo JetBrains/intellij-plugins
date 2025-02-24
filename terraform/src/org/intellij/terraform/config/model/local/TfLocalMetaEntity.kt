@@ -8,7 +8,7 @@ import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
-interface TFLocalMetaEntity : WorkspaceEntity {
+interface TfLocalMetaEntity : WorkspaceEntity {
 
   val timeStampLow: Int
 
@@ -27,7 +27,7 @@ interface TFLocalMetaEntity : WorkspaceEntity {
 
   //region generated code
   @GeneratedCodeApiVersion(3)
-  interface Builder : WorkspaceEntity.Builder<TFLocalMetaEntity> {
+  interface Builder : WorkspaceEntity.Builder<TfLocalMetaEntity> {
     override var entitySource: EntitySource
     var timeStampLow: Int
     var timeStampHigh: Int
@@ -35,7 +35,7 @@ interface TFLocalMetaEntity : WorkspaceEntity {
     var lockFile: VirtualFileUrl
   }
 
-  companion object : EntityType<TFLocalMetaEntity, Builder>() {
+  companion object : EntityType<TfLocalMetaEntity, Builder>() {
     @JvmOverloads
     @JvmStatic
     @JvmName("create")
@@ -63,9 +63,9 @@ interface TFLocalMetaEntity : WorkspaceEntity {
 
 //region generated code
 fun MutableEntityStorage.modifyTFLocalMetaEntity(
-  entity: TFLocalMetaEntity,
-  modification: TFLocalMetaEntity.Builder.() -> Unit,
-): TFLocalMetaEntity {
-  return modifyEntity(TFLocalMetaEntity.Builder::class.java, entity, modification)
+  entity: TfLocalMetaEntity,
+  modification: TfLocalMetaEntity.Builder.() -> Unit,
+): TfLocalMetaEntity {
+  return modifyEntity(TfLocalMetaEntity.Builder::class.java, entity, modification)
 }
 //endregion

@@ -72,14 +72,14 @@ internal abstract class TfToolsRunConfigurationBase(
   }
 
   private fun checkExecutableAndThrow() {
-    if (!ToolPathDetector.getInstance(this.project).isExecutable(Path(toolPath))) {
+    if (!TfToolPathDetector.getInstance(this.project).isExecutable(Path(toolPath))) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
         CommonBundle.getErrorTitle()
       )
       exception.setQuickFix(Runnable {
         runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-          ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, true)
+          TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, true)
         }
       })
       throw exception
@@ -159,7 +159,7 @@ internal class TfToolCommandLineState(
 
   override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
     val isToolDetected = runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
-      ToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
+      TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
     }
     if (!isToolDetected) {
       showIncorrectPathNotification(project, toolType)
