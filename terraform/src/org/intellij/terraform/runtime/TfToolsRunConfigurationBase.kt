@@ -93,7 +93,8 @@ internal abstract class TfToolsRunConfigurationBase(
       throw exception
     }
     //To avoid compilation error, it cannot detect isNullOrEmpty method and derive nullability
-    val workDirPath = workingDirectory ?.let {Path(it) } ?: throw RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
+    val workDirPath = workingDirectory?.let { Path(it) }
+                      ?: throw RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
     if (!workDirPath.exists() || !workDirPath.isDirectory()) {
       val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.working.directory.doesnt.exist", workingDirectory))
       exception.setQuickFix(Runnable { workingDirectory = project.basePath })
