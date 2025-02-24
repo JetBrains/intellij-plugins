@@ -13,6 +13,12 @@ jvm_resources(
   strip_prefix = "compatibilityResources"
 )
 
+jvm_resources(
+  name = "postcss_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
 jvm_library(
   name = "postcss",
   module_name = "intellij.postcss",
@@ -73,6 +79,7 @@ jvm_library(
   runtime_deps = [
     ":postcss_resources",
     ":postcss_resources_1",
+    ":postcss_test_resources",
   ]
 )
 

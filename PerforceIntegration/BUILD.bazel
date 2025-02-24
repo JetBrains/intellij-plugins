@@ -37,7 +37,13 @@ jvm_library(
 
 ### auto-generated section `build intellij.vcs.perforce.tests` start
 load("@rules_java//java:defs.bzl", "java_library")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+
+jvm_resources(
+  name = "vcs-perforce-tests_test_resources",
+  files = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
 
 java_library(
   name = "vcs-perforce-tests",
@@ -64,7 +70,8 @@ jvm_library(
     "@community//platform/vcs-tests:vcs-testFramework",
     "@community//platform/platform-util-io:ide-util-io",
     "@lib//:mockito",
-  ]
+  ],
+  runtime_deps = [":vcs-perforce-tests_test_resources"]
 )
 
 jvm_test(

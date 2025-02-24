@@ -16,6 +16,12 @@ jvm_resources(
   strip_prefix = "core/resources"
 )
 
+jvm_resources(
+  name = "qodana_test_resources",
+  files = glob(["core/test-data/**/*"]),
+  strip_prefix = "core/test-data"
+)
+
 jvm_library(
   name = "qodana",
   module_name = "intellij.qodana",
@@ -193,7 +199,10 @@ jvm_library(
     "@community//platform/platform-impl/ui:ide-ui",
     "@community//platform/statistics/testFramework",
   ],
-  runtime_deps = [":qodana_resources"]
+  runtime_deps = [
+    ":qodana_resources",
+    ":qodana_test_resources",
+  ]
 )
 
 jvm_test(

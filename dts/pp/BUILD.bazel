@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "pp_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
 jvm_library(
   name = "pp",
   module_name = "intellij.dts.pp",
@@ -43,7 +49,10 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
   ],
-  runtime_deps = [":pp_resources"]
+  runtime_deps = [
+    ":pp_resources",
+    ":pp_test_resources",
+  ]
 )
 
 jvm_test(

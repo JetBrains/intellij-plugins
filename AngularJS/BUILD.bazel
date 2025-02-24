@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "angularJS_test_resources",
+  files = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
 jvm_library(
   name = "angularJS",
   module_name = "intellij.angularJS",
@@ -124,7 +130,10 @@ jvm_library(
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "//webcore/impl:webide-impl",
   ],
-  runtime_deps = [":angularJS_resources"]
+  runtime_deps = [
+    ":angularJS_resources",
+    ":angularJS_test_resources",
+  ]
 )
 
 jvm_test(

@@ -13,6 +13,12 @@ jvm_resources(
   strip_prefix = "gen-resources"
 )
 
+jvm_resources(
+  name = "prisma_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
 jvm_library(
   name = "prisma",
   module_name = "intellij.prisma",
@@ -93,6 +99,7 @@ jvm_library(
   runtime_deps = [
     ":prisma_resources",
     ":prisma_resources_1",
+    ":prisma_test_resources",
   ]
 )
 

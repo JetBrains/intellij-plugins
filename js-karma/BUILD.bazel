@@ -13,6 +13,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "karma_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
 jvm_library(
   name = "karma",
   module_name = "intellij.karma",
@@ -92,6 +98,7 @@ jvm_library(
   runtime_deps = [
     ":karma_resources",
     ":karma_resources_1",
+    ":karma_test_resources",
   ]
 )
 

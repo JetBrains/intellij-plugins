@@ -1,6 +1,12 @@
 ### auto-generated section `build intellij.vuejs.tests` start
 load("@rules_java//java:defs.bzl", "java_library")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+
+jvm_resources(
+  name = "tests_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
 
 java_library(
   name = "tests",
@@ -58,7 +64,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//platform/webSymbols:webSymbols-testFramework",
     "@community//xml/testFramework",
-  ]
+  ],
+  runtime_deps = [":tests_test_resources"]
 )
 
 jvm_test(

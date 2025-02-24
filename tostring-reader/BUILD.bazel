@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "tsr_test_resources",
+  files = glob(["test-resources/**/*"]),
+  strip_prefix = "test-resources"
+)
+
 jvm_library(
   name = "tsr",
   module_name = "intellij.tsr",
@@ -39,6 +45,9 @@ jvm_test(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl",
   ],
-  runtime_deps = [":tsr_resources"]
+  runtime_deps = [
+    ":tsr_resources",
+    ":tsr_test_resources",
+  ]
 )
 ### auto-generated section `build intellij.tsr` end

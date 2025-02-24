@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "clion-embedded-platformio_test_resources",
+  files = glob(["test-resources/**/*"]),
+  strip_prefix = "test-resources"
+)
+
 jvm_library(
   name = "clion-embedded-platformio",
   module_name = "intellij.clion.embedded.platformio",
@@ -82,7 +88,10 @@ jvm_library(
     "@community//platform/ui.jcef:ui-jcef",
     "//CIDR/clion-testFramework",
   ],
-  runtime_deps = [":clion-embedded-platformio_resources"]
+  runtime_deps = [
+    ":clion-embedded-platformio_resources",
+    ":clion-embedded-platformio_test_resources",
+  ]
 )
 
 jvm_test(

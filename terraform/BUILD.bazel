@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "res"
 )
 
+jvm_resources(
+  name = "terraform_test_resources",
+  files = glob(["test-data/**/*"]),
+  strip_prefix = "test-data"
+)
+
 jvm_library(
   name = "terraform",
   module_name = "intellij.terraform",
@@ -102,7 +108,10 @@ jvm_library(
     "@community//platform/eel-provider",
     "@community//platform/util/progress",
   ],
-  runtime_deps = [":terraform_resources"]
+  runtime_deps = [
+    ":terraform_resources",
+    ":terraform_test_resources",
+  ]
 )
 
 jvm_test(

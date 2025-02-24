@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "dts_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
 jvm_library(
   name = "dts",
   module_name = "intellij.dts",
@@ -59,6 +65,9 @@ jvm_test(
     "@lib//:jackson-databind",
     "@lib//:jackson-dataformat-yaml",
   ],
-  runtime_deps = [":dts_resources"]
+  runtime_deps = [
+    ":dts_resources",
+    ":dts_test_resources",
+  ]
 )
 ### auto-generated section `build intellij.dts` end

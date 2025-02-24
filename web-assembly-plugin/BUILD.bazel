@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "src/main/resources"
 )
 
+jvm_resources(
+  name = "webassembly_test_resources",
+  files = glob(["src/test/resources/**/*"]),
+  strip_prefix = "src/test/resources"
+)
+
 jvm_library(
   name = "webassembly",
   module_name = "intellij.webassembly",
@@ -40,7 +46,10 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
   ],
-  runtime_deps = [":webassembly_resources"]
+  runtime_deps = [
+    ":webassembly_resources",
+    ":webassembly_test_resources",
+  ]
 )
 
 jvm_test(

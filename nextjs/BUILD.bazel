@@ -7,6 +7,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "nextjs_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
 jvm_library(
   name = "nextjs",
   module_name = "intellij.nextjs",
@@ -60,7 +66,10 @@ jvm_library(
     "@community//platform/webSymbols",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
   ],
-  runtime_deps = [":nextjs_resources"]
+  runtime_deps = [
+    ":nextjs_resources",
+    ":nextjs_test_resources",
+  ]
 )
 
 jvm_test(

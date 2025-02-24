@@ -13,6 +13,18 @@ jvm_resources(
   strip_prefix = "gen-resources"
 )
 
+jvm_resources(
+  name = "angular_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
+jvm_resources(
+  name = "angular_test_resources_1",
+  files = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
 jvm_library(
   name = "angular",
   module_name = "intellij.angular",
@@ -141,6 +153,8 @@ jvm_library(
   runtime_deps = [
     ":angular_resources",
     ":angular_resources_1",
+    ":angular_test_resources",
+    ":angular_test_resources_1",
   ]
 )
 

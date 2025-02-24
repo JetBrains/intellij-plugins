@@ -13,6 +13,12 @@ jvm_resources(
   strip_prefix = "resources"
 )
 
+jvm_resources(
+  name = "jade_test_resources",
+  files = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
 jvm_library(
   name = "jade",
   module_name = "intellij.jade",
@@ -97,6 +103,7 @@ jvm_library(
   runtime_deps = [
     ":jade_resources",
     ":jade_resources_1",
+    ":jade_test_resources",
   ]
 )
 
