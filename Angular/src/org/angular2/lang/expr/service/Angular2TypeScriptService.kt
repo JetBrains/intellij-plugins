@@ -37,6 +37,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
@@ -97,11 +99,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.getQuickInfoAt(usageElement, originalFile)
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
-  val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
-                 ?.let { (transpiledDirectiveFile, topLevelFile) -> translateNamesInErrors(errors, transpiledDirectiveFile, topLevelFile) }
-               ?: errors
-  return result.filter { Angular2LanguageServiceErrorFilter.accept(file, it) }
-}
+    val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
+                   ?.let { (transpiledDirectiveFile, topLevelFile) -> translateNamesInErrors(errors, transpiledDirectiveFile, topLevelFile) }
+                 ?: errors
+    return result.filter { Angular2LanguageServiceErrorFilter.accept(file, it) }
+  }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> =
     super.getServiceFixes(file, element, result)
@@ -124,8 +126,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> = withServiceTraceSpan("repositionInlayHints") {
     val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@withServiceTraceSpan hints
-    return@withServiceTraceSpan hints.map {
-      repositionInlayHint(file, document, it)
+    return@withServiceTraceSpan hints.mapNotNull {
+      transformInlayHints(file, document, it)
     }.toTypedArray()
   }
 
@@ -198,22 +200,32 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
-  private fun repositionInlayHint(file: PsiFile, document: Document, hint: InlayHintItem): InlayHintItem {
-    if (hint.kind != InlayHintKind.Type) return hint
+  private fun transformInlayHints(file: PsiFile, document: Document, hint: InlayHintItem): InlayHintItem? {
+    if (hint.kind.let { it != InlayHintKind.Type && it != InlayHintKind.Parameter }) return hint
     val line = hint.position?.line ?: return hint
     val column = hint.position?.offset ?: return hint
     val offset = document.getLineStartOffset(line - 1) + column - 1
     val injectedLanguageManager = InjectedLanguageManager.getInstance(file.project)
     val injectedElement = injectedLanguageManager.findInjectedElementAt(file, offset)
-    val textRange = if (injectedElement != null)
-      injectedElement.takeIf(::acceptElementToRepositionHint)?.textRange?.let {
-        injectedLanguageManager.injectedToHost(injectedElement, it)
+    when (hint.kind) {
+      InlayHintKind.Type -> {
+        val textRange = if (injectedElement != null)
+          injectedElement.takeIf(::acceptElementToRepositionHint)?.textRange?.let {
+            injectedLanguageManager.injectedToHost(injectedElement, it)
+          }
+        else
+          file.findElementAt(offset)?.takeIf(::acceptElementToRepositionHint)?.textRange
+        if (textRange == null || textRange.endOffset == offset || textRange.startOffset == offset) return hint
+        // Reposition hint
+        hint.position!!.offset += textRange.endOffset - offset
+        return hint
       }
-    else
-      file.findElementAt(offset)?.takeIf(::acceptElementToRepositionHint)?.textRange
-    if (textRange == null || textRange.endOffset == offset || textRange.startOffset == offset) return hint
-    hint.position!!.offset += textRange.endOffset - offset
-    return hint
+      InlayHintKind.Parameter -> {
+        val element = injectedElement ?: file.findElementAt(offset)
+        return hint.takeIf { element !is XmlAttribute && element?.parent !is XmlAttribute }
+      }
+      else -> return hint
+    }
   }
 
   private fun acceptElementToRepositionHint(element: PsiElement): Boolean =
