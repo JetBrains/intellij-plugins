@@ -75,6 +75,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@lib//:commons-text",
     "@community//plugins/markdown/core:markdown",
+    "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],
   runtime_deps = [
     ":vuejs_resources",
