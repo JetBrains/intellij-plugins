@@ -1,7 +1,7 @@
 import {Component} from "@angular/core";
 import {NgForOf, NgIf} from "@angular/common";
 
-@Component({
+@Component(<hint text="obj(59120,59123):"/>{
   selector: 'app-test',
   standalone: true,
   imports: [NgIf, NgForOf],

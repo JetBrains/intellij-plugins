@@ -156,7 +156,7 @@ export class AngularSourceMap implements Mapper {
 class BinarySearchStorage<Data> {
 
   private readonly offsets: number[];
-  private readonly mappings: Set<Mapping<Data>>[];
+  private readonly mappings: Mapping<Data>[][];
 
   constructor(originalMappings: Mapping<Data>[], private readonly key: CodeRangeKey) {
     const offsetsSet = new Set<number>();
@@ -168,19 +168,30 @@ class BinarySearchStorage<Data> {
     }
 
     const offsets = [...offsetsSet].sort((a, b) => a - b);
-    const mappings = offsets.map(() => new Set<Mapping<Data>>());
+    const mappings: [number, Set<Mapping<Data>>][] = offsets.map(offset => [offset, new Set<Mapping<Data>>()]);
 
     for (const mapping of originalMappings) {
       for (let i = 0; i < mapping[key].length; i++) {
         const startIndex = binarySearch(offsets, mapping[key][i]).match!;
         const endIndex = binarySearch(offsets, mapping[key][i] + getLengths(mapping, key)[i]).match!;
         for (let i = startIndex; i <= endIndex; i++) {
-          mappings[i].add(mapping);
+          mappings[i][1].add(mapping);
         }
       }
     }
     this.offsets = offsets
-    this.mappings = mappings
+    this.mappings = mappings.map(([offset, mapping]) => [...mapping].sort((a, b) => {
+      // Closest range to the offset first
+      let aOffset = offset - a[key][0];
+      let bOffset = offset - b[key][0];
+      if (aOffset === bOffset) {
+        // Then shortest range
+        let aLength = getLengths(a, key)[0];
+        let bLength = getLengths(b, key)[0];
+        return aLength - bLength;
+      }
+      return aOffset - bOffset;
+    }))
   }
 
   * findMatchingMappingIndexes(offset: number, filter: ((data: Data) => boolean) | undefined): Generator<[Mapping<Data>, number]> {
