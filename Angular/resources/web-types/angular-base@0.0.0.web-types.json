@@ -505,7 +505,9 @@
                   "/css/length-units",
                   "/css/time-units",
                   "/css/angle-units",
-                  "/css/resolution-units"
+                  "/css/resolution-units",
+                  "/css/frequency-units",
+                  "/css/flex-units"
                 ],
                 "priority": "lowest",
                 "required": false,
