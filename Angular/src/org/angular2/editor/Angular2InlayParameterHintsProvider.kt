@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSCallLikeExpression
 import com.intellij.lang.javascript.psi.JSParameterItem
 import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.html.HtmlDocumentImpl
@@ -43,10 +42,14 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
   }
 
   override fun getParameterHints(element: PsiElement): List<InlayInfo> {
-    return if (element is JSCallExpression && isAllArgsSettingsPreview(element)) {
-      getAllArgsSettingsPreviewInfo(element)
+    if (element is JSCallExpression && isSettingsPreview(element)) {
+      if (element.text == "foo('phone', 22)")
+        return createFixedHints(element, "a", "b")
+      if (element.text == "foo(phone, 22)")
+        return createFixedHints(element, "a")
     }
-    else super.getParameterHints(element)
+
+    return super.getParameterHints(element)
   }
 
   object Options {
@@ -58,7 +61,7 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
       "angular.show.names.for.pipes", Angular2Bundle.messagePointer("angular.inlay.params.option.pipe.arguments"), true)
   }
 
-  private fun isAllArgsSettingsPreview(element: JSCallExpression): Boolean {
+  private fun isSettingsPreview(element: JSCallExpression): Boolean {
     // fast path for normal case
     var parent = element.parent
     if (parent !is Angular2Interpolation) return false
@@ -71,17 +74,6 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
     parent = parent.getParent()
     if (parent !is HtmlDocumentImpl) return false
     parent = parent.getParent()
-    return if (parent !is HtmlFileImpl) false else "dummy" == parent.name && element.text == "foo(phone, 22)"
-  }
-
-  private fun getAllArgsSettingsPreviewInfo(callExpression: JSCallExpression): List<InlayInfo> {
-    val arguments = callExpression.arguments
-    if (arguments.size != 2) {
-      Logger.getInstance(Angular2InlayParameterHintsProvider::class.java).error("Unexpected call expression")
-      return emptyList()
-    }
-    return listOf(InlayInfo("a", arguments[0].textOffset),
-                  InlayInfo("b", arguments[1].textOffset))
-
+    return if (parent.isPhysical || parent !is HtmlFileImpl) false else "dummy" == parent.name
   }
 }
