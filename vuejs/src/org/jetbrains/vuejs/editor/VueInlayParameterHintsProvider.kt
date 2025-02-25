@@ -28,8 +28,10 @@ class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
   }
 
   override fun shouldInlineParameterName(argument: PsiElement, parameter: JSParameterItem, callExpression: JSCallLikeExpression): Boolean =
-    Options.NAMES_FOR_FILTERS.get() && callExpression is VueJSFilterExpression
-        || super.shouldInlineParameterName(argument, parameter, callExpression)
+    if (callExpression is VueJSFilterExpression)
+      Options.NAMES_FOR_FILTERS.get()
+    else
+      super.shouldInlineParameterName(argument, parameter, callExpression)
 
   override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
     return if (expression is VueJSFilterExpression && i == 0) true

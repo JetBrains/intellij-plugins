@@ -33,8 +33,10 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
   }
 
   override fun shouldInlineParameterName(argument: PsiElement, parameter: JSParameterItem, callExpression: JSCallLikeExpression): Boolean =
-    Options.NAMES_FOR_PIPES.get() && callExpression is Angular2PipeExpression
-        || super.shouldInlineParameterName(argument, parameter, callExpression)
+    if (callExpression is Angular2PipeExpression)
+      Options.NAMES_FOR_PIPES.get()
+    else
+      super.shouldInlineParameterName(argument, parameter, callExpression)
 
   override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
     return (expression is Angular2PipeExpression && i == 0) || super.skipIndex(i, expression)
