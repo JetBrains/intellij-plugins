@@ -36,7 +36,7 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextVa
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
-import org.intellij.terraform.config.documentation.psi.FakeHCLElementPsiFactory
+import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
@@ -333,7 +333,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
-        .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
+        .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
     }
 
     private fun buildProviderLookupElement(it: ProviderType, position: PsiElement): LookupElementBuilder {
@@ -348,14 +348,14 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it))
-        .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
+        .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
     }
 
     private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement): LookupElementBuilder = create(typeName)
       .withTypeText(typeText, true)
       .withIcon(getLookupIcon(position))
       .withInsertHandler(BlockSubNameInsertHandler(it))
-      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, position.containingFile.originalFile))
+      .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, position.containingFile.originalFile))
   }
 
   private object BlockPropertiesCompletionProvider : TfCompletionProvider() {
@@ -440,7 +440,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       if (incomplete != null) {
         LOG.debug { "Including properties which contains incomplete result: $incomplete" }
       }
-      val fakeHCLPsiFactory = parent.project.service<FakeHCLElementPsiFactory>()
+      val fakeHCLPsiFactory = parent.project.service<HCLFakeElementPsiFactory>()
       addResultsWithCustomSorter(result, properties.values
         .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
