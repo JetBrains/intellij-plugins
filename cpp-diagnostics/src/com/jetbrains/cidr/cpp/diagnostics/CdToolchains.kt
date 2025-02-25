@@ -6,6 +6,8 @@ import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.serviceOrNull
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
@@ -33,14 +35,25 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Files
+import java.util.concurrent.CancellationException
 import kotlin.io.path.readText
+
+private val LOGGER = logger<CppDiagnosticsAction>()
 
 fun collectToolchains(project: Project?): String {
   val log = CdIndenter(indentSize = 4)
   processSystemInfo(log)
   log.put()
   getAllEnvironments(project).forEach {
-    processCPPEnvironment(log, it)
+    try {
+      processCPPEnvironment(log, it)
+    } catch (e: CancellationException) {
+      throw e
+    } catch (e: Exception) {
+      log.put("Failed to get CPPEnvironment to process ${it.toolchain.name}: ", e.localizedMessage)
+      log.put("Please, see logs for details.")
+      LOGGER.warn("Failed to get CPPEnvironment to process ${it.toolchain.name}", e)
+    }
     log.put()
   }
   return log.result
@@ -115,17 +128,25 @@ private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) 
     environment.make?.let { logTool(it, "make", log) }
     environment.gdb?.let { logTool(it, "cmake", log) }
 
-    if (hostMachine is MappedHost) {
-      log.put("Path Mappings:")
+    try {
+      if (hostMachine is MappedHost) {
+        log.put("Path Mappings:")
 
-      var pathMapper: PathMapper = hostMachine.pathMapper
-      if (pathMapper is PathMapperWrapper) pathMapper = pathMapper.original
+        var pathMapper: PathMapper = hostMachine.pathMapper
+        if (pathMapper is PathMapperWrapper) pathMapper = pathMapper.original
 
-      log.scope {
-        if (pathMapper is PathMappingSettings) {
-          pathMapper.pathMappings.forEach { log.put("${it.localRoot} -> ${it.remoteRoot}") }
+        log.scope {
+          if (pathMapper is PathMappingSettings) {
+            pathMapper.pathMappings.forEach { log.put("${it.localRoot} -> ${it.remoteRoot}") }
+          }
         }
       }
+    } catch (e: CancellationException) {
+      throw e
+    } catch (e: Exception) {
+      log.put("Failed to get path mappings: ", e.localizedMessage)
+      log.put("Please, see logs for details.")
+      LOGGER.warn("Failed to get path mappings", e)
     }
 
     if (serviceOrNull<RemoteDeployment>() != null) {

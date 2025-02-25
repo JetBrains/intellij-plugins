@@ -7,7 +7,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -22,6 +24,8 @@ import com.intellij.troubleshooting.TroubleInfoCollector
 import com.intellij.util.io.Compressor
 import java.io.File
 import java.io.IOException
+
+private val LOGGER = Logger.getInstance(CppDiagnosticsAction::class.java)
 
 /**
  * This action may act as an example of how to access various C/C++ project model information from a plugin
@@ -144,11 +148,19 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
     }
 
 
-    private fun <R> readActionWithText(indicator: ProgressIndicator?, @NlsContexts.ProgressText text : String, block: () -> R): R {
+    private fun readActionWithText(indicator: ProgressIndicator?, @NlsContexts.ProgressText text : String, block: () -> String): String {
       val oldText = indicator?.text
       indicator?.text = text
       try {
         return runReadAction(block)
+      } catch (e: Exception) {
+        if (e is ProcessCanceledException) throw e
+        // We should never interrupt any trying to any attempt to retrieve the logs.
+        // If we do that, no one will ever know what the error was.
+        // Let this thing not be correctly logged, but we must complete this operation by all means.
+        // We will throw away an error that can be logged later.
+        LOGGER.error("Run task with name '$text' failed", e)
+        return "Retrieving logs failed: ${e.localizedMessage}."
       }
       finally {
         indicator?.text = oldText
