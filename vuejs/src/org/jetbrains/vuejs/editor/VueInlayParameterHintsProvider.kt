@@ -1,9 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
+import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.editing.JavaScriptInlayParameterHintsProvider
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSCallLikeExpression
 import com.intellij.lang.javascript.psi.JSParameterItem
 import com.intellij.psi.PsiElement
@@ -38,6 +40,18 @@ class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
     else super.skipIndex(i, expression)
   }
 
+  override fun getParameterHints(element: PsiElement): List<InlayInfo?> {
+    if (element is JSCallExpression && isSettingsPreview(element)) {
+      return when (element.text) {
+        "example(123)", "example(data)" -> createFixedHints(element, "param")
+        "'hello' | capitalize(true)" -> createFixedHints(element, "", "withBang")
+        else -> listOf()
+      }
+    }
+
+    return super.getParameterHints(element)
+  }
+
   private object Options {
     val NAMES_FOR_LITERAL_ARGS = Option(
       "vuejs.show.names.for.literal.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.literal.args"), true)
@@ -47,4 +61,7 @@ class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
       "vuejs.show.names.for.filters", VueBundle.messagePointer("vue.param.hints.show.names.for.filters"), true)
   }
 
+  private fun isSettingsPreview(element: JSCallExpression): Boolean =
+    element.containingFile.name == "dummy"
+      && !element.containingFile.isPhysical
 }
