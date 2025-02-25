@@ -18,7 +18,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 
-class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider({ true }) {
+class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider() {
 
   override fun getShowNameForLiteralArgsOption(): Option {
     return Options.NAMES_FOR_LITERAL_ARGS
