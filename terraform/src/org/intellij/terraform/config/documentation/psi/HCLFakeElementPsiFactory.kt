@@ -19,7 +19,7 @@ import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 internal val FAKE_PROVIDER_KEY = Key.create<ProviderType>("org.intellij.terraform.config.documentation.psi.provider")
 
 @Service(Service.Level.PROJECT)
-internal class FakeHCLElementPsiFactory(val project: Project) {
+internal class HCLFakeElementPsiFactory(val project: Project) {
 
   val emptyHCLBlock: HCLBlock? by lazy {
     createFakeHCLBlock("", "")
