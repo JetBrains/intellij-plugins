@@ -16,7 +16,7 @@ class IncorrectFormattingResultHandlerQodana: IncorrectFormattingResultHandler {
       )
       )
     }
-    return null
+    return arrayOf(helper.createGlobalReport())
   }
 
   private fun evenlyDistributedItems(array: Array<ProblemDescriptor>, itemCount: Int): Array<ProblemDescriptor> {
