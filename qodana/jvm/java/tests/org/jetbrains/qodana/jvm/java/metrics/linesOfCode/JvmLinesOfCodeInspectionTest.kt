@@ -13,16 +13,16 @@ import org.junit.Test
 
 @TestDataPath("\$CONTENT_ROOT/testData/JvmLinesOfCodeInspectionTest")
 class JvmLinesOfCodeInspectionTest : QodanaRunnerTestCase() {
-  private val emptyProfileConfig: QodanaProfileConfig = QodanaProfileConfig(name = "empty")
-  private val includedInspections = listOf(InspectScope("JvmLinesOfCodeInspection"))
-
   override fun setUp() {
     super.setUp()
     application.replaceService(IjQDCloudClientProvider::class.java, IjQDCloudClientProviderTestImpl(), testRootDisposable)
     manager.registerEmbeddedProfilesTestProvider()
   }
 
-  private fun updateConfig(includeInspections: List<InspectScope> = includedInspections, profile: QodanaProfileConfig = emptyProfileConfig) {
+  private fun updateConfig(
+    includeInspections: List<InspectScope> = listOf(InspectScope("JvmLinesOfCodeInspection")),
+    profile: QodanaProfileConfig = QodanaProfileConfig.named("empty")
+  ) {
     updateQodanaConfig {
       it.copy(
         include = includeInspections,

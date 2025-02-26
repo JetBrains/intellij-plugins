@@ -1,0 +1,11 @@
+version: 1.0
+
+profile:
+  base:
+    name: empty
+
+  inspections:
+    - inspection: IgnoreResultOfCall
+      enabled: true
+    - inspection: ConstantValue
+      enabled: true

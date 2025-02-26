@@ -13,7 +13,7 @@ class QodanaJavaSanityTest : QodanaRunnerTestCase() {
   fun `testUnresolved references`(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         disableSanityInspections = false
       )
     }
@@ -25,7 +25,7 @@ class QodanaJavaSanityTest : QodanaRunnerTestCase() {
   fun `testUnresolved references in javadoc`(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         disableSanityInspections = false
       )
     }

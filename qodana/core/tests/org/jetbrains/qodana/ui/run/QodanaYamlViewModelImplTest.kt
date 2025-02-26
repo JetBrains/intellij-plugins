@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.ui.run
 
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.QodanaPluginHeavyTestBase
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
@@ -36,7 +36,9 @@ private val EXPECTED_VALID_PHYSICAL_YAML_CONTENT = """
 @TestDataPath("\$CONTENT_ROOT/test-data/QodanaYamlViewModelImplTest")
 class QodanaYamlViewModelImplTest : QodanaPluginHeavyTestBase() {
   private val expectedValidYamlConfig = QodanaYamlConfig(
-    version = "1.0", profile = QodanaProfileConfig(name = "qodana.starter"))
+    version = "1.0",
+    profile = QodanaProfileYamlConfig(name = "qodana.starter"),
+  )
 
   override fun getBasePath(): String = Path(super.getBasePath(), "QodanaYamlViewModelImplTest").pathString
 

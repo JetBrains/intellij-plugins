@@ -16,7 +16,7 @@ class QodanaExternalAnnotatorBatchInspectionsTest : QodanaRunnerTestCase() {
     registerTool(LocalTestTool)
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:${LocalTestTool.shortName}"),
+        profile = QodanaProfileConfig.named("qodana.single:${LocalTestTool.shortName}"),
       )
     }
 

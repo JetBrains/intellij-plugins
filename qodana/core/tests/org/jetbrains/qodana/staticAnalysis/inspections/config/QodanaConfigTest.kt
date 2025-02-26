@@ -132,7 +132,7 @@ class QodanaConfigTest {
       profile:
         name: two words
     """.trimIndent()).let(::getQodanaConfig)
-    assertEquals("two words", config.profile.name)
+    assertEquals("two words", config.profile.base.name)
   }
 
   @Test
@@ -142,7 +142,7 @@ class QodanaConfigTest {
       profile:
         path: /home/two words/target
     """.trimIndent()).let(::getQodanaConfig)
-    assertEquals("/home/two words/target", config.profile.path)
+    assertEquals("/home/two words/target", config.profile.base.path)
   }
 
   @Test
@@ -153,8 +153,8 @@ class QodanaConfigTest {
         name: name
         path: path
     """.trimIndent()).let(::getQodanaConfig)
-    assertEquals("name", config.profile.name)
-    assertEquals("path", config.profile.path)
+    assertEquals("name", config.profile.base.name)
+    assertEquals("path", config.profile.base.path)
   }
 
   @Test

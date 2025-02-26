@@ -42,7 +42,7 @@ abstract class QodanaQuickFixesTestBase(private val strategy: FixesStrategy) : Q
   fun runTest(profileName: String) {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = profileName)
+        profile = QodanaProfileConfig.named(profileName)
       )
     }
     analyzeAndValidateResults()
@@ -51,7 +51,7 @@ abstract class QodanaQuickFixesTestBase(private val strategy: FixesStrategy) : Q
   fun runTestWithProfilePath(profilePath: String) {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(path = profilePath),
+        profile = QodanaProfileConfig.fromPath(profilePath),
       )
     }
     analyzeAndValidateResults()

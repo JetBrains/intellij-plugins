@@ -16,20 +16,15 @@ import kotlinx.coroutines.flow.*
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.StateManager
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer.Companion.waitForDynamicInspectionsInitialization
 import org.jetbrains.qodana.report.guid
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaInIdeRunContextFactory
-import org.jetbrains.qodana.staticAnalysis.profile.QODANA_BASE_PROFILE_NAME
-import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
-import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.stats.AnalysisState
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
@@ -147,7 +142,6 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       val projectPath = project.guessProjectDir()?.toNioPath()?.toAbsolutePath() ?: return null
       val outDir = FileUtil.createTempDirectory("qodana_output", null, true)
       val resultsDir = FileUtil.createTempDirectory("qodana_results", null, true)
-      val messageReporter = QodanaMessageReporter.EMPTY
 
       val yamlFiles = runInIdeParameters.qodanaYamlFile?.let { QodanaYamlFiles.noConfigDir(it) } ?: QodanaYamlFiles.noFiles()
 
@@ -161,34 +155,16 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       )
 
       val analysisScope = QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)
-      val loadedInspectionProfile = loadInspectionProfile(config, QodanaInspectionProfileLoader(project), messageReporter)
+      val loadedInspectionProfile = LoadedProfile.load(config, project, QodanaMessageReporter.EMPTY)
 
       return QodanaInIdeRunContextFactory(
         config,
-        messageReporter,
+        QodanaMessageReporter.EMPTY,
         project,
         loadedInspectionProfile,
         analysisScope,
         scope
       ).openRunContext()
-    }
-
-    private suspend fun loadInspectionProfile(
-      config: QodanaConfig,
-      inspectionProfileLoader: QodanaInspectionProfileLoader,
-      messageReporter: QodanaMessageReporter
-    ): LoadedProfile {
-      waitForDynamicInspectionsInitialization(project, messageReporter)
-      val (path, name) = config.profile
-      val profileFromQodanaYaml = inspectionProfileLoader.tryLoadProfileByNameOrPath(name, path, QODANA_YAML_CONFIG_FILENAME) {}
-      if (profileFromQodanaYaml != null) return LoadedProfile(profileFromQodanaYaml, name, path)
-
-      val defaultProfile = inspectionProfileLoader.tryLoadProfileByNameOrPath(config.defaultProfileName, "", "default profile") {}
-      if (defaultProfile != null) return LoadedProfile(defaultProfile, config.defaultProfileName, "")
-
-      val inspectionProfileManager = QodanaInspectionProfileManager.getInstance(project)
-      val qodanaBaseProfile = QodanaInspectionProfile.newWithEnabledByDefaultTools(QODANA_BASE_PROFILE_NAME, inspectionProfileManager)
-      return LoadedProfile(qodanaBaseProfile, "Current profile", "")
     }
 
     private suspend fun writeQodanaYaml(destination: Path) {

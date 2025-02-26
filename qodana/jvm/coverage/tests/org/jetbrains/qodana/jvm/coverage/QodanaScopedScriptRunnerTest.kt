@@ -20,7 +20,7 @@ class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig(name = "qodana.single:JvmCoverageInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:JvmCoverageInspection"),
       )
     }
 
@@ -51,7 +51,7 @@ class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig(name = "qodana.single:JvmCoverageInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:JvmCoverageInspection"),
       )
     }
 
@@ -89,7 +89,7 @@ class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig(name = "qodana.single:JvmCoverageInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:JvmCoverageInspection"),
       )
     }
 

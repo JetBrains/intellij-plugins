@@ -52,7 +52,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   fun `embedded profile`() {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.starter")
+        profile = QodanaProfileConfig.named("qodana.starter")
       )
     }
     runAnalysis()
@@ -68,7 +68,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
     copyProjectProfiles()
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.project")
+        profile = QodanaProfileConfig.named("qodana.project"),
       )
     }
     runAnalysis()
@@ -80,7 +80,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
     runWithIdeaApplicationProfiles {
       updateQodanaConfig {
         it.copy(
-          profile = QodanaProfileConfig(name = "qodana.application")
+          profile = QodanaProfileConfig.named("qodana.application"),
         )
       }
       runAnalysis()
@@ -92,7 +92,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   fun `single tool`() {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:inspection-1")
+        profile = QodanaProfileConfig.named("qodana.single:inspection-1"),
       )
     }
     runAnalysis()
@@ -103,7 +103,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   fun `empty profile`() {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "empty")
+        profile = QodanaProfileConfig.named("empty"),
       )
     }
     runAnalysis()
@@ -114,7 +114,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   fun `default profile`() {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "Default")
+        profile = QodanaProfileConfig.named("Default"),
       )
     }
     runAnalysis()
@@ -174,7 +174,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   fun `external tool in yaml`() {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(path = getTestDataPath("inspection-profile.yaml").absolutePathString())
+        profile = QodanaProfileConfig.fromPath(getTestDataPath("inspection-profile.yaml").absolutePathString()),
       )
     }
 
@@ -185,7 +185,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   private fun loadProfileByName(name: String): LoadedProfile {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = name)
+        profile = QodanaProfileConfig.named(name)
       )
     }
     return loadInspectionProfile()

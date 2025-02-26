@@ -109,12 +109,13 @@ class QodanaInspectionApplicationFactory {
     }
 
     val outPath = commandLine.args[1]
-    val profileName = commandLine.getOptionValue("n") ?: commandLine.getOptionValue("profileName")
-    val profilePath = commandLine.getOptionValue("p") ?: commandLine.getOptionValue("profilePath")
+    val profileName = commandLine.getOptionValue("n") ?: commandLine.getOptionValue("profileName") ?: ""
+    val profilePath = commandLine.getOptionValue("p") ?: commandLine.getOptionValue("profilePath") ?: ""
     val dirToAnalyze = commandLine.getOptionValue("d") ?: commandLine.getOptionValue("source-directory")
 
     val effectiveQodanaYamlPath = qodanaYamlFiles.effectiveQodanaYaml
-    @Suppress("DEPRECATION") val yamlConfig = effectiveQodanaYamlPath?.let { effectiveConfig ->
+    @Suppress("DEPRECATION")
+    val yamlConfig = effectiveQodanaYamlPath?.let { effectiveConfig ->
       withContext(StaticAnalysisDispatchers.IO) {
         QodanaYamlReader.load(effectiveConfig)
       }
@@ -127,16 +128,13 @@ class QodanaInspectionApplicationFactory {
 
     val includeAbsent = commandLine.hasOption("baseline-include-absent") || yamlConfig.includeAbsent
 
-    val profile = yamlConfig.profile.copy(
-      name = profileName?.takeUnless(String::isBlank) ?: yamlConfig.profile.name,
-      path = profilePath?.takeUnless(String::isBlank) ?: yamlConfig.profile.path
-    )
     val qodanaConfig = QodanaConfig.fromYaml(
       absoluteProjectPath,
       Paths.get(outPath),
       yamlFiles = qodanaYamlFiles,
       yaml = yamlConfig,
-      profile = profile,
+      profileNameFromCli = profileName,
+      profilePathFromCli = profilePath,
       baseline = commandLine.getOptionValue("baseline"),
       disableSanityInspections = disableSanity,
       fixesStrategy = commandLine.fixesStrategy() ?: FixesStrategy.fromString(yamlConfig.fixesStrategy.uppercase()),
