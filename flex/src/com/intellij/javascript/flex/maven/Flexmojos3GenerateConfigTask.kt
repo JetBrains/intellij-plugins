@@ -28,11 +28,11 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.idea.maven.buildtool.MavenLogEventHandler
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap
 import org.jetbrains.idea.maven.project.*
-import org.jetbrains.idea.maven.project.MavenEmbeddersManager.EmbedderTask
 import org.jetbrains.idea.maven.server.MavenGoalExecutionRequest
 import org.jetbrains.idea.maven.utils.MavenLog
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException
 import org.jetbrains.idea.maven.utils.MavenUtil
+import org.jetbrains.idea.maven.utils.MavenUtil.getBaseDir
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -53,52 +53,51 @@ internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
 
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.displayName))
 
-    val task = EmbedderTask { embedder ->
-      var temporaryFiles: List<VirtualFile>? = null
-      try {
-        val workspaceMap = MavenWorkspaceMap()
-        temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.projects)
+    val baseDir = getBaseDir(myMavenProject.directoryFile).toString()
+    val embedder = embeddersManager.getEmbedder(MavenEmbeddersManager.FOR_POST_PROCESSING, baseDir)
+    var temporaryFiles: List<VirtualFile>? = null
+    try {
+      val workspaceMap = MavenWorkspaceMap()
+      temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.projects)
 
-        val generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
-                                 ":generate-config-" + myMavenProject.packaging
-        val profilesIds = myMavenProject.activatedProfilesIds
-        val request = MavenGoalExecutionRequest(File(myMavenProject.path), profilesIds)
-        val result = runBlockingMaybeCancellable {
-          withBackgroundProgress(project, MavenProjectBundle.message("maven.updating.folders"), true) {
-            reportRawProgress { reporter ->
-              embedder.executeGoal(listOf(request), generateConfigGoal, reporter, MavenLogEventHandler)[0]
-            }
-          }
-        }
-        if (!result.success) {
-          myFlexConfigInformer.showFlexConfigWarningIfNeeded(project)
-        }
-
-        MavenUtil.invokeAndWaitWriteAction(project) {
-          // need to refresh externally created file
-          val file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath)
-          if (file != null) {
-            file.refresh(false, false)
-
-            updateMainClass(myModule, file)
+      val generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
+                               ":generate-config-" + myMavenProject.packaging
+      val profilesIds = myMavenProject.activatedProfilesIds
+      val request = MavenGoalExecutionRequest(File(myMavenProject.path), profilesIds)
+      val result = runBlockingMaybeCancellable {
+        withBackgroundProgress(project, MavenProjectBundle.message("maven.updating.folders"), true) {
+          reportRawProgress { reporter ->
+            embedder.executeGoal(listOf(request), generateConfigGoal, reporter, MavenLogEventHandler)[0]
           }
         }
       }
-      catch (e: MavenProcessCanceledException) {
-        throw e
-      }
-      catch (e: Exception) {
+      if (!result.success) {
         myFlexConfigInformer.showFlexConfigWarningIfNeeded(project)
-        MavenLog.LOG.warn(e)
       }
-      finally {
-        if (temporaryFiles != null && !temporaryFiles.isEmpty()) {
-          removeTemporaryFiles(project, temporaryFiles)
+
+      MavenUtil.invokeAndWaitWriteAction(project) {
+        // need to refresh externally created file
+        val file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath)
+        if (file != null) {
+          file.refresh(false, false)
+
+          updateMainClass(myModule, file)
         }
       }
     }
-
-    embeddersManager.execute(myMavenProject, MavenEmbeddersManager.FOR_POST_PROCESSING, task)
+    catch (e: MavenProcessCanceledException) {
+      throw e
+    }
+    catch (e: Exception) {
+      myFlexConfigInformer.showFlexConfigWarningIfNeeded(project)
+      MavenLog.LOG.warn(e)
+    }
+    finally {
+      embeddersManager.release(embedder)
+      if (temporaryFiles != null && !temporaryFiles.isEmpty()) {
+        removeTemporaryFiles(project, temporaryFiles)
+      }
+    }
   }
 
   companion object {
