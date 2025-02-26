@@ -14,7 +14,8 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.replaceService
 import com.intellij.util.application
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Result.BaselineState
 import kotlinx.coroutines.runBlocking
 import org.intellij.lang.annotations.Language
@@ -29,7 +30,10 @@ import org.jetbrains.qodana.respond200PublishReport
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
-import org.jetbrains.qodana.staticAnalysis.inspections.config.*
+import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
+import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.markGenFolderAsGeneratedSources
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_PROMO_ANALYZE_EACH_N_FILE_KEY
@@ -37,10 +41,10 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
-import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
+import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionDurationsAggregatorService
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
 import org.junit.Ignore
@@ -275,7 +279,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
       )
     }
 
@@ -310,7 +314,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
         includeAbsent = true
       )
@@ -347,7 +351,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         includeAbsent = true
       )
     }
@@ -383,7 +387,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
       )
     }
 
@@ -401,7 +405,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
         includeAbsent = true
       )
@@ -421,7 +425,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
         includeAbsent = true
       )
@@ -442,7 +446,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME, mapOf("path" to "test-module/teamcity-changes.txt")),
-        profile = QodanaProfileConfig(name = "qodana.single:ConstantValue"),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
       )
     }
 
@@ -665,7 +669,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
   fun `testEmbedded problem`(): Unit = runBlocking {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:CssInvalidHtmlTagReference"),
+        profile = QodanaProfileConfig.named("qodana.single:CssInvalidHtmlTagReference"),
       )
     }
     runAnalysis()
@@ -926,7 +930,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     registerTool(tool)
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:${tool.shortName}"),
+        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
       )
     }
 
@@ -943,7 +947,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     registerTool(tool)
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:${tool.shortName}"),
+        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
       )
     }
 
@@ -958,6 +962,14 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     withSystemProperty(FORCE_DISABLE_INSPECTION_KTS, "true") {
       runAnalysis()
     }
+  }
+
+  @Test
+  fun `testProfile yaml syntax in qodana yaml`(): Unit = runBlocking {
+    runAnalysis()
+
+    assertSarifEnabledRules("ConstantValue", "IgnoreResultOfCall")
+    assertSarifResults()
   }
 
   @Test

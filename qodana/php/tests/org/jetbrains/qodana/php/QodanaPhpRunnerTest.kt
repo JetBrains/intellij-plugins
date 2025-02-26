@@ -20,7 +20,7 @@ class QodanaPhpRunnerTest : QodanaRunnerTestCase() {
     configurePhpVersion()
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:PhpConstructorStyleInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:PhpConstructorStyleInspection"),
       )
     }
 
@@ -33,7 +33,7 @@ class QodanaPhpRunnerTest : QodanaRunnerTestCase() {
     configurePhpVersion("5.3.0")
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:PhpConstructorStyleInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:PhpConstructorStyleInspection"),
       )
     }
 
@@ -46,7 +46,7 @@ class QodanaPhpRunnerTest : QodanaRunnerTestCase() {
     configurePhpVersion()
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:PhpVulnerablePathsInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:PhpVulnerablePathsInspection"),
         disableSanityInspections = true,
         runPromoInspections = false
       )

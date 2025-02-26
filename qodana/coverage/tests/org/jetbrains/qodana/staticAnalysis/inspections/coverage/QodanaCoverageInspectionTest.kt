@@ -2,13 +2,13 @@ package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.intellij.openapi.application.PluginPathManager
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaTestManager
 import com.intellij.testFramework.JavaModuleTestCase
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaTestManager
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.nio.file.Path
@@ -37,7 +37,9 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
 
   private fun getTestDataPath(relativePath: String): Path = testData.resolve(testDataBasePath).resolve(relativePath)
 
-  private fun getProfileConfig(relativePath: String) = QodanaProfileConfig(getTestDataPath(relativePath).toString(), "")
+  private fun getProfileConfig(relativePath: String): QodanaProfileConfig {
+    return QodanaProfileConfig.fromPath(getTestDataPath(relativePath).toString())
+  }
 
   protected fun assertSarifResults() {
     val (actualJson, expectedSarif) = manager.computeSarifResult(::getTestDataPath)
@@ -49,7 +51,7 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
     val (config, _) = manager.updateQodanaConfig(Paths.get(myProject.basePath!!), outputBasePath) {
       it.copy(
         include = listOf(InspectScope(inspection)),
-        profile = customProfileConfig ?: QodanaProfileConfig(name = "empty")
+        profile = customProfileConfig ?: QodanaProfileConfig.named("empty")
       )
     }
     qodanaConfig = config

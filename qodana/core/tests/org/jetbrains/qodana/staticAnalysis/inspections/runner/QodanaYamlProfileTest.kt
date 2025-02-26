@@ -5,13 +5,13 @@ import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.SourceFolder
 import com.intellij.openapi.roots.TestSourcesFilter
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.TestDataPath
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Assert
 import org.junit.Test
 import kotlin.io.path.absolutePathString
@@ -102,7 +102,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   fun `testInclude global inspection in qodana-yaml`(): Unit = runBlocking {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.starter"),
+        profile = QodanaProfileConfig.named("qodana.starter"),
         include = listOf(InspectScope("unused"))
       )
     }
@@ -115,7 +115,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   fun `testInclude inspection in qodana-yaml with path`(): Unit = runBlocking {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.starter"),
+        profile = QodanaProfileConfig.named("qodana.starter"),
         include = listOf(InspectScope("UNUSED_IMPORT", paths = listOf("test-module/A.java")))
       )
     }
@@ -166,7 +166,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
 
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.starter")
+        profile = QodanaProfileConfig.named("qodana.starter"),
       )
     }
 
@@ -180,7 +180,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
 
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.recommended")
+        profile = QodanaProfileConfig.named("qodana.recommended"),
       )
     }
 
@@ -217,7 +217,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
 
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = QodanaEmbeddedProfile.QODANA_RECOMMENDED.profileName),
+        profile = QodanaProfileConfig.named(QodanaEmbeddedProfile.QODANA_RECOMMENDED.profileName),
         include = listOf(InspectScope("ConstantValue", paths = listOf("test-module/tests"))),
       )
     }
@@ -237,7 +237,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   private fun runYamlTest(): Unit = runBlocking {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(path = getTestDataPath("inspection-profile.yaml").absolutePathString())
+        profile = QodanaProfileConfig.fromPath(getTestDataPath("inspection-profile.yaml").absolutePathString()),
       )
     }
 

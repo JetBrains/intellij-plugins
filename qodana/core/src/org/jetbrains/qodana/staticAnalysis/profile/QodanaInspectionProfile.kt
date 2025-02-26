@@ -22,7 +22,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
  */
 class QodanaInspectionProfile(
   profileName: String,
-  profileManager: QodanaInspectionProfileManager,
+  val profileManager: QodanaInspectionProfileManager,
   baseProfile: QodanaInspectionProfile?,
   dataHolder: SchemeDataHolder<InspectionProfileImpl>? = null
 ) : InspectionProfileImpl(

@@ -13,7 +13,7 @@ class QodanaSanityInspectionTagsTest : QodanaRunnerTestCase() {
   fun `testUnresolved imports`(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:QodanaSanity"),
+        profile = QodanaProfileConfig.named("qodana.single:QodanaSanity"),
         fileSuspendThreshold = Int.MAX_VALUE,
         moduleSuspendThreshold = Int.MAX_VALUE,
         projectSuspendThreshold = Int.MAX_VALUE
@@ -27,7 +27,7 @@ class QodanaSanityInspectionTagsTest : QodanaRunnerTestCase() {
   fun `testUnresolved types`(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:QodanaSanity"),
+        profile = QodanaProfileConfig.named("qodana.single:QodanaSanity"),
         fileSuspendThreshold = Int.MAX_VALUE,
         moduleSuspendThreshold = Int.MAX_VALUE,
         projectSuspendThreshold = Int.MAX_VALUE

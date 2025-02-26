@@ -24,7 +24,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     }
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:DuplicatedCode"),
+        profile = QodanaProfileConfig.named("qodana.single:DuplicatedCode"),
         disableSanityInspections = true,
         runPromoInspections = false
       )

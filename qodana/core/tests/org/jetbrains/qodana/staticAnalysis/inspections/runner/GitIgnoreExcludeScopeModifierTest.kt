@@ -134,7 +134,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
   private fun runYamlTest() {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(path = getTestDataPath("inspection-profile.yaml").absolutePathString())
+        profile = QodanaProfileConfig.fromPath(getTestDataPath("inspection-profile.yaml").absolutePathString()),
       )
     }
 

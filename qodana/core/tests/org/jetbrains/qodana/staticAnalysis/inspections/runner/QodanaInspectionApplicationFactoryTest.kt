@@ -4,9 +4,7 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
+import org.jetbrains.qodana.staticAnalysis.inspections.config.*
 import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.junit.Test
@@ -57,8 +55,8 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)!!
 
-    assertEquals("NAMENAMENAME", app.config.profile.name)
-    assertEquals("PATH/profile.xml", app.config.profile.path)
+    assertEquals("NAMENAMENAME", app.config.profile.base.name)
+    assertEquals("PATH/profile.xml", app.config.profile.base.path)
     assertEquals("command line", app.config.profileSource)
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath().pathString, app.config.projectPath.toString())
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
@@ -85,8 +83,8 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)!!
 
-    assertEquals("NAMENAMENAME", app.config.profile.name)
-    assertEquals("PATH/profile.xml", app.config.profile.path)
+    assertEquals("NAMENAMENAME", app.config.profile.base.name)
+    assertEquals("PATH/profile.xml", app.config.profile.base.path)
     assertEquals("command line", app.config.profileSource)
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath().pathString, app.config.projectPath.toString())
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
@@ -104,8 +102,8 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)!!
 
-    assertEquals("", app.config.profile.name)
-    assertEquals("", app.config.profile.path)
+    assertEquals("", app.config.profile.base.name)
+    assertEquals("", app.config.profile.base.path)
     assertEquals(QODANA_YAML_CONFIG_FILENAME, app.config.profileSource)
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath().pathString, app.config.projectPath.toString())
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
@@ -146,8 +144,8 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)!!
 
-    assertEquals("NAMENAMENAME", app.config.profile.name)
-    assertEquals("PATH/profile.xml", app.config.profile.path)
+    assertEquals("NAMENAMENAME", app.config.profile.base.name)
+    assertEquals("PATH/profile.xml", app.config.profile.base.path)
     assertEquals("command line", app.config.profileSource)
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath(), app.config.projectPath)
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
@@ -253,7 +251,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)
     assertEquals(testProjectPath, app?.config?.yamlFiles?.effectiveQodanaYaml)
-    assertEquals("empty", app?.config?.profile?.name)
+    assertEquals("empty", app?.config?.profile?.base?.name)
   }
 
   @Test
@@ -293,12 +291,52 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
       )
 
     val app = QodanaInspectionApplicationFactory().buildApplication(args)
-    assertThat(app?.config?.profile?.name).isEqualTo("qodana.recommended")
-    assertThat(app?.config?.profile?.path).isEqualTo(profileYaml.pathString)
+    assertThat(app?.config?.profile?.base?.name).isEqualTo("qodana.recommended")
+    assertThat(app?.config?.profile?.base?.path).isEqualTo(profileYaml.pathString)
     assertThat(app?.config?.bootstrap).isEqualTo("bootstrap")
 
     val yamlFiles = app?.config?.yamlFiles
     assertThat(yamlFiles?.effectiveQodanaYaml).isEqualTo(effectiveQodanaYamlPath)
     assertThat(yamlFiles?.localQodanaYaml).isEqualTo(localQodanaYamlPath)
+  }
+
+  @Test
+  fun `config from yaml config profile in base and root`() {
+    val profileName = "qodana.recommended"
+    val profilePath = "/path/to/profile"
+    val config = QodanaConfig.fromYaml(
+      projectPath = Path("unused"),
+      outPath = Path("unused"),
+      yaml = QodanaYamlConfig(
+        profile = QodanaProfileYamlConfig(
+          name = profileName,
+          base = QodanaProfileYamlConfig.BaseProfile(
+            path = profilePath
+          )
+        )
+      )
+    )
+    assertThat(config.profile.base.name).isEqualTo(profileName)
+    assertThat(config.profile.base.path).isEqualTo(profilePath)
+  }
+
+  @Test
+  fun `config from yaml config profile as cli argument`() {
+    val profileName = "qodana.recommended"
+    val profilePath = "/path/to/profile"
+    val config = QodanaConfig.fromYaml(
+      projectPath = Path("unused"),
+      outPath = Path("unused"),
+      profileNameFromCli = profileName,
+      yaml = QodanaYamlConfig(
+        profile = QodanaProfileYamlConfig(
+          base = QodanaProfileYamlConfig.BaseProfile(
+            path = profilePath
+          )
+        )
+      )
+    )
+    assertThat(config.profile.base.name).isEqualTo(profileName)
+    assertThat(config.profile.base.path).isEqualTo(profilePath)
   }
 }

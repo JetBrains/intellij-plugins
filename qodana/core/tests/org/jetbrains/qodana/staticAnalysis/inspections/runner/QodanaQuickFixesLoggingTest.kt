@@ -7,8 +7,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.ALLOW_NON_BATCH_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.FixesLogger
-import java.nio.file.Path
 import org.junit.Test
+import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
 @TestDataPath("\$CONTENT_ROOT/testData/QodanaQuickFixesLoggingTest")
@@ -65,7 +65,7 @@ class QodanaQuickFixesLoggingTest: QodanaRunnerTestCase() {
       it.copy(
         fixesStrategy = strategy,
         disableSanityInspections = true,
-        profile = QodanaProfileConfig(path = getTestDataPath("inspection-profile.yaml").absolutePathString())
+        profile = QodanaProfileConfig.fromPath(getTestDataPath("inspection-profile.yaml").absolutePathString())
       )
     }
     runAnalysis()

@@ -70,14 +70,19 @@ class QodanaTestManager {
     setSystemProperties()
     mockEnv()
 
-    val isProfileSpecifiedInYaml = yamlConfig.profile != QodanaProfileConfig()
+    val isProfileSpecifiedInYaml = yamlConfig.profile != QodanaProfileYamlConfig()
+    val profile = if (isProfileSpecifiedInYaml) {
+      QodanaProfileConfig.fromYaml(yamlConfig.profile, "", "")
+    } else {
+      QodanaProfileConfig.fromPath(testData.getTestDataPath("inspection-profile.xml").toString())
+    }
     qodanaConfig = QodanaConfig.fromYaml(
       testData.projectPath,
       testData.outputPath,
       yamlFiles = yamlPath?.let { QodanaYamlFiles.noConfigDir(yamlPath) } ?: QodanaYamlFiles.noFiles(),
       yaml = yamlConfig,
       baseline = testData.getTestDataPath("baseline-results.sarif.json").takeIf { it.exists() }?.toString(),
-      profile = if (isProfileSpecifiedInYaml) yamlConfig.profile else QodanaProfileConfig(testData.getTestDataPath("inspection-profile.xml").toString(), ""),
+      profile = profile,
       disableSanityInspections = true,
       runPromoInspections = false,
       fixesStrategy = FixesStrategy.NONE
