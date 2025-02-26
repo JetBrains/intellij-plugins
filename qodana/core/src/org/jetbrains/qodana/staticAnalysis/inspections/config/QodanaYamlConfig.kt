@@ -12,7 +12,7 @@ data class QodanaCoverageYamlConfig(
 
 data class QodanaYamlConfig(
   val version: String = "1.0",
-  val profile: QodanaProfileConfig = QodanaProfileConfig(),
+  val profile: QodanaProfileYamlConfig = QodanaProfileYamlConfig(),
   val exclude: InspectScopes = emptyList(),
   val include: InspectScopes = emptyList(),
   val disableSanityInspections: Boolean = false,
@@ -65,15 +65,25 @@ data class QodanaYamlConfig(
     projectPath: Path,
     yamlPath: Path,
   ): QodanaYamlConfig {
-    val profilePath = profile.path
-    if (profilePath.isBlank() || Paths.get(profilePath).isAbsolute) {
-      return this
+    fun String.asAbsolutePath(): String {
+      val profilePath = this.trim()
+      if (profilePath.isBlank() || Paths.get(profilePath).isAbsolute) {
+        return profilePath
+      }
+
+      val absoluteFromProjectPath = projectPath.resolve(profilePath).toAbsolutePath()
+      val absoluteFromYamlPath = yamlPath.parent.resolve(profilePath).toAbsolutePath()
+      val absolutePath = absoluteFromProjectPath.takeIf { it.exists() } ?: absoluteFromYamlPath
+      return absolutePath.pathString
     }
 
-    val absoluteFromProjectPath = projectPath.resolve(profilePath).toAbsolutePath()
-    val absoluteFromYamlPath = yamlPath.parent.resolve(profilePath).toAbsolutePath()
-    val absolutePath = absoluteFromProjectPath.takeIf { it.exists() } ?: absoluteFromYamlPath
+    val profileConfigWithAbsolutePaths = profile.copy(
+      path = profile.path.asAbsolutePath(),
+      base = profile.base.copy(
+        path = profile.base.path.asAbsolutePath(),
+      )
+    )
 
-    return copy(profile = profile.copy(path = absolutePath.pathString))
+    return copy(profile = profileConfigWithAbsolutePaths)
   }
 }

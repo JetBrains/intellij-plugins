@@ -9,9 +9,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiMethod
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 
 
@@ -25,7 +25,7 @@ class QodanaRelatedLocationsTest : QodanaRunnerTestCase(){
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:${tool.shortName}"),
+        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
       )
     }
 

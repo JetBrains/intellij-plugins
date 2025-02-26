@@ -20,138 +20,61 @@ class KotlinCyclomaticComplexityInspectionTest: QodanaRunnerTestCase() {
   }
 
   @Test
-  fun testAnonymousObjects(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testAnonymousObjects() = executeTest()
 
   @Test
-  fun testCatch(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testCatch() = executeTest()
 
   @Test
-  fun testClassInitializer(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testClassInitializer() = executeTest()
 
   @Test
-  fun testDoWhile(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testDoWhile() = executeTest()
 
   @Test
-  fun testFor(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testFor() = executeTest()
 
   @Test
-  fun testIf(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testIf() = executeTest()
 
   @Test
-  fun testLambdaFunctions(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testLambdaFunctions() = executeTest()
 
   @Test
-  fun testLogicalOrAnd(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testLogicalOrAnd() = executeTest()
 
   @Test
-  fun testNestedClasses(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testNestedClasses() = executeTest()
 
   @Test
-  fun testNestedFunctions(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testNestedFunctions() = executeTest()
 
   @Test
-  fun testSafeCall(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testSafeCall() = executeTest()
 
   @Test
-  fun testSafeCast(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testSafeCast() = executeTest()
 
   @Test
-  fun testSecondaryConstructor(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testSecondaryConstructor() = executeTest()
 
   @Test
-  fun testWhen(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
-    }
-    runAnalysis()
-    assertSarifResults()
-  }
+  fun testWhen() = executeTest()
 
   @Test
-  fun testWhile(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(profile = QodanaProfileConfig(name = "qodana.single:CyclomaticComplexityInspection"))
+  fun testWhile() = executeTest()
+
+  private fun executeTest() {
+    runBlocking {
+      setUpProfile()
+      runAnalysis()
+      assertSarifResults()
     }
-    runAnalysis()
-    assertSarifResults()
   }
 
+  private fun setUpProfile() {
+    updateQodanaConfig {
+      it.copy(profile = QodanaProfileConfig.named("qodana.single:CyclomaticComplexityInspection"))
+    }
+  }
 }

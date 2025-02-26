@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.*
 import com.intellij.psi.*
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.TestDataPath
 import com.jetbrains.qodana.sarif.SarifUtil
@@ -14,6 +13,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 import java.nio.file.Paths
 import kotlin.io.path.bufferedReader
@@ -75,7 +75,7 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:${tool.shortName}"),
+        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
       )
     }
 

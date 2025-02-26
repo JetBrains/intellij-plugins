@@ -53,11 +53,6 @@ const val DEFAULT_PROJECT_SUSPEND_THRESHOLD = "125"
 
 typealias InspectScopes = List<InspectScope>
 
-data class QodanaProfileConfig(
-  val path: String = "",
-  val name: String = ""
-)
-
 data class QodanaScriptConfig(
   val name: String = DEFAULT_SCRIPT_NAME,
   val parameters: Map<String, Any> = emptyMap()
@@ -199,7 +194,9 @@ data class QodanaConfig(
       yaml: QodanaYamlConfig = QodanaYamlConfig.EMPTY_V1,
       resultsStorage: Path = getResultsStorage(outPath, getOutputFormat()),
       baseline: String? = null,
-      profile: QodanaProfileConfig = yaml.profile,
+      profileNameFromCli: String = "",
+      profilePathFromCli: String = "",
+      profile: QodanaProfileConfig = QodanaProfileConfig.fromYaml(yaml.profile, profileNameFromCli, profilePathFromCli),
       defaultProfileName: String = getDefaultProfileName(),
       disableSanityInspections: Boolean = yaml.disableSanityInspections,
       fixesStrategy: FixesStrategy = FixesStrategy.fromString(yaml.fixesStrategy),
@@ -226,6 +223,7 @@ data class QodanaConfig(
       val dependencyAnalysis = DependencyAnalysisConfig.fromYamlConfig(yaml)
 
       if (yaml.version != "1.0") throw QodanaException("Property \"version\" in qodana.yaml must be \"1.0\", not \"${yaml.version}\"")
+      val isCommandLineProfile = profileNameFromCli.isNotBlank() || profilePathFromCli.isNotBlank()
       return QodanaConfig(
         projectPath = projectPath,
         outPath = outPath,
@@ -233,7 +231,7 @@ data class QodanaConfig(
         resultsStorage = resultsStorage,
         baseline = baseline,
         profile = profile,
-        profileSource = if (profile == yaml.profile) QODANA_YAML_CONFIG_FILENAME else "command line",
+        profileSource = if (isCommandLineProfile) "command line" else QODANA_YAML_CONFIG_FILENAME,
         defaultProfileName = defaultProfileName,
         disableSanityInspections = disableSanityInspections,
         fixesStrategy = fixesStrategy,
@@ -254,7 +252,7 @@ data class QodanaConfig(
         dotnet = dotnet,
         php = php,
         jvm = jvm,
-        dependencyAnalysis = dependencyAnalysis
+        dependencyAnalysis = dependencyAnalysis,
       )
     }
   }

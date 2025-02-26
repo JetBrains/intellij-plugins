@@ -3,7 +3,10 @@ package org.jetbrains.qodana.staticAnalysis.stat
 import com.intellij.internal.statistic.FUCollectorTestCase
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.jetbrains.fus.reporting.model.lion3.LogEvent
-import org.jetbrains.qodana.staticAnalysis.inspections.config.*
+import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector.profileForReporting
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -157,10 +160,8 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
           failThreshold = 123,
           bootstrap = "echo 'Starting analysis'"
         ),
-        profile = QodanaProfileConfig(
-          name = "qodana.recommended",
-          path = "irrelevant path to inspection profile.xml"
-        ),
+        profileNameFromCli = "qodana.recommended",
+        profilePathFromCli = "irrelevant path to inspection profile.xml",
         baseline = "something not null",
         fixesStrategy = FixesStrategy.CLEANUP,
         includeAbsent = true,

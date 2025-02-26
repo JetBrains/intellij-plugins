@@ -1,12 +1,12 @@
 package org.jetbrains.qodana.inspectionKts.js
 
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
-import org.jetbrains.qodana.staticAnalysis.testFramework.withInspectionKtsFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
+import org.jetbrains.qodana.staticAnalysis.testFramework.withInspectionKtsFile
 import org.junit.Test
 
 @TestDataPath("\$CONTENT_ROOT/../../core/test-data/QodanaJsInspectionKtsTest")
@@ -20,7 +20,7 @@ class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
     withInspectionKtsFile(qodanaConfig.projectPath, filename, inspectionKtsContent) {
       updateQodanaConfig {
         it.copy(
-          profile = QodanaProfileConfig(name = "qodana.single:MyJsInspection"),
+          profile = QodanaProfileConfig.named("qodana.single:MyJsInspection"),
         )
       }
       reinstantiateInspectionRelatedServices(project, testRootDisposable)
@@ -40,7 +40,7 @@ class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
     withInspectionKtsFile(qodanaConfig.projectPath, "js/$filename", inspectionKtsContent) {
       updateQodanaConfig {
         it.copy(
-          profile = QodanaProfileConfig(name = "qodana.single:MyJsInspection"),
+          profile = QodanaProfileConfig.named("qodana.single:MyJsInspection"),
         )
       }
       reinstantiateInspectionRelatedServices(project, testRootDisposable)

@@ -27,7 +27,7 @@ class KotlinCoverageTest : QodanaRunnerTestCase() {
   fun testKotlin(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:JvmCoverageInspection"),
+        profile = QodanaProfileConfig.named("qodana.single:JvmCoverageInspection"),
         disableSanityInspections = true,
         coverage = it.coverage.copy(
           reportProblems = true

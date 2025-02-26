@@ -13,7 +13,7 @@ class QodanaKotlinSanityInspectionTest : QodanaRunnerTestCase() {
   fun `testUnresolved imports`(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:KotlinConstantConditions"),
+        profile = QodanaProfileConfig.named("qodana.single:KotlinConstantConditions"),
         disableSanityInspections = false,
         fileSuspendThreshold = Int.MAX_VALUE,
         moduleSuspendThreshold = Int.MAX_VALUE,
@@ -28,7 +28,7 @@ class QodanaKotlinSanityInspectionTest : QodanaRunnerTestCase() {
   fun `testUnresolved types`(): Unit = runTest {
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:KotlinConstantConditions"),
+        profile = QodanaProfileConfig.named("qodana.single:KotlinConstantConditions"),
         disableSanityInspections = false,
         fileSuspendThreshold = Int.MAX_VALUE,
         moduleSuspendThreshold = Int.MAX_VALUE,

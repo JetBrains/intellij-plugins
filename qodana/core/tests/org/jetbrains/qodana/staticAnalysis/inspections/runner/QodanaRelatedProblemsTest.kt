@@ -8,9 +8,9 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 
 
@@ -24,7 +24,7 @@ class QodanaRelatedProblemsTest : QodanaRunnerTestCase(){
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     updateQodanaConfig {
       it.copy(
-        profile = QodanaProfileConfig(name = "qodana.single:${tool.shortName}"),
+        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
       )
     }
 
