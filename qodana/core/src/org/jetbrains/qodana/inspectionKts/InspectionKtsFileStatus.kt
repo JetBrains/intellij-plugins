@@ -36,7 +36,7 @@ interface CompiledInspectionsKtsData
 
 internal class CompiledInspectionKtsInspections(
   val inspections: Set<DynamicInspectionDescriptor>,
-  val userData: Set<CompiledInspectionsKtsData>,
+  val customData: Set<CompiledInspectionsKtsData>,
   @Suppress("unused") private val engine: IdeScriptEngine?, // to keep classes loaded by the engine
 )
 
