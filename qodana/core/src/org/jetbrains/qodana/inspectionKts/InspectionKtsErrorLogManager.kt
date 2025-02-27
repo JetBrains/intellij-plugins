@@ -14,7 +14,7 @@ import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.*
 
-internal class InspectionKtsErrorLogManager(scope: CoroutineScope) {
+class InspectionKtsErrorLogManager(scope: CoroutineScope) {
   private val logFile: Deferred<Path> = scope.async(StaticAnalysisDispatchers.IO, start = CoroutineStart.LAZY) {
     runInterruptible {
       val logDir = PathManager.getLogDir()
