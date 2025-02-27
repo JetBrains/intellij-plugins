@@ -40,15 +40,17 @@ internal class CompiledInspectionKtsInspections(
   @Suppress("unused") private val engine: IdeScriptEngine?, // to keep classes loaded by the engine
 )
 
-abstract class CompiledInspectionKtsPostProcessor {
+interface CompiledInspectionKtsPostProcessorFactory {
   companion object {
-    val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessor> = ExtensionPointName.create("org.intellij.qodana.compiledInspectionKtsPostProcessor")
-
+    private val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessorFactory> = ExtensionPointName.create("org.intellij.qodana.compiledInspectionKtsPostProcessorFactory")
+    
     fun getProcessor(result: Any): CompiledInspectionKtsPostProcessor? =
-      EP_NAME.extensionList.firstOrNull { it.isApplicable(result) }
+      EP_NAME.extensionList.firstNotNullOfOrNull { it.createProcessorIfApplicable(result) }
   }
 
-  abstract fun isApplicable(result: Any): Boolean
+  fun createProcessorIfApplicable(result: Any): CompiledInspectionKtsPostProcessor?
+}
 
-  abstract fun process(project: Project, filePath: Path, result: Any): CompiledInspectionsKtsData?
+fun interface CompiledInspectionKtsPostProcessor {
+  fun process(project: Project, filePath: Path): CompiledInspectionsKtsData?
 }

@@ -87,7 +87,7 @@ internal suspend fun compileInspectionKtsFile(
 
     KeepAliveKotlinCompileService.getInstance().keepCompilerAliveJob.start()
 
-    val processor = CompiledInspectionKtsPostProcessor.getProcessor(result)
+    val processor = CompiledInspectionKtsPostProcessorFactory.getProcessor(result)
     if (processor == null) {
       val resultList = result as? Collection<*>
                        ?: error("Got $result from inspection script, expected ${Collection::class.java.canonicalName} of ${InspectionKts::class.java.canonicalName}")
@@ -108,7 +108,7 @@ internal suspend fun compileInspectionKtsFile(
       InspectionKtsResultData(descriptors, emptySet())
     }
     else {
-      val inspectionsKtsData = processor.process(project, file, result)
+      val inspectionsKtsData = processor.process(project, file)
                                ?: error("Failed to process inspection data with ${processor::javaClass.name} processor")
       InspectionKtsResultData(emptySet(), setOf(inspectionsKtsData))
     }

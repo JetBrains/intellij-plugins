@@ -332,8 +332,8 @@
     <extensionPoint name="dynamicInspectionsInitializer"
                     interface="org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer"
                     dynamic="true"/>
-    <extensionPoint name="compiledInspectionKtsPostProcessor"
-                    interface="org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessor"
+    <extensionPoint name="compiledInspectionKtsPostProcessorFactory"
+                    interface="org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessorFactory"
                     dynamic="true"/>
 
   </extensionPoints>
