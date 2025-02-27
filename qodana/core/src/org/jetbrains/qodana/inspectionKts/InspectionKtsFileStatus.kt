@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.flow.StateFlow
 import java.nio.file.Path
 
-internal sealed interface InspectionKtsFileStatus {
+sealed interface InspectionKtsFileStatus {
   val file: Path
 
   data class Compiled(
@@ -34,7 +34,7 @@ internal sealed interface InspectionKtsFileStatus {
 
 interface CompiledInspectionsKtsData
 
-internal class CompiledInspectionKtsInspections(
+class CompiledInspectionKtsInspections(
   val inspections: Set<DynamicInspectionDescriptor>,
   val customData: Set<CompiledInspectionsKtsData>,
   @Suppress("unused") private val engine: IdeScriptEngine?, // to keep classes loaded by the engine

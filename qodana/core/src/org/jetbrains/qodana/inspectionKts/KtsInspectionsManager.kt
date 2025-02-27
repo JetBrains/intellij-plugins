@@ -102,20 +102,12 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
 
   private val recompileFileFlow = MutableSharedFlow<Path>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-  internal val ktsInspectionsFlow: StateFlow<Set<InspectionKtsFileStatus>?> by lazy {
+  val ktsInspectionsFlow: StateFlow<Set<InspectionKtsFileStatus>?> by lazy {
     inspectionKtsFlow()
       .onEmpty { emit(emptySet()) }
       .flowOn(StaticAnalysisDispatchers.Default)
       .stateIn(scope, SharingStarted.Lazily, null)
   }
-
-  val ktsInspectionsSignalFlow: Flow<Unit> = ktsInspectionsFlow.map {}
-
-  val compiledKtsInspectionData: Collection<CompiledInspectionsKtsData>
-    get() = ktsInspectionsFlow.value.orEmpty()
-      .filterIsInstance<InspectionKtsFileStatus.Compiled>()
-      .flatMap { it.inspections.customData }
-      .toSet()
 
   fun recompileFile(file: Path) {
     recompileFileFlow.tryEmit(file)
