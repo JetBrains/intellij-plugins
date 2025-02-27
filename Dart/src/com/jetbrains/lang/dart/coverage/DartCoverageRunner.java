@@ -4,8 +4,12 @@ package com.jetbrains.lang.dart.coverage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.intellij.coverage.CoverageEngine;
+import com.intellij.coverage.CoverageLoadErrorReporter;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
+import com.intellij.coverage.FailedLoadCoverageResult;
+import com.intellij.coverage.LoadCoverageResult;
+import com.intellij.coverage.SuccessLoadCoverageResult;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -30,32 +34,42 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.concurrent.TimeoutException;
 
 public final class DartCoverageRunner extends CoverageRunner {
   private static final String ID = "DartCoverageRunner";
   private static final Logger LOG = Logger.getInstance(DartCoverageRunner.class.getName());
 
   @Override
-  public @Nullable ProjectData loadCoverageData(final @NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
+  public LoadCoverageResult loadCoverageDataWithLogging(
+    final @NotNull File sessionDataFile,
+    @Nullable CoverageSuite baseCoverageSuite,
+    @Nullable CoverageLoadErrorReporter reporter
+  ) {
     if (!(baseCoverageSuite instanceof DartCoverageSuite)) {
-      return null;
+      String message = "Expected Dart coverage suite, got " + (baseCoverageSuite == null ? "null" : baseCoverageSuite.getClass().getName());
+      return new FailedLoadCoverageResult(null, message, new IllegalArgumentException(message));
     }
 
     if (ApplicationManager.getApplication().isDispatchThread()) {
-      final Ref<ProjectData> projectDataRef = new Ref<>();
+      final Ref<LoadCoverageResult> projectDataRef = new Ref<>();
 
       ProgressManager.getInstance().runProcessWithProgressSynchronously(
-        () -> projectDataRef.set(doLoadCoverageData(sessionDataFile, (DartCoverageSuite)baseCoverageSuite)),
+        () -> projectDataRef.set(doLoadCoverageData(sessionDataFile, (DartCoverageSuite)baseCoverageSuite, reporter)),
         DartBundle.message("progress.title.loading.coverage.data"), true, baseCoverageSuite.getProject());
 
       return projectDataRef.get();
     }
     else {
-      return doLoadCoverageData(sessionDataFile, (DartCoverageSuite)baseCoverageSuite);
+      return doLoadCoverageData(sessionDataFile, (DartCoverageSuite)baseCoverageSuite, reporter);
     }
   }
 
-  private static @Nullable ProjectData doLoadCoverageData(final @NotNull File sessionDataFile, final @NotNull DartCoverageSuite coverageSuite) {
+  private static LoadCoverageResult doLoadCoverageData(
+    final @NotNull File sessionDataFile,
+    final @NotNull DartCoverageSuite coverageSuite,
+    final @Nullable CoverageLoadErrorReporter reporter
+  ) {
     final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
     // coverageProcess == null means that we are switching to data gathered earlier
     if (coverageProcess != null) {
@@ -69,19 +83,22 @@ public final class DartCoverageRunner extends CoverageRunner {
 
       if (!coverageProcess.isProcessTerminated()) {
         coverageProcess.destroyProcess();
-        return null;
+        String message = "Dart coverage process is running too long, terminating";
+        return new FailedLoadCoverageResult(null, message, new TimeoutException(message));
       }
     }
 
     final Project project = coverageSuite.getProject();
     final String contextFilePath = coverageSuite.getContextFilePath();
     if (project == null || contextFilePath == null) {
-      return null;
+      String message = "Could not get project or context file path";
+      return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
     }
 
-    final String contextId = DartAnalysisServerService.getInstance(project).execution_createContext(contextFilePath);
+    final String contextId = DartAnalysisServerService.getInstance(project).execution_createContext(contextFilePath, reporter);
     if (contextId == null) {
-      return null;
+      String message = "Could not create context for " + contextFilePath;
+      return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
     }
 
     final ProjectData projectData = new ProjectData();
@@ -91,7 +108,8 @@ public final class DartCoverageRunner extends CoverageRunner {
         new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile, StandardCharsets.UTF_8)), DartCoverageData.class);
       if (data == null) {
         LOG.warn("Coverage file does not contain valid data.");
-        return null;
+        String message = "Invalid coverage file: " + sessionDataFile.getAbsolutePath();
+        return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
       }
 
       for (Map.Entry<String, SortedMap<Integer, Integer>> entry : data.getMergedDartFileCoverageData().entrySet()) {
@@ -100,6 +118,10 @@ public final class DartCoverageRunner extends CoverageRunner {
         String filePath = getFileForUri(project, contextId, entry.getKey());
         if (filePath == null) {
           // File is not found.
+          String message = "Could not find source: " + entry.getKey();
+          if (reporter != null) {
+            reporter.reportError(message, new IllegalStateException(message));
+          }
           continue;
         }
         SortedMap<Integer, Integer> lineHits = entry.getValue();
@@ -119,12 +141,14 @@ public final class DartCoverageRunner extends CoverageRunner {
     }
     catch (JsonSyntaxException | IOException e) {
       LOG.warn(e);
+      if (reporter != null) {
+        reporter.reportError("Error while trying to read coverage data: " + e.getMessage(), e);
+      }
     }
     finally {
       DartAnalysisServerService.getInstance(project).execution_deleteContext(contextId);
     }
-
-    return projectData;
+    return new SuccessLoadCoverageResult(projectData);
   }
 
   private static @Nullable String getFileForUri(final @NotNull Project project, final @NotNull String contextId, final @NotNull String uri) {

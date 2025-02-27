@@ -2,12 +2,14 @@
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.CoverageEngine;
+import com.intellij.coverage.CoverageLoadErrorReporter;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
+import com.intellij.coverage.FailedLoadCoverageResult;
+import com.intellij.coverage.LoadCoverageResult;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.testing.CoverageProjectDataLoader;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.rt.coverage.data.ProjectData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,17 +27,23 @@ public final class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @Override
-  public ProjectData loadCoverageData(@NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
+  public LoadCoverageResult loadCoverageDataWithLogging(
+    @NotNull File sessionDataFile,
+    @Nullable CoverageSuite baseCoverageSuite,
+    @Nullable CoverageLoadErrorReporter reporter
+  ) {
     Path localProjectRoot = myLocalProjectRoot;
     if (localProjectRoot != null) {
       try {
-        return CoverageProjectDataLoader.readProjectData(sessionDataFile.toPath(), localProjectRoot, myTargetRun);
+        return CoverageProjectDataLoader.readProjectData(sessionDataFile.toPath(), localProjectRoot, myTargetRun, reporter);
       }
       catch (Exception e) {
         LOG.warn("Can't read coverage data", e);
+        return new FailedLoadCoverageResult(null, "Can't load Karma coverage data in file " + sessionDataFile + ": " + e.getMessage(), e);
       }
     }
-    return null;
+    String message = "The localProjectRoot variable is not set";
+    return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
   }
 
   public void setTargetRun(@NotNull NodeTargetRun targetRun) {
