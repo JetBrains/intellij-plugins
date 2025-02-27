@@ -4,6 +4,11 @@
     <module name="intellij.platform.coverage"/>
   </dependencies>
 
+  <projectListeners>
+    <listener class="org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadListener"
+              topic="com.intellij.coverage.CoverageLoadListener"/>
+  </projectListeners>
+
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.qodana.coverage.cloudArtifactsProcessor"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor"
