@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.sql.database.SqlDataSourceImpl
 import com.intellij.sql.database.SqlDataSourceManager
@@ -94,8 +95,7 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
 
   private fun doHighlightText(expectedErrorCount: Int = 0) {
     myFixture.doHighlighting()
-    var document = myFixture.editor.document
-    if (document is DocumentWindow) document = document.delegate
+    var document = PsiDocumentManagerBase.getTopLevelDocument(myFixture.editor.document)
     val highlights = DaemonCodeAnalyzerImpl.getHighlights(document, HighlightSeverity.ERROR, project)
     val errors = highlights.filter { it.severity == HighlightSeverity.ERROR }
     if (expectedErrorCount == 0) assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isEmpty())
