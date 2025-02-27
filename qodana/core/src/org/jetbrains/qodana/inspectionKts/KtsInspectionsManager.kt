@@ -114,7 +114,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
   val compiledKtsInspectionData: Collection<CompiledInspectionsKtsData>
     get() = ktsInspectionsFlow.value.orEmpty()
       .filterIsInstance<InspectionKtsFileStatus.Compiled>()
-      .flatMap { it.inspections.userData }
+      .flatMap { it.inspections.customData }
       .toSet()
 
   fun recompileFile(file: Path) {
