@@ -75,6 +75,7 @@ module Teamcity
         file_colon_line = "#{location.file}:#{location.lines.max}"
         scenario_node_name = scenario_node_name(event.test_case)
         log_suite_started(scenario_node_name, file_colon_line=file_colon_line)
+        log_in_idea(@message_factory.create_custom_progress_test_status(:started))
 
         if @current_scenario_outline.nil?
           scenario = scenario_source(event.test_case).scenario
@@ -126,6 +127,7 @@ module Teamcity
         scenario_node_name = scenario_node_name(event.test_case)
         @passed_test_cases << event.test_case if @config.wip? && event.result.passed?
         log_suite_finished(scenario_node_name)
+        log_in_idea(@message_factory.create_custom_progress_test_status(:finished))
       end
 
       def on_test_run_finished(event)
