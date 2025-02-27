@@ -4,8 +4,6 @@ package org.intellij.terraform.hcl.psi
 import com.intellij.lang.refactoring.RefactoringSupportProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import com.intellij.refactoring.RefactoringActionHandler
-import org.intellij.terraform.config.refactoring.TfIntroduceVariableHandler
 
 class HCLRefactoringSupportProvider : RefactoringSupportProvider() {
   override fun isAvailable(context: PsiElement): Boolean {
@@ -19,13 +17,5 @@ class HCLRefactoringSupportProvider : RefactoringSupportProvider() {
 
   override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
     return element is HCLElement && element is PsiNamedElement
-  }
-
-  override fun getIntroduceVariableHandler(): RefactoringActionHandler {
-    return TfIntroduceVariableHandler()
-  }
-
-  override fun getIntroduceVariableHandler(element: PsiElement?): RefactoringActionHandler {
-    return TfIntroduceVariableHandler()
   }
 }
