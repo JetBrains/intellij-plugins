@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.blockingContextScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.toNioPathOrNull
@@ -373,7 +374,7 @@ private fun logModCommand(
   }
 }
 
-private fun VirtualFile.relativePath(base: Path) = toNioPathOrNull()?.let { base.relativize(it).toString() } ?: path
+private fun VirtualFile.relativePath(base: Path) = toNioPathOrNull()?.let { FileUtil.toSystemIndependentName(base.relativize(it).toString()) } ?: path
 
 private fun ProblemDescriptor.messageWithLine() =
   "${lineNumber}: ${ProblemDescriptorUtil.renderDescriptionMessage(this, psiElement)}"
