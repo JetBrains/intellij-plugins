@@ -102,6 +102,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
 
   private val recompileFileFlow = MutableSharedFlow<Path>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
+  @get:Internal
   val ktsInspectionsFlow: StateFlow<Set<InspectionKtsFileStatus>?> by lazy {
     inspectionKtsFlow()
       .onEmpty { emit(emptySet()) }
