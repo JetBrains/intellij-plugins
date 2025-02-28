@@ -15,7 +15,6 @@ class Angular2Annotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     when (element) {
       is XmlAttribute -> visitXmlAttribute(element, holder)
-      is Angular2TemplateBindingKey -> visitTemplateBindingKey(element, holder)
     }
   }
 
@@ -32,16 +31,5 @@ class Angular2Annotator : Annotator {
             .create()
         }
     }
-  }
-
-  private fun visitTemplateBindingKey(key: Angular2TemplateBindingKey, holder: AnnotationHolder) {
-    val color = when ((key.parent as? Angular2TemplateBinding ?: return).keyKind) {
-      Angular2TemplateBinding.KeyKind.LET -> TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE
-      else -> return
-    }
-    holder.newSilentAnnotationWithDebugInfo(HighlightInfoType.SYMBOL_TYPE_SEVERITY, color.externalName)
-      .range(key.textRange)
-      .textAttributes(color)
-      .create()
   }
 }
