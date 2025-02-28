@@ -165,7 +165,7 @@ class PrettierLanguageServiceImpl(
     val packageJsonPath: LocalFilePath? = LocalFilePath.create((prettierPackage as? YarnPnpNodePackage)?.let {
       FileUtil.toSystemDependentName(it.getPackageJsonPath(project)!!)
     })
-    val ignoreFilePath: String? = ignoreFilePath?.let { FileUtil.toSystemDependentName(it) }
+    val ignoreFilePath: LocalFilePath? = ignoreFilePath?.let { LocalFilePath.create(FileUtil.toSystemDependentName(it)) }
     val start: Int? = range?.startOffset
     val end: Int? = range?.endOffset
 
