@@ -1,6 +1,5 @@
 package com.intellij.prettier.wsl
 
-import com.intellij.lang.javascript.linter.ActionsOnSaveTestUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.testFramework.PlatformTestUtil
@@ -48,7 +47,7 @@ class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
     fixture.configureByText("foo.js", "var  a=''")
     fixture.type(' ')
     fixture.performEditorAction("SaveAll")
-    ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(fixture.project)
+    EventQueue.invokeAndWait { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
     fixture.checkResult(" var  a=''")
   }
 }
