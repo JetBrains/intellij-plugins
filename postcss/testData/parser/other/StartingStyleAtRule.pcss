@@ -1,0 +1,48 @@
+h1 {
+  transition: background-color 1.5s;
+  background-color: green;
+}
+
+@starting-style {
+  h1 {
+    background-color: transparent;
+  }
+}
+
+h1 {
+  transition: background-color 1.5s;
+  background-color: green;
+
+  @starting-style {
+    background-color: transparent;
+  }
+}
+
+.Drawer/*:popover-open */{
+  @starting-style {
+    translate: 16rem 0;
+
+    &::backdrop {
+      opacity: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @starting-style {
+    ._oyeijq3t {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+@starting-style {
+  @keyframes screen {}
+  @font-face {}
+  @counter-style x {}
+  @layer x {}
+  @property --x {
+    syntax: "*";
+    inherits: false;
+  }
+}
