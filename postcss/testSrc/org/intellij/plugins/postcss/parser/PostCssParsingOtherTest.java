@@ -16,4 +16,6 @@ public class PostCssParsingOtherTest extends PostCssParsingTest {
   public void testScopeAtRule() {
     doTest();
   }
+
+  public void testStartingStyleAtRule() { doTest(); }
 }
