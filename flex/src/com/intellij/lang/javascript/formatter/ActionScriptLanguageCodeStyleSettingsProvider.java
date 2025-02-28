@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
@@ -19,6 +19,12 @@ import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.ge
 
 public final class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   public static final @NlsSafe String CONFIGURABLE_DISPLAY_NAME = "ActionScript";
+  public static final @NlsSafe String CONFIGURABLE_ID = "preferences.sourceCode.ActionScript";
+
+  @Override
+  public @NotNull String getConfigurableId() {
+    return CONFIGURABLE_ID;
+  }
 
   public static final String GENERAL_CODE_SAMPLE =
     """

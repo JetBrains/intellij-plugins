@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.arrangement;
 
 import com.intellij.icons.AllIcons;
@@ -286,7 +286,7 @@ public final class ActionScriptRearranger extends JSRearrangerBase {
   public @NotNull Collection<ArrangementTabInfo> getArrangementTabInfos() {
     return List.of(new ArrangementTabInfo(AllIcons.FileTypes.AS,
                                           JavaScriptBundle.message("filetype.actionscript.description"),
-                                          ActionScriptLanguageCodeStyleSettingsProvider.CONFIGURABLE_DISPLAY_NAME));
+                                          ActionScriptLanguageCodeStyleSettingsProvider.CONFIGURABLE_ID));
   }
 }
 
