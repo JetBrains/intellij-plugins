@@ -706,6 +706,10 @@ const props = {seeMe: {}}
   fun testBindShorthandAttribute() {
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0))
   }
+
+  fun testWatchProperty() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0), extension = "js")
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
