@@ -710,6 +710,10 @@ const props = {seeMe: {}}
   fun testWatchProperty() {
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0), extension = "js")
   }
+
+  fun testTypedMixins() {
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0), fileName = "index.js")
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
