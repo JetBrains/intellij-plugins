@@ -1,6 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.scopes
 
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
@@ -26,6 +29,7 @@ import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.VueFramework
+import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
@@ -51,6 +55,9 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
         return true
       }
     }, onlyPublic = false)
+    if (!DialectDetector.isTypeScript(enclosingComponent.source)) {
+      consumer(anyJsDataSymbol)
+    }
     consumer(VueWatchablePropertySymbol)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
@@ -62,9 +69,11 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
     }
   }
 
-  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsCodeCompletionQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsCodeCompletionQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope)
       .let { codeCompletions ->
         if (qualifiedName.matches(VUE_COMPONENT_COMPUTED_PROPERTIES, VUE_COMPONENT_DATA_PROPERTIES))
@@ -76,6 +85,17 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(enclosingComponent.source.project).modificationCount
+
+  companion object {
+
+    private val anyJsDataSymbol = VueAnySymbol(
+      WebSymbolOrigin.create(VueFramework.ID),
+      VUE_COMPONENT_DATA_PROPERTIES,
+      "Unknown data property",
+      JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.JS)
+    )
+
+  }
 
   object VueWatchablePropertySymbol : WebSymbol {
 

@@ -30,7 +30,7 @@ open class VueDirectiveSymbol(name: String, directive: VueDirective, private val
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
-      listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, qualifiedName.kind, qualifiedName.name))
+      listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
     }
     else emptyList()
 
@@ -38,7 +38,7 @@ open class VueDirectiveSymbol(name: String, directive: VueDirective, private val
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT) {
-      listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, qualifiedKind.kind, "Vue directive argument"))
+      listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
     }
     else emptyList()
 
