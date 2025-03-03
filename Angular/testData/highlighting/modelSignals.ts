@@ -28,9 +28,20 @@ export class TestSignalComponent {
 }
 
 @Component({
+  selector: 'app-test-generic',
+  standalone: true,
+  template: ``
+})
+export class TestGenericComponent<T> {
+  generic = model<T>('' as T);
+  @Output()
+  event = new EventEmitter<T>();
+}
+
+@Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TestAnnotationComponent, TestSignalComponent],
+  imports: [TestAnnotationComponent, TestSignalComponent, TestGenericComponent],
   template: `
     <!-- two way syntax: -->
     <app-test-annotation [(optional)]="value2" [(required)]="value1"></app-test-annotation>
@@ -39,6 +50,10 @@ export class TestSignalComponent {
     <!-- split syntax: -->
     <app-test-annotation [optional]="value2" (optionalChange)="value2 = $event" [required]="value1" (requiredChange)="value2 = $event"></app-test-annotation>
     <app-test-signal [optional]="value2" (optionalChange)="value2 = $event" [required]="value1" (requiredChange)="value2 = $event"></app-test-signal>
+    
+    <!-- generic component -->
+    <app-test-generic [(generic)]="signal1" (event)="<error descr="TS2322: Type 'string' is not assignable to type 'number'.">value3</error> = $event"></app-test-generic>
+    <app-test-generic [(generic)]="signal2" (event)="value3 = $event"></app-test-generic>
     
     <!-- check types -->
     <app-test-signal 
