@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -47,6 +48,10 @@ private fun createInfo(template: PsiElement?): VueTemplate<*>? =
   when (template) {
     is XmlFile -> VueFileTemplate(template)
     is XmlTag -> VueTagTemplate(template)
+    is PsiFile -> template.viewProvider.languages.find { it.isKindOf(HTMLLanguage.INSTANCE) }
+      ?.let { template.viewProvider.getPsi(it) }
+      ?.asSafely<XmlFile>()
+      ?.let { VueFileTemplate(it) }
     else -> null
   }
 
