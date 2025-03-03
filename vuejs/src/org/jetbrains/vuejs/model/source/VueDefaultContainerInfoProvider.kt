@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -27,6 +26,7 @@ import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
+import org.jetbrains.vuejs.model.typed.VueTypedMixin
 import org.jetbrains.vuejs.types.VueSourcePropType
 import org.jetbrains.vuejs.types.optionalIf
 
@@ -119,17 +119,25 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
           .mapNotNull { VueModelManager.getMixin(it) }
           .toList()
 
-      val initializerMixins: List<VueMixin> =
+      val expressions: List<JSExpression> =
         (mixinsProperty as? StubBasedPsiElement<*>)?.stub
-          ?.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION, JSObjectLiteralExpression.ARRAY_FACTORY)
-          ?.mapNotNull { VueModelManager.getMixin(it) }
+          ?.let { stub ->
+            stub.childrenStubs.mapNotNull { it.psi as? JSExpression }
+          }
         ?: (mixinsProperty.value as? JSArrayLiteralExpression)
           ?.expressions
-          ?.asSequence()
-          ?.filterIsInstance<JSObjectLiteralExpression>()
-          ?.mapNotNull { VueModelManager.getMixin(it) }
           ?.toList()
         ?: emptyList()
+
+      val initializerMixins: List<VueMixin> = expressions
+        .mapNotNull {
+          when (it) {
+            is JSCallExpression -> VueTypedMixin(it)
+            is JSObjectLiteralExpression -> VueModelManager.getMixin(it)
+            else -> null
+          }
+        }
+
       return referencedMixins + initializerMixins
     }
   }
