@@ -213,6 +213,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
+    if (isVueMixinInitializerCall(node)) return true
     val methodExpression = JSCallExpressionImpl.getMethodExpression(node)
     if (methodExpression == null || methodExpression.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
     return isCompositionApiAppObjectCall(node)
@@ -426,6 +427,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     && checkCallExpression(callNode) { refName, hasQualifier ->
       !hasQualifier && isVueComponentDecoratorName(refName)
     }
+
+  private fun isVueMixinInitializerCall(callNode: ASTNode): Boolean =
+    callNode
+      .treeParent?.takeIf { it.elementType == JSStubElementTypes.ARRAY_LITERAL_EXPRESSION }
+      ?.treeParent?.takeIf { it.elementType == JSStubElementTypes.PROPERTY }
+      ?.psi?.asSafely<JSProperty>()?.name == MIXINS_PROP
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(node: ASTNode): Boolean {
