@@ -596,7 +596,7 @@ private class TcbDirectiveCtorOp(
       }
       for (input in attr.inputs) {
         val fieldName = input.fieldName
-        val isTwoWayBinding = false
+        val isTwoWayBinding = input.isTwoWayBinding
         // Skip the field if an attribute has already been bound to it; we can't have a duplicate
         // key in the type constructor call.
         if (fieldName == null || genericInputs.contains(fieldName)) {
