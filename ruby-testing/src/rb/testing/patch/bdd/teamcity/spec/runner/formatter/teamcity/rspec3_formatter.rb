@@ -21,6 +21,7 @@ require 'teamcity/utils/service_message_factory'
 require 'teamcity/utils/std_capture_helper'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/url_formatter'
+require 'teamcity/utils/formatter_util'
 
 module Spec
   module Runner
@@ -77,6 +78,7 @@ module Spec
         include ::Rake::TeamCity::RunnerUtils
         include ::Rake::TeamCity::RunnerCommon
         include ::Rake::TeamCity::Utils::UrlFormatter
+        include ::Rake::TeamCity::FormatterUtil
 
         RSpec::Core::Formatters.register self, :start, :close,
                                          :example_group_started, :example_group_finished,
@@ -381,13 +383,16 @@ module Spec
           duration = finished_at_ms - started_at_ms
 
           debug_log("Example finishing... full example name = [#{example_data}], duration = #{duration} ms]")
+          time_now = format_time(Time.now)
+          started_at = format_time(example.execution_result.started_at)
+          finished_at = format_time(example.execution_result.finished_at)
           diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" \
-                            ", f/s=(#{finished_at_ms}, #{started_at_ms})" \
-                            ", duration=#{duration}" \
-                            ", time.now=#{Time.now}" \
-                            ", raw[:started_at]=#{example.execution_result.started_at}" \
-                            ", raw[:finished_at]=#{example.execution_result.finished_at}" \
-                            ", raw[:run_time]=#{example.execution_result.run_time}"
+            ", f/s=(#{finished_at_ms}, #{started_at_ms})" \
+            ", duration=#{duration}" \
+            ", time.now=#{time_now}" \
+            ", raw[:started_at]=#{started_at}" \
+            ", raw[:finished_at]=#{finished_at}" \
+            ", raw[:run_time]=#{example.execution_result.run_time}"
 
           log(@message_factory.create_test_finished(example_data.full_name,
                                                     duration,
