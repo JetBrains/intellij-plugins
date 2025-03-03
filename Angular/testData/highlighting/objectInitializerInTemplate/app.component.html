@@ -1,0 +1,6 @@
+@for (item of [
+  {title: 'Explore the Docs'},
+]; track item.title) {
+
+  {{ item.<error descr="TS2551: Property 'ttle' does not exist on type '{ title: string; }'. Did you mean 'title'?">ttle</error> }}
+}
