@@ -9,7 +9,7 @@ data class QodanaProfileYamlConfig(
   val base: BaseProfile = BaseProfile(),
 
   val groups: List<InspectionGroup> = emptyList(),
-  val inspections: List<InspectionConfigRaw> = emptyList()
+  val inspections: List<InspectionConfig> = emptyList()
 ) {
   data class BaseProfile(
     val name: String = "",
@@ -22,7 +22,7 @@ data class QodanaProfileYamlConfig(
     val groups: List<String> = emptyList()
   )
 
-  data class InspectionConfigRaw(
+  data class InspectionConfig(
     val inspection: String? = null,
     val group: String? = null,
     val enabled: Boolean? = null,
@@ -36,7 +36,7 @@ data class QodanaProfileConfig(
   val base: QodanaProfileYamlConfig.BaseProfile = QodanaProfileYamlConfig.BaseProfile(),
 
   val groups: List<QodanaProfileYamlConfig.InspectionGroup> = emptyList(),
-  val inspections: List<QodanaProfileYamlConfig.InspectionConfigRaw> = emptyList()
+  val inspections: List<QodanaProfileYamlConfig.InspectionConfig> = emptyList()
 ) {
   companion object {
     @TestOnly
