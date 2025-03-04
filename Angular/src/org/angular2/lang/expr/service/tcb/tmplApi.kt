@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
+import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDelegate
@@ -165,7 +166,7 @@ internal interface TmplAstBlockNodeWithChildren : TmplAstBlockNode, TmplAstNodeW
 internal class TmplAstForLoopBlock(
   override val nameSpan: TextRange?,
   val item: TmplAstVariable?,
-  val contextVariables: Map<String, TmplAstVariable>,
+  val contextVariables: MultiMap<String, Pair<TmplAstVariable, JSExpression?>>,
   val empty: TmplAstForLoopBlockEmpty?,
   val expression: JSExpression?,
   val trackBy: JSExpression?,
@@ -1022,21 +1023,25 @@ private fun JSVariable.toTmplAstLetDeclaration(referenceResolver: ReferenceResol
     referenceResolver.set(this@toTmplAstLetDeclaration, this)
   }
 
-private fun buildContextVariables(forOfBlock: Angular2HtmlBlock, referenceResolver: ReferenceResolver): Map<String, TmplAstVariable> {
-  val result = mutableMapOf<String, TmplAstVariable>()
+private fun buildContextVariables(forOfBlock: Angular2HtmlBlock, referenceResolver: ReferenceResolver): MultiMap<String, Pair<TmplAstVariable, JSExpression?>> {
+  val result = MultiMap<String, Pair<TmplAstVariable, JSExpression?>>()
+
+  val symbols = forOfBlock.definition?.implicitVariables?.associateBy { it.name }
+                ?: emptyMap()
+  Scope.forLoopContextVariableTypes.keys.forEach { name ->
+    result.putValue(name, Pair((symbols[name] ?: throw IllegalStateException("Cannot find symbol for $name"))
+                                 .toTmplAstVariable(forOfBlock, referenceResolver), null))
+  }
+
   forOfBlock.parameters
     .asSequence()
     .filter { !it.isPrimaryExpression && it.name == PARAMETER_LET }
     .flatMap { it.variables }
-    .mapNotNull { v -> v.initializer?.text?.trim()?.let { Pair(it, v.toTmplAstVariable(referenceResolver)) } }
-    .toMap(result)
-
-  val symbols = forOfBlock.definition?.implicitVariables?.associateBy { it.name }
-                ?: emptyMap()
-  Scope.forLoopContextVariableTypes.keys.filter { !result.containsKey(it) }.associateByTo(
-    result, { it }, {
-    (symbols[it] ?: throw IllegalStateException("Cannot find symbol for $it")).toTmplAstVariable(forOfBlock, referenceResolver)
-  }
-  )
+    .forEach { v ->
+      val initializer = v.initializer ?: return@forEach
+      initializer.text?.trim()?.let {
+        result.putValue(it, Pair(v.toTmplAstVariable(referenceResolver), initializer))
+      }
+    }
   return result
 }

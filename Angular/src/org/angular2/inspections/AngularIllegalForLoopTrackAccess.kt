@@ -1,0 +1,5 @@
+package org.angular2.inspections
+
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
+
+class AngularIllegalForLoopTrackAccess : AngularTcbOutOfBandInspectionBase(DiagnosticKind.IllegalForLoopTrackAccess)

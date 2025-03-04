@@ -39,6 +39,7 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       AngularIncorrectLetUsageInspection::class.java,
       AngularUnusedComponentImportInspection::class.java,
       AngularUnsupportedSyntaxInspection::class.java,
+      AngularIllegalForLoopTrackAccess::class.java,
       // TS
       TypeScriptUnresolvedReferenceInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,

@@ -17,7 +17,7 @@ export interface User {
         let first = $first, <warning descr="Unused constant as">as</warning><error descr="'=' expected"> </error>second; 
         <error descr="@for does not support parameter as">as</error> third
     ) {
-        {{ item }} {{first}} {{<error descr="TS2339: Property '$first' does not exist on type 'RobotProfileComponent'.">$first</error>}} {{$last}} {{$count}} {{<error descr="TS2339: Property '$foo' does not exist on type 'RobotProfileComponent'.">$foo</error>}}
+        {{ item }} {{first}} {{$first}} {{$last}} {{$count}} {{<error descr="TS2339: Property '$foo' does not exist on type 'RobotProfileComponent'.">$foo</error>}}
     }
     @for(<warning descr="Unused constant item">item</warning><error descr="'of' expected"> </error>array; 
          track<error descr="Expression expected">;</error> 
