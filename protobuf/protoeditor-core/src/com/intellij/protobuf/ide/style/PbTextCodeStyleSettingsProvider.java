@@ -41,6 +41,11 @@ public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   }
 
   @Override
+  public @NotNull String getConfigurableId() {
+    return "preferences.sourceCode.Protocol Buffer Text";
+  }
+
+  @Override
   public @NotNull CodeStyleConfigurable createConfigurable(
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("prototext.name")) {

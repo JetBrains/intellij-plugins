@@ -27,6 +27,11 @@ public final class JadeCodeStyleSettingsProvider extends CodeStyleSettingsProvid
   }
 
   @Override
+  public @NotNull String getConfigurableId() {
+    return "preferences.sourceCode.Pug/Jade";
+  }
+
+  @Override
   public @Nullable String getConfigurableDisplayName() {
     return JadeBundle.message("pug.code.style.configurable.name");
   }
