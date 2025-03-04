@@ -108,5 +108,6 @@
     <orderEntry type="module" module-name="intellij.platform.langInjection" />
     <orderEntry type="module" module-name="intellij.platform.ide.ui" />
     <orderEntry type="module" module-name="intellij.platform.statistics.testFramework" scope="TEST" />
+    <orderEntry type="library" name="jetbrains.qodana.configuration" level="project" />
   </component>
 </module>
