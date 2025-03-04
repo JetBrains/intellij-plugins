@@ -59,7 +59,7 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
 class AngularSettingsState : BaseState() {
   var innerServiceType: AngularServiceSettings by enum(AngularServiceSettings.AUTO)
   var packageName: String? by string(defaultPackageKey)
-  var useTypesFromServer: Boolean by property(true)
+  var useTypesFromServer: Boolean by property(false)
 }
 
 enum class AngularServiceSettings {
