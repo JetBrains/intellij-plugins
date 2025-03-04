@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.ui.run
 
 import com.fasterxml.jackson.core.JacksonException
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -16,6 +16,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.*
+import org.jetbrains.qodana.effectiveConfiguration.QdConfigurationResult
+import org.jetbrains.qodana.effectiveConfiguration.QdVirtualYamlFile
+import org.jetbrains.qodana.effectiveConfiguration.buildEffectiveQdConfiguration
 import org.jetbrains.qodana.findQodanaConfigVirtualFile
 import org.jetbrains.qodana.getFileTypeByFilename
 import org.jetbrains.qodana.refreshVcsFileStatus
@@ -138,7 +141,7 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
     return QODANA_CONFIG_FILES.map(projectDir::resolve).contains(this)
   }
 
-  private fun parseQodanaYamlConfig(
+  private suspend fun parseQodanaYamlConfig(
     text: String,
     projectPath: String,
     yamlPath: Path?,
@@ -146,7 +149,18 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
     val projectPath = Path(projectPath)
     val yamlPath = yamlPath ?: projectPath.resolve(QODANA_YAML_CONFIG_FILENAME)
 
-    return QodanaYamlReader.parse(text)
+    val effectiveYamlTextResult = buildEffectiveQodanaYamlText(text, yamlPath)
+    @Suppress("HardCodedStringLiteral")
+    val effectiveYamlText = when (effectiveYamlTextResult) {
+      is QdConfigurationResult.Failure -> {
+        return QodanaYamlViewModel.ParseResult.Error(effectiveYamlTextResult.exception.failureMessage)
+      }
+      is QdConfigurationResult.Success -> {
+        effectiveYamlTextResult.value
+      }
+    }
+
+    return QodanaYamlReader.parse(effectiveYamlText)
       .map { it.withAbsoluteProfilePath(projectPath, yamlPath) }
       .map { QodanaYamlViewModel.ParseResult.Valid(it, text) }
       .getOrElse { e ->
@@ -166,5 +180,23 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
         }
       }
   }
+}
 
+private suspend fun buildEffectiveQodanaYamlText(text: String, yamlPath: Path): QdConfigurationResult<String> {
+  val file = object : QdVirtualYamlFile by QdVirtualYamlFile.physical(yamlPath) {
+    override fun reader() = text.reader()
+  }
+
+  // Reading files – IO
+  val effectiveConfiguration = withContext(QodanaDispatchers.IO) {
+    buildEffectiveQdConfiguration(file)
+  }
+  return when (effectiveConfiguration) {
+    is QdConfigurationResult.Failure -> effectiveConfiguration
+    is QdConfigurationResult.Success -> {
+      val irYaml = effectiveConfiguration.value.effectiveQodanaIrYaml
+      val effectiveYamlText = irYaml.generateYamlText()
+      QdConfigurationResult.Success(effectiveYamlText)
+    }
+  }
 }

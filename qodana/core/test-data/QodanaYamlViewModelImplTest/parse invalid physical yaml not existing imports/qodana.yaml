@@ -1,0 +1,5 @@
+version: 1.0
+imports:
+  - inner.qodana.yaml
+profile:
+  name: qodana.starter

@@ -1,0 +1,5 @@
+version: "1.0"
+
+failureConditions:
+  severityThresholds:
+    any: 0

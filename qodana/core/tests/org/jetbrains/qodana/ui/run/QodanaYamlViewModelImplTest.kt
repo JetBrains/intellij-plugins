@@ -161,7 +161,7 @@ class QodanaYamlViewModelImplTest : QodanaPluginHeavyTestBase() {
     val yamlState = viewModel.yamlStateFlow.filterNotNull().first()
     assertThat(yamlState).isNotNull
     assertThat(yamlState.isPhysical).isFalse
-    
+
     var error: QodanaYamlViewModel.ParseResult.Error? = null
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
       viewModel.yamlValidationErrorFlow.collect {
@@ -219,6 +219,53 @@ class QodanaYamlViewModelImplTest : QodanaPluginHeavyTestBase() {
   }
 
   fun `test parse invalid physical yaml`() = runTest {
+    val viewModel = QodanaYamlViewModelImpl(project, backgroundScope)
+
+    val yamlState = viewModel.yamlStateFlow.filterNotNull().first()
+    assertThat(yamlState).isNotNull
+    assertThat(yamlState.isPhysical).isTrue
+
+    var errorFromErrorFlow: QodanaYamlViewModel.ParseResult.Error? = null
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+      viewModel.yamlValidationErrorFlow.collect {
+        errorFromErrorFlow = it
+      }
+    }
+
+    val errorFromValidation = viewModel.parseQodanaYaml().await() as QodanaYamlViewModel.ParseResult.Error
+    testScheduler.advanceUntilIdle()
+    assertThat(errorFromValidation).isEqualTo(errorFromErrorFlow)
+  }
+
+  fun `test parse valid physical yaml with imports`() = runTest {
+    val viewModel = QodanaYamlViewModelImpl(project, backgroundScope)
+
+    val yamlState = viewModel.yamlStateFlow.filterNotNull().first()
+    assertThat(yamlState).isNotNull
+    assertThat(yamlState.isPhysical).isTrue
+
+    var error: QodanaYamlViewModel.ParseResult.Error? = null
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+      viewModel.yamlValidationErrorFlow.collect {
+        error = it
+      }
+    }
+
+    val parseResult = viewModel.parseQodanaYaml().await() as QodanaYamlViewModel.ParseResult.Valid
+
+    val expectedSeverityThresholds = expectedValidYamlConfig.failureConditions.severityThresholds.copy(any = 0)
+    val expectedConfig = expectedValidYamlConfig.copy(
+      failureConditions = expectedValidYamlConfig.failureConditions.copy(
+        severityThresholds = expectedSeverityThresholds
+      )
+    )
+
+    assertThat(parseResult.yamlConfig).isEqualTo(expectedConfig)
+    testScheduler.advanceUntilIdle()
+    assertThat(error).isNull()
+  }
+
+  fun `test parse invalid physical yaml not existing imports`() = runTest {
     val viewModel = QodanaYamlViewModelImpl(project, backgroundScope)
 
     val yamlState = viewModel.yamlStateFlow.filterNotNull().first()
