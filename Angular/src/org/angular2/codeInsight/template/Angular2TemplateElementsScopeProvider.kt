@@ -206,13 +206,8 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       pushScope(block)
       super.visitBlock(block)
       if (blockName == BLOCK_FOR) {
-        val usedVariables = block.parameters
-          .filter { it.name == PARAMETER_LET }
-          .flatMap { it.variables }
-          .mapNotNull { variable -> (variable.initializer as? JSReferenceExpression)?.takeIf { it.qualifier == null }?.referenceName }
         block.definition
           ?.implicitVariables
-          ?.filter { it.name !in usedVariables }
           ?.forEach { addSymbol(it.withNavigationTarget(block)) }
       }
       popScope()
