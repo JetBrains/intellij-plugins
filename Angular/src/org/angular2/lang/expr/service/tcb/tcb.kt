@@ -21,6 +21,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.startOffset
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
+import com.intellij.util.containers.sequenceOfNotNull
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
@@ -1184,13 +1185,14 @@ private class TcbBlockImplicitVariableOp(
   private val scope: Scope,
   private val type: Expression,
   private val variable: TmplAstVariable,
+  private val initializer: Expression?,
 ) : TcbOp() {
 
   override val optional get() = true
 
   override fun execute(): Identifier {
     val id = this.tcb.allocateId(this.variable)
-    val variable = tsDeclareVariable(id, this.type)
+    val variable = tsDeclareVariable(id, this.type, this.initializer)
     this.scope.addStatement(variable)
     return id
   }
@@ -1667,12 +1669,12 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
           scope.varMap[it] = loopInitializer
         }
 
-        for ((name, variable) in scopedNode.contextVariables) {
-          val typeName = forLoopContextVariableTypes[name]
-          if (typeName == null) {
-            throw Error("Unrecognized for loop context variable ${name}")
+        for ((name, variables) in scopedNode.contextVariables.entrySet()) {
+          val typeName = forLoopContextVariableTypes[name] ?: "any"
+          for ((variable, initializer) in variables) {
+            scope.registerVariable(variable, TcbBlockImplicitVariableOp(tcb, scope, Expression(typeName),
+                                                                        variable, initializer?.let { tcbExpression(it, tcb, scope) }))
           }
-          scope.registerVariable(variable, TcbBlockImplicitVariableOp(tcb, scope, Expression(typeName), variable))
         }
       }
       for (node in children) {
@@ -2865,7 +2867,7 @@ private class TcbForLoopTrackTranslator(
 ) : TcbExpressionTranslator(tcb, scope, result) {
 
   private val allowedVariables: Set<TmplAstVariable> =
-    setOfNotNull(block.item, block.contextVariables["\$index"])
+    sequenceOfNotNull(block.item).plus(block.contextVariables.get("\$index").map { it.first }).toSet()
 
   override fun visitJSReferenceExpression(node: JSReferenceExpression) {
     if (node.qualifier == null) {
@@ -2875,7 +2877,7 @@ private class TcbForLoopTrackTranslator(
       if (target != null &&
           (target !is TmplAstVariable || !this.allowedVariables.contains(target))
       ) {
-        this.tcb.oobRecorder.illegalForLoopTrackAccess(this.tcb.id, this.block, node)
+        this.tcb.oobRecorder.illegalForLoopTrackAccess(this.block, node)
       }
     }
     super.visitJSReferenceExpression(node)
@@ -2906,7 +2908,7 @@ private fun tsCastToAny(expr: Expression): Expression {
  */
 
 internal fun tsDeclareVariable(
-  id: Identifier, type: Expression,
+  id: Identifier, type: Expression, initializer: Expression? = null,
   types: Boolean = true, ofDir: Angular2Directive? = null,
   ignoreDiagnostics: Boolean = false,
 ): Statement {
@@ -2919,9 +2921,11 @@ internal fun tsDeclareVariable(
       id, id.sourceSpan, supportTypes = types, diagnosticsRange = id.sourceSpan.takeIf { !ignoreDiagnostics },
       varOfDirective = ofDir,
     )
-    append(" = null! as ")
-    append(type)
-    append(";")
+    if (initializer != null) {
+      append(" : ").append(type).append(" = ").append(initializer).append(";")
+    } else {
+      append(" = null! as ").append(type).append(";")
+    }
   }
 }
 

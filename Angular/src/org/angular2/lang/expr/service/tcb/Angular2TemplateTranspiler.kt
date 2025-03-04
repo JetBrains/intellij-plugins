@@ -184,7 +184,8 @@ object Angular2TemplateTranspiler {
   }
 
   enum class DiagnosticKind {
-    UnresolvedPipe
+    UnresolvedPipe,
+    IllegalForLoopTrackAccess
   }
 
   interface Diagnostic {

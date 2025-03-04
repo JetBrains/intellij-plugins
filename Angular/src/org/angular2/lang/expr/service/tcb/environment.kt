@@ -17,6 +17,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.SmartList
+import com.intellij.util.containers.sequenceOfNotNull
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig
@@ -377,8 +379,18 @@ internal class OutOfBandDiagnosticRecorder {
 
   }
 
-  fun illegalForLoopTrackAccess(id: TemplateId, block: TmplAstForLoopBlock, ast: JSReferenceExpression) {
-
+  fun illegalForLoopTrackAccess(block: TmplAstForLoopBlock, ast: JSReferenceExpression) {
+    registerDiagnostics(
+      DiagnosticKind.IllegalForLoopTrackAccess,
+      ast.textRange,
+      Angular2Bundle.htmlMessage(
+        "angular.inspection.illegal-for-loop-access.message",
+        ast.text.withColor(TextAttributesKind.TS_LOCAL_VARIABLE, ast),
+        sequenceOfNotNull(block.item).plus(block.contextVariables.get("\$index").map { it.first })
+          .joinToString(", ") {it.name.withColor(TextAttributesKind.TS_LOCAL_VARIABLE, ast) },
+      ),
+      highlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+    )
   }
 
   fun controlFlowPreventingContentProjection(

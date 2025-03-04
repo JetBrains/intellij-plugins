@@ -181,6 +181,10 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkDocumentation = true,
                  lookupItemFilter = { it.lookupString == "\$count" })
 
+  fun testForBlockVariablesInExpr() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html",
+                 lookupItemFilter = { it.priority >= 100 })
+
   fun testDeferBlockTimeExpressionStart() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
