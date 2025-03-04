@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -39,6 +40,8 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.math.max
 
+private val EMBEDDER = Key.create<String>(Flexmojos3GenerateConfigTask::class.java.toString() + ".EMBEDDER")
+
 internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
                                    mavenProject: MavenProject?,
                                    mavenTree: MavenProjectsTree?,
@@ -54,7 +57,7 @@ internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.displayName))
 
     val baseDir = getBaseDir(myMavenProject.directoryFile).toString()
-    val embedder = embeddersManager.getEmbedder(MavenEmbeddersManager.FOR_POST_PROCESSING, baseDir)
+    val embedder = embeddersManager.getEmbedder(EMBEDDER, baseDir)
     var temporaryFiles: List<VirtualFile>? = null
     try {
       val workspaceMap = MavenWorkspaceMap()
