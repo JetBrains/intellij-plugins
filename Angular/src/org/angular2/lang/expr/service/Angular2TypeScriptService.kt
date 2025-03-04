@@ -38,7 +38,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
@@ -271,8 +270,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       if (element !is JSElement && element.parent !is JSElement) null
       else super.getElementType(element, isContextual, virtualFile, projectFile)
 
-    override suspend fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile) {
-      super.commitDocumentsBeforeGetElementType(element, virtualFile)
+    override suspend fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile, configFile: VirtualFile?) {
+      super.commitDocumentsBeforeGetElementType(element, virtualFile, configFile)
       if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
         refreshTranspiledTemplateIfNeeded(virtualFile)
       }
