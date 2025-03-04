@@ -27,10 +27,10 @@ public final class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @Override
-  public LoadCoverageResult loadCoverageDataWithLogging(
+  public @NotNull LoadCoverageResult loadCoverageDataWithLogging(
     @NotNull File sessionDataFile,
     @Nullable CoverageSuite baseCoverageSuite,
-    @Nullable CoverageLoadErrorReporter reporter
+    @NotNull CoverageLoadErrorReporter reporter
   ) {
     Path localProjectRoot = myLocalProjectRoot;
     if (localProjectRoot != null) {
@@ -39,11 +39,12 @@ public final class KarmaCoverageRunner extends CoverageRunner {
       }
       catch (Exception e) {
         LOG.warn("Can't read coverage data", e);
-        return new FailedLoadCoverageResult(null, "Can't load Karma coverage data in file " + sessionDataFile + ": " + e.getMessage(), e);
+        return new FailedLoadCoverageResult(e, true);
       }
     }
-    String message = "The localProjectRoot variable is not set";
-    return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
+    String message = "The localProjectRoot is not set";
+    LOG.warn(message);
+    return new FailedLoadCoverageResult(message);
   }
 
   public void setTargetRun(@NotNull NodeTargetRun targetRun) {

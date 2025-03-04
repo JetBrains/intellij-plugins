@@ -4,38 +4,16 @@ import com.intellij.coverage.CoverageLoadListener
 import com.intellij.coverage.FailedLoadCoverageResult
 import com.intellij.coverage.LoadCoverageResult
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
-import com.intellij.openapi.diagnostic.logger
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
-private val LOG = logger<QodanaCoverageLoadListener>()
-
-private data class ExceptionLocation(
-  val coverageFilePath: String,
-  val exceptionStackTrace: Array<StackTraceElement>
-) {
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as ExceptionLocation
-
-    if (coverageFilePath != other.coverageFilePath) return false
-    if (!exceptionStackTrace.contentEquals(other.exceptionStackTrace)) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result = coverageFilePath.hashCode()
-    result = 31 * result + exceptionStackTrace.contentHashCode()
-    return result
-  }
-}
+private const val PRINTED_EXCEPTION_LIMIT = 10
 
 class QodanaCoverageLoadListener: CoverageLoadListener {
 
   private val reporter = QodanaMessageReporter.DEFAULT
-  private val reportedErrors = mutableSetOf<ExceptionLocation>()
+  private val reportedErrors = ConcurrentHashMap<File, AtomicInteger>()
 
   override fun coverageLoadingStarted(coverageFile: File) {
     reporter.reportMessage(1, "Started loading coverage from $coverageFile...")
@@ -43,16 +21,27 @@ class QodanaCoverageLoadListener: CoverageLoadListener {
 
   override fun reportCoverageLoaded(result: LoadCoverageResult, coverageFile: File) {
     if (result is FailedLoadCoverageResult) {
-      LOG.error(result.message, result.exception)
-      reporter.reportError(result.message)
+      val message = "Could not load coverage from file $coverageFile: ${result.reason}"
+      reportError(coverageFile, message, result.exception)
+    } else {
+      reporter.reportMessage(1, "Coverage from file $coverageFile loaded successfully.")
     }
   }
 
-  override fun reportCoverageLoadException(message: String, e: Exception, coverageFile: File) {
-    LOG.warn(message, e)
-    // To not spam same errors to output
-    if (reportedErrors.add(ExceptionLocation(coverageFile.path, e.stackTrace))) {
+  override fun reportCoverageLoadException(reason: String, coverageFile: File, e: Exception?) {
+    val message = "The coverage data from $coverageFile may be loaded incorrectly because of: $reason"
+    reportError(coverageFile, message, e)
+  }
+
+  private fun reportError(coverageFile: File, message: String, e: Exception? = null) {
+    val problemCounter = reportedErrors.getOrPut(coverageFile) { AtomicInteger(0) }
+    val currentProblemCount = problemCounter.incrementAndGet()
+    if (currentProblemCount <= PRINTED_EXCEPTION_LIMIT) {
       reporter.reportError(message)
+      e?.let { reporter.reportError(it) }
+    }
+    if (currentProblemCount == PRINTED_EXCEPTION_LIMIT + 1) {
+      reporter.reportError("More errors than limit $PRINTED_EXCEPTION_LIMIT were reported for file $coverageFile. For all errors please see the idea.log file")
     }
   }
 }

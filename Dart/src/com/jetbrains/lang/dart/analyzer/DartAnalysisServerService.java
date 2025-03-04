@@ -13,6 +13,7 @@ import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonObject;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.coverage.CoverageLoadErrorReporter;
+import com.intellij.coverage.DummyCoverageLoadErrorReporter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -78,7 +79,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public final class DartAnalysisServerService implements Disposable {
   public static final String MIN_SDK_VERSION = "1.12";
@@ -1948,16 +1948,15 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   public @Nullable String execution_createContext(@NotNull String filePath) {
-    return execution_createContext(filePath, null);
+    return execution_createContext(filePath, new DummyCoverageLoadErrorReporter());
   }
 
-  public @Nullable String execution_createContext(@NotNull String filePath, @Nullable CoverageLoadErrorReporter reporter) {
+  public @Nullable String execution_createContext(@NotNull String filePath, @NotNull CoverageLoadErrorReporter reporter) {
     final AnalysisServer server = myServer;
     if (server == null) {
-      if (reporter != null) {
-        String message = "Dart Analysis Server is not available.";
-        reporter.reportError(message, new IllegalStateException(message));
-      }
+      String message = "Dart Analysis Server is not available.";
+      LOG.warn(message);
+      reporter.reportWarning(message, null);
       return null;
     }
 
@@ -1974,10 +1973,8 @@ public final class DartAnalysisServerService implements Disposable {
       @Override
       public void onError(final RequestError error) {
         logError("execution_createContext()", fileUri, error);
-        if (reporter != null) {
-          String message = getShortErrorMessage("execution_createContext()", fileUri, error);
-          reporter.reportError("Execution context creation failed: " + message, new IllegalStateException(message));
-        }
+        String message = getShortErrorMessage("execution_createContext()", fileUri, error);
+        reporter.reportError("Execution context creation failed: " + message);
         latch.countDown();
       }
     });
@@ -1986,10 +1983,8 @@ public final class DartAnalysisServerService implements Disposable {
 
     if (latch.getCount() > 0) {
       logTookTooLongMessage("execution_createContext", EXECUTION_CREATE_CONTEXT_TIMEOUT, fileUri);
-      if (reporter != null) {
-        String message = "Execution context creation timed out.";
-        reporter.reportError(message, new TimeoutException(message));
-      }
+      String message = "Execution context creation timed out.";
+      reporter.reportWarning(message, null);
     }
     return resultRef.get();
   }

@@ -34,21 +34,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.concurrent.TimeoutException;
 
 public final class DartCoverageRunner extends CoverageRunner {
   private static final String ID = "DartCoverageRunner";
   private static final Logger LOG = Logger.getInstance(DartCoverageRunner.class.getName());
 
   @Override
-  public LoadCoverageResult loadCoverageDataWithLogging(
+  public @NotNull LoadCoverageResult loadCoverageDataWithLogging(
     final @NotNull File sessionDataFile,
     @Nullable CoverageSuite baseCoverageSuite,
-    @Nullable CoverageLoadErrorReporter reporter
+    @NotNull CoverageLoadErrorReporter reporter
   ) {
     if (!(baseCoverageSuite instanceof DartCoverageSuite)) {
       String message = "Expected Dart coverage suite, got " + (baseCoverageSuite == null ? "null" : baseCoverageSuite.getClass().getName());
-      return new FailedLoadCoverageResult(null, message, new IllegalArgumentException(message));
+      LOG.warn(message);
+      return new FailedLoadCoverageResult(message);
     }
 
     if (ApplicationManager.getApplication().isDispatchThread()) {
@@ -68,7 +68,7 @@ public final class DartCoverageRunner extends CoverageRunner {
   private static LoadCoverageResult doLoadCoverageData(
     final @NotNull File sessionDataFile,
     final @NotNull DartCoverageSuite coverageSuite,
-    final @Nullable CoverageLoadErrorReporter reporter
+    final @NotNull CoverageLoadErrorReporter reporter
   ) {
     final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
     // coverageProcess == null means that we are switching to data gathered earlier
@@ -84,7 +84,8 @@ public final class DartCoverageRunner extends CoverageRunner {
       if (!coverageProcess.isProcessTerminated()) {
         coverageProcess.destroyProcess();
         String message = "Dart coverage process is running too long, terminating";
-        return new FailedLoadCoverageResult(null, message, new TimeoutException(message));
+        LOG.warn(message);
+        return new FailedLoadCoverageResult(message);
       }
     }
 
@@ -92,13 +93,15 @@ public final class DartCoverageRunner extends CoverageRunner {
     final String contextFilePath = coverageSuite.getContextFilePath();
     if (project == null || contextFilePath == null) {
       String message = "Could not get project or context file path";
-      return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
+      LOG.warn(message);
+      return new FailedLoadCoverageResult(message);
     }
 
     final String contextId = DartAnalysisServerService.getInstance(project).execution_createContext(contextFilePath, reporter);
     if (contextId == null) {
       String message = "Could not create context for " + contextFilePath;
-      return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
+      LOG.warn(message);
+      return new FailedLoadCoverageResult(message);
     }
 
     final ProjectData projectData = new ProjectData();
@@ -107,9 +110,9 @@ public final class DartCoverageRunner extends CoverageRunner {
       DartCoverageData data =
         new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile, StandardCharsets.UTF_8)), DartCoverageData.class);
       if (data == null) {
-        LOG.warn("Coverage file does not contain valid data.");
-        String message = "Invalid coverage file: " + sessionDataFile.getAbsolutePath();
-        return new FailedLoadCoverageResult(null, message, new IllegalStateException(message));
+        String message = "Coverage file does not contain valid data.";
+        LOG.warn(message);
+        return new FailedLoadCoverageResult(message);
       }
 
       for (Map.Entry<String, SortedMap<Integer, Integer>> entry : data.getMergedDartFileCoverageData().entrySet()) {
@@ -119,9 +122,8 @@ public final class DartCoverageRunner extends CoverageRunner {
         if (filePath == null) {
           // File is not found.
           String message = "Could not find source: " + entry.getKey();
-          if (reporter != null) {
-            reporter.reportError(message, new IllegalStateException(message));
-          }
+          LOG.warn(message);
+          reporter.reportWarning(message, null);
           continue;
         }
         SortedMap<Integer, Integer> lineHits = entry.getValue();
@@ -141,9 +143,7 @@ public final class DartCoverageRunner extends CoverageRunner {
     }
     catch (JsonSyntaxException | IOException e) {
       LOG.warn(e);
-      if (reporter != null) {
-        reporter.reportError("Error while trying to read coverage data: " + e.getMessage(), e);
-      }
+      reporter.reportWarning(e);
     }
     finally {
       DartAnalysisServerService.getInstance(project).execution_deleteContext(contextId);
