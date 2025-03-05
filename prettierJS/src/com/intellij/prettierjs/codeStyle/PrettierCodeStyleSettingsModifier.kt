@@ -3,18 +3,20 @@ package com.intellij.prettierjs.codeStyle
 
 import com.intellij.application.options.codeStyle.properties.AbstractCodeStylePropertyMapper
 import com.intellij.application.options.codeStyle.properties.GeneralCodeStylePropertyMapper
+import com.intellij.ide.DataManager
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.options.ex.ConfigurableWrapper
+import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.prettierjs.*
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.modifier.CodeStyleSettingsModifier
 import com.intellij.psi.codeStyle.modifier.CodeStyleStatusBarUIContributor
@@ -44,7 +46,13 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
   override fun getDisablingFunction(project: Project): Consumer<CodeStyleSettings?>? {
     return Consumer { settings: CodeStyleSettings? ->
       PrettierConfiguration.getInstance(project).state.codeStyleSettingsModifierEnabled = false
-      CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
+      DataManager.getInstance().dataContextFromFocusAsync.then { dataContext ->
+        val settings = Settings.KEY.getData(dataContext) ?: return@then
+        val configurable = settings.getConfigurableWithInitializedUiComponent(CONFIGURABLE_ID, false) ?: return@then
+        val unwrapped = (configurable as? ConfigurableWrapper)?.rawConfigurable ?: configurable
+        val prettierConfigurable = unwrapped as? PrettierConfigurable ?: return@then
+        prettierConfigurable.uncheckCodeStyleModifierCheckBox()
+      }
     }
   }
 
