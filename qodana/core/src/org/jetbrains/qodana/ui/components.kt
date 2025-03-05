@@ -1,8 +1,6 @@
 package org.jetbrains.qodana.ui
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.observable.properties.AtomicProperty
-import com.intellij.openapi.observable.util.bindEnabled
 import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Disposer
@@ -10,7 +8,10 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.VideoPromoComponent
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.panels.Wrapper
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.BottomGap
+import com.intellij.ui.dsl.builder.DslComponentProperty
+import com.intellij.ui.dsl.builder.Panel
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.Url
 import com.intellij.util.Urls
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.Nls
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.cloud.QodanaCloudDefaultUrls
 import org.jetbrains.qodana.cloud.normalizeUrl
 import java.net.MalformedURLException
 import javax.swing.JComponent
@@ -43,11 +45,12 @@ fun buildSettingsLogInPanel(scope: CoroutineScope, server: String?, logInAction:
 fun Panel.logInPanel(scope: CoroutineScope, initialServer: String?, logInAction: (Url?) -> Unit) {
   val errorMessageFlow = MutableStateFlow<@Nls String?>(null)
 
-  val useCustomServer = AtomicProperty(initialServer != null)
+  val defaultUrl = QodanaCloudDefaultUrls.websiteHost
+
   val serverNameField = JBTextField(30).apply {
     emptyText.text = QodanaBundle.message("qodana.settings.panel.organization.url.template")
-    if (initialServer != null) text = initialServer
-  }.bindEnabled(useCustomServer)
+    text = initialServer ?: defaultUrl
+  }
 
   row {
     label(QodanaBundle.message("qodana.settings.panel.log.in.label"))
@@ -55,34 +58,25 @@ fun Panel.logInPanel(scope: CoroutineScope, initialServer: String?, logInAction:
   }
   row {
     button(QodanaBundle.message("qodana.settings.panel.log.in.button")) {
-      val serverUrl = if (useCustomServer.get()) {
-        if (serverNameField.text.isEmpty()) {
-          errorMessageFlow.value = QodanaBundle.message("qodana.settings.panel.organization.url.empty.error")
-          return@button
-        }
+      val serverName = serverNameField.text
+      val url = if (serverName.isEmpty() || serverName == defaultUrl) {
+        null
+      } else {
         try {
-          Urls.newFromEncoded(normalizeUrl(serverNameField.text))
+          Urls.newFromEncoded(normalizeUrl(serverName))
         } catch (e: MalformedURLException) {
           e.message?.let { errorMessageFlow.value = QodanaBundle.message("qodana.settings.panel.organization.url.another.error") }
           return@button
         }
-      } else null
-      logInAction.invoke(serverUrl)
+      }
+      logInAction.invoke(url)
     }
       .apply { component.putClientProperty(DslComponentProperty.VISUAL_PADDINGS, UnscaledGaps.EMPTY) }
   }
   val selfHostedBlock = com.intellij.ui.dsl.builder.panel {
-    row {
-      checkBox(QodanaBundle.message("qodana.settings.panel.custom.server")).apply {
-        onChanged {
-          serverNameField.isEnabled = it.isSelected
-        }
-        bindSelected(useCustomServer)
-      }
-    }
     row(QodanaBundle.message("qodana.settings.panel.organization.url")) {
       cell(serverNameField)
-    }.visibleIf(useCustomServer)
+    }
   }
   row {
     cell(selfHostedBlock)

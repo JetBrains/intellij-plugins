@@ -4,24 +4,14 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.util.Url
 import com.intellij.util.Urls
 import org.jetbrains.qodana.registry.QodanaRegistry
-import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 
 
 internal object QodanaCloudDefaultUrls {
   val websiteUrl: String
     get() = QodanaRegistry.Cloud.website
 
-  val cloudApi: String
-    get() = qodanaEnv().ENDPOINT.value ?: QodanaRegistry.Cloud.cloudApi
-
-  val jbaOAuthUrl: String
-    get() = QodanaRegistry.Cloud.jbaOAuthUrl
-
-  val jbaAuthReferrer: String
-    get() = QodanaRegistry.Cloud.jbaAuthReferrer
-
-  val jbaClientId: String
-    get() = QodanaRegistry.Cloud.jbaClientId
+  val websiteHost: String
+    get() = websiteUrl.substringAfterLast("/")
 }
 
 internal fun currentQodanaCloudFrontendUrl(): Url {

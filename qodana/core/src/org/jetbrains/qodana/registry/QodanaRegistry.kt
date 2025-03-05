@@ -41,9 +41,6 @@ object QodanaRegistry {
   val vcsRevisionMaxPages: Int
     get() = Registry.intValue("qd.vcs.revision.max.pages", 10)
 
-  val cloudRequestRetriesCount: Int
-    get() = Registry.intValue("qd.cloud.request.retries.count", 2)
-
   val cloudDownloadRetriesCount: Int
     get() = Registry.intValue("qd.cloud.download.retries.count", 2)
 
@@ -56,18 +53,6 @@ object QodanaRegistry {
   object Cloud {
     val website: String
       get() = fromRegistryOrDefaultIfEmpty("qd.cloud.website", "https://qodana.cloud")
-
-    val cloudApi: String
-      get() = fromRegistryOrDefaultIfEmpty("qd.cloud.api", "https://api.qodana.cloud")
-
-    val jbaOAuthUrl: String
-      get() = fromRegistryOrDefaultIfEmpty("qd.cloud.jba.oauth.url","https://oauth.account.jetbrains.com/oauth2/auth")
-
-    val jbaAuthReferrer: String
-      get() = fromRegistryOrDefaultIfEmpty("qd.cloud.jba.auth.referrer", "https://account.jetbrains.com/")
-
-    val jbaClientId: String
-      get() = fromRegistryOrDefaultIfEmpty("qd.cloud.jba.auth.client.id", "qodana")
   }
 }
 
