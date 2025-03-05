@@ -402,7 +402,7 @@ module Teamcity
         # log tags because the are reported before step name
         print_current_tags
 
-        diagnostic_info = "cucumber  f/s=(#{finished_at_ms}, #{@current_step_start_time}), duration=#{duration_ms}, time.now=#{stringify_time(Time.now)}"
+        diagnostic_info = "cucumber  f/s=(#{finished_at_ms}, #{@current_step_start_time}), duration=#{duration_ms}, time.now=#{format_time(Time.now)}"
         log_status_and_test_finished(status, step_line, duration_ms, exception, multiline_arg, keyword, diagnostic_info)
       end
 

@@ -383,9 +383,9 @@ module Spec
           duration = finished_at_ms - started_at_ms
 
           debug_log("Example finishing... full example name = [#{example_data}], duration = #{duration} ms]")
-          time_now = stringify_time(Time.now)
-          started_at = stringify_time(example.execution_result.started_at)
-          finished_at = stringify_time(example.execution_result.finished_at)
+          time_now = format_time(Time.now)
+          started_at = format_time(example.execution_result.started_at)
+          finished_at = format_time(example.execution_result.finished_at)
           diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" \
             ", f/s=(#{finished_at_ms}, #{started_at_ms})" \
             ", duration=#{duration}" \
