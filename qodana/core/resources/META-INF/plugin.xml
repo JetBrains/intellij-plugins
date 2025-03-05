@@ -112,16 +112,11 @@
     <registryKey defaultValue="3" description="Common package filter length for coverage reports from Qodana Cloud" key="qd.open.coverage.common.package.length"/>
     <registryKey defaultValue="100" description="Number of commits to load from VCS per request, used to search Qodana Cloud report relevant to current revision" key="qd.vcs.revision.page.size" restartRequired="true"/>
     <registryKey defaultValue="10" description="Max number of requests to VCS, used to search Qodana Cloud report relevant to current revision" key="qd.vcs.revision.max.pages" restartRequired="true"/>
-    <registryKey defaultValue="2" description="Retry attempts count to Qodana Cloud server on failed request" key="qd.cloud.request.retries.count"/>
     <registryKey defaultValue="2" description="Retry attempts count to Qodana Cloud server on failed report download" key="qd.cloud.download.retries.count"/>
     <registryKey defaultValue="false" description="Use whole distribution for .inspection.kts" key="qd.inspection.kts.all.distribution.for.dependencies"/>
     <registryKey defaultValue="true" description="Use inspection.kts dependencies limited only to flexinspect" key="qd.inspection.kts.limited.dependencies"/>
 
     <registryKey defaultValue="" description="Qodana Cloud website url" key="qd.cloud.website"/>
-    <registryKey defaultValue="" description="Qodana Cloud backend api" key="qd.cloud.api"/>
-    <registryKey defaultValue="" description="Oauth url used to auth in qodana.cloud" key="qd.cloud.jba.oauth.url"/>
-    <registryKey defaultValue="" description="JBA auth referrer accepted by IDE" key="qd.cloud.jba.auth.referrer"/>
-    <registryKey defaultValue="" description="Qodana Cloud JBA client id" key="qd.cloud.jba.auth.client.id"/>
 
     <appStarter id="qodanaExcludedPlugins" implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaExcludedPluginsCalculator"/>
     <projectService serviceImplementation="org.jetbrains.qodana.QodanaIntelliJYamlService"
