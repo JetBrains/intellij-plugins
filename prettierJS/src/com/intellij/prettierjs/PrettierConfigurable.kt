@@ -1,15 +1,20 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
+import com.intellij.application.options.CodeStyleSchemesConfigurable
+import com.intellij.ide.DataManager
 import com.intellij.ide.actionsOnSave.*
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.options.BoundSearchableConfigurable
+import com.intellij.openapi.options.ex.ConfigurableWrapper
+import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -45,12 +50,16 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private lateinit var packageField: NodePackageField
   private lateinit var runForFilesField: JBTextField
   private lateinit var runOnSaveCheckBox: JCheckBox
-  private lateinit var codeStyleModifierCheckBox: JCheckBox
   private lateinit var customIgnorePathField: TextFieldWithBrowseButton
+  private var codeStyleModifierCheckBox: JCheckBox? = null
 
   private lateinit var disabledConfiguration: JRadioButton
   private lateinit var automaticConfiguration: JRadioButton
   private lateinit var manualConfiguration: JRadioButton
+
+  fun uncheckCodeStyleModifierCheckBox() {
+    codeStyleModifierCheckBox?.isSelected = false
+  }
 
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
@@ -67,7 +76,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
               addItemListener { e ->
                 if (e.stateChange == ItemEvent.SELECTED) {
                   runOnSaveCheckBox.isSelected = false
-                  codeStyleModifierCheckBox.isSelected = false
+                  codeStyleModifierCheckBox?.isSelected = false
                 }
               }
             }
@@ -197,8 +206,25 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
       onApply {
         CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
+        // We must update the code style settings immediately because the code style modifier may have changed.
+        // To reflect the changes in the UI, we need to apply the code style settings.
+        applyCodeStyleSchemesFromContext(
+          DataManager.getInstance().getDataContext(codeStyleModifierCheckBox)
+        )
       }
     }
+  }
+
+  private fun applyCodeStyleSchemesFromContext(context: DataContext) {
+    val settings = Settings.KEY.getData(context) ?: return
+    val configurable = settings.getConfigurableWithInitializedUiComponent(
+      CodeStyleSchemesConfigurable.CONFIGURABLE_ID,
+      false
+    ) ?: return
+    val unwrapped = (configurable as? ConfigurableWrapper)?.rawConfigurable ?: configurable
+    val codeStyleSchemesConfigurable = unwrapped as? CodeStyleSchemesConfigurable ?: return
+
+    codeStyleSchemesConfigurable.apply()
   }
 
   private class ConfigurationModeProperty(
@@ -215,7 +241,6 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       if (value)
         prettierConfiguration.configurationMode = mode
     }
-
   }
 
   class PrettierOnSaveInfoProvider : ActionOnSaveInfoProvider() {
