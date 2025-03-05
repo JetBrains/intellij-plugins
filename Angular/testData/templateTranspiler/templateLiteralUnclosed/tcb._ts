@@ -1,0 +1,21 @@
+/* Angular type checking code */
+
+/* TCB for templateLiteral.html */
+
+function _tcb1(this: AppComponent) {
+var _t1 = document.createElement("div");
+for (const _t2 of ([
+  {title: `Explore ${this.fpp} the Docs`}])!) {
+var _t3 = null! as boolean;
+var _t4 = null! as boolean;
+var _t5 = null! as boolean;
+var _t6 = null! as number;
+var _t7 = null! as boolean;
+var _t8 = null! as number;
+var _t9 = document.createElement("a");
+(_t2.link);
+var _t10 = document.createElement("span");
+"" + _t2.title;
+(_t2.title);
+}
+}

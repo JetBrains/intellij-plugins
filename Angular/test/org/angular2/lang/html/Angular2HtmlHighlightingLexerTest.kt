@@ -34,6 +34,12 @@ open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
              """.trimIndent())
   }
 
+  fun testTemplateLiteral() {
+    doTest("""
+      {{ { obj: `template literal ${"$"}{ with + `nested text { }` } `, foo: 12} }}
+    """.trimIndent())
+  }
+
   override fun getDirPath(): String {
     return Angular2TestUtil.getLexerTestDirPath() + "html/highlightingLexer"
   }

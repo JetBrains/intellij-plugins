@@ -1,0 +1,75 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <href,PROPERTY>
+        XmlToken:XML_NAME('[href]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSStringTemplateExpression
+                PsiElement(JS:BACKQUOTE)('`')
+                PsiElement(JS:STRING_TEMPLATE_PART)('https://www.google.com?q=')
+                PsiElement(JS:DOLLAR)('$')
+                PsiElement(JS:LBRACE)('{')
+                JSBinaryExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('test')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    JSObjectLiteralExpression
+                      PsiElement(JS:LBRACE)('{')
+                      JSProperty
+                        PsiElement(JS:IDENTIFIER)('a')
+                        PsiElement(JS:COLON)(':')
+                        JSLiteralExpression
+                          PsiElement(JS:NUMERIC_LITERAL)('12')
+                      PsiElement(JS:RBRACE)('}')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('a')
+                PsiElement(JS:RBRACE)('}')
+                PsiElement(JS:BACKQUOTE)('`')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      PsiWhiteSpace(' ')
+      Angular2Interpolation
+        JSStringTemplateExpression
+          PsiElement(JS:BACKQUOTE)('`')
+          PsiElement(JS:STRING_TEMPLATE_PART)('https://www.google.com?q=')
+          PsiElement(JS:DOLLAR)('$')
+          PsiElement(JS:LBRACE)('{')
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('test')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:PLUS)('+')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              JSObjectLiteralExpression
+                PsiElement(JS:LBRACE)('{')
+                JSProperty
+                  PsiElement(JS:IDENTIFIER)('a')
+                  PsiElement(JS:COLON)(':')
+                  JSLiteralExpression
+                    PsiElement(JS:NUMERIC_LITERAL)('12')
+                PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:RBRACE)('}')
+          PsiElement(JS:BACKQUOTE)('`')
+      PsiWhiteSpace(' ')
+    PsiElement(NG:INTERPOLATION_END)('}}')

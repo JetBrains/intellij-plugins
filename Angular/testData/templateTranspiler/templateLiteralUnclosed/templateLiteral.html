@@ -1,0 +1,14 @@
+<div class="pill-group">
+  @for (item of [
+  {title: `Explore ${fpp the Docs`, link: 'https://angular.dev' },
+  ]; track item.title) {
+  <a
+    class="pill"
+    [href]="item.link"
+    target="_blank"
+    rel="noopener"
+  >
+    <span>{{ item.title }}</span>
+  </a>
+  }
+</div>
