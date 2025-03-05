@@ -2,6 +2,7 @@ package org.angular2.lang.expr.lexer;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lexer.FlexLexer;
+import com.intellij.util.containers.IntStack;
 
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockUtilsKt;
 
@@ -18,6 +19,8 @@ import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
   private String blockName;
   private int blockParamIndex;
 
+  private IntStack myStateStack = new IntStack(5);
+
   public _Angular2Lexer(Angular2Lexer.Config config) {
     this((java.io.Reader)null);
     if (config instanceof Angular2Lexer.BlockParameter blockParameter) {
@@ -26,8 +29,29 @@ import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
     }
   }
 
+  public final void clearState() {
+    myStateStack.clear();
+  }
+
+  public boolean isRestartableState() {
+    return (yystate() == YYINITIAL || yystate() == YYEXPRESSION) && myStateStack.size() == 0;
+  }
+
   private boolean shouldStartWithParameter() {
     return blockName != null && (blockParamIndex > 0 || !Angular2HtmlBlockUtilsKt.getBLOCKS_WITH_PRIMARY_EXPRESSION().contains(blockName));
+  }
+
+  private void pushState(int nextState) {
+    myStateStack.push(nextState);
+  }
+
+  private int popState() {
+    if (myStateStack.size() > 0) {
+      int nextState = myStateStack.pop();
+      yybegin(nextState);
+      return nextState;
+    }
+    return -1;
   }
 
 %}
@@ -55,9 +79,15 @@ ALPHA=[:letter:]
 TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 
 IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
+STRING_TEMPLATE_CHAR=[^\\$`] | \\ .
+ESCAPE_SEQUENCE=\\[^\r\n]
+LINE_TERMINATOR_SEQUENCE=\R
 
 %state YYEXPRESSION
 %state YYSTRING
+%state YYSTRING_TEMPLATE
+%state YYSTRING_TEMPLATE_DOLLAR
+%state YYINITIAL_WITH_NONEMPTY_STATE_STACK
 
 %%
 
@@ -116,8 +146,19 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
 
   "("                         { return LPAR; }
   ")"                         { return RPAR; }
-  "{"                         { return LBRACE; }
-  "}"                         { return RBRACE; }
+  "{"                         {
+                                if (myStateStack.size() > 0) pushState(YYEXPRESSION);
+                                yybegin(YYEXPRESSION);
+                                return LBRACE;
+                              }
+  "}"                         {
+                                int popped = popState();
+                                if (popped < 0) {
+                                  yybegin(YYEXPRESSION);
+                                }
+                                return RBRACE;
+                              }
+
   "["                         { return LBRACKET; }
   "]"                         { return RBRACKET; }
   "."                         { return DOT; }
@@ -127,6 +168,8 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
   ":"                         { return COLON; }
   "?"                         { return QUEST; }
   "#"                         { return SHARP; }
+
+  "`"                         { yybegin(YYSTRING_TEMPLATE); return BACKQUOTE; }
 
   [^]                         { return BAD_CHARACTER; }
 }
@@ -148,4 +191,19 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
   "&#"{DIGIT}+";"             { return XML_CHAR_ENTITY_REF; }
   [^&\'\"\n\r\\]+ | "&"       { return STRING_LITERAL_PART; }
   [^]                         { yypushback(yytext().length()); yybegin(YYEXPRESSION); }
+}
+
+<YYSTRING_TEMPLATE> {
+  ( {STRING_TEMPLATE_CHAR} | {ESCAPE_SEQUENCE} | "\\" {LINE_TERMINATOR_SEQUENCE} )+
+                              { return STRING_TEMPLATE_PART; }
+  "$"                         { return STRING_TEMPLATE_PART; }
+  "$" / "{"                   { /* don't merge with { to have parents paired */
+                                yybegin(YYSTRING_TEMPLATE_DOLLAR);
+                                return DOLLAR;
+                              }
+  "`"                         { yybegin(YYEXPRESSION); return BACKQUOTE; }
+}
+
+<YYSTRING_TEMPLATE_DOLLAR> {
+  "{"                         { pushState(YYSTRING_TEMPLATE); yybegin(YYEXPRESSION); return LBRACE; }
 }

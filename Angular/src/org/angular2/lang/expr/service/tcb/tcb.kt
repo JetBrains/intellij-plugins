@@ -9,15 +9,21 @@
 
 package org.angular2.lang.expr.service.tcb
 
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptParserBundle
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.elementType
+import com.intellij.psi.util.siblings
 import com.intellij.psi.util.startOffset
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
@@ -2477,6 +2483,9 @@ private open class TcbExpressionTranslator(
       result.append("(")
     }
     super.visitJSArrayLiteralExpression(node)
+    if (node.lastChild.elementType != JSTokenTypes.RBRACKET) {
+      result.append("]")
+    }
     if (!tcb.env.config.strictLiteralTypes) {
       result.append(" as any)")
     }
@@ -2487,6 +2496,9 @@ private open class TcbExpressionTranslator(
       result.append("(")
     }
     super.visitJSObjectLiteralExpression(node)
+    if (node.lastChild.elementType != JSTokenTypes.RBRACE) {
+      result.append("}")
+    }
     if (!tcb.env.config.strictLiteralTypes) {
       result.append(" as any)")
     }
@@ -2511,6 +2523,20 @@ private open class TcbExpressionTranslator(
     }
     else super.visitJSLiteralExpression(node)
   }
+
+  override fun visitErrorElement(element: PsiErrorElement) {
+    if (element.parent is JSStringTemplateExpression
+        && isErrorElementMissingRBraceOrBackquote(element)
+        && element.siblings(forward = false, withSelf = false).none { it is PsiErrorElement && isErrorElementMissingRBraceOrBackquote(it) }
+    ) {
+      result.append("}")
+    }
+    super.visitErrorElement(element)
+  }
+
+  private fun isErrorElementMissingRBraceOrBackquote(element: PsiErrorElement): Boolean =
+    element.errorDescription == JavaScriptParserBundle.message("javascript.parser.message.expected.rbrace") ||
+    element.errorDescription == JavaScriptParserBundle.message("javascript.parser.message.missing.back.quote")
 
   private fun getTargetNodeExpression(targetNode: TemplateEntity, expressionNode: JSReferenceExpression): Expression {
     val identifier = this.scope.resolve(targetNode)
@@ -2923,7 +2949,8 @@ internal fun tsDeclareVariable(
     )
     if (initializer != null) {
       append(" : ").append(type).append(" = ").append(initializer).append(";")
-    } else {
+    }
+    else {
       append(" = null! as ").append(type).append(";")
     }
   }

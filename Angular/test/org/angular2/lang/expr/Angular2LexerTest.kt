@@ -1,7 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.expr
 
+import com.intellij.lang.javascript.JSElementTypeServiceHelper.registerJSElementTypeServices
+import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocCustomTagsHandlerEP
 import com.intellij.lexer.Lexer
+import com.intellij.mock.MockApplication
 import com.intellij.testFramework.LexerTestCase
 import org.angular2.Angular2TestUtil
 import org.angular2.codeInsight.blocks.BLOCK_DEFER
@@ -69,10 +72,21 @@ class Angular2LexerTest : LexerTestCase() {
     doBlockTest(BLOCK_LET, 0)
   }
 
+  fun testTemplateLiterals() {
+    doFileTest("js")
+  }
+
   override fun createLexer(): Lexer = lexerFactory()
 
   override fun getDirPath(): String {
     return Angular2TestUtil.getLexerTestDirPath() + "expr/lexer"
+  }
+
+  @Throws(Exception::class)
+  override fun setUp() {
+    val app = MockApplication.setUp(getTestRootDisposable())
+    super.setUp()
+    registerJSElementTypeServices(app, getTestRootDisposable())
   }
 
   override fun doTest(text: @NonNls String) {

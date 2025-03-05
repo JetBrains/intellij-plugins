@@ -343,6 +343,7 @@
     <webSymbols.webTypes enableByDefault="false" source="web-types/angular@18.0.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="false" source="web-types/angular@18.1.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="false" source="web-types/angular@19.0.0.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@19.2.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 

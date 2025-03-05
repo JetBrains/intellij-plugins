@@ -1,0 +1,10 @@
+@let permissions = 12;
+@let strPermission = "";
+
+{{ `Multiple Interpolations: ${permissions} ${strPermission}` }}
+
+@for(item of [`Test1 ${{foo:12}.foo}`]) {
+
+}
+
+Pipes:<time>{{ `today is ${today | date:'fullDate'}` | uppercase }}</time>

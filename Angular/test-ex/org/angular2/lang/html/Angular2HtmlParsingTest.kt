@@ -427,4 +427,11 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
       </main>
     """.trimIndent())
   }
+
+  fun testTemplateLiteral() {
+    doTestHtml("""
+      <a [href]="`https://www.google.com?q=${'$'}{test + {a:12}.a}`"></a>
+      {{ `https://www.google.com?q=${'$'}{test + {a:12}.a}` }}
+    """.trimIndent())
+  }
 }

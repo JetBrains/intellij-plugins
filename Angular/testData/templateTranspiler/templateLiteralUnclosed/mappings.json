@@ -1,0 +1,49 @@
+[
+  {
+    "file-name": "templateLiteral.html",
+    "mappings": [
+      "«div» [1] => «_t1» [111]} (no diagnostics) (no semantic)",
+      "«item» [33] => «_t2» [159]}",
+      "«[» [41] => «[» [167]}",
+      "«[\n  {title: `Explore ${fpp the Docs`» [41] => «[\n  {title: `Explore ${this.fpp} the Docs`}» [167]}",
+      "«{» [45] => «{» [171]}",
+      "«{title: `Explore ${fpp the Docs`» [45] => «{title: `Explore ${this.fpp} the Docs`» [171]}",
+      "«title» [46] => «title» [172]}",
+      "«title: `Explore ${fpp the Docs`» [46] => «title: `Explore ${this.fpp} the Docs`» [172]}",
+      "«:» [51] => «:» [177]}",
+      "«`» [53] => «`» [179]}",
+      "«`Explore ${fpp the Docs`» [53] => «`Explore ${this.fpp} the Docs`» [179]}",
+      "«Explore » [54] => «Explore » [180]}",
+      "«$» [62] => «$» [188]}",
+      "«{» [63] => «{» [189]}",
+      "«fpp» [64] => «fpp» [195]} (no types)",
+      "«fpp» [64] => «this.fpp» [190]}",
+      "«» [67] => «» [199]}",
+      "«the» [68] => «the» [200]}",
+      "«» [71] => «» [203]}",
+      "«Docs» [72] => «Docs» [204]}",
+      "«`» [76] => «`» [208]}",
+      "«» [77] => «» [209]}",
+      "«item» [121] => «_t2» [494]}",
+      "«item.title» [121] => «_t2.title» [494]}",
+      "«.» [125] => «.» [497]}",
+      "«title» [126] => «title» [498]}",
+      "«a» [138] => «_t9» [387]} (no diagnostics) (no semantic)",
+      "«item» [169] => «_t2» [423]}",
+      "«item.link» [169] => «_t2.link» [423]}",
+      "«.» [173] => «.» [426]}",
+      "«link» [174] => «link» [427]}",
+      "«span» [228] => «_t10» [438]} (no diagnostics) (no semantic)",
+      "«item» [236] => «_t2» [482]}",
+      "«item.title» [236] => «_t2.title» [482]}",
+      "«.» [240] => «.» [485]}",
+      "«title» [241] => «title» [486]}"
+    ]
+  },
+  {
+    "file-name": "templateLiteral.ts",
+    "mappings": [
+      "0:295 => 0:295 (source)"
+    ]
+  }
+]
