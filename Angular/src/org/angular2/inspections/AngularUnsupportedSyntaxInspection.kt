@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -28,6 +29,14 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
           holder.registerProblem(element, Angular2Bundle.htmlMessage(
             "angular.inspection.unsupported-syntax-inspection.message.ng19-or-above",
             "typeof".withColor(Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD, element)))
+        }
+        else if (
+          element is JSStringTemplateExpression
+          && element.language is Angular2Language
+          && Angular2LangUtil.isAngular2Context(element)
+          && !Angular2LangUtil.isAtLeastAngularVersion(element, Angular2LangUtil.AngularVersion.V_19_2)
+        ) {
+          holder.registerProblem(element, Angular2Bundle.htmlMessage("angular.inspection.unsupported-syntax-inspection.message.template"))
         }
       }
     }

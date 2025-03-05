@@ -10,13 +10,27 @@ class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angul
 
   private var myMergeFunction: MyMergeFunction? = null
 
+  private val flexLexer: _Angular2Lexer = (delegate as FlexAdapter).flex as _Angular2Lexer
+
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     super.start(buffer, startOffset, endOffset, initialState)
     myMergeFunction = MyMergeFunction(false)
+    flexLexer.clearState()
   }
 
   override fun getStartState(): Int =
     _Angular2Lexer.YYINITIAL
+
+  override fun getState(): Int {
+    val state = super.getState()
+    if (state == _Angular2Lexer.YYINITIAL || state == _Angular2Lexer.YYEXPRESSION) {
+      val flex = flexLexer
+      if (!flex.isRestartableState) {
+        return _Angular2Lexer.YYINITIAL_WITH_NONEMPTY_STATE_STACK
+      }
+    }
+    return state
+  }
 
   override fun isRestartableState(state: Int): Boolean =
     state == _Angular2Lexer.YYINITIAL || state == _Angular2Lexer.YYEXPRESSION
@@ -58,31 +72,32 @@ class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angul
 
   private class MyMergeFunction(prevTokenEscapeSequence: Boolean) : MergeFunction {
 
-    var isPrevTokenEscapeSequence: Boolean = false
+    var isPrevTokenEscapeSequence: Boolean = prevTokenEscapeSequence
       private set
 
-    init {
-      this.isPrevTokenEscapeSequence = prevTokenEscapeSequence
-    }
-
     override fun merge(type: IElementType, originalLexer: Lexer): IElementType? {
-      if (type != JSTokenTypes.STRING_LITERAL_PART) {
-        isPrevTokenEscapeSequence = STRING_PART_SPECIAL_SEQ.contains(type)
-        return type
-      }
-      while (true) {
-        val tokenType = originalLexer.tokenType
-        if (tokenType != JSTokenTypes.STRING_LITERAL_PART) {
-          if (isPrevTokenEscapeSequence || STRING_PART_SPECIAL_SEQ.contains(tokenType)) {
-            isPrevTokenEscapeSequence = false
-            return JSTokenTypes.STRING_LITERAL_PART
+      when (type) {
+        JSTokenTypes.STRING_LITERAL_PART -> while (true) {
+          val tokenType = originalLexer.tokenType
+          if (tokenType != JSTokenTypes.STRING_LITERAL_PART) {
+            if (isPrevTokenEscapeSequence || STRING_PART_SPECIAL_SEQ.contains(tokenType)) {
+              isPrevTokenEscapeSequence = false
+              return JSTokenTypes.STRING_LITERAL_PART
+            }
+            else {
+              return JSTokenTypes.STRING_LITERAL
+            }
           }
-          else {
-            return JSTokenTypes.STRING_LITERAL
-          }
+          originalLexer.advance()
         }
-        originalLexer.advance()
+        JSTokenTypes.STRING_TEMPLATE_PART -> while (originalLexer.tokenType === type) {
+          originalLexer.advance()
+        }
+        else -> {
+          isPrevTokenEscapeSequence = STRING_PART_SPECIAL_SEQ.contains(type)
+        }
       }
+      return type
     }
   }
 }

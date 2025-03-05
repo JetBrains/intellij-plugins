@@ -110,6 +110,20 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_COMMON_18_2_1,
   )
 
+  fun testTemplateLiteralExternal() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_18_2_1,
+    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+    dir = true,
+    configureFileName = "templateLiteral.ts"
+  )
+
+  fun testTemplateLiteralUnclosed() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_18_2_1,
+    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+    dir = true,
+    configureFileName = "templateLiteral.ts"
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
