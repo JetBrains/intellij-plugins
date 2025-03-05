@@ -8,9 +8,14 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-private const val PRINTED_EXCEPTION_LIMIT = 10
+const val PRINTED_EXCEPTION_LIMIT: Int = 10
 
 class QodanaCoverageLoadListener: CoverageLoadListener {
+
+  companion object {
+    fun buildTooManyErrorMessage(filePath: String): String =
+      "More errors than limit $PRINTED_EXCEPTION_LIMIT were reported for file $filePath. For all errors please see the idea.log file"
+  }
 
   private val reporter = QodanaMessageReporter.DEFAULT
   private val reportedErrors = ConcurrentHashMap<File, AtomicInteger>()
@@ -41,7 +46,7 @@ class QodanaCoverageLoadListener: CoverageLoadListener {
       e?.let { reporter.reportError(it) }
     }
     if (currentProblemCount == PRINTED_EXCEPTION_LIMIT + 1) {
-      reporter.reportError("More errors than limit $PRINTED_EXCEPTION_LIMIT were reported for file $coverageFile. For all errors please see the idea.log file")
+      reporter.reportError(buildTooManyErrorMessage(coverageFile.toString()))
     }
   }
 }

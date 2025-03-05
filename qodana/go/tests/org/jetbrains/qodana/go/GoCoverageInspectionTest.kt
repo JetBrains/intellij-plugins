@@ -8,15 +8,22 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
 import com.intellij.coverage.CoverageSuitesBundle
+import com.intellij.openapi.util.io.toCanonicalPath
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.PRINTED_EXCEPTION_LIMIT
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadListener
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
 import org.junit.Test
+import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.nio.file.Path
+import java.nio.file.Paths
 import javax.swing.Icon
 
 
@@ -93,5 +100,59 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   fun warnMissingCoverage() {
     runUnderCover("inspection-profile.xml")
     assertSarifResults()
+  }
+
+  private val coverageFilePath
+    get() = Paths.get(project.basePath!!, "..", testDirectoryName, "coverage", "coverage.out").toCanonicalPath()
+
+  private val expectedError
+    get() = """
+      The coverage data from $coverageFilePath may be loaded incorrectly because of: Parsing error in line: sources/coverage.go:8.13,10.3 X X
+      java.lang.NumberFormatException: For input string: "X"
+    """.trimIndent()
+
+  private val exceptionMessage = "For input string: \"X\""
+
+  @Test
+  fun invalidCoverageFileWithOneError() {
+    val stdErr = runTestWithStderrCaptured {
+      runUnderCover()
+    }
+    // checks that both message and exception were collected
+    assertTrue(stdErr.contains(expectedError))
+    // checks that only one exception was printed to stderr
+    assertTrue(exceptionMessage.toRegex().findAll(stdErr).count() == 1)
+  }
+
+  private val expectedErrorMessageRegex
+    get() = "The coverage data from $coverageFilePath may be loaded incorrectly because of:".toRegex()
+
+  @Test
+  fun invalidCoverageFileWithMultipleErrors() {
+    val stdErr = runTestWithStderrCaptured {
+      runUnderCover()
+    }
+    // checks that exactly PRINTED_EXCEPTION_LIMIT errors were printed to stderr
+    assertTrue(expectedErrorMessageRegex.findAll(stdErr).count() == PRINTED_EXCEPTION_LIMIT)
+
+    // checks that message about more exceptions was printed exactly once
+    val expectedErrorMessage = QodanaCoverageLoadListener.buildTooManyErrorMessage(coverageFilePath)
+    assertTrue(expectedErrorMessage.toRegex().findAll(stdErr).count() == 1)
+  }
+
+  private fun runTestWithStderrCaptured(runnable: () -> Unit): String {
+    val oldStdErr = System.err
+    return ByteArrayOutputStream().use { stream ->
+      try {
+        BufferedOutputStream(stream).use { bufferedStream ->
+          System.setErr(PrintStream(bufferedStream))
+          runnable()
+          bufferedStream.flush()
+        }
+      } finally {
+        System.setErr(oldStdErr)
+      }
+      stream.toString()
+    }
   }
 }
