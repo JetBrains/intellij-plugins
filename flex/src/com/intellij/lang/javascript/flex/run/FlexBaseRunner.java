@@ -40,6 +40,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.*;
+import com.intellij.notification.impl.NotificationsToolWindowFactory;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
@@ -685,7 +686,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     NotificationsConfiguration.getNotificationsConfiguration()
       .changeSettings(getCompileBeforeLaunchNotificationGroup().getDisplayId(), NotificationDisplayType.NONE, false, false);
     ToolWindowManager.getInstance(project)
-      .notifyByBalloon(ActionCenter.TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
+      .notifyByBalloon(NotificationsToolWindowFactory.ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
   }
 
   private static void checkDebuggerFromSdk4(final Project project,
