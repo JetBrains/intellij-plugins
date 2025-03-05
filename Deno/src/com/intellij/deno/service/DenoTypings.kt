@@ -13,10 +13,9 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.io.URLUtil
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
@@ -87,18 +86,14 @@ class DenoTypings(val project: Project) : Disposable {
 
   fun isDenoTypings(virtualFile: VirtualFile): Boolean {
     val path = virtualFile.path
-    return path == getDenoTypings() || path == getBundledTypings().path.removePrefix("file:") // removing prefix in case of 'jar:file:...'
+    return path == getDenoTypings() || virtualFile == VfsUtil.findFileByURL(getBundledTypings())
   }
 
   fun getDenoTypingsVirtualFile(): VirtualFile? {
     val typings = LocalFileSystem.getInstance().findFileByPath(getDenoTypings())
     if (typings != null && typings.isValid) return typings
     val bundled = getBundledTypings()
-    return when (bundled.protocol) {
-      URLUtil.JAR_PROTOCOL -> JarFileSystem.getInstance().findFileByPath(URL(bundled.path).path)
-      URLUtil.FILE_PROTOCOL -> LocalFileSystem.getInstance().findFileByPath(bundled.path)
-      else -> error("Unsupported protocol '${bundled.protocol}' for bundled Deno typings file '$bundled'")
-    }?.also {
+    return VfsUtil.findFileByURL(bundled)?.also {
       require(isDenoTypings(it)) { "Virtual file '$it' is not a Deno typings file" }
     }
   }
