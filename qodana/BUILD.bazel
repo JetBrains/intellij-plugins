@@ -96,6 +96,7 @@ jvm_library(
     "@lib//:kotlinx-serialization-json",
     "@community//plugins/IntelliLang:langInjection",
     "@community//platform/platform-impl/ui:ide-ui",
+    "@ultimate_lib//:jetbrains-qodana-configuration",
   ],
   runtime_deps = [":qodana_resources"]
 )
@@ -198,6 +199,7 @@ jvm_library(
     "@community//plugins/IntelliLang:langInjection",
     "@community//platform/platform-impl/ui:ide-ui",
     "@community//platform/statistics/testFramework",
+    "@ultimate_lib//:jetbrains-qodana-configuration",
   ],
   runtime_deps = [
     ":qodana_resources",
