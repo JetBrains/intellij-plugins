@@ -40,7 +40,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
       return try {
         val response = HttpRequests.request(apiUrl).readString()
         val jsonNode = ObjectMapper().readTree(response)
-        jsonNode.get("current_version")?.asText()
+        jsonNode.get("current_version")?.asText()?.removePrefix("v")
       }
       catch (e: Exception) {
         logger<BinaryInstaller>().error("Failed to fetch the latest stable Terraform version", e)
