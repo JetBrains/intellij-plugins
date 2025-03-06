@@ -8,8 +8,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
-import org.jetbrains.jps.model.ex.JpsElementCollectionRole;
 import org.jetbrains.jps.model.ex.JpsNamedCompositeElementBase;
+import org.jetbrains.jps.model.ex.JpsNamedElementCollectionRole;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 
@@ -23,7 +23,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   implements JpsFlexBuildConfiguration {
 
   private static final JpsElementChildRoleBase<JpsFlexBuildConfiguration> ROLE = JpsElementChildRoleBase.create("flex build configuration");
-  static final JpsElementCollectionRole<JpsFlexBuildConfiguration> COLLECTION_ROLE = JpsElementCollectionRole.create(ROLE);
+  static final JpsNamedElementCollectionRole<JpsFlexBuildConfiguration> COLLECTION_ROLE = JpsNamedElementCollectionRole.create(ROLE);
 
   //private @NotNull String myName = UNNAMED;
   private @NotNull TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;
