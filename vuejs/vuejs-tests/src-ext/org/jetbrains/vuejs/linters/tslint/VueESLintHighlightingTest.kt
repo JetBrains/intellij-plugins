@@ -22,7 +22,11 @@ class VueESLintHighlightingTest : EslintServiceTestBase() {
     "@vue/cli-plugin-babel" to "latest",
   )
 
-  fun testVueSpecificRules() {
+  fun testVue2SpecificRules() {
+    doEditorHighlightingTest("test.vue")
+  }
+
+  fun testVue3SpecificRules() {
     doEditorHighlightingTest("test.vue")
   }
 
