@@ -14,7 +14,7 @@ class Angular2FileImpl(fileViewProvider: FileViewProvider) : JSFileImpl(fileView
   override fun getJSConfig(): JSConfig? =
     when (val topLevelFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(this)) {
       is Angular2HtmlFile -> topLevelFile.jsConfig
-      is JSFileImpl -> TypeScriptConfigUtil.getConfigForPsiFile(topLevelFile)
+      is JSFileImpl -> TypeScriptConfigUtil.getPreferableConfig(topLevelFile, false)
       else -> throw IllegalStateException("Unexpected file type $topLevelFile")
     }
 
