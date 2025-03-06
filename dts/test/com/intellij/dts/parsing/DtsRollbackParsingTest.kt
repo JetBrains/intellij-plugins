@@ -1,9 +1,9 @@
 package com.intellij.dts.parsing
 
-import com.intellij.lang.impl.PsiBuilderDiagnostics
 import com.intellij.lang.impl.PsiBuilderDiagnosticsImpl
+import com.intellij.platform.syntax.impl.builder.SyntaxBuildingDiagnostics
 
-private class BuilderDiagnostics : PsiBuilderDiagnostics {
+private class BuilderDiagnostics : SyntaxBuildingDiagnostics {
   val rollbacks = mutableMapOf<String, MutableMap<Int, Int>>()
   var emptyRollbacks = 0
 
