@@ -48,6 +48,9 @@ abstract class TfDuplicatedInspectionBase : LocalInspectionTool() {
 
       protected fun invokeRenameRefactoring(project: Project, element: PsiElement) {
         val editor = getEditor(element, project) ?: return
+        val offset = element.textOffset
+        editor.caretModel.moveToOffset(offset)
+
         val dataContext = SimpleDataContext.builder()
           .add(CommonDataKeys.PSI_ELEMENT, element)
           .add(CommonDataKeys.EDITOR, editor)

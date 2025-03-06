@@ -177,6 +177,7 @@
     <renameInputValidator implementation="org.intellij.terraform.hcl.refactoring.HCLElementRenameValidator"/>
     <renameInputValidator implementation="org.intellij.terraform.config.refactoring.TfElementRenameValidator"/>
     <renameInputValidator implementation="org.intellij.terraform.config.refactoring.TfProhibitElementRenameValidator"/>
+    <vetoRenameCondition implementation="org.intellij.terraform.config.refactoring.TfVetoRenameCondition"/>
 
     <!-- Formatter -->
     <codeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HCLCodeStyleSettingsProvider"/>

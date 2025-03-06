@@ -9,13 +9,4 @@ class HCLRefactoringSupportProvider : RefactoringSupportProvider() {
   override fun isAvailable(context: PsiElement): Boolean {
     return context is HCLElement && context is PsiNamedElement
   }
-
-  // Inplace refactoring supported only if element#getUseScope is instance of LocalSearchScope
-  override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
-    return element is HCLElement && element is PsiNamedElement
-  }
-
-  override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
-    return element is HCLElement && element is PsiNamedElement
-  }
 }
