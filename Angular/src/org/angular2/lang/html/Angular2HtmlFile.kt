@@ -34,6 +34,6 @@ class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileEle
       }
       return null
     }
-    return TypeScriptConfigUtil.getConfigForPsiFile(importGraphIncludedFile)
+    return TypeScriptConfigUtil.getPreferableConfig(importGraphIncludedFile, false)
   }
 }
