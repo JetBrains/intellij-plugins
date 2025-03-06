@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsCompositeElement;
 import org.jetbrains.jps.model.JpsElementChildRole;
-import org.jetbrains.jps.model.JpsElementCollection;
+import org.jetbrains.jps.model.JpsNamedElementCollection;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.impl.JpsNamedElementReferenceBase;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -36,7 +36,7 @@ class JpsFlexBCReferenceImpl
   }
 
   @Override
-  protected @Nullable JpsElementCollection<? extends JpsFlexBuildConfiguration> getCollection(@NotNull JpsCompositeElement parent) {
+  protected @Nullable JpsNamedElementCollection<? extends JpsFlexBuildConfiguration> getNamedElementCollection(@NotNull JpsCompositeElement parent) {
     if (!(parent instanceof JpsModule)) return null;
     JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = ((JpsModule)parent).asTyped(JpsFlexModuleType.INSTANCE);
     if (flexModule == null) return null;
