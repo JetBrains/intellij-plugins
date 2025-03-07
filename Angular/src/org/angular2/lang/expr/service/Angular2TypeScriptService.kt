@@ -38,6 +38,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
@@ -104,16 +105,17 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun supportsInlayHints(file: PsiFile): Boolean =
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
+
+  @RequiresReadLock
   override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
     val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile
                                                                              ?: return@withScopedServiceTraceSpan null) != null
     val result = super.getInlayHints(file, textRange) ?: return@withScopedServiceTraceSpan null
-    return@withScopedServiceTraceSpan readAction {
-      if (hasTranspiledTemplate)
-        repositionInlayHints(file, result)
-      else
-        result
-    }
+
+    if (hasTranspiledTemplate)
+      repositionInlayHints(file, result)
+    else
+      result
   }
 
   private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> = withServiceTraceSpan("repositionInlayHints") {
@@ -150,6 +152,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun createLSCache(): TypeScriptLanguageServiceCache =
     Angular2LanguageServiceCache(myProject)
 
+  @RequiresReadLock
   override suspend fun beforeGetErrors(file: VirtualFile) {
     refreshTranspiledTemplateIfNeededCancellable(file)
   }
@@ -229,18 +232,17 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
   }
 
+  @RequiresReadLock
   private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledComponentFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
-    readAction {
-      // Updating the cache can cause the transpiled template to be (re)built,
-      // so let's build the template first and ensure that it doesn't change
-      // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
-      // on server cache locking leading to tests instability.
-      val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
-      runBlockingCancellable {
-        process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
-      }
-      result
-    }
+    // Updating the cache can cause the transpiled template to be (re)built,
+    // so let's build the template first and ensure that it doesn't change
+    // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
+    // on server cache locking leading to tests instability.
+    val result = Angular2TranspiledComponentFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
+
+    process?.executeSuspending(Angular2TranspiledTemplateCommand(virtualFile))
+
+    result
   }
 
   private inner class Angular2CompilerServiceEvaluationSupport(project: Project) : TypeScriptCompilerServiceEvaluationSupport(project),
