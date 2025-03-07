@@ -16,7 +16,9 @@ import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 internal class TfVetoRenameCondition : Condition<PsiElement> {
   override fun value(element: PsiElement?): Boolean {
-    val file = element?.containingFile ?: return true
+    if (element !is HCLElement) return false
+
+    val file = element.containingFile ?: return true
     if (!isTerraformCompatiblePsiFile(file)) {
       return true
     }
