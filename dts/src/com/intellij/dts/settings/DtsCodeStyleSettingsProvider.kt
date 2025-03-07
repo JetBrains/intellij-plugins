@@ -23,6 +23,10 @@ private class DtsCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
 
   override fun getConfigurableDisplayName(): String = DtsLanguage.displayName
 
+  override fun getConfigurableId(): String {
+    return CodeStyleSettings.generateConfigurableIdByLanguage(DtsLanguage)
+  }
+
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings = DtsCodeStyleSettings(settings)
 
   override fun createConfigurable(
