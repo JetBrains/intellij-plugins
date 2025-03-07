@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.index
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
@@ -10,6 +11,7 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.Processor
+import com.intellij.util.SmartList
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
@@ -35,8 +37,13 @@ private const val DELIMITER = ';'
  */
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   if (DumbService.isDumb(scope.project!!)) return emptySequence()
-  val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
-  return keys.asSequence().flatMap { resolve(it, scope, key) }
+  val result = SmartList<JSImplicitElement>()
+  StubIndex.getInstance().processAllKeys(key, scope.project!!) {
+    ProgressManager.checkCanceled()
+    result.addAll(resolve(it, scope, key))
+    true
+  }
+  return result.asSequence()
 }
 
 /**
