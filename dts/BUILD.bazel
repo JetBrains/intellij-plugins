@@ -64,6 +64,8 @@ jvm_test(
     "@lib//:jackson",
     "@lib//:jackson-databind",
     "@lib//:jackson-dataformat-yaml",
+    "@community//platform/syntax/syntax-api:syntax",
+    "@community//platform/syntax/syntax-api:syntax_test_lib",
   ],
   runtime_deps = [
     ":dts_resources",
