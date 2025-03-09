@@ -25,7 +25,7 @@ public class CfmlCreateFileAction extends CreateFileFromTemplateAction implement
   }
 
   @Override
-  protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
+  protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.@NotNull Builder builder) {
     builder
       .setTitle(CfmlBundle.message("dialog.title.cfml.cfc.file2"))
       .addKind(CfmlBundle.message("dialog.kind.cfml.file"), CFMLIcons.Cfml, "ColdFusion File.cfm")

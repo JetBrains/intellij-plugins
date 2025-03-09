@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class CreateDartFileAction extends CreateFileFromTemplateAction {
 
   @Override
-  protected boolean isAvailable(DataContext dataContext) {
+  protected boolean isAvailable(@NotNull DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     return super.isAvailable(dataContext) && project != null && DartSdk.getDartSdk(project) != null;
   }

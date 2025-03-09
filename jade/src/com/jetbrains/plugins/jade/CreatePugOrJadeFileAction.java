@@ -13,17 +13,18 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.plugins.jade.psi.JadeFileType;
 import org.jetbrains.annotations.NotNull;
 
-public class CreatePugOrJadeFileAction extends CreateFileFromTemplateAction implements DumbAware {
+final class CreatePugOrJadeFileAction extends CreateFileFromTemplateAction implements DumbAware {
 
   @Override
-  protected boolean isAvailable(DataContext dataContext) {
+  protected boolean isAvailable(@NotNull DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (!super.isAvailable(dataContext) || project == null) return false;
     return JSWebUtil.hasFilesOfType(project, JadeFileType.INSTANCE);
   }
 
   @Override
-  protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
+  protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory,
+                             @NotNull CreateFileFromTemplateDialog.Builder builder) {
     builder.setTitle(JadeBundle.message("pug.action.new-file.dialog.title"))
       .addKind(JadeBundle.message("pug.action.new-file.pug"), JadeIcons.Pug, "Pug File")
       .addKind(JadeBundle.message("pug.action.new-file.jade"), JadeIcons.Jade, "Jade File");
