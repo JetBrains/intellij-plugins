@@ -10,6 +10,7 @@ import com.intellij.psi.*
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerProviderQodana.Companion.QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY
 import org.junit.Test
 import kotlin.io.path.absolutePathString
 
@@ -23,16 +24,19 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
 
   @Test
   fun testIncorrectFormattingSimple() {
+    System.setProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
     runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
   }
 
   @Test
   fun testIncorrectFormatting() {
+    System.setProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
     runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
   }
 
   @Test
   fun testIncorrectFormattingWithAnotherInspections() {
+    System.setProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
     runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
   }
 

@@ -6,8 +6,12 @@ import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingResult
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
 class IncorrectFormattingResultHandlerProviderQodana: IncorrectFormattingResultHandlerProvider {
+  companion object {
+    const val QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY: String = "qodana.new.incorrect.formatting.output"
+  }
   override fun getApplicableResultHandler(globalContext: GlobalInspectionContext): IncorrectFormattingResultHandler? {
-    return if (globalContext is QodanaGlobalInspectionContext) {
+    val newOutputProperty = System.getProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "false").toBoolean()
+    return if (newOutputProperty && globalContext is QodanaGlobalInspectionContext) {
       IncorrectFormattingResultHandlerQodana()
     } else null
   }
