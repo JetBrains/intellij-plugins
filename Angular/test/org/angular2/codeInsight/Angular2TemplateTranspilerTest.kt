@@ -124,6 +124,12 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     configureFileName = "templateLiteral.ts"
   )
 
+  fun testTemplateLiteralInline() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_19_2_0,
+    Angular2TestModule.ANGULAR_COMMON_19_2_0,
+    configureFileName = "templateLiteralInline.ts"
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
