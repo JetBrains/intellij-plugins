@@ -1,0 +1,13 @@
+{
+  "name": "test-karma-qunit-run-config-producer-guttes-in-file",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "karma start"
+  },
+  "private": true,
+  "devDependencies": {
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-qunit": "^4.2.1"
+  }
+}

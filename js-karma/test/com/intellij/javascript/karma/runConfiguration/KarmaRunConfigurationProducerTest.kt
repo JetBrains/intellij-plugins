@@ -185,6 +185,27 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  fun `test guttersInFileQUnit`() {
+    val fileQuery = FileQuery("src/user.spec.js")
+    val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.TEST, "src/user.spec.js", "karma.conf.js", workingDir = "")
+
+    assertGuttersCount(fileQuery, 3)
+
+    assertGutterRunConfigurationSettings(
+      fileQuery.forLine(7),
+      baseSettingsFixture.forSuite("user")
+    )
+
+    assertGutterRunConfigurationSettings(
+      fileQuery.forLine(9),
+      baseSettingsFixture.forTest("should be tested")
+    )
+    assertGutterRunConfigurationSettings(
+      fileQuery.forLine(13),
+      baseSettingsFixture.forTest("should be tested 2")
+    )
+  }
+
   override fun assetConfigurationSettings(
     messageTracePrefix: String,
     configuration: RunConfiguration?,
