@@ -300,9 +300,11 @@ data class QodanaConfig(
 internal suspend fun copyConfigToLog(config: QodanaConfig) {
   runInterruptible(StaticAnalysisDispatchers.IO) {
     val filesWithNamesInLog = listOfNotNull(
-      config.yamlFiles.effectiveQodanaYaml?.let { it to QodanaYamlFiles.EFFECTIVE_QODANA_YAML_FILENAME },
       config.yamlFiles.localQodanaYaml?.let { it to QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME },
       config.yamlFiles.qodanaConfigJson?.let { it to QodanaYamlFiles.QODANA_CONFIG_JSON_FILENAME },
+
+      // QD-10850
+      config.yamlFiles.effectiveQodanaYaml?.let { it to QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME },
     )
 
     filesWithNamesInLog.forEach { (file, nameInLog) ->
