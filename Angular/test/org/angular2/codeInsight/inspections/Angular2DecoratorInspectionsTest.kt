@@ -120,41 +120,41 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testModuleEntityTypeMismatchNg19() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
     doTest(AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch-ng19.ts")
   }
 
   fun testModuleEntityTypeMismatchNg19_1a() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
     doTest(1, "Com<caret>ponentNonStandalone, //import a", "Make ComponentNonStandalone standalone",
            AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch-ng19.ts")
   }
 
   fun testModuleEntityTypeMismatchNg19_1b() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
     doTest(1, "Com<caret>ponentNonStandalone, //import b", "Make ComponentNonStandalone standalone",
            AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch-ng19.ts")
   }
 
   fun testModuleEntityTypeMismatchNg19_2() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
     doTest(2, "Com<caret>ponent1, // move", "Import Component1 instead",
            AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch-ng19.ts")
   }
 
   fun testModuleEntityTypeMismatchNg19_3() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
     doTest(3, "Com<caret>ponent1, // move", "Make Component1 non-standalone",
            AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch-ng19.ts")
   }
 
   fun testModuleEntityTypeMismatchNg19_4() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
     doTest(4, "Dire<caret>ctive1, // move", "Make Directive1 non-standalone",
            AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch-ng19.ts")

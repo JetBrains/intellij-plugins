@@ -18,6 +18,7 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
   ANGULAR_COMMON_16_2_8("@angular/common", "16.2.8"),
   ANGULAR_COMMON_17_3_0("@angular/common", "17.3.0"),
   ANGULAR_COMMON_18_2_1("@angular/common", "18.2.1"),
+  ANGULAR_COMMON_19_2_0("@angular/common", "19.2.0"),
 
   ANGULAR_CORE_4_0_0("@angular/core", "4.0.0"),
   ANGULAR_CORE_8_2_14("@angular/core", "8.2.14"),
@@ -27,7 +28,7 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
   ANGULAR_CORE_16_2_8("@angular/core", "16.2.8"),
   ANGULAR_CORE_17_3_0("@angular/core", "17.3.0"),
   ANGULAR_CORE_18_2_1("@angular/core", "18.2.1"),
-  ANGULAR_CORE_19_0_0_NEXT_4("@angular/core", "19.0.0-next.4"),
+  ANGULAR_CORE_19_2_0("@angular/core", "19.2.0"),
 
   ANGULAR_FLEX_LAYOUT_13_0_0("@angular/flex-layout", "13.0.0-beta.36"),
 
