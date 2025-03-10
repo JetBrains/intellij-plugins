@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport.UpdateContextInfo
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
@@ -269,10 +270,11 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       if (element !is JSElement && element.parent !is JSElement) null
       else super.getElementType(element, isContextual, virtualFile, projectFile)
 
-    override suspend fun commitDocumentsBeforeGetElementType(element: PsiElement, virtualFile: VirtualFile, configFile: VirtualFile?) {
-      super.commitDocumentsBeforeGetElementType(element, virtualFile, configFile)
+    override suspend fun commitDocuments(updateContext: UpdateContextInfo) {
+      super.commitDocuments(updateContext)
+      val element = updateContext.element
       if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
-        refreshTranspiledTemplateIfNeeded(virtualFile)
+        refreshTranspiledTemplateIfNeeded(updateContext.file)
       }
     }
 
