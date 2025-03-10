@@ -6,7 +6,6 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -18,7 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.refactoring.actions.RenameElementAction
+import com.intellij.refactoring.rename.RenameHandlerRegistry
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.*
 import com.intellij.util.NullableFunction
@@ -48,18 +47,15 @@ abstract class TfDuplicatedInspectionBase : LocalInspectionTool() {
 
       protected fun invokeRenameRefactoring(project: Project, element: PsiElement) {
         val editor = getEditor(element, project) ?: return
-        val offset = element.textOffset
-        editor.caretModel.moveToOffset(offset)
 
         val dataContext = SimpleDataContext.builder()
           .add(CommonDataKeys.PSI_ELEMENT, element)
           .add(CommonDataKeys.EDITOR, editor)
           .setParent(EditorUtil.getEditorDataContext(editor))
           .build()
-        val action = RenameElementAction()
-        val event = AnActionEvent.createFromAnAction(action, null, "", dataContext)
-        event.setInjectedContext(false) // ensure our map/element is used, not some other element
-        action.actionPerformed(event)
+
+        val renameHandler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)
+        renameHandler?.invoke(project, editor, element.containingFile, dataContext)
       }
 
       fun getEditor(element: PsiElement, project: Project): Editor? {

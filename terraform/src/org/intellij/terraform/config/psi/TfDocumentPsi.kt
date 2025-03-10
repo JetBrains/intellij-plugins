@@ -7,6 +7,7 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.SyntheticElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.util.parentOfType
@@ -17,7 +18,7 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 
 internal class TfDocumentPsi(val element: PsiElement,
-                             private val text: String) : FakePsiElement(), HCLElement {
+                             private val text: String) : FakePsiElement(), HCLElement, SyntheticElement {
 
   private val parentElement: HCLBlock? = element.parentOfType<HCLBlock>(true)
 

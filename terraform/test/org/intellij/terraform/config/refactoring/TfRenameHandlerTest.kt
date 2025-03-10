@@ -1,80 +1,29 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.refactoring
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class TfRenameHandlerTest : BasePlatformTestCase() {
   fun testRenameResource() {
-    doTest(
-      """
-      resource "aws_instance" "<caret>old_name" {
-        ami = "ami-123456"
-      }
-      """.trimIndent(),
-      "new_name",
-      """
-      resource "aws_instance" "new_name" {
-        ami = "ami-123456"
-      }
-      """.trimIndent()
-    )
+    myFixture.testRenameUsingHandler("resource.tf", "resource_after.tf", "new_name")
   }
 
   fun testRenameDataSource() {
-    doTest(
-      """
-      data "aws_iam_role" "<caret>old_role" {
-        name = "my-role"
-      }
-
-      resource "aws_lambda_function" "lambda" {
-        role = data.aws_iam_role.old_role.arn
-      }
-      """.trimIndent(),
-      "new_role",
-      """
-      data "aws_iam_role" "new_role" {
-        name = "my-role"
-      }
-
-      resource "aws_lambda_function" "lambda" {
-        role = data.aws_iam_role.new_role.arn
-      }
-      """.trimIndent()
-    )
+    myFixture.testRenameUsingHandler("datasource.tf", "datasource_after.tf", "new_role")
   }
 
   fun testRenameLocalVariable() {
-    doTest(
-      """
-      locals {
-        old_local<caret> = "some_value"
-      }
-
-      resource "aws_instance" "example" {
-        tags = {
-          Name = local.old_local
-        }
-      }
-      """.trimIndent(),
-      "new_local",
-      """
-      locals {
-        new_local = "some_value"
-      }
-
-      resource "aws_instance" "example" {
-        tags = {
-          Name = local.new_local
-        }
-      }
-      """.trimIndent()
-    )
+    myFixture.testRenameUsingHandler("local.tf", "local_after.tf", "new_local")
   }
 
-  private fun doTest(before: String, newName: String, after: String) {
-    myFixture.configureByText("main.tf", before)
-    myFixture.renameElementAtCaret(newName)
-    myFixture.checkResult(after)
+  fun testRenameReservedWord() {
+    assertThrows(AssertionError::class.java, "No handler for this context") {
+      myFixture.testRenameUsingHandler("reserved_word.tf", "reserved_word_after.tf", "new_name")
+    }
+  }
+
+  override fun getTestDataPath(): String {
+    return PathManager.getHomePath() + "/contrib/terraform/test-data/terraform/refactoring"
   }
 }
