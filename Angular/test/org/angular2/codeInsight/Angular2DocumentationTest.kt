@@ -94,9 +94,9 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testDeferBlockOnTrigger() = doTest(Angular2TestModule.ANGULAR_CORE_17_3_0, ext = "html")
 
-  fun testDeferBlockHydrate() = doTest(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4, ext = "html")
+  fun testDeferBlockHydrate() = doTest(Angular2TestModule.ANGULAR_CORE_19_2_0, ext = "html")
 
-  fun testDeferBlockHydrateNever() = doTest(Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4, ext = "html")
+  fun testDeferBlockHydrateNever() = doTest(Angular2TestModule.ANGULAR_CORE_19_2_0, ext = "html")
 
   fun testDefaultValueJSDoc() = doTest()
 

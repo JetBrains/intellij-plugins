@@ -147,7 +147,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   }
 
   fun testBlockDeferHydrateNg19() {
-    checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, extension = "ts")
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
   }
 
   fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
@@ -268,7 +268,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "typeof.html")
 
   fun testTypeofNg19() =
-    checkHighlighting(ANGULAR_CORE_19_0_0_NEXT_4, dir = true, configureFileName = "typeof.html")
+    checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "typeof.html")
 
   fun testConfigWithMapping() =
     checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "projects/frontend/src/app/app.component.html",

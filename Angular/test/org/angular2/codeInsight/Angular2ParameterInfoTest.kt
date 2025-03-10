@@ -6,7 +6,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
-import org.angular2.Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4
+import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 
 class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   private lateinit var myHintFixture: EditorHintFixture
@@ -57,15 +57,15 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
     checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testDeferBlock1() =
-    checkParameterInfo(ANGULAR_CORE_19_0_0_NEXT_4, extension = "html")
+    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
 
   fun testDeferBlock2() =
-    checkParameterInfo(ANGULAR_CORE_19_0_0_NEXT_4, extension = "html")
+    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
 
   fun testDeferBlock3() =
-    checkParameterInfo(ANGULAR_CORE_19_0_0_NEXT_4, extension = "html")
+    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
 
   fun testDeferBlock4() =
-    checkParameterInfo(ANGULAR_CORE_19_0_0_NEXT_4, extension = "html")
+    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
 
 }

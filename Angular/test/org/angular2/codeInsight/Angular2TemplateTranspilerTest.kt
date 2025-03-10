@@ -82,7 +82,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
   )
 
   fun testTypeof() = checkTranspilation(
-    Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4
+    Angular2TestModule.ANGULAR_CORE_19_2_0
   )
 
   fun testObjectInitializer() = checkTranspilation(
@@ -102,7 +102,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
   )
 
   fun testEs6ShorthandProperty() = checkTranspilation(
-    Angular2TestModule.ANGULAR_CORE_19_0_0_NEXT_4,
+    Angular2TestModule.ANGULAR_CORE_19_2_0,
   )
 
   fun testStructuralDirective() = checkTranspilation(
@@ -111,15 +111,15 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
   )
 
   fun testTemplateLiteralExternal() = checkTranspilation(
-    Angular2TestModule.ANGULAR_CORE_18_2_1,
-    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+    Angular2TestModule.ANGULAR_CORE_19_2_0,
+    Angular2TestModule.ANGULAR_COMMON_19_2_0,
     dir = true,
     configureFileName = "templateLiteral.ts"
   )
 
   fun testTemplateLiteralUnclosed() = checkTranspilation(
-    Angular2TestModule.ANGULAR_CORE_18_2_1,
-    Angular2TestModule.ANGULAR_COMMON_18_2_1,
+    Angular2TestModule.ANGULAR_CORE_19_2_0,
+    Angular2TestModule.ANGULAR_COMMON_19_2_0,
     dir = true,
     configureFileName = "templateLiteral.ts"
   )
