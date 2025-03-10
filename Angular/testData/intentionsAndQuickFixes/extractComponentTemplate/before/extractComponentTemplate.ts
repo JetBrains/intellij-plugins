@@ -7,7 +7,7 @@ import {RegistrationFormComponent} from './registration-form.component';
  imports: [RegistrationFormComponent],
  temp<caret>late: `
     <div>
-      <app-registration-form [bind]="\`foo\`">Some text with \`\`</app-registration-form>
+      <app-registration-form [bind]="\`foo \${ bar }\`">Some text with \`foo \${test}\`</app-registration-form>
     </div>
   `,
  styleUrl: './app.component.css'

@@ -41,7 +41,7 @@ class AngularExtractComponentTemplate : JavaScriptIntention() {
     if (!IntentionPreviewUtils.isIntentionPreviewActive()) {
       val newTemplateFile = property.containingFile.containingDirectory.createFile(templateFileName)
       val document = PsiDocumentManager.getInstance(project).getDocument(newTemplateFile)!!
-      document.setText(template.text.replace("\\`", "`").trimStart('\n').trimEnd(' ', '\n').trimIndent() + "\n")
+      document.setText(InjectedLanguageManager.getInstance(project).getUnescapedText(template).trimStart('\n').trimEnd(' ', '\n').trimIndent() + "\n")
       PsiDocumentManager.getInstance(project).commitDocument(document)
     }
 

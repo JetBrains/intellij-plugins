@@ -6,6 +6,7 @@ import com.intellij.codeInspection.util.IntentionFamilyName
 import com.intellij.codeInspection.util.IntentionName
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
+import com.intellij.lang.javascript.psi.JSInheritedLanguagesHelper
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
@@ -42,7 +43,8 @@ class AngularInlineComponentTemplate : JavaScriptIntention() {
     val lineIndent = CodeStyleManager.getInstance(project).getLineIndent(property.containingFile, property.textRange.startOffset)
                      ?: ""
     val indentSize = " ".repeat(CodeStyle.getIndentSize(property.containingFile))
-    val templateLiteralText = "`\n" + template.text.replace("`", "\\`").trim('\n').prependIndent(lineIndent + indentSize) + "\n$lineIndent`"
+    val templateLiteralText = "`\n" + JSInheritedLanguagesHelper.getMultilineLiteralContent(template, template.text).trim('\n')
+      .prependIndent(lineIndent + indentSize) + "\n$lineIndent`"
 
     newProperty
       .initializer
