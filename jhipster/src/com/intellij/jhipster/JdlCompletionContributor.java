@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.jhipster.model.*;
 import com.intellij.jhipster.psi.*;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
@@ -21,8 +22,8 @@ import static com.intellij.jhipster.JdlConstants.*;
 import static com.intellij.jhipster.JdlPatterns.*;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-final class JdlCompletionContributor extends CompletionContributor {
-  public JdlCompletionContributor() {
+final class JdlCompletionContributor extends CompletionContributor implements DumbAware {
+  JdlCompletionContributor() {
     extend(CompletionType.BASIC, jdlIdentifier().inside(jdlApplicationBlock()).andNot(psiElement().inside(JdlConfigBlock.class)),
            new KeywordsCompletionProvider(APPLICATION_NESTED_KEYWORDS));
 
