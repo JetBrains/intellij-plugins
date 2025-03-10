@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.base.projectStructure.toKaLibraryModule
 import org.jetbrains.kotlin.idea.core.script.ScriptDependencyAware
 import org.jetbrains.qodana.QodanaIntelliJYamlService
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
+import org.jetbrains.qodana.inspectionKts.CustomPluginsForKtsClasspathProvider
 import org.jetbrains.qodana.inspectionKts.isInspectionKtsEnabled
 import org.jetbrains.qodana.registry.QodanaRegistry
 import java.io.File
@@ -89,11 +90,13 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
     val pluginsWithLanguageParserClassLoaders = LanguageParserDefinitions.INSTANCE.point?.extensionList?.mapNotNull { it.instance.javaClass.classLoader }
     val distributionPluginsClassLoaders = PluginManager.getPlugins()
       .filter { useAllDistributionForDependencies || !it.isJetBrainsOrBundledPlugin }.map { it.classLoader }
+    val customPluginClassLoaders = CustomPluginsForKtsClasspathProvider.provide().map { it.classLoader }
 
     listOf(
       listOf(platformClassLoader, qodanaPluginClassLoader),
       pluginsWithLanguageParserClassLoaders ?: emptyList(),
-      distributionPluginsClassLoaders
+      distributionPluginsClassLoaders,
+      customPluginClassLoaders
     ).flatten().toSet().forEach { classLoader ->
       val jars = when {
         useAllDistributionForDependencies -> scriptCompilationClasspathFromContext(classLoader = classLoader, wholeClasspath = true)
