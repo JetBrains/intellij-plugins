@@ -2209,7 +2209,14 @@ private open class TcbExpressionTranslator(
 
   override fun visitElement(element: PsiElement) {
     if (element is LeafPsiElement) {
-      result.append(element.text, if (element !is PsiWhiteSpace) element.textRange else null, supportTypes = true)
+      val text = when (element.elementType) {
+        JSTokenTypes.BACKQUOTE ->  "`"
+        JSTokenTypes.RBRACE -> "}"
+        JSTokenTypes.LBRACE -> "{"
+        JSTokenTypes.DOLLAR -> "$"
+        else -> element.text
+      }
+      result.append(text, if (element !is PsiWhiteSpace) element.textRange else null, supportTypes = true)
     }
     else {
       result.withSourceSpan(element.textRange, supportTypes = true) {

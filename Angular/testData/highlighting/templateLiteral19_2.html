@@ -1,0 +1,6 @@
+<div>
+  {{ `supported ${<error descr="Unresolved variable or type foo">foo</error>}` }}
+  @if ( <error descr="Unresolved variable or type check">check</error> === `this-${<error descr="Unresolved variable or type foo">foo</error>}` ) {
+      Do this!
+  }
+</div>

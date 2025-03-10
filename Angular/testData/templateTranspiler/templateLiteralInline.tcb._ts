@@ -1,0 +1,10 @@
+/* Angular type checking code */
+
+/* TCB for templateLiteralInline.ts */
+
+function _tcb1(this: AppComponent) {
+var _t1 = document.createElement("div");
+"" + `supported ${ this.bar }`;
+if (this.title === `it-${ this.foo }`) {
+}
+}
