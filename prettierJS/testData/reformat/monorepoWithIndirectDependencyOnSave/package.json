@@ -1,0 +1,14 @@
+{
+  "name": "prettier-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "package-a",
+    "package-b",
+    "package-c"
+  ],
+  "private": true,
+  "dependencies": {
+    "lodash": "latest"
+  }
+}

@@ -266,6 +266,24 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testMonorepoWithIndirectDependencyOnSave() {
+    configureRunOnSave(() -> {
+      var actionId = "SaveDocument";
+
+      //file in the root without prettier
+      doTestSaveAction(actionId, "");
+
+      //package with an indirect dependecy prettier in subfolder
+      doTestSaveAction(actionId, "package-a/");
+
+      //package with prettier in subfolder
+      doTestSaveAction(actionId, "package-b/");
+
+      //package with prettier config in subfolder
+      doTestSaveAction(actionId, "package-c/");
+    });
+  }
+
   public void testMonorepoSubDirOnSaveManualWithoutScope() {
     configureFormatFilesOutsideDependencyScope(true, () -> {
       var actionId = "SaveDocument";

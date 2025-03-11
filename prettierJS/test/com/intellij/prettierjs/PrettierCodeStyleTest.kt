@@ -241,7 +241,7 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
 
       val settings = getCodeStyleSettingsForFile("index.js")
       val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
-      assertEquals(4, indentOptions?.INDENT_SIZE)
+      assertEquals(12, indentOptions?.INDENT_SIZE)
     }
     finally {
       PrettierConfiguration.getInstance(project).state.formatFilesOutsideDependencyScope = false
