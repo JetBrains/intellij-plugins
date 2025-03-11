@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
+import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.findChildPackageJsonFile;
 import static com.intellij.prettierjs.PrettierConfig.createFromMap;
 
 public final class PrettierUtil {
@@ -144,17 +145,33 @@ public final class PrettierUtil {
     }
 
     if (!configuration.getFormatFilesOutsideDependencyScope()) {
-      return findPackageJsonWithPrettierUpTree(project, file) != null;
+      return findPrettierScopeUpTree(project, file) != null;
     }
 
     return true;
   }
 
-  public static @Nullable PackageJsonData findPackageJsonWithPrettierUpTree(@NotNull Project project, @NotNull VirtualFile file) {
-    return PackageJsonUtil.processUpPackageJsonFilesAndFindFirst(project, file, packageJson -> {
-      var data = PackageJsonData.getOrCreate(packageJson);
-      return data.isDependencyOfAnyType(PACKAGE_NAME) ? data : null;
+  public static @Nullable VirtualFile findPrettierScopeUpTree(@NotNull Project project, @NotNull VirtualFile file) {
+    Ref<VirtualFile> result = Ref.create();
+
+    JSProjectUtil.processDirectoriesUpToContentRoot(project, file, directory -> {
+      var packageJson = findChildPackageJsonFile(directory);
+      if (packageJson != null) {
+        var data = PackageJsonData.getOrCreate(packageJson);
+        if (data.isDependencyOfAnyType(PACKAGE_NAME)) {
+          result.set(directory);
+        }
+      }
+      if (result.isNull() && directory.isValid()) {
+        var configFile = findChildConfigFile(directory);
+        if (configFile != null) {
+          result.set(directory);
+        }
+      }
+      return result.isNull();
     });
+
+    return result.get();
   }
 
   private static void addPossibleConfigsForFile(@NotNull VirtualFile from, @NotNull Set<VirtualFile> result, @NotNull VirtualFile baseDir) {
