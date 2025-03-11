@@ -13,6 +13,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
@@ -30,6 +31,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.io.BaseOutputReader
 import com.intellij.util.io.URLUtil
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.ide.devtools.DartDevToolsService
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
@@ -42,6 +44,7 @@ import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.*
 
 @Service(Service.Level.PROJECT)
 class DartToolingDaemonService private constructor(private val project: Project) : Disposable {
@@ -93,7 +96,12 @@ class DartToolingDaemonService private constructor(private val project: Project)
     this.uri = uri
     this.secret = secret
     DartDevToolsService.getInstance(project).startService(uri)
-    uri?.let { connectToDtdWebSocket(it) }
+    uri?.let { it ->
+      connectToDtdWebSocket(it)
+      CoroutineScope(Dispatchers.IO).launch {
+        sendDtdConnectRequest(project, it)
+      }
+    }
   }
 
   private fun connectToDtdWebSocket(uri: String) {
@@ -104,6 +112,23 @@ class DartToolingDaemonService private constructor(private val project: Project)
     }
     catch (e: Exception) {
       logger.error("Failed to connect to Dart Tooling Daemon, uri: $uri", e)
+    }
+  }
+
+  private suspend fun sendDtdConnectRequest(project: Project, uri: String) {
+    // Do not send connect request if there is no DTD uri.
+    val dtdUri = DartToolingDaemonService.getInstance(project).uri ?: return;
+
+    // Wait for the Analysis Server to be ready.
+    readActionBlocking {
+      DartAnalysisServerService.getInstance(project).serverReadyForRequest()
+    }
+
+    // Send connect request to the Analysis Server.
+    val params = JsonObject()
+    params.addProperty("uri", dtdUri)
+    DartToolingDaemonService.getInstance(project).sendRequest("dart/connectToDtd", params, false) {
+      // Do nothing, response is always null regardless of success or failure.
     }
   }
 
