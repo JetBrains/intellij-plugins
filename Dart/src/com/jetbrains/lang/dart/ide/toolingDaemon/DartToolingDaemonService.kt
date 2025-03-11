@@ -68,6 +68,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
+  val analysisServerScope = DartAnalysisServerService.getInstance(project).serviceScope
+
   @Throws(ExecutionException::class)
   fun startService() {
     if (serviceRunning) {
@@ -98,7 +100,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     DartDevToolsService.getInstance(project).startService(uri)
     uri?.let { it ->
       connectToDtdWebSocket(it)
-      CoroutineScope(Dispatchers.IO).launch {
+      analysisServerScope.launch {
         sendDtdConnectRequest(project, it)
       }
     }
