@@ -23,12 +23,12 @@ import com.intellij.util.containers.MultiMap
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMapping
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledCode
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledHostBindings
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledTemplate
+import org.angular2.lang.html.Angular2HtmlDialect
 import java.util.*
 
 object Angular2TranspiledDirectiveFileBuilder {
@@ -67,8 +67,8 @@ object Angular2TranspiledDirectiveFileBuilder {
 
   fun getTranspiledDirectiveFile(directiveFile: PsiFile): TranspiledDirectiveFile? =
     CachedValuesManager.getCachedValue(directiveFile) {
-      CachedValueProvider.Result.create(getDirectiveFileCache(directiveFile)?.let {
-        withTypeEvaluationLocation(directiveFile) {
+      CachedValueProvider.Result.create(withTypeEvaluationLocation(directiveFile) {
+        getDirectiveFileCache(directiveFile)?.let {
           buildTranspiledDirectiveFile(directiveFile, it)
         }
       }, PsiModificationTracker.MODIFICATION_COUNT)
@@ -103,7 +103,8 @@ object Angular2TranspiledDirectiveFileBuilder {
           if (Angular2DecoratorUtil.findDecorator(typeScriptClass, true, Angular2DecoratorUtil.COMPONENT_DEC) != null) {
             components.add(typeScriptClass)
             directives.add(typeScriptClass)
-          } else if (Angular2DecoratorUtil.findDecorator(typeScriptClass, true, Angular2DecoratorUtil.DIRECTIVE_DEC) != null) {
+          }
+          else if (Angular2DecoratorUtil.findDecorator(typeScriptClass, true, Angular2DecoratorUtil.DIRECTIVE_DEC) != null) {
             directives.add(typeScriptClass)
           }
         }
@@ -255,7 +256,7 @@ object Angular2TranspiledDirectiveFileBuilder {
     val directiveVarMappings: Map<Pair<TextRange, Angular2Directive>, TextRange>,
   ) {
     val fileName: String = this.sourceFile.viewProvider.virtualFile.let { TypeScriptCompilerConfigUtil.normalizeNameAndPath(it) }
-                        ?: "<non-local>"
+                           ?: "<non-local>"
   }
 
 }
