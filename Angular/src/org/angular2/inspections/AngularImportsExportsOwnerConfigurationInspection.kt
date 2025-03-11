@@ -4,6 +4,7 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -243,7 +244,9 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
       return if (isAngularEntityDecorator(decorator, MODULE_DEC, COMPONENT_DEC))
         CachedValuesManager.getCachedValue(decorator) {
           CachedValueProvider.Result.create(
-            validate(decorator),
+            JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(decorator) {
+              validate(decorator)
+            },
             PsiModificationTracker.MODIFICATION_COUNT)
         }
       else
