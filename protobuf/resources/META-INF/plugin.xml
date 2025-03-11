@@ -2,7 +2,7 @@
   <name>Protocol Buffers</name>
   <id>idea.plugin.protoeditor</id>
   <vendor>JetBrains</vendor>
-  <category>Microservices</category>
+  <category>Languages</category>
   <description><![CDATA[
     Provides editor support for <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a> files.
     <br>
