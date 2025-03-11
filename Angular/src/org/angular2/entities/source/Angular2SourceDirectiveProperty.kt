@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardUtil
+import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.model.Pointer
 import com.intellij.navigation.SymbolNavigationService
@@ -140,6 +141,7 @@ abstract class Angular2SourceDirectiveProperty(
   val typeFromSignal: JSType?
     get() = withTypeEvaluationLocation(owner) {
       signature.jsType
+        ?.takeIf { it !is JSPrimitiveType }
         ?.asRecordType()
         ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name)
         ?.jsTypeWithOptionality
