@@ -68,7 +68,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
-  val analysisServerScope = DartAnalysisServerService.getInstance(project).serviceScope
+  private val analysisServerScope = DartAnalysisServerService.getInstance(project).serviceScope
 
   @Throws(ExecutionException::class)
   fun startService() {
