@@ -1,0 +1,9 @@
+{
+  "name": "package-a",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "prettier": "../package-b",
+  "author": "",
+  "license": "ISC"
+}

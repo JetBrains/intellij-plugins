@@ -1,0 +1,11 @@
+{
+  "name": "package-b",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "prettier": "latest"
+  },
+  "author": "",
+  "license": "ISC"
+}
