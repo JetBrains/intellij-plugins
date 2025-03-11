@@ -16,9 +16,6 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <scriptConfigurationsSource implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaScriptConfigurationSource"/>
     <scriptDefinitionsSource implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaScriptDefinitionSource"/>
-    <scriptDefinitionsProvider
-      id="QodanaKtsInspectionsScriptDefinitionSource"
-      implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaKtsInspectionsScriptDefinitionsProvider"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <resolveScopeProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.InspectionKtsResolveScopeProvider"/>

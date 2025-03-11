@@ -17,8 +17,8 @@ internal class QodanaScriptConfigurationSource(
   override val project: Project,
   cs: CoroutineScope
 ) : BundledScriptConfigurationsSource(project, cs) {
-  override fun getScriptDefinitionsSource(): ScriptDefinitionsSource? {
-    return project.scriptDefinitionsSourceOfType<QodanaScriptDefinitionSource>()
+  override fun getDefinitions(): Sequence<ScriptDefinition>? {
+    return project.scriptDefinitionsSourceOfType<QodanaScriptDefinitionSource>()?.definitions
   }
 
   override suspend fun updateModules(storage: MutableEntityStorage?) {
