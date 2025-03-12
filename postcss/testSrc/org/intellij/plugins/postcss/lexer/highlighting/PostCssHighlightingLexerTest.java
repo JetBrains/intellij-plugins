@@ -1,7 +1,6 @@
 package org.intellij.plugins.postcss.lexer.highlighting;
 
 import com.intellij.lexer.Lexer;
-import com.intellij.psi.css.impl.util.CssHighlighterLexer;
 import com.intellij.testFramework.LexerTestCase;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssTestUtils;
@@ -84,7 +83,7 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
 
   @Override
   protected @NotNull Lexer createLexer() {
-    return new PostCssHighlightingLexer(CssHighlighterLexer.Lazy.DEFAULT_PROPERTY_VALUES);
+    return new PostCssHighlightingLexer();
   }
 
   @Override

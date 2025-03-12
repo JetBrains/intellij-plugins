@@ -4,7 +4,6 @@ import com.intellij.lang.Language;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.index.CssSupportedFileTypesProvider;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.intellij.plugins.postcss.PostCssLanguage;
@@ -25,7 +24,7 @@ public class PostCssSupportedFileTypesProvider extends CssSupportedFileTypesProv
 
   @Override
   public @NotNull Lexer getIndexingLexer() {
-    return new PostCssHighlightingLexer(CssElementDescriptorFactory2.getInstance().getValueIdentifiers());
+    return new PostCssHighlightingLexer();
   }
 
   @Override

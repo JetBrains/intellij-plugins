@@ -3,9 +3,6 @@ package org.intellij.plugins.postcss.lexer;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssHighlighterLexer;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 public final class PostCssHighlightingLexer extends CssHighlighterLexer {
   private static final int AFTER_AMPERSAND_FLAG = 0x20;
@@ -13,8 +10,8 @@ public final class PostCssHighlightingLexer extends CssHighlighterLexer {
   private boolean afterAmpersand = false;
   private boolean afterNumber = false;
 
-  public PostCssHighlightingLexer(@NotNull Set<String> propertyValues) {
-    super(new PostCssLexer(), propertyValues);
+  public PostCssHighlightingLexer() {
+    super(new PostCssLexer());
   }
 
   @Override
