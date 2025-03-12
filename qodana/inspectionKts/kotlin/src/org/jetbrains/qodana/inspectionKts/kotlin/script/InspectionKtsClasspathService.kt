@@ -159,7 +159,7 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
     val isYamlPlugin = pluginId == "org.jetbrains.plugins.yaml"
     return when {
       isJavaPlugin -> {
-        jarName.startsWith("java-frontback") // part of Java's PSI
+        jarName.startsWith("java-impl-frontend") // part of Java's PSI
       }
       isKotlinPlugin -> {
         jarName.startsWith("kotlinc.kotlin-compiler-common") || // Kotlin PSI
