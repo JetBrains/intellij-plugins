@@ -8,11 +8,12 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.intellij.terraform.hcl.HCLBundle;
 import org.intellij.terraform.hil.HILTokenTypes;
+import org.intellij.terraform.hil.psi.template.HilTemplatingAwarePsiBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 import static org.intellij.terraform.hil.HILElementTypes.R_CURLY;
-import static org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED;
+import static org.intellij.terraform.hil.psi.template.TftplTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED;
 
 public class HILParserUtil extends GeneratedParserUtilBase {
   @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")

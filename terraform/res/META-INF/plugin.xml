@@ -123,7 +123,7 @@
 
   <content>
     <module name="intellij.terraform/watchers"/>
-    <module name="intellij.terraform/template"/>
+    <module name="intellij.terraform.template"/>
   </content>
 
   <dependencies>
@@ -245,7 +245,6 @@
     <vcs.codeVisionLanguageContext language="HCL-Terraform" implementationClass="org.intellij.terraform.config.hints.TfVcsContextProvider"/>
     <codeInsight.codeVisionSettingsPreviewLanguage modelId="references" language="HCL-Terraform"/>
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.psi.TfReferenceContributor"/>
-    <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.codeinsight.HclFileReferenceContributor"/>
 
     <platform.backend.documentation.targetProvider implementation="org.intellij.terraform.config.documentation.TfDocTargetProvider"/>
     <platform.backend.documentation.psiTargetProvider implementation="org.intellij.terraform.config.documentation.TfPsiDocTargetProvider"/>

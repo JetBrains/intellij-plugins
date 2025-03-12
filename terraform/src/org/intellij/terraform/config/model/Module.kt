@@ -12,7 +12,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
@@ -36,7 +35,6 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
-import org.intellij.terraform.template.psi.TftplFile
 import org.intellij.terraform.withGuaranteedProgressIndicator
 
 class Module private constructor(val moduleRoot: PsiFileSystemItem) {
@@ -68,30 +66,6 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
 
     fun getAsModuleBlock(moduleBlock: HCLBlock): Module? {
       return ModuleDetectionUtil.getAsModuleBlock(moduleBlock)
-    }
-
-    private class TemplateFilesVisitor : PsiFileSystemItemProcessor {
-      private val myTemplates = mutableListOf<TftplFile>()
-
-      fun getResults(): List<TftplFile> {
-        return myTemplates.toList()
-      }
-
-      override fun execute(element: PsiFileSystemItem): Boolean {
-        when {
-          element.isDirectory -> element.processChildren(this)
-          element is TftplFile -> myTemplates.add(element)
-        }
-        return true
-      }
-
-      override fun acceptItem(name: String, isDirectory: Boolean): Boolean {
-        return when {
-          isDirectory -> true
-          FileUtilRt.getExtension(name) == "tftpl" -> true
-          else -> false
-        }
-      }
     }
 
     private class CollectVariablesVisitor(val name: String? = null) : HCLElementVisitor() {
@@ -137,13 +111,6 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
       }
 
     }
-  }
-
-
-  fun getAllTemplates(): List<TftplFile> {
-    val visitor = TemplateFilesVisitor()
-    moduleRoot.processChildren(visitor)
-    return visitor.getResults()
   }
 
   fun getAllVariables(): List<Variable> {
