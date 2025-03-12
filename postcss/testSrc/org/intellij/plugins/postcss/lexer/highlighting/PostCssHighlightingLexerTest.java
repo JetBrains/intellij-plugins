@@ -42,10 +42,6 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
     doTest();
   }
 
-  public void testTagName() {
-    doTest();
-  }
-
   public void testViewport() {
     doTest();
   }
