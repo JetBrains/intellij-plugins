@@ -1084,6 +1084,8 @@ public interface AnalysisServer {
    */
   public void server_showMessageRequest(String type, String message, List<MessageAction> actions, ShowMessageRequestConsumer consumer);
 
+  public void lsp_workspaceApplyEdit(DartLspApplyWorkspaceEditParams params, DartLspWorkspaceApplyEditRequestConsumer consumer);
+
   /**
    * {@code server.shutdown}
    *

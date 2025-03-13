@@ -28,13 +28,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Version;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -774,9 +772,129 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
       server_showMessageRequest(type, message, messageActions, consumer);
     }
+    else if (method.equals("lsp.handle")) {
+      processLspRequestFromServer(idString, response.get("params").getAsJsonObject().get("lspMessage").getAsJsonObject());
+    }
 
     // it is a request from the server, even if we did not handle it
     return true;
+  }
+
+  private void processLspRequestFromServer(String dasRequestId, JsonObject lspMessage) {
+    String lspRequestId = lspMessage.get("id").getAsString();
+    String lspMethod = lspMessage.get("method").getAsString();
+    if (lspMethod.equals("workspace/applyEdit")) {
+      processWorspaceApplyEditRequestFromServer(dasRequestId, lspRequestId, lspMessage.get("params"));
+    }
+  }
+
+  /*
+    {
+      "id": "0",
+      "method": "lsp.handle",
+      "params": {
+        "lspMessage": {
+          "id": 0,
+          "jsonrpc": "2.0",
+          "method": "workspace/applyEdit",
+          "params": {
+            "edit": {
+              "changes": {
+                "file:///C:/home/test/lib/test.dart": [
+                  {
+                    "newText": "2",
+                    "range": {
+                      "end": {
+                        "character": 53,
+                        "line": 8
+                      },
+                      "start": {
+                        "character": 52,
+                        "line": 8
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "label": "Edit argument"
+          }
+        }
+      }
+    }
+  */
+  private void processWorspaceApplyEditRequestFromServer(String dasRequestId, String lspRequestId, JsonElement paramsElement) {
+    DartLspApplyWorkspaceEditParams workspaceEditParams = getAsWorkspaceEditParams(paramsElement);
+    if (workspaceEditParams == null) return;
+
+    DartLspWorkspaceApplyEditRequestConsumer consumer = new DartLspWorkspaceApplyEditRequestConsumer() {
+      @Override
+      public void workspaceEditApplied(DartLspApplyWorkspaceEditResult result) {
+        JsonObject lspResultElement = new JsonObject();
+        lspResultElement.addProperty("applied", result.getApplied());
+
+        JsonObject lspResponseElement = new JsonObject();
+        lspResponseElement.addProperty("id", lspRequestId);
+        lspResponseElement.addProperty("jsonrpc", "2.0");
+        lspResponseElement.add("result", lspResultElement);
+
+        JsonObject resultJsonElement = new JsonObject();
+        resultJsonElement.add("lspResponse", lspResponseElement);
+
+        JsonObject responseElement = new JsonObject();
+        responseElement.addProperty("id", dasRequestId);
+        responseElement.add("result", resultJsonElement);
+
+        sendResponseToServer(responseElement);
+      }
+    };
+
+    lsp_workspaceApplyEdit(workspaceEditParams, consumer);
+  }
+
+  private @Nullable DartLspApplyWorkspaceEditParams getAsWorkspaceEditParams(JsonElement paramsElement) {
+    JsonElement labelElement = paramsElement.getAsJsonObject().get("label");
+    String label = labelElement != null ? labelElement.getAsString() : null;
+
+    JsonElement editElement = paramsElement.getAsJsonObject().get("edit");
+    if (!(editElement instanceof JsonObject)) return null;
+
+    JsonElement changesElement = editElement.getAsJsonObject().get("changes");
+    if (!(changesElement instanceof JsonObject)) return null;
+
+    Map<String, List<DartLspTextEdit>> uriToTextEditMap = new LinkedHashMap<>();
+
+    for (Map.Entry<String, JsonElement> entry : changesElement.getAsJsonObject().entrySet()) {
+      String uri = entry.getKey();
+      JsonElement editsElement = entry.getValue();
+      if (!(editsElement instanceof JsonArray)) continue;
+
+      List<DartLspTextEdit> textEdits = new ArrayList<>();
+      for (JsonElement element : editsElement.getAsJsonArray()) {
+        String newText = element.getAsJsonObject().get("newText").getAsString();
+        DartLspRange range = getAsRange(element.getAsJsonObject().get("range"));
+        textEdits.add(new DartLspTextEdit(range, newText));
+      }
+
+      uriToTextEditMap.put(uri, textEdits);
+    }
+
+    DartLspWorkspaceEdit workspaceEdit = new DartLspWorkspaceEdit(uriToTextEditMap);
+    DartLspApplyWorkspaceEditParams workspaceEditParams = new DartLspApplyWorkspaceEditParams(workspaceEdit, label);
+
+    return workspaceEditParams;
+  }
+
+  private DartLspRange getAsRange(JsonElement rangeElement) {
+    DartLspPosition start = getAsPosition(rangeElement.getAsJsonObject().get("start"));
+    DartLspPosition end = getAsPosition(rangeElement.getAsJsonObject().get("end"));
+    return new DartLspRange(start, end);
+  }
+
+  private DartLspPosition getAsPosition(JsonElement positionElement) {
+    int line = positionElement.getAsJsonObject().get("line").getAsInt();
+    int character = positionElement.getAsJsonObject().get("character").getAsInt();
+    return new DartLspPosition(line, character);
   }
 
   private void processResponse(JsonObject response) throws Exception {
