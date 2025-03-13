@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
+import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService.LOCATION
 import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
@@ -37,7 +38,7 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
                                    ?.let { JSResolveUtil.getExpressionJSType(it) }
                                    ?.substitute()
                                    ?.let { JSTypeUtils.removeNullableComponents(it) }
-                                   ?.takeIf { !JSTypeUtils.isAnyType(it) }
+                                   ?.takeIf { !JSTypeUtils.isAnyType(it) && it !is JSTupleType }
                                  ?: return@withTypeEvaluationLocation
             val property = expressionType
               .asRecordType(block)

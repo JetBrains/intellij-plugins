@@ -27,6 +27,10 @@ interface Person {
       @for (p of (persons$ | async); track p.id) {
           {{ p.phone + p.<error descr="TS2339: Property 'foo' does not exist on type 'Person'.">foo</error> }}
       }
+      @for (t of title; track t) {
+        {{t.<error descr="TS2339: Property 'foo' does not exist on type '\"a\" | \"b\" | \"c\" | \"d\"'.
+  Property 'foo' does not exist on type '\"a\"'.">foo</error>}}
+      }
     `,
    imports: [AsyncPipe]
  })
@@ -36,4 +40,5 @@ export class TestComponent {
   personsAny: any
   personsOptional?: Person[]
   persons$: Observable<Person[]> = of(this.persons);
+  title= ['a', 'b', 'c', 'd'] as const;
 }
