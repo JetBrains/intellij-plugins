@@ -15,6 +15,7 @@ java_library(
   runtime_deps = [
     ":sarif_resources",
     "@ultimate_lib//:qodana-sarif",
+    "@community//platform/backend",
   ]
 )
 ### auto-generated section `build intellij.qodana.sarif` end
