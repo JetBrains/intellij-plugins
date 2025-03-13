@@ -40,7 +40,7 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <plugin id="com.intellij.modules.json"/>
+    <module name="intellij.json.backend"/>
     <module name="intellij.platform.collaborationTools"/>
   </dependencies>
 
