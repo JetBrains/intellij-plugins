@@ -10,10 +10,15 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.command.writeCommandAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.util.concurrency.annotations.RequiresWriteLock
+import com.jetbrains.lang.dart.DartBundle
+import kotlinx.coroutines.launch
 import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditParams
-import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditResult
+import org.dartlang.analysis.server.protocol.DartLspWorkspaceEdit
 import org.dartlang.analysis.server.protocol.MessageAction
 import org.dartlang.analysis.server.protocol.MessageType
 
@@ -51,6 +56,25 @@ internal class DartAnalysisServerImpl(private val project: Project, socket: Anal
   }
 
   override fun lsp_workspaceApplyEdit(params: DartLspApplyWorkspaceEditParams, consumer: DartLspWorkspaceApplyEditRequestConsumer) {
-    consumer.workspaceEditApplied(DartLspApplyWorkspaceEditResult(false))
+    DartAnalysisServerService.getInstance(project).serviceScope.launch {
+      val label: @NlsSafe String? = params.label
+      val commandName: String = label ?: DartBundle.message("code.changes.by.dart.analysis.server")
+
+      writeCommandAction(project, commandName) {
+        applyWorkspaceEdit(params.workspaceEdit)
+      }
+    }
+  }
+
+  @RequiresWriteLock
+  private fun applyWorkspaceEdit(workspaceEdit: DartLspWorkspaceEdit): Boolean {
+    val changes = workspaceEdit.changes ?: return false
+    changes.entries.forEach { entry ->
+      val uri = entry.key
+      val virtualFile = getDartFileInfo(project, uri).findFile() ?: return false
+      val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return false
+      if (!applyTextEdits(document, entry.value)) return false
+    }
+    return true
   }
 }
