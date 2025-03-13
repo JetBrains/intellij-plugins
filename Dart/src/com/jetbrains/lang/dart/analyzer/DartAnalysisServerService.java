@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
@@ -101,6 +101,7 @@ public final class DartAnalysisServerService implements Disposable {
   // See "supportsUris"
   // https://htmlpreview.github.io/?https://github.com/dart-lang/sdk/blob/main/pkg/analysis_server/doc/api.html#request_server.setClientCapabilities
   public static final String MIN_FILE_URI_SDK_VERSION = "3.4.0";
+  private static final String MIN_WORKSPACE_APPLY_EDITS_SDK_VERSION = "3.8";
 
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
@@ -504,6 +505,10 @@ public final class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficientForFileUri(@NotNull String sdkVersion) {
     return Registry.is("dart.macros.support", false) && StringUtil.compareVersionNumbers(sdkVersion, MIN_FILE_URI_SDK_VERSION) >= 0;
+  }
+
+  private static boolean isDartSdkVersionSufficientForWorkspaceApplyEdits(@NotNull String sdkVersion) {
+    return StringUtil.compareVersionNumbers(sdkVersion, MIN_WORKSPACE_APPLY_EDITS_SDK_VERSION) >= 0;
   }
 
   public boolean shouldUseCompletion2() {
@@ -2267,7 +2272,10 @@ public final class DartAnalysisServerService implements Disposable {
 
         startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
         boolean supportsUris = isDartSdkVersionSufficientForFileUri(mySdkVersion);
-        startedServer.server_setClientCapabilities(List.of("openUrlRequest", "showMessageRequest"), supportsUris);
+        boolean supportsWorkspaceApplyEdits = isDartSdkVersionSufficientForWorkspaceApplyEdits(mySdkVersion);
+        startedServer.server_setClientCapabilities(List.of("openUrlRequest", "showMessageRequest"),
+                                                   supportsUris,
+                                                   supportsWorkspaceApplyEdits);
 
         myServer = startedServer;
 

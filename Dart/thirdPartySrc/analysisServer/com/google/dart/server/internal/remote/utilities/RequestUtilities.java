@@ -1048,12 +1048,26 @@ public class RequestUtilities {
    * }
    * </pre>
    */
-  public static JsonObject generateClientCapabilities(String idValue, List<String> requests, boolean supportsUris) {
+  public static JsonObject generateClientCapabilities(String idValue,
+                                                      List<String> requests,
+                                                      boolean supportsUris,
+                                                      boolean supportsWorkspaceApplyEdits) {
     JsonObject params = new JsonObject();
     params.add(REQUESTS, buildJsonElement(requests));
     if (supportsUris) {
       params.addProperty("supportsUris", supportsUris);
     }
+
+    if (supportsWorkspaceApplyEdits) {
+      JsonObject workspace = new JsonObject();
+      workspace.addProperty("applyEdit", supportsWorkspaceApplyEdits);
+
+      JsonObject lspCapabilities = new JsonObject();
+      lspCapabilities.add("workspace", workspace);
+
+      params.add("lspCapabilities", lspCapabilities);
+    }
+
     return buildJsonObjectRequest(idValue, METHOD_SERVER_SET_CAPABILITIES, params);
   }
 
