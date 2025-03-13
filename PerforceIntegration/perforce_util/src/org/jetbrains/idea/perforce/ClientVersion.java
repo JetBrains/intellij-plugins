@@ -24,6 +24,10 @@ public class ClientVersion {
     return myYear > 2009 || myYear == 2009 && myVersion > 1;
   }
 
+  public boolean supportsP4vcParam() {
+    return myYear >= 2014 && myVersion >= 1;
+  }
+
   @Override
   public String toString() {
     return myYear + "." + myVersion + "/" + myBuild;

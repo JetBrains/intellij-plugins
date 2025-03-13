@@ -31,8 +31,11 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.FileStatusManager;
 import com.intellij.openapi.vcs.VcsException;
@@ -40,6 +43,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.perforce.ClientVersion;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceClient;
 import org.jetbrains.idea.perforce.application.PerforceManager;
@@ -86,10 +90,29 @@ public class RevisionGraphAction extends DumbAwareAction {
       return;
     }
 
-    final PerforceClient client = PerforceManager.getInstance(project).getClient(connection);
-    final PerforceSettings settings = PerforceSettings.getSettings(project);
+    PerforceManager manager = PerforceManager.getInstance(project);
+    PerforceClient client = manager.getClient(connection);
+    ClientVersion version = manager.getClientVersion();
+    PerforceSettings settings = PerforceSettings.getSettings(project);
+    FilePath p4vPath = VcsUtil.getFilePath(settings.PATH_TO_P4VC, false);
 
-    final GeneralCommandLine cmd = new GeneralCommandLine(settings.PATH_TO_P4VC);
+    GeneralCommandLine cmd;
+    if (!SystemInfo.isWindows || !Registry.is("p4.force.p4v.exe")) {
+      cmd = new GeneralCommandLine(settings.PATH_TO_P4VC);
+    }
+    else {
+      String p4vExeName = "p4v.exe";
+      FilePath parentPath = p4vPath.getParentPath();
+      FilePath p4vExePath = p4vPath.getName().equals(p4vExeName)
+                            ? p4vPath
+                            : VcsUtil.getFilePath(parentPath != null ? parentPath.getPath() + "/" + p4vExeName : p4vExeName, false);
+      cmd = new GeneralCommandLine(FileUtil.toSystemDependentName(p4vExePath.getPath()));
+    }
+
+    boolean supportsP4vcParam = version != null && version.supportsP4vcParam();
+    if (supportsP4vcParam) {
+      cmd.addParameters("-p4vc");
+    }
 
     try {
       addCommandParameters(cmd, client);
