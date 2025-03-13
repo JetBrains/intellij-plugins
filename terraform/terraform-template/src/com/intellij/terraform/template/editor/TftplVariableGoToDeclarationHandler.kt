@@ -8,7 +8,7 @@ import com.intellij.terraform.template.model.TftplVariable
 import com.intellij.terraform.template.model.collectAvailableVariables
 import org.intellij.terraform.withGuaranteedProgressIndicator
 
-class TftplVariableGoToDeclarationHandler : GotoDeclarationHandler {
+internal class TftplVariableGoToDeclarationHandler : GotoDeclarationHandler {
   override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement> {
     val effectiveVariableToSearch = when {
       sourceElement == null -> return emptyArray()

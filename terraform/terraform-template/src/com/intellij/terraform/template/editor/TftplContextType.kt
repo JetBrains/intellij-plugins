@@ -6,7 +6,7 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.terraform.template.TftplBundle
 import com.intellij.terraform.template.psi.TftplFile
 
-class TftplContextType : TemplateContextType(TftplBundle.message("live.template.context.name")) {
+internal class TftplContextType : TemplateContextType(TftplBundle.message("live.template.context.name")) {
   override fun isInContext(templateActionContext: TemplateActionContext): Boolean {
     return templateActionContext.file.originalFile is TftplFile
   }

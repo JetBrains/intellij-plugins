@@ -12,7 +12,7 @@ import org.intellij.terraform.hil.HILSyntaxHighlighterFactory
 import com.intellij.terraform.template.lexer.TerraformTemplateLexer
 import org.intellij.terraform.hil.psi.template.TftplTokenTypes
 
-class TftplSyntaxHighlightingFactory : HILSyntaxHighlighterFactory() {
+internal class TftplSyntaxHighlightingFactory : HILSyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     return TerraformTemplateSyntaxHighlighter()
   }

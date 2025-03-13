@@ -3,4 +3,4 @@ package com.intellij.terraform.template.lexer
 
 import com.intellij.lexer.FlexAdapter
 
-class TerraformTemplateLexer : FlexAdapter(_TerraformTemplateLexer())
+internal class TerraformTemplateLexer : FlexAdapter(_TerraformTemplateLexer())

@@ -7,7 +7,7 @@ import com.intellij.psi.FileViewProvider
 import org.intellij.terraform.hil.psi.template.TftplLanguage
 import com.intellij.terraform.template.TftplFileType
 
-class TftplFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, TftplLanguage) {
+internal class TftplFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, TftplLanguage) {
   override fun getFileType(): FileType {
     return TftplFileType
   }

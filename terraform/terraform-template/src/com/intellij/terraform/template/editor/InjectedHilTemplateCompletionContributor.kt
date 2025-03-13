@@ -8,7 +8,7 @@ import com.intellij.util.ProcessingContext
 import com.intellij.terraform.template.model.TftplVariable
 import com.intellij.terraform.template.model.collectAvailableVariables
 
-class InjectedHilTemplateCompletionContributor : CompletionContributor() {
+internal class InjectedHilTemplateCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, createHilVariablePattern(::isInjectedHil), InjectedHilTemplateVariableCompletionProvider())
   }
