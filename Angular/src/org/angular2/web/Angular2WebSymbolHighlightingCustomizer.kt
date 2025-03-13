@@ -60,6 +60,9 @@ class Angular2WebSymbolHighlightingCustomizer : WebSymbolHighlightingCustomizer 
       NG_PROPERTY_BINDINGS -> if (host is JSLiteralExpression) {
         return Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       }
+      NG_DIRECTIVE_ATTRIBUTES -> if (host is JSLiteralExpression) {
+        return XmlHighlighterColors.HTML_ATTRIBUTE_NAME
+      }
       NG_EVENT_BINDINGS -> if (host is JSLiteralExpression) {
         return Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
       }

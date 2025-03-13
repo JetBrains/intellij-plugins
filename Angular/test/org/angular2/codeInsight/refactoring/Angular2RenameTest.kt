@@ -261,4 +261,10 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
 
   fun testTemplateBindingKeyFromInputMappingSameFileInlineTemplate() =
     checkSymbolRename("appClicksFoo", dir = false)
+
+  fun testHostAttributeToken() =
+    checkSymbolRename("test", dir = false)
+
+  fun testConstructorAttribute() =
+    checkSymbolRename("test", dir = false)
 }
