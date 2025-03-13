@@ -8,16 +8,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.web.Angular2PsiSourcedSymbol
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTES
 
-interface Angular2DirectiveAttribute : Angular2PsiSourcedSymbol, Angular2Element {
+interface Angular2DirectiveAttribute : Angular2Symbol, Angular2Element {
 
   override val name: String
 
   override val type: JSType?
-
-  override val source: PsiElement
-    get() = sourceElement
 
   override val project: Project
     get() = sourceElement.project

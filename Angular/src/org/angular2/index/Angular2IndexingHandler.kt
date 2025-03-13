@@ -33,6 +33,7 @@ import org.angular2.Angular2DecoratorUtil.ATTRIBUTE_DEC
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.FORWARD_REF_FUN
+import org.angular2.Angular2DecoratorUtil.HOST_ATTRIBUTE_TOKEN_CLASS
 import org.angular2.Angular2DecoratorUtil.INJECT_FUN
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
@@ -70,6 +71,9 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     || getFunctionReferenceName(node)?.let {
       STUBBED_FUNCTIONS.contains(it) || (it == INJECT_FUN && isDirectiveField(node.treeParent))
     } == true
+    || getConstructorReferenceName(node)?.let {
+      STUBBED_CONSTRUCTORS.contains(it)
+    } == true
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     val parent = node.treeParent ?: return false
@@ -84,7 +88,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     if (container.elementType === JSElementTypes.ARGUMENT_LIST) {
       val grandParent = container.treeParent
       return (grandParent != null
-              && grandParent.elementType === JSStubElementTypes.CALL_EXPRESSION
+              && grandParent.elementType.let { it === JSStubElementTypes.CALL_EXPRESSION || it === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION }
               && shouldCreateStubForCallExpression(grandParent))
     }
     val property = if (container.elementType === JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
@@ -123,6 +127,10 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
           || (name == INJECT_FUN && isDirectiveField(callExpression.node.treeParent)))
       ) {
         recordFunctionName(callExpression, outData, name)
+      }
+      val className = getConstructorReferenceName(callExpression.node)
+      if (className != null && STUBBED_CONSTRUCTORS.contains(className)) {
+        recordFunctionName(callExpression, outData, className)
       }
     }
   }
@@ -321,6 +329,18 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
       ?.takeIf { it.elementType === JSTokenTypes.IDENTIFIER }
       ?.text
 
+  private fun getConstructorReferenceName(callNode: ASTNode): String? =
+    callNode
+      .takeIf { it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION }
+      ?.firstChildNode
+      ?.takeIf { it.elementType === JSTokenTypes.NEW_KEYWORD }
+      ?.treeNext
+      ?.treeNext
+      ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
+      ?.firstChildNode
+      ?.takeIf { it.elementType === JSTokenTypes.IDENTIFIER }
+      ?.text
+
   private fun isDirectiveField(fieldNode: ASTNode?): Boolean {
     if (fieldNode?.elementType !== TypeScriptStubElementTypes.TYPESCRIPT_FIELD) return false
     val classNode = fieldNode?.treeParent?.treeParent
@@ -458,6 +478,9 @@ private val STUBBED_DECORATOR_LIKE_FUNCTIONS = setOf(
 
 private val STUBBED_FUNCTIONS = setOf(
   FORWARD_REF_FUN)
+
+private val STUBBED_CONSTRUCTORS = setOf(
+  HOST_ATTRIBUTE_TOKEN_CLASS)
 
 private val INDEX_MAP = mapOf<String, StubIndexKey<String, JSImplicitElementProvider>?>(
   ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING to Angular2TemplateUrlIndexKey,

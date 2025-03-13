@@ -65,9 +65,11 @@ object Angular2DecoratorUtil {
   const val STYLE_URL_PROP: String = "styleUrl"
   const val STYLES_PROP: String = "styles"
   const val REQUIRED_PROP: String = "required"
+  const val OPTIONAL_PROP: String = "optional"
   const val ALIAS_PROP: String = "alias"
   const val TRANSFORM_PROP: String = "transform"
   const val DIRECTIVE_PROP: String = "directive"
+  const val HOST_ATTRIBUTE_TOKEN_CLASS: String ="HostAttributeToken"
 
   @JvmStatic
   fun isLiteralInNgDecorator(element: PsiElement?, propertyName: String, vararg decoratorNames: String): Boolean {

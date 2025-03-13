@@ -339,7 +339,6 @@
         },
         {
           "name": "Attribute bindings",
-          "virtual": true,
           "pattern": {
             "items": "/js/ng-directive-attributes"
           },

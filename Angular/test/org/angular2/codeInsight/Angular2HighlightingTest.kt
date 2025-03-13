@@ -338,6 +338,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testTemplateLiteralInline19_2() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
+  fun testHostAttributeToken() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "app.component.html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

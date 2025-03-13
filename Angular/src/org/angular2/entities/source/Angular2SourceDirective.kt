@@ -21,10 +21,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
+import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.HOST_ATTRIBUTE_TOKEN_CLASS
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INJECT_FUN
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
@@ -179,12 +181,36 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
   private fun getAttributesNoCache(): Collection<Angular2DirectiveAttribute> {
     JSTypeEvaluationLocationProvider.assertLocationIsSet()
     val constructors = typeScriptClass.constructors
-    return if (constructors.size == 1)
-      processCtorParameters(constructors[0])
+    val result = SmartList<Angular2DirectiveAttribute>()
+    if (constructors.size == 1)
+      result.addAll(processCtorParameters(constructors[0]))
     else
       constructors.firstOrNull { it.isOverloadImplementation }
         ?.let { processCtorParameters(it) }
-      ?: emptyList()
+        ?.let { result.addAll(it) }
+
+    Angular2TypeUtils
+      .buildTypeFromClass(typeScriptClass)
+      .properties
+      .forEach { prop ->
+        for (field in getPropertySources(prop.memberSource.singleElement)) {
+          field.asSafely<TypeScriptField>()
+            ?.initializerOrStub
+            ?.asSafely<JSCallExpression>()
+            ?.takeIf { getFunctionNameFromIndex(it) == INJECT_FUN }
+            ?.stubSafeCallArguments
+            ?.firstOrNull()
+            ?.asSafely<JSCallExpression>()
+            ?.takeIf { it.isNewExpression && getFunctionNameFromIndex(it) == HOST_ATTRIBUTE_TOKEN_CLASS }
+            ?.stubSafeCallArguments
+            ?.firstOrNull()
+            ?.asSafely<JSLiteralExpression>()
+            ?.takeIf { !it.stubSafeStringValue.isNullOrBlank() }
+            ?.let { Angular2SourceDirectiveAttribute.create(field, it) }
+            ?.let { result.add(it) }
+        }
+      }
+    return result.distinctBy { it.name }
   }
 
   private fun readPropertyMappings(source: String): MutableMap<String, Angular2PropertyInfo> =
@@ -216,24 +242,20 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       }
     }
 
-    private fun processCtorParameters(ctor: JSFunction): Collection<Angular2DirectiveAttribute> {
-      return ctor.parameterVariables
+    private fun processCtorParameters(ctor: JSFunction): Collection<Angular2DirectiveAttribute> =
+      ctor.parameterVariables
         .flatMap { param ->
           param.attributeList
             ?.decorators
-            ?.asSequence()
-            ?.filter { Angular2DecoratorUtil.ATTRIBUTE_DEC == it.decoratorName }
-            ?.mapNotNull { getStringParamValue(it)?.takeIf { value -> !value.isBlank() } }
-            ?.map { Angular2SourceDirectiveAttribute(param, it) }
-          ?: emptySequence()
+            ?.mapNotNull {
+              it.takeIf { Angular2DecoratorUtil.ATTRIBUTE_DEC == it.decoratorName }
+                ?.let { getDecoratorParamValue(it) }
+                ?.asSafely<JSLiteralExpression>()
+                ?.takeIf { !it.stubSafeStringValue.isNullOrBlank() }
+                ?.let { Angular2SourceDirectiveAttribute.create(param, it) }
+            }
+          ?: emptyList()
         }
-        .distinctBy { it.name }
-    }
-
-    private fun getStringParamValue(decorator: ES6Decorator?): String? =
-      getDecoratorParamValue(decorator)
-        ?.asSafely<JSLiteralExpression>()
-        ?.stubSafeStringValue
 
     private fun getDecoratorParamValue(decorator: ES6Decorator?): PsiElement? =
       decorator
