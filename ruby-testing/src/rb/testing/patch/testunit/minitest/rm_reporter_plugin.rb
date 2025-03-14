@@ -261,9 +261,9 @@ module Minitest
     end
 
     def send_service_message(msg)
-      io.flush
-      io.puts("#{msg}")
-      io.flush
+      STDOUT.flush
+      STDOUT.puts("#{msg}")
+      STDOUT.flush
 
       msg
     end
