@@ -728,7 +728,7 @@ private fun XmlTag.toTmplAstDirectiveContainer(
       inputs = templateBindings.inputs,
       outputs = emptyMap(),
       attributes = emptyMap(),
-      references = references,
+      references = emptyMap(),
       variables = templateBindings.variables,
       startSourceSpan = templateBindingAttribute?.nameElement?.textRange ?: startSourceSpan,
       children = listOf(
@@ -739,14 +739,14 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           inputs = inputs,
           outputs = outputs,
           attributes = attributes,
-          references = emptyMap(),
+          references = references,
           startSourceSpan = startSourceSpan,
           children = children
-        )
+        ).apply {
+          references.forEach { it.value.parent = this }
+        }
       )
-    ).apply {
-      references.forEach { it.value.parent = this }
-    }
+    )
   }
   else {
     TmplAstElement(

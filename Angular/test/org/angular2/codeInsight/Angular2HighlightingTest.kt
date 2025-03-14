@@ -317,6 +317,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testViewChildrenSignalSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
+  fun testReferenceOnTagWithTemplateBindings() =
+    checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
+
   fun testTemplateBindingsNgFor() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
