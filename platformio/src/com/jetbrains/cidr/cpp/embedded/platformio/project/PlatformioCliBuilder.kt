@@ -6,7 +6,7 @@ import com.intellij.execution.Platform
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.execution.configurations.PtyCommandLine
-import com.intellij.ide.impl.isTrusted
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -27,7 +27,7 @@ class PlatformioCliBuilder(
   private val commandLine: GeneralCommandLine
 
   init {
-    if (project?.isTrusted() == false) {
+    if (project?.let { TrustedProjects.isProjectTrusted(it) } == false) {
       throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
     }
     commandLine = if(usePty) PtyCommandLine() else GeneralCommandLine()

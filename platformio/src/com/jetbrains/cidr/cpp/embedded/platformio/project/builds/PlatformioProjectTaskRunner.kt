@@ -6,7 +6,7 @@ import com.intellij.build.events.MessageEvent
 import com.intellij.build.progress.BuildProgress
 import com.intellij.build.progress.BuildProgressDescriptor
 import com.intellij.execution.process.*
-import com.intellij.ide.impl.isTrusted
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.service
@@ -42,7 +42,7 @@ class PlatformioProjectTaskRunner : CidrProjectTaskRunner() {
   override val buildSystemId: String = ID.id
   override fun canRun(project: Project, projectTask: ProjectTask): Boolean {
     return project.service<PlatformioWorkspace>().isInitialized
-           && project.isTrusted() && canRun(projectTask)
+           && TrustedProjects.isProjectTrusted(project) && canRun(projectTask)
   }
 
   override fun canRun(task: ProjectTask): Boolean {

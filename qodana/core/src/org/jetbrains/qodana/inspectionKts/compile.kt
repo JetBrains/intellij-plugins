@@ -1,9 +1,9 @@
 package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
-import com.intellij.ide.impl.isTrusted
 import com.intellij.ide.script.IdeScriptEngine
 import com.intellij.ide.script.IdeScriptEngineManager
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.ide.trustedProjects.TrustedProjectsListener
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
@@ -145,7 +145,7 @@ internal suspend fun getDocumentByNioPath(file: Path): Document? {
 }
 
 private suspend fun waitWhenProjectTrusted(project: Project) {
-  if (project.isTrusted()) return
+  if (TrustedProjects.isProjectTrusted(project)) return
 
   suspendCancellableCoroutine { cont ->
     val disposable = Disposer.newDisposable()

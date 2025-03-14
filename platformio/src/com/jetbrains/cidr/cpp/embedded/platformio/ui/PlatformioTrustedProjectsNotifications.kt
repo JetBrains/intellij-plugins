@@ -1,14 +1,14 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
 import com.intellij.ide.IdeBundle
-import com.intellij.ide.impl.isTrusted
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.project.Project
 import com.intellij.ide.trustedProjects.TrustedProjectsDialog
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import java.util.concurrent.CancellationException
 
 suspend fun ensureProjectIsTrusted(project: Project) {
-  if (project.isTrusted()) return
+  if (TrustedProjects.isProjectTrusted(project)) return
   if (!showUntrustedProjectLoadDialog(project)) {
     throw CancellationException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
   }

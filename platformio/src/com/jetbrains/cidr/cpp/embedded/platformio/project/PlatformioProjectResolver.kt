@@ -6,7 +6,7 @@ import com.intellij.execution.DefaultExecutionTarget
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.process.*
-import com.intellij.ide.impl.isTrusted
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
@@ -90,7 +90,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     val project = id.findProject()!!
     val platformioService = project.service<PlatformioService>()
 
-    if (!project.isTrusted()) {
+    if (!TrustedProjects.isProjectTrusted(project)) {
       // To prevent a deadlock
       assert(!EDT.isCurrentThreadEdt())
       runBlockingCancellable {
