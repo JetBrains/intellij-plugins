@@ -81,6 +81,8 @@
 
     <psi.referenceContributor language="Jade" implementation="com.jetbrains.plugins.jade.psi.references.JadeReferenceContributor"/>
     <psi.referenceContributor language="Jade" implementation="com.jetbrains.plugins.jade.psi.references.JadeCssReferenceContributor"/>
+    <psi.referenceContributor language="JavaScript" implementation="com.jetbrains.plugins.jade.psi.references.JavaScriptInJadeReferenceContributor"/>
+    <completion.contributor language="JavaScript" implementationClass="com.jetbrains.plugins.jade.JavaScriptInJadeCompletionContributor" order="first"/>
     <stubElementTypeHolder class="com.jetbrains.plugins.jade.psi.stubs.JadeStubElementTypes"/>
     <stubIndex implementation="com.jetbrains.plugins.jade.psi.stubs.JadeMixinIndex"/>
 
