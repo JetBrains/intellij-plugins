@@ -24,7 +24,7 @@ protected constructor(private val decorator: ES6Decorator,
   : Angular2SourceEntityListProcessor<T>(entityClass, decorator) {
   private lateinit var myIterator: TreeTraversal.TracingIt<PsiElement>
 
-  fun validate() {
+  open fun validate() {
     val property = getProperty(decorator, propertyName) ?: return
     AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(property.containingFile) {
       val value = property.value
