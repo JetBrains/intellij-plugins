@@ -229,6 +229,11 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "unused-imports-pipe-with-inherited-transform.ts")
   }
 
+  fun testUnusedImportsInUnknownTemplate() {
+    doTest(AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-in-unknown-template.ts")
+  }
+
   fun testInspectionsNonAngular() {
     myFixture.enableInspections(AngularIncorrectTemplateDefinitionInspection::class.java,
                                 AngularInvalidSelectorInspection::class.java,
