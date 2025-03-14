@@ -92,6 +92,7 @@ groups:
     inspections:
       - InconsistentNaming
       - SpellCheckingInspection
+      - UndefinedAction
 
   - groupId: ProofreadingInspections
     inspections:
