@@ -20,6 +20,4 @@ suspend fun showUntrustedProjectLoadDialog(project: Project): Boolean =
       project = project,
       title = IdeBundle.message("untrusted.project.dialog.title", ClionEmbeddedPlatformioBundle.message("platformio.name"), 1),
       message = IdeBundle.message("untrusted.project.dialog.text", ClionEmbeddedPlatformioBundle.message("platformio.name"), 1),
-      trustButtonText = IdeBundle.message("untrusted.project.dialog.trust.button"),
-      distrustButtonText = IdeBundle.message("untrusted.project.dialog.distrust.button")
     )
