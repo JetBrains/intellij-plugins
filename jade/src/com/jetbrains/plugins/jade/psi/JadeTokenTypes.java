@@ -6,6 +6,7 @@ import com.intellij.embedding.TemplateMasqueradingLexer;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.TokenType;
@@ -171,7 +172,7 @@ public interface JadeTokenTypes {
     }
   }
 
-  class JSInJadeMetaCode extends EmbeddedLazyParseableElementType {
+  class JSInJadeMetaCode extends EmbeddedLazyParseableElementType implements JSEmbeddedBlockElementType {
 
     public JSInJadeMetaCode() {
       super("JS_META_CODE", JavaScriptInJadeLanguageDialect.INSTANCE);
