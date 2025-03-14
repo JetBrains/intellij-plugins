@@ -1,4 +1,4 @@
-<idea-plugin package="com.intellij.protobuf">
+<idea-plugin package="com.intellij.protobuf" allow-bundled-update="true">
   <name>Protocol Buffers</name>
   <id>idea.plugin.protoeditor</id>
   <vendor>JetBrains</vendor>
