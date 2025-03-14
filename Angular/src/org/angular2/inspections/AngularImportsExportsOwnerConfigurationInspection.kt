@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlRecursiveElementWalkingVisitor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -93,7 +94,14 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
   ) : Angular2SourceEntityListValidator<Angular2Entity, ProblemType>(
     decorator, results, Angular2Entity::class.java, IMPORTS_PROP) {
 
-    private val usedEntities = collectUsedDeclarations(component)
+    private val templateFile = component.templateFile
+    private val usedEntities = templateFile?.let { collectUsedDeclarations(component, it) }
+                               ?: emptySet()
+
+    override fun validate() {
+      if (templateFile == null) return
+      super.validate()
+    }
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
       if (entity is Angular2Declaration && entity.isStandalone && !usedEntities.contains(entity)) {
@@ -266,7 +274,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
       return results
     }
 
-    private fun collectUsedDeclarations(component: Angular2Component): Set<Angular2Declaration> {
+    private fun collectUsedDeclarations(component: Angular2Component, templateFile: PsiFile): Set<Angular2Declaration> {
       val result = mutableSetOf<Angular2Declaration>()
       val scope = Angular2DeclarationsScope(component)
       val pipesByName = Angular2EntitiesProvider.getAllPipes(component.sourceElement.project)
@@ -282,7 +290,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         }
       }
 
-      component.templateFile?.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
+      templateFile?.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
         override fun visitXmlTag(tag: XmlTag) {
           Angular2ApplicableDirectivesProvider(tag, scope = scope).matched.forEach(result::add)
           super.visitXmlTag(tag)
