@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -87,7 +88,7 @@ object Angular2LibrariesHacks {
     // We can guess outputs by looking for fields with EventEmitter type
     cls.jsType.asRecordType(directive.sourceElement).properties.forEach { prop ->
       try {
-        val type = prop.asSafely<TypeScriptField>()?.jsType
+        val type = prop.takeIf { it.memberSource.singleElement is TypeScriptField }?.jsType?.substitute()
         if (type != null && type.typeText.startsWith(Angular2LangUtil.EVENT_EMITTER)) {
           outputs[prop.memberName] = prop.memberName
         }
