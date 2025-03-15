@@ -1,4 +1,21 @@
-<idea-plugin>
+<idea-plugin implementation-detail="true">
+  <id>com.intellij.cpp-diagnostics</id>
+  <name>CLion Diagnostics</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      C/C++ Diagnostics (shows project model structure, toolchains and more)
+    ]]></description>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.clion"/>
+    <plugin id="com.intellij.modules.clion.ide"/>
+  </dependencies>
+
+  <module value="com.intellij.modules.clion.diagnostics"/>
+
+  <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
+
   <extensions defaultExtensionNs="com.intellij">
     <troubleInfoCollector implementation="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction"/>
     <registryKey key="cpp.diagnostics.track.events" description="Track various events to dump them in the diagnostics info"
