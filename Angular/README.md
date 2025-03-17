@@ -1,6 +1,6 @@
 # Angular Plugin for IntelliJ IDEA-based IDEs
 
-This plugin provides support for Angular projects in IntelliJ IDEA Ultimate, GoLand, PhpStorm, PyCharm Professional, Rider, RubyMine, and WebStorm.
+This plugin provides support for Angular projects in IntelliJ IDEA Ultimate, GoLand, PhpStorm, PyCharm, Rider, RubyMine, and WebStorm.
 
 It provides intelligent Angular-specific code completion, navigation and refactoring. 
 

@@ -1,6 +1,6 @@
 # Vue.js for IntelliJ IDEA-based IDEs
 
-This plugin provides support for [Vue.js](https://vuejs.org) in IntelliJ IDEA Ultimate, WebStorm, PhpStorm, PyCharm Professional and RubyMine.
+This plugin provides support for [Vue.js](https://vuejs.org) in IntelliJ IDEA Ultimate, WebStorm, PhpStorm, PyCharm and RubyMine.
 
 It provides intelligent Vue-specific code completion, navigation, and refactoring.
 
