@@ -22,6 +22,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.text.SemVer
+import kotlinx.coroutines.async
+import kotlinx.coroutines.future.asCompletableFuture
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiFunction
 import java.util.function.Consumer
@@ -80,13 +82,10 @@ class TsLintLanguageService(
     //doesn't pass content (file should be saved before)
     val command = commandProvider.apply(LocalFilePath.create(path),
                                         LocalFilePath.create(configFilePath))
-    return process.execute(command, createHighlightProcessor(path))
-  }
-
-  private fun createHighlightProcessor(path: String): JSLanguageServiceCommandProcessor<MutableList<TsLinterError?>> {
-    return JSLanguageServiceCommandProcessor { `object`: JSLanguageServiceObject?, answer: JSLanguageServiceAnswer? ->
-      parseResults(answer!!, path, JSLanguageServiceUtil.getGson(this))
-    }
+    return cs.async {
+      val answer = process.execute(command)?.answer ?: return@async null
+      parseResults(answer, path, JSLanguageServiceUtil.getGson(this@TsLintLanguageService))
+    }.asCompletableFuture()
   }
 
   override fun createLanguageServiceQueueBlocking(): JSLanguageServiceQueue {
