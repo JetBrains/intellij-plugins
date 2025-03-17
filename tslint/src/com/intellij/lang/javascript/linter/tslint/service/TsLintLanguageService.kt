@@ -1,238 +1,211 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.intellij.lang.javascript.linter.tslint.service;
+package com.intellij.lang.javascript.linter.tslint.service
 
-import com.google.gson.*;
-import com.intellij.javascript.nodejs.execution.NodeTargetRun;
-import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
-import com.intellij.lang.javascript.linter.ExtendedLinterState;
-import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
-import com.intellij.lang.javascript.linter.tslint.TslintUtil;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
-import com.intellij.lang.javascript.service.*;
-import com.intellij.lang.javascript.service.protocol.*;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.text.SemVer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.gson.*
+import com.intellij.javascript.nodejs.execution.NodeTargetRun
+import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
+import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle
+import com.intellij.lang.javascript.linter.tslint.TslintUtil
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration
+import com.intellij.lang.javascript.linter.tslint.config.TsLintState
+import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser
+import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError
+import com.intellij.lang.javascript.service.*
+import com.intellij.lang.javascript.service.protocol.*
+import com.intellij.lang.javascript.service.protocol.LocalFilePath.Companion.create
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.text.SemVer
+import java.util.concurrent.CompletableFuture
+import java.util.function.BiFunction
+import java.util.function.Consumer
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
+class TsLintLanguageService(
+  project: Project,
+  val nodePackage: NodePackage,
+  private val myWorkingDirectory: VirtualFile
+) : JSLanguageServiceBase(project) {
 
-
-public final class TsLintLanguageService extends JSLanguageServiceBase {
-  private static final Logger LOG = Logger.getInstance(TsLintLanguageService.class);
-
-  private final @NotNull VirtualFile myWorkingDirectory;
-  private final @NotNull NodePackage myNodePackage;
-
-  public TsLintLanguageService(@NotNull Project project, @NotNull NodePackage nodePackage, @NotNull VirtualFile workingDirectory) {
-    super(project);
-    myWorkingDirectory = workingDirectory;
-    myNodePackage = nodePackage;
-  }
-
-  public @NotNull NodePackage getNodePackage() {
-    return myNodePackage;
-  }
-
-  public @Nullable CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
-                                                                    @Nullable VirtualFile config,
-                                                                    @Nullable String content,
-                                                                    @NotNull TsLintState state) {
+  fun highlight(
+    virtualFile: VirtualFile,
+    config: VirtualFile?,
+    content: String?,
+    state: TsLintState
+  ): CompletableFuture<MutableList<TsLinterError?>?>? {
     return createHighlightFuture(virtualFile, config, state,
-                                 (filePath, configPath) -> new GetErrorsCommand(filePath, configPath,StringUtil.notNullize(content)));
+                                 BiFunction { filePath: LocalFilePath?, configPath: LocalFilePath? ->
+                                   GetErrorsCommand(filePath, configPath, content ?: "")
+                                 })
   }
 
-  public @Nullable CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
-    VirtualFile config = TslintUtil.getConfig(state, myProject, virtualFile);
+  fun highlightAndFix(virtualFile: VirtualFile, state: TsLintState): CompletableFuture<MutableList<TsLinterError?>?>? {
+    val config = TslintUtil.getConfig(state, myProject, virtualFile)
     //doesn't pass content (file should be saved before)
-    return createHighlightFuture(virtualFile, config, state, FixErrorsCommand::new);
+    return createHighlightFuture(virtualFile, config, state, BiFunction { filePath: LocalFilePath?, configPath: LocalFilePath? ->
+      FixErrorsCommand(filePath, configPath)
+    })
   }
 
-  private CompletableFuture<List<TsLinterError>> createHighlightFuture(@NotNull VirtualFile virtualFile,
-                                                                       @Nullable VirtualFile config,
-                                                                       @NotNull TsLintState state,
-                                                                       @NotNull BiFunction<LocalFilePath,LocalFilePath, BaseCommand> commandProvider) {
-    String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
+  private fun createHighlightFuture(
+    virtualFile: VirtualFile,
+    config: VirtualFile?,
+    state: TsLintState,
+    commandProvider: BiFunction<LocalFilePath?, LocalFilePath?, BaseCommand>
+  ): CompletableFuture<MutableList<TsLinterError?>?>? {
+    val configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config)
     if (configFilePath == null) {
-      if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE) {
-        return CompletableFuture.completedFuture(ContainerUtil.emptyList());
+      if (state.nodePackageRef === AutodetectLinterPackage.INSTANCE) {
+        return CompletableFuture.completedFuture<MutableList<TsLinterError?>?>(ContainerUtil.emptyList<TsLinterError?>())
       }
-      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError(
-        TsLintBundle.message("tslint.inspection.message.config.file.was.not.found"))));
+      return CompletableFuture.completedFuture<MutableList<TsLinterError?>?>(mutableListOf(TsLinterError.createGlobalError(
+        TsLintBundle.message("tslint.inspection.message.config.file.was.not.found"))))
     }
-    String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
+    val path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile)
     if (path == null) {
-      return null;
+      return null
     }
 
-    final JSLanguageServiceQueue process = getProcess();
+    val process = process
     if (process == null) {
-      return CompletableFuture.completedFuture(Collections.singletonList(
-        TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
+      return CompletableFuture.completedFuture<MutableList<TsLinterError?>?>(mutableListOf<TsLinterError?>(
+        TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))))
     }
 
     //doesn't pass content (file should be saved before)
-    BaseCommand command = commandProvider.apply(LocalFilePath.create(path),
-                                                    LocalFilePath.create(configFilePath));
-    return process.execute(command, createHighlightProcessor(path));
+    val command = commandProvider.apply(LocalFilePath.create(path),
+                                        LocalFilePath.create(configFilePath))
+    return process.execute(command, createHighlightProcessor(path))
   }
 
-  private @NotNull JSLanguageServiceCommandProcessor<List<TsLinterError>> createHighlightProcessor(@NotNull String path) {
-    return (object, answer) -> parseResults(answer, path, JSLanguageServiceUtil.getGson(this));
-  }
-
-  private static @Nullable List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path, @NotNull Gson gson) {
-    final JsonObject element = answer.getElement();
-    final JsonElement error = element.get("error");
-    if (error != null) {
-      return Collections.singletonList(TsLinterError.createGlobalError(error.getAsString())); //NON-NLS
-    }
-    final JsonElement body = parseBody(element);
-    if (body == null) return null;
-    final String version = element.get("version").getAsString();
-    final SemVer tsLintVersion = SemVer.parseFromText(version);
-    final boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
-    final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased, gson);
-    return new ArrayList<>(parser.getErrors());
-  }
-
-  private static JsonElement parseBody(@NotNull JsonObject element) {
-    final JsonElement body = element.get("body");
-    if (body == null) {
-      //we do not currently treat empty body as error in protocol
-      return null;
-    } else {
-      if (body.isJsonPrimitive() && body.getAsJsonPrimitive().isString()) {
-        final String bodyContent = StringUtil.unquoteString(body.getAsJsonPrimitive().getAsString());
-        if (!StringUtil.isEmptyOrSpaces(bodyContent)) {
-          try {
-            return JsonParser.parseString(bodyContent);
-          } catch (JsonParseException e) {
-            LOG.info(String.format("Problem parsing body: '%s'\n%s", body, e.getMessage()), e);
-          }
-        }
-      } else {
-        LOG.info(String.format("Error body type, should be a string with json inside. Body:'%s'", body.getAsString()));
-      }
-    }
-    return null;
-  }
-
-  @Override
-  protected JSLanguageServiceQueue createLanguageServiceQueueBlocking() {
-    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), null,
-                                          myDefaultReporter,
-                                          new JSLanguageServiceDefaultCacheData());
-  }
-
-  private abstract static class BaseCommand implements JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
-    public LocalFilePath filePath;
-    public @Nullable LocalFilePath configPath;
-
-    protected BaseCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath) {
-      this.filePath = filePath;
-      this.configPath = configPath;
-    }
-
-    @Override
-    public @NotNull JSLanguageServiceObject toSerializableObject() {
-      return this;
+  private fun createHighlightProcessor(path: String): JSLanguageServiceCommandProcessor<MutableList<TsLinterError?>> {
+    return JSLanguageServiceCommandProcessor { `object`: JSLanguageServiceObject?, answer: JSLanguageServiceAnswer? ->
+      parseResults(answer!!, path, JSLanguageServiceUtil.getGson(this))
     }
   }
 
-  private static final class GetErrorsCommand extends BaseCommand{
-    public String content;
-    private GetErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath, String content) {
-      super(filePath, configPath);
-      this.content = content;
-    }
+  override fun createLanguageServiceQueueBlocking(): JSLanguageServiceQueue {
+    return JSLanguageServiceQueueImpl(
+      myProject,
+      Protocol(this.nodePackage, myWorkingDirectory, myProject),
+      null,
+      myDefaultReporter,
+      JSLanguageServiceDefaultCacheData())
+  }
 
-    @Override
-    public @NotNull String getCommand() {
-      return "GetErrors";
+  private abstract class BaseCommand protected constructor(
+    var filePath: LocalFilePath?,
+    var configPath: LocalFilePath?
+  ) : JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
+    override fun toSerializableObject(): JSLanguageServiceObject {
+      return this
     }
   }
 
-  private static final class FixErrorsCommand extends BaseCommand{
-    private FixErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath) {
-      super(filePath, configPath);
-    }
-
-    @Override
-    public @NotNull String getCommand() {
-      return "FixErrors";
-    }
+  private class GetErrorsCommand(filePath: LocalFilePath?, configPath: LocalFilePath?, var content: String?) : BaseCommand(filePath,
+                                                                                                                           configPath) {
+    override val command: String
+      get() = "GetErrors"
   }
 
-  private static final class Protocol extends JSLanguageServiceNodeStdProtocolBase {
-    private final NodePackage myNodePackage;
-    private final VirtualFile myWorkingDirectory;
+  private class FixErrorsCommand(filePath: LocalFilePath?, configPath: LocalFilePath?) : BaseCommand(filePath, configPath) {
+    override val command: String
+      get() = "FixErrors"
+  }
 
-    private Protocol(@NotNull NodePackage nodePackage, @NotNull VirtualFile workingDirectory, @NotNull Project project) {
-      super("tslint", project, o -> {});
-      myNodePackage = nodePackage;
-      myWorkingDirectory = workingDirectory;
-    }
+  private class Protocol(
+    private val myNodePackage: NodePackage,
+    private val myWorkingDirectory: VirtualFile,
+    project: Project
+  ) : JSLanguageServiceNodeStdProtocolBase("tslint", project, Consumer { o: Any? -> }) {
+    override val workingDirectory: String?
+      get() = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(myWorkingDirectory)
 
-    @Override
-    protected String getWorkingDirectory() {
-      return JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(myWorkingDirectory);
-    }
-
-    @Override
-    protected JSLanguageServiceInitialState createState() {
-      InitialState result = new InitialState();
-      ExtendedLinterState<TsLintState> extendedState = TsLintConfiguration.getInstance(myProject).getExtendedState();
-      if (myNodePackage instanceof YarnPnpNodePackage) {
-        result.tslintPackagePath = LocalFilePath.create(myNodePackage.getName());
-        String packageJsonPath = ((YarnPnpNodePackage)myNodePackage).getPackageJsonPath(myProject);
-        if (packageJsonPath == null) {
-          throw new IllegalStateException("Cannot find package.json path for " + myNodePackage);
-        }
-        result.packageJsonPath = LocalFilePath.create(FileUtil.toSystemDependentName(packageJsonPath));
+    override fun createState(): JSLanguageServiceInitialState {
+      val result = InitialState()
+      val extendedState = TsLintConfiguration.getInstance(myProject).extendedState
+      if (myNodePackage is YarnPnpNodePackage) {
+        result.tslintPackagePath = LocalFilePath.create(myNodePackage.name)
+        val packageJsonPath = myNodePackage.getPackageJsonPath(myProject)
+        checkNotNull(packageJsonPath) { "Cannot find package.json path for " + myNodePackage }
+        result.packageJsonPath = LocalFilePath.create(FileUtil.toSystemDependentName(packageJsonPath))
       }
       else {
-        result.tslintPackagePath = LocalFilePath.create(myNodePackage.getSystemDependentPath());
+        result.tslintPackagePath = LocalFilePath.create(myNodePackage.systemDependentPath)
       }
-      result.additionalRootDirectory = LocalFilePath.create(extendedState.getState().getRulesDirectory());
-      result.pluginName = "tslint";
+      result.additionalRootDirectory = create(extendedState.getState().rulesDirectory)
+      result.pluginName = "tslint"
       result.pluginPath = LocalFilePath.create(
-        JSLanguageServiceUtil.getPluginDirectory(getClass(), "js/languageService/tslint-plugin-provider.js").getAbsolutePath());
-      return result;
+        JSLanguageServiceUtil.getPluginDirectory(javaClass, "js/languageService/tslint-plugin-provider.js")!!.absolutePath)
+      return result
     }
 
-    @Override
-    protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
-      super.addNodeProcessAdditionalArguments(targetRun);
-      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(getClass(), "js").getAbsolutePath());
+    override fun addNodeProcessAdditionalArguments(targetRun: NodeTargetRun) {
+      super.addNodeProcessAdditionalArguments(targetRun)
+      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(javaClass, "js")!!.absolutePath)
     }
 
-    @Override
-    public void dispose() {
+    override fun dispose() {
     }
   }
 
-  private static class InitialState extends JSLanguageServiceInitialState {
-    LocalFilePath tslintPackagePath;
+  private class InitialState : JSLanguageServiceInitialState() {
+    var tslintPackagePath: LocalFilePath? = null
+
     /**
      * Path to package.json declaring tslint dependency.
      * Allows requiring dependencies in proper context. Used by Yarn PnP.
      */
-    @Nullable LocalFilePath packageJsonPath;
-    LocalFilePath additionalRootDirectory;
+    var packageJsonPath: LocalFilePath? = null
+    var additionalRootDirectory: LocalFilePath? = null
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(TsLintLanguageService::class.java)
+
+    private fun parseResults(answer: JSLanguageServiceAnswer, path: String, gson: Gson): MutableList<TsLinterError?>? {
+      val element = answer.element
+      val error = element.get("error")
+      if (error != null) {
+        return mutableListOf(TsLinterError.createGlobalError(error.asString)) //NON-NLS
+      }
+      val body: JsonElement? = parseBody(element)
+      if (body == null) return null
+      val version = element.get("version").asString
+      val tsLintVersion = SemVer.parseFromText(version)
+      val isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion)
+      val parser = TsLintOutputJsonParser(path, body, isZeroBased, gson)
+      return ArrayList(parser.errors)
+    }
+
+    private fun parseBody(element: JsonObject): JsonElement? {
+      val body = element.get("body")
+      if (body == null) {
+        //we do not currently treat empty body as error in protocol
+        return null
+      }
+      else {
+        if (body.isJsonPrimitive && body.getAsJsonPrimitive().isString) {
+          val bodyContent = StringUtil.unquoteString(body.getAsJsonPrimitive().getAsString())
+          if (bodyContent.isNotBlank()) {
+            try {
+              return JsonParser.parseString(bodyContent)
+            }
+            catch (e: JsonParseException) {
+              LOG.info(String.format("Problem parsing body: '%s'\n%s", body, e.message), e)
+            }
+          }
+        }
+        else {
+          LOG.info(String.format("Error body type, should be a string with json inside. Body:'%s'", body.asString))
+        }
+      }
+      return null
+    }
   }
 }
