@@ -3,7 +3,6 @@ package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
 import com.intellij.codeInsight.actions.VcsFacade;
-import com.intellij.codeStyle.AbstractConvertLineSeparatorsAction;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.lang.javascript.service.protocol.LocalFilePath;
@@ -35,7 +34,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.LineSeparator;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -45,6 +43,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+
+import static com.intellij.prettierjs.PrettierConfigUtilKt.ensureConfigsSaved;
 
 public final class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
@@ -154,7 +154,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     else if (result.ignored) {
       PrettierUtil.showHintLater(editor, PrettierBundle.message("file.was.ignored.hint", file.getName()), false, null);
     }
-    else {
+    else if (result.result != null) {
       Document document = editor.getDocument();
       CharSequence textBefore = document.getImmutableCharSequence();
       String newContent = result.result;
@@ -162,16 +162,15 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
        * This checks only the first line break, but given that we don't handle mixed line separators,
        * this is enough to detect if separators were changed by the external process
        */
-      LineSeparator newLineSeparator = StringUtil.detectSeparators(newContent);
-      String newDocumentContent = StringUtil.convertLineSeparators(newContent);
-
       Ref<Boolean> lineSeparatorUpdated = new Ref<>(Boolean.FALSE);
+      var formattingDiff = PrettierFormatUtilKt.computeFormattingDiff(textBefore, newContent);
+
       EditorScrollingPositionKeeper.perform(editor, true, () -> {
         runWriteCommandAction(project, () -> {
-          if (!StringUtil.equals(textBefore, newContent)) {
-            document.setText(newDocumentContent);
-          }
-          lineSeparatorUpdated.set(setDetectedLineSeparator(project, vFile, newLineSeparator));
+          var isLineSeparatorChanged = PrettierFormatUtilKt.applyFormattingDiff(
+            project, document, vFile, formattingDiff
+          );
+          lineSeparatorUpdated.set(isLineSeparatorChanged);
         });
       });
 
@@ -200,16 +199,6 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       return range.grown(delta);
     }
     return range;
-  }
-
-  static void ensureConfigsSaved(@NotNull List<VirtualFile> virtualFiles, @NotNull Project project) {
-    FileDocumentManager documentManager = FileDocumentManager.getInstance();
-    for (VirtualFile config : PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project)) {
-      Document document = documentManager.getCachedDocument(config);
-      if (document != null && documentManager.isDocumentUnsaved(document)) {
-        documentManager.saveDocument(document);
-      }
-    }
   }
 
   public static void processVirtualFiles(@NotNull Project project,
@@ -280,8 +269,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
         if (virtualFile == null) {
           continue;
         }
-        PrettierLanguageService.FormatResult result = entry.getValue();
-        applyFormatResult(project, virtualFile, result);
+        applyFormatResult(project, virtualFile, entry.getValue());
       }
     });
     List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
@@ -299,19 +287,12 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
                                @NotNull VirtualFile virtualFile,
                                @NotNull PrettierLanguageService.FormatResult result) {
     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-    int delta = 0;
-    if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported) {
-      CharSequence textBefore = document.getCharsSequence();
-      LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
-      String newContent = StringUtil.convertLineSeparators(result.result);
-      if (!StringUtil.equals(textBefore, newContent)) {
-        int lengthBefore = textBefore.length();
-        document.setText(newContent);
-        delta = newContent.length() - lengthBefore;
-      }
-      setDetectedLineSeparator(project, virtualFile, newlineSeparator);
+    if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && (result.result != null)) {
+      var formattingDiff = PrettierFormatUtilKt.computeFormattingDiff(document.getImmutableCharSequence(), result.result);
+      PrettierFormatUtilKt.applyFormattingDiff(project, document, virtualFile, formattingDiff);
+      return formattingDiff.getContentLengthDelta();
     }
-    return delta;
+    return 0;
   }
 
   static @Nullable PrettierLanguageService.FormatResult performRequestForFile(@NotNull PsiFile currentFile, @Nullable TextRange range) {
@@ -384,21 +365,5 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
                                    : PrettierBundle.message("no.lines.changed");
     }
     return PrettierBundle.message("formatted.0.lines", number);
-  }
-
-  /**
-   * @return true if line separator was updated
-   */
-  private static boolean setDetectedLineSeparator(@NotNull Project project,
-                                                  @NotNull VirtualFile vFile,
-                                                  @Nullable LineSeparator newSeparator) {
-    if (newSeparator != null) {
-      String newSeparatorString = newSeparator.getSeparatorString();
-      if (!StringUtil.equals(vFile.getDetectedLineSeparator(), newSeparatorString)) {
-        AbstractConvertLineSeparatorsAction.changeLineSeparators(project, vFile, newSeparatorString);
-        return true;
-      }
-    }
-    return false;
   }
 }

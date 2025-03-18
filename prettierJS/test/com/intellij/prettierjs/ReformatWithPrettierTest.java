@@ -358,6 +358,29 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     myFixture.checkResultByFile(dirName + "/toReformat_after_1.js");
   }
 
+  public void testPatchApplied() {
+    configureRunOnSave(() -> {
+      var actionId = "SaveDocument";
+      doTestSaveAction(actionId, "first/");
+      doTestSaveAction(actionId, "second/");
+    });
+  }
+
+  public void testPatchAppliedDeletion() {
+    doReformatFile("js");
+  }
+
+  public void testPatchAppliedEndline() {
+    doReformatFile("js");
+  }
+
+  public void testCaretPosition() {
+    configureRunOnSave(() -> {
+      var actionId = "SaveDocument";
+      doTestSaveAction(actionId, "first/");
+    });
+  }
+
   public void testCommentAfterImports() {
     configureRunOnReformat(() -> doTestEditorReformat(""));
   }

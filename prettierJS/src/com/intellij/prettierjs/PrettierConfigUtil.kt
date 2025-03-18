@@ -2,6 +2,9 @@
 package com.intellij.prettierjs
 
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withTimeoutOrNull
@@ -19,5 +22,15 @@ internal suspend fun resolveConfigForFile(file: PsiFile): PrettierLanguageServic
 
   return withTimeoutOrNull(500.milliseconds) {
     future.await()
+  }
+}
+
+internal fun ensureConfigsSaved(virtualFiles: List<VirtualFile>, project: Project) {
+  val documentManager = FileDocumentManager.getInstance()
+  PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project).forEach { config ->
+    val document = documentManager.getCachedDocument(config)
+    if (document != null && documentManager.isDocumentUnsaved(document)) {
+      documentManager.saveDocument(document)
+    }
   }
 }

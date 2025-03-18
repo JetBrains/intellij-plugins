@@ -26,7 +26,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
 
   override suspend fun updateDocument(project: Project, document: Document) {
     val (file, psiFile) = readAction { getFileToProcess(project, document) } ?: return
-    runPrettierAsActionOnSave(file, psiFile)
+    runPrettierAsActionOnSave(file, psiFile, document)
   }
 
   @RequiresReadLock
@@ -49,17 +49,19 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
     return file to psiFile
   }
 
-  private suspend fun runPrettierAsActionOnSave(file: VirtualFile, psiFile: PsiFile) {
+  private suspend fun runPrettierAsActionOnSave(file: VirtualFile, psiFile: PsiFile, document: Document) {
     val project = psiFile.project
 
     withContext(Dispatchers.EDT + ModalityState.nonModal().asContextElement()) {
-      ReformatWithPrettierAction.ensureConfigsSaved(listOf(file), project)
+      ensureConfigsSaved(listOf(file), project)
     }
 
-    val result = ReformatWithPrettierAction.performRequestForFile(psiFile, null) ?: return
+    val response = ReformatWithPrettierAction.performRequestForFile(psiFile, null) ?: return
+    val formattedContent = response.result ?: return
+    val formattingDiff = computeFormattingDiff(document.charsSequence, formattedContent)
 
     writeCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name")) {
-      ReformatWithPrettierAction.applyFormatResult(project, file, result)
+      applyFormattingDiff(project, document, file, formattingDiff)
     }
   }
 }
