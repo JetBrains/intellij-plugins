@@ -248,7 +248,7 @@ public final class ActionScriptLanguageCodeStyleSettingsProvider extends Languag
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_OBJECT_PROPERTIES",
                                 JavaScriptBundle.message("js.code.style.align.caption"),
                                 JavaScriptBundle.message("js.code.style.object.literals.category.name"),
-                                JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_OPTIONS,
+                                JSLanguageCodeStyleSettingsProvider.getAlignObjectPropertiesOptions(),
                                 JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_VALUES);
 
       //var statements
@@ -261,7 +261,7 @@ public final class ActionScriptLanguageCodeStyleSettingsProvider extends Languag
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_VAR_STATEMENTS",
                                 JavaScriptBundle.message("js.code.style.align.caption"),
                                 JavaScriptBundle.message("js.wrap.settings.var.group.name"),
-                                JSLanguageCodeStyleSettingsProvider.ALIGN_VAR_STATEMENT_OPTIONS,
+                                JSLanguageCodeStyleSettingsProvider.getAlignVarStatementOptions(),
                                 JSLanguageCodeStyleSettingsProvider.ALIGN_VAR_STATEMENT_VALUES);
     }
     else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
