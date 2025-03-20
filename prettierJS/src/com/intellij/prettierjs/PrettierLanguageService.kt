@@ -18,6 +18,7 @@ interface PrettierLanguageService {
     text: String,
     prettierPackage: NodePackage,
     range: TextRange?,
+    cursorOffset: Int,
   ): CompletableFuture<FormatResult?>?
 
   fun resolveConfig(
@@ -44,20 +45,22 @@ interface PrettierLanguageService {
 
   class FormatResult private constructor(
     @JvmField val result: String?,
+    @JvmField val cursorOffset: Int,
     @JvmField val error: String?,
     @JvmField val ignored: Boolean,
     @JvmField val unsupported: Boolean,
   ) {
     companion object {
-      val IGNORED: FormatResult = FormatResult(null, null, true, false)
+      val IGNORED: FormatResult = FormatResult(null, -1, null, true, false)
 
       @JvmField
-      val UNSUPPORTED: FormatResult = FormatResult(null, null, false, true)
+      val UNSUPPORTED: FormatResult = FormatResult(null, -1, null, false, true)
 
       @JvmStatic
-      fun error(error: String): FormatResult = FormatResult(null, error, false, false)
+      fun error(error: String): FormatResult = FormatResult(null, -1, error, false, false)
 
-      fun formatted(result: String): FormatResult = FormatResult(result, null, false, false)
+      @JvmStatic
+      fun formatted(result: String, cursorOffset: Int): FormatResult = FormatResult(result, cursorOffset, null, false, false)
     }
   }
 
