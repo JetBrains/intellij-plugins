@@ -377,7 +377,16 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   public void testCaretPosition() {
     configureRunOnSave(() -> {
       var actionId = "SaveDocument";
-      doTestSaveAction(actionId, "first/");
+      doTestSaveAction(actionId, "");
+    });
+  }
+
+  public void testCrlfCaretPosition() {
+    configureRunOnSave(() -> {
+      var actionId = "SaveDocument";
+      doTestSaveAction(actionId, "", () -> {
+        JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF);
+      });
     });
   }
 
@@ -532,8 +541,15 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   private void doTestSaveAction(@NotNull String actionId, @NotNull String subDir) {
+    doTestSaveAction(actionId, subDir, null);
+  }
+
+  private void doTestSaveAction(@NotNull String actionId, @NotNull String subDir, @Nullable Runnable configureFile) {
     String dirName = getTestName(true);
     myFixture.configureFromTempProjectFile(subDir + "toReformat.js");
+    if (configureFile != null) {
+      configureFile.run();
+    }
     myFixture.type(' ');
     myFixture.performEditorAction(actionId);
     ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.getProject());

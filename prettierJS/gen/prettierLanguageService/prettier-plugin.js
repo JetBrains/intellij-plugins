@@ -188,6 +188,10 @@ function performFormat(api, config, args) {
                     _b.sent();
                     _b.label = 2;
                 case 2:
+                    if (api.formatWithCursor != null) {
+                        config.cursorOffset = args.cursorOffset || -1;
+                        return [2 /*return*/, api.formatWithCursor(args.content, config)];
+                    }
                     _a = {};
                     return [4 /*yield*/, api.format(args.content, config)];
                 case 3: return [2 /*return*/, (_a.formatted = _b.sent(), _a)];

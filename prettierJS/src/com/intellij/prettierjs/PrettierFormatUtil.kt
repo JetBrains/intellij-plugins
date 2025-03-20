@@ -20,14 +20,17 @@ internal data class FormattingDiff(
   val normalizedFormattedContent: String,
   val contentLengthDelta: Int,
   val detectedLineSeparator: LineSeparator?,
+  val cursorOffset: Int,
 )
 
 internal fun computeFormattingDiff(
   originalContent: CharSequence,
   formattedContent: String,
+  cursorOffset: Int,
 ): FormattingDiff {
   val detectedLineSeparator = StringUtil.detectSeparators(formattedContent)
-  val normalizedFormattedContent = StringUtil.convertLineSeparators(formattedContent)
+  val offsetsToKeep = intArrayOf(cursorOffset)
+  val normalizedFormattedContent = StringUtil.convertLineSeparators(formattedContent, "\n", offsetsToKeep)
 
   val originalLineOffsets = LineOffsetsUtil.create(originalContent)
   val formattedLineOffsets = LineOffsetsUtil.create(normalizedFormattedContent)
@@ -41,6 +44,7 @@ internal fun computeFormattingDiff(
     normalizedFormattedContent,
     contentLengthDelta,
     detectedLineSeparator,
+    offsetsToKeep[0]
   )
 }
 

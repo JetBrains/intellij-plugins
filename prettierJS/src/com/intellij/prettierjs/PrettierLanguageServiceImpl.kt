@@ -32,6 +32,7 @@ class PrettierLanguageServiceImpl(
     text: String,
     prettierPackage: NodePackage,
     range: TextRange?,
+    cursorOffset: Int,
   ): CompletableFuture<PrettierLanguageService.FormatResult?>? {
     val process = process
     if (process == null || !process.isValid) {
@@ -42,7 +43,7 @@ class PrettierLanguageServiceImpl(
     // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
     // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
     val forceLineBreakAtEof = range != null && range.endOffset < text.length && text.endsWith("\n")
-    val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, false)
+    val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, false, cursorOffset)
     return project.service<PrettierLanguageServiceManager>().cs.future {
       val commandResult = process.execute(command)
       val answer = commandResult?.answer ?: return@future null
@@ -82,12 +83,13 @@ class PrettierLanguageServiceImpl(
     }
 
     var formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted")!!
+    var cursorOffset = JsonUtil.getChildAsInteger(jsonObject, "cursorOffset", -1)
     if (forceLineBreakAtEof && !formattedResult.endsWith("\n")) {
       // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
       // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
       formattedResult += '\n'
     }
-    return PrettierLanguageService.FormatResult.formatted(formattedResult)
+    return PrettierLanguageService.FormatResult.formatted(formattedResult, cursorOffset)
   }
 
   private fun parseResolveConfigResponse(response: JSLanguageServiceAnswer): PrettierLanguageService.ResolveConfigResult {
@@ -159,6 +161,7 @@ class PrettierLanguageServiceImpl(
     val content: String,
     range: TextRange?,
     val flushConfigCache: Boolean,
+    val cursorOffset: Int,
   ) : JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
     val path: LocalFilePath = LocalFilePath.create(FileUtil.toSystemDependentName(filePath))
     val prettierPath: LocalFilePath =

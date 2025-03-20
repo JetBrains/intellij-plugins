@@ -10,6 +10,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
@@ -56,12 +57,21 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
       ensureConfigsSaved(listOf(file), project)
     }
 
-    val response = ReformatWithPrettierAction.performRequestForFile(psiFile, null) ?: return
-    val formattedContent = response.result ?: return
-    val formattingDiff = computeFormattingDiff(document.charsSequence, formattedContent)
+    val result = ReformatWithPrettierAction.performRequestForFile(psiFile, null) ?: return
+    val formattedContent = result.result ?: return
+    val formattingDiff = computeFormattingDiff(
+      document.charsSequence,
+      formattedContent,
+      result.cursorOffset,
+    )
 
     writeCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name")) {
       applyFormattingDiff(project, document, file, formattingDiff)
+
+      val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return@writeCommandAction
+      if (!editor.isDisposed && editor.virtualFile == file && formattingDiff.cursorOffset >= 0) {
+        editor.caretModel.moveToOffset(formattingDiff.cursorOffset)
+      }
     }
   }
 }

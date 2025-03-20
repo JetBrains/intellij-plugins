@@ -12,9 +12,11 @@ interface FormatResponse {
     unsupported?: boolean;
     error?: string;
     formatted?: string;
+    cursorOffset?: number;
 }
 
 interface FormatArguments {
+    cursorOffset?: number;
     start?: number;
     end?: number;
     path: string;
@@ -165,6 +167,12 @@ async function performFormat(
     if (args.flushConfigCache) {
       await api.clearConfigCache();
     }
+
+    if (api.formatWithCursor != null) {
+      config.cursorOffset = args.cursorOffset || -1;
+      return api.formatWithCursor(args.content, config);
+    }
+
     return { formatted: await api.format(args.content, config) };
 }
 
