@@ -2,7 +2,7 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
-import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileFix;
+import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileModCommand;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -565,7 +565,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                                 ? "javascript.validation.message.variable.should.be.in.file"
                                                 : "javascript.validation.message.function.should.be.in.file", name, nameWithExtension);
         myHolder.newAnnotation(HighlightSeverity.ERROR, message).range(node)
-        .withFix(new RenameFileFix(nameWithExtension))
+        .withFix(new RenameFileModCommand(nameWithExtension))
         .withFix(new RenameElementFix(aClass) {
           final String text;
           final String familyName;
