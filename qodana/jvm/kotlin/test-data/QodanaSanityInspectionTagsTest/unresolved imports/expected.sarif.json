@@ -8,8 +8,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: unknow",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: unknow"
+            "text": "[UNRESOLVED_IMPORT] Unresolved reference 'unknow'.",
+            "markdown": "\\[UNRESOLVED_IMPORT\\] Unresolved reference 'unknow'."
           },
           "locations": [
             {
@@ -49,7 +49,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "7299740e88595892",
-            "equalIndicator/v1": "37fb350203f397f499157a2bec87c312dcf769ddaa1fd9b88a557687f7f36487"
+            "equalIndicator/v1": "e6c53e1c5fd470dbf9cb05a94e4d7e654a4c9414e8ae5f6e756827b69d660fbe"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -57,7 +57,7 @@
             "problemType": "REGULAR",
             "tags": [
               "kotlin",
-              "UNRESOLVED_REFERENCE"
+              "UNRESOLVED_IMPORT"
             ]
           }
         },
@@ -66,8 +66,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Unknown",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Unknown"
+            "text": "[UNRESOLVED_IMPORT] Unresolved reference 'Unknown'.",
+            "markdown": "\\[UNRESOLVED_IMPORT\\] Unresolved reference 'Unknown'."
           },
           "locations": [
             {
@@ -107,7 +107,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "115d038b666c23ae",
-            "equalIndicator/v1": "e5f7a7c3692e5091ae5ddd7b4aa7ff875b9be09787eff23887b61029061b11e1"
+            "equalIndicator/v1": "4dc4008a83ba00efd4e73328d258c9e336faa27d8c4f7e374521896b4ca8874f"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -115,7 +115,7 @@
             "problemType": "REGULAR",
             "tags": [
               "kotlin",
-              "UNRESOLVED_REFERENCE"
+              "UNRESOLVED_IMPORT"
             ]
           }
         },
@@ -124,8 +124,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Unknown2",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Unknown2"
+            "text": "[UNRESOLVED_IMPORT] Unresolved reference 'Unknown2'.",
+            "markdown": "\\[UNRESOLVED_IMPORT\\] Unresolved reference 'Unknown2'."
           },
           "locations": [
             {
@@ -165,7 +165,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "e04fe6f316516380",
-            "equalIndicator/v1": "55ba97065eb6daf432f9260c5597058062269cab676ce7ca7f39af1ab8e01a2f"
+            "equalIndicator/v1": "d5176b2d5af55ba515e720dafc2ffb475db713911ab723cf809d3f59c0c105ea"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -173,7 +173,7 @@
             "problemType": "REGULAR",
             "tags": [
               "kotlin",
-              "UNRESOLVED_REFERENCE"
+              "UNRESOLVED_IMPORT"
             ]
           }
         }

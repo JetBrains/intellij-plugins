@@ -8,8 +8,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Foo",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Foo"
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference 'Foo'.",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference 'Foo'."
           },
           "locations": [
             {
@@ -49,7 +49,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "ab3f8e35fbaa58f9",
-            "equalIndicator/v1": "5e4d31dd5ead1141ee1e402301b3662a77157569c30b3bc33d9c5946a71aa3b6"
+            "equalIndicator/v1": "f7b89bbcc7ee79f9043a8bea59db172c6c8ab7e8984da448b8543940f11888c5"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -66,8 +66,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "",
-            "markdown": ""
+            "text": "[REDECLARATION] Conflicting declarations: param: param: List",
+            "markdown": "\\[REDECLARATION\\] Conflicting declarations: param: param: List"
           },
           "locations": [
             {
@@ -107,14 +107,15 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "009694076850ad29",
-            "equalIndicator/v1": "c8d17ffea9683469d7dc85fd8a1bb6facfaf56ad8529a34d28366fd1f31e9a4f"
+            "equalIndicator/v1": "4a43a2b903cb1178da2856af7e94feb5dbc20a26acd28ed4cfb7c0a008299d1c"
           },
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
             "problemType": "REGULAR",
             "tags": [
-              "kotlin"
+              "kotlin",
+              "REDECLARATION"
             ]
           }
         },
@@ -123,8 +124,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Param",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Param"
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference 'Param'.",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference 'Param'."
           },
           "locations": [
             {
@@ -164,7 +165,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "5f57d7c1e98c2b95",
-            "equalIndicator/v1": "ef3f29806701ca9d79ea26f76c080baebc2d36c1a2879233945177b81a2fe175"
+            "equalIndicator/v1": "6303d5ee5a541b3320a3c61e0aa1a067d0326414d68e6e3d0e1924df134089ba"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -181,8 +182,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "",
-            "markdown": ""
+            "text": "[REDECLARATION] Conflicting declarations: param: param: List",
+            "markdown": "\\[REDECLARATION\\] Conflicting declarations: param: param: List"
           },
           "locations": [
             {
@@ -222,14 +223,15 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "e45bebed6efc1153",
-            "equalIndicator/v1": "3bf379b7f5572fa4a21de5f2bda7f848a01edb014b45a2ee03053fd646401073"
+            "equalIndicator/v1": "ed484071a72501b13d6f8e539a6cbff052fdfa985d24dec33a12f707a9e2c7ad"
           },
           "properties": {
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
             "problemType": "REGULAR",
             "tags": [
-              "kotlin"
+              "kotlin",
+              "REDECLARATION"
             ]
           }
         },
@@ -238,8 +240,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: Param2",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: Param2"
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference 'Param2'.",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference 'Param2'."
           },
           "locations": [
             {
@@ -279,7 +281,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "28bf818a3b8a465c",
-            "equalIndicator/v1": "06705fc7fde43bf2f3e5a5cbfc5dff7950cc141699c888af0f557c9f006bc573"
+            "equalIndicator/v1": "d600867327976b807807debf1619a93b9aacbe25e293991aaabd3b332ed0aa19"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -296,8 +298,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_REFERENCE] Unresolved reference: unknownMethod",
-            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference: unknownMethod"
+            "text": "[UNRESOLVED_REFERENCE] Unresolved reference 'unknownMethod'.",
+            "markdown": "\\[UNRESOLVED_REFERENCE\\] Unresolved reference 'unknownMethod'."
           },
           "locations": [
             {
@@ -337,7 +339,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "012d838fd7e68048",
-            "equalIndicator/v1": "fbcff1ef00601ece1194069d6e74ff053eac7fec860f552afd8474aedaf52559"
+            "equalIndicator/v1": "5241dcfa9d9378fd3dbec7cef6bd3e8ef237ae960f4fe3a00edc6fe39ab3916f"
           },
           "properties": {
             "ideaSeverity": "ERROR",

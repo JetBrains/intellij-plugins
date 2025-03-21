@@ -136,63 +136,6 @@
             "kind": "fail",
             "level": "error",
             "message": {
-              "text": "Unresolved reference List",
-              "markdown": "Unresolved reference List"
-            },
-            "locations": [
-              {
-                "physicalLocation": {
-                  "artifactLocation": {
-                    "uri": "test-module/org/Main.kt",
-                    "uriBaseId": "SRCROOT"
-                  },
-                  "region": {
-                    "startLine": 4,
-                    "startColumn": 35,
-                    "charOffset": 66,
-                    "charLength": 12,
-                    "snippet": {
-                      "text": "List<Param2>"
-                    },
-                    "sourceLanguage": "kotlin"
-                  },
-                  "contextRegion": {
-                    "startLine": 2,
-                    "startColumn": 1,
-                    "charOffset": 12,
-                    "charLength": 93,
-                    "snippet": {
-                      "text": "\nclass Baz: Foo() {\n  fun method(param: Param, param: List<Param2>) {\n    unknownMethod()\n  }"
-                    },
-                    "sourceLanguage": "kotlin"
-                  }
-                },
-                "logicalLocations": [
-                  {
-                    "fullyQualifiedName": "testUnresolved types",
-                    "kind": "module"
-                  }
-                ]
-              }
-            ],
-            "partialFingerprints": {
-              "equalIndicator/v2": "0dcc177e6a68e7d6",
-              "equalIndicator/v1": "d817024e9da41f1702254e55240a158a4ffe2cffb02311341c1c6268bf2d04fb"
-            },
-            "properties": {
-              "ideaSeverity": "ERROR",
-              "qodanaSeverity": "Critical",
-              "problemType": "REGULAR",
-              "tags": [
-                "kotlin"
-              ]
-            }
-          },
-          {
-            "ruleId": "QodanaKotlinSanity",
-            "kind": "fail",
-            "level": "error",
-            "message": {
               "text": "Unresolved reference Param2",
               "markdown": "Unresolved reference Param2"
             },
