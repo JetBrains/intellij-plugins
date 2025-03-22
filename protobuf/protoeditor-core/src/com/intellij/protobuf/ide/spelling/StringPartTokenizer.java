@@ -36,7 +36,7 @@ public class StringPartTokenizer extends Tokenizer<ProtoStringPart> {
   }
 
   @Override
-  public @NotNull TextRange getHighlightingRange(PsiElement element, int offset, TextRange range) {
+  public @NotNull TextRange getHighlightingRange(@NotNull PsiElement element, int offset, @NotNull TextRange range) {
     if (!(element instanceof ProtoStringPart stringPart)) {
       return super.getHighlightingRange(element, offset, range);
     }

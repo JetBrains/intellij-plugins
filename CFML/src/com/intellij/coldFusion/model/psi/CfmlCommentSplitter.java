@@ -25,7 +25,7 @@ public final class CfmlCommentSplitter extends BaseSplitter {
   }
 
   @Override
-  public void split(@Nullable String text, @NotNull TextRange range, Consumer<TextRange> consumer) {
+  public void split(@Nullable String text, @NotNull TextRange range, @NotNull Consumer<TextRange> consumer) {
     if (StringUtil.isEmpty(text)) {
       return;
     }

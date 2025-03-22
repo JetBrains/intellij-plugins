@@ -31,7 +31,7 @@ public final class CfmlSpellcheckingStrategy extends SpellcheckingStrategy imple
         public void tokenize(final @NotNull PsiElement element, @NotNull TokenConsumer consumer) {
           consumer.consumeToken(element, new TextSplitter() {
             @Override
-            public void split(@Nullable String text, @NotNull TextRange range, Consumer<TextRange> consumer) {
+            public void split(@Nullable String text, @NotNull TextRange range, @NotNull Consumer<TextRange> consumer) {
               int elementOffset = element.getTextRange().getStartOffset();
               for (PsiElement e = element.getFirstChild(); e != null; e = e.getNextSibling()) {
                 ASTNode astNode = e.getNode();

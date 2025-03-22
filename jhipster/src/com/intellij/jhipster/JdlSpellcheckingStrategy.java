@@ -38,7 +38,7 @@ final class JdlSpellcheckingStrategy extends SpellcheckingStrategy implements Du
 
   private final Tokenizer<PsiElement> idLiteralTokenizer = new Tokenizer<>() {
     @Override
-    public void tokenize(@NotNull PsiElement element, TokenConsumer consumer) {
+    public void tokenize(@NotNull PsiElement element, @NotNull TokenConsumer consumer) {
       PlainTextSplitter textSplitter = PlainTextSplitter.getInstance();
       consumer.consumeToken(element, textSplitter);
     }
