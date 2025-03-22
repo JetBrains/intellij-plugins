@@ -44,7 +44,8 @@ class PrettierLanguageServiceImpl(
     val forceLineBreakAtEof = range != null && range.endOffset < text.length && text.endsWith("\n")
     val command = ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, false)
     return project.service<PrettierLanguageServiceManager>().cs.future {
-      val answer = process.execute(command)?.answer ?: return@future null
+      val commandResult = process.execute(command)
+      val answer = commandResult?.answer ?: return@future null
       parseReformatResponse(answer, forceLineBreakAtEof)
     }
   }
