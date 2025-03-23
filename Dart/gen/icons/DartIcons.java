@@ -11,9 +11,6 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class DartIcons {
-  private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
-    return IconManager.getInstance().loadRasterizedIcon(path, DartIcons.class.getClassLoader(), cacheKey, flags);
-  }
   private static @NotNull Icon load(@NotNull String expUIPath, @NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, expUIPath, DartIcons.class.getClassLoader(), cacheKey, flags);
   }
@@ -23,7 +20,6 @@ public final class DartIcons {
   /** 16x16 */ public static final @NotNull Icon Dart_remote = load("icons/expui/dartRemote.svg", "icons/dart_remote.svg", -1472681987, 2);
   /** 16x16 */ public static final @NotNull Icon Dart_test = load("icons/expui/dartTest.svg", "icons/dart_test.svg", -2083033960, 2);
   /** 16x16 */ public static final @NotNull Icon DartWeb = load("icons/expui/dartWeb.svg", "icons/dartWeb.svg", -471235906, 2);
-  /** 16x16 */ public static final @NotNull Icon Observatory = load("icons/expui/observatory.svg", -1458295788, 2);
   /** 13x13 */ public static final @NotNull Icon PubServeToolWindow = load("icons/expui/toolWindowPubServe.svg", "icons/pubServeToolWindow.svg", -1642538183, 2);
   /** 6x6 */ public static final @NotNull Icon Warning_point = load("icons/expui/warningPoint.svg", "icons/warning_point.svg", -476289486, 2);
 }
