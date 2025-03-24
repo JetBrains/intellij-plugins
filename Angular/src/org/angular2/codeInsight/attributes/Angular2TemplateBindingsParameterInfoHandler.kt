@@ -18,9 +18,9 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.containers.addIfNotNull
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
-import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax
-import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
-import com.intellij.javascript.ParameterInfoHandlerWithColoredSyntax.SignaturePresentation
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignaturePresentation
 import com.intellij.xml.util.XmlUtil
 import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
