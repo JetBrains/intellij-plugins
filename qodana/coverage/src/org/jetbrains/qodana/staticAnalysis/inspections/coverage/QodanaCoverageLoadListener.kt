@@ -3,6 +3,8 @@ package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 import com.intellij.coverage.CoverageLoadListener
 import com.intellij.coverage.FailedLoadCoverageResult
 import com.intellij.coverage.LoadCoverageResult
+import com.intellij.coverage.NotSupportedCoverageResult
+import com.intellij.coverage.SuccessLoadCoverageResult
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -25,11 +27,12 @@ class QodanaCoverageLoadListener: CoverageLoadListener {
   }
 
   override fun reportCoverageLoaded(result: LoadCoverageResult, coverageFile: File) {
-    if (result is FailedLoadCoverageResult) {
-      val message = "Could not load coverage from file $coverageFile: ${result.reason}"
-      reportError(coverageFile, message, result.exception)
-    } else {
-      reporter.reportMessage(1, "Coverage from file $coverageFile loaded successfully.")
+    when (result) {
+      is FailedLoadCoverageResult ->
+        reportError(coverageFile, "Could not load coverage from file $coverageFile: ${result.reason}", result.exception)
+      is NotSupportedCoverageResult ->
+        reportError(coverageFile, "Could not load coverage from file $coverageFile: class ${result.clazz} didn't implement coverage loading interface")
+      is SuccessLoadCoverageResult -> reporter.reportMessage(1, "Coverage from file $coverageFile loaded successfully.")
     }
   }
 
