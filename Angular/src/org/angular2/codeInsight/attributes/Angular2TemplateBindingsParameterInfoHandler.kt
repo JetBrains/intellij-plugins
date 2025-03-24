@@ -6,6 +6,9 @@ import com.intellij.lang.javascript.documentation.JSHtmlHighlightingUtil
 import com.intellij.lang.javascript.psi.JSArgumentsHolder
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignatureHtmlPresentation
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithTabActionSupport
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -16,18 +19,15 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.containers.addIfNotNull
+import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignaturePresentation
-import com.intellij.xml.util.XmlUtil
 import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
 import org.angular2.web.scopes.TemplateBindingKeyScope.Companion.getDirectiveInputsFor
 
-class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<Angular2HtmlTemplateBindings, SignaturePresentation>(),
+class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<Angular2HtmlTemplateBindings, SignatureHtmlPresentation>(),
                                                      ParameterInfoHandlerWithTabActionSupport<Angular2HtmlTemplateBindings, ParameterInfoHandlerWithColoredSyntaxData, Angular2TemplateBinding> {
 
   override fun getActualParameters(o: Angular2HtmlTemplateBindings): Array<out Angular2TemplateBinding> =
@@ -60,7 +60,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
   override val parameterListSeparator: String
     get() = ";<br>"
 
-  override fun buildSignaturePresentations(parameterOwner: Angular2HtmlTemplateBindings): List<SignaturePresentation> {
+  override fun buildSignaturePresentations(parameterOwner: Angular2HtmlTemplateBindings): List<SignatureHtmlPresentation> {
     val templateName = parameterOwner.templateName
 
     val inputDefinitions = getDirectiveInputsFor(parameterOwner.bindings)
@@ -71,10 +71,10 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
         Pair(input.name, definition)
       }
 
-    val result = mutableListOf<ParameterPresentation>()
+    val result = mutableListOf<ParameterHtmlPresentation>()
     result.addIfNotNull(
       inputDefinitions.remove(templateName)
-        ?.let { ParameterPresentation("&lt;expr&gt;$it", TextRange(0, 0)) }
+        ?.let { ParameterHtmlPresentation("&lt;expr&gt;$it", TextRange(0, 0)) }
     )
 
     parameterOwner.bindings.bindings
@@ -83,16 +83,16 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
           null
         else when (it.keyKind) {
           Angular2TemplateBinding.KeyKind.LET -> {
-            ParameterPresentation("let".withColor(TS_KEYWORD, parameterOwner, false) + " " + it.key.withColor(NG_TEMPLATE_VARIABLE, parameterOwner, false) +
-                                  renderJSType(it.variableDefinition), it.textRange)
+            ParameterHtmlPresentation("let".withColor(TS_KEYWORD, parameterOwner, false) + " " + it.key.withColor(NG_TEMPLATE_VARIABLE, parameterOwner, false) +
+                                      renderJSType(it.variableDefinition), it.textRange)
           }
           Angular2TemplateBinding.KeyKind.BINDING -> {
             val inputDef = inputDefinitions.remove(it.key)
             if (inputDef != null) {
-              ParameterPresentation(inputDef, it.textRange)
+              ParameterHtmlPresentation(inputDef, it.textRange)
             }
             else {
-              ParameterPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(ERROR, parameterOwner, false), it.textRange)
+              ParameterHtmlPresentation(directiveInputToTemplateBindingVar(it.key, templateName).withColor(ERROR, parameterOwner, false), it.textRange)
             }
           }
           Angular2TemplateBinding.KeyKind.AS -> null
@@ -100,11 +100,11 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
       }
 
     inputDefinitions.values.mapTo(result) {
-      ParameterPresentation("[$it]", null)
+      ParameterHtmlPresentation("[$it]", null)
     }
     if (result.isEmpty())
-      result.add(ParameterPresentation(XmlUtil.escape(CodeInsightBundle.message("parameter.info.no.parameters"))))
-    return listOf(SignaturePresentation(result))
+      result.add(ParameterHtmlPresentation(XmlUtil.escape(CodeInsightBundle.message("parameter.info.no.parameters"))))
+    return listOf(SignatureHtmlPresentation(result))
   }
 
   private fun renderJSType(variable: JSVariable?): String {

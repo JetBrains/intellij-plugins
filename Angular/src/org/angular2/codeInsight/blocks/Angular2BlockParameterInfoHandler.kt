@@ -17,7 +17,7 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignaturePresentation
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignatureHtmlPresentation
 import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol.Companion.PRIMARY_EXPRESSION
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -25,7 +25,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockParameters
 
-class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<Angular2HtmlBlockParameters, SignaturePresentation>(),
+class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<Angular2HtmlBlockParameters, SignatureHtmlPresentation>(),
                                           ParameterInfoHandlerWithTabActionSupport<Angular2HtmlBlockParameters, ParameterInfoHandlerWithColoredSyntaxData, Angular2BlockParameter> {
 
   override val parameterListSeparator: String
@@ -39,7 +39,7 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
       ?.takeIf { (it.parent as? Angular2HtmlBlock)?.name != BLOCK_LET }
   }
 
-  override fun buildSignaturePresentations(parameterOwner: Angular2HtmlBlockParameters): List<SignaturePresentation> {
+  override fun buildSignaturePresentations(parameterOwner: Angular2HtmlBlockParameters): List<SignatureHtmlPresentation> {
     val blockDefinition = (parameterOwner.parent as? Angular2HtmlBlock)?.definition ?: return emptyList()
     val definitionToPrefixMap = buildDefinitionToPrefixMap(blockDefinition)
 
@@ -72,19 +72,19 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
       parameterDefs[entry.key] = definition
     }
 
-    val result = mutableListOf<ParameterPresentation>()
+    val result = mutableListOf<ParameterHtmlPresentation>()
     parameterOwner.parameters.forEach { parameter ->
       if (parameter.isPrimaryExpression) {
-        result.add(ParameterPresentation(parameterDefs[PRIMARY_EXPRESSION]
-                                         ?: exprPlaceholder.withColor(ERROR, parameterOwner, false), parameter.textRange))
+        result.add(ParameterHtmlPresentation(parameterDefs[PRIMARY_EXPRESSION]
+                                             ?: exprPlaceholder.withColor(ERROR, parameterOwner, false), parameter.textRange))
       }
       else {
         val prefix = parameter.prefix
                        ?.withColor(if (parameter.prefixDefinition != null) TS_KEYWORD else ERROR, parameterOwner, false)
                        ?.let { "$it " } ?: ""
-        result.add(ParameterPresentation(parameterDefs[parameter.name]?.let { "$prefix$it" }
-                                         ?: (parameter.name ?: return@forEach).withColor(ERROR, parameterOwner, false),
-                                         parameter.textRange))
+        result.add(ParameterHtmlPresentation(parameterDefs[parameter.name]?.let { "$prefix$it" }
+                                             ?: (parameter.name ?: return@forEach).withColor(ERROR, parameterOwner, false),
+                                             parameter.textRange))
       }
     }
     val provided = parameterOwner.parameters
@@ -101,14 +101,14 @@ class Angular2BlockParameterInfoHandler : ParameterInfoHandlerWithColoredSyntax<
       val prefixes = definitionToPrefixMap[it.key]
       if (!provided.contains(it.key) && (prefixes.size != 1 || !prefixesToFilterOut.contains(prefixes.first()))) {
         if (it.key == PRIMARY_EXPRESSION)
-          result.add(ParameterPresentation(it.value, TextRange(0, 0)))
+          result.add(ParameterHtmlPresentation(it.value, TextRange(0, 0)))
         else
-          result.add(ParameterPresentation("[" + renderPrefixesList(prefixes.filter { !prefixesToFilterOut.contains(it) }, parameterOwner) + it.value + "]", null))
+          result.add(ParameterHtmlPresentation("[" + renderPrefixesList(prefixes.filter { !prefixesToFilterOut.contains(it) }, parameterOwner) + it.value + "]", null))
       }
     }
     if (result.isEmpty())
-      result.add(ParameterPresentation(XmlUtil.escape(CodeInsightBundle.message("parameter.info.no.parameters"))))
-    return listOf(SignaturePresentation(result))
+      result.add(ParameterHtmlPresentation(XmlUtil.escape(CodeInsightBundle.message("parameter.info.no.parameters"))))
+    return listOf(SignatureHtmlPresentation(result))
   }
 
   private fun renderPrefixesList(prefixes: Collection<String>, parameterOwner: Angular2HtmlBlockParameters): String {
