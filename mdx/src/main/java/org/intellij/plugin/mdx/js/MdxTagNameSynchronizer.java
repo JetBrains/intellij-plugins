@@ -15,6 +15,7 @@ import com.intellij.lang.xhtml.XHTMLLanguage;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
 import com.intellij.openapi.command.undo.UndoManager;
@@ -27,10 +28,7 @@ import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.core.impl.PomModelImpl;
 import com.intellij.psi.*;
@@ -41,6 +39,7 @@ import com.intellij.psi.templateLanguages.OuterLanguageElement;
 import com.intellij.psi.templateLanguages.TemplateLanguage;
 import com.intellij.psi.templateLanguages.TemplateLanguageUtil;
 import com.intellij.psi.xml.XmlTokenType;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlExtension;
 import com.intellij.xml.util.HtmlUtil;
@@ -51,6 +50,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 /**
@@ -85,16 +85,24 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
   }
 
   public static void createSynchronizerFor(Editor editor) {
-    Project project = editor.getProject();
-    if (project == null || !(editor instanceof EditorImpl)) {
+    var project = editor.getProject();
+    if (project == null || !(editor instanceof EditorImpl editorImpl)) {
       return;
     }
-    Document document = editor.getDocument();
-    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-    Language language = findXmlLikeLanguage(project, file);
-    if (language != null) {
-      new TagNameSynchronizer((EditorImpl)editor, project, language).listenForDocumentChanges();
-    }
+
+    ReadAction.nonBlocking((Callable<Void>)() -> {
+        if (editor.isDisposed() || project.isDisposed())
+          return null;
+        var document = editor.getDocument();
+        var file = FileDocumentManager.getInstance().getFile(document);
+        var language = findXmlLikeLanguage(project, file);
+        if (language != null) {
+          new TagNameSynchronizer(editorImpl, project, language).listenForDocumentChanges();
+        }
+        return null;
+      })
+      .coalesceBy(Pair.create(editor, MdxTagNameSynchronizer.class))
+      .submit(AppExecutorUtil.getAppExecutorService());
   }
 
   private static void recreateSynchronizers() {
