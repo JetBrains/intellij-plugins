@@ -17,6 +17,11 @@
                 "artifactLocation": {
                   "uri": "test-module/Main.java",
                   "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 0,
+                  "startColumn": 0,
+                  "charLength": 0
                 }
               },
               "logicalLocations": [
@@ -28,8 +33,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "5403426bd05c41f0",
-            "equalIndicator/v1": "4ac59531dc29f57be488b6fed48467dbbbce51abe97ff77ebac825bef35a6a05"
+            "equalIndicator/v2": "e4d2a20cc64f038c",
+            "equalIndicator/v1": "2fd64393edd2cea80fba4bf201e21be74499f9ad0ee1439200868a4ee25784b7"
           },
           "relatedLocations": [
             {

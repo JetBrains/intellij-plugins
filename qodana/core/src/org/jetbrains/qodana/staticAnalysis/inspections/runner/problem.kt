@@ -9,6 +9,7 @@ import com.intellij.openapi.util.UserDataHolderEx
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.Fix
 import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Region
 import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
@@ -47,6 +48,11 @@ internal class XmlProblem(private val element: Element,
         result.ruleId == INCORRECT_FORMATTING_INSPECTION_ID && !result.relatedLocations.isNullOrEmpty() -> {
           if (isRelatedLocationsValidForIncorrectFormatting(result.relatedLocations)) {
             result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.INCORRECT_FORMATTING
+            // only for IncorrectFormattingInspection with relatedLocation for the main problem (incorrect formatted file)
+            // startLine = 0, startColumn = 0, charLength = 0 because it is necessary to be able to open the file in ide from web-ui
+            result.locations.forEach { loc ->
+              loc.physicalLocation.region = Region().withStartLine(0).withStartColumn(0).withCharLength(0)
+            }
           } else {
             QodanaException("Related locations are invalid for inspection: $INCORRECT_FORMATTING_INSPECTION_ID")
           }
