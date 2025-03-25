@@ -30,7 +30,7 @@ import com.intellij.webSymbols.css.CSS_CLASS_LIST
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
-import org.angular2.Angular2DecoratorUtil
+import org.angular2.*
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
@@ -39,15 +39,13 @@ import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.isNgClassAttribute
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
 import org.angular2.codeInsight.blocks.isDeferOnTriggerReference
 import org.angular2.codeInsight.blocks.isJSReferenceAfterEqInForBlockLetParameterAssignment
-import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.isTemplateBindingDirectiveInput
+import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -56,7 +54,6 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.signals.Angular2SignalUtils.getPossibleSignalFunNameForLiteralParameter
 import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
 import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
-import org.angular2.templateBindingVarToDirectiveInput
 import org.angular2.web.scopes.*
 
 class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -198,11 +195,13 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         }
       }
       is JSLiteralExpression -> {
-        listOfNotNull(DirectivePropertyMappingCompletionScope(element),
-                      getHostBindingsScopeForLiteral(element),
-                      getCssClassesInJSLiteralInHtmlAttributeScope(element),
-                      getViewChildrenScopeForLiteral(element),
-                      element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
+        listOfNotNull(
+          DirectivePropertyMappingCompletionScope(element),
+          getHostBindingsScopeForLiteral(element),
+          getCssClassesInJSLiteralInHtmlAttributeScope(element),
+          getViewChildrenScopeForLiteral(element),
+          element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) },
+        ) + getCreateComponentBindingsScopeForLiteral(element)
       }
       is JSObjectLiteralExpression -> {
         var decorator: ES6Decorator? = null
@@ -247,6 +246,33 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       .parentOfType<TypeScriptClass>()
       ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
       ?.let { ViewChildrenScope(it, isChildrenViewCall) }
+  }
+
+  private fun getCreateComponentBindingsScopeForLiteral(element: JSLiteralExpression): List<WebSymbolsScope> {
+    val callExpr =
+      element.context
+        ?.let { if (it is JSArgumentList) it.parent else it }
+        ?.asSafely<JSCallExpression>()
+      ?: return emptyList()
+    val functionName = getFunctionNameFromIndex(callExpr)
+                         ?.takeIf { it == TWO_WAY_BINDING_FUN || it == OUTPUT_BINDING_FUN || it == INPUT_BINDING_FUN }
+                       ?: return emptyList()
+    val objectLiteral =
+      callExpr.context
+        ?.let { if (it is JSArrayLiteralExpression) it.parent else it }
+        ?.asSafely<JSProperty>()
+        ?.takeIf { it.name == BINDINGS_PROP }
+        ?.context?.asSafely<JSObjectLiteralExpression>()
+      ?: return emptyList()
+    return listOf(
+      CreateComponentDirectiveBindingScope(objectLiteral),
+      when (functionName) {
+        INPUT_BINDING_FUN -> CreateComponentDirectiveBindingScope.INPUTS_SCOPE
+        OUTPUT_BINDING_FUN -> CreateComponentDirectiveBindingScope.OUTPUTS_SCOPE
+        TWO_WAY_BINDING_FUN -> CreateComponentDirectiveBindingScope.IN_OUTS_SCOPE
+        else -> throw IllegalStateException("Unexpected function name: $functionName")
+      }
+    )
   }
 
   private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): WebSymbolsScope? =
