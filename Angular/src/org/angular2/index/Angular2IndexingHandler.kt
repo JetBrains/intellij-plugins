@@ -59,6 +59,10 @@ import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.ivy.Angular2IvySymbolDef
 import org.angular2.entities.source.Angular2SourceUtil.isStylesheet
 import org.angular2.lang.Angular2Bundle
+import org.angular2.web.scopes.CREATE_COMPONENT_FUN
+import org.angular2.web.scopes.INPUT_BINDING_FUN
+import org.angular2.web.scopes.OUTPUT_BINDING_FUN
+import org.angular2.web.scopes.TWO_WAY_BINDING_FUN
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.NonNls
 import java.util.function.Predicate
@@ -477,7 +481,7 @@ private val STUBBED_DECORATOR_LIKE_FUNCTIONS = setOf(
   INPUT_FUN, OUTPUT_FUN, OUTPUT_FROM_OBSERVABLE_FUN, MODEL_FUN)
 
 private val STUBBED_FUNCTIONS = setOf(
-  FORWARD_REF_FUN)
+  FORWARD_REF_FUN, INPUT_BINDING_FUN, OUTPUT_BINDING_FUN, TWO_WAY_BINDING_FUN, CREATE_COMPONENT_FUN)
 
 private val STUBBED_CONSTRUCTORS = setOf(
   HOST_ATTRIBUTE_TOKEN_CLASS)

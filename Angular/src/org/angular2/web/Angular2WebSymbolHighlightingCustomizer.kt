@@ -18,6 +18,7 @@ import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 
@@ -27,6 +28,7 @@ class Angular2WebSymbolHighlightingCustomizer : WebSymbolHighlightingCustomizer 
     when (qualifiedKind) {
       NG_DIRECTIVE_INPUTS -> Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       NG_DIRECTIVE_OUTPUTS -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
+      NG_DIRECTIVE_IN_OUTS -> Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME
       NG_DIRECTIVE_ATTRIBUTE_SELECTORS, NG_DIRECTIVE_ONE_TIME_BINDINGS -> XmlHighlighterColors.HTML_ATTRIBUTE_NAME
       NG_DIRECTIVE_ELEMENT_SELECTORS -> XmlHighlighterColors.HTML_TAG_NAME
       else -> null
@@ -35,6 +37,7 @@ class Angular2WebSymbolHighlightingCustomizer : WebSymbolHighlightingCustomizer 
   override fun getDefaultHostClassTextAttributes(): Map<Class<out PsiExternalReferenceHost>, TextAttributesKey> =
     mapOf(
       Angular2HtmlPropertyBinding::class.java to Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME,
+      Angular2HtmlBananaBoxBinding::class.java to Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME,
       Angular2HtmlEvent::class.java to Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME,
     )
 
@@ -52,11 +55,13 @@ class Angular2WebSymbolHighlightingCustomizer : WebSymbolHighlightingCustomizer 
             Angular2AttributeType.EVENT -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
             else -> null
           }
-        } else if (host is Angular2HtmlPropertyBinding && level == 0) {
-          return Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
-        } else if (host is Angular2HtmlEvent && level == 0) {
-          return Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
-        }
+        } else if (level == 0)
+          return when (host) {
+            is Angular2HtmlPropertyBinding -> Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
+            is Angular2HtmlEvent -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
+            is Angular2HtmlBananaBoxBinding -> Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME
+            else -> null
+          }
       NG_PROPERTY_BINDINGS -> if (host is JSLiteralExpression) {
         return Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       }
