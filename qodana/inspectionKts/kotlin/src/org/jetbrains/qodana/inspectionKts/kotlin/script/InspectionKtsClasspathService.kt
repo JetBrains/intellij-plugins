@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.script
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.cl.PluginClassLoader
@@ -17,14 +18,15 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.application
 import com.intellij.util.io.URLUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
 import org.jetbrains.kotlin.idea.base.plugin.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.base.projectStructure.scope.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.base.projectStructure.toKaLibraryModule
@@ -37,6 +39,7 @@ import org.jetbrains.qodana.registry.QodanaRegistry
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.*
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
@@ -48,34 +51,47 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
     fun getInstanceIfCreated(): InspectionKtsClasspathService? = serviceIfCreated()
   }
 
+  internal class DependenciesScope(
+    private val roots: Set<VirtualFile>,
+    private val jarsDependenciesScope: NonClasspathDirectoriesScope,
+  ) {
+    fun getResolveScopeForFile(project: Project, file: VirtualFile): GlobalSearchScope? {
+      if (!isUnderDependenciesRoot(file)) return null
+
+      return GlobalSearchScope.union(
+        arrayOf(
+          ScriptDependencyAware.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
+          KotlinSourceFilterScope.libraryClasses(jarsDependenciesScope, project),
+          GlobalSearchScope.fileScope(project, file),
+        )
+      )
+    }
+
+    private fun isUnderDependenciesRoot(file: VirtualFile): Boolean {
+      if (roots.isEmpty()) {
+        return false
+      }
+
+      val isJar = file.fileSystem is JarFileSystem
+      val jarFile = if (isJar) {
+        VfsUtilCore.getVirtualFileForJar(file) ?: file
+      } else {
+        file
+      }
+      return VfsUtilCore.isUnder(jarFile, roots)
+    }
+  }
+
   fun collectClassPath(): List<File> {
     return classPath
   }
 
-  suspend fun isUnderDependenciesRoot(file: VirtualFile): Boolean {
-    val roots = dependenciesRoots.await()
-    if (roots.isEmpty()) {
-      return false
-    }
-
-    val isJar = file.fileSystem is JarFileSystem
-    val jarFile = if (isJar) {
-      VfsUtilCore.getVirtualFileForJar(file) ?: file
-    } else {
-      file
-    }
-    return VfsUtilCore.isUnder(jarFile, roots)
+  fun currentDependenciesScope(): DependenciesScope? {
+    initializeDependenciesTask.start()
+    return dependenciesScope.get()
   }
 
-  suspend fun collectDependenciesScope(project: Project): GlobalSearchScope {
-    val dependenciesScope = dependenciesScope.await()
-    return GlobalSearchScope.union(
-      arrayOf(
-        ScriptDependencyAware.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
-        KotlinSourceFilterScope.libraryClasses(dependenciesScope, project),
-      )
-    )
-  }
+  private val dependenciesScope = AtomicReference<DependenciesScope?>(null)
 
   private val classPath: List<File> by lazy {
     if (isInspectionKtsResolveDisabled()) {
@@ -112,9 +128,24 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
     classPath.toList()
   }
 
-  private val dependenciesRoots: Deferred<Set<VirtualFile>> = scope.async(QodanaDispatchers.IO, start = CoroutineStart.LAZY) {
+  private val initializeDependenciesTask = scope.launch(context = QodanaDispatchers.Default, start = CoroutineStart.LAZY) {
+    val dependenciesRoots = collectDependenciesRoots()
+    val dependenciesScope = collectDependenciesScope()
+    this@InspectionKtsClasspathService.dependenciesScope.set(DependenciesScope(dependenciesRoots, dependenciesScope))
+
+    rehighlightProjectsFiles()
+  }
+
+  private fun rehighlightProjectsFiles() {
+    ProjectManager.getInstance().openProjects.forEach { project ->
+      PsiManagerEx.getInstanceEx(project).dropResolveCaches()
+      DaemonCodeAnalyzer.getInstance(project).restart()
+    }
+  }
+
+  private suspend fun collectDependenciesRoots(): Set<VirtualFile> {
     if (isInspectionKtsResolveDisabled()) {
-      return@async emptySet()
+      return emptySet()
     }
 
     val compiledFromSourcesRoot = if (AppMode.isDevServer() || PluginManagerCore.isRunningFromSources()) {
@@ -123,14 +154,17 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
       null
     }
     checkCanceled()
-    val homePath = StandardFileSystems.local().findFileByPath(PathManager.getHomePath())
+    val homePath = runInterruptible(QodanaDispatchers.IO) {
+      StandardFileSystems.local().findFileByPath(PathManager.getHomePath())
+    }
     checkCanceled()
-    val configPath = StandardFileSystems.local().findFileByPath(PathManager.getConfigPath())
-
-    setOfNotNull(homePath, configPath, compiledFromSourcesRoot)
+    val configPath = runInterruptible(QodanaDispatchers.IO) {
+      StandardFileSystems.local().findFileByPath(PathManager.getConfigPath())
+    }
+    return setOfNotNull(homePath, configPath, compiledFromSourcesRoot)
   }
 
-  private val dependenciesScope: Deferred<NonClasspathDirectoriesScope> = scope.async(QodanaDispatchers.IO, start = CoroutineStart.LAZY) {
+  private suspend fun collectDependenciesScope(): NonClasspathDirectoriesScope {
     val dependencies = classPath.mapNotNull { file ->
       val nioFile = file.toPath()
       checkCanceled()
@@ -141,7 +175,7 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
       }
       virtualFile
     }
-    NonClasspathDirectoriesScope(dependencies)
+    return NonClasspathDirectoriesScope(dependencies)
   }
 }
 
@@ -228,7 +262,9 @@ private suspend fun commonRoot(dependenciesJars: List<File>): VirtualFile? {
   if (commonRoot.isEmpty()) return null
 
   val rootFile = File(File.separator + commonRoot.joinToString(File.separator))
-  val root = StandardFileSystems.local().findFileByPath(rootFile.path) ?: return null
+  val root = runInterruptible(QodanaDispatchers.IO) {
+    StandardFileSystems.local().findFileByPath(rootFile.path) ?: return@runInterruptible null
+  }
   return root
 }
 
