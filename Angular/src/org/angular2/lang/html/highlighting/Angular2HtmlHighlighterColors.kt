@@ -2,6 +2,7 @@
 package org.angular2.lang.html.highlighting
 
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
 interface Angular2HtmlHighlighterColors {
@@ -36,7 +37,7 @@ interface Angular2HtmlHighlighterColors {
 
     @JvmField
     val NG_EXPRESSION: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
-      "NG.EXPRESSIONS", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
+      "NG.EXPRESSIONS", HighlighterColors.TEXT)
 
     @JvmField
     val NG_EXPANSION_FORM: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
