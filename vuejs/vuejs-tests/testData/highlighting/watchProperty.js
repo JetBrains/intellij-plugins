@@ -15,6 +15,9 @@ export default {
         bar: 3,
       };
     },
+    product() {
+      return <weak_warning descr="Unresolved variable or type foo">foo</weak_warning>;
+    },
   },
 
   watch: {
@@ -28,6 +31,10 @@ export default {
     },
 
     'element.foo': {
+      handler() {},
+    },
+
+    'product.fooBar': {
       handler() {},
     },
   },
