@@ -1,0 +1,66 @@
+### auto-generated section `build intellij.terraform.template` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+
+jvm_resources(
+  name = "template_resources",
+  files = glob(["resource/**/*"]),
+  strip_prefix = "resource"
+)
+
+jvm_resources(
+  name = "template_test_resources",
+  files = glob(["test-data/**/*"]),
+  strip_prefix = "test-data"
+)
+
+jvm_library(
+  name = "template",
+  module_name = "intellij.terraform.template",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/util",
+    "@community//plugins/IntelliLang:langInjection",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/lang-impl",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "//contrib/terraform",
+    "@community//platform/util:util-ui",
+  ],
+  runtime_deps = [":template_resources"]
+)
+
+jvm_library(
+  name = "template_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  associates = [":template"],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/util",
+    "@community//plugins/IntelliLang:langInjection",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/lang-impl",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "//contrib/terraform",
+    "//contrib/terraform:terraform_test_lib",
+    "@community//platform/util:util-ui",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+  ],
+  runtime_deps = [
+    ":template_resources",
+    ":template_test_resources",
+  ]
+)
+
+jvm_test(
+  name = "template_test",
+  runtime_deps = [":template_test_lib"]
+)
+### auto-generated section `build intellij.terraform.template` end
