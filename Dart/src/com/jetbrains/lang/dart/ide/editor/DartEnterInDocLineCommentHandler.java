@@ -1,7 +1,7 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.editor;
 
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -19,7 +19,7 @@ import com.jetbrains.lang.dart.ide.documentation.DartDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 
-public final class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapter {
+public final class DartEnterInDocLineCommentHandler implements EnterHandlerDelegate {
 
   // EnterInLineCommentHandler doesn't work well enough for Dart doc comments
   @Override

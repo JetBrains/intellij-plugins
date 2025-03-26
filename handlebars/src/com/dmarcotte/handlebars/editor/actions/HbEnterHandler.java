@@ -1,9 +1,9 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.psi.HbPsiFile;
 import com.dmarcotte.handlebars.psi.HbPsiUtil;
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Handler for custom plugin actions when {@code Enter} is typed by the user
  */
-public final class HbEnterHandler extends EnterHandlerDelegateAdapter {
+public final class HbEnterHandler implements EnterHandlerDelegate {
 
   @Override
   public Result preprocessEnter(final @NotNull PsiFile file,

@@ -1,7 +1,7 @@
 package com.intellij.dts.completion
 
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsEntry
@@ -18,7 +18,7 @@ import com.intellij.psi.util.endOffset
 import kotlin.math.max
 import kotlin.math.min
 
-class DtsSemicolonEnterHandler : EnterHandlerDelegateAdapter() {
+class DtsSemicolonEnterHandler : EnterHandlerDelegate {
   private fun isCommentOrWhitespace(token: IElementType): Boolean {
     return token in DtsTokenSets.comments || token == TokenType.WHITE_SPACE
   }

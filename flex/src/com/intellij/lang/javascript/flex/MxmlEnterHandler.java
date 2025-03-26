@@ -1,7 +1,8 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -16,7 +17,7 @@ import com.intellij.psi.xml.XmlComment;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
-public final class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
+public final class MxmlEnterHandler implements EnterHandlerDelegate {
   @Override
   public Result preprocessEnter(@NotNull PsiFile file,
                                 @NotNull Editor editor,

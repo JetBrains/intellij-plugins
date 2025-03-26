@@ -1,7 +1,7 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions.typedHandlers;
 
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
@@ -15,7 +15,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-public final class CfmlEnterHandler extends EnterHandlerDelegateAdapter {
+public final class CfmlEnterHandler implements EnterHandlerDelegate {
   @Override
   public Result preprocessEnter(final @NotNull PsiFile file,
                                 final @NotNull Editor editor,
