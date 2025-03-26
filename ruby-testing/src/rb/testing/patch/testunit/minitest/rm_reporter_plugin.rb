@@ -86,6 +86,10 @@ module Minitest
       "#{Minitest.class_nesting(@klass)}#{@class_name}.#{@method_name}"
     end
 
+    def parent_fqn
+      "#{Minitest.class_nesting(@klass)}#{@class_name}"
+    end
+
     def location
       begin
         location = klass.instance_method(@method_name).source_location
@@ -193,7 +197,7 @@ module Minitest
         test_data = @test_data[class_name][test_name]
         test_data.klass = klass if test_data.klass.nil? && !klass.nil?
         test_fqn = test_data.fqn
-        suite_fqn = test_fqn.split(/\./, 2).first
+        suite_fqn = test_data.parent_fqn
         debug("Test finished #{test_fqn}")
 
         normalized_test_name = normalize(test_name)
