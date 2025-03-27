@@ -127,11 +127,14 @@ object TfPsiPatterns {
         }
       })
 
-
   val LocalsRootBlock: PsiElementPattern.Capture<HCLBlock> =
     PlatformPatterns.psiElement(HCLBlock::class.java)
       .and(RootBlock)
       .with(createBlockPattern(HCL_LOCALS_IDENTIFIER))
+
+  val LocalsVariable: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+    .withParent(HCLObject::class.java)
+    .withSuperParent(2, LocalsRootBlock)
 
   val Backend: PsiElementPattern.Capture<HCLBlock> =
     PlatformPatterns.psiElement(HCLBlock::class.java)

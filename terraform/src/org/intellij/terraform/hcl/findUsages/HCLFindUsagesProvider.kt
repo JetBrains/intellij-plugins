@@ -10,6 +10,8 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.createHclLexer
 import org.intellij.terraform.hcl.psi.*
+import org.jetbrains.annotations.Nls
+import kotlin.toString
 
 open class HCLFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner(): WordsScanner? {
@@ -25,7 +27,8 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
         if (TfPsiPatterns.DynamicBlockIterator.accepts(psiElement.parent)) {
           return true
         }
-      } else if (TfPsiPatterns.ForVariable.accepts(psiElement)) {
+      }
+      else if (TfPsiPatterns.ForVariable.accepts(psiElement)) {
         return true
       }
     }
@@ -45,58 +48,59 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
   }
 
   override fun getType(element: PsiElement): String {
-    if (TfPsiPatterns.TerraformFile.accepts(element.containingFile)) {
-      val parent = element.parent
-
-      if (element is HCLBlock) {
-        @NlsSafe val type = element.getNameElementUnquoted(0)
-        if (TfPsiPatterns.RootBlock.accepts(element)) {
-          when (type) {
-            "module" -> return HCLBundle.message("HCLFindUsagesProvider.type.module")
-            "variable" -> return HCLBundle.message("HCLFindUsagesProvider.type.variable")
-            "output" -> return HCLBundle.message("HCLFindUsagesProvider.type.output.value")
-            "provider" -> return HCLBundle.message("HCLFindUsagesProvider.type.provider")
-            "resource" -> return HCLBundle.message("HCLFindUsagesProvider.type.resource")
-            "data" -> return HCLBundle.message("HCLFindUsagesProvider.type.data.source")
-
-            "terraform" -> return HCLBundle.message("HCLFindUsagesProvider.type.terraform.configuration")
-            "locals" -> return HCLBundle.message("HCLFindUsagesProvider.type.local.values")
-          }
-        }
-        if (TfPsiPatterns.Backend.accepts(element)){
-          return HCLBundle.message("HCLFindUsagesProvider.type.backend.configuration")
-        }
-        return "$type"
-      }
-
-      if (element is HCLProperty) {
-        if (TfPsiPatterns.LocalsRootBlock.accepts(parent?.parent)) {
-          return HCLBundle.message("HCLFindUsagesProvider.type.local.value")
-        }
-        return HCLBundle.message("HCLFindUsagesProvider.type.property")
-      }
-      if (element is HCLIdentifier) {
-        if (HCLPsiUtil.isPropertyValue(element)) {
-          if (TfPsiPatterns.DynamicBlockIterator.accepts(element.parent)) {
-            return HCLBundle.message("HCLFindUsagesProvider.type.dynamic.iterator")
-          }
-        } else if (TfPsiPatterns.ForVariable.accepts(element)) {
-          return HCLBundle.message("HCLFindUsagesProvider.type.for.loop.variable")
-        }
-      }
+    if (!TfPsiPatterns.TerraformFile.accepts(element.containingFile)) {
+      return getDefaultType(element)
     }
 
-    if (element is HCLBlock) {
-      return HCLBundle.message("HCLFindUsagesProvider.type.named.block", element.getNameElementUnquoted(0))
+    return when (element) {
+      is HCLBlock -> getBlockType(element)
+      is HCLProperty -> getPropertyType(element)
+      is HCLIdentifier -> getIdentifierType(element)
+      else -> getDefaultType(element)
     }
-    if (element is HCLProperty) {
-      return HCLBundle.message("HCLFindUsagesProvider.type.property")
+  }
+
+  private fun getBlockType(block: HCLBlock): @NlsSafe String {
+    val type = block.getNameElementUnquoted(0)
+
+    return when {
+      TfPsiPatterns.RootBlock.accepts(block) -> getRootBlockType(type)
+      TfPsiPatterns.Backend.accepts(block) -> HCLBundle.message("HCLFindUsagesProvider.type.backend.configuration")
+      else -> type.toString()
     }
-    if (element is PsiNamedElement) {
-      //      return element.name ?:
-      return HCLBundle.message("HCLFindUsagesProvider.type.untyped.named.element", element.javaClass.name)
-    }
-    return HCLBundle.message("HCLFindUsagesProvider.type.untyped.non.psi.named.element", element.node.elementType)
+  }
+
+  private fun getRootBlockType(type: String?): @NlsSafe String = when (type) {
+    "module" -> HCLBundle.message("HCLFindUsagesProvider.type.module")
+    "variable" -> HCLBundle.message("HCLFindUsagesProvider.type.variable")
+    "output" -> HCLBundle.message("HCLFindUsagesProvider.type.output.value")
+    "provider" -> HCLBundle.message("HCLFindUsagesProvider.type.provider")
+    "resource" -> HCLBundle.message("HCLFindUsagesProvider.type.resource")
+    "data" -> HCLBundle.message("HCLFindUsagesProvider.type.data.source")
+    "terraform" -> HCLBundle.message("HCLFindUsagesProvider.type.terraform.configuration")
+    "locals" -> HCLBundle.message("HCLFindUsagesProvider.type.local.values")
+    else -> type.toString()
+  }
+
+  private fun getPropertyType(property: PsiElement): @Nls String = when {
+    TfPsiPatterns.LocalsVariable.accepts(property) -> HCLBundle.message("HCLFindUsagesProvider.type.local.value")
+    else -> HCLBundle.message("HCLFindUsagesProvider.type.property")
+  }
+
+  private fun getIdentifierType(identifier: HCLIdentifier): @Nls String = when {
+    HCLPsiUtil.isPropertyValue(identifier) && TfPsiPatterns.DynamicBlockIterator.accepts(identifier.parent) ->
+      HCLBundle.message("HCLFindUsagesProvider.type.dynamic.iterator")
+    TfPsiPatterns.ForVariable.accepts(identifier) ->
+      HCLBundle.message("HCLFindUsagesProvider.type.for.loop.variable")
+    identifier.parent is HCLProperty -> getPropertyType(identifier.parent)
+    else -> getDefaultType(identifier)
+  }
+
+  private fun getDefaultType(element: PsiElement): @Nls String = when (element) {
+    is HCLBlock -> HCLBundle.message("HCLFindUsagesProvider.type.named.block", element.getNameElementUnquoted(0))
+    is HCLProperty -> HCLBundle.message("HCLFindUsagesProvider.type.property")
+    is PsiNamedElement -> HCLBundle.message("HCLFindUsagesProvider.type.untyped.named.element", element.javaClass.name)
+    else -> HCLBundle.message("HCLFindUsagesProvider.type.untyped.non.psi.named.element", element.node.elementType)
   }
 
   override fun getDescriptiveName(element: PsiElement): String {
@@ -105,10 +109,8 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
   }
 
   override fun getNodeText(element: PsiElement, useFullName: Boolean): String {
-    if (useFullName) {
-      if (element is HCLBlock) {
-        return element.fullName
-      }
+    if (useFullName && element is HCLBlock) {
+      return element.fullName
     }
     return getDescriptiveName(element)
   }
