@@ -3,7 +3,7 @@ package org.intellij.terraform.hcl.editor
 
 import com.intellij.ide.navigationToolbar.StructureAwareNavBarModelExtension
 import com.intellij.lang.Language
-import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.DataMap
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.HCLLanguage
@@ -14,8 +14,8 @@ import org.intellij.terraform.hcl.psi.HCLProperty
 import javax.swing.Icon
 
 internal class HCLNavBarExtension : StructureAwareNavBarModelExtension() {
-  override fun getLeafElement(dataContext: DataContext): PsiElement? {
-    val leafElement = super.getLeafElement(dataContext)
+  override fun getLeafElement(dataProvider: DataMap): PsiElement? {
+    val leafElement = super.getLeafElement(dataProvider)
     if (leafElement is HCLObject) {
       return leafElement.parent
     }
