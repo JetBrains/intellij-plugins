@@ -9,52 +9,57 @@ import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingResult
 import org.jetbrains.qodana.staticAnalysis.sarif.CONTEXT_MAX_LINES_MARGIN
 import kotlin.collections.isNotEmpty
 
-class IncorrectFormattingResultHandlerQodana: IncorrectFormattingResultHandler {
+class IncorrectFormattingResultHandlerQodana : IncorrectFormattingResultHandler {
   companion object {
-    private const val MAXIMUM_SNIPPET_SIZE = 10
     private const val CONTEXT_SIZE_AROUND_PROBLEM = 2 * CONTEXT_MAX_LINES_MARGIN + 1
-    private const val SELECTED_SNIPPETS_AMOUNT = 3
+    const val QODANA_INCORRECT_FORMATTING_MAXIMUM_SNIPPET_SIZE_PROPERTY: String = "qodana.incorrect.formatting.maximum.snippet.size"
+    const val QODANA_INCORRECT_FORMATTING_SELECTED_SNIPPETS_AMOUNT_PROPERTY: String = "qodana.incorrect.formatting.selected.snippets.amount"
   }
+
   override fun getResults(reportPerFile: Boolean, helper: IncorrectFormattingInspectionHelper): Array<ProblemDescriptor>? {
     val allProblems = helper.createAllReports()
-    if (!allProblems.isNullOrEmpty()) {
-      val selectedDescriptors = selectDescriptorsForSnippets(allProblems, SELECTED_SNIPPETS_AMOUNT)
-      return arrayOf(
-        helper.createGlobalReport().withRelatedLocations(
-          selectedDescriptors.map { problemDescriptor ->
-            ProblemRelatedLocation(problemDescriptor as ProblemDescriptorBase)
-          }
-        )
+    if (allProblems.isNullOrEmpty()) return arrayOf(helper.createGlobalReport())
+    val maximumSnippetSize = Integer.getInteger(QODANA_INCORRECT_FORMATTING_MAXIMUM_SNIPPET_SIZE_PROPERTY, 10)
+    val selectedSnippetsAmount = Integer.getInteger(QODANA_INCORRECT_FORMATTING_SELECTED_SNIPPETS_AMOUNT_PROPERTY, 3)
+    val selectedDescriptors = selectDescriptorsForSnippets(allProblems, selectedSnippetsAmount, maximumSnippetSize)
+    return arrayOf(
+      helper.createGlobalReport().withRelatedLocations(
+        selectedDescriptors.map { problemDescriptor ->
+          ProblemRelatedLocation(problemDescriptor as ProblemDescriptorBase)
+        }
       )
-    }
-    return arrayOf(helper.createGlobalReport())
+    )
   }
 
   private fun selectDescriptorsForSnippets(
     descriptors: Array<ProblemDescriptor>,
-    snippetsAmount: Int
+    snippetsAmount: Int,
+    maximumSnippetSize: Int
   ): List<ProblemDescriptor> {
     val sortedDescriptors = descriptors.sortedBy { it.lineNumber }
 
     val groups = mutableListOf<MutableList<ProblemDescriptor>>()
     var currentGroup = mutableListOf<ProblemDescriptor>()
-
     var minimalLineInCurrentGroup = 0
     var lastLineInCurrentGroup = 0
+
+    fun resetCurrentGroup(descriptor: ProblemDescriptor) {
+      currentGroup = mutableListOf(descriptor)
+      minimalLineInCurrentGroup = getProblemFirstLineNumber(descriptor)
+      lastLineInCurrentGroup = getProblemLastLineNumber(descriptor)
+    }
+
     for (descriptor in sortedDescriptors) {
       if (currentGroup.isEmpty()) {
-        currentGroup.add(descriptor)
-        minimalLineInCurrentGroup = getProblemFirstLineNumber(descriptor)
-        lastLineInCurrentGroup = getProblemLastLineNumber(descriptor)
+        resetCurrentGroup(descriptor)
         continue
       }
-      if (getProblemFirstLineNumber(descriptor) - minimalLineInCurrentGroup > MAXIMUM_SNIPPET_SIZE ||
+      if (getProblemFirstLineNumber(descriptor) - minimalLineInCurrentGroup > maximumSnippetSize ||
           getProblemFirstLineNumber(descriptor) - lastLineInCurrentGroup > CONTEXT_SIZE_AROUND_PROBLEM) {
         groups.add(currentGroup)
-        currentGroup = mutableListOf(descriptor)
-        minimalLineInCurrentGroup = getProblemFirstLineNumber(descriptor)
-        lastLineInCurrentGroup = getProblemLastLineNumber(descriptor)
-      } else {
+        resetCurrentGroup(descriptor)
+      }
+      else {
         currentGroup.add(descriptor)
         lastLineInCurrentGroup = getProblemLastLineNumber(descriptor)
       }

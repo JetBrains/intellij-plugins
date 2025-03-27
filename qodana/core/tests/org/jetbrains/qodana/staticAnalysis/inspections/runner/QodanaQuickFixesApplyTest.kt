@@ -10,7 +10,7 @@ import com.intellij.psi.*
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
-import org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerProviderQodana.Companion.QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY
+import org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerProviderQodana.Companion.QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY
 import org.junit.Test
 import kotlin.io.path.absolutePathString
 
@@ -24,20 +24,26 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
 
   @Test
   fun testIncorrectFormattingSimple() {
-    System.setProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
-    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+    withNewIncorrectFormattingOutput {
+      runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+      assertIncorrectFormattingRegionInvariant()
+    }
   }
 
   @Test
   fun testIncorrectFormatting() {
-    System.setProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
-    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+    withNewIncorrectFormattingOutput {
+      runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+      assertIncorrectFormattingRegionInvariant()
+    }
   }
 
   @Test
   fun testIncorrectFormattingWithAnotherInspections() {
-    System.setProperty(QODANA_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
-    runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+    withNewIncorrectFormattingOutput {
+      runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+      assertIncorrectFormattingRegionInvariant()
+    }
   }
 
   @Test
@@ -51,6 +57,23 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
     registerGlobalTool(tool)
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     runTestWithProfilePath(getTestDataPath("profile.yaml").absolutePathString())
+  }
+
+  private fun assertIncorrectFormattingRegionInvariant() {
+    val results = manager.qodanaRunner.sarifRun.results
+    results.filter { it.properties?.get("problemType") == ProblemType.INCORRECT_FORMATTING.toString() }.forEach { result ->
+      for (location in result.locations) {
+        assertEquals(location.physicalLocation?.region?.startLine, 0)
+        assertEquals(location.physicalLocation?.region?.startColumn, 0)
+        assertEquals(location.physicalLocation?.region?.charLength, 0)
+      }
+    }
+  }
+
+  private fun withNewIncorrectFormattingOutput(action: () -> Unit) {
+    System.setProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
+    action()
+    System.clearProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY)
   }
 }
 
