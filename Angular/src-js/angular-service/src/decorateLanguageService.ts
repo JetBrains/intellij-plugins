@@ -54,7 +54,7 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
         let generatedRangePosStart = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.start.line, generatedRange.start.character)
         let generatedRangePosEnd = ts.getPositionOfLineAndCharacter(generatedFile, generatedRange.end.line, generatedRange.end.character)
 
-        const sourceRange = toSourceRange(undefined, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, false, it => it.types || it.reverseTypes);
+        const sourceRange = toSourceRange(undefined, language, serviceScript, generatedRangePosStart, generatedRangePosEnd, true, it => it.types || it.reverseTypes);
 
         if (sourceRange !== undefined) {
           let targetFile = program?.getSourceFile(sourceRange[0])
