@@ -345,6 +345,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "app.component.html")
 
   fun testCreateComponentBindings() =
+    checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "ts")
 
 
   override fun setUp() {
