@@ -46,6 +46,9 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Companion.createElementCssSelector
 import org.angular2.lang.selector.Angular2SelectorMatcher
 import org.angular2.web.Angular2SymbolDelegate
+import org.angular2.web.scopes.INPUT_BINDING_FUN
+import org.angular2.web.scopes.OUTPUT_BINDING_FUN
+import org.angular2.web.scopes.TWO_WAY_BINDING_FUN
 
 
 private typealias `TcbOp|Identifier` = Any
@@ -658,6 +661,7 @@ private class TcbDirectiveInputsOp(
   private val scope: Scope,
   private val node: `TmplAstElement|TmplAstTemplate`,
   private val dir: TmplDirectiveMetadata,
+  private val isDynamicDirective: Boolean = false,
 ) : TcbOp() {
 
   override val optional get() = false
@@ -671,12 +675,17 @@ private class TcbDirectiveInputsOp(
 
     for (attr in boundAttrs) {
       // For bound inputs, the property is assigned the binding expression.
-      val expr = widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
-        .applyIf(!tcb.markAttributeExpressionAsTranspiled(attr.attribute)) {
-          Expression {
-            withIgnoreMappings({ append(this@applyIf) })
-          }
-        }
+      val expr =
+        if (isDynamicDirective)
+          // Custom WebStorm code to support dynamic bindings in createComponent calls
+          Expression((attr.attribute as TmplAstBoundAttribute).value!!.text)
+        else
+          widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
+            .applyIf(!tcb.markAttributeExpressionAsTranspiled(attr.attribute)) {
+              Expression {
+                withIgnoreMappings({ append(this@applyIf) })
+              }
+            }
 
       var assignment: Expression = expr
 
@@ -763,6 +772,9 @@ private class TcbDirectiveInputsOp(
         // Two-way bindings accept `T | WritableSignal<T>` so we have to unwrap the value.
         if (input.isTwoWayBinding && this.tcb.env.config.allowSignalsInTwoWayBindings) {
           assignment = unwrapWritableSignal(assignment, this.tcb)
+        } else if (isDynamicDirective) {
+          // Custom WebStorm code to support dynamic bindings in createComponent calls
+          assignment = Expression { append("(").append(assignment).append(")()") }
         }
 
         // Finally the assignment is extended by assigning it into the target expression.
@@ -1074,6 +1086,57 @@ private class TcbDirectiveOutputsOp(
         this.scope.addStatement(outputField)
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, EventParamType.Any)
         this.scope.addStatement(handler)
+      }
+    }
+
+    return null
+  }
+}
+
+/**
+ * A custom WebStorm `TcbOp` which generates code to check type argument to outputBinding call within
+ * createComponent.
+ *
+ * Executing this operation returns nothing.
+ */
+private class TcbDynamicDirectiveOutputsOp(
+  private val tcb: Context, private val scope: Scope, private val node: `TmplAstElement|TmplAstTemplate`,
+  private val dir: TmplDirectiveMetadata,
+) : TcbOp() {
+
+  override val optional get() = false
+
+  override fun execute(): Identifier? {
+    var dirId: Identifier? = null
+    val outputs = dir.outputs
+
+    for (output in this.node.outputs.values) {
+      if (output.type == ParsedEventType.Animation ||
+          !outputs.containsKey(output.name)) {
+        continue
+      }
+
+      val field = outputs[output.name]!!.fieldName
+
+      if (dirId == null) {
+        dirId = this.scope.resolve(this.node, this.dir)
+      }
+      val outputField = Expression {
+        append(dirId).append("[\"$field\"]", output.keySpan)
+      }
+
+      // For strict checking of directive events, generate a call to the `subscribe` method
+      // on the directive's output field to let type information flow into the handler function's
+      // `$event` parameter.
+      val handler = output.handler.firstOrNull() ?: continue
+      this.scope.addStatement {
+        append(outputField).append(".subscribe((\$event) => ")
+        codeBlock {
+          appendStatement {
+            append("\$event",output.keySpan).append(" = null! as (").append(handler.text).append(")")
+          }
+        }
+        append(")")
       }
     }
 
@@ -1696,6 +1759,71 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
       }
       return scope
     }
+
+    @JvmStatic
+    internal fun forDynamicBindings(
+      tcb: Context, dynamicBindings: List<DynamicDirectiveBinding>,
+    ): Scope {
+      val scope = Scope(tcb, null, null)
+      dynamicBindings.groupBy { it.directive }.forEach { (directive, bindings) ->
+        val directivesMetadata = directive?.let { buildMetadata(it) } ?: emptyList()
+
+        val node: `TmplAstElement|TmplAstTemplate` = TmplAstElement(
+          "div", null, directivesMetadata.toSet(),
+          bindings.filter { it.kind == INPUT_BINDING_FUN || it.kind == TWO_WAY_BINDING_FUN }
+            .associateBy({ it.name.value?.toString() ?: "<null>" }, {
+              TmplAstBoundAttribute(
+                name = it.name.value?.toString() ?: "<null>",
+                keySpan = it.name.textRange.let { TextRange(it.startOffset + 1, it.endOffset - 1) },
+                type = if (it.kind == TWO_WAY_BINDING_FUN) BindingType.TwoWay else BindingType.Property,
+                value = it.value as? JSExpression,
+                valueMappingOffset = 0,
+                sourceSpan = it.name.textRange
+              ).also {
+                tcb.markAttributeExpressionAsTranspiled(it)
+              }
+            }),
+          bindings.filter { it.kind == OUTPUT_BINDING_FUN }
+            .associateBy({ it.name.value?.toString() ?: "<null>" }, {
+              TmplAstBoundEvent(
+                name = it.name.value?.toString() ?: "<null>",
+                keySpan = it.name.textRange.let { TextRange(it.startOffset + 1, it.endOffset - 1) },
+                type = ParsedEventType.Regular,
+                handler = listOf(it.value),
+                handlerMappingOffset = 0,
+                target = null,
+                phase = null,
+                sourceSpan = it.name.textRange
+              )
+            }),
+          emptyMap(), emptyMap(), null, emptyList()
+        )
+
+        val dirMap = mutableMapOf<TmplDirectiveMetadata, Int>()
+        for (directiveMetadata in directivesMetadata) {
+          var directiveOp: TcbOp
+
+          if (!directiveMetadata.isGeneric) {
+            directiveOp = TcbNonGenericDirectiveTypeOp(scope.tcb, scope, node, directiveMetadata)
+          }
+          else if (!requiresInlineTypeCtor(directiveMetadata.typeScriptClass, scope.tcb.env) ||
+                   scope.tcb.env.config.useInlineTypeConstructors) {
+            directiveOp = TcbDirectiveCtorOp(scope.tcb, scope, node, directiveMetadata)
+          }
+          else {
+            directiveOp = TcbGenericDirectiveTypeWithAnyParamsOp(scope.tcb, scope, node, directiveMetadata)
+          }
+
+          scope.opQueue.add(directiveOp)
+          dirMap[directiveMetadata] = scope.opQueue.lastIndex
+
+          scope.opQueue.add(TcbDirectiveInputsOp(tcb, scope, node, directiveMetadata, isDynamicDirective = true))
+          scope.opQueue.add(TcbDynamicDirectiveOutputsOp(tcb, scope, node, directiveMetadata))
+        }
+        scope.directiveOpMap[node] = dirMap
+      }
+      return scope
+    }
   }
 
   /** Registers a local variable with a scope. */
@@ -2210,7 +2338,7 @@ private open class TcbExpressionTranslator(
   override fun visitElement(element: PsiElement) {
     if (element is LeafPsiElement) {
       val text = when (element.elementType) {
-        JSTokenTypes.BACKQUOTE ->  "`"
+        JSTokenTypes.BACKQUOTE -> "`"
         JSTokenTypes.RBRACE -> "}"
         JSTokenTypes.LBRACE -> "{"
         JSTokenTypes.DOLLAR -> "$"

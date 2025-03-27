@@ -7,10 +7,10 @@ import {
   MAPPING_FLAG_COMPLETION,
   MAPPING_FLAG_FORMAT,
   MAPPING_FLAG_NAVIGATION,
+  MAPPING_FLAG_REVERSE_TYPES,
   MAPPING_FLAG_SEMANTIC,
   MAPPING_FLAG_STRUCTURE,
   MAPPING_FLAG_TYPES,
-  MAPPING_FLAG_REVERSE_TYPES,
 } from "./mappings"
 
 export class AngularVirtualCode implements VirtualCode {
@@ -20,6 +20,8 @@ export class AngularVirtualCode implements VirtualCode {
   public mappings: CodeMapping[] = []
 
   public associatedScriptMappings: Map<string, CodeMapping[]> = new Map<string, CodeMapping[]>();
+
+  public preventLeadingOffset: boolean = true
 
   get id(): string {
     return "main"
@@ -40,7 +42,9 @@ export class AngularVirtualCode implements VirtualCode {
   ): AngularVirtualCode {
     this.associatedScriptMappings.clear()
     if (transpiledTemplate && this.isTemplateInSync(ts, snapshot, ctx, transpiledTemplate)) {
+      this.preventLeadingOffset = !this.requiresTrailingSpaces(snapshot, transpiledTemplate)
       this.snapshot = transpiledTemplate.snapshot
+      // : createScriptSnapshot(snapshot.getText(0, snapshot.getLength()).replaceAll(/[^\n\r]/g, " ") + transpiledTemplate.snapshot.getText(0, transpiledTemplate.snapshot.getLength()))
       this.mappings = []
       transpiledTemplate.mappings.forEach(mappingSet => {
         let mappingsWithData: CodeMapping[]
@@ -110,6 +114,7 @@ export class AngularVirtualCode implements VirtualCode {
       })
     }
     else {
+      this.preventLeadingOffset = true
       this.snapshot = snapshot
       this.mappings = [{
         generatedOffsets: [0],
@@ -137,8 +142,7 @@ export class AngularVirtualCode implements VirtualCode {
     transpiledTemplate: AngularTranspiledTemplate,
   ) {
     const sourceText = getNormalizedSnapshotText(snapshot)
-    if (!getNormalizedSnapshotText(transpiledTemplate.snapshot).startsWith(sourceText)
-      || sourceText !== transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
+    if (sourceText !== transpiledTemplate.sourceCode[ts.server.toNormalizedPath(this.fileName)]) {
       return false
     }
     else if (transpiledTemplate.mappings.find(mapping => {
@@ -148,6 +152,14 @@ export class AngularVirtualCode implements VirtualCode {
       return false
     }
     return true
+  }
+
+  private requiresTrailingSpaces(
+    snapshot: ts.IScriptSnapshot,
+    transpiledTemplate: AngularTranspiledTemplate,
+  ) {
+    const sourceText = getNormalizedSnapshotText(snapshot)
+    return !getNormalizedSnapshotText(transpiledTemplate.snapshot).startsWith(sourceText)
   }
 }
 

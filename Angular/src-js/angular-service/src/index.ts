@@ -50,7 +50,9 @@ function loadLanguagePlugins(ts: typeof import('tsc-ide-plugin/tsserverlibrary.s
             code: rootVirtualCode,
             extension: ".ts",
             scriptKind: ts.ScriptKind.TS,
-            preventLeadingOffset: true,
+            get preventLeadingOffset() {
+              return rootVirtualCode.preventLeadingOffset
+            }
           }
         }
       }
