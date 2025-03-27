@@ -5,8 +5,8 @@ import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageLoadErrorReporter;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
-import com.intellij.coverage.FailedLoadCoverageResult;
-import com.intellij.coverage.LoadCoverageResult;
+import com.intellij.coverage.FailedCoverageLoadingResult;
+import com.intellij.coverage.CoverageLoadingResult;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.testing.CoverageProjectDataLoader;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,7 +27,7 @@ public final class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @Override
-  public @NotNull LoadCoverageResult loadCoverageDataWithLogging(
+  public @NotNull CoverageLoadingResult loadCoverageData(
     @NotNull File sessionDataFile,
     @Nullable CoverageSuite baseCoverageSuite,
     @NotNull CoverageLoadErrorReporter reporter
@@ -39,12 +39,12 @@ public final class KarmaCoverageRunner extends CoverageRunner {
       }
       catch (Exception e) {
         LOG.warn("Can't read coverage data", e);
-        return new FailedLoadCoverageResult(e, true);
+        return new FailedCoverageLoadingResult(e, true);
       }
     }
     String message = "The localProjectRoot is not set";
     LOG.warn(message);
-    return new FailedLoadCoverageResult(message);
+    return new FailedCoverageLoadingResult(message);
   }
 
   public void setTargetRun(@NotNull NodeTargetRun targetRun) {

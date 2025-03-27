@@ -1,10 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
-import com.intellij.coverage.CoverageLoadListener
-import com.intellij.coverage.FailedLoadCoverageResult
-import com.intellij.coverage.LoadCoverageResult
-import com.intellij.coverage.NotSupportedCoverageResult
-import com.intellij.coverage.SuccessLoadCoverageResult
+import com.intellij.coverage.CoverageLoadingListener
+import com.intellij.coverage.FailedCoverageLoadingResult
+import com.intellij.coverage.CoverageLoadingResult
+import com.intellij.coverage.SuccessCoverageLoadingResult
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -12,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 const val PRINTED_EXCEPTION_LIMIT: Int = 10
 
-class QodanaCoverageLoadListener: CoverageLoadListener {
+class QodanaCoverageLoadingListener: CoverageLoadingListener {
 
   companion object {
     fun buildTooManyErrorMessage(filePath: String): String =
@@ -26,13 +25,11 @@ class QodanaCoverageLoadListener: CoverageLoadListener {
     reporter.reportMessage(1, "Started loading coverage from $coverageFile...")
   }
 
-  override fun reportCoverageLoaded(result: LoadCoverageResult, coverageFile: File) {
+  override fun reportCoverageLoaded(result: CoverageLoadingResult, coverageFile: File) {
     when (result) {
-      is FailedLoadCoverageResult ->
+      is FailedCoverageLoadingResult ->
         reportError(coverageFile, "Could not load coverage from file $coverageFile: ${result.reason}", result.exception)
-      is NotSupportedCoverageResult ->
-        reportError(coverageFile, "Could not load coverage from file $coverageFile: class ${result.clazz} didn't implement coverage loading interface")
-      is SuccessLoadCoverageResult -> reporter.reportMessage(1, "Coverage from file $coverageFile loaded successfully.")
+      is SuccessCoverageLoadingResult -> reporter.reportMessage(1, "Coverage from file $coverageFile loaded successfully.")
     }
   }
 
