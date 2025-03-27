@@ -16,7 +16,7 @@ import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.PRINTED_EXCEPTION_LIMIT
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadListener
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadingListener
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
 import org.junit.Test
 import java.io.BufferedOutputStream
@@ -136,7 +136,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
     assertTrue(expectedErrorMessageRegex.findAll(stdErr).count() == PRINTED_EXCEPTION_LIMIT)
 
     // checks that message about more exceptions was printed exactly once
-    val expectedErrorMessage = QodanaCoverageLoadListener.buildTooManyErrorMessage(coverageFilePath)
+    val expectedErrorMessage = QodanaCoverageLoadingListener.buildTooManyErrorMessage(coverageFilePath)
     assertTrue(expectedErrorMessage.toRegex().findAll(stdErr).count() == 1)
   }
 

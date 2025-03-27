@@ -5,8 +5,8 @@
   </dependencies>
 
   <projectListeners>
-    <listener class="org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadListener"
-              topic="com.intellij.coverage.CoverageLoadListener"/>
+    <listener class="org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadingListener"
+              topic="com.intellij.coverage.CoverageLoadingListener"/>
   </projectListeners>
 
   <extensionPoints>
