@@ -10,12 +10,12 @@ import {FormControl, FormGroup} from '@angular/forms';
                 <div formGroupName="foo">
                     <input formControlName="bar" placeholder="Last name"/>
                 </div>
-                <div formGroupName="<warning descr="Unrecognized name">bar</warning>">
+                <div formGroupName="<warning descr="Unrecognized Angular Form group name">bar</warning>">
                     <input formControlName="baz" placeholder="Last name"/>
                 </div>
             </div>
             <input formControlName="email" placeholder="Email"/>
-            <input formControlName="<warning descr="Unrecognized name">emails</warning>" placeholder="Email"/>
+            <input formControlName="<warning descr="Unrecognized Angular Form control name">emails</warning>" placeholder="Email"/>
         </form>
         <form [formGroup]="foo">
             <input formControlName="email" placeholder="Email"/>
@@ -44,9 +44,9 @@ export class NestedFormGroupComp {
 
   check() {
     this.form.get(['name', 'foo', 'bar'])
-    this.form.get(['name', 'foo', '<warning descr="Unrecognized name">baz</warning>', 'bar'])
-    this.form.get(['email', '<warning descr="Unrecognized name">first</warning>', 'second'])
-    this.form.get(['<warning descr="Unrecognized name">foo</warning>', 'first'])
+    this.form.get(['name', 'foo', '<warning descr="Unrecognized Angular Form control, array or group name">baz</warning>', 'bar'])
+    this.form.get(['email', '<warning descr="Unrecognized Angular Form control, array or group name">first</warning>', 'second'])
+    this.form.get(['<warning descr="Unrecognized Angular Form control, array or group name">foo</warning>', 'first'])
     this.form.get('name');
     this.form.get('name.first');
     this.form.get('name.first.<warning descr="Missing name"></warning>');

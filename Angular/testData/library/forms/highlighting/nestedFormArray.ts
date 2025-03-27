@@ -5,19 +5,19 @@ import {FormControl, FormGroup, FormArray} from '@angular/forms';
    selector: 'nested-form-groups',
    template: `
         <form [formGroup]="form">
-            <div formGroupName="<warning descr="Unrecognized name">first</warning>">
+            <div formGroupName="<warning descr="Unrecognized Angular Form group name">first</warning>">
                 <input formControlName="first" placeholder="First name"/>
             </div>
             <div formArrayName="first">
-                <input formControlName="<warning descr="Unrecognized name">first</warning>" placeholder="First name"/>
+                <input formControlName="<warning descr="Unrecognized Angular Form control name">first</warning>" placeholder="First name"/>
                 <input formControlName="12" placeholder="First name"/>
-                <div formGroupName="<warning descr="Unrecognized name">12</warning>"></div>
-                <div formArrayName="<warning descr="Unrecognized name">12</warning>"></div>
+                <div formGroupName="<warning descr="Unrecognized Angular Form group name">12</warning>"></div>
+                <div formArrayName="<warning descr="Unrecognized Angular Form array name">12</warning>"></div>
             </div>
             <form formGroupName="group">
-                <input formControlName="<warning descr="Unrecognized name">email</warning>" placeholder="Email"/>
+                <input formControlName="<warning descr="Unrecognized Angular Form control name">email</warning>" placeholder="Email"/>
                 <div formArrayName="members">
-                    <input formControlName="<warning descr="Unrecognized name">email</warning>" placeholder="Email"/>
+                    <input formControlName="<warning descr="Unrecognized Angular Form control name">email</warning>" placeholder="Email"/>
                     <input formControlName="23" placeholder="Email"/>
                 </div>
             </form>
@@ -36,11 +36,11 @@ export class NestedFormGroupComp {
 
   check() {
     this.form.get(['first', '1'])
-    this.form.get(['first', '<warning descr="Unrecognized name">foo</warning>'])
-    this.form.get(['group', 'members', '<warning descr="Unrecognized name">23.4</warning>'])
+    this.form.get(['first', '<warning descr="Unrecognized Angular Form control, array or group name">foo</warning>'])
+    this.form.get(['group', 'members', '<warning descr="Unrecognized Angular Form control, array or group name">23.4</warning>'])
     this.form.get(['first', '1'])
-    this.form.get(['first', '<warning descr="Unrecognized name">foo</warning>', 'bar'])
-    this.form.get(['group', 'members', '<warning descr="Unrecognized name">23.4</warning>'])
+    this.form.get(['first', '<warning descr="Unrecognized Angular Form control, array or group name">foo</warning>', 'bar'])
+    this.form.get(['group', 'members', '<warning descr="Unrecognized Angular Form control, array or group name">23.4</warning>'])
     this.form.get('first.1')
     this.form.get('first.<warning descr="Unrecognized name">foo</warning>')
     this.form.get('group.members.23.4')

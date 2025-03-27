@@ -6,9 +6,9 @@ import {FormControl, FormGroup} from '@angular/forms';
    template: `
         <form [formGroup]="form">
             <div formGroupName="name">
-                <input formControlName="<warning descr="Unrecognized name">first</warning>" placeholder="First name"/>
+                <input formControlName="<warning descr="Unrecognized Angular Form control name">first</warning>" placeholder="First name"/>
             </div>
-            <input formControlName="<warning descr="Unrecognized name">email</warning>" placeholder="Email"/>
+            <input formControlName="<warning descr="Unrecognized Angular Form control name">email</warning>" placeholder="Email"/>
         </form>
     `,
   standalone: false,

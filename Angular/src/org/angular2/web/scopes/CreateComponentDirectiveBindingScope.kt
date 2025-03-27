@@ -34,11 +34,11 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
   : WebSymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
-    val INPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "inputs",
+    val INPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "Angular directive input",
                                                                   true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
-    val OUTPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "outputs",
+    val OUTPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "Angular directive output",
                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
-    val IN_OUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "inOuts",
+    val IN_OUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "Angular directive two-way binding",
                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
   }
 
