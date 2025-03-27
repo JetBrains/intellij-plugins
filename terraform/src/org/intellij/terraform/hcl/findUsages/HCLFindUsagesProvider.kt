@@ -19,28 +19,16 @@ open class HCLFindUsagesProvider : FindUsagesProvider {
   }
 
   override fun canFindUsagesFor(psiElement: PsiElement): Boolean {
-    if (psiElement !is PsiNamedElement || psiElement !is HCLElement) {
-      return false
-    }
+    if (psiElement !is PsiNamedElement || psiElement !is HCLElement) return false
+
     if (psiElement is HCLIdentifier) {
-      if (HCLPsiUtil.isPropertyValue(psiElement)) {
-        if (TfPsiPatterns.DynamicBlockIterator.accepts(psiElement.parent)) {
-          return true
-        }
-      }
-      else if (TfPsiPatterns.ForVariable.accepts(psiElement)) {
-        return true
-      }
+      val isDynamicIterator = HCLPsiUtil.isPropertyValue(psiElement) && TfPsiPatterns.DynamicBlockIterator.accepts(psiElement.parent)
+      val isForVariable = TfPsiPatterns.ForVariable.accepts(psiElement)
+
+      if (isDynamicIterator || isForVariable) return true
     }
-    if (TfPsiPatterns.RootBlock.accepts(psiElement)) {
-      if (TfPsiPatterns.LocalsRootBlock.accepts(psiElement)) {
-        return false
-      }
-      if (TfPsiPatterns.TerraformRootBlock.accepts(psiElement)) {
-        return false
-      }
-    }
-    return true
+
+    return !TfPsiPatterns.LocalsRootBlock.accepts(psiElement) && !TfPsiPatterns.TerraformRootBlock.accepts(psiElement)
   }
 
   override fun getHelpId(psiElement: PsiElement): String? {
