@@ -6,9 +6,9 @@ import {FormControl, FormGroup, <weak_warning descr="TS6133: 'Validators' is dec
    template: `
         <form [formGroup]="form">
             <div formGroupName="name">
-                <div formArrayName="<warning descr="Unrecognized name">first</warning>"/>
+                <div formArrayName="<warning descr="Unrecognized Angular Form array name">first</warning>"/>
             </div>
-            <input formControlName="<warning descr="Unrecognized name">email</warning>" placeholder="Email"/>
+            <input formControlName="<warning descr="Unrecognized Angular Form control name">email</warning>" placeholder="Email"/>
         </form>
     `,
   standalone: false,

@@ -148,7 +148,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   private val inputOutputReference = ReferencingWebSymbol.create(
     JS_STRING_LITERALS,
-    "Directive property",
+    "Angular directive property",
     AngularEmptyOrigin,
     NG_DIRECTIVE_INPUTS,
     NG_DIRECTIVE_OUTPUTS,

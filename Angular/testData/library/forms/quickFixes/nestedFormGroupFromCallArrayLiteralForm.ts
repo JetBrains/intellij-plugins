@@ -16,7 +16,7 @@ export class NestedFormGroupComp {
   });
 
   check() {
-    this.form.get(['name', '<warning descr="Unrecognized name">foo</warning>', 'bar'])
-    this.form.get(['email', '<warning descr="Unrecognized name">first</warning>'])
+    this.form.get(['name', '<warning descr="Unrecognized Angular Form control, array or group name">foo</warning>', 'bar'])
+    this.form.get(['email', '<warning descr="Unrecognized Angular Form control, array or group name">first</warning>'])
   }
 }

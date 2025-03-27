@@ -7,7 +7,7 @@ import {FormGroup, FormBuilder, Validators} from '@angular/forms';
         <div [formGroup]="form">
             <div formGroupName="name">
                 <div formGroupName="more">
-                    <div formControlName="<warning descr="Unrecognized name">foo</warning>">
+                    <div formControlName="<warning descr="Unrecognized Angular Form control name">foo</warning>">
                     </div>
                 </div>
             </div>

@@ -49,7 +49,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
             .filter { it.name != templateName }
             .forEach(consumer)
         }
-        consumer(ReferencingWebSymbol.create(NG_TEMPLATE_BINDINGS, "Template binding mapping for ${templateBindings.templateName}",
+        consumer(ReferencingWebSymbol.create(NG_TEMPLATE_BINDINGS, "Angular template binding mapping",
                                              Angular2SymbolOrigin.empty,
                                              NG_DIRECTIVE_INPUTS))
       }

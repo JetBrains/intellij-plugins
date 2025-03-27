@@ -15,13 +15,13 @@ import org.angular2.web.NG_TEMPLATE_BINDING_KEYWORDS
 object TemplateBindingKeywordsScope : WebSymbolsScope {
 
   private val KEYWORDS_REF_FOR_JS_SYMBOLS = ReferencingWebSymbol.create(
-    JS_SYMBOLS, "keywords", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    JS_SYMBOLS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   private val KEYWORDS_REF_FOR_JS_PROPERTIES = ReferencingWebSymbol.create(
-    JS_PROPERTIES, "keywords", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    JS_PROPERTIES, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingWebSymbol.create(
-    NG_TEMPLATE_BINDINGS, "keywords", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    NG_TEMPLATE_BINDINGS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     when (qualifiedKind) {

@@ -344,6 +344,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testHostAttributeToken() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "app.component.html")
 
+  fun testCreateComponentBindings() =
+
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

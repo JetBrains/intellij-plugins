@@ -70,17 +70,17 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form Control Name", WebSymbolOrigin.empty(),
+    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form control name", WebSymbolOrigin.empty(),
     NG_FORM_CONTROL_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form Array Name", WebSymbolOrigin.empty(),
+    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form array name", WebSymbolOrigin.empty(),
     NG_FORM_ARRAY_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form Group Name", WebSymbolOrigin.empty(),
+    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form group name", WebSymbolOrigin.empty(),
     NG_FORM_GROUP_PROPS,
   )
 

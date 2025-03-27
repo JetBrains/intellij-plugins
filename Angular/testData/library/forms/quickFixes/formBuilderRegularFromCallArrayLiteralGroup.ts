@@ -21,6 +21,6 @@ export class DisabledFormControlComponent {
   )
 
   check() {
-    this.form.get(["name", "<warning descr="Unrecognized name">check</warning>"])
+    this.form.get(["name", "<warning descr="Unrecognized Angular Form control, array or group name">check</warning>"])
   }
 }
