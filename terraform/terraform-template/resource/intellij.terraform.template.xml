@@ -1,4 +1,4 @@
-<idea-plugin package="com.intellij.terraform.template">
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="com.intellij.modules.lang"/>
