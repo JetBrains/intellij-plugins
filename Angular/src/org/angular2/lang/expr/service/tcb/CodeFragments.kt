@@ -1,12 +1,13 @@
 package org.angular2.lang.expr.service.tcb
 
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
 import org.angular2.entities.Angular2Directive
-import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
+import org.angular2.lang.html.Angular2HtmlFile
 import java.util.*
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
@@ -48,14 +49,9 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     templateFile: Angular2HtmlFile,
     diagnostics: Set<Angular2TemplateTranspiler.Diagnostic>,
   ): Angular2TemplateTranspiler.TranspiledTemplate =
-    object : Angular2TemplateTranspiler.TranspiledTemplate {
+    object : TranspiledCodeImpl(diagnostics), Angular2TemplateTranspiler.TranspiledTemplate {
       override val templateFile: Angular2HtmlFile = templateFile
       override val generatedCode: String = code.toString()
-      override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
-      override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
-      override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
-      override val diagnostics: Set<Angular2TemplateTranspiler.Diagnostic> = diagnostics
-      override val nameMappings: List<Pair<Int, Map<String, String>>> = this@Expression.nameMappings
     }
 
   fun asTranspiledHostBindings(
@@ -63,17 +59,29 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     inlineCodeRanges: List<TextRange>,
     diagnostics: Set<Angular2TemplateTranspiler.Diagnostic>,
   ): Angular2TemplateTranspiler.TranspiledHostBindings =
-    object : Angular2TemplateTranspiler.TranspiledHostBindings {
+    object : TranspiledCodeImpl(diagnostics), Angular2TemplateTranspiler.TranspiledHostBindings {
       override val cls: TypeScriptClass = cls
       override val inlineCodeRanges: List<TextRange> = inlineCodeRanges
       override val generatedCode: String = code.toString()
-      override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
-      override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
-      override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
-      override val diagnostics: Set<Angular2TemplateTranspiler.Diagnostic> = diagnostics
-      override val nameMappings: List<Pair<Int, Map<String, String>>> = this@Expression.nameMappings
     }
 
+  fun asTranspiledCreateComponentBindings(
+    call: JSCallExpression,
+    inlineCodeRanges: List<TextRange>,
+    diagnostics: Set<Angular2TemplateTranspiler.Diagnostic>,
+  ): Angular2TemplateTranspiler.TranspiledCreateComponentBindings =
+    object : TranspiledCodeImpl(diagnostics), Angular2TemplateTranspiler.TranspiledCreateComponentBindings {
+      override val call: JSCallExpression = call
+      override val inlineCodeRanges: List<TextRange> = inlineCodeRanges
+      override val generatedCode: String = code.toString()
+    }
+
+  private abstract inner class TranspiledCodeImpl(final override val diagnostics: Set<Angular2TemplateTranspiler.Diagnostic>) : Angular2TemplateTranspiler.TranspiledCode {
+    final override val sourceMappings: List<Angular2TemplateTranspiler.SourceMapping> = this@Expression.sourceMappings.toList()
+    final override val contextVarMappings: List<Angular2TemplateTranspiler.ContextVarMapping> = this@Expression.contextVarMappings.toList()
+    final override val directiveVarMappings: List<Angular2TemplateTranspiler.DirectiveVarMapping> = this@Expression.directiveVarMappings.toList()
+    final override val nameMappings: List<Pair<Int, Map<String, String>>> = this@Expression.nameMappings
+  }
 
   interface ExpressionBuilder {
     val isIgnoreDiagnostics: Boolean

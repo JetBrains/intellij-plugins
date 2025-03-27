@@ -312,6 +312,13 @@ internal enum class ParsedEventType {
   TwoWay,
 }
 
+internal data class DynamicDirectiveBinding(
+  val directive: Angular2Directive?,
+  val name: JSLiteralExpression,
+  val value: JSElement,
+  val kind: String,
+)
+
 internal class BoundTarget(component: Angular2Component?) {
 
   private val referenceMap: Map<Any?, TemplateEntity>

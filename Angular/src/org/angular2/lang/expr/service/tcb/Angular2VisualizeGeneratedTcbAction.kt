@@ -17,7 +17,6 @@ import kotlinx.coroutines.withContext
 import org.angular2.Angular2InjectionUtils
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.html.Angular2HtmlDialect
 
 private class Angular2VisualizeGeneratedTcbAction : AnAction() {
   override fun getActionUpdateThread(): ActionUpdateThread =
@@ -34,23 +33,22 @@ private class Angular2VisualizeGeneratedTcbAction : AnAction() {
         || Angular2LangUtil.isAngular2HtmlFileType(it)
         || Angular2LangUtil.isAngular2SvgFileType(it)
       } && Angular2LangUtil.isAngular2Context(file)) {
-      val element = Angular2InjectionUtils.getElementAtCaretFromContext(e.dataContext)
-      if (element?.containingFile?.language is Angular2HtmlDialect) {
-        e.presentation.isVisible = true
-        e.presentation.isEnabled = true
-      }
+      e.presentation.isVisible = true
+      e.presentation.isEnabled = true
     }
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val element = Angular2InjectionUtils.getElementAtCaretFromContext(e.dataContext) ?: return
-    val component = Angular2EntitiesProvider.findTemplateComponent(element) ?: return
 
     // Ensure that we will recreate TCB
     element.manager.dropPsiCaches()
     runWithModalProgressBlocking(element.project, "Building TCBs") {
       val transpiledTemplate =
-        readAction { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(component.sourceElement.containingFile ?: return@readAction null)}
+        readAction {
+          Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(element.containingFile
+                                                                            ?: return@readAction null)
+        }
         ?: return@runWithModalProgressBlocking
 
 

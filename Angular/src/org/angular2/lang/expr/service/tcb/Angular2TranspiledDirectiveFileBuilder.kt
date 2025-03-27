@@ -1,9 +1,10 @@
 package org.angular2.lang.expr.service.tcb
 
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
-import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
+import com.intellij.lang.javascript.psi.JSStatement
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
@@ -18,17 +19,22 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMapping
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledCode
+import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledCreateComponentBindings
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledHostBindings
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.TranspiledTemplate
 import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.web.scopes.CREATE_COMPONENT_FUN
 import java.util.*
 
 object Angular2TranspiledDirectiveFileBuilder {
@@ -91,14 +97,24 @@ object Angular2TranspiledDirectiveFileBuilder {
           PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
-    return@withServiceTraceSpan buildTranspiledDirectiveFile(cache.environment, directiveFile, hostBindings, templates)
+    val createComponentBindings = cache.createComponentCalls.mapIndexedNotNull { index, call ->
+      CachedValuesManager.getCachedValue(call) {
+        val context = getDirectiveFileCache(call.containingFile)!!.environment
+        CachedValueProvider.Result.create(
+          Angular2TemplateTranspiler.transpileCreateComponentBindings(context, call, (index + 1).toString()),
+          PsiModificationTracker.MODIFICATION_COUNT)
+      }
+    }
+    return@withServiceTraceSpan buildTranspiledDirectiveFile(cache.environment, directiveFile, hostBindings,
+                                                             createComponentBindings, templates)
   }
 
   private fun getDirectiveFileCache(file: PsiFile): DirectiveFileCache? =
     CachedValuesManager.getCachedValue(file) {
       val directives = SmartList<TypeScriptClass>()
       val components = SmartList<TypeScriptClass>()
-      file.acceptChildren(object : JSElementVisitor() {
+      val createComponentCalls = SmartList<JSCallExpression>()
+      file.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
         override fun visitTypeScriptClass(typeScriptClass: TypeScriptClass) {
           if (Angular2DecoratorUtil.findDecorator(typeScriptClass, true, Angular2DecoratorUtil.COMPONENT_DEC) != null) {
             components.add(typeScriptClass)
@@ -107,17 +123,21 @@ object Angular2TranspiledDirectiveFileBuilder {
           else if (Angular2DecoratorUtil.findDecorator(typeScriptClass, true, Angular2DecoratorUtil.DIRECTIVE_DEC) != null) {
             directives.add(typeScriptClass)
           }
+          super.visitTypeScriptClass(typeScriptClass)
         }
 
-        override fun visitES6ExportDefaultAssignment(node: ES6ExportDefaultAssignment) {
-          node.acceptChildren(this)
+        override fun visitJSCallExpression(node: JSCallExpression) {
+          super.visitJSCallExpression(node)
+          if (getFunctionNameFromIndex(node) == CREATE_COMPONENT_FUN) {
+            createComponentCalls.add(node)
+          }
         }
       })
       CachedValueProvider.Result.create(
         if (directives.isEmpty() && components.isEmpty())
           null
         else
-          DirectiveFileCache(directives, components, Angular2TemplateTranspiler.createFileContext(file)),
+          DirectiveFileCache(directives, components, createComponentCalls, Angular2TemplateTranspiler.createFileContext(file)),
         PsiModificationTracker.MODIFICATION_COUNT
       )
     }
@@ -125,6 +145,7 @@ object Angular2TranspiledDirectiveFileBuilder {
   private class DirectiveFileCache(
     val directives: List<TypeScriptClass>,
     val components: List<TypeScriptClass>,
+    val createComponentCalls: List<JSCallExpression>,
     val environment: Environment,
   )
 
@@ -132,14 +153,13 @@ object Angular2TranspiledDirectiveFileBuilder {
     context: Angular2TemplateTranspiler.FileContext,
     directiveFile: PsiFile,
     directiveHostBindings: List<TranspiledHostBindings>,
+    createComponentBindings: List<TranspiledCreateComponentBindings>,
     templates: List<TranspiledTemplate>,
   ): TranspiledDirectiveFile {
     val generatedCode = StringBuilder()
-    val componentFileText = directiveFile.text
-    generatedCode.append(componentFileText)
+    val inlineTemplateRanges = SmartList<TextRange>()
 
     val injectedLanguageManager = InjectedLanguageManager.getInstance(directiveFile.project)
-    val inlineTemplateRanges = SmartList<TextRange>()
 
     val componentFileMappings = SmartList<SourceMapping>()
     val directiveFileContextVarMappings = mutableMapOf<TextRange, TextRange>()
@@ -167,6 +187,29 @@ object Angular2TranspiledDirectiveFileBuilder {
       diagnostics.putValues(sourceFile, template.diagnostics.map { it.offsetBy(sourceMappingOffset) })
       nameMaps.putValues(sourceFile, template.nameMappings.map { (offset, map) -> Pair(offset + sourceMappingOffset, map) })
     }
+
+    val componentFileText = directiveFile.text
+    var lastOffset = 0
+    var totalCodeOffset = 0
+    val insertedCodeMap = TreeMap<Int, Int>()
+    insertedCodeMap[0] = 0
+    for (bindings in createComponentBindings) {
+      val callOffset = bindings.call.parentOfType<JSStatement>()?.endOffset ?: continue
+      generatedCode.append(componentFileText.substring(lastOffset, callOffset))
+      lastOffset = callOffset
+
+      val start = generatedCode.length
+      generatedCode.append("\n/* TCB for create component bindings  */\n\n")
+      val generatedMappingsOffset = generatedCode.length
+      generatedCode.append(bindings.generatedCode)
+      inlineTemplateRanges.addAll(bindings.inlineCodeRanges)
+      contributeInlineTranspilation(bindings, bindings.call.containingFile, generatedMappingsOffset, 0)
+      totalCodeOffset += generatedCode.length - start
+      insertedCodeMap[callOffset] = totalCodeOffset
+      inlineTemplateRanges.add(TextRange(callOffset, callOffset))
+    }
+
+    generatedCode.append(componentFileText.substring(lastOffset))
 
     generatedCode.append("\n\n/* Angular type checking code */\n")
     generatedCode.append(context.getCommonCode())
@@ -213,13 +256,14 @@ object Angular2TranspiledDirectiveFileBuilder {
     inlineTemplateRanges.sortBy { it.startOffset }
     var lastRangeEnd = 0
     for (inlineTemplateRange in inlineTemplateRanges + TextRange(componentFileText.length, componentFileText.length)) {
+      val totalCodeOffset = insertedCodeMap.floorEntry(inlineTemplateRange.startOffset - 1)?.value ?: 0
       val sourceLength = inlineTemplateRange.startOffset - lastRangeEnd
       componentFileMappings.add(SourceMappingData(
         lastRangeEnd,
         sourceLength,
-        lastRangeEnd,
+        totalCodeOffset + lastRangeEnd,
         sourceLength,
-        diagnosticsOffset = lastRangeEnd,
+        diagnosticsOffset = totalCodeOffset + lastRangeEnd,
         diagnosticsLength = sourceLength,
         flags = EnumSet.allOf(SourceMappingFlag::class.java),
       ))
