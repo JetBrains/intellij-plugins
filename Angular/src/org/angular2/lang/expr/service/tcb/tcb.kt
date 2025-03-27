@@ -2245,7 +2245,9 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
   private fun appendDeferredBlock(block: TmplAstDeferredBlock) {
     this.appendDeferredTriggers(block, block.triggers)
     this.appendDeferredTriggers(block, block.prefetchTriggers)
-    this.appendDeferredTriggers(block, block.hydrateTriggers)
+    if (block.hydrateTriggers.`when` != null) {
+      this.opQueue.add(TcbExpressionOp(this.tcb, this, block.hydrateTriggers.`when`.value))
+    }
     this.appendChildren(block)
     this.appendChildren(block.placeholder)
     this.appendChildren(block.loading)
