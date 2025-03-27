@@ -2393,21 +2393,7 @@ private open class TcbExpressionTranslator(
   }
 
   override fun visitJSReferenceExpression(node: JSReferenceExpression) {
-    // TODO: this is actually a bug, because `ImplicitReceiver`: `ThisReceiver`. Consider a
-    // case when the explicit `this` read is inside a template with a context that also provides the
-    // variable name being read:
-    // ```
-    // <ng-template let-a>{{this.a}}</ng-template>
-    // ```
-    // Clearly, `this.a` should refer to the class property `a`. However, because of this code,
-    // `this.a` will refer to `let-a` on the template context.
-    //
-    // Note that the generated code is actually consistent with this bug. To fix it, we have to:
-    // - Check `!(ast.receiver instanceof ThisReceiver)` in this condition
-    // - Update `ingest.ts` in the Template Pipeline (see the corresponding comment)
-    // - Turn off legacy TemplateDefinitionBuilder
-    // - Fix g3, and release in a major version
-    if (node.qualifier == null || node.qualifier is JSThisExpression) {
+    if (node.qualifier == null) {
       if (node.referenceName == "undefined") {
         result.append("undefined", node.textRange, supportTypes = true)
         return
