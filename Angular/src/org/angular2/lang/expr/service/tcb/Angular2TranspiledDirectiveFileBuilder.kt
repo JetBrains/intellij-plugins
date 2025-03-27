@@ -263,7 +263,7 @@ object Angular2TranspiledDirectiveFileBuilder {
         sourceLength,
         totalCodeOffset + lastRangeEnd,
         sourceLength,
-        diagnosticsOffset = totalCodeOffset + lastRangeEnd,
+        diagnosticsOffset = lastRangeEnd,
         diagnosticsLength = sourceLength,
         flags = EnumSet.allOf(SourceMappingFlag::class.java),
       ))

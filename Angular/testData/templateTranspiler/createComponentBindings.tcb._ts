@@ -1,0 +1,92 @@
+import {
+  Component,
+  createComponent,
+  Directive,
+  EnvironmentInjector, EventEmitter, Input,
+  inputBinding,
+  model, Output, outputBinding,
+  signal,
+  twoWayBinding
+} from '@angular/core';
+import {TestBed} from '@angular/core/testing';
+
+@Component({
+  selector: 'app-root',
+  template: '',
+})
+export class Comp {
+  value = model(12);
+
+  @Input("hostInput")
+  input!: string;
+
+  @Output()
+  event = new EventEmitter<{value: number}>();
+}
+
+@Directive({
+  selector: '[foo]'
+})
+export class Dir {
+  value = model(12);
+
+  @Input("dirInput")
+  input!: string;
+
+  @Output("the-event")
+  event = new EventEmitter<{value: number}>();
+}
+
+const events: {value: number}[] = [];
+const value = signal('initial');
+let dirValue = 'initial';
+const hostElement = document.createElement('div');
+const environmentInjector = TestBed.inject(EnvironmentInjector);
+
+function createTheComponent() {
+  const ref = createComponent(Comp, {
+    hostElement,
+    environmentInjector,
+    directives: [{
+      type: Dir,
+      bindings: [
+        twoWayBinding('value', value),
+        inputBinding('dirInput', () => dirValue),
+        inputBinding('diInput', () => dirValue),
+        outputBinding<{ value: string }>('the-event', (event) => events.push(event)),
+        outputBinding<{ value: number }>('events', (event) => events.push(event)),
+      ],
+    },
+    ],
+    bindings: [
+      inputBinding('hostInput', value),
+      inputBinding('hosInput', value),
+      twoWayBinding('value', value),
+    ],
+  });
+/* TCB for create component bindings  */
+
+function _tcb_createComponent_1(){
+var _t1 = null! as Comp;
+_t1.input = (value)();
+_t1.value[_i1.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = _i1.ɵunwrapWritableSignal(value);
+var _t2 = null! as Dir;
+_t2.value[_i1.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = _i1.ɵunwrapWritableSignal(value);
+_t2.input = (() => dirValue)();
+_t2["event"].subscribe(($event) => {
+$event = null! as ({ value: string })
+})
+};
+  return ref
+}
+
+
+
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/core";
+
+/* TCB for createComponentBindings.ts */
+
+function _tcb1(this: Comp) {
+}

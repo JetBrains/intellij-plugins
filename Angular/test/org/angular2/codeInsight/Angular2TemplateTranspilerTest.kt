@@ -130,6 +130,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     configureFileName = "templateLiteralInline.ts"
   )
 
+  fun testCreateComponentBindings() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
@@ -143,11 +147,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
                            ?: throw IllegalStateException("Cannot build transpiled file")
 
       val fileText = componentFile.text
-      assert(transpiledFile.generatedCode.startsWith(fileText)) {
-        "Generated code does not start with the original file contents"
-      }
+      val prefixLength = if (transpiledFile.generatedCode.startsWith(fileText))
+        StringUtil.skipWhitespaceOrNewLineForward(transpiledFile.generatedCode, fileText.length)
+      else
+        0
 
-      val prefixLength = StringUtil.skipWhitespaceOrNewLineForward(transpiledFile.generatedCode, fileText.length)
       checkTextByFile(
         transpiledFile.generatedCode.substring(prefixLength),
         if (dir) "${testName}/tcb._ts" else "$testName.tcb._ts"
