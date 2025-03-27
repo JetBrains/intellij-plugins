@@ -1056,7 +1056,7 @@ private class TcbDirectiveOutputsOp(
 
       if (this.tcb.env.config.checkTypeOfOutputEvents && output.name.endsWith(OUTPUT_CHANGE_SUFFIX)) {
         val inputName = output.name.removeSuffix(OUTPUT_CHANGE_SUFFIX)
-        isSplitTwoWayBinding(inputName, output, this.node.inputs, this.tcb)
+        checkSplitTwoWayBinding(inputName, output, this.node.inputs, this.tcb)
       }
       // TODO(alxhub): consider supporting multiple fields with the same property name for outputs.
       val field = outputs[output.name]!!.fieldName
@@ -1172,7 +1172,7 @@ private class TcbUnclaimedOutputsOp(
 
       if (this.tcb.env.config.checkTypeOfOutputEvents && output.name.endsWith(OUTPUT_CHANGE_SUFFIX)) {
         val inputName = output.name.removeSuffix(OUTPUT_CHANGE_SUFFIX)
-        if (isSplitTwoWayBinding(inputName, output, this.element.inputs, this.tcb)) {
+        if (checkSplitTwoWayBinding(inputName, output, this.element.inputs, this.tcb)) {
           // Skip this event handler as the error was already handled.
           continue
         }
@@ -2958,7 +2958,7 @@ private fun tcbEventHandlerExpression(ast: JSElement?, offset: Int, tcb: Context
   }
 }
 
-private fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, inputs: Map<String, TmplAstBoundAttribute>, tcb: Context): Boolean {
+private fun checkSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, inputs: Map<String, TmplAstBoundAttribute>, tcb: Context): Boolean {
   val input = inputs[inputName]
   if (input == null || input.sourceSpan != output.sourceSpan) {
     return false
