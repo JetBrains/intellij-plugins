@@ -139,6 +139,7 @@ inspections:
       - "scope#$gitignore" # $gitignore scope available only in qodana execution
       - "scope#test:*..*"
       - "scope#file:buildSrc/*"
+      - "**.md" # Provides lot's of false positives on embedded code examples
   - group: "category:JavaScript and TypeScript"
     ignore:
       - "**/resources/**"
