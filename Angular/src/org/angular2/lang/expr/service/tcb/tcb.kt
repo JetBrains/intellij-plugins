@@ -36,6 +36,7 @@ import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
+import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.`$IMPLICIT`
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
@@ -2267,7 +2268,9 @@ private open class TcbExpressionTranslator(
   }
 
   override fun visitJSReferenceExpression(node: JSReferenceExpression) {
-    if (node.qualifier == null) {
+    if (node.qualifier == null
+        // Keep old behavior for versions <19
+        || (node.qualifier is JSThisExpression && !Angular2LangUtil.isAtLeastAngularVersion(node, Angular2LangUtil.AngularVersion.V_19))) {
       if (node.referenceName == "undefined") {
         result.append("undefined", node.textRange, supportTypes = true)
         return

@@ -1,5 +1,5 @@
-<!-- For Angular <19 `this.div` should resolve to #div -->
-{{this.div | <error descr="Unresolved pipe json">json</error>}}
+<!-- For Angular 19+ `this.div` should not resolve to #div -->
+{{this.<error descr="TS2339: Property 'div' does not exist on type 'MyComponent'.">div</error> | <error descr="Unresolved pipe json">json</error>}}
 
 {{this | <error descr="Unresolved pipe json">json</error>}}
 
