@@ -707,6 +707,15 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void lsp_connectToDtd(String uri) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateConnectToDtd(id, uri), new BasicConsumer() {
+      @Override
+      public void received() { }
+    });
+  }
+
+  @Override
   public void server_shutdown() {
     shutdownRequested = true;
     stopWatcher();

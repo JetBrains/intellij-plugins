@@ -61,6 +61,7 @@ import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.completion.DartCompletionTimerExtension;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
+import com.jetbrains.lang.dart.ide.toolingDaemon.DartToolingDaemonService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -170,6 +171,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   private boolean myHaveShownInitialProgress;
   private boolean mySentAnalysisBusy;
+  private @Nullable String myDtdUri;
 
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
   private final @NotNull Set<String> myFilePathsWithErrors = new HashSet<>();
@@ -1459,7 +1461,9 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public @NotNull List<TypeHierarchyItem> search_getTypeHierarchy(final @NotNull VirtualFile file, final int _offset, final boolean superOnly) {
+  public @NotNull List<TypeHierarchyItem> search_getTypeHierarchy(final @NotNull VirtualFile file,
+                                                                  final int _offset,
+                                                                  final boolean superOnly) {
     final List<TypeHierarchyItem> results = new ArrayList<>();
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -2291,6 +2295,12 @@ public final class DartAnalysisServerService implements Disposable {
 
         // This must be done after myServer is set, and should be done each time the server starts.
         registerPostfixCompletionTemplates();
+
+        myDtdUri = null;
+        String dtdUri = DartToolingDaemonService.getInstance(myProject).getUri();
+        if (dtdUri != null) {
+          connectToDtd(dtdUri);
+        }
       }
       catch (Exception e) {
         LOG.warn("Failed to start Dart analysis server", e);
@@ -2383,6 +2393,20 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
+  public void connectToDtd(@NotNull String uri) {
+    AnalysisServer server = myServer;
+    if (server == null) {
+      return;
+    }
+
+    boolean supportsWorkspaceApplyEdits = isDartSdkVersionSufficientForWorkspaceApplyEdits(mySdkVersion);
+    // Connection to DTD is used for server-initiated edits (workspace.applyEdits)
+    if (supportsWorkspaceApplyEdits && !uri.equals(myDtdUri)) {
+      myDtdUri = uri;
+      server.lsp_connectToDtd(uri);
+    }
+  }
+
   public void waitForAnalysisToComplete_TESTS_ONLY(final @NotNull VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
 
@@ -2443,7 +2467,9 @@ public final class DartAnalysisServerService implements Disposable {
     LOG.error(message);
   }
 
-  private @NonNls @NotNull String getShortErrorMessage(@NonNls @NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
+  private @NonNls @NotNull String getShortErrorMessage(@NonNls @NotNull String methodName,
+                                                       @Nullable String filePath,
+                                                       @NotNull RequestError error) {
     return "Error from " + methodName +
            (filePath == null ? "" : (", file = " + filePath)) +
            ", SDK version = " + mySdkVersion +

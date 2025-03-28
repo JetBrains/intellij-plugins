@@ -1075,6 +1075,12 @@ public class RequestUtilities {
     return buildJsonObjectRequest(idValue, METHOD_SERVER_SET_CAPABILITIES, params);
   }
 
+  public static JsonObject generateConnectToDtd(String idValue, String uri) {
+    JsonObject lspParams = new JsonObject();
+    lspParams.addProperty("uri", uri);
+    return generateLSPMessage(idValue, "dart/connectToDtd", lspParams);
+  }
+
   /**
    * Generate and return a {@value #METHOD_SERVER_SHUTDOWN} request.
    * <p>
