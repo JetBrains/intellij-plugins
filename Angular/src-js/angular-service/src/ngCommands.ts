@@ -61,8 +61,10 @@ type TranspiledTemplateArguments = {
 type GetGeneratedElementTypeArguments = {
   file: string;
   projectFileName?: string;
-  startOffset: number,
-  endOffset: number,
+  range: {
+    start: ts.LineAndCharacter;
+    end: ts.LineAndCharacter;
+  },
   forceReturnType: boolean,
 }
 
@@ -114,6 +116,6 @@ function ngGetGeneratedElementTypeHandler(ts: typeof import('tsc-ide-plugin/tsse
   let project = (projectFileName ? projectService.findProject(projectFileName) : undefined)
     ?? projectService.getDefaultProjectForFile(fileName, true)
   return project?.getLanguageService()?.webStormNgGetGeneratedElementType(
-    ts, fileName, requestArguments.startOffset, requestArguments.endOffset, requestArguments.forceReturnType, projectService.cancellationToken as any
+    ts, fileName, requestArguments.range, requestArguments.forceReturnType, projectService.cancellationToken as any
   ) ?? {responseRequired: true, response: {}}
 };

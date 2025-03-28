@@ -18,6 +18,8 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Position
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Range
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
@@ -31,6 +33,7 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiDocumentManager
@@ -39,6 +42,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
@@ -279,35 +283,42 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
     override fun getGeneratedElementType(transpiledFile: TranspiledDirectiveFile, templateFile: PsiFile, generatedRange: TextRange): JSType? = withServiceTraceSpan("getGeneratedElementType", myLifecycleSpan) {
+      ThreadingAssertions.assertReadAccess()
       val componentVirtualFile = transpiledFile.originalFile.originalFile.virtualFile
                                  ?: return@withServiceTraceSpan null
       val evaluationLocation = InjectedLanguageManager.getInstance(templateFile.project).getTopLevelFile(templateFile.originalFile).virtualFile
                                ?: return@withServiceTraceSpan null
-      commitDocumentsWithNBRA(componentVirtualFile)
+      commitDocuments(componentVirtualFile)
       if (componentVirtualFile != evaluationLocation) {
         // If template is not inlined, we need to ensure that both component and template files are up-to-date
-        commitDocumentsWithNBRA(evaluationLocation)
+        commitDocuments(evaluationLocation)
       }
       // Ensure that transpiled template is up-to-date
       refreshTranspiledTemplateIfNeeded(componentVirtualFile)
+      ?: return@withServiceTraceSpan null
 
       val filePath = JSLanguageServiceUtil.awaitFuture(getFilePath(componentVirtualFile), JSLanguageServiceUtil.getShortTimeout())
                      ?: return@withServiceTraceSpan null
 
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
-      val projectFileName = TypeScriptConfigUtil.getProjectFileName(transpiledFile.originalFile.originalFile)
-      val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, generatedRange.startOffset, generatedRange.endOffset)
+      val projectFileName = TypeScriptConfigUtil.getConfigForPsiFile(transpiledFile.originalFile.originalFile)
+                              ?.configFile
+                              ?.let { JSLanguageServiceUtil.awaitFuture(getFilePath(it), JSLanguageServiceUtil.getShortTimeout()) }
+
+      val range = Range(
+        start = StringUtil.offsetToLineColumn(transpiledFile.generatedCode, generatedRange.startOffset).let { Position(it.line, it.column) },
+        end = StringUtil.offsetToLineColumn(transpiledFile.generatedCode, generatedRange.endOffset).let { Position(it.line, it.column) }
+      )
+
+      val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, range)
       return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeToJSType(
         transpiledFile.originalFile, null, Angular2GetGeneratedElementTypeCommand(args))
     }
   }
 
-  private fun commitDocumentsWithNBRA(virtualFile: VirtualFile) {
-    val updateContext = JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
-      createUpdateContext(virtualFile)
-    }
-    update(updateContext)
+  private fun commitDocuments(virtualFile: VirtualFile) {
+    update(createUpdateContext(virtualFile))
   }
 }
 
