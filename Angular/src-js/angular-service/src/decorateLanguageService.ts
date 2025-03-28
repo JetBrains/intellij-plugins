@@ -140,16 +140,20 @@ export function decorateNgLanguageServiceExtensions(
   unboundReverseMapper: UnboundReverseMapper,
   webStormGetElementType: TS.LanguageService["webStormGetElementType"]) {
   languageService.webStormNgGetGeneratedElementType = (
-    ts, fileName, startOffset, endOffset, forceReturnType, cancellationToken
+    ts, fileName, range, forceReturnType, cancellationToken
   ) => {
     let program = languageService.getProgram();
     if (!program) {
       return undefined
     }
-    const sourceFile = program.getSourceFile(fileName);
-    if (!sourceFile) {
-      return undefined
-    }
+
+    const [_serviceScript, targetScript, _sourceScript] = getServiceScript(language, fileName);
+    const generatedFile = targetScript ? program?.getSourceFile(targetScript.id) : undefined;
+    if (!generatedFile)
+      return undefined;
+
+    let startOffset = ts.getPositionOfLineAndCharacter(generatedFile, range.start.line, range.start.character)
+    let endOffset = ts.getPositionOfLineAndCharacter(generatedFile, range.end.line, range.end.character)
 
     return webStormGetElementType(ts, fileName, startOffset, endOffset, false, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
