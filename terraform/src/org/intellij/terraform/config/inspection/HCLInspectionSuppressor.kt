@@ -2,16 +2,18 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.codeInsight.daemon.impl.actions.AbstractBatchSuppressByNoInspectionCommentFix
 import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.codeInspection.SuppressionUtil
+import com.intellij.codeInspection.util.IntentionName
 import com.intellij.openapi.application.ReadAction
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import java.util.regex.Pattern
 
 internal class HCLInspectionSuppressor : InspectionSuppressor {
@@ -41,13 +43,19 @@ internal class HCLInspectionSuppressor : InspectionSuppressor {
 
   override fun getSuppressActions(element: PsiElement?, toolId: String): Array<SuppressQuickFix> {
     if (element == null) return SuppressQuickFix.EMPTY_ARRAY
-    return listOfNotNull(
-      HCLSuppressInspectionFix(toolId, HCLBlock::class.java) {
-        HCLBundle.message("inspection.suppressor.suppress.for.element.action.name",
-                          it.getContainer(element)?.getNameElementUnquoted(0) ?: "block")
-      }.takeIf { it.getContainer(element) != null },
-      HCLSuppressInspectionFix(toolId, HCLBundle.message("inspection.suppressor.suppress.for.property.action.name"),
-                               HCLProperty::class.java).takeIf { it.getContainer(element) != null }
-    ).toTypedArray()
+
+    return arrayOf(BlockSuppressQuickFix(toolId), PropertySuppressQuickFix(toolId))
   }
+}
+
+private class BlockSuppressQuickFix(toolId: String) : AbstractBatchSuppressByNoInspectionCommentFix(toolId, false) {
+  override fun getContainer(context: PsiElement?): HCLBlock? = context?.parentOfType<HCLBlock>()
+
+  override fun getText(): @IntentionName String = HCLBundle.message("suppress.inspection.block.action.name")
+}
+
+private class PropertySuppressQuickFix(toolId: String) : AbstractBatchSuppressByNoInspectionCommentFix(toolId, false) {
+  override fun getContainer(context: PsiElement?): HCLProperty? = context?.parentOfType<HCLProperty>()
+
+  override fun getText(): @IntentionName String = HCLBundle.message("suppress.inspection.property.action.name")
 }
