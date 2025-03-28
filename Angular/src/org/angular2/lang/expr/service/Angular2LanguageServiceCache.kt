@@ -1,7 +1,7 @@
 package org.angular2.lang.expr.service
 
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
+import com.intellij.lang.typescript.compiler.languageService.protocol.JSLanguageServiceObjectWithStateUpdater
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringHash
@@ -18,14 +18,14 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
 
   private val transpiledComponentCache: MutableMap<VirtualFile, TranspiledComponentInfo> = ConcurrentHashMap()
 
-  override fun updateCacheAndGetServiceObject(input: JSLanguageServiceCommand): JSLanguageServiceObject? =
+  override fun getServiceObjectWithStateUpdater(input: JSLanguageServiceCommand): JSLanguageServiceObjectWithStateUpdater? =
     if (input is Angular2TranspiledTemplateCommand)
       computeInNonBlockingReadAction { getUpdateTemplateServiceObject(input) }
     else
-      super.updateCacheAndGetServiceObject(input)
+      super.getServiceObjectWithStateUpdater(input)
 
 
-  private fun getUpdateTemplateServiceObject(input: Angular2TranspiledTemplateCommand): ServiceObjectWithCacheUpdate? {
+  private fun getUpdateTemplateServiceObject(input: Angular2TranspiledTemplateCommand): JSLanguageServiceObjectWithStateUpdater? {
     val templateFile = PsiManager.getInstance(myProject).findFile(input.templateFile)
                        ?: return null
     val componentFile = Angular2TranspiledDirectiveFileBuilder.findDirectiveFile(templateFile)
@@ -44,9 +44,9 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
       return null
     }
 
-    return ServiceObjectWithCacheUpdate(
+    return JSLanguageServiceObjectWithStateUpdater(
       newContents.toAngular2TranspiledTemplateRequestArgs(myProject, componentVirtualFile),
-      listOf(Runnable {
+      listOf({
         transpiledComponentCache[componentVirtualFile] = newInfo
       })
     )
