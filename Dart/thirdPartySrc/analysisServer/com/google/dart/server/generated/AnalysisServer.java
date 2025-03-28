@@ -1086,6 +1086,8 @@ public interface AnalysisServer {
 
   public void lsp_workspaceApplyEdit(DartLspApplyWorkspaceEditParams params, DartLspWorkspaceApplyEditRequestConsumer consumer);
 
+  public void lsp_connectToDtd(String uri);
+
   /**
    * {@code server.shutdown}
    *
