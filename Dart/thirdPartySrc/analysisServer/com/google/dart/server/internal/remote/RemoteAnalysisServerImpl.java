@@ -879,7 +879,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
       uriToTextEditMap.put(uri, textEdits);
     }
 
-    DartLspWorkspaceEdit workspaceEdit = new DartLspWorkspaceEdit(uriToTextEditMap);
+    DartLspWorkspaceEdit workspaceEdit = new DartLspWorkspaceEdit(uriToTextEditMap, null);
     DartLspApplyWorkspaceEditParams workspaceEditParams = new DartLspApplyWorkspaceEditParams(workspaceEdit, label);
 
     return workspaceEditParams;
