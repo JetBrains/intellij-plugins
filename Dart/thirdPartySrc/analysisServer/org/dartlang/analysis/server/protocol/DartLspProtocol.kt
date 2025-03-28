@@ -1,13 +1,23 @@
 package org.dartlang.analysis.server.protocol
 
-data class DartLspApplyWorkspaceEditParams(val workspaceEdit: DartLspWorkspaceEdit, val label: String? = null)
+class DartLspApplyWorkspaceEditParams(val workspaceEdit: DartLspWorkspaceEdit, val label: String? = null)
 
-data class DartLspApplyWorkspaceEditResult(val applied: Boolean)
+class DartLspApplyWorkspaceEditResult(val applied: Boolean)
 
-data class DartLspWorkspaceEdit(val changes: Map<String, List<DartLspTextEdit>>?)
+class DartLspWorkspaceEdit(val changes: Map<String, List<DartLspTextEdit>>?, val documentChanges: List<DartLspDocumentChange>?)
 
-data class DartLspTextEdit(val range: DartLspRange, val newText: String)
+class DartLspTextEdit(val range: DartLspRange, val newText: String)
 
-data class DartLspRange(val start: DartLspPosition, val end: DartLspPosition)
+interface DartLspDocumentChange
 
-data class DartLspPosition(val line: Int, val character: Int)
+class DartLspTextDocumentEdit() : DartLspDocumentChange
+
+class DartLspCreateFile() : DartLspDocumentChange
+
+class DartLspRenameFile() : DartLspDocumentChange
+
+class DartLspDeleteFile() : DartLspDocumentChange
+
+class DartLspRange(val start: DartLspPosition, val end: DartLspPosition)
+
+class DartLspPosition(val line: Int, val character: Int)
