@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.toolingDaemon
 
 import com.google.gson.JsonArray
@@ -30,6 +30,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.io.BaseOutputReader
 import com.intellij.util.io.URLUtil
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.ide.devtools.DartDevToolsService
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
@@ -93,7 +94,10 @@ class DartToolingDaemonService private constructor(private val project: Project)
     this.uri = uri
     this.secret = secret
     DartDevToolsService.getInstance(project).startService(uri)
-    uri?.let { connectToDtdWebSocket(it) }
+    uri?.let {
+      connectToDtdWebSocket(it)
+      DartAnalysisServerService.getInstance(project).connectToDtd(uri)
+    }
   }
 
   private fun connectToDtdWebSocket(uri: String) {
