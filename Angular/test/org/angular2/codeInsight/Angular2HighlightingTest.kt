@@ -30,6 +30,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testGlobalThis() = checkHighlighting(dir = true)
 
+  fun testGlobalThisNg19() = checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "globalThis.html")
+
   fun testComplexGenerics() = checkHighlighting(dir = true)
 
   fun testUnknownTagsAttributesInlineTemplate() = checkHighlighting(extension = "ts")
