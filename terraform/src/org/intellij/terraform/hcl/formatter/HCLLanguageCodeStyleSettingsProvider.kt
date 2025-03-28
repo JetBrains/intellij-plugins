@@ -41,6 +41,7 @@ open class HCLLanguageCodeStyleSettingsProvider(private val language:Language = 
 
   override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
     indentOptions.INDENT_SIZE = 2
+    commonSettings.LINE_COMMENT_ADD_SPACE_IN_SUPPRESSION = true
   }
 
   override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
