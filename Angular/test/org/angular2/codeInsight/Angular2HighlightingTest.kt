@@ -354,6 +354,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testCreateComponentBindings() =
     checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "ts")
 
+  fun testHostDirectiveWithInheritance() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   override fun setUp() {
     super.setUp()
