@@ -109,6 +109,8 @@ private val ATTRS: Array<AttributesDescriptor> = arrayOf(
                        Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
   AttributesDescriptor(Angular2Bundle.message("angular.colors.block-braces"),
                        Angular2HtmlHighlighterColors.NG_BLOCK_BRACES),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.ng-deep-pseudo"),
+                       Angular2HtmlHighlighterColors.NG_DEEP_PSEUDO),
 )
 
 private val tags = mapOf(

@@ -4,6 +4,8 @@ package org.angular2.lang.html.highlighting
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.psi.css.impl.util.CssHighlighter
+import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 
 interface Angular2HtmlHighlighterColors {
   companion object {
@@ -54,6 +56,11 @@ interface Angular2HtmlHighlighterColors {
     @JvmField
     val NG_BLOCK_BRACES: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
       "NG.BLOCK_BRACES", DefaultLanguageHighlighterColors.BRACES)
+
+    @JvmField
+    val NG_DEEP_PSEUDO: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
+      "NG.DEEP_PSEUDO", Angular2HighlighterColors.NG_SIGNAL)
+
 
   }
 }

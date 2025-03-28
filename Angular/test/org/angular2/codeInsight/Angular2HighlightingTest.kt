@@ -352,6 +352,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testHostDirectiveWithInheritance() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
+  fun testNgDeepSemantic() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "css", checkSymbolNames = true, checkInformation = false, checkWarnings = false, checkWeakWarnings = false)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
