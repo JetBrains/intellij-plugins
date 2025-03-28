@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.platform.backend.observation.ActivityKey
 import com.intellij.platform.backend.observation.trackActivity
-import com.intellij.pycharm.community.ide.impl.PySdkFromEnvironmentVariableConfigurator
+import com.jetbrains.python.sdk.PySdkFromEnvironmentVariable
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -17,19 +17,19 @@ import org.jetbrains.qodana.staticAnalysis.QodanaLinterProjectActivity
 
 class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
   object Key : ActivityKey {
-    override val presentableName: String = "PYCHARM_PYTHON_PATH environment update"
+    override val presentableName: String = "${PySdkFromEnvironmentVariable.PYCHARM_PYTHON_PATH_ENV} environment update"
   }
 
   override suspend fun run(project: Project) {
     coroutineScope {
       project.trackActivity(Key) {
-        val pycharmPythonPath = PySdkFromEnvironmentVariableConfigurator.getPycharmPythonPathProperty()
+        val pycharmPythonPath = PySdkFromEnvironmentVariable.getPycharmPythonPathProperty()
         if (pycharmPythonPath.isNullOrEmpty()) {
           return@trackActivity
         }
 
         val pycharmPythonPathSdk = withContext(QodanaDispatchers.Ui) {
-          PySdkFromEnvironmentVariableConfigurator.findOrCreateSdkByPath(pycharmPythonPath)
+          PySdkFromEnvironmentVariable.findOrCreateSdkByPath(pycharmPythonPath)
         } ?: return@trackActivity
         val projectSdk = ProjectRootManager.getInstance(project).projectSdk
 
@@ -38,7 +38,7 @@ class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
             project.trackActivity(Key) {
               modules.forEach { module ->
                 withContext(QodanaDispatchers.Ui) {
-                  PySdkFromEnvironmentVariableConfigurator.setModuleSdk(module, projectSdk, pycharmPythonPathSdk, pycharmPythonPath)
+                  PySdkFromEnvironmentVariable.setModuleSdk(module, projectSdk, pycharmPythonPathSdk, pycharmPythonPath)
                 }
               }
             }
