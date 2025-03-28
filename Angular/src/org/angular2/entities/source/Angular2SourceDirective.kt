@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
@@ -26,6 +27,8 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.HOST_ATTRIBUTE_TOKEN_CLASS
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INJECT_FUN
@@ -102,10 +105,34 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
   }
 
   override val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
-    get() = decorator.let { dec ->
-      CachedValuesManager.getCachedValue(dec) {
-        HostDirectivesCollector(dec).collect(Angular2DecoratorUtil.getProperty(dec, HOST_DIRECTIVES_PROP))
+    get() = getCachedValue {
+      val result = mutableSetOf<Angular2HostDirective>()
+      val dependencies = mutableListOf<Any>()
+      var isFullyResolved = true
+
+      dependencies.addAll(classModificationDependencies)
+
+      JSClassUtils.processClassesInHierarchy(typeScriptClass, false) { aClass, _, _ ->
+        if (aClass is TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass(aClass)) {
+          getIvyEntity(aClass, true)
+            .asSafely<Angular2Directive>()?.hostDirectives
+            ?.let { result.addAll(it) }
+          return@processClassesInHierarchy false
+        } else {
+          val decorator = Angular2DecoratorUtil.findDecorator(aClass, COMPONENT_DEC, DIRECTIVE_DEC)
+          if (decorator != null) {
+            HostDirectivesCollector(decorator)
+              .collect(Angular2DecoratorUtil.getProperty(decorator, HOST_DIRECTIVES_PROP))
+              .let {
+                result.addAll(it.value.symbols)
+                dependencies.addAll(it.dependencyItems)
+                isFullyResolved = isFullyResolved && it.value.isFullyResolved
+              }
+          }
+          return@processClassesInHierarchy decorator != null
+        }
       }
+      Angular2ResolvedSymbolsSet.createResult(result, isFullyResolved, dependencies)
     }
 
   override val directExportAs: Map<String, Angular2DirectiveExportAs>
