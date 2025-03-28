@@ -17,10 +17,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import com.jetbrains.lang.dart.DartBundle
 import kotlinx.coroutines.launch
-import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditParams
-import org.dartlang.analysis.server.protocol.DartLspWorkspaceEdit
-import org.dartlang.analysis.server.protocol.MessageAction
-import org.dartlang.analysis.server.protocol.MessageType
+import org.dartlang.analysis.server.protocol.*
 
 internal class DartAnalysisServerImpl(private val project: Project, socket: AnalysisServerSocket) : RemoteAnalysisServerImpl(socket) {
 
@@ -60,8 +57,16 @@ internal class DartAnalysisServerImpl(private val project: Project, socket: Anal
       val label: @NlsSafe String? = params.label
       val commandName: String = label ?: DartBundle.message("code.changes.by.dart.analysis.server")
 
-      writeCommandAction(project, commandName) {
-        applyWorkspaceEdit(params.workspaceEdit)
+      var applied = false
+      try {
+        writeCommandAction(project, commandName) {
+          applyWorkspaceEdit(params.workspaceEdit)
+          consumer.workspaceEditApplied(DartLspApplyWorkspaceEditResult(true))
+          applied = true
+        }
+      }
+      finally {
+        if (!applied) consumer.workspaceEditApplied(DartLspApplyWorkspaceEditResult(false))
       }
     }
   }

@@ -1060,7 +1060,11 @@ public class RequestUtilities {
 
     if (supportsWorkspaceApplyEdits) {
       JsonObject workspace = new JsonObject();
-      workspace.addProperty("applyEdit", supportsWorkspaceApplyEdits);
+      workspace.addProperty("applyEdit", true);
+
+      JsonObject workspaceEdit = new JsonObject();
+      workspaceEdit.addProperty("documentChanges", false);
+      workspace.add("workspaceEdit", workspaceEdit);
 
       JsonObject lspCapabilities = new JsonObject();
       lspCapabilities.add("workspace", workspace);
