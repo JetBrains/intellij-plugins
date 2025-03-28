@@ -78,7 +78,7 @@
           {
             "ruleId": "IgnoreResultOfCall",
             "kind": "fail",
-            "level": "warning",
+            "level": "error",
             "message": {
               "text": "Result of 'A.unusedResult()' is ignored",
               "markdown": "Result of `A.unusedResult()` is ignored"
@@ -124,8 +124,8 @@
               "equalIndicator/v1": "d30f9b12432e26da36dedf4292c28f3365296350a073e18923f897ae9deb3000"
             },
             "properties": {
-              "ideaSeverity": "WARNING",
-              "qodanaSeverity": "High",
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
               "problemType": "REGULAR",
               "tags": [
                 "JAVA"
@@ -135,7 +135,7 @@
           {
             "ruleId": "IgnoreResultOfCall",
             "kind": "fail",
-            "level": "warning",
+            "level": "error",
             "message": {
               "text": "Result of 'A.unusedResult()' is ignored",
               "markdown": "Result of `A.unusedResult()` is ignored"
@@ -181,8 +181,8 @@
               "equalIndicator/v1": "adfed3a01b76170f5cc8ea81c75e94c05c08c98ef6671f2b8d30d9b2a940f710"
             },
             "properties": {
-              "ideaSeverity": "WARNING",
-              "qodanaSeverity": "High",
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
               "problemType": "REGULAR",
               "tags": [
                 "JAVA"

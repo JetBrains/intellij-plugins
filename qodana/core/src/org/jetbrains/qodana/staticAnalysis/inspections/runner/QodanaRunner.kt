@@ -5,10 +5,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.diagnostic.telemetry.helpers.useWithScope
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
-import com.jetbrains.qodana.sarif.model.PropertyBag
-import com.jetbrains.qodana.sarif.model.Result
-import com.jetbrains.qodana.sarif.model.Run
-import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.*
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runInterruptible
@@ -80,6 +77,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       val properties = sarifRun.properties ?: PropertyBag()
       sarifRun.properties = properties
       val sanityResults = resultsByInspectionGroup("sanity", scriptResult)
+        ?.filter { it.level == Level.ERROR }
       if (!sanityResults.isNullOrEmpty()) {
         properties["qodana.sanity.results"] = sanityResults
         commandLineResultsPrinter?.printSanityResults(sanityResults)
