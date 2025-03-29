@@ -51,7 +51,6 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "//contrib/qodana/coverage",
     "@community//platform/backend/observation",
-    "@community//python/ide/impl:pycharm-community-ide-impl",
     ":qodana_provided",
     ":analysis_provided",
     ":core-api-core_provided",
@@ -89,7 +88,6 @@ jvm_library(
     "//python/plugin",
     "@community//platform/backend/observation",
     "@community//platform/backend/observation:observation_test_lib",
-    "@community//python/ide/impl:pycharm-community-ide-impl",
   ],
   runtime_deps = [":python_resources"]
 )
