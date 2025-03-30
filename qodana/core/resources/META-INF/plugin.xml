@@ -15,7 +15,7 @@
      <li>Open Qodana static analysis SARIF report and view the issues detected by a Qodana linter</li>
      <li>Use the "Open in IDE" functionality provided by the Qodana UI</li>
     </ul>
-    ]]></description>
+  ]]></description>
 
   <content>
     <module name="intellij.qodana.sarif" loading="embedded"/>
@@ -100,6 +100,7 @@
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.stats.QodanaPluginStatsStateCollector"/>
 
+    <!--suppress PluginXmlCapitalization -->
     <registryKey defaultValue="true" description="Enable Qodana Cloud integration" key="qd.cloud.integration.enabled"
                  restartRequired="true"/>
     <registryKey defaultValue="true" description="Enable Qodana Cloud license agreement check" key="qd.license.agreement.callback.enabled"/>
@@ -129,10 +130,10 @@
 
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.staticAnalysis.stat.QodanaProjectInfoCollector"/>
     <problemsViewPanelProvider implementation="org.jetbrains.qodana.ui.problemsView.QodanaProblemsViewPanelProvider"/>
-    <localInspection shortName="QodanaSanity" groupKey="inspection.qodana.tools.group.name" groupBundle="messages.QodanaBundle"
-                      enabledByDefault="false" level="ERROR" isInternal="true"
-                      bundle="messages.QodanaBundle" key="inspection.qodana.sanity.display.name"
-                      implementationClass="org.jetbrains.qodana.staticAnalysis.inspections.sanity.QodanaSanity"/>
+    <localInspection language="" shortName="QodanaSanity" groupKey="inspection.qodana.tools.group.name" groupBundle="messages.QodanaBundle"
+                     enabledByDefault="false" level="ERROR" isInternal="true"
+                     bundle="messages.QodanaBundle" key="inspection.qodana.sanity.display.name"
+                     implementationClass="org.jetbrains.qodana.staticAnalysis.inspections.sanity.QodanaSanity"/>
     <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.KtsDynamicInspectionsProvider"/>
 
     <localInspection language=""
@@ -201,7 +202,7 @@
     </action>
 
     <action id="Qodana.NewInspectionKts" class="org.jetbrains.qodana.inspectionKts.templates.NewKtsInspectionAction"
-            icon="QodanaIcons.Icons.Qodana">
+            icon="icons.QodanaIcons.Icons.Qodana">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
     </action>
   </actions>
