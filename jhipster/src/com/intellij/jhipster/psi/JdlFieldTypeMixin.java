@@ -6,6 +6,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class JdlFieldTypeMixin extends ASTWrapperPsiElement implements JdlFieldType {
   public JdlFieldTypeMixin(@NotNull ASTNode node) {
@@ -13,7 +14,8 @@ public abstract class JdlFieldTypeMixin extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  public PsiReference getReference() {
-    return new JdlFieldTypeReference(this);
+  public @Nullable PsiReference getReference() {
+    JdlFieldTypeReferenceProvider provider = JdlFieldTypeReferenceProvider.getInstance();
+    return provider != null ? provider.createReference(this) : null;
   }
 }

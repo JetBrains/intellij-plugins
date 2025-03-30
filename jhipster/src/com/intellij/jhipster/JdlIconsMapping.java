@@ -3,6 +3,7 @@
 package com.intellij.jhipster;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.jhipster.icons.JhipsterIcons;
 
 import javax.swing.*;
 

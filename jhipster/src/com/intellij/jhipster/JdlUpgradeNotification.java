@@ -2,9 +2,10 @@
 
 package com.intellij.jhipster;
 
+import com.intellij.frontend.HostIdeInfoService;
+import com.intellij.frontend.HostInfo;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.function.Function;
 
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
 import static com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserServiceKt.createTryUltimateActionLabel;
 
 final class JdlUpgradeNotification implements EditorNotificationProvider {
@@ -27,7 +29,10 @@ final class JdlUpgradeNotification implements EditorNotificationProvider {
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent>
   collectNotificationData(@NotNull Project project, @NotNull VirtualFile file) {
-    var productCode = ApplicationInfo.getInstance().getBuild().getProductCode();
+    HostInfo info = getApplication().getService(HostIdeInfoService.class).getHostInfo();
+    if (info == null) return null;
+
+    var productCode = info.getProductCode();
     if ("IU".equals(productCode)) return null;
 
     if (isDismissed()) return null;

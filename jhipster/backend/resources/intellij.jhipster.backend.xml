@@ -1,0 +1,54 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.platform.backend"/>
+    <plugin id="com.intellij.java"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Backend-specific extensions -->
+    <lang.findUsagesProvider language="JDL" implementationClass="com.intellij.jhipster.JdlFindUsagesProvider"/>
+    <annotator language="JDL" implementationClass="com.intellij.jhipster.JdlAnnotator"/>
+
+    <lang.psiStructureViewFactory language="JDL" implementationClass="com.intellij.jhipster.JdlPsiStructureViewFactory"/>
+    <lang.refactoringSupport language="JDL" implementationClass="com.intellij.jhipster.JdlRefactoringSupportProvider"/>
+
+    <completion.contributor language="JDL" implementationClass="com.intellij.jhipster.JdlCompletionContributor"/>
+    <spellchecker.support language="JDL" implementationClass="com.intellij.jhipster.JdlSpellcheckingStrategy"/>
+
+    <configurationType implementation="com.intellij.jhipster.run.JdlRunConfigurationType"/>
+    <runConfigurationProducer implementation="com.intellij.jhipster.run.JdlRunConfigurationProducer"/>
+
+    <liveTemplateContext contextId="JDL" implementation="com.intellij.jhipster.JdlLiveTemplateContextType"/>
+    <defaultLiveTemplates file="/com/intellij/jhipster/liveTemplates.xml"/>
+
+    <!-- Code inspections -->
+    <localInspection language="JDL" shortName="JdlDuplicatedDeclaration" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.jhipster.inspections.JdlDuplicatedDeclarationInspection"
+                     bundle="messages.JdlBundle"
+                     groupKey="inspections.jhipster.group" key="inspection.jdl.duplicated.declaration.display.name"/>
+    <localInspection language="JDL" shortName="JdlUnusedDeclaration" enabledByDefault="true"
+                     implementationClass="com.intellij.jhipster.inspections.JdlUnusedDeclarationInspection"
+                     bundle="messages.JdlBundle"
+                     groupKey="inspections.jhipster.group" key="inspection.jdl.unused.declaration.display.name"/>
+    <localInspection language="JDL" shortName="JdlUnknownOption" enabledByDefault="true" level="WEAK WARNING"
+                     implementationClass="com.intellij.jhipster.inspections.JdlUnknownOptionInspection"
+                     bundle="messages.JdlBundle"
+                     groupKey="inspections.jhipster.group" key="inspection.jdl.unknown.option.display.name"/>
+    <localInspection language="JDL" shortName="JdlIncorrectOptionType" enabledByDefault="true"
+                     implementationClass="com.intellij.jhipster.inspections.JdlIncorrectOptionTypeInspection"
+                     bundle="messages.JdlBundle"
+                     groupKey="inspections.jhipster.group" key="inspection.jdl.incorrect.option.type.display.name"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.jhipster">
+    <fieldTypeReferenceProvider implementation="com.intellij.jhipster.psi.JdlFieldTypeReferenceProviderBackendImpl"/>
+  </extensions>
+
+  <actions>
+    <!--suppress PluginXmlCapitalization -->
+    <action class="com.intellij.jhipster.run.JdlRunFloatingAction"
+            icon="AllIcons.Modules.GeneratedSourceRoot"
+            id="JDL.Generate"/>
+  </actions>
+</idea-plugin>

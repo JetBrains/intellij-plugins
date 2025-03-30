@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress LiveTemplateI18n -->
+<templateSet group="JHipster">
+  <template description="JHipster JDL application" name="jh-app" toReformat="true"
+            value="application {&#10;    config {&#10;        baseName $NAME$&#10;        packageName $PACKAGE_NAME$&#10;        applicationType $TYPE$&#10;        $END$&#10;    }&#10;}"
+            shortcut="TAB">
+    <variable name="NAME" defaultValue="&quot;demo&quot;" alwaysStopAt="true"/>
+    <variable name="PACKAGE_NAME" defaultValue="&quot;com.demo&quot;" alwaysStopAt="true"/>
+    <variable name="TYPE" expression="complete()" defaultValue="&quot;monolith&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="JDL" value="true"/>
+    </context>
+  </template>
+
+  <template description="JHipster JDL entity" name="jh-entity" toReformat="true"
+            value="entity $NAME$ {&#10;    $END$&#10;}" shortcut="TAB">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="JDL" value="true"/>
+    </context>
+  </template>
+
+  <template description="JHipster JDL enum" name="jh-enum" toReformat="true"
+            value="enum $NAME$ {&#10;    $END$&#10;}" shortcut="TAB">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="JDL" value="true"/>
+    </context>
+  </template>
+
+  <template description="JHipster JDL relationship" name="jh-rel" toReformat="true"
+            value="relationship $TYPE$ {&#10;    $END$&#10;}" shortcut="TAB">
+    <variable name="TYPE" expression="complete()" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="JDL" value="true"/>
+    </context>
+  </template>
+
+  <template description="JHipster JDL deployment" name="jh-deploy" toReformat="true"
+            value="deployment {&#10;    $END$&#10;}" shortcut="TAB">
+    <context>
+      <option name="JDL" value="true"/>
+    </context>
+  </template>
+</templateSet>

@@ -1,0 +1,36 @@
+<idea-plugin package="com.intellij.jhipster">
+  <id>org.strangeway.jdl</id>
+  <name>JHipster JDL</name>
+  <vendor>JetBrains</vendor>
+  <category>JVM Frameworks</category>
+
+  <description><![CDATA[
+    <p>Provides <a href="https://www.jhipster.tech/jdl/intro">JHipster-specific domain language (JDL)</a> editor support.</p>
+    <br/>
+    Features:
+    <ul>
+      <li>Syntax highlighting and customizable color scheme</li>
+      <li>Options completion for all supported JHipster parameters</li>
+      <li>Go to declaration and Find usages for entities and enums</li>
+      <li>Structure view, UML preview and quick navigation</li>
+      <li>Run configuration to start generator with a single click</li>
+      <li>Rename refactor</li>
+    </ul>
+    <br/>
+    Use live templates to speed-up JDL editing:
+    <ul>
+      <li><b>jh-app</b> - Adds a new application declaration</li>
+      <li><b>jh-entity</b> - Adds a new entity declaration</li>
+      <li><b>jh-enum</b> - Adds a new enum declaration</li>
+      <li><b>jh-rel</b> - Adds a new relationship declaration</li>
+      <li><b>jh-deploy</b> - Adds a new deployment declaration</li>
+    </ul>
+  ]]></description>
+
+  <content>
+    <module name="intellij.jhipster" loading="embedded"/>
+    <module name="intellij.jhipster.backend"/>
+    <module name="intellij.jhipster.frontend"/>
+    <module name="intellij.jhipster.uml"/>
+  </content>
+</idea-plugin>

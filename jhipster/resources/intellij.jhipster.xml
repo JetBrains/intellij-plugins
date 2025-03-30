@@ -1,0 +1,30 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.jhipster.fieldTypeReferenceProvider"
+                    interface="com.intellij.jhipster.psi.JdlFieldTypeReferenceProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="JHipster JDL" language="JDL" fieldName="INSTANCE" implementationClass="com.intellij.jhipster.JdlFileType"
+              extensions="jdl;jh"/>
+    <lang.parserDefinition language="JDL" implementationClass="com.intellij.jhipster.psi.JdlParserDefinition"/>
+
+    <!-- Core language features that should be in both frontend and backend -->
+    <lang.braceMatcher language="JDL" implementationClass="com.intellij.jhipster.JdlPairedBraceMatcher"/>
+    <lang.quoteHandler language="JDL" implementationClass="com.intellij.jhipster.JdlQuoteHandler"/>
+    <lang.syntaxHighlighterFactory language="JDL" implementationClass="com.intellij.jhipster.JdlSyntaxHighlighterFactory"/>
+    <lang.commenter language="JDL" implementationClass="com.intellij.jhipster.JdlCommenter"/>
+    <lang.foldingBuilder language="JDL" implementationClass="com.intellij.jhipster.JdlFoldingBuilder"/>
+
+    <lang.elementManipulator forClass="com.intellij.jhipster.psi.JdlId" implementationClass="com.intellij.jhipster.psi.JdlIdManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.jhipster.psi.JdlFieldType"
+                             implementationClass="com.intellij.jhipster.psi.JdlFieldTypeManipulator"/>
+
+    <lang.formatter language="JDL" implementationClass="com.intellij.jhipster.JdlFormattingModelBuilder"/>
+    <codeStyleSettingsProvider implementation="com.intellij.jhipster.JdlCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.intellij.jhipster.JdlLanguageCodeStyleSettingsProvider"/>
+
+    <colorSettingsPage implementation="com.intellij.jhipster.JdlColorSettingsPage"/>
+  </extensions>
+</idea-plugin>

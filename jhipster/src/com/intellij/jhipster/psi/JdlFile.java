@@ -14,11 +14,10 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class JdlFile extends PsiFileBase {
   public JdlFile(@NotNull FileViewProvider viewProvider) {
@@ -53,8 +52,6 @@ public final class JdlFile extends PsiFileBase {
 
   private static List<PsiElement> findDeclarations(@NotNull JdlFile file) {
     ASTNode[] nodes = file.getNode().getChildren(JdlTokenSets.DECLARATIONS);
-    return Arrays.stream(nodes)
-      .map(ASTNode::getPsi)
-      .collect(Collectors.toList());
+    return ContainerUtil.map(nodes, ASTNode::getPsi);
   }
 }
