@@ -234,6 +234,13 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "unused-imports-in-unknown-template.ts")
   }
 
+  fun testUnusedImportsMultipleComponentsSameTemplate() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
+    doTest(AngularUnusedComponentImportInspection::class.java,
+           "unused-imports-multiple-components-same-template.ts",
+           "unused-imports-multiple-components-same-template.html")
+  }
+
   fun testInspectionsNonAngular() {
     myFixture.enableInspections(AngularIncorrectTemplateDefinitionInspection::class.java,
                                 AngularInvalidSelectorInspection::class.java,
