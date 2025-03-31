@@ -28,7 +28,7 @@ import java.io.File
 
 private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
   "@vue/language-server",
-  PackageVersion.bundled<VueLspServerPackageDescriptor>("2.1.6", "vuejs", "vue-language-server") {
+  PackageVersion.bundled<VueLspServerPackageDescriptor>("2.2.8", "vuejs", "vue-language-server") {
     Registry.`is`("vue.language.server.bundled.enabled")
   },
   "/bin/vue-language-server.js"

@@ -1,9 +1,9 @@
 {
   "name": "@vue/language-server",
-  "version": "2.1.6",
+  "version": "2.2.8",
   "private": true,
   "devDependencies": {
-    "@vue/language-server": "2.1.6",
+    "@vue/language-server": "2.2.8",
     "esbuild": "^0.20.0"
   },
   "scripts": {
