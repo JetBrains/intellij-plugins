@@ -1,0 +1,74 @@
+### auto-generated section `build intellij.jhipster.backend` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+
+jvm_resources(
+  name = "backend_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "backend",
+  module_name = "intellij.jhipster.backend",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  deps = [
+    "@community//platform/backend",
+    "//contrib/jhipster",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//platform/util",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/indexing-impl",
+    "@community//spellchecker",
+    "@community//platform/execution",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/execution-impl",
+    "@community//platform/core-ui",
+    "@community//platform/lang-api:lang",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:kotlin-stdlib",
+    "@community//java/java-psi-api:psi",
+    "@community//platform/core-impl",
+  ],
+  runtime_deps = [":backend_resources"]
+)
+
+jvm_library(
+  name = "backend_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  associates = [":backend"],
+  deps = [
+    "@community//platform/backend",
+    "//contrib/jhipster",
+    "//contrib/jhipster:jhipster_test_lib",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//platform/util",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/indexing-impl",
+    "@community//spellchecker",
+    "@community//spellchecker:spellchecker_test_lib",
+    "@community//platform/execution",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/execution-impl",
+    "@community//platform/core-ui",
+    "@community//platform/lang-api:lang",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:kotlin-stdlib",
+    "@community//java/java-psi-api:psi",
+    "@community//platform/core-impl",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+  ],
+  runtime_deps = [":backend_resources"]
+)
+
+jvm_test(
+  name = "backend_test",
+  runtime_deps = [":backend_test_lib"]
+)
+### auto-generated section `build intellij.jhipster.backend` end

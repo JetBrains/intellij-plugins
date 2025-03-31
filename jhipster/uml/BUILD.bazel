@@ -1,0 +1,30 @@
+### auto-generated section `build intellij.jhipster.uml` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+
+jvm_resources(
+  name = "uml_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "uml",
+  module_name = "intellij.jhipster.uml",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  deps = [
+    "//contrib/jhipster",
+    "//plugins/uml:diagram",
+    "@community//platform/core-api:core",
+    "@community//platform/util",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/ide-core",
+    "@community//platform/core-ui",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/analysis-api:analysis",
+    "//plugins/uml:diagram-impl",
+    "@community//platform/core-impl",
+  ],
+  runtime_deps = [":uml_resources"]
+)
+### auto-generated section `build intellij.jhipster.uml` end
