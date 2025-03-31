@@ -71,9 +71,12 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
   }
 
   private fun withNewIncorrectFormattingOutput(action: () -> Unit) {
-    System.setProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
-    action()
-    System.clearProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY)
+    try {
+      System.setProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true")
+      action()
+    } finally {
+      System.clearProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY)
+    }
   }
 }
 
