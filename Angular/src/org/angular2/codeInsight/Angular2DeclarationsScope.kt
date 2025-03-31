@@ -26,7 +26,7 @@ class Angular2DeclarationsScope {
 
   constructor(component: Angular2Component) {
     this.location = component.templateFile
-    this.scope = createScope(location)
+    this.scope = createScope(component)
     this.fileIndex = NotNullLazyValue.createValue { ProjectRootManager.getInstance(component.sourceElement.project).fileIndex }
   }
 
@@ -124,6 +124,16 @@ class Angular2DeclarationsScope {
         val importsOwner = Angular2EntitiesProvider.findTemplateComponent(file)
           ?.let { selectImportsOwner(it, file) }
         val result = ScopeResult(importsOwner, importsOwner?.declarationsInScope, importsOwner?.isScopeFullyResolved ?: false)
+        CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+      }
+    }
+
+    private fun createScope(component: Angular2Component) = NotNullLazyValue.createValue {
+      val componentSource = component.sourceElement
+      CachedValuesManager.getCachedValue(componentSource) {
+        val importsOwner = Angular2EntitiesProvider.getComponent(componentSource)
+          ?.let { selectImportsOwner(it, it.templateFile ?: return@let null) }
+        val result = ScopeResult(importsOwner, importsOwner?.declarationsInScope, importsOwner?.isScopeFullyResolved == true)
         CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
