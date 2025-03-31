@@ -70,6 +70,7 @@ groups:
 
   - groupId: ExcludedInspections # list of inspections disabled by specific reason
     inspections:
+      #JVM
       - Annotator # substituted by JavaAnnotator in sanity
       - KotlinAnnotator # works in "sanity" inspections
       - JavaAnnotator # works in "sanity" inspections
@@ -101,6 +102,8 @@ groups:
       - PyInterpreterInspection # Sanity
       - PyUnresolvedReferencesInspection # Sanity
       - PyDataclassInspection # Untill PY-77817 fixed, too many critical FP
+      - PyArgumentListInspection # QD-11389 FPs on real python projects (due to python being dynamic and not type friendly)
+      - PyTypeCheckerInspection # QD-11389 FPs on real python projects (due to python being dynamic and not type friendly)
 
       #Security
       - HttpUrlsUsage # Spam
