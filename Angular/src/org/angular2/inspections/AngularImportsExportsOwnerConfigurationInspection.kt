@@ -4,8 +4,11 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -19,6 +22,8 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlText
+import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
@@ -40,6 +45,7 @@ import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuick
 import org.angular2.inspections.quickfixes.MoveDeclarationOfStandaloneToImportsQuickFix
 import org.angular2.inspections.quickfixes.RemoveEntityImportQuickFix
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -284,7 +290,6 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         .mapValues { it.value.filter { pipe -> scope.contains(pipe) } }
 
       val expressionVisitor = object : JSRecursiveWalkingElementVisitor() {
-
         override fun visitJSReferenceExpression(node: JSReferenceExpression) {
           if (node is Angular2PipeReferenceExpression) {
             pipesByName[node.referenceName]?.let { result.addAll(it) }
@@ -293,7 +298,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         }
       }
 
-      templateFile?.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
+      val xmlVisitor = object : XmlRecursiveElementWalkingVisitor() {
         override fun visitXmlTag(tag: XmlTag) {
           Angular2ApplicableDirectivesProvider(tag, scope = scope).matched.forEach(result::add)
           super.visitXmlTag(tag)
@@ -301,8 +306,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
         override fun visitXmlAttribute(attribute: XmlAttribute) {
           if (attribute !is Angular2HtmlBoundAttribute) {
-            Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2EmbeddedExpression::class.java)
-              ?.accept(expressionVisitor)
+            visitInjectedExpressions(attribute)
           }
           if (attribute.name.startsWith("*")) {
             Angular2TemplateBindings.get(attribute).let {
@@ -312,15 +316,36 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
           super.visitXmlAttribute(attribute)
         }
 
+        override fun visitXmlText(text: XmlText) {
+          visitInjectedExpressions(text)
+          super.visitXmlText(text)
+        }
+
         override fun visitElement(element: PsiElement) {
           if (element is Angular2EmbeddedExpression) {
             element.acceptChildren(expressionVisitor)
+          } else if (element is JSLiteralExpression && element.language !is Angular2Language) {
+            // Pug support
+            visitInjectedExpressions(element)
           }
           else {
             super.visitElement(element)
           }
         }
-      })
+
+        private fun visitInjectedExpressions(element: PsiElement) {
+          InjectedLanguageManager.getInstance(element.project)
+            .enumerate(element) { file, _ ->
+              if (file is JSFile) {
+                file.accept(expressionVisitor)
+              }
+            }
+        }
+
+      }
+      AstLoadingFilter.forceAllowTreeLoading<Throwable>(templateFile) {
+        templateFile.accept(xmlVisitor)
+      }
       return result
     }
   }
