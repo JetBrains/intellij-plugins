@@ -12,10 +12,13 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 @Suppress("DialogTitleCapitalization")
-internal class MakefileRunTargetAction(private val target: MakefileTarget)
-  : AnAction(MakefileLangBundle.message("action.run.target.text", target.name),
-             MakefileLangBundle.message("action.run.target.description", target.name),
-             MakefileTargetIcon) {
+internal class MakefileRunTargetAction(private val target: MakefileTarget) : AnAction() {
+  init {
+    templatePresentation.setText(MakefileLangBundle.message("action.run.target.text", target.name), false)
+    templatePresentation.description = MakefileLangBundle.message("action.run.target.description", target.name)
+    templatePresentation.icon = MakefileTargetIcon
+  }
+
   override fun actionPerformed(event: AnActionEvent) {
     val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY, PsiLocation(target), event.dataContext)
 
