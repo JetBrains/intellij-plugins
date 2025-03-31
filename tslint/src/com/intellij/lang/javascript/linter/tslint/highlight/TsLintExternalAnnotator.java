@@ -156,8 +156,10 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                                                             @NotNull @InspectionMessage String error) {
     final ProcessOutput output = new ProcessOutput();
     output.appendStderr(error);
-    final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),
-                                                                           null, output, null);
+    final IntentionAction detailsAction =
+      StringUtil.containsLineBreak(output.getStderr()) ? JSLinterUtil.createDetailsAction(collectedInfo.getProject(),
+                                                                                          collectedInfo.getVirtualFile(),
+                                                                                          null, output, null) : null;
     final JSLinterFileLevelAnnotation annotation = new JSLinterFileLevelAnnotation(error, detailsAction);
     return JSLinterAnnotationResult.create(collectedInfo, annotation, config);
   }
