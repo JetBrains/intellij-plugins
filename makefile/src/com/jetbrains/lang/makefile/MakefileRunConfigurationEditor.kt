@@ -4,6 +4,8 @@ import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory.singleFile
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.FixedSizeButton
@@ -43,7 +45,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   }
 
   init {
-    filenameField.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFileDescriptor(MakefileFileType)
+    filenameField.addBrowseFolderListener(project, singleFile().withFileFilter { file -> FileTypeManager.getInstance().isFileOfType(file, MakefileFileType) }
       .withTitle(MakefileLangBundle.message("file.chooser.title"))
       .withDescription(MakefileLangBundle.message("file.chooser.description")))
     filenameField.textField.document.addDocumentListener(object : DocumentAdapter() {
