@@ -1,6 +1,8 @@
 package org.angular2.lang.expr.service
 
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.languageService.protocol.JSLanguageServiceObjectWithStateUpdater
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.openapi.project.Project
@@ -43,9 +45,11 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
     if (oldInfo == newInfo) {
       return null
     }
-
+    val serviceObject = newContents.toAngular2TranspiledTemplateRequestArgs(myProject, componentVirtualFile)
     return JSLanguageServiceObjectWithStateUpdater(
-      newContents.toAngular2TranspiledTemplateRequestArgs(myProject, componentVirtualFile),
+      listOf(object : Angular2TranspiledTemplateCommand(componentVirtualFile), JSLanguageServiceSimpleCommand {
+        override fun toSerializableObject(): JSLanguageServiceObject = serviceObject
+      }),
       listOf({
         transpiledComponentCache[componentVirtualFile] = newInfo
       })
