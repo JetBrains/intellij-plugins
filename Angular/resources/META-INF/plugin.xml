@@ -178,6 +178,7 @@
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveAttributeDeclarationProvider"/>
+    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2CustomCssPropertyDeclarationProvider"/>
     <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-blocks"
                                        implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol$Factory"/>
     <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameters"

@@ -155,6 +155,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           NgContentSelectorsScope(it),
           MatchedDirectivesScope.createFor(it),
           I18NAttributesScope(it),
+          HtmlAttributesCustomCssPropertiesScope(it),
         ))
       }
     }
@@ -167,7 +168,8 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
   private fun calculateCssScopes(element: CssElement): List<WebSymbolsScope> =
     listOf(DirectiveElementSelectorsScope(element.containingFile),
-           DirectiveAttributeSelectorsScope(element.containingFile))
+           DirectiveAttributeSelectorsScope(element.containingFile),
+           HtmlAttributesCustomCssPropertiesScope(element))
 
   private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
     when (element) {

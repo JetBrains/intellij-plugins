@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
+import com.intellij.psi.css.impl.util.CssHighlighter
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
@@ -34,6 +35,7 @@ object Angular2HighlightingUtils {
     TS_KEYWORD(TypeScriptHighlighter.TS_KEYWORD),
     HTML_TAG(XmlHighlighterColors.HTML_TAG_NAME),
     HTML_ATTRIBUTE(XmlHighlighterColors.HTML_ATTRIBUTE_NAME),
+    CSS_PROPERTY(CssHighlighter.CSS_PROPERTY_NAME),
     NG_INPUT(Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME),
     NG_OUTPUT(Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME),
     NG_IN_OUT(Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME),
