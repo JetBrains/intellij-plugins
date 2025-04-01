@@ -59,6 +59,7 @@ groups:
       - "category:Java/Java language level migration aids" # Migration aids - only on explicit request, due to possible spam
       - "category:JavaScript and TypeScript/ES2015 migration aids" # Migration aids - only on explicit request, due to possible spam
       - "category:C_C++/Compiler Issues" # Sanity inspections in CLion
+      - "category:C_C++/Data Flow Analysis" # Temporarily disabled due to analysis hangups; see CPP-43721
       - "category:Ktor/General" # Not relevant for Qodana analysis
       - "GLOBAL" # Qodana doesn't run global inspections by default, due to significant time consumption
       - "severity:INFORMATION" # Qodana doesn't run "invisible" and "technical" in IDE inspections
@@ -158,4 +159,3 @@ inspections:
   - inspection: NullableProblems
     options:
       IGNORE_EXTERNAL_SUPER_NOTNULL: true
-
